@@ -1,1 +1,0 @@
-Reading existing permissions.ts file to understand current implementation

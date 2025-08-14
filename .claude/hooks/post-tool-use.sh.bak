@@ -1,0 +1,121 @@
+#!/bin/bash
+
+# Claude Code Post-Tool-Use Hook
+# Executes after each tool call - for monitoring, logging, and pattern learning
+# Integrates with .claude directory configurations for quality tracking
+# Version: 2.0.0 - Refactored with shared library architecture
+
+# ============================================================================
+# INITIALIZATION
+# ============================================================================
+
+# Get the absolute path to the .claude directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CLAUDE_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+# Source the shared library
+SHARED_LIB="${CLAUDE_DIR}/hooks/hook-commons.sh"
+if [[ ! -f "$SHARED_LIB" ]]; then
+    echo "[ERROR] Shared library not found: $SHARED_LIB" >&2
+    exit 1
+fi
+
+source "$SHARED_LIB"
+
+# Initialize hook commons
+HOOK_NAME="post-tool-use"
+START_TIME=$(date +%s%N)
+
+init_hook_commons "$HOOK_NAME" || {
+    echo "[ERROR] Failed to initialize hook commons" >&2
+    exit 1
+}
+
+# ============================================================================
+# POST-TOOL-USE LOGIC
+# ============================================================================
+
+# Extract tool information and results from arguments
+TOOL_NAME="${1:-unknown}"
+TOOL_RESULT="${2:-unknown}"
+TOOL_ARGS="${3:-}"
+
+log_message "INFO" "Post-tool-use hook started for tool: $TOOL_NAME (result: $TOOL_RESULT)" "$HOOK_NAME"
+
+# Enhanced path resolution and logging
+NORMALIZED_PATH=$(echo "$CLAUDE_DIR" | sed 's|\\|/|g')
+log_message "INFO" "Claude directory: $NORMALIZED_PATH" "$HOOK_NAME"
+
+# Monitor system resources after tool execution
+monitor_resources "$HOOK_NAME"
+
+# ============================================================================
+# RESULT ANALYSIS AND PATTERN LEARNING
+# ============================================================================
+
+# Analyze tool execution results for pattern learning
+log_message "INFO" "Analyzing tool execution results for pattern learning" "$HOOK_NAME"
+
+# Determine operation success
+OPERATION_SUCCESS="failure"
+case "$TOOL_RESULT" in
+    "success"|"0"|"completed"|"true")
+        OPERATION_SUCCESS="success"
+        log_message "INFO" "Tool execution successful: $TOOL_NAME" "$HOOK_NAME"
+        ;;
+    *)
+        log_message "WARN" "Tool execution result unclear or failed: $TOOL_NAME ($TOOL_RESULT)" "$HOOK_NAME"
+        ;;
+esac
+
+# Update learned patterns based on results
+update_learned_patterns "$TOOL_NAME" "$OPERATION_SUCCESS" "$HOOK_NAME"
+
+# ============================================================================
+# QUALITY AND PERFORMANCE TRACKING
+# ============================================================================
+
+# Track quality metrics for successful operations
+if [[ "$OPERATION_SUCCESS" == "success" ]]; then
+    log_message "INFO" "Recording successful operation for quality tracking" "$HOOK_NAME"
+    
+    # Create quality tracking entry
+    QUALITY_LOG="${LOGS_DIR}/quality-tracking.log"
+    echo "$(date '+%Y-%m-%d %H:%M:%S'),${TOOL_NAME},success,${HOOK_NAME}" >> "$QUALITY_LOG"
+fi
+
+# Performance analysis for optimization opportunities
+case "$TOOL_NAME" in
+    *"write_file"|*"edit_block")
+        log_message "INFO" "File operation completed: $TOOL_NAME" "$HOOK_NAME"
+        ;;
+    *"sequential-thinking")
+        log_message "INFO" "Complex thinking operation completed: $TOOL_NAME" "$HOOK_NAME"
+        ;;
+    *"context7"|*"research")
+        log_message "INFO" "Research operation completed: $TOOL_NAME" "$HOOK_NAME"
+        ;;
+esac
+
+# ============================================================================
+# CONFIGURATION UPDATES
+# ============================================================================
+
+# Check if configuration updates are needed based on patterns
+PATTERN_UPDATE_NEEDED=$(get_config_value "master-workflow.md" "auto_pattern_updates" "false")
+if [[ "$PATTERN_UPDATE_NEEDED" == "true" && "$OPERATION_SUCCESS" == "success" ]]; then
+    log_message "INFO" "Automatic pattern updates enabled - recording successful pattern" "$HOOK_NAME"
+fi
+
+# ============================================================================
+# FINALIZATION
+# ============================================================================
+
+# Track execution time
+END_TIME=$(date +%s%N)
+track_execution_time "$HOOK_NAME" "$START_TIME" "$END_TIME"
+
+log_message "INFO" "Post-tool-use analysis completed for: $TOOL_NAME" "$HOOK_NAME"
+
+# Always return success for post-tool-use hook
+exit 0

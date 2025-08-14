@@ -1,0 +1,215 @@
+#!/bin/bash
+
+# Claude Code Subagent Stop Hook
+# Executes when a subagent stops - for coordination tracking and handoff management
+# Integrates with .claude directory configurations for agent orchestration
+# Version: 2.0.0 - Refactored with shared library architecture
+
+# ============================================================================
+# INITIALIZATION
+# ============================================================================
+
+# Get the absolute path to the .claude directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CLAUDE_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+# Source the shared library
+SHARED_LIB="${CLAUDE_DIR}/hooks/hook-commons.sh"
+if [[ ! -f "$SHARED_LIB" ]]; then
+    echo "[ERROR] Shared library not found: $SHARED_LIB" >&2
+    exit 1
+fi
+
+source "$SHARED_LIB"
+
+# Initialize hook commons
+HOOK_NAME="subagent-stop"
+START_TIME=$(date +%s%N)
+
+init_hook_commons "$HOOK_NAME" || {
+    echo "[ERROR] Failed to initialize hook commons" >&2
+    exit 1
+}
+
+# ============================================================================
+# SUBAGENT STOP LOGIC
+# ============================================================================
+
+# Extract subagent information from arguments
+SUBAGENT_NAME="${1:-unknown}"
+SUBAGENT_ID="${2:-unknown}"
+STOP_REASON="${3:-normal}"
+HANDOFF_STATUS="${4:-unknown}"
+
+log_message "INFO" "Subagent stop hook started - Agent: $SUBAGENT_NAME, ID: $SUBAGENT_ID, Reason: $STOP_REASON" "$HOOK_NAME"
+
+# Enhanced path resolution and logging
+NORMALIZED_PATH=$(echo "$CLAUDE_DIR" | sed 's|\\|/|g')
+log_message "INFO" "Claude directory: $NORMALIZED_PATH" "$HOOK_NAME"
+
+# Monitor system resources
+monitor_resources "$HOOK_NAME"
+
+# ============================================================================
+# AGENT COORDINATION TRACKING
+# ============================================================================
+
+log_message "INFO" "Tracking agent coordination and handoff status" "$HOOK_NAME"
+
+# Track agent-specific metrics
+track_subagent_metrics() {
+    local agent_log="${LOGS_DIR}/agents/${SUBAGENT_NAME}.log"
+    
+    # Create agent-specific log directory
+    mkdir -p "${LOGS_DIR}/agents"
+    
+    # Record subagent session details
+    cat >> "$agent_log" << EOF
+$(date '+%Y-%m-%d %H:%M:%S') - Subagent Stop
+Agent: $SUBAGENT_NAME
+Session ID: $SUBAGENT_ID
+Stop Reason: $STOP_REASON
+Handoff Status: $HANDOFF_STATUS
+EOF
+    
+    log_message "INFO" "Agent metrics recorded for: $SUBAGENT_NAME" "$HOOK_NAME"
+}
+
+track_subagent_metrics
+
+# ============================================================================
+# HANDOFF VALIDATION AND COORDINATION
+# ============================================================================
+
+# Validate handoff completion for orchestrator-worker pattern
+validate_handoff_completion() {
+    log_message "INFO" "Validating handoff completion for agent: $SUBAGENT_NAME" "$HOOK_NAME"
+    
+    case "$HANDOFF_STATUS" in
+        "completed"|"success")
+            log_message "INFO" "Handoff completed successfully for: $SUBAGENT_NAME" "$HOOK_NAME"
+            record_successful_handoff
+            ;;
+        "partial"|"incomplete")
+            log_message "WARN" "Partial handoff detected for: $SUBAGENT_NAME" "$HOOK_NAME"
+            record_partial_handoff
+            ;;
+        "failed"|"error")
+            log_message "ERROR" "Handoff failed for: $SUBAGENT_NAME" "$HOOK_NAME"
+            record_failed_handoff
+            ;;
+        *)
+            log_message "WARN" "Unknown handoff status for: $SUBAGENT_NAME ($HANDOFF_STATUS)" "$HOOK_NAME"
+            ;;
+    esac
+}
+
+# Record successful handoff patterns
+record_successful_handoff() {
+    local handoff_log="${CACHE_DIR}/successful_handoffs.log"
+    echo "$(date '+%Y-%m-%d %H:%M:%S'),$SUBAGENT_NAME,$SUBAGENT_ID,success" >> "$handoff_log"
+    
+    # Update learned patterns with successful coordination
+    update_learned_patterns "subagent_handoff_${SUBAGENT_NAME}" "success" "$HOOK_NAME"
+}
+
+# Record partial handoff for analysis
+record_partial_handoff() {
+    local handoff_log="${CACHE_DIR}/partial_handoffs.log"
+    echo "$(date '+%Y-%m-%d %H:%M:%S'),$SUBAGENT_NAME,$SUBAGENT_ID,partial,$STOP_REASON" >> "$handoff_log"
+}
+
+# Record failed handoff for troubleshooting
+record_failed_handoff() {
+    local handoff_log="${CACHE_DIR}/failed_handoffs.log"
+    echo "$(date '+%Y-%m-%d %H:%M:%S'),$SUBAGENT_NAME,$SUBAGENT_ID,failed,$STOP_REASON" >> "$handoff_log"
+}
+
+validate_handoff_completion
+
+# ============================================================================
+# AGENT-SPECIFIC ANALYSIS
+# ============================================================================
+
+# Perform agent-specific analysis based on the subagent type
+analyze_agent_performance() {
+    log_message "INFO" "Performing agent-specific analysis for: $SUBAGENT_NAME" "$HOOK_NAME"
+    
+    case "$SUBAGENT_NAME" in
+        "apex-dev"|"apex-developer")
+            log_message "INFO" "Development agent completed - analyzing implementation quality" "$HOOK_NAME"
+            ;;
+        "apex-researcher")
+            log_message "INFO" "Research agent completed - analyzing research completeness" "$HOOK_NAME"
+            ;;
+        "apex-qa-debugger")
+            log_message "INFO" "QA agent completed - analyzing quality validation results" "$HOOK_NAME"
+            ;;
+        "apex-ui-ux-designer")
+            log_message "INFO" "Design agent completed - analyzing design implementation" "$HOOK_NAME"
+            ;;
+        *)
+            log_message "INFO" "Generic agent analysis for: $SUBAGENT_NAME" "$HOOK_NAME"
+            ;;
+    esac
+}
+
+analyze_agent_performance
+
+# ============================================================================
+# COORDINATION REPORTING
+# ============================================================================
+
+# Generate coordination report for master orchestrator
+generate_coordination_report() {
+    local report_file="${LOGS_DIR}/coordination-report-$(date +%Y%m%d-%H%M%S).log"
+    
+    cat > "$report_file" << EOF
+Agent Coordination Report - $(date '+%Y-%m-%d %H:%M:%S')
+======================================================
+Subagent: $SUBAGENT_NAME
+Session ID: $SUBAGENT_ID
+Stop Reason: $STOP_REASON
+Handoff Status: $HANDOFF_STATUS
+System Resources: $(monitor_resources "$HOOK_NAME" 2>&1 | tail -n 1)
+======================================================
+EOF
+    
+    log_message "INFO" "Coordination report generated: $report_file" "$HOOK_NAME"
+}
+
+generate_coordination_report
+
+# ============================================================================
+# PATTERN LEARNING FOR COORDINATION
+# ============================================================================
+
+# Learn coordination patterns for future orchestration improvements
+learn_coordination_patterns() {
+    log_message "INFO" "Learning coordination patterns from subagent completion" "$HOOK_NAME"
+    
+    # Record timing patterns for different agent types
+    local timing_log="${CACHE_DIR}/agent_timing_patterns.log"
+    echo "$(date '+%Y-%m-%d %H:%M:%S'),$SUBAGENT_NAME,stop,$STOP_REASON" >> "$timing_log"
+    
+    # Check for optimal coordination patterns
+    local coordination_config=$(get_config_value "workflow-orchestrator.md" "optimal_coordination" "true")
+    if [[ "$coordination_config" == "true" ]]; then
+        log_message "INFO" "Recording optimal coordination pattern for: $SUBAGENT_NAME" "$HOOK_NAME"
+    fi
+}
+
+learn_coordination_patterns
+
+# ============================================================================
+# FINALIZATION
+# ============================================================================
+
+# Track execution time
+END_TIME=$(date +%s%N)
+track_execution_time "$HOOK_NAME" "$START_TIME" "$END_TIME"
+
+log_message "INFO" "Subagent stop hook completed for: $SUBAGENT_NAME (ID: $SUBAGENT_ID)" "$HOOK_NAME"
+
+# Success - subagent coordination tracked
+exit 0

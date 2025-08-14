@@ -1,0 +1,99 @@
+#!/bin/bash
+
+# Claude Code Pre-Tool-Use Hook
+# Executes before each tool call - CAN BLOCK tool execution by returning non-zero exit code
+# Integrates with .claude directory configurations for rule enforcement
+# Version: 2.0.0 - Refactored with shared library architecture
+
+# ============================================================================
+# INITIALIZATION
+# ============================================================================
+
+# Get the absolute path to the .claude directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CLAUDE_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+# Source the shared library
+SHARED_LIB="${CLAUDE_DIR}/hooks/hook-commons.sh"
+if [[ ! -f "$SHARED_LIB" ]]; then
+    echo "[ERROR] Shared library not found: $SHARED_LIB" >&2
+    exit 1
+fi
+
+source "$SHARED_LIB"
+
+# Initialize hook commons
+HOOK_NAME="pre-tool-use"
+START_TIME=$(date +%s%N)
+
+init_hook_commons "$HOOK_NAME" || {
+    echo "[ERROR] Failed to initialize hook commons" >&2
+    exit 1
+}
+
+# ============================================================================
+# PRE-TOOL-USE LOGIC
+# ============================================================================
+
+# Extract tool information from arguments
+TOOL_NAME="${1:-unknown}"
+TOOL_ARGS="${2:-}"
+
+log_message "INFO" "Pre-tool-use hook started for tool: $TOOL_NAME" "$HOOK_NAME"
+
+# Enhanced path resolution and logging
+NORMALIZED_PATH=$(echo "$CLAUDE_DIR" | sed 's|\\|/|g')
+log_message "INFO" "Claude directory: $NORMALIZED_PATH" "$HOOK_NAME"
+
+# Monitor system resources
+monitor_resources "$HOOK_NAME"
+
+# ============================================================================
+# RULE ENFORCEMENT
+# ============================================================================
+
+# Validate tool usage against configured rules
+log_message "INFO" "Validating tool usage against configured rules" "$HOOK_NAME"
+
+if ! validate_tool_usage "$TOOL_NAME" "$HOOK_NAME"; then
+    log_message "ERROR" "Tool validation failed for: $TOOL_NAME" "$HOOK_NAME"
+    handle_error "Tool usage validation failed - blocking execution" "$HOOK_NAME" 1
+fi
+
+# Check quality standards enforcement
+MIN_QUALITY=$(get_config_value "master-workflow.md" "minimum_quality" "9.0")
+log_message "INFO" "Enforcing minimum quality standard: $MIN_QUALITY" "$HOOK_NAME"
+
+# Security validation for sensitive operations
+SECURITY_ENABLED=$(get_config_value "master-workflow.md" "security_validation" "true")
+if [[ "$SECURITY_ENABLED" == "true" ]]; then
+    log_message "INFO" "Security validation enabled" "$HOOK_NAME"
+    
+    # Additional security checks for file operations
+    case "$TOOL_NAME" in
+        *"write_file"|*"edit_block"|*"create_directory")
+            log_message "INFO" "Performing security validation for file operation: $TOOL_NAME" "$HOOK_NAME"
+            ;;
+    esac
+fi
+
+# ============================================================================
+# PATTERN INTEGRATION
+# ============================================================================
+
+# Check against learned patterns and best practices
+log_message "INFO" "Checking compliance with learned patterns" "$HOOK_NAME"
+check_pattern_compliance "$TOOL_NAME" "$HOOK_NAME"
+
+# ============================================================================
+# FINALIZATION
+# ============================================================================
+
+# Track execution time
+END_TIME=$(date +%s%N)
+track_execution_time "$HOOK_NAME" "$START_TIME" "$END_TIME"
+
+log_message "INFO" "Pre-tool-use validation completed successfully for: $TOOL_NAME" "$HOOK_NAME"
+
+# Success - allow tool execution to proceed
+exit 0

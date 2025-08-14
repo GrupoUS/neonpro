@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "TodoWrite",
+      "WebFetch",
+      "WebSearch",
+      "Task",
+      "mcp__desktop-commander__*",
+      "mcp__context7__*",
+      "mcp__tavily__*",
+      "mcp__exa__*",
+      "mcp__sequential-thinking__*",
+      "mcp__supabase-mcp__*",
+      "mcp__shadcn-ui__*",
+      "mcp__serena__*",
+      "WebFetch(domain:docs.anthropic.com)",
+      "Bash(claude doctor)",
+      "Bash(powershell:*)",
+      "mcp___21st-dev_magic__*",
+      "mcp__desktop-commander__list_directory",
+      "mcp__desktop-commander__read_file",
+      "mcp__desktop-commander__search_code",
+      "mcp__desktop-commander__start_process",
+      "mcp__desktop-commander__read_process_output",
+      "mcp__desktop-commander__write_file",
+      "mcp__context7__get-library-docs",
+      "mcp__tavily__searchQNA",
+      "mcp__tavily__searchContext",
+      "mcp__exa__web_search_exa",
+      "mcp__exa__deep_researcher_start",
+      "mcp__exa__deep_researcher_check",
+      "mcp__sequential-thinking__sequentialthinking",
+      "mcp__desktop-commander__get_file_info",
+      "mcp__desktop-commander__move_file",
+      "mcp__desktop-commander__edit_block",
+      "mcp__desktop-commander__search_files",
+      "mcp__serena__search_for_pattern",
+      "mcp__serena__find_file",
+      "mcp__serena__list_dir",
+      "mcp__desktop-commander__create_directory",
+      "mcp__desktop-commander__force_terminate",
+      "mcp__supabase-mcp__list_projects",
+      "mcp__supabase-mcp__execute_sql",
+      "mcp__supabase-mcp__get_project",
+      "mcp__supabase-mcp__get_project_url",
+      "mcp__supabase-mcp__get_anon_key",
+      "mcp__supabase-mcp__list_tables",
+      "mcp__supabase-mcp__apply_migration",
+      "mcp__desktop-commander__list_sessions",
+      "mcp__desktop-commander__force_terminate",
+      "mcp__desktop-commander__interact_with_process"
+    ],
+    "deny": [
+      "Edit",
+      "Read",
+      "Write",
+      "Bash",
+      "LS",
+      "Glob",
+      "Grep",
+      "MultiEdit",
+      "NotebookRead",
+      "NotebookEdit"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "desktop-commander",
+    "sequential-thinking",
+    "context7",
+    "tavily",
+    "exa",
+    "supabase-mcp",
+    "shadcn-ui",
+    "serena",
+    "@21st-dev/magic"
+  ],
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude\\hooks\\pre-tool-use.bat",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude\\hooks\\post-tool-use.bat",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude\\hooks\\subagent-stop.bat"
+          }
+        ]
+      }
+    ]
+  }
+}
