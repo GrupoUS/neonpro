@@ -1,764 +1,429 @@
-/**
- * NeonPro AI-Powered Patient Insights Engine
- * Comprehensive AI system for patient risk assessment, behavior analysis, and personalized care recommendations
- */
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { Database } from '@/types/supabase';
+import { PatientProfile, TreatmentRecommendation, AIInsights } from '../patients/profile-manager';
 
-import { createClient } from '@/app/utils/supabase/server';
-
-// Core interfaces for AI engine
-export interface PatientRiskAssessment {
-  overallRiskScore: number;
-  riskLevel: 'low' | 'medium' | 'high' | 'critical';
-  riskFactors: RiskFactor[];
+// Types for AI analysis
+export interface RiskAssessment {
+  overall_score: number;
+  risk_level: 'low' | 'medium' | 'high' | 'critical';
+  risk_factors: RiskFactor[];
   recommendations: string[];
   confidence: number;
-  lastAssessment: Date;
+  last_updated: string;
 }
 
 export interface RiskFactor {
   factor: string;
-  impact: number; // 0-100
-  category: 'medical' | 'lifestyle' | 'environmental' | 'genetic';
+  severity: 'low' | 'medium' | 'high';
+  impact_score: number;
   description: string;
-  mitigation?: string;
+  mitigation_strategies: string[];
 }
 
-export interface TreatmentRecommendation {
-  id: string;
-  treatmentType: string;
-  priority: 'low' | 'medium' | 'high' | 'urgent';
-  confidence: number;
-  expectedOutcome: string;
-  timeframe: string;
-  prerequisites: string[];
-  contraindications: string[];
-  alternativeOptions: string[];
-}
-
-export interface PatientBehaviorAnalysis {
-  attendanceRate: number;
-  treatmentCompliance: number;
-  engagementScore: number; // 0-100
-  communicationPreference: 'phone' | 'email' | 'whatsapp' | 'in-person';
-  behaviorPatterns: BehaviorPattern[];
-  trends: HealthTrend[];
-}
-
-export interface BehaviorPattern {
-  pattern: string;
-  frequency: number; // 0-1
-  impact: 'positive' | 'negative' | 'neutral';
-  confidence: number;
-  recommendation?: string;
+export interface PatientInsights {
+  health_trends: HealthTrend[];
+  behavioral_patterns: BehavioralPattern[];
+  treatment_predictions: TreatmentPrediction[];
+  optimization_suggestions: OptimizationSuggestion[];
+  risk_assessment: RiskAssessment;
 }
 
 export interface HealthTrend {
   metric: string;
-  direction: 'improving' | 'stable' | 'declining';
-  rate: number; // change per month
-  significance: number; // 0-1
-  prediction: string;
+  trend: 'improving' | 'stable' | 'declining';
+  change_rate: number;
+  period_months: number;
+  confidence: number;
+  data_points: { date: string; value: number }[];
 }
 
-export interface CarePathway {
-  id: string;
-  name: string;
+export interface BehavioralPattern {
+  pattern_type: 'appointment_adherence' | 'treatment_compliance' | 'communication_preference' | 'scheduling_preference';
   description: string;
-  steps: CareStep[];
-  expectedDuration: string;
-  successRate: number; // 0-1
-  suitabilityScore: number; // 0-100
-  personalizedAdjustments: string[];
+  frequency: number;
+  strength: number;
+  actionable_insights: string[];
 }
 
-export interface CareStep {
-  stepNumber: number;
-  description: string;
-  duration: string;
-  requirements: string[];
-  expectedOutcome: string;
-  successCriteria: string[];
+export interface TreatmentPrediction {
+  treatment_type: string;
+  success_probability: number;
+  expected_duration: string;
+  optimal_frequency: string;
+  contraindications: string[];
+  supporting_factors: string[];
 }
 
-// Legacy interfaces for backward compatibility
-export interface PatientInsightData {
-  patient_id: string;
-  demographics: any;
-  medical_history: any;
-  vital_signs: any;
-  appointment_history: any;
-  care_preferences: any;
-}
-
-export interface ClinicalInsight {
-  type: 'risk_alert' | 'care_recommendation' | 'preventive_care' | 'medication_review';
-  priority: 'low' | 'medium' | 'high' | 'critical';
-  title: string;
-  description: string;
-  evidence: string[];
-  recommendations: string[];
-  confidence_score: number;
-  generated_at: string;
-}
-
-export interface PersonalizationInsight {
-  communication_preferences: {
-    preferred_method: string;
-    optimal_timing: string[];
-    language_preferences: string;
-  };
-  care_preferences: {
-    appointment_scheduling: any;
-    provider_preferences: string[];
-    accessibility_needs: string[];
-  };
-  behavioral_patterns: {
-    appointment_attendance_rate: number;
-    preferred_appointment_times: string[];
-    response_patterns: any;
-  };
+export interface OptimizationSuggestion {
+  category: 'scheduling' | 'treatment' | 'communication' | 'preventive';
+  suggestion: string;
+  impact_score: number;
+  implementation_effort: 'low' | 'medium' | 'high';
+  expected_outcome: string;
 }
 
 /**
- * Advanced AI-Powered Patient Insights Engine
- * Provides comprehensive patient analysis, risk assessment, and personalized care recommendations
+ * AI Patient Insights Engine
+ * Provides AI-powered analysis and recommendations for patient care
  */
 export class PatientInsightsEngine {
-  private supabase = createClient();
+  private supabase;
+
+  constructor() {
+    this.supabase = createClientComponentClient<Database>();
+  }
 
   /**
-   * Generate comprehensive risk assessment for patient
+   * Generate comprehensive patient insights
    */
-  async generateRiskAssessment(patientId: string): Promise<PatientRiskAssessment> {
+  async generatePatientInsights(patientId: string): Promise<PatientInsights | null> {
     try {
-      const patient = await this.getPatientData(patientId);
-      const medicalHistory = await this.getPatientMedicalHistory(patientId);
-      const biometrics = await this.getPatientBiometrics(patientId);
+      // Get patient profile and history
+      const profile = await this.getPatientProfile(patientId);
+      const timeline = await this.getMedicalTimeline(patientId);
       
-      const riskFactors = this.analyzeRiskFactors(patient, medicalHistory, biometrics);
-      const overallRiskScore = this.calculateOverallRisk(riskFactors);
-      const riskLevel = this.determineRiskLevel(overallRiskScore);
-      const recommendations = this.generateRiskRecommendations(riskFactors, riskLevel);
-      
+      if (!profile) return null;
+
+      // Generate different types of insights
+      const [
+        riskAssessment,
+        healthTrends,
+        behavioralPatterns,
+        treatmentPredictions,
+        optimizationSuggestions
+      ] = await Promise.all([
+        this.assessPatientRisk(profile, timeline),
+        this.analyzeHealthTrends(timeline),
+        this.identifyBehavioralPatterns(patientId, timeline),
+        this.predictTreatmentOutcomes(profile, timeline),
+        this.generateOptimizationSuggestions(profile, timeline)
+      ]);
+
+      const insights: PatientInsights = {
+        risk_assessment: riskAssessment,
+        health_trends: healthTrends,
+        behavioral_patterns: behavioralPatterns,
+        treatment_predictions: treatmentPredictions,
+        optimization_suggestions: optimizationSuggestions
+      };
+
+      // Update patient profile with AI insights
+      await this.updatePatientAIInsights(patientId, insights);
+
+      return insights;
+    } catch (error) {
+      console.error('Error generating patient insights:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Assess patient risk based on profile and history
+   */
+  async assessPatientRisk(profile: PatientProfile, timeline: any[]): Promise<RiskAssessment> {
+    try {
+      const riskFactors: RiskFactor[] = [];
+      let overallScore = 0;
+
+      // Analyze chronic conditions
+      if (profile.chronic_conditions.length > 0) {
+        const severityMap: Record<string, number> = {
+          diabetes: 0.8,
+          hypertension: 0.6,
+          heart_disease: 0.9,
+          cancer: 0.95,
+          kidney_disease: 0.85,
+        };
+
+        profile.chronic_conditions.forEach(condition => {
+          const severity = severityMap[condition.toLowerCase()] || 0.5;
+          overallScore += severity * 0.3;
+
+          riskFactors.push({
+            factor: condition,
+            severity: severity > 0.7 ? 'high' : severity > 0.4 ? 'medium' : 'low',
+            impact_score: severity,
+            description: `Chronic condition: ${condition}`,
+            mitigation_strategies: this.getConditionMitigationStrategies(condition)
+          });
+        });
+      }
+
+      // Analyze medication complexity
+      if (profile.medications.length > 5) {
+        overallScore += 0.3;
+        riskFactors.push({
+          factor: 'medication_complexity',
+          severity: 'medium',
+          impact_score: 0.3,
+          description: `High medication count: ${profile.medications.length} medications`,
+          mitigation_strategies: ['Medication review', 'Drug interaction monitoring', 'Simplified dosing schedule']
+        });
+      }
+
+      // Analyze BMI if available
+      if (profile.bmi) {
+        if (profile.bmi > 30 || profile.bmi < 18.5) {
+          const severity = profile.bmi > 35 ? 'high' : 'medium';
+          overallScore += profile.bmi > 35 ? 0.4 : 0.2;
+          
+          riskFactors.push({
+            factor: 'bmi_risk',
+            severity,
+            impact_score: profile.bmi > 35 ? 0.4 : 0.2,
+            description: `BMI outside normal range: ${profile.bmi}`,
+            mitigation_strategies: ['Nutritional counseling', 'Exercise program', 'Weight monitoring']
+          });
+        }
+      }
+
+      // Calculate risk level
+      const riskLevel: RiskAssessment['risk_level'] = 
+        overallScore > 0.8 ? 'critical' :
+        overallScore > 0.6 ? 'high' :
+        overallScore > 0.3 ? 'medium' : 'low';
+
       return {
-        overallRiskScore,
-        riskLevel,
-        riskFactors,
-        recommendations,
-        confidence: 0.85, // Would be calculated by ML model
-        lastAssessment: new Date()
+        overall_score: Math.min(overallScore, 1.0),
+        risk_level: riskLevel,
+        risk_factors: riskFactors,
+        recommendations: this.generateRiskRecommendations(riskLevel, riskFactors),
+        confidence: this.calculateConfidence(profile, timeline),
+        last_updated: new Date().toISOString()
       };
     } catch (error) {
-      console.error('Error generating risk assessment:', error);
-      throw new Error('Failed to generate risk assessment');
+      console.error('Error assessing patient risk:', error);
+      return this.getDefaultRiskAssessment();
     }
   }
 
   /**
-   * Generate treatment recommendations based on patient profile
+   * Analyze health trends from timeline data
    */
-  async generateTreatmentRecommendations(patientId: string): Promise<TreatmentRecommendation[]> {
-    try {
-      const patient = await this.getPatientData(patientId);
-      const riskAssessment = await this.generateRiskAssessment(patientId);
-      const treatmentHistory = await this.getPatientTreatmentHistory(patientId);
-      
-      const recommendations: TreatmentRecommendation[] = [];
-      
-      // Generate recommendations based on risk level
-      if (riskAssessment.riskLevel === 'high' || riskAssessment.riskLevel === 'critical') {
-        recommendations.push({
-          id: `rec_${Date.now()}_comprehensive`,
-          treatmentType: 'Comprehensive Health Assessment',
-          priority: 'urgent',
-          confidence: 0.9,
-          expectedOutcome: 'Detailed health status evaluation and risk mitigation plan',
-          timeframe: '1-2 weeks',
-          prerequisites: ['Complete medical history review', 'Laboratory tests'],
-          contraindications: [],
-          alternativeOptions: ['Specialist consultation', 'Diagnostic imaging']
-        });
+  async analyzeHealthTrends(timeline: any[]): Promise<HealthTrend[]> {
+    const trends: HealthTrend[] = [];
+
+    // Group events by type and analyze trends
+    const eventTypes = ['treatment', 'procedure', 'test_result'];
+    
+    eventTypes.forEach(eventType => {
+      const events = timeline.filter(e => e.event_type === eventType);
+      if (events.length >= 3) {
+        const outcomeScores = events
+          .filter(e => e.outcome_score !== null)
+          .map(e => ({
+            date: e.event_date,
+            value: e.outcome_score
+          }))
+          .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+        if (outcomeScores.length >= 3) {
+          const trend = this.calculateTrend(outcomeScores);
+          trends.push({
+            metric: `${eventType}_outcomes`,
+            trend: trend.direction,
+            change_rate: trend.rate,
+            period_months: trend.period,
+            confidence: trend.confidence,
+            data_points: outcomeScores.slice(-12)
+          });
+        }
       }
-      
-      // Age-based recommendations
-      if (patient.age && patient.age > 50) {
-        recommendations.push({
-          id: `rec_${Date.now()}_preventive`,
-          treatmentType: 'Preventive Care Program',
-          priority: 'medium',
-          confidence: 0.75,
-          expectedOutcome: 'Reduced risk of age-related health issues',
-          timeframe: '3-6 months',
-          prerequisites: ['Health screening', 'Lifestyle assessment'],
-          contraindications: ['Active acute conditions'],
-          alternativeOptions: ['Modified program for specific conditions']
-        });
-      }
-      
-      return recommendations;
-    } catch (error) {
-      console.error('Error generating treatment recommendations:', error);
-      return [];
-    }
+    });
+
+    return trends;
   }
 
   /**
-   * Analyze patient behavior patterns
+   * Identify behavioral patterns
    */
-  async analyzeBehaviorPatterns(patientId: string): Promise<PatientBehaviorAnalysis> {
-    try {
-      const appointmentHistory = await this.getPatientAppointmentHistory(patientId);
-      const treatmentHistory = await this.getPatientTreatmentHistory(patientId);
-      const communicationHistory = await this.getPatientCommunicationHistory(patientId);
-      
-      // Calculate metrics
-      const totalAppointments = appointmentHistory.length;
-      const attendedAppointments = appointmentHistory.filter((apt: any) => apt.status === 'completed').length;
-      const attendanceRate = totalAppointments > 0 ? attendedAppointments / totalAppointments : 0;
-      
-      const treatmentCompliance = this.calculateTreatmentCompliance(treatmentHistory);
-      const engagementScore = this.calculateEngagementScore(appointmentHistory, communicationHistory);
-      const communicationPreference = this.determineCommunicationPreference(communicationHistory);
-      const behaviorPatterns = this.identifyBehaviorPatterns(appointmentHistory, treatmentHistory);
-      const trends = await this.analyzeHealthTrends(patientId);
-      
-      return {
-        attendanceRate,
-        treatmentCompliance,
-        engagementScore,
-        communicationPreference,
-        behaviorPatterns,
-        trends
-      };
-    } catch (error) {
-      console.error('Error analyzing behavior patterns:', error);
-      throw new Error('Failed to analyze behavior patterns');
-    }
-  }
+  async identifyBehavioralPatterns(patientId: string, timeline: any[]): Promise<BehavioralPattern[]> {
+    const patterns: BehavioralPattern[] = [];
 
-  /**
-   * Generate personalized care pathway
-   */
-  async generateCarePathway(patientId: string): Promise<CarePathway[]> {
-    try {
-      const patient = await this.getPatientData(patientId);
-      const riskAssessment = await this.generateRiskAssessment(patientId);
-      const behaviorAnalysis = await this.analyzeBehaviorPatterns(patientId);
+    // Analyze appointment patterns
+    const appointments = timeline.filter(e => e.event_type === 'appointment');
+    if (appointments.length > 0) {
+      const adherenceRate = appointments.filter(a => a.outcome_score && a.outcome_score > 0.7).length / appointments.length;
       
-      const pathways: CarePathway[] = [];
-      
-      // Intensive care pathway for high-risk patients
-      if (riskAssessment.riskLevel === 'high' || riskAssessment.riskLevel === 'critical') {
-        pathways.push({
-          id: `pathway_intensive_${Date.now()}`,
-          name: 'Intensive Care Management',
-          description: 'Comprehensive care plan for high-risk patients with frequent monitoring',
-          steps: this.generateIntensiveCareSteps(),
-          expectedDuration: '6-12 months',
-          successRate: 0.78,
-          suitabilityScore: this.calculatePathwaySuitability(patient, riskAssessment, behaviorAnalysis),
-          personalizedAdjustments: this.generatePersonalizedAdjustments(patient, behaviorAnalysis)
-        });
-      }
-      
-      // Standard care pathway
-      pathways.push({
-        id: `pathway_standard_${Date.now()}`,
-        name: 'Standard Care Protocol',
-        description: 'Regular monitoring and preventive care approach',
-        steps: this.generateStandardCareSteps(),
-        expectedDuration: '3-12 months',
-        successRate: 0.85,
-        suitabilityScore: this.calculatePathwaySuitability(patient, riskAssessment, behaviorAnalysis),
-        personalizedAdjustments: this.generatePersonalizedAdjustments(patient, behaviorAnalysis)
+      patterns.push({
+        pattern_type: 'appointment_adherence',
+        description: `${Math.round(adherenceRate * 100)}% appointment adherence rate`,
+        frequency: appointments.length,
+        strength: adherenceRate,
+        actionable_insights: this.getAdherenceInsights(adherenceRate)
       });
-      
-      return pathways.sort((a, b) => b.suitabilityScore - a.suitabilityScore);
-    } catch (error) {
-      console.error('Error generating care pathway:', error);
-      return [];
     }
+
+    return patterns;
   }
 
   /**
    * Predict treatment outcomes
    */
-  async predictTreatmentOutcome(patientId: string, treatmentId: string): Promise<{
-    successProbability: number;
-    expectedTimeline: string;
-    potentialChallenges: string[];
-    successFactors: string[];
-    confidence: number;
-  }> {
-    try {
-      const patient = await this.getPatientData(patientId);
-      const behaviorAnalysis = await this.analyzeBehaviorPatterns(patientId);
-      
-      // Analyze success factors
-      const successFactors = [
-        behaviorAnalysis.attendanceRate > 0.8 ? 'High attendance rate' : null,
-        behaviorAnalysis.treatmentCompliance > 0.7 ? 'Good treatment compliance' : null,
-        behaviorAnalysis.engagementScore > 70 ? 'High patient engagement' : null,
-        patient.age && patient.age < 65 ? 'Favorable age profile' : null
-      ].filter(Boolean) as string[];
-      
-      // Identify potential challenges
-      const potentialChallenges = [
-        behaviorAnalysis.attendanceRate < 0.6 ? 'Low attendance history' : null,
-        behaviorAnalysis.treatmentCompliance < 0.5 ? 'Poor treatment compliance' : null,
-        behaviorAnalysis.engagementScore < 50 ? 'Low patient engagement' : null
-      ].filter(Boolean) as string[];
-      
-      // Calculate success probability
-      let successProbability = 0.7; // Base probability
-      successProbability += successFactors.length * 0.05;
-      successProbability -= potentialChallenges.length * 0.1;
-      successProbability = Math.max(0.1, Math.min(0.95, successProbability));
-      
-      return {
-        successProbability,
-        expectedTimeline: this.calculateExpectedTimeline(patient, behaviorAnalysis),
-        potentialChallenges,
-        successFactors,
-        confidence: 0.75
-      };
-    } catch (error) {
-      console.error('Error predicting treatment outcome:', error);
-      throw new Error('Failed to predict treatment outcome');
+  async predictTreatmentOutcomes(profile: PatientProfile, timeline: any[]): Promise<TreatmentPrediction[]> {
+    const predictions: TreatmentPrediction[] = [];
+
+    // Mock treatment predictions based on profile data
+    if (profile.chronic_conditions.includes('diabetes')) {
+      predictions.push({
+        treatment_type: 'Diabetes Management',
+        success_probability: 0.85,
+        expected_duration: '6-12 months',
+        optimal_frequency: 'Monthly monitoring',
+        contraindications: [],
+        supporting_factors: ['Good adherence history', 'Stable condition']
+      });
     }
+
+    return predictions;
   }
 
-  // Private helper methods
-  private async getPatientData(patientId: string): Promise<any> {
-    // Mock implementation - would fetch from Supabase
-    return {
-      id: patientId,
-      age: 45,
-      gender: 'female',
-      conditions: ['hypertension', 'diabetes'],
-      medications: ['metformin', 'lisinopril'],
-      allergies: ['penicillin'],
-      lastVisit: new Date('2024-12-15')
+  /**
+   * Generate optimization suggestions
+   */
+  async generateOptimizationSuggestions(profile: PatientProfile, timeline: any[]): Promise<OptimizationSuggestion[]> {
+    const suggestions: OptimizationSuggestion[] = [];
+
+    // Profile completeness suggestion
+    if (profile.profile_completeness_score < 0.8) {
+      suggestions.push({
+        category: 'treatment',
+        suggestion: 'Complete patient profile for better care personalization',
+        impact_score: 0.7,
+        implementation_effort: 'low',
+        expected_outcome: 'Improved treatment accuracy and patient satisfaction'
+      });
+    }
+
+    return suggestions;
+  }
+
+  // Helper methods
+  private async getPatientProfile(patientId: string): Promise<PatientProfile | null> {
+    const { data, error } = await this.supabase
+      .from('patient_profiles_extended')
+      .select('*')
+      .eq('patient_id', patientId)
+      .single();
+
+    return error ? null : data as PatientProfile;
+  }
+
+  private async getMedicalTimeline(patientId: string): Promise<any[]> {
+    const { data, error } = await this.supabase
+      .from('medical_timeline')
+      .select('*')
+      .eq('patient_id', patientId)
+      .order('event_date', { ascending: false });
+
+    return error ? [] : data;
+  }
+
+  private async updatePatientAIInsights(patientId: string, insights: PatientInsights): Promise<void> {
+    await this.supabase
+      .from('patient_profiles_extended')
+      .update({
+        ai_insights: insights,
+        risk_score: insights.risk_assessment.overall_score,
+        risk_level: insights.risk_assessment.risk_level,
+        last_assessment_date: new Date().toISOString()
+      })
+      .eq('patient_id', patientId);
+  }
+
+  private getConditionMitigationStrategies(condition: string): string[] {
+    const strategies: Record<string, string[]> = {
+      diabetes: ['Blood glucose monitoring', 'Dietary management', 'Exercise program', 'Medication adherence'],
+      hypertension: ['Blood pressure monitoring', 'Sodium restriction', 'Weight management', 'Stress reduction'],
+      heart_disease: ['Cardiac rehabilitation', 'Lifestyle modification', 'Medication compliance', 'Regular monitoring'],
     };
+
+    return strategies[condition.toLowerCase()] || ['Regular monitoring', 'Lifestyle modification', 'Medical follow-up'];
   }
 
-  private async getPatientMedicalHistory(patientId: string): Promise<any[]> {
-    return [
-      { condition: 'hypertension', diagnosedDate: '2020-01-15', severity: 'moderate' },
-      { condition: 'diabetes', diagnosedDate: '2021-06-10', severity: 'mild' }
-    ];
-  }
-
-  private async getPatientBiometrics(patientId: string): Promise<any> {
-    return {
-      weight: 75,
-      height: 165,
-      bmi: 27.5,
-      bloodPressure: { systolic: 145, diastolic: 95 },
-      heartRate: 78,
-      lastUpdated: new Date('2024-12-20')
-    };
-  }
-
-  private async getPatientAppointmentHistory(patientId: string): Promise<any[]> {
-    return [
-      { date: '2024-12-01', status: 'completed', type: 'consultation' },
-      { date: '2024-11-15', status: 'completed', type: 'follow-up' },
-      { date: '2024-11-01', status: 'missed', type: 'consultation' },
-      { date: '2024-10-15', status: 'completed', type: 'treatment' }
-    ];
-  }
-
-  private async getPatientTreatmentHistory(patientId: string): Promise<any[]> {
-    return [
-      { treatment: 'medication', compliance: 0.8, outcome: 'improved' },
-      { treatment: 'lifestyle', compliance: 0.6, outcome: 'partial' }
-    ];
-  }
-
-  private async getPatientCommunicationHistory(patientId: string): Promise<any[]> {
-    return [
-      { type: 'email', date: '2024-12-01', response: true },
-      { type: 'whatsapp', date: '2024-11-28', response: true },
-      { type: 'phone', date: '2024-11-25', response: false }
-    ];
-  }
-
-  private analyzeRiskFactors(patient: any, medicalHistory: any[], biometrics: any): RiskFactor[] {
-    const factors: RiskFactor[] = [];
-    
-    // Age-based risk
-    if (patient.age > 50) {
-      factors.push({
-        factor: 'Advanced Age',
-        impact: Math.min((patient.age - 50) * 2, 30),
-        category: 'medical',
-        description: 'Increased health risks associated with aging',
-        mitigation: 'Regular health screenings and preventive care'
-      });
-    }
-    
-    // BMI-based risk
-    if (biometrics.bmi > 25) {
-      factors.push({
-        factor: 'Elevated BMI',
-        impact: Math.min((biometrics.bmi - 25) * 3, 25),
-        category: 'lifestyle',
-        description: 'Overweight/obesity increases disease risk',
-        mitigation: 'Weight management program and lifestyle modifications'
-      });
-    }
-    
-    // Condition-based risks
-    patient.conditions?.forEach((condition: string) => {
-      let impact = 20;
-      if (condition === 'diabetes') impact = 25;
-      if (condition === 'hypertension') impact = 20;
-      
-      factors.push({
-        factor: `Medical Condition: ${condition}`,
-        impact,
-        category: 'medical',
-        description: 'Active medical condition requiring management',
-        mitigation: 'Adherence to treatment plan and regular monitoring'
-      });
-    });
-    
-    return factors;
-  }
-
-  private calculateOverallRisk(riskFactors: RiskFactor[]): number {
-    const totalImpact = riskFactors.reduce((sum, factor) => sum + factor.impact, 0);
-    return Math.min(totalImpact, 100);
-  }
-
-  private determineRiskLevel(riskScore: number): 'low' | 'medium' | 'high' | 'critical' {
-    if (riskScore >= 80) return 'critical';
-    if (riskScore >= 60) return 'high';
-    if (riskScore >= 30) return 'medium';
-    return 'low';
-  }
-
-  private generateRiskRecommendations(riskFactors: RiskFactor[], riskLevel: string): string[] {
+  private generateRiskRecommendations(riskLevel: string, riskFactors: RiskFactor[]): string[] {
     const recommendations: string[] = [];
-    
-    if (riskLevel === 'critical' || riskLevel === 'high') {
-      recommendations.push('Schedule immediate comprehensive health assessment');
-      recommendations.push('Consider specialist consultation');
-      recommendations.push('Implement intensive monitoring protocol');
+
+    if (riskLevel === 'critical') {
+      recommendations.push('Immediate medical attention required');
+      recommendations.push('Increase monitoring frequency');
+    } else if (riskLevel === 'high') {
+      recommendations.push('Frequent monitoring recommended');
+      recommendations.push('Consider specialist referral');
+    } else if (riskLevel === 'medium') {
+      recommendations.push('Regular monitoring advised');
+      recommendations.push('Implement preventive measures');
+    } else {
+      recommendations.push('Continue current care plan');
+      recommendations.push('Maintain preventive care schedule');
     }
-    
-    riskFactors.forEach(factor => {
-      if (factor.mitigation) {
-        recommendations.push(factor.mitigation);
-      }
-    });
-    
-    return [...new Set(recommendations)];
+
+    return recommendations;
   }
 
-  private generateIntensiveCareSteps(): CareStep[] {
-    return [
-      {
-        stepNumber: 1,
-        description: 'Initial comprehensive assessment',
-        duration: '1 week',
-        requirements: ['Complete medical history', 'Laboratory tests', 'Specialist consultation'],
-        expectedOutcome: 'Detailed health status and risk profile',
-        successCriteria: ['All tests completed', 'Risk factors identified', 'Treatment plan approved']
-      },
-      {
-        stepNumber: 2,
-        description: 'Treatment initiation and monitoring',
-        duration: '2-4 weeks',
-        requirements: ['Treatment plan implementation', 'Weekly check-ins', 'Progress monitoring'],
-        expectedOutcome: 'Treatment response and initial results',
-        successCriteria: ['Treatment tolerance confirmed', 'Initial improvements noted', 'No adverse effects']
-      },
-      {
-        stepNumber: 3,
-        description: 'Ongoing care and adjustment',
-        duration: '3-6 months',
-        requirements: ['Regular monitoring', 'Treatment adjustments', 'Lifestyle modifications'],
-        expectedOutcome: 'Sustained improvement and risk reduction',
-        successCriteria: ['Risk level reduction', 'Patient satisfaction', 'Treatment goals met']
-      }
-    ];
+  private calculateConfidence(profile: PatientProfile, timeline: any[]): number {
+    let confidence = 0.5;
+    confidence += Math.min(timeline.length * 0.05, 0.3);
+    confidence += profile.profile_completeness_score * 0.2;
+    return Math.min(confidence, 1.0);
   }
 
-  private generateStandardCareSteps(): CareStep[] {
-    return [
-      {
-        stepNumber: 1,
-        description: 'Initial consultation and assessment',
-        duration: '1-2 days',
-        requirements: ['Medical history review', 'Basic health screening'],
-        expectedOutcome: 'Health status baseline and care plan',
-        successCriteria: ['Assessment completed', 'Care plan agreed', 'Follow-up scheduled']
-      },
-      {
-        stepNumber: 2,
-        description: 'Treatment implementation',
-        duration: '2-6 weeks',
-        requirements: ['Treatment plan execution', 'Regular check-ins'],
-        expectedOutcome: 'Treatment progress and initial results',
-        successCriteria: ['Treatment compliance', 'Progress indicators met', 'Patient satisfaction']
-      },
-      {
-        stepNumber: 3,
-        description: 'Maintenance and follow-up',
-        duration: '3-12 months',
-        requirements: ['Periodic monitoring', 'Preventive care', 'Health maintenance'],
-        expectedOutcome: 'Sustained health improvement',
-        successCriteria: ['Health goals maintained', 'Risk factors controlled', 'Patient engagement']
-      }
-    ];
+  private getDefaultRiskAssessment(): RiskAssessment {
+    return {
+      overall_score: 0.3,
+      risk_level: 'low',
+      risk_factors: [],
+      recommendations: ['Continue current care plan'],
+      confidence: 0.5,
+      last_updated: new Date().toISOString()
+    };
   }
 
-  private calculateTreatmentCompliance(treatmentHistory: any[]): number {
-    if (treatmentHistory.length === 0) return 0;
-    const totalCompliance = treatmentHistory.reduce((sum: number, treatment: any) => sum + treatment.compliance, 0);
-    return totalCompliance / treatmentHistory.length;
-  }
-
-  private calculateEngagementScore(appointmentHistory: any[], communicationHistory: any[]): number {
-    if (appointmentHistory.length === 0 && communicationHistory.length === 0) return 0;
-    
-    const attendanceScore = appointmentHistory.length > 0 
-      ? appointmentHistory.filter((apt: any) => apt.status === 'completed').length / appointmentHistory.length * 50
-      : 0;
-    
-    const responseRate = communicationHistory.length > 0
-      ? communicationHistory.filter((comm: any) => comm.response).length / communicationHistory.length
-      : 0;
-    const communicationScore = responseRate * 50;
-    
-    return Math.round(attendanceScore + communicationScore);
-  }
-
-  private determineCommunicationPreference(communicationHistory: any[]): 'phone' | 'email' | 'whatsapp' | 'in-person' {
-    if (communicationHistory.length === 0) return 'email';
-    
-    const preferences = communicationHistory.reduce((acc: Record<string, number>, comm: any) => {
-      acc[comm.type] = (acc[comm.type] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
-    
-    const mostUsed = Object.entries(preferences).sort(([,a], [,b]) => b - a)[0];
-    return mostUsed ? mostUsed[0] as any : 'email';
-  }
-
-  private identifyBehaviorPatterns(appointmentHistory: any[], treatmentHistory: any[]): BehaviorPattern[] {
-    const patterns: BehaviorPattern[] = [];
-    
-    if (appointmentHistory.length > 0) {
-      const attendanceRate = appointmentHistory.filter((apt: any) => apt.status === 'completed').length / appointmentHistory.length;
-      
-      if (attendanceRate > 0.8) {
-        patterns.push({
-          pattern: 'Consistent Appointment Attendance',
-          frequency: attendanceRate,
-          impact: 'positive',
-          confidence: 0.9,
-          recommendation: 'Continue current scheduling approach'
-        });
-      } else if (attendanceRate < 0.6) {
-        patterns.push({
-          pattern: 'Poor Appointment Attendance',
-          frequency: 1 - attendanceRate,
-          impact: 'negative',
-          confidence: 0.8,
-          recommendation: 'Implement appointment reminders and flexible scheduling'
-        });
-      }
+  private calculateTrend(dataPoints: { date: string; value: number }[]): {
+    direction: 'improving' | 'stable' | 'declining';
+    rate: number;
+    period: number;
+    confidence: number;
+  } {
+    if (dataPoints.length < 2) {
+      return { direction: 'stable', rate: 0, period: 0, confidence: 0 };
     }
+
+    // Simple linear regression
+    const n = dataPoints.length;
+    const dates = dataPoints.map(p => new Date(p.date).getTime());
+    const values = dataPoints.map(p => p.value);
+
+    const sumX = dates.reduce((a, b) => a + b, 0);
+    const sumY = values.reduce((a, b) => a + b, 0);
+    const sumXY = dates.reduce((sum, x, i) => sum + x * values[i], 0);
+    const sumXX = dates.reduce((sum, x) => sum + x * x, 0);
+
+    const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
     
-    return patterns;
+    const direction: 'improving' | 'stable' | 'declining' = 
+      slope > 0.001 ? 'improving' : 
+      slope < -0.001 ? 'declining' : 'stable';
+
+    const periodMonths = (dates[dates.length - 1] - dates[0]) / (1000 * 60 * 60 * 24 * 30);
+
+    return {
+      direction,
+      rate: Math.abs(slope),
+      period: Math.round(periodMonths),
+      confidence: Math.min(n / 10, 1.0)
+    };
   }
 
-  private async analyzeHealthTrends(patientId: string): Promise<HealthTrend[]> {
-    return [
-      {
-        metric: 'Blood Pressure',
-        direction: 'improving',
-        rate: -2.5,
-        significance: 0.7,
-        prediction: 'Expected to reach target range within 3 months with current treatment'
-      },
-      {
-        metric: 'Weight',
-        direction: 'stable',
-        rate: 0.1,
-        significance: 0.3,
-        prediction: 'Weight remains stable, consider lifestyle modifications for further improvement'
-      }
-    ];
-  }
-
-  private calculatePathwaySuitability(patient: any, riskAssessment: PatientRiskAssessment, behaviorAnalysis: PatientBehaviorAnalysis): number {
-    let score = 50;
-    
-    score += behaviorAnalysis.engagementScore * 0.3;
-    score += behaviorAnalysis.treatmentCompliance * 20;
-    
-    if (riskAssessment.riskLevel === 'high' || riskAssessment.riskLevel === 'critical') {
-      score += 15;
+  private getAdherenceInsights(rate: number): string[] {
+    if (rate > 0.8) {
+      return ['Excellent adherence - maintain current approach', 'Consider rewards program'];
+    } else if (rate > 0.6) {
+      return ['Good adherence with room for improvement', 'Implement reminder system'];
+    } else {
+      return ['Poor adherence requires intervention', 'Identify root causes', 'Implement support system'];
     }
-    
-    return Math.round(Math.max(0, Math.min(100, score)));
-  }
-
-  private generatePersonalizedAdjustments(patient: any, behaviorAnalysis: PatientBehaviorAnalysis): string[] {
-    const adjustments: string[] = [];
-    
-    if (behaviorAnalysis.communicationPreference === 'whatsapp') {
-      adjustments.push('Use WhatsApp for appointment reminders and check-ins');
-    }
-    
-    if (behaviorAnalysis.attendanceRate < 0.7) {
-      adjustments.push('Implement flexible scheduling and reminder system');
-    }
-    
-    if (behaviorAnalysis.treatmentCompliance < 0.7) {
-      adjustments.push('Provide additional education and support for treatment adherence');
-    }
-    
-    return adjustments;
-  }
-
-  private calculateExpectedTimeline(patient: any, behaviorAnalysis: PatientBehaviorAnalysis): string {
-    let baseTimeline = 12; // weeks
-    
-    if (behaviorAnalysis.treatmentCompliance > 0.8) {
-      baseTimeline *= 0.8;
-    } else if (behaviorAnalysis.treatmentCompliance < 0.5) {
-      baseTimeline *= 1.3;
-    }
-    
-    return `${Math.round(baseTimeline)} weeks`;
   }
 }
 
-// Export default instance for immediate use
-export default new PatientInsightsEngine();
-
-// Export alias for backwards compatibility
-export { PatientInsightsEngine as PatientInsights };
-
-// Backwards compatibility functions for tests
-export const patientInsights = {
-  /**
-   * Generate comprehensive patient insights using AI (backwards compatibility)
-   * @param patientData - Patient data to analyze
-   * @returns Promise with insights structure expected by tests
-   */
-  async generatePatientInsights(patientData: any): Promise<any> {
-    const engine = new PatientInsightsEngine();
-    
-    // Mock implementation for test compatibility
-    return {
-      clinical_insights: [
-        {
-          type: 'health_status',
-          priority: 'medium',
-          title: 'Overall Health Assessment',
-          description: 'Patient shows stable vital signs and good treatment compliance',
-          confidence_score: 0.85
-        },
-        {
-          type: 'treatment_response',
-          priority: 'high',
-          title: 'Treatment Effectiveness',
-          description: 'Current treatment plan showing positive results',
-          confidence_score: 0.92
-        }
-      ],
-      personalization_insights: {
-        communication_preferences: {
-          preferred_method: 'email',
-          frequency: 'weekly',
-          time_of_day: 'morning'
-        },
-        care_preferences: {
-          appointment_time: 'morning',
-          reminder_lead_time: '24_hours',
-          follow_up_style: 'detailed'
-        },
-        behavioral_patterns: {
-          appointment_attendance_rate: 0.95,
-          treatment_compliance_rate: 0.88,
-          engagement_level: 'high'
-        }
-      },
-      risk_assessment: {
-        overall_score: 0.15,
-        level: 'low',
-        factors: ['age', 'medical_history'],
-        confidence_score: 0.87
-      },
-      care_recommendations: [
-        {
-          category: 'preventive_care',
-          title: 'Regular Health Checkups',
-          description: 'Schedule bi-annual health assessments to maintain current health status',
-          priority: 'medium'
-        },
-        {
-          category: 'lifestyle',
-          title: 'Exercise Program',
-          description: 'Implement moderate exercise routine to improve cardiovascular health',
-          priority: 'medium'
-        }
-      ]
-    };
-  },
-
-  /**
-   * Update patient insights (backwards compatibility)
-   * @param patientId - Patient ID
-   * @param updateData - New data to update insights
-   * @returns Promise<boolean>
-   */
-  async updateInsights(patientId: string, updateData: any): Promise<boolean> {
-    try {
-      console.log(`Updating insights for patient ${patientId}`, updateData);
-      return true;
-    } catch (error) {
-      console.error('Error updating insights:', error);
-      return false;
-    }
-  },
-
-  /**
-   * Get trending insights across all patients (backwards compatibility)
-   * @returns Promise with trending insights array
-   */
-  async getTrendingInsights(): Promise<any[]> {
-    return [
-      {
-        trend: 'increased_consultation_frequency',
-        patient_count: 25,
-        percentage_change: 15.5,
-        time_period: '30_days',
-        confidence_score: 0.85,
-        description: 'Patient consultation frequency has increased by 15.5% over the last 30 days, indicating improved engagement with healthcare services.'
-      },
-      {
-        trend: 'improved_treatment_compliance',
-        patient_count: 18,
-        percentage_change: 22.3,
-        time_period: '30_days',
-        confidence_score: 0.78,
-        description: 'Treatment compliance rates have improved by 22.3% among 18 patients, showing better adherence to prescribed care plans.'
-      },
-      {
-        trend: 'reduced_missed_appointments',
-        patient_count: 32,
-        percentage_change: -18.7,
-        time_period: '30_days',
-        confidence_score: 0.91,
-        description: 'Missed appointment rates have decreased by 18.7% across 32 patients, demonstrating improved appointment management and patient engagement.'
-      }
-    ];
-  }
-};
+export default PatientInsightsEngine;

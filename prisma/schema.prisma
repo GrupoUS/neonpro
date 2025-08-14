@@ -1,118 +1,586 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
+// 🏥 NEONPRO HEALTHCARE DATABASE SCHEMA
+// Enterprise healthcare platform with LGPD/ANVISA compliance
+
 generator client {
   provider = "prisma-client-js"
-  previewFeatures = ["postgresqlExtensions"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
-  extensions = [uuid_ossp(map: "uuid-ossp")]
 }
 
-// 🚧 CORE MODELS FOR NEONPRO HEALTHCARE SYSTEM
-// Based on Supabase introspection of 167+ tables
+// =============================================================================
+// 👥 USER MANAGEMENT & AUTHENTICATION
+// =============================================================================
 
-/// Healthcare professional profiles with RLS enabled
-model Profile {
-  id                     String    @id @db.Uuid
-  email                  String?   @unique
-  full_name              String?
-  first_name             String?
-  last_name              String?
-  role                   String?   @default("professional")
-  medical_license        String?
-  department             String?
-  professional_title     String?
-  phone                  String?
-  avatar_url             String?
+enum UserRole {
+  SUPER_ADMIN      // System administration
+  MEDICAL_DIRECTOR // Clinical oversight
+  DOCTOR          // Full patient access
+  NURSE           // Limited patient access
+  TECHNICIAN      // Specific procedures
+  RECEPTIONIST    // Scheduling only
+  BILLING         // Financial data only
+  AUDITOR         // Read-only compliance
+  PATIENT         // Own data only
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  PENDING_VERIFICATION
+}
+
+model User {
+  id                String    @id @default(cuid())
+  email             String    @unique
+  phone             String?
+  password_hash     String?   // For local auth
+  supabase_id       String?   @unique // Supabase auth integration
   
-  // Google integration
-  google_provider_id     String?   @unique
-  google_picture         String?
-  google_verified_email  Boolean?  @default(false)
-  profile_sync_status    String?   @default("pending")
-  google_sync_enabled    Boolean?  @default(true)
-  last_google_sync       DateTime? @db.Timestamptz(6)
+  // Profile Information
+  first_name        String
+  last_name         String
+  cpf               String?   @unique // Brazilian tax ID
+  birth_date        DateTime?
+  gender            String?
   
-  // LGPD compliance
-  data_consent_given     Boolean?  @default(false)
-  data_consent_date      DateTime? @db.Timestamptz(6)
+  // Professional Information (for healthcare providers)
+  professional_id   String?   @unique // CRM, COREN, etc.
+  specialty         String?
+  license_number    String?
+  license_expiry    DateTime?
+  
+  // System Information
+  role              UserRole  @default(PATIENT)
+  status            UserStatus @default(PENDING_VERIFICATION)
+  email_verified    Boolean   @default(false)
+  phone_verified    Boolean   @default(false)
+  
+  // Healthcare Compliance
+  lgpd_consent_date DateTime?
+  lgpd_consent_version String?
+  emergency_contact String?
   
   // Timestamps
-  created_at             DateTime  @default(now()) @db.Timestamptz(6)
-  updated_at             DateTime  @default(now()) @db.Timestamptz(6)
-  
-  // Relations (will be added based on actual FK constraints)
-  patients_created       Patient[] @relation("PatientCreatedBy")
-  clinics_created        Clinic[]  @relation("ClinicCreatedBy")
-  
-  @@map("profiles")
-}
-
-/// Patient records with medical information
-model Patient {
-  id                     String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  clinic_id              String    @db.Uuid
-  full_name              String
-  email                  String?
-  phone                  String?
-  birth_date             DateTime? @db.Date
-  
-  // Healthcare specific
-  medical_record_number  String?   @unique
-  emergency_contact      String?
-  insurance_provider     String?
-  
-  // LGPD compliance
-  data_consent_given     Boolean?  @default(false)
-  data_consent_date      DateTime? @db.Timestamptz(6)
-  
-  // Metadata
-  created_by             String    @db.Uuid
-  updated_by             String?   @db.Uuid
-  created_at             DateTime  @default(now()) @db.Timestamptz(6)
-  updated_at             DateTime  @default(now()) @db.Timestamptz(6)
+  created_at        DateTime  @default(now())
+  updated_at        DateTime  @updatedAt
+  last_login        DateTime?
   
   // Relations
-  clinic                 Clinic    @relation(fields: [clinic_id], references: [id])
-  created_by_profile     Profile   @relation("PatientCreatedBy", fields: [created_by], references: [id])
+  patient           Patient?
+  healthcare_provider HealthcareProvider?
+  consent_records   ConsentRecord[]
+  audit_logs        AuditLog[]
+  notifications     Notification[]
   
-  // Appointments, medical conditions, etc. will be added
+  @@map("users")
+}
+
+// =============================================================================
+// 👤 PATIENT MANAGEMENT
+// =============================================================================
+
+model Patient {
+  id                String    @id @default(cuid())
+  user_id           String    @unique
+  user              User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  
+  // Patient Identification
+  medical_record_number String @unique
+  patient_id        String    @unique // External patient ID
+  
+  // Contact Information
+  address_street    String?
+  address_number    String?
+  address_complement String?
+  address_neighborhood String?
+  address_city      String?
+  address_state     String?
+  address_zipcode   String?
+  
+  // Emergency Contact
+  emergency_contact_name String?
+  emergency_contact_phone String?
+  emergency_contact_relationship String?
+  
+  // Medical Information
+  allergies         String[]  // Array of allergies
+  medications       String[]  // Current medications
+  medical_conditions String[] // Chronic conditions
+  insurance_number  String?
+  insurance_provider String?
+  
+  // Timestamps
+  created_at        DateTime  @default(now())
+  updated_at        DateTime  @updatedAt
+  
+  // Relations
+  appointments      Appointment[]
+  medical_records   MedicalRecord[]
+  billing_records   Billing[]
+  notifications     Notification[]
   
   @@map("patients")
 }
 
-/// Clinic facilities management
-model Clinic {
-  id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name              String
-  address           String?
-  phone             String?
-  email             String?
+// =============================================================================
+// 👨‍⚕️ HEALTHCARE PROVIDERS
+// =============================================================================
+
+model HealthcareProvider {
+  id                String    @id @default(cuid())
+  user_id           String    @unique
+  user              User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
   
-  // Business information
-  cnpj              String?   @unique
-  license_number    String?
+  // Professional Details
+  provider_type     String    // "DOCTOR", "NURSE", "TECHNICIAN"
+  specialization    String[]  // Array of specializations
+  license_state     String?   // State where licensed
+  board_certified   Boolean   @default(false)
   
-  // Compliance and settings
-  is_active         Boolean?  @default(true)
+  // Schedule & Availability
+  working_hours     Json?     // Flexible schedule data
+  consultation_duration Int?  @default(30) // Default 30 minutes
   
-  // Metadata
-  created_by        String    @db.Uuid
-  updated_by        String?   @db.Uuid
-  created_at        DateTime  @default(now()) @db.Timestamptz(6)
-  updated_at        DateTime  @default(now()) @db.Timestamptz(6)
+  // Performance Metrics
+  average_rating    Float?    @default(0)
+  total_patients    Int       @default(0)
+  total_appointments Int      @default(0)
+  
+  // Timestamps
+  created_at        DateTime  @default(now())
+  updated_at        DateTime  @updatedAt
   
   // Relations
-  created_by_profile Profile  @relation("ClinicCreatedBy", fields: [created_by], references: [id])
-  patients          Patient[]
+  appointments      Appointment[]
+  medical_records   MedicalRecord[]
+  billing_records   Billing[]
+  analytics         Analytics[]
   
-  @@map("clinics")
+  @@map("healthcare_providers")
 }
 
-// 🚧 MORE MODELS WILL BE ADDED AFTER INTROSPECTION
-// This is a starter schema with core models identified from Supabase MCP analysis
+// =============================================================================
+// 📅 APPOINTMENT MANAGEMENT
+// =============================================================================
+
+enum AppointmentStatus {
+  SCHEDULED
+  CONFIRMED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+  RESCHEDULED
+}
+
+enum AppointmentType {
+  CONSULTATION
+  PROCEDURE
+  FOLLOW_UP
+  EMERGENCY
+  TELEMEDICINE
+}
+
+model Appointment {
+  id                String    @id @default(cuid())
+  
+  // Core Information
+  patient_id        String
+  patient           Patient   @relation(fields: [patient_id], references: [id])
+  provider_id       String?
+  provider          HealthcareProvider? @relation(fields: [provider_id], references: [id])
+  created_by_id     String
+  
+  // Appointment Details
+  appointment_date  DateTime
+  duration_minutes  Int       @default(30)
+  appointment_type  AppointmentType @default(CONSULTATION)
+  status            AppointmentStatus @default(SCHEDULED)
+  
+  // Clinical Information
+  chief_complaint   String?   // Main reason for visit
+  notes             String?   // Provider notes
+  diagnosis         String[]  // Array of diagnoses
+  treatment_plan    String?
+  
+  // Administrative
+  insurance_authorized Boolean @default(false)
+  copay_amount     Decimal?  @db.Decimal(10, 2)
+  total_cost       Decimal?  @db.Decimal(10, 2)
+  
+  // Timestamps
+  created_at        DateTime  @default(now())
+  updated_at        DateTime  @updatedAt
+  cancelled_at      DateTime?
+  completed_at      DateTime?
+  
+  // Relations
+  medical_records   MedicalRecord[]
+  billing_records   Billing[]
+  
+  @@map("appointments")
+}
+
+// =============================================================================
+// 🛡️ LGPD COMPLIANCE & DATA PROTECTION
+// =============================================================================
+
+enum ConsentType {
+  DATA_PROCESSING
+  MARKETING
+  RESEARCH
+  THIRD_PARTY_SHARING
+  MEDICAL_TREATMENT
+  EMERGENCY_CONTACT
+}
+
+enum ConsentStatus {
+  GRANTED
+  WITHDRAWN
+  EXPIRED
+  PENDING
+}
+
+model ConsentRecord {
+  id                String        @id @default(cuid())
+  user_id           String
+  user              User          @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  
+  // Consent Details
+  consent_type      ConsentType
+  status            ConsentStatus @default(PENDING)
+  purpose           String        // Specific purpose description
+  legal_basis       String        // LGPD legal basis
+  
+  // Consent Tracking
+  granted_at        DateTime?
+  withdrawn_at      DateTime?
+  expires_at        DateTime?
+  consent_version   String        @default("2.1")
+  
+  // Technical Details
+  ip_address        String?
+  user_agent        String?
+  consent_method    String?       // "WEB", "MOBILE", "VERBAL", "WRITTEN"
+  
+  // Timestamps
+  created_at        DateTime      @default(now())
+  updated_at        DateTime      @updatedAt
+  
+  @@index([user_id, consent_type])
+  @@index([status])
+  @@index([expires_at])
+  @@map("consent_records")
+}
+
+// =============================================================================
+// 📋 AUDIT LOG & COMPLIANCE TRACKING
+// =============================================================================
+
+enum AuditAction {
+  CREATE
+  READ
+  UPDATE
+  DELETE
+  LOGIN
+  LOGOUT
+  EXPORT
+  CONSENT_GRANTED
+  CONSENT_WITHDRAWN
+  EMERGENCY_ACCESS
+  ADMIN_ACTION
+}
+
+model AuditLog {
+  id                String        @id @default(cuid())
+  user_id           String?
+  user              User?         @relation(fields: [user_id], references: [id], onDelete: SetNull)
+  
+  // Action Details
+  action            AuditAction
+  resource_type     String        // "PATIENT", "APPOINTMENT", etc.
+  resource_id       String?
+  description       String
+  
+  // Technical Details
+  ip_address        String?
+  user_agent        String?
+  session_id        String?
+  
+  // LGPD Compliance
+  legal_basis       String?       // LGPD legal basis for processing
+  data_categories   String[]      // Types of personal data accessed
+  
+  // Risk Assessment
+  risk_level        String?       // "LOW", "MEDIUM", "HIGH", "CRITICAL"
+  automated_action  Boolean       @default(false)
+  
+  // Timestamps
+  created_at        DateTime      @default(now())
+  
+  @@index([user_id, created_at])
+  @@index([action, resource_type])
+  @@index([created_at])
+  @@map("audit_logs")
+}
+
+// =============================================================================
+// 🏥 MEDICAL RECORDS & CLINICAL DATA
+// =============================================================================
+
+enum RecordType {
+  CONSULTATION
+  TREATMENT
+  PRESCRIPTION
+  LAB_RESULT
+  IMAGING
+  PROCEDURE
+  FOLLOW_UP
+  EMERGENCY
+}
+
+enum RecordStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+  DELETED
+}
+
+model MedicalRecord {
+  id                String        @id @default(cuid())
+  patient_id        String
+  patient           Patient       @relation(fields: [patient_id], references: [id], onDelete: Cascade)
+  provider_id       String
+  provider          HealthcareProvider @relation(fields: [provider_id], references: [id])
+  appointment_id    String?
+  appointment       Appointment?  @relation(fields: [appointment_id], references: [id])
+  
+  // Record Details
+  record_type       RecordType
+  status            RecordStatus  @default(DRAFT)
+  title             String
+  description       String?
+  diagnosis         String?
+  treatment_plan    String?
+  
+  // Clinical Data
+  vital_signs       Json?         // Structured vital signs data
+  medications       Json?         // Current medications
+  allergies         Json?         // Known allergies
+  medical_history   Json?         // Relevant medical history
+  
+  // ANVISA Compliance
+  cfm_number        String?       // CFM registration number
+  crm_number        String?       // CRM registration number
+  procedure_code    String?       // TUSS/CBHPM codes
+  
+  // File Attachments
+  attachments       Json?         // File references and metadata
+  
+  // Security & Compliance
+  access_log        Json?         // Who accessed when
+  encryption_key    String?       // Encryption reference
+  
+  // Timestamps
+  record_date       DateTime      @default(now())
+  created_at        DateTime      @default(now())
+  updated_at        DateTime      @updatedAt
+  
+  @@index([patient_id, record_date])
+  @@index([provider_id, record_date])
+  @@index([record_type, status])
+  @@map("medical_records")
+}
+
+// =============================================================================
+// 💰 BILLING & FINANCIAL MANAGEMENT
+// =============================================================================
+
+enum PaymentStatus {
+  PENDING
+  PROCESSING
+  PAID
+  FAILED
+  CANCELLED
+  REFUNDED
+}
+
+enum PaymentMethod {
+  CREDIT_CARD
+  DEBIT_CARD
+  PIX
+  BANK_TRANSFER
+  INSURANCE
+  CASH
+  INSTALLMENT
+}
+
+model Billing {
+  id                String        @id @default(cuid())
+  patient_id        String
+  patient           Patient       @relation(fields: [patient_id], references: [id])
+  appointment_id    String?
+  appointment       Appointment?  @relation(fields: [appointment_id], references: [id])
+  provider_id       String
+  provider          HealthcareProvider @relation(fields: [provider_id], references: [id])
+  
+  // Billing Details
+  invoice_number    String        @unique
+  description       String
+  amount            Decimal       @db.Decimal(10, 2)
+  discount          Decimal?      @db.Decimal(10, 2) @default(0.00)
+  final_amount      Decimal       @db.Decimal(10, 2)
+  
+  // Payment Information
+  payment_status    PaymentStatus @default(PENDING)
+  payment_method    PaymentMethod?
+  payment_date      DateTime?
+  payment_reference String?       // Transaction ID, PIX key, etc.
+  
+  // Tax & Compliance
+  tax_amount        Decimal?      @db.Decimal(10, 2)
+  tax_percentage    Decimal?      @db.Decimal(5, 2)
+  cfm_procedure     String?       // CFM procedure code
+  
+  // Due Date Management
+  due_date          DateTime
+  overdue_days      Int           @default(0)
+  
+  // Timestamps
+  created_at        DateTime      @default(now())
+  updated_at        DateTime      @updatedAt
+  
+  @@index([patient_id, payment_status])
+  @@index([provider_id, created_at])
+  @@index([due_date, payment_status])
+  @@map("billing")
+}
+
+// =============================================================================
+// 🔔 NOTIFICATIONS & COMMUNICATION
+// =============================================================================
+
+enum NotificationType {
+  APPOINTMENT_REMINDER
+  APPOINTMENT_CONFIRMATION
+  APPOINTMENT_CANCELLED
+  TREATMENT_REMINDER
+  BILLING_REMINDER
+  PAYMENT_CONFIRMATION
+  EMERGENCY_ALERT
+  SYSTEM_UPDATE
+  CONSENT_EXPIRY
+  COMPLIANCE_ALERT
+}
+
+enum NotificationChannel {
+  EMAIL
+  SMS
+  WHATSAPP
+  PUSH_NOTIFICATION
+  SYSTEM_ALERT
+}
+
+enum NotificationStatus {
+  PENDING
+  SENT
+  DELIVERED
+  READ
+  FAILED
+}
+
+model Notification {
+  id                String              @id @default(cuid())
+  user_id           String?
+  user              User?               @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  patient_id        String?
+  patient           Patient?            @relation(fields: [patient_id], references: [id], onDelete: Cascade)
+  
+  // Notification Details
+  type              NotificationType
+  channel           NotificationChannel
+  status            NotificationStatus  @default(PENDING)
+  priority          String              @default("NORMAL") // LOW, NORMAL, HIGH, URGENT
+  
+  // Content
+  title             String
+  message           String
+  action_url        String?
+  
+  // Scheduling
+  scheduled_for     DateTime?
+  sent_at           DateTime?
+  delivered_at      DateTime?
+  read_at           DateTime?
+  
+  // Delivery Details
+  recipient_email   String?
+  recipient_phone   String?
+  external_id       String?             // External service ID
+  
+  // Compliance
+  consent_required  Boolean             @default(true)
+  lgpd_basis        String?             // LGPD legal basis
+  
+  // Timestamps
+  created_at        DateTime            @default(now())
+  updated_at        DateTime            @updatedAt
+  
+  @@index([user_id, status])
+  @@index([scheduled_for, status])
+  @@index([type, created_at])
+  @@map("notifications")
+}
+
+// =============================================================================
+// 📊 ANALYTICS & REPORTING (LGPD Compliant)
+// =============================================================================
+
+enum MetricType {
+  APPOINTMENTS_COUNT
+  REVENUE
+  PATIENT_SATISFACTION
+  TREATMENT_SUCCESS
+  COMPLIANCE_SCORE
+  SYSTEM_PERFORMANCE
+}
+
+model Analytics {
+  id                String      @id @default(cuid())
+  provider_id       String?
+  provider          HealthcareProvider? @relation(fields: [provider_id], references: [id])
+  
+  // Metric Details
+  metric_type       MetricType
+  metric_name       String
+  metric_value      Decimal     @db.Decimal(15, 4)
+  metric_unit       String?     // "COUNT", "PERCENTAGE", "BRL", etc.
+  
+  // Aggregation Details
+  period_start      DateTime
+  period_end        DateTime
+  aggregation_level String      // "DAILY", "WEEKLY", "MONTHLY", "YEARLY"
+  
+  // Privacy Protection
+  anonymized        Boolean     @default(true)
+  consent_based     Boolean     @default(true)
+  
+  // Metadata
+  metadata          Json?       // Additional context
+  
+  // Timestamps
+  created_at        DateTime    @default(now())
+  
+  @@index([provider_id, period_start])
+  @@index([metric_type, period_start])
+  @@index([created_at])
+  @@map("analytics")
+}

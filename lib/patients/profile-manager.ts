@@ -1,639 +1,545 @@
-/**
- * Patient Profile Manager
- * 
- * Comprehensive patient profile management system for the NeonPro clinic management platform.
- * Handles patient demographics, medical history, care preferences, emergency contacts,
- * and provides 360-degree patient view with profile completeness scoring.
- * 
- * Enhanced with LGPD compliance automation and comprehensive audit trail for 
- * real-time compliance validation and complete traceability.
- */
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { Database } from '@/types/supabase';
 
-import { AuditLogger } from '@/lib/auth/audit/audit-logger';
-import { LGPDComplianceManager } from '@/lib/lgpd/LGPDComplianceManager';
-import { createClient } from '@/app/utils/supabase/server';
-
-// Enhanced patient profile types with comprehensive data structure
-export interface PatientDemographics {
-  name: string;
-  date_of_birth: string;
-  gender: 'male' | 'female' | 'other' | 'prefer_not_to_say';
-  phone: string;
-  email: string;
-  address: string;
-  insurance_provider?: string;
-  insurance_id?: string;
-  preferred_language?: string;
-  marital_status?: 'single' | 'married' | 'divorced' | 'widowed' | 'other';
-  occupation?: string;
-  emergency_contact_name?: string;
-  emergency_contact_phone?: string;
-  emergency_contact_relationship?: string;
-}
-
-export interface MedicalInformation {
-  medical_history: string[];
-  chronic_conditions: string[];
-  current_medications: Array<{
-    name: string;
-    dosage: string;
-    frequency: string;
-    prescribing_doctor?: string;
-    start_date?: string;
-  }>;
-  allergies: string[];
-  immunizations?: Array<{
-    vaccine: string;
-    date_administered: string;
-    lot_number?: string;
-  }>;
-  family_medical_history?: Array<{
-    relationship: string;
-    condition: string;
-    age_of_onset?: number;
-  }>;
-}
-
-export interface VitalSigns {
+// Types for patient profile management
+export interface PatientProfile {
+  id: string;
+  patient_id: string;
+  
+  // Biometric data
   height_cm?: number;
   weight_kg?: number;
   bmi?: number;
-  blood_pressure_systolic?: number;
-  blood_pressure_diastolic?: number;
-  heart_rate?: number;
-  temperature_celsius?: number;
-  respiratory_rate?: number;
-  oxygen_saturation?: number;
   blood_type?: string;
-  last_updated?: string;
-}
-
-export interface CarePreferences {
-  communication_method: 'phone' | 'email' | 'sms' | 'portal';
-  appointment_preferences: {
-    preferred_time_of_day?: 'morning' | 'afternoon' | 'evening';
-    preferred_days?: string[];
-    advance_notice_days?: number;
-  };
-  language: string;
-  cultural_considerations?: string[];
-  accessibility_needs?: string[];
-  dietary_restrictions?: string[];
-  religious_considerations?: string[];
+  allergies: string[];
+  chronic_conditions: string[];
+  medications: string[];
+  emergency_contact: EmergencyContact;
+  
+  // AI insights
+  ai_insights: AIInsights;
+  risk_score?: number;
+  risk_level?: 'low' | 'medium' | 'high' | 'critical';
+  risk_factors: string[];
+  treatment_recommendations: TreatmentRecommendation[];
+  last_assessment_date?: string;
+  
+  // Profile metadata
+  profile_completeness_score: number;
+  data_quality_score: number;
+  preferences: PatientPreferences;
+  consent_status: ConsentStatus;
+  privacy_settings: PrivacySettings;
+  
+  // Audit
+  created_at: string;
+  updated_at: string;
+  created_by?: string;
+  updated_by?: string;
 }
 
 export interface EmergencyContact {
-  name: string;
-  relationship: string;
-  phone: string;
+  name?: string;
+  relationship?: string;
+  phone?: string;
   email?: string;
   address?: string;
-  is_primary: boolean;
-  can_make_medical_decisions: boolean;
 }
 
-export interface PatientProfileExtended {
+export interface AIInsights {
+  health_score?: number;
+  predicted_risks?: string[];
+  treatment_success_probability?: number;
+  recommended_frequency?: string;
+  behavioral_patterns?: any[];
+  last_analysis?: string;
+}
+
+export interface TreatmentRecommendation {
+  type: string;
+  description: string;
+  priority: 'low' | 'medium' | 'high';
+  estimated_duration?: string;
+  success_probability?: number;
+  contraindications?: string[];
+}
+
+export interface PatientPreferences {
+  communication_method?: 'email' | 'sms' | 'phone' | 'app';
+  appointment_reminders?: boolean;
+  marketing_communications?: boolean;
+  preferred_staff?: string[];
+  preferred_times?: string[];
+  accessibility_needs?: string[];
+}
+
+export interface ConsentStatus {
+  data_processing?: boolean;
+  marketing?: boolean;
+  research?: boolean;
+  photo_usage?: boolean;
+  data_sharing?: boolean;
+  last_updated?: string;
+}
+
+export interface PrivacySettings {
+  profile_visibility?: 'private' | 'staff_only' | 'limited';
+  photo_access?: 'none' | 'medical_only' | 'full';
+  data_retention_period?: number;
+  anonymize_data?: boolean;
+}
+
+export interface PatientPhoto {
+  id: string;
   patient_id: string;
-  demographics: PatientDemographics;
-  medical_information: MedicalInformation;
-  vital_signs: VitalSigns;
-  care_preferences: CarePreferences;
-  emergency_contacts: EmergencyContact[];
-  profile_completeness_score: number;
-  risk_assessment?: {
-    score: number;
-    level: 'low' | 'medium' | 'high' | 'critical';
-    factors: string[];
-  };
-  ai_insights?: any;
+  photo_url: string;
+  photo_type: 'profile' | 'identification' | 'medical' | 'before' | 'after' | 'progress';
+  file_size?: number;
+  mime_type?: string;
+  dimensions?: { width: number; height: number };
+  recognition_data?: any;
+  face_encoding?: string;
+  quality_score?: number;
+  verification_status: 'pending' | 'verified' | 'failed' | 'manual_review';
+  title?: string;
+  description?: string;
+  tags: string[];
+  is_primary: boolean;
+  is_visible: boolean;
+  access_level: string;
+  uploaded_at: string;
+  uploaded_by?: string;
+  approved_at?: string;
+  approved_by?: string;
+}
+
+export interface MedicalTimelineEvent {
+  id: string;
+  patient_id: string;
+  event_type: 'appointment' | 'treatment' | 'procedure' | 'diagnosis' | 'medication' | 'test_result' | 'follow_up';
+  event_date: string;
+  title: string;
+  description?: string;
+  notes?: string;
+  photos: string[];
+  documents: any[];
+  metadata: any;
+  outcome_score?: number;
+  outcome_notes?: string;
+  follow_up_required: boolean;
+  follow_up_date?: string;
+  treatment_id?: string;
+  appointment_id?: string;
+  staff_id?: string;
   created_at: string;
+  created_by?: string;
   updated_at: string;
-  last_accessed?: string;
-  is_active: boolean;
+  updated_by?: string;
 }
 
-export interface ProfileUpdateData {
-  demographics?: Partial<PatientDemographics>;
-  medical_information?: Partial<MedicalInformation>;
-  vital_signs?: Partial<VitalSigns>;
-  care_preferences?: Partial<CarePreferences>;
-  emergency_contacts?: EmergencyContact[];
+export interface DuplicateCandidate {
+  id: string;
+  patient_id_1: string;
+  patient_id_2: string;
+  confidence_score: number;
+  matching_factors: any;
+  similarity_analysis: any;
+  review_status: 'pending' | 'approved' | 'rejected' | 'merged';
+  reviewed_at?: string;
+  reviewed_by?: string;
+  review_notes?: string;
+  resolved_date?: string;
+  merge_result?: any;
+  kept_patient_id?: string;
+  detection_algorithm?: string;
+  detection_version?: string;
+  created_at: string;
 }
 
-export class ProfileManager {
-  private mockProfiles: Map<string, PatientProfileExtended> = new Map();
-  private auditLogger: AuditLogger;
-  private complianceManager: LGPDComplianceManager;
+export interface PatientSearchResult {
+  patient_id: string;
+  full_name: string;
+  email?: string;
+  phone?: string;
+  risk_level?: string;
+  last_visit?: string;
+  profile_completeness: number;
+  photo_url?: string;
+  search_score?: number;
+}
+
+/**
+ * Patient Profile Manager
+ * Handles comprehensive patient profile management with AI insights
+ */
+export class PatientProfileManager {
+  private supabase;
 
   constructor() {
-    // Initialize audit and compliance systems
-    const supabase = createClient();
-    this.auditLogger = new AuditLogger(supabase);
-    this.complianceManager = new LGPDComplianceManager();
+    this.supabase = createClientComponentClient<Database>();
   }
 
   /**
-   * Create a new comprehensive patient profile
+   * Get comprehensive patient profile
    */
-  async createPatientProfile(profileData: Partial<PatientProfileExtended>, userId?: string): Promise<PatientProfileExtended | null> {
-    const startTime = Date.now();
-    
+  async getPatientProfile(patientId: string): Promise<PatientProfile | null> {
     try {
-      // LGPD Compliance Validation
-      await this.complianceManager.validateDataConsent(profileData, 'patient_profile_creation');
-      
-      // Calculate initial profile completeness
-      const completenessScore = await this.calculateProfileCompleteness(profileData);
+      const { data, error } = await this.supabase
+        .from('patient_profiles_extended')
+        .select('*')
+        .eq('patient_id', patientId)
+        .single();
 
-      // Create profile with system fields
-      const profile: PatientProfileExtended = {
-        patient_id: profileData.patient_id || `patient_${Date.now()}`,
-        demographics: profileData.demographics || {
-          name: '',
-          date_of_birth: '',
-          gender: 'prefer_not_to_say',
-          phone: '',
-          email: '',
-          address: ''
-        },
-        medical_information: profileData.medical_information || {
-          medical_history: [],
-          chronic_conditions: [],
-          current_medications: [],
-          allergies: []
-        },
-        vital_signs: profileData.vital_signs || {},
-        care_preferences: profileData.care_preferences || {
-          communication_method: 'email',
-          appointment_preferences: {},
-          language: 'en'
-        },
-        emergency_contacts: profileData.emergency_contacts || [],
-        profile_completeness_score: completenessScore,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        is_active: true
-      };
-
-      // Store in mock database
-      this.mockProfiles.set(profile.patient_id, profile);
-
-      // Audit Trail - Patient Profile Creation
-      await this.auditLogger.log({
-        user_id: userId || 'system',
-        event_type: 'patient_profile_created',
-        event_description: `Patient profile created for ${profile.demographics.name}`,
-        metadata: {
-          patient_id: profile.patient_id,
-          completeness_score: completenessScore,
-          performance_ms: Date.now() - startTime,
-          compliance_validated: true
-        }
-      });
-
-      // Performance monitoring (PRD requirement: ≤20s create)
-      const executionTime = Date.now() - startTime;
-      if (executionTime > 20000) {
-        console.warn(`Patient profile creation exceeded 20s target: ${executionTime}ms`);
-      }
-
-      console.log(`Created patient profile for ${profile.patient_id} with completeness: ${completenessScore} (${executionTime}ms)`);
-      return profile;
-
+      if (error) throw error;
+      return data as PatientProfile;
     } catch (error) {
-      // Audit Trail - Error
-      await this.auditLogger.log({
-        user_id: userId || 'system',
-        event_type: 'patient_profile_creation_error',
-        event_description: `Failed to create patient profile: ${error.message}`,
-        metadata: {
-          error: error.message,
-          performance_ms: Date.now() - startTime
-        }
-      });
-      
-      console.error('Error in createPatientProfile:', error);
+      console.error('Error fetching patient profile:', error);
       return null;
     }
   }
 
   /**
-   * Retrieve complete patient profile with all related data
+   * Create or update patient profile
    */
-  async getPatientProfile(patientId: string, userId?: string): Promise<PatientProfileExtended | null> {
-    const startTime = Date.now();
-    
+  async upsertPatientProfile(patientId: string, profileData: Partial<PatientProfile>): Promise<PatientProfile | null> {
     try {
-      const profile = this.mockProfiles.get(patientId);
-      
-      if (!profile || !profile.is_active) {
-        return null;
-      }
-
-      // Update last accessed timestamp
-      profile.last_accessed = new Date().toISOString();
-      this.mockProfiles.set(patientId, profile);
-
-      // Audit Trail - Patient Profile Access
-      await this.auditLogger.log({
-        user_id: userId || 'system',
-        event_type: 'patient_profile_accessed',
-        event_description: `Patient profile accessed for ${profile.demographics.name}`,
-        metadata: {
+      const { data, error } = await this.supabase
+        .from('patient_profiles_extended')
+        .upsert({
           patient_id: patientId,
-          performance_ms: Date.now() - startTime,
-          access_timestamp: profile.last_accessed
-        }
-      });
+          ...profileData,
+          updated_at: new Date().toISOString(),
+        })
+        .select()
+        .single();
 
-      // Performance monitoring (PRD requirement: ≤2s search)
-      const executionTime = Date.now() - startTime;
-      if (executionTime > 2000) {
-        console.warn(`Patient profile retrieval exceeded 2s target: ${executionTime}ms`);
-      }
+      if (error) throw error;
 
-      console.log(`Retrieved patient profile for ${patientId} (${executionTime}ms)`);
-      return profile;
-
-    } catch (error) {
-      // Audit Trail - Error
-      await this.auditLogger.log({
-        user_id: userId || 'system',
-        event_type: 'patient_profile_access_error',
-        event_description: `Failed to access patient profile: ${error.message}`,
-        metadata: {
-          patient_id: patientId,
-          error: error.message,
-          performance_ms: Date.now() - startTime
-        }
-      });
+      // Update search index
+      await this.updateSearchIndex(patientId);
       
-      console.error('Error in getPatientProfile:', error);
+      return data as PatientProfile;
+    } catch (error) {
+      console.error('Error upserting patient profile:', error);
       return null;
     }
   }
 
   /**
-   * Update patient profile with selective updates
+   * Calculate and update profile completeness score
    */
-  async updatePatientProfile(
-    patientId: string, 
-    updateData: ProfileUpdateData
-  ): Promise<PatientProfileExtended | null> {
+  async updateProfileCompleteness(patientId: string): Promise<number> {
     try {
-      const currentProfile = this.mockProfiles.get(patientId);
-      if (!currentProfile) {
-        throw new Error('Patient profile not found');
-      }
+      const { data, error } = await this.supabase
+        .rpc('calculate_profile_completeness', { patient_uuid: patientId });
 
-      // Merge update data with current profile
-      const mergedData = this.mergeProfileData(currentProfile, updateData);
+      if (error) throw error;
 
-      // Recalculate profile completeness
-      const newCompleteness = await this.calculateProfileCompleteness(mergedData);
+      // Update the profile with the new score
+      await this.supabase
+        .from('patient_profiles_extended')
+        .update({ profile_completeness_score: data })
+        .eq('patient_id', patientId);
 
-      // Update profile
-      const updatedProfile: PatientProfileExtended = {
-        ...mergedData,
-        profile_completeness_score: newCompleteness,
-        updated_at: new Date().toISOString()
-      };
-
-      this.mockProfiles.set(patientId, updatedProfile);
-
-      console.log(`Updated patient profile for ${patientId}, new completeness: ${newCompleteness}`);
-      return updatedProfile;
-
+      return data;
     } catch (error) {
-      console.error('Error in updatePatientProfile:', error);
-      return null;
+      console.error('Error updating profile completeness:', error);
+      return 0;
     }
   }
 
   /**
-   * Calculate comprehensive profile completeness score
+   * Get patient photos
    */
-  async calculateProfileCompleteness(profileData: Partial<PatientProfileExtended>): Promise<number> {
-    const weights = {
-      demographics: 0.3,
-      medical_information: 0.25,
-      vital_signs: 0.2,
-      care_preferences: 0.15,
-      emergency_contacts: 0.1
-    };
-
-    let totalScore = 0;
-
-    // Demographics completeness
-    if (profileData.demographics) {
-      const demoFields = [
-        'name', 'date_of_birth', 'gender', 'phone', 'email', 'address'
-      ];
-      const requiredFields = ['insurance_provider', 'preferred_language', 'emergency_contact_name'];
-      
-      const demoScore = this.calculateSectionCompleteness(
-        profileData.demographics,
-        demoFields,
-        requiredFields
-      );
-      totalScore += demoScore * weights.demographics;
-    }
-
-    // Medical information completeness
-    if (profileData.medical_information) {
-      const medFields = ['medical_history', 'chronic_conditions', 'current_medications', 'allergies'];
-      const medOptional = ['immunizations', 'family_medical_history'];
-      
-      const medScore = this.calculateSectionCompleteness(
-        profileData.medical_information,
-        medFields,
-        medOptional
-      );
-      totalScore += medScore * weights.medical_information;
-    }
-
-    // Vital signs completeness
-    if (profileData.vital_signs) {
-      const vitalFields = ['height_cm', 'weight_kg', 'blood_type'];
-      const vitalOptional = ['blood_pressure_systolic', 'heart_rate', 'temperature_celsius'];
-      
-      const vitalScore = this.calculateSectionCompleteness(
-        profileData.vital_signs,
-        vitalFields,
-        vitalOptional
-      );
-      totalScore += vitalScore * weights.vital_signs;
-    }
-
-    // Care preferences completeness
-    if (profileData.care_preferences) {
-      const careFields = ['communication_method', 'language'];
-      const careOptional = ['appointment_preferences', 'accessibility_needs'];
-      
-      const careScore = this.calculateSectionCompleteness(
-        profileData.care_preferences,
-        careFields,
-        careOptional
-      );
-      totalScore += careScore * weights.care_preferences;
-    }
-
-    // Emergency contacts completeness
-    if (profileData.emergency_contacts && profileData.emergency_contacts.length > 0) {
-      const primaryContact = profileData.emergency_contacts.find(contact => contact.is_primary);
-      if (primaryContact) {
-        const contactFields = ['name', 'relationship', 'phone'];
-        const contactScore = this.calculateSectionCompleteness(
-          primaryContact,
-          contactFields,
-          ['email', 'address']
-        );
-        totalScore += contactScore * weights.emergency_contacts;
-      }
-    }
-
-    return Math.min(100, Math.round(totalScore * 100)); // Return as percentage (0-100)
-  }
-
-  /**
-   * Search patients by various criteria
-   */
-  async searchPatients(searchCriteria: {
-    name?: string;
-    phone?: string;
-    email?: string;
-    dateOfBirth?: string;
-    insuranceId?: string;
-    limit?: number;
-  }): Promise<PatientProfileExtended[]> {
+  async getPatientPhotos(patientId: string, photoType?: string): Promise<PatientPhoto[]> {
     try {
-      const allPatients = Array.from(this.mockProfiles.values())
-        .filter(patient => patient.is_active);
+      let query = this.supabase
+        .from('patient_photos')
+        .select('*')
+        .eq('patient_id', patientId)
+        .eq('is_visible', true)
+        .order('uploaded_at', { ascending: false });
 
-      let results = allPatients;
-
-      // Apply search filters
-      if (searchCriteria.name) {
-        results = results.filter(patient => 
-          patient.demographics.name.toLowerCase().includes(searchCriteria.name!.toLowerCase())
-        );
+      if (photoType) {
+        query = query.eq('photo_type', photoType);
       }
 
-      if (searchCriteria.phone) {
-        results = results.filter(patient => 
-          patient.demographics.phone === searchCriteria.phone
-        );
-      }
+      const { data, error } = await query;
+      if (error) throw error;
 
-      if (searchCriteria.email) {
-        results = results.filter(patient => 
-          patient.demographics.email.toLowerCase().includes(searchCriteria.email!.toLowerCase())
-        );
-      }
-
-      if (searchCriteria.dateOfBirth) {
-        results = results.filter(patient => 
-          patient.demographics.date_of_birth === searchCriteria.dateOfBirth
-        );
-      }
-
-      if (searchCriteria.insuranceId) {
-        results = results.filter(patient => 
-          patient.demographics.insurance_id === searchCriteria.insuranceId
-        );
-      }
-
-      // Apply limit
-      if (searchCriteria.limit) {
-        results = results.slice(0, searchCriteria.limit);
-      }
-
-      return results.sort((a, b) => 
-        new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
-      );
-
+      return data as PatientPhoto[];
     } catch (error) {
-      console.error('Error in searchPatients:', error);
+      console.error('Error fetching patient photos:', error);
       return [];
     }
   }
 
   /**
-   * Get patients with incomplete profiles
+   * Upload patient photo
    */
-  async getIncompleteProfiles(threshold: number = 0.8): Promise<PatientProfileExtended[]> {
+  async uploadPatientPhoto(
+    patientId: string,
+    file: File,
+    photoType: PatientPhoto['photo_type'],
+    metadata?: Partial<PatientPhoto>
+  ): Promise<PatientPhoto | null> {
     try {
-      return Array.from(this.mockProfiles.values())
-        .filter(patient => 
-          patient.is_active && patient.profile_completeness_score < threshold
-        )
-        .sort((a, b) => a.profile_completeness_score - b.profile_completeness_score);
+      // Upload file to Supabase storage
+      const fileName = `${patientId}/${photoType}/${Date.now()}-${file.name}`;
+      const { data: uploadData, error: uploadError } = await this.supabase.storage
+        .from('patient-photos')
+        .upload(fileName, file);
 
+      if (uploadError) throw uploadError;
+
+      // Get public URL
+      const { data: urlData } = this.supabase.storage
+        .from('patient-photos')
+        .getPublicUrl(fileName);
+
+      // Create photo record
+      const photoData = {
+        patient_id: patientId,
+        photo_url: urlData.publicUrl,
+        photo_type: photoType,
+        file_size: file.size,
+        mime_type: file.type,
+        dimensions: await this.getImageDimensions(file),
+        is_primary: photoType === 'profile' && metadata?.is_primary !== false,
+        ...metadata,
+      };
+
+      const { data, error } = await this.supabase
+        .from('patient_photos')
+        .insert(photoData)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data as PatientPhoto;
     } catch (error) {
-      console.error('Error in getIncompleteProfiles:', error);
+      console.error('Error uploading patient photo:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Get medical timeline for patient
+   */
+  async getMedicalTimeline(patientId: string, limit?: number): Promise<MedicalTimelineEvent[]> {
+    try {
+      let query = this.supabase
+        .from('medical_timeline')
+        .select('*')
+        .eq('patient_id', patientId)
+        .order('event_date', { ascending: false });
+
+      if (limit) {
+        query = query.limit(limit);
+      }
+
+      const { data, error } = await query;
+      if (error) throw error;
+
+      return data as MedicalTimelineEvent[];
+    } catch (error) {
+      console.error('Error fetching medical timeline:', error);
       return [];
     }
   }
 
   /**
-   * Archive patient profile (soft delete)
+   * Add medical timeline event
    */
-  async archivePatientProfile(patientId: string): Promise<boolean> {
+  async addTimelineEvent(
+    patientId: string,
+    eventData: Omit<MedicalTimelineEvent, 'id' | 'patient_id' | 'created_at' | 'updated_at'>
+  ): Promise<MedicalTimelineEvent | null> {
     try {
-      const profile = this.mockProfiles.get(patientId);
-      if (!profile) {
-        return false;
-      }
+      const { data, error } = await this.supabase
+        .from('medical_timeline')
+        .insert({
+          patient_id: patientId,
+          ...eventData,
+        })
+        .select()
+        .single();
 
-      profile.is_active = false;
-      profile.updated_at = new Date().toISOString();
-      this.mockProfiles.set(patientId, profile);
-
-      console.log(`Archived patient profile for ${patientId}`);
-      return true;
-
+      if (error) throw error;
+      return data as MedicalTimelineEvent;
     } catch (error) {
-      console.error('Error in archivePatientProfile:', error);
-      return false;
+      console.error('Error adding timeline event:', error);
+      return null;
     }
   }
 
   /**
-   * Get patient statistics and analytics
+   * Search patients with advanced filters
    */
-  async getPatientAnalytics(): Promise<{
-    totalPatients: number;
-    activePatients: number;
-    averageCompleteness: number;
-    profilesNeedingAttention: number;
-    recentlyUpdated: number;
-  }> {
+  async searchPatients(
+    query: string,
+    filters?: {
+      risk_level?: string;
+      age_range?: [number, number];
+      last_visit_days?: number;
+      has_photo?: boolean;
+      completion_threshold?: number;
+    },
+    limit = 50
+  ): Promise<PatientSearchResult[]> {
     try {
-      const allPatients = Array.from(this.mockProfiles.values());
-      const activePatients = allPatients.filter(patient => patient.is_active);
+      let searchQuery = this.supabase
+        .from('patient_search_index')
+        .select(`
+          patient_id,
+          full_name_normalized,
+          email_normalized,
+          phone_normalized
+        `)
+        .limit(limit);
 
-      const avgCompleteness = activePatients.length > 0
-        ? activePatients.reduce((sum, patient) => sum + patient.profile_completeness_score, 0) / activePatients.length
-        : 0;
+      // Apply text search
+      if (query.trim()) {
+        searchQuery = searchQuery.textSearch('search_vector', query, {
+          type: 'websearch',
+          config: 'portuguese'
+        });
+      }
 
-      const needingAttention = activePatients.filter(patient => 
-        patient.profile_completeness_score < 0.7
-      );
+      const { data: searchData, error: searchError } = await searchQuery;
+      if (searchError) throw searchError;
 
-      const sevenDaysAgo = new Date();
-      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-      
-      const recentlyUpdated = activePatients.filter(patient => 
-        new Date(patient.updated_at) >= sevenDaysAgo
-      );
+      if (!searchData || searchData.length === 0) {
+        return [];
+      }
 
-      return {
-        totalPatients: allPatients.length,
-        activePatients: activePatients.length,
-        averageCompleteness: Math.round(avgCompleteness * 100) / 100,
-        profilesNeedingAttention: needingAttention.length,
-        recentlyUpdated: recentlyUpdated.length
-      };
+      // Get additional patient data
+      const patientIds = searchData.map(p => p.patient_id);
+      const { data: profilesData, error: profilesError } = await this.supabase
+        .from('patient_profiles_extended')
+        .select('patient_id, risk_level, profile_completeness_score, updated_at')
+        .in('patient_id', patientIds);
 
+      if (profilesError) throw profilesError;
+
+      // Combine search and profile data
+      const results = searchData.map(search => {
+        const profile = profilesData?.find(p => p.patient_id === search.patient_id);
+        return {
+          patient_id: search.patient_id,
+          full_name: search.full_name_normalized,
+          email: search.email_normalized,
+          phone: search.phone_normalized,
+          risk_level: profile?.risk_level,
+          last_visit: profile?.updated_at,
+          profile_completeness: profile?.profile_completeness_score || 0,
+          search_score: 1.0, // Could be enhanced with proper scoring
+        };
+      });
+
+      return this.applySearchFilters(results, filters);
     } catch (error) {
-      console.error('Error in getPatientAnalytics:', error);
-      return {
-        totalPatients: 0,
-        activePatients: 0,
-        averageCompleteness: 0,
-        profilesNeedingAttention: 0,
-        recentlyUpdated: 0
-      };
+      console.error('Error searching patients:', error);
+      return [];
     }
-  }
-
-  // Private helper methods
-
-  private calculateSectionCompleteness(
-    sectionData: any,
-    requiredFields: string[],
-    optionalFields: string[] = []
-  ): number {
-    if (!sectionData) return 0;
-
-    let score = 0;
-    const totalFields = requiredFields.length + optionalFields.length;
-
-    // Check required fields (weighted more heavily)
-    for (const field of requiredFields) {
-      if (this.hasValidValue(sectionData[field])) {
-        score += 2; // Required fields worth 2 points
-      }
-    }
-
-    // Check optional fields
-    for (const field of optionalFields) {
-      if (this.hasValidValue(sectionData[field])) {
-        score += 1; // Optional fields worth 1 point
-      }
-    }
-
-    // Calculate percentage (required fields count double)
-    const maxScore = (requiredFields.length * 2) + optionalFields.length;
-    return maxScore > 0 ? score / maxScore : 0;
-  }
-
-  private hasValidValue(value: any): boolean {
-    if (value === null || value === undefined) return false;
-    if (typeof value === 'string' && value.trim() === '') return false;
-    if (Array.isArray(value) && value.length === 0) return false;
-    return true;
-  }
-
-  private mergeProfileData(
-    currentProfile: PatientProfileExtended,
-    updateData: ProfileUpdateData
-  ): PatientProfileExtended {
-    return {
-      ...currentProfile,
-      demographics: updateData.demographics 
-        ? { ...currentProfile.demographics, ...updateData.demographics }
-        : currentProfile.demographics,
-      medical_information: updateData.medical_information
-        ? { ...currentProfile.medical_information, ...updateData.medical_information }
-        : currentProfile.medical_information,
-      vital_signs: updateData.vital_signs
-        ? { ...currentProfile.vital_signs, ...updateData.vital_signs }
-        : currentProfile.vital_signs,
-      care_preferences: updateData.care_preferences
-        ? { ...currentProfile.care_preferences, ...updateData.care_preferences }
-        : currentProfile.care_preferences,
-      emergency_contacts: updateData.emergency_contacts || currentProfile.emergency_contacts
-    };
   }
 
   /**
-   * Archive patient profile (soft delete)
+   * Detect duplicate patients
    */
-  async archivePatient(patientId: string): Promise<boolean> {
+  async detectDuplicates(patientId: string): Promise<DuplicateCandidate[]> {
     try {
-      const profile = this.mockProfiles.get(patientId);
-      
-      if (!profile) {
-        console.error(`Patient ${patientId} not found for archiving`);
+      // Get patient data for comparison
+      const profile = await this.getPatientProfile(patientId);
+      if (!profile) return [];
+
+      // Simple duplicate detection based on name similarity
+      // In production, this would be more sophisticated
+      const { data, error } = await this.supabase
+        .from('duplicate_candidates')
+        .select('*')
+        .or(`patient_id_1.eq.${patientId},patient_id_2.eq.${patientId}`)
+        .eq('review_status', 'pending');
+
+      if (error) throw error;
+      return data as DuplicateCandidate[];
+    } catch (error) {
+      console.error('Error detecting duplicates:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Update patient search index
+   */
+  private async updateSearchIndex(patientId: string): Promise<void> {
+    try {
+      await this.supabase.rpc('update_patient_search_index', {
+        patient_uuid: patientId
+      });
+    } catch (error) {
+      console.error('Error updating search index:', error);
+    }
+  }
+
+  /**
+   * Get image dimensions from file
+   */
+  private async getImageDimensions(file: File): Promise<{ width: number; height: number } | null> {
+    return new Promise((resolve) => {
+      if (!file.type.startsWith('image/')) {
+        resolve(null);
+        return;
+      }
+
+      const img = new Image();
+      img.onload = () => {
+        resolve({ width: img.width, height: img.height });
+      };
+      img.onerror = () => resolve(null);
+      img.src = URL.createObjectURL(file);
+    });
+  }
+
+  /**
+   * Apply search filters to results
+   */
+  private applySearchFilters(
+    results: PatientSearchResult[],
+    filters?: {
+      risk_level?: string;
+      age_range?: [number, number];
+      last_visit_days?: number;
+      has_photo?: boolean;
+      completion_threshold?: number;
+    }
+  ): PatientSearchResult[] {
+    if (!filters) return results;
+
+    return results.filter(result => {
+      // Risk level filter
+      if (filters.risk_level && result.risk_level !== filters.risk_level) {
         return false;
       }
 
-      // Mark as inactive (soft delete)
-      profile.is_active = false;
-      profile.updated_at = new Date().toISOString();
-      
-      // Update the profile in the mock database
-      this.mockProfiles.set(patientId, profile);
-      
-      console.log(`Archived patient profile for ${patientId}`);
-      return true;
+      // Completion threshold filter
+      if (filters.completion_threshold && result.profile_completeness < filters.completion_threshold) {
+        return false;
+      }
 
-    } catch (error) {
-      console.error('Error in archivePatient:', error);
-      return false;
-    }
+      // Last visit filter
+      if (filters.last_visit_days && result.last_visit) {
+        const daysSinceVisit = Math.floor(
+          (Date.now() - new Date(result.last_visit).getTime()) / (1000 * 60 * 60 * 24)
+        );
+        if (daysSinceVisit > filters.last_visit_days) {
+          return false;
+        }
+      }
+
+      return true;
+    });
   }
 }
 
-export default ProfileManager;
+export default PatientProfileManager;
