@@ -1,0 +1,36 @@
+import { describe, test, expect } from '@jest/globals';
+
+describe('Patient Insights - Minimal Test', () => {
+  test('should validate test environment is working', () => {
+    expect(1 + 1).toBe(2);
+  });
+
+  test('should test basic module imports', async () => {
+    // Test that we can import the basic types
+    const types = await import('../../../../lib/ai/patient-insights/types');
+    expect(types).toBeDefined();
+  });
+
+  test('should test individual module imports', async () => {
+    try {
+      const riskAssessment = await import('../../../../lib/ai/patient-insights/risk-assessment');
+      expect(riskAssessment).toBeDefined();
+      expect(riskAssessment.PatientRiskAssessment).toBeDefined();
+    } catch (error) {
+      console.error('Risk Assessment import error:', error);
+      throw error;
+    }
+  });
+
+  test('should test index module import', async () => {
+    try {
+      const index = await import('../../../../lib/ai/patient-insights/index');
+      expect(index).toBeDefined();
+      console.log('Available exports:', Object.keys(index));
+      expect(index.PatientInsightsIntegration).toBeDefined();
+    } catch (error) {
+      console.error('Index import error:', error);
+      throw error;
+    }
+  });
+});

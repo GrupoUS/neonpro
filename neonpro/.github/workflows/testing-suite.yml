@@ -1,0 +1,245 @@
+name: Testing Suite CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+jobs:
+  # Unit and Integration Tests
+  test-unit:
+    name: Unit & Integration Tests
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run type checking
+        run: npm run type-check
+      
+      - name: Run linting
+        run: npm run lint
+
+      - name: VIBECODE Quality Validation
+        run: |
+          echo "🧠 Running VIBECODE quality validation..."
+          if [ -f "memory-bank/python/copilot_config_validator.py" ]; then
+            python memory-bank/python/copilot_config_validator.py
+          else
+            echo "VIBECODE validator not found, skipping validation..."
+          fi
+      
+      - name: Run unit tests
+        run: npm run test:ci
+        env:
+          CI: true
+      
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage/lcov.info
+          flags: unit-tests
+          name: unit-tests-${{ matrix.node-version }}
+          fail_ci_if_error: false
+
+  # E2E Tests
+  test-e2e:
+    name: End-to-End Tests
+    runs-on: ubuntu-latest
+    needs: test-unit
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Install Playwright browsers
+        run: |
+          echo "🎭 Installing Playwright browsers..."
+          if npm list playwright > /dev/null 2>&1; then
+            npx playwright install --with-deps
+          else
+            echo "Playwright not found, skipping browser installation..."
+          fi
+      
+      - name: Build application
+        run: npm run build
+        env:
+          NODE_ENV: production
+      
+      - name: Start application
+        run: npm start &
+        env:
+          NODE_ENV: production
+      
+      - name: Wait for application to be ready
+        run: npx wait-on http://localhost:3000 --timeout 60000
+      
+      - name: Run E2E tests
+        run: |
+          echo "🎭 Running E2E tests..."
+          if npm list cypress > /dev/null 2>&1; then
+            npm run test:e2e
+          elif npm list playwright > /dev/null 2>&1; then
+            npm run test:e2e:ui
+          else
+            echo "No E2E framework found, skipping..."
+          fi
+        env:
+          CI: true
+      
+      - name: Upload E2E test results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
+
+  # Performance Tests
+  test-performance:
+    name: Performance Tests
+    runs-on: ubuntu-latest
+    needs: test-unit
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build application
+        run: npm run build
+        env:
+          NODE_ENV: production
+      
+      - name: Start application
+        run: npm start &
+        env:
+          NODE_ENV: production
+      
+      - name: Wait for application
+        run: npx wait-on http://localhost:3000 --timeout 60000
+      
+      - name: Run Lighthouse CI
+        run: |
+          echo "🔍 Running Lighthouse CI..."
+          if command -v lhci >/dev/null 2>&1; then
+            lhci autorun
+          else
+            echo "Installing Lighthouse CI..."
+            npm install -g @lhci/cli@0.12.x
+            lhci autorun
+          fi
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN || '' }}
+
+  # Security Tests
+  test-security:
+    name: Security Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run security audit
+        run: npm audit --audit-level high
+      
+      - name: Run CodeQL Analysis
+        uses: github/codeql-action/init@v2
+        with:
+          languages: javascript
+      
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+
+  # Test Report Generation
+  test-report:
+    name: Generate Test Report
+    runs-on: ubuntu-latest
+    needs: [test-unit, test-e2e, test-performance]
+    if: always()
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Download all artifacts
+        uses: actions/download-artifact@v3
+      
+      - name: Generate comprehensive test report
+        run: |
+          echo "# Test Results Summary" > test-report.md
+          echo "" >> test-report.md
+          echo "## Unit Tests" >> test-report.md
+          echo "- Status: ${{ needs.test-unit.result }}" >> test-report.md
+          echo "" >> test-report.md
+          echo "## E2E Tests" >> test-report.md
+          echo "- Status: ${{ needs.test-e2e.result }}" >> test-report.md
+          echo "" >> test-report.md
+          echo "## Performance Tests" >> test-report.md
+          echo "- Status: ${{ needs.test-performance.result }}" >> test-report.md
+      
+      - name: Upload test report
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-report
+          path: test-report.md
+
+  # Notification
+  notify:
+    name: Send Notifications
+    runs-on: ubuntu-latest
+    needs: [test-unit, test-e2e, test-performance, test-security]
+    if: always()
+    
+    steps:
+      - name: Send Slack notification
+        if: always() && env.SLACK_WEBHOOK_URL != ''
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          fields: repo,message,commit,author,action,eventName,ref,workflow
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

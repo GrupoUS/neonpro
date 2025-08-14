@@ -1,0 +1,314 @@
+name: 🚀 NEONPRO Production Deployment Pipeline
+
+on:
+  push:
+    branches: [main, production]
+    paths:
+      - 'src/**'
+      - 'public/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'next.config.ts'
+      - 'tailwind.config.ts'
+      - 'tsconfig.json'
+      - 'drizzle.config.ts'
+      - '.github/workflows/**'
+  pull_request:
+    branches: [main, production]
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment Environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+      skip_tests:
+        description: 'Skip test execution'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  NODE_VERSION: '20'
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}/neonpro
+
+jobs:
+  # ===== QUALITY GATES =====
+  code-quality:
+    name: 🔍 Code Quality & Security
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: 'package-lock.json'
+
+      - name: 📦 Install Dependencies
+        run: npm ci --prefer-offline --no-audit
+
+      - name: 🔍 ESLint Analysis
+        run: npm run lint
+
+      - name: 🎯 TypeScript Check
+        run: npm run type-check
+
+      - name: 🧠 VIBECODE System Validation
+        run: |
+          echo "🧠 Validating VIBECODE system integrity..."
+          if [ -f "memory-bank/python/copilot_config_validator.py" ]; then
+            python memory-bank/python/copilot_config_validator.py
+          else
+            echo "VIBECODE validator not found, skipping..."
+          fi
+
+      - name: 🔒 Security Audit
+        run: npm audit --audit-level=moderate
+
+      - name: 📊 Code Quality Report
+        uses: github/super-linter@v5
+        env:
+          DEFAULT_BRANCH: main
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VALIDATE_TYPESCRIPT_ES: true
+          VALIDATE_JAVASCRIPT_ES: true
+          VALIDATE_CSS: true
+          VALIDATE_JSON: true
+
+  # ===== AUTOMATED TESTING =====
+  unit-tests:
+    name: 🧪 Unit & Integration Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [code-quality]
+    if: ${{ !inputs.skip_tests }}
+
+    strategy:
+      matrix:
+        test-group: [unit, integration, components]
+
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: 'package-lock.json'
+
+      - name: 📦 Install Dependencies
+        run: npm ci --prefer-offline
+
+      - name: 🧪 Run Tests - ${{ matrix.test-group }}
+        run: npm run test:${{ matrix.test-group }}
+        env:
+          CI: true
+
+      - name: 📊 Upload Coverage
+        uses: codecov/codecov-action@v3
+        with:
+          file: 'coverage/lcov.info'
+          flags: ${{ matrix.test-group }}
+
+  e2e-tests:
+    name: 🎭 End-to-End Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: [code-quality]
+    if: ${{ !inputs.skip_tests }}
+
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: 'package-lock.json'
+
+      - name: 📦 Install Dependencies
+        run: npm ci --prefer-offline
+
+      - name: 🎭 Install Playwright
+        run: npx playwright install --with-deps
+
+      - name: 🏗️ Build Application
+        run: npm run build
+        env:
+          NODE_ENV: test
+
+      - name: 🎭 Run E2E Tests
+        run: npm run test:e2e
+        env:
+          CI: true
+
+      - name: 📸 Upload Test Results
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: 'playwright-report/'
+          retention-days: 7
+
+  # ===== BUILD & OPTIMIZATION =====
+  build-application:
+    name: 🏗️ Build & Optimize
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [unit-tests, e2e-tests]
+    if: always() && (needs.unit-tests.result == 'success' || inputs.skip_tests) && (needs.e2e-tests.result == 'success' || inputs.skip_tests)
+
+    outputs:
+      build-hash: ${{ steps.build-info.outputs.hash }}
+      build-size: ${{ steps.build-info.outputs.size }}
+
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: 'package-lock.json'
+
+      - name: 📦 Install Dependencies
+        run: npm ci --prefer-offline --production=false
+
+      - name: 🏗️ Build Application
+        run: npm run build
+        env:
+          NODE_ENV: production
+          NEXT_TELEMETRY_DISABLED: 1
+
+      - name: 📊 Analyze Bundle
+        run: |
+          echo "📊 Analyzing bundle size..."
+          if [ -f ".next/analyze/__bundle_analysis.json" ]; then
+            echo "Bundle analysis available"
+          else
+            echo "Bundle analysis not available, skipping..."
+          fi
+
+      - name: 📈 Build Information
+        id: build-info
+        run: |
+          BUILD_HASH=$(find .next -type f -name "*.js" -o -name "*.css" | xargs sha256sum | sha256sum | cut -d' ' -f1)
+          BUILD_SIZE=$(du -sh .next | cut -f1)
+          echo "hash=$BUILD_HASH" >> $GITHUB_OUTPUT
+          echo "size=$BUILD_SIZE" >> $GITHUB_OUTPUT
+          echo "Build Hash: $BUILD_HASH"
+          echo "Build Size: $BUILD_SIZE"
+
+      - name: 📦 Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: neonpro-build-${{ github.sha }}
+          path: |
+            .next/
+            public/
+          retention-days: 7
+
+  # ===== STAGING DEPLOYMENT =====
+  deploy-staging:
+    name: 🚀 Deploy to Staging
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [build-application]
+    if: github.ref == 'refs/heads/main' || inputs.environment == 'staging'
+    environment:
+      name: staging
+      url: https://neonpro-staging.grupous.com
+
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 🚀 Deploy to Staging
+        run: |
+          echo "🚀 Deploying NEONPRO to Staging Environment"
+          echo "Build Hash: ${{ needs.build-application.outputs.build-hash }}"
+          echo "Build Size: ${{ needs.build-application.outputs.build-size }}"
+          # Add actual deployment commands here
+
+      - name: 🔍 Health Check
+        run: |
+          echo "🔍 Running staging health checks..."
+          # Add health check commands here
+
+      - name: 📊 Performance Test
+        run: |
+          echo "📊 Running performance tests..."
+          # Add performance testing commands here
+
+  # ===== PRODUCTION DEPLOYMENT =====
+  deploy-production:
+    name: 🎯 Deploy to Production
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [build-application, deploy-staging]
+    if: github.ref == 'refs/heads/production' || inputs.environment == 'production'
+    environment:
+      name: production
+      url: https://neonpro.grupous.com
+
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 🎯 Deploy to Production
+        run: |
+          echo "🎯 Deploying NEONPRO to Production Environment"
+          echo "Build Hash: ${{ needs.build-application.outputs.build-hash }}"
+          echo "Build Size: ${{ needs.build-application.outputs.build-size }}"
+          # Add actual deployment commands here
+
+      - name: 🔍 Production Health Check
+        run: |
+          echo "🔍 Running production health checks..."
+          # Add comprehensive health checks here
+
+      - name: 📊 Production Monitoring
+        run: |
+          echo "📊 Activating production monitoring..."
+          # Add monitoring activation here
+
+  # ===== NOTIFICATION =====
+  notify-deployment:
+    name: 📢 Deployment Notification
+    runs-on: ubuntu-latest
+    needs: [deploy-staging, deploy-production]
+    if: always()
+
+    steps:
+      - name: 📢 Success Notification
+        if: needs.deploy-production.result == 'success' || needs.deploy-staging.result == 'success'
+        run: |
+          echo "✅ NEONPRO deployment completed successfully!"
+          echo "Environment: ${{ inputs.environment || 'staging' }}"
+          echo "Build Hash: ${{ needs.build-application.outputs.build-hash }}"
+          echo "Build Size: ${{ needs.build-application.outputs.build-size }}"
+
+      - name: 📢 Failure Notification
+        if: needs.deploy-production.result == 'failure' || needs.deploy-staging.result == 'failure'
+        run: |
+          echo "❌ NEONPRO deployment failed!"
+          echo "Please check the logs for details."

@@ -1,0 +1,238 @@
+'use client'
+
+import React, { Component, ReactNode } from 'react'
+import { AlertTriangle, RefreshCw } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { cn } from '@/lib/utils'
+// import * as Sentry from '@sentry/nextjs' // Temporarily disabled
+
+interface ErrorBoundaryState {
+  hasError: boolean
+  error?: Error
+  errorInfo?: React.ErrorInfo
+}
+
+interface ErrorBoundaryProps {
+  children: ReactNode
+  fallback?: ReactNode
+  onError?: (error: Error, errorInfo: React.ErrorInfo) => void
+  className?: string
+  showDetails?: boolean
+}
+
+/**
+ * Error Boundary component following VIBECODE standards
+ * Catches JavaScript errors anywhere in the child component tree
+ */
+export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  constructor(props: ErrorBoundaryProps) {
+    super(props)
+    this.state = { hasError: false }
+  }
+
+  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+    // Update state so the next render will show the fallback UI
+    return { 
+      hasError: true, 
+      error 
+    }
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    // Log error for monitoring
+    console.error('ErrorBoundary caught an error:', error, errorInfo)
+    
+    // Report error to monitoring service (Sentry temporarily disabled)
+    /*
+    Sentry.withScope((scope) => {
+      // Add component stack trace
+      scope.setContext('componentStack', {
+        componentStack: errorInfo.componentStack,
+      })
+      
+      // Add error boundary context
+      scope.setTag('errorBoundary', true)
+      scope.setLevel('error')
+      
+      // Add user context if available
+      if (typeof window !== 'undefined') {
+        scope.setContext('browser', {
+          url: window.location.href,
+          userAgent: window.navigator.userAgent,
+          timestamp: new Date().toISOString(),
+        })
+      }
+      
+      // Capture the error
+      Sentry.captureException(error, {
+        contexts: {
+          react: {
+            componentStack: errorInfo.componentStack,
+          },
+        },
+        tags: {
+          section: 'error-boundary',
+        },
+      })
+    })
+    */
+    
+    console.error('Error caught by boundary:', error, errorInfo)
+    
+    this.setState({
+      error,
+      errorInfo
+    })
+
+    // Call custom error handler if provided
+    this.props.onError?.(error, errorInfo)
+  }
+
+  handleReset = () => {
+    this.setState({ hasError: false, error: undefined, errorInfo: undefined })
+  }
+
+  render() {
+    if (this.state.hasError) {
+      // Custom fallback UI
+      if (this.props.fallback) {
+        return this.props.fallback
+      }
+
+      // Default error UI
+      return (
+        <Card className={cn("w-full max-w-lg mx-auto mt-8", this.props.className)}>
+          <CardHeader className="text-center">
+            <div className="flex justify-center mb-4">
+              <AlertTriangle className="h-12 w-12 text-destructive" />
+            </div>
+            <CardTitle className="text-xl font-semibold">
+              Oops! Algo deu errado
+            </CardTitle>
+            <CardDescription>
+              Ocorreu um erro inesperado. Nossa equipe foi notificada.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Button
+              onClick={this.handleReset}
+              className="w-full"
+              variant="outline"
+            >
+              <RefreshCw className="mr-2 h-4 w-4" />
+              Tentar novamente
+            </Button>
+            
+            {this.props.showDetails && this.state.error && (
+              <details className="mt-4">
+                <summary className="cursor-pointer text-sm text-muted-foreground hover:text-foreground">
+                  Detalhes técnicos
+                </summary>
+                <div className="mt-2 p-3 bg-muted rounded-md">
+                  <p className="text-sm font-mono text-destructive">
+                    {this.state.error.message}
+                  </p>
+                  {this.state.errorInfo && (
+                    <pre className="text-xs mt-2 overflow-auto max-h-32">
+                      {this.state.errorInfo.componentStack}
+                    </pre>
+                  )}
+                </div>
+              </details>
+            )}
+          </CardContent>
+        </Card>
+      )
+    }
+
+    return this.props.children
+  }
+}
+
+/**
+ * Hook-based Error Boundary wrapper for functional components
+ */
+interface ErrorBoundaryWrapperProps extends Omit<ErrorBoundaryProps, 'children'> {
+  children: ReactNode
+}
+
+export function withErrorBoundary<P extends object>(
+  Component: React.ComponentType<P>,
+  errorBoundaryProps?: Omit<ErrorBoundaryWrapperProps, 'children'>
+) {
+  const WrappedComponent = (props: P) => (
+    <ErrorBoundary {...errorBoundaryProps}>
+      <Component {...props} />
+    </ErrorBoundary>
+  )
+
+  WrappedComponent.displayName = `withErrorBoundary(${Component.displayName || Component.name})`
+  
+  return WrappedComponent
+}
+
+/**
+ * Simplified Error Boundary for critical sections
+ */
+export function CriticalErrorBoundary({ children, title }: { 
+  children: ReactNode
+  title?: string 
+}) {
+  return (
+    <ErrorBoundary
+      onError={(error, errorInfo) => {
+        // Send to monitoring service (Sentry temporarily disabled)
+        /*
+        Sentry.withScope((scope) => {
+          scope.setTag('criticalError', true)
+          scope.setTag('section', title || 'unknown')
+          scope.setContext('errorInfo', {
+            componentStack: errorInfo.componentStack,
+            title: title || 'Critical Error',
+            timestamp: new Date().toISOString(),
+          })
+          
+          Sentry.captureException(error, {
+            level: 'fatal',
+            tags: {
+              errorBoundary: 'critical',
+              component: title || 'unknown',
+            },
+          })
+        })
+        */
+        
+        // Log to console for debugging
+        console.error(`Critical error in ${title}:`, error, errorInfo)
+      }}
+      fallback={
+        <div className="flex items-center justify-center p-8">
+          <Card className="w-full max-w-md">
+            <CardHeader className="text-center">
+              <AlertTriangle className="h-8 w-8 text-destructive mx-auto mb-2" />
+              <CardTitle className="text-lg">
+                {title ? `Erro em ${title}` : 'Erro do Sistema'}
+              </CardTitle>
+              <CardDescription>
+                Ocorreu um erro crítico. Atualize a página.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button 
+                onClick={() => window.location.reload()} 
+                className="w-full"
+                variant="outline"
+              >
+                <RefreshCw className="mr-2 h-4 w-4" />
+                Recarregar Página
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      }
+    >
+      {children}
+    </ErrorBoundary>
+  )
+}

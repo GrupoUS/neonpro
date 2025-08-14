@@ -1,0 +1,22 @@
+markdownExploder: true
+prd:
+  prdFile: docs/prd.md
+  prdVersion: v4
+  prdSharded: true
+  prdShardedLocation: docs/shards/epics
+  epicFilePattern: epic-{n}*.md
+architecture:
+  architectureFile: docs/architecture.md
+  architectureVersion: v4
+  architectureSharded: true
+  architectureShardedLocation: docs/shards/architecture
+customTechnicalDocuments: null
+devLoadAlwaysFiles:
+  - docs/architecture.md
+  - docs/prd.md
+  - docs/front-end-spec.md
+  - docs/shards/architecture/tech-stack.md
+  - docs/shards/architecture/coding-standards.md
+devDebugLog: .ai/debug-log.md
+devStoryLocation: docs/shards/stories
+slashPrefix: BMad

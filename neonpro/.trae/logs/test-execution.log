@@ -1,0 +1,88 @@
+[2025-07-29T16:53:54.264Z] [INFO] Starting VIBECODE V2.1 comprehensive test execution...
+[2025-07-29T16:53:54.266Z] [INFO] Checking test environment...
+[2025-07-29T16:53:54.266Z] [INFO] Test configuration found: package.json
+[2025-07-29T16:53:54.267Z] [INFO] Test directory found: __tests__
+[2025-07-29T16:53:54.267Z] [INFO] Test directory found: tests
+[2025-07-29T16:53:54.267Z] [INFO] Running type check tests...
+[2025-07-29T16:53:54.270Z] [ERROR] Type check execution failed: spawn npx ENOENT
+[2025-07-29T16:53:54.270Z] [INFO] Running lint tests...
+[2025-07-29T16:53:54.272Z] [ERROR] Lint test execution failed: spawn npm ENOENT
+[2025-07-29T16:53:54.272Z] [INFO] Running unit tests...
+[2025-07-29T16:53:54.273Z] [INFO] Using npm test script
+[2025-07-29T16:53:54.274Z] [ERROR] Unit test execution failed: spawn npm ENOENT
+[2025-07-29T16:53:54.275Z] [INFO] Running integration tests...
+[2025-07-29T16:53:54.277Z] [ERROR] Integration test execution failed: spawn npm ENOENT
+[2025-07-29T16:53:54.277Z] [INFO] Running E2E tests...
+[2025-07-29T16:53:54.277Z] [INFO] Running Playwright E2E tests...
+[2025-07-29T16:53:54.279Z] [ERROR] E2E test execution failed: spawn npm ENOENT
+[2025-07-29T16:53:54.279Z] [INFO] Generating coverage report...
+[2025-07-29T16:53:54.279Z] [INFO] Coverage script found - running coverage analysis
+[2025-07-29T16:53:54.280Z] [INFO] 
+========================================
+[2025-07-29T16:53:54.280Z] [INFO] VIBECODE V2.1 Test Execution Report
+[2025-07-29T16:53:54.280Z] [INFO] ========================================
+[2025-07-29T16:53:54.280Z] [INFO] Quality Score: 7.5/10.0
+[2025-07-29T16:53:54.281Z] [INFO] Total Tests: 0
+[2025-07-29T16:53:54.281Z] [INFO] Passed Tests: 0
+[2025-07-29T16:53:54.281Z] [INFO] Failed Tests: 0
+[2025-07-29T16:53:54.281Z] [INFO] Errors: 5
+[2025-07-29T16:53:54.282Z] [INFO] Warnings: 0
+[2025-07-29T16:53:54.282Z] [INFO] 
+Test Results Summary:
+[2025-07-29T16:53:54.282Z] [INFO] 
+Errors:
+[2025-07-29T16:53:54.282Z] [INFO]   1. Type check execution failed: spawn npx ENOENT
+[2025-07-29T16:53:54.283Z] [INFO]   2. Lint test execution failed: spawn npm ENOENT
+[2025-07-29T16:53:54.283Z] [INFO]   3. Unit test execution failed: spawn npm ENOENT
+[2025-07-29T16:53:54.283Z] [INFO]   4. Integration test execution failed: spawn npm ENOENT
+[2025-07-29T16:53:54.283Z] [INFO]   5. E2E test execution failed: spawn npm ENOENT
+[2025-07-29T16:53:54.283Z] [INFO] 
+========================================
+[2025-07-29T16:53:54.284Z] [INFO] ❌ TESTS FAILED - Quality < 9.6/10 or test failures present
+[2025-07-29T16:53:54.284Z] [INFO] ========================================
+
+[2025-07-29T16:53:54.285Z] [INFO] Report saved to .trae/logs/test-execution-report.json
+[2025-07-29T16:54:19.674Z] [INFO] Starting VIBECODE V2.1 comprehensive test execution...
+[2025-07-29T16:54:19.676Z] [INFO] Checking test environment...
+[2025-07-29T16:54:19.676Z] [INFO] Test configuration found: package.json
+[2025-07-29T16:54:19.676Z] [INFO] Test directory found: __tests__
+[2025-07-29T16:54:19.677Z] [INFO] Test directory found: tests
+[2025-07-29T16:54:19.678Z] [INFO] Running type check tests...
+[2025-07-29T16:54:19.681Z] [ERROR] Type check execution failed: spawn npx ENOENT
+[2025-07-29T16:54:19.681Z] [INFO] Running lint tests...
+[2025-07-29T16:54:19.683Z] [ERROR] Lint test execution failed: spawn npm ENOENT
+[2025-07-29T16:54:19.683Z] [INFO] Running unit tests...
+[2025-07-29T16:54:19.683Z] [INFO] Using npm test script
+[2025-07-29T16:54:19.685Z] [ERROR] Unit test execution failed: spawn npm ENOENT
+[2025-07-29T16:54:19.685Z] [INFO] Running integration tests...
+[2025-07-29T16:54:19.687Z] [ERROR] Integration test execution failed: spawn npm ENOENT
+[2025-07-29T16:54:19.687Z] [INFO] Running E2E tests...
+[2025-07-29T16:54:19.687Z] [INFO] Running Playwright E2E tests...
+[2025-07-29T16:54:19.688Z] [ERROR] E2E test execution failed: spawn npm ENOENT
+[2025-07-29T16:54:19.688Z] [INFO] Generating coverage report...
+[2025-07-29T16:54:19.689Z] [INFO] Coverage script found - running coverage analysis
+[2025-07-29T16:54:19.689Z] [INFO] 
+========================================
+[2025-07-29T16:54:19.689Z] [INFO] VIBECODE V2.1 Test Execution Report
+[2025-07-29T16:54:19.689Z] [INFO] ========================================
+[2025-07-29T16:54:19.689Z] [INFO] Quality Score: 7.5/10.0
+[2025-07-29T16:54:19.690Z] [INFO] Total Tests: 0
+[2025-07-29T16:54:19.690Z] [INFO] Passed Tests: 0
+[2025-07-29T16:54:19.690Z] [INFO] Failed Tests: 0
+[2025-07-29T16:54:19.690Z] [INFO] Errors: 5
+[2025-07-29T16:54:19.690Z] [INFO] Warnings: 0
+[2025-07-29T16:54:19.691Z] [INFO] 
+Test Results Summary:
+[2025-07-29T16:54:19.691Z] [INFO] 
+Errors:
+[2025-07-29T16:54:19.691Z] [INFO]   1. Type check execution failed: spawn npx ENOENT
+[2025-07-29T16:54:19.691Z] [INFO]   2. Lint test execution failed: spawn npm ENOENT
+[2025-07-29T16:54:19.692Z] [INFO]   3. Unit test execution failed: spawn npm ENOENT
+[2025-07-29T16:54:19.692Z] [INFO]   4. Integration test execution failed: spawn npm ENOENT
+[2025-07-29T16:54:19.692Z] [INFO]   5. E2E test execution failed: spawn npm ENOENT
+[2025-07-29T16:54:19.692Z] [INFO] 
+========================================
+[2025-07-29T16:54:19.693Z] [INFO] ❌ TESTS FAILED - Quality < 9.6/10 or test failures present
+[2025-07-29T16:54:19.693Z] [INFO] ========================================
+
+[2025-07-29T16:54:19.693Z] [INFO] Report saved to .trae/logs/test-execution-report.json

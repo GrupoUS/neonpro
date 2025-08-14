@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  .animate-background-position-spin {
+    background-size: 200% 200%;
+    animation: background-position-spin 3s infinite alternate;
+  }
+  
+  .animate-glow-scale {
+    animation: glow-scale 5s infinite;
+  }
+  
+  .animate-glow-slide {
+    animation: glow-slide 5s infinite linear;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Suporte para movimento reduzido */
+@media (prefers-reduced-motion: reduce) {
+  .animate-background-position-spin,
+  .animate-glow-scale,
+  .animate-glow-slide {
+    animation: none;
+  }
+}

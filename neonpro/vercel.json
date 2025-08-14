@@ -1,0 +1,67 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev", 
+  "installCommand": "npm install --legacy-peer-deps",
+  "framework": "nextjs",
+  "regions": ["iad1", "gru1"],
+  "functions": {
+    "app/auth/popup-callback/route.ts": {
+      "maxDuration": 30
+    },
+    "app/auth/callback/route.ts": {
+      "maxDuration": 30
+    },
+    "app/api/cron/evaluate-alerts/route.ts": {
+      "maxDuration": 60
+    },
+    "app/api/trigger/route.ts": {
+      "maxDuration": 300,
+      "memory": 1024,
+      "runtime": "nodejs20.x"
+    },
+    "app/api/appointments/enhanced/route.ts": {
+      "maxDuration": 30,
+      "memory": 512
+    },
+    "app/api/monitoring/*/route.ts": {
+      "maxDuration": 15,
+      "memory": 256
+    }
+  },
+  "crons": [
+    {
+      "path": "/api/cron/evaluate-alerts",
+      "schedule": "*/15 * * * *"
+    },
+    {
+      "path": "/api/cron/cleanup-metrics",
+      "schedule": "0 2 * * *"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/auth/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/health",
+      "destination": "/api/health"
+    },
+    {
+      "source": "/metrics",
+      "destination": "/api/monitoring/performance"
+    }
+  ],
+  "env": {
+    "VERCEL_ENV": "production",
+    "NODE_ENV": "production"
+  }
+}

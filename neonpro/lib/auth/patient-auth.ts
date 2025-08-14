@@ -1,0 +1,1 @@
+export { usePatientAuth, PatientAuthProvider } from '@/lib/hooks/use-patient-auth'

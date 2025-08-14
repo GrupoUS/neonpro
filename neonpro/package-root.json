@@ -1,0 +1,48 @@
+{
+  "name": "neonpro-monorepo",
+  "version": "2.0.0",
+  "description": "NeonPro - Enhanced Architecture Monorepo for Aesthetic Clinic Management",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "pnpm run --recursive build",
+    "dev": "pnpm run --parallel dev",
+    "lint": "pnpm run --recursive lint",
+    "start": "pnpm --filter=@neonpro/web start",
+    "test": "pnpm run --recursive test",
+    "type-check": "pnpm run --recursive type-check",
+    "clean": "pnpm run --recursive clean",
+    "web:dev": "pnpm --filter=@neonpro/web dev",
+    "web:build": "pnpm --filter=@neonpro/web build",
+    "web:lint": "pnpm --filter=@neonpro/web lint",
+    "web:test": "pnpm --filter=@neonpro/web test"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0",
+    "@types/node": "^20.11.0"
+  },
+  "packageManager": "pnpm@8.15.0",
+  "engines": {
+    "node": ">=18.17.0",
+    "pnpm": ">=8.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mauriciomeirelles/neonpro.git"
+  },
+  "keywords": [
+    "clinic-management",
+    "saas",
+    "nextjs",
+    "supabase",
+    "aesthetic-clinic",
+    "monorepo",
+    "typescript"
+  ],
+  "author": "Mauricio Meirelles",
+  "license": "MIT"
+}

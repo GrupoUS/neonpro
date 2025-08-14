@@ -1,0 +1,101 @@
+{
+  "chat.agent.enabled": true,
+  "chat.agent.maxRequests": 15,
+  "github.copilot.chat.agent.runTasks": true,
+  "chat.mcp.discovery.enabled": true,
+  "github.copilot.chat.agent.autoFix": true,
+  "chat.tools.autoApprove": true,
+  "debug.allowBreakpointsEverywhere": true,
+  "debug.openDebug": "openOnDebugBreak",
+  "deno.enablePaths": [
+    "supabase/functions"
+  ],
+  "editor.codeActionsOnSave": {
+    "source.addMissingImports": "explicit",
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "explicit"
+  },
+  "editor.quickSuggestions": {
+    "comments": "on",
+    "other": "on",
+    "strings": "on"
+  },
+  "editor.suggest.localityBonus": true,
+  "editor.suggest.shareSuggestSelections": true,
+  "editor.wordBasedSuggestions": "currentDocument",
+  "emmet.includeLanguages": {
+    "javascript": "html",
+    "typescript": "html"
+  },
+  "files.associations": {
+    "*.supabase": "sql",
+    "supabase/**/*.sql": "sql"
+  },
+  "files.exclude": {
+    "**/.git": true,
+    "**/.next": true,
+    "**/.vercel": true,
+    "**/coverage": true,
+    "**/dist": true,
+    "**/node_modules": true
+  },
+  "github.copilot.advanced": {
+    "context.includeGitHistory": true,
+    "context.includeOpenTabs": true,
+    "context.includeRecentFiles": true,
+    "context.includeWorkspace": true,
+    "context.maxFileSize": 50000,
+    "context.maxFiles": 30,
+    "context.projectSpecific": {
+      "neonpro": {
+        "conventions": "VIBECODE_V1",
+        "patterns": [
+          "app/**",
+          "components/**",
+          "lib/**",
+          "hooks/**"
+        ],
+        "technologies": [
+          "nextjs",
+          "supabase",
+          "shadcn",
+          "tailwind"
+        ]
+      }
+    }
+  },
+  "github.copilot.chat.context": {
+    "description": "Clinic management system with Next.js 15 and Supabase",
+    "patterns": [
+      "Always use Server Components by default",
+      "Use dual Supabase client pattern",
+      "Follow VIBECODE V1.0 standards",
+      "Implement proper TypeScript types",
+      "Use pnpm package manager only",
+      "Follow shadcn/ui component patterns",
+      "Implement proper error handling",
+      "Use react-hook-form with zod validation"
+    ],
+    "project": "NeonPro"
+  },
+  "npm.packageManager": "pnpm",
+  "search.exclude": {
+    "**/.next": true,
+    "**/dist": true,
+    "**/node_modules": true,
+    "**/pnpm-lock.yaml": true
+  },
+  "tailwindCSS.classAttributes": [
+    "class",
+    "className",
+    "ngClass"
+  ],
+  "tailwindCSS.includeLanguages": {
+    "javascript": "html",
+    "typescript": "html"
+  },
+  "typescript.preferences.importModuleSpecifier": "relative",
+  "typescript.preferences.includePackageJsonAutoImports": "auto",
+  "typescript.suggest.autoImports": true,
+  "typescript.suggest.completeFunctionCalls": true
+}
