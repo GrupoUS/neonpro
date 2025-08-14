@@ -584,3 +584,604 @@ model Analytics {
   @@index([created_at])
   @@map("analytics")
 }
+
+// =============================================================================
+// 📦 INVENTORY MANAGEMENT (ANVISA COMPLIANCE)
+// =============================================================================
+
+enum InventoryCategory {
+  PRODUTOS       // Aesthetic products
+  EQUIPAMENTOS   // Medical equipment
+  CONSUMIVEIS    // Consumables
+  MEDICAMENTOS   // Medications
+}
+
+enum InventoryStatus {
+  ACTIVE
+  INACTIVE
+  EXPIRED
+  RECALLED
+  MAINTENANCE
+}
+
+model InventoryItem {
+  id                String            @id @default(cuid())
+  
+  // Basic Information
+  name              String
+  description       String?
+  category          InventoryCategory
+  subcategory       String?
+  brand             String
+  model             String?
+  serial_number     String?           @unique
+  
+  // Stock Management
+  current_stock     Int               @default(0)
+  min_stock         Int               @default(1)
+  max_stock         Int               @default(100)
+  unit_price        Decimal           @db.Decimal(10, 2)
+  total_value       Decimal           @db.Decimal(10, 2)
+  
+  // Supplier Information
+  supplier_name     String
+  supplier_cnpj     String?
+  supplier_contact  String?
+  
+  // ANVISA Compliance
+  anvisa_code       String?
+  batch_number      String?
+  manufacturing_date DateTime?
+  expiry_date       DateTime?
+  storage_conditions String?
+  
+  // Location & Status
+  location          String
+  status            InventoryStatus   @default(ACTIVE)
+  
+  // Maintenance (for equipment)
+  last_maintenance  DateTime?
+  next_maintenance  DateTime?
+  maintenance_notes String?
+  
+  // Certifications
+  certifications    String[]          // ["ANVISA", "FDA", "CE"]
+  
+  // Usage Tracking
+  usage_logs        InventoryUsage[]
+  
+  // Timestamps
+  created_at        DateTime          @default(now())
+  updated_at        DateTime          @updatedAt
+  
+  @@index([category, status])
+  @@index([expiry_date])
+  @@index([batch_number])
+  @@index([anvisa_code])
+  @@map("inventory_items")
+}
+
+model InventoryUsage {
+  id                String        @id @default(cuid())
+  item_id           String
+  item              InventoryItem @relation(fields: [item_id], references: [id], onDelete: Cascade)
+  
+  // Usage Details
+  quantity_used     Int
+  used_by_id        String
+  used_by           User          @relation(fields: [used_by_id], references: [id])
+  patient_id        String?
+  patient           Patient?      @relation(fields: [patient_id], references: [id])
+  
+  // Context
+  purpose           String        // "TREATMENT", "MAINTENANCE", "CALIBRATION"
+  notes             String?
+  
+  // Batch Tracking (ANVISA)
+  batch_number      String?
+  expiry_date       DateTime?
+  
+  // Timestamps
+  used_at           DateTime      @default(now())
+  
+  @@index([item_id, used_at])
+  @@index([used_by_id])
+  @@index([patient_id])
+  @@map("inventory_usage")
+}
+
+// =============================================================================
+// 💰 ENHANCED FINANCIAL MANAGEMENT
+// =============================================================================
+
+enum TransactionType {
+  PAYMENT
+  REFUND
+  ADJUSTMENT
+  INSURANCE_PAYMENT
+}
+
+model Transaction {
+  id                String          @id @default(cuid())
+  billing_id        String
+  billing           Billing         @relation(fields: [billing_id], references: [id])
+  
+  // Transaction Details
+  transaction_type  TransactionType
+  amount            Decimal         @db.Decimal(10, 2)
+  description       String?
+  
+  // Payment Details
+  payment_method    PaymentMethod?
+  transaction_id    String?         // External transaction ID
+  authorization_code String?
+  
+  // PIX Details
+  pix_key           String?
+  pix_qr_code       String?
+  pix_txid          String?
+  
+  // Status
+  status            PaymentStatus   @default(PENDING)
+  processed_at      DateTime?
+  
+  // Timestamps
+  created_at        DateTime        @default(now())
+  
+  @@index([billing_id])
+  @@index([transaction_type, status])
+  @@index([processed_at])
+  @@map("transactions")
+}
+
+// =============================================================================
+// 📋 PRESCRIPTION MANAGEMENT (CFM COMPLIANCE)
+// =============================================================================
+
+enum PrescriptionStatus {
+  DRAFT
+  ACTIVE
+  DISPENSED
+  EXPIRED
+  CANCELLED
+}
+
+model Prescription {
+  id                String              @id @default(cuid())
+  patient_id        String
+  patient           Patient             @relation(fields: [patient_id], references: [id])
+  provider_id       String
+  provider          HealthcareProvider  @relation(fields: [provider_id], references: [id])
+  medical_record_id String?
+  medical_record    MedicalRecord?      @relation(fields: [medical_record_id], references: [id])
+  
+  // Prescription Details
+  prescription_number String            @unique
+  status            PrescriptionStatus  @default(DRAFT)
+  diagnosis         String
+  notes             String?
+  
+  // Digital Signature (CFM)
+  digital_signature Json?               // ICP-Brasil signature data
+  signed_at         DateTime?
+  
+  // Validity
+  valid_until       DateTime
+  refills_allowed   Int                 @default(0)
+  refills_used      Int                 @default(0)
+  
+  // Medications
+  medications       PrescriptionItem[]
+  
+  // Timestamps
+  created_at        DateTime            @default(now())
+  updated_at        DateTime            @updatedAt
+  
+  @@index([patient_id])
+  @@index([provider_id])
+  @@index([prescription_number])
+  @@index([status])
+  @@map("prescriptions")
+}
+
+model PrescriptionItem {
+  id                String        @id @default(cuid())
+  prescription_id   String
+  prescription      Prescription  @relation(fields: [prescription_id], references: [id], onDelete: Cascade)
+  
+  // Medication Details
+  medication_name   String
+  dosage            String        // "50mg"
+  frequency         String        // "2x ao dia"
+  duration          String        // "7 dias"
+  quantity          String        // "14 comprimidos"
+  instructions      String        // "Tomar com alimentos"
+  
+  // ANVISA Controlled Substance
+  controlled_substance Boolean    @default(false)
+  control_list      String?      // "A1", "B1", etc.
+  
+  // Timestamps
+  created_at        DateTime      @default(now())
+  
+  @@index([prescription_id])
+  @@map("prescription_items")
+}
+
+// =============================================================================
+// 🔔 ENHANCED COMMUNICATION
+// =============================================================================
+
+enum CommunicationChannel {
+  EMAIL
+  SMS
+  WHATSAPP
+  VOICE_CALL
+  PUSH_NOTIFICATION
+  IN_APP
+}
+
+model CommunicationLog {
+  id                String                @id @default(cuid())
+  patient_id        String?
+  patient           Patient?              @relation(fields: [patient_id], references: [id])
+  user_id           String?
+  user              User?                 @relation(fields: [user_id], references: [id])
+  
+  // Communication Details
+  channel           CommunicationChannel
+  message_type      String                // "APPOINTMENT_REMINDER", "RESULT_NOTIFICATION"
+  subject           String?
+  content           String
+  
+  // Delivery Status
+  sent_at           DateTime?
+  delivered_at      DateTime?
+  read_at           DateTime?
+  failed_at         DateTime?
+  failure_reason    String?
+  
+  // External IDs
+  external_id       String?               // WhatsApp message ID, etc.
+  
+  // LGPD Compliance
+  consent_based     Boolean               @default(true)
+  retention_expires DateTime?
+  
+  // Timestamps
+  created_at        DateTime              @default(now())
+  
+  @@index([patient_id, created_at])
+  @@index([channel, sent_at])
+  @@map("communication_logs")
+}
+
+// =============================================================================
+// 📊 APPOINTMENT FEEDBACK & QUALITY
+// =============================================================================
+
+model AppointmentFeedback {
+  id                String        @id @default(cuid())
+  appointment_id    String        @unique
+  appointment       Appointment   @relation(fields: [appointment_id], references: [id], onDelete: Cascade)
+  patient_id        String
+  patient           Patient       @relation(fields: [patient_id], references: [id])
+  
+  // Ratings (1-5 scale)
+  overall_rating    Int           // Overall satisfaction
+  provider_rating   Int           // Provider performance
+  facility_rating   Int           // Facility quality
+  scheduling_rating Int           // Scheduling ease
+  
+  // Feedback
+  positive_feedback String?
+  improvement_areas String?
+  would_recommend   Boolean?
+  
+  // Net Promoter Score
+  nps_score         Int?          // 0-10 scale
+  
+  // Timestamps
+  submitted_at      DateTime      @default(now())
+  
+  @@index([appointment_id])
+  @@index([overall_rating])
+  @@index([submitted_at])
+  @@map("appointment_feedback")
+}
+
+// =============================================================================
+// 🔧 SYSTEM CONFIGURATION
+// =============================================================================
+
+model SystemConfig {
+  id                String    @id @default(cuid())
+  category          String    // "GENERAL", "SECURITY", "COMPLIANCE", "BILLING"
+  key               String    // "clinic_name", "session_timeout"
+  value             String    // JSON string for complex values
+  description       String?
+  
+  // Metadata
+  data_type         String    @default("STRING") // "STRING", "NUMBER", "BOOLEAN", "JSON"
+  is_sensitive      Boolean   @default(false)
+  requires_restart  Boolean   @default(false)
+  
+  // Change Tracking
+  changed_by        String?
+  changed_at        DateTime?
+  
+  // Timestamps
+  created_at        DateTime  @default(now())
+  updated_at        DateTime  @updatedAt
+  
+  @@unique([category, key])
+  @@index([category])
+  @@map("system_config")
+}
+
+// =============================================================================
+// UPDATE EXISTING MODELS WITH NEW RELATIONS
+// =============================================================================
+
+model User {
+  id                String    @id @default(cuid())
+  email             String    @unique
+  phone             String?
+  password_hash     String?   // For local auth
+  supabase_id       String?   @unique // Supabase auth integration
+  
+  // Profile Information
+  first_name        String
+  last_name         String
+  cpf               String?   @unique // Brazilian tax ID
+  birth_date        DateTime?
+  gender            String?
+  
+  // Professional Information (for healthcare providers)
+  professional_id   String?   @unique // CRM, COREN, etc.
+  specialty         String?
+  license_number    String?
+  license_expiry    DateTime?
+  
+  // System Information
+  role              UserRole  @default(PATIENT)
+  status            UserStatus @default(PENDING_VERIFICATION)
+  email_verified    Boolean   @default(false)
+  phone_verified    Boolean   @default(false)
+  
+  // Healthcare Compliance
+  lgpd_consent_date DateTime?
+  lgpd_consent_version String?
+  emergency_contact String?
+  
+  // Timestamps
+  created_at        DateTime  @default(now())
+  updated_at        DateTime  @updatedAt
+  last_login        DateTime?
+  
+  // Relations
+  patient           Patient?
+  healthcare_provider HealthcareProvider?
+  consent_records   ConsentRecord[]
+  audit_logs        AuditLog[]
+  notifications     Notification[]
+  inventory_usage   InventoryUsage[]    // Added
+  communication_logs CommunicationLog[] // Added
+  
+  @@map("users")
+}
+
+model Patient {
+  id                String    @id @default(cuid())
+  user_id           String    @unique
+  user              User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  
+  // Patient Identification
+  medical_record_number String @unique
+  patient_id        String    @unique // External patient ID
+  
+  // Contact Information
+  address_street    String?
+  address_number    String?
+  address_complement String?
+  address_neighborhood String?
+  address_city      String?
+  address_state     String?
+  address_zipcode   String?
+  
+  // Emergency Contact
+  emergency_contact_name String?
+  emergency_contact_phone String?
+  emergency_contact_relationship String?
+  
+  // Medical Information
+  allergies         String[]  // Array of allergies
+  medications       String[]  // Current medications
+  medical_conditions String[] // Chronic conditions
+  insurance_number  String?
+  insurance_provider String?
+  
+  // Timestamps
+  created_at        DateTime  @default(now())
+  updated_at        DateTime  @updatedAt
+  
+  // Relations
+  appointments      Appointment[]
+  medical_records   MedicalRecord[]
+  billing_records   Billing[]
+  notifications     Notification[]
+  inventory_usage   InventoryUsage[]      // Added
+  prescriptions     Prescription[]        // Added
+  communication_logs CommunicationLog[]   // Added
+  appointment_feedback AppointmentFeedback[] // Added
+  
+  @@map("patients")
+}
+
+model HealthcareProvider {
+  id                String    @id @default(cuid())
+  user_id           String    @unique
+  user              User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  
+  // Professional Details
+  provider_type     String    // "DOCTOR", "NURSE", "TECHNICIAN"
+  specialization    String[]  // Array of specializations
+  license_state     String?   // State where licensed
+  board_certified   Boolean   @default(false)
+  
+  // Schedule & Availability
+  working_hours     Json?     // Flexible schedule data
+  consultation_duration Int?  @default(30) // Default 30 minutes
+  
+  // Performance Metrics
+  average_rating    Float?    @default(0)
+  total_patients    Int       @default(0)
+  total_appointments Int      @default(0)
+  
+  // Timestamps
+  created_at        DateTime  @default(now())
+  updated_at        DateTime  @updatedAt
+  
+  // Relations
+  appointments      Appointment[]
+  medical_records   MedicalRecord[]
+  billing_records   Billing[]
+  analytics         Analytics[]
+  prescriptions     Prescription[]        // Added
+  
+  @@map("healthcare_providers")
+}
+
+model Appointment {
+  id                String    @id @default(cuid())
+  
+  // Core Information
+  patient_id        String
+  patient           Patient   @relation(fields: [patient_id], references: [id])
+  provider_id       String?
+  provider          HealthcareProvider? @relation(fields: [provider_id], references: [id])
+  created_by_id     String
+  
+  // Appointment Details
+  appointment_date  DateTime
+  duration_minutes  Int       @default(30)
+  appointment_type  AppointmentType @default(CONSULTATION)
+  status            AppointmentStatus @default(SCHEDULED)
+  
+  // Clinical Information
+  chief_complaint   String?   // Main reason for visit
+  notes             String?   // Provider notes
+  diagnosis         String[]  // Array of diagnoses
+  treatment_plan    String?
+  
+  // Administrative
+  insurance_authorized Boolean @default(false)
+  copay_amount     Decimal?  @db.Decimal(10, 2)
+  total_cost       Decimal?  @db.Decimal(10, 2)
+  
+  // Timestamps
+  created_at        DateTime  @default(now())
+  updated_at        DateTime  @updatedAt
+  cancelled_at      DateTime?
+  completed_at      DateTime?
+  
+  // Relations
+  medical_records   MedicalRecord[]
+  billing_records   Billing[]
+  feedback          AppointmentFeedback?  // Added
+  
+  @@map("appointments")
+}
+
+model MedicalRecord {
+  id                String        @id @default(cuid())
+  patient_id        String
+  patient           Patient       @relation(fields: [patient_id], references: [id], onDelete: Cascade)
+  provider_id       String
+  provider          HealthcareProvider @relation(fields: [provider_id], references: [id])
+  appointment_id    String?
+  appointment       Appointment?  @relation(fields: [appointment_id], references: [id])
+  
+  // Record Details
+  record_type       RecordType
+  status            RecordStatus  @default(DRAFT)
+  title             String
+  description       String?
+  diagnosis         String?
+  treatment_plan    String?
+  
+  // Clinical Data
+  vital_signs       Json?         // Structured vital signs data
+  medications       Json?         // Current medications
+  allergies         Json?         // Known allergies
+  medical_history   Json?         // Relevant medical history
+  
+  // ANVISA Compliance
+  cfm_number        String?       // CFM registration number
+  crm_number        String?       // CRM registration number
+  procedure_code    String?       // TUSS/CBHPM codes
+  
+  // File Attachments
+  attachments       Json?         // File references and metadata
+  
+  // Security & Compliance
+  access_log        Json?         // Who accessed when
+  encryption_key    String?       // Encryption reference
+  
+  // Timestamps
+  record_date       DateTime      @default(now())
+  created_at        DateTime      @default(now())
+  updated_at        DateTime      @updatedAt
+  
+  // Relations
+  prescriptions     Prescription[] // Added
+  
+  @@index([patient_id, record_date])
+  @@index([provider_id, record_date])
+  @@index([record_type, status])
+  @@map("medical_records")
+}
+
+model Billing {
+  id                String        @id @default(cuid())
+  patient_id        String
+  patient           Patient       @relation(fields: [patient_id], references: [id])
+  appointment_id    String?
+  appointment       Appointment?  @relation(fields: [appointment_id], references: [id])
+  provider_id       String
+  provider          HealthcareProvider @relation(fields: [provider_id], references: [id])
+  
+  // Billing Details
+  invoice_number    String        @unique
+  description       String
+  amount            Decimal       @db.Decimal(10, 2)
+  discount          Decimal?      @db.Decimal(10, 2) @default(0.00)
+  final_amount      Decimal       @db.Decimal(10, 2)
+  
+  // Payment Information
+  payment_status    PaymentStatus @default(PENDING)
+  payment_method    PaymentMethod?
+  payment_date      DateTime?
+  payment_reference String?       // Transaction ID, PIX key, etc.
+  
+  // Tax & Compliance
+  tax_amount        Decimal?      @db.Decimal(10, 2)
+  tax_percentage    Decimal?      @db.Decimal(5, 2)
+  cfm_procedure     String?       // CFM procedure code
+  
+  // Due Date Management
+  due_date          DateTime
+  overdue_days      Int           @default(0)
+  
+  // Timestamps
+  created_at        DateTime      @default(now())
+  updated_at        DateTime      @updatedAt
+  
+  // Relations
+  transactions      Transaction[] // Added
+  
+  @@index([patient_id, payment_status])
+  @@index([provider_id, created_at])
+  @@index([due_date, payment_status])
+  @@map("billing")
+}

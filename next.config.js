@@ -1,18 +1,39 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  reactStrictMode: true,
+  swcMinify: true,
   experimental: {
-    appDir: true,
+    typedRoutes: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: false,
   },
   images: {
     domains: ['localhost'],
   },
-  typescript: {
-    // Permite builds mesmo com erros de TypeScript durante desenvolvimento
-    ignoreBuildErrors: false,
-  },
-  eslint: {
-    // Permite builds mesmo com warnings do ESLint durante desenvolvimento
-    ignoreDuringBuilds: false,
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY',
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'origin-when-cross-origin',
+          },
+        ],
+      },
+    ];
   },
 }
 
