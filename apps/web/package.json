@@ -7,6 +7,8 @@
     "dev": "next dev",
     "start": "next start",
     "lint": "next lint",
+    "test": "jest",
+    "test:watch": "jest --watch",
     "vercel-build": "prisma generate && prisma migrate deploy && next build"
   },
   "prisma": {
@@ -15,6 +17,7 @@
   "dependencies": {
     "@prisma/client": "^5.7.1",
     "@radix-ui/react-slot": "^1.0.2",
+    "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.38.5",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",

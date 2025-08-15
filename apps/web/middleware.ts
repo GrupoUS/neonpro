@@ -1,26 +1,45 @@
-import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
+import { NextResponse, type NextRequest } from 'next/server'
 
-const isProtectedRoute = createRouteMatcher([
-  '/dashboard(.*)',
-  '/patients(.*)',
-  '/appointments(.*)',
-  '/admin(.*)',
-  '/api/protected(.*)'
-])
+export async function middleware(request: NextRequest) {
+  // Protected routes that require authentication
+  const protectedPaths = ['/dashboard', '/patients', '/appointments', '/admin']
+  const isProtectedPath = protectedPaths.some(path => 
+    request.nextUrl.pathname.startsWith(path)
+  )
 
-export default clerkMiddleware((auth, req) => {
-  // Clerk v6 syntax: Use auth().userId to check authentication
-  // and auth().redirectToSignIn() for redirects
-  if (isProtectedRoute(req) && !auth().userId) {
-    return auth().redirectToSignIn()
+  // For protected paths, check if user has auth cookies
+  if (isProtectedPath) {
+    const authCookies = [
+      'sb-access-token',
+      'sb-refresh-token', 
+      'supabase-auth-token',
+      'supabase.auth.token'
+    ]
+    
+    const hasAuthCookie = authCookies.some(cookieName => 
+      request.cookies.has(cookieName)
+    )
+    
+    if (!hasAuthCookie) {
+      // Redirect to login page (using the correct path from the project)
+      const redirectUrl = new URL('/auth/entrar', request.url)
+      redirectUrl.searchParams.set('redirectTo', request.nextUrl.pathname)
+      return NextResponse.redirect(redirectUrl)
+    }
   }
-})
+
+  return NextResponse.next()
+}
 
 export const config = {
   matcher: [
-    // Skip Next.js internals and all static files, unless found in search params
-    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-    // Always run for API routes
-    '/(api|trpc)(.*)',
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - api routes (handled by API middleware)
+     */
+    '/((?!_next/static|_next/image|favicon.ico|api|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 }

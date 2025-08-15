@@ -16,10 +16,10 @@
 		"prepare": "husky || true"
 	},
 	"devDependencies": {
-		"turbo": "^2.4.4",
-		"typescript": "^5.7.2",
 		"@types/node": "^22.10.2",
-		"husky": "^9.1.7"
+		"husky": "^9.1.7",
+		"turbo": "^2.4.4",
+		"typescript": "^5.7.2"
 	},
 	"engines": {
 		"node": ">=18.17.0",
@@ -31,5 +31,14 @@
 		"monorepo",
 		"nextjs",
 		"supabase"
-	]
+	],
+	"dependencies": {
+		"@supabase/auth-helpers-nextjs": "^0.10.0",
+		"@supabase/ssr": "^0.6.1",
+		"@supabase/supabase-js": "^2.55.0",
+		"@types/jest": "^30.0.0",
+		"dotenv": "^17.2.1",
+		"jest": "^30.0.5",
+		"ts-jest": "^29.4.1"
+	}
 }

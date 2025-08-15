@@ -1,5 +1,7 @@
-# 🚀 Performance Load Testing Suite
-# Comprehensive Performance Testing for NeonPro Financial System
+/**
+ * 🚀 Performance Load Testing Suite
+ * Comprehensive Performance Testing for NeonPro Financial System
+ */
 
 import { describe, it, expect, beforeAll, afterAll } from '@jest/globals'
 

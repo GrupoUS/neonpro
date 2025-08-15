@@ -2,7 +2,7 @@ const nextJest = require('next/jest');
 
 const createJestConfig = nextJest({
   // Provide the path to your Next.js app to load next.config.js and .env files
-  dir: './',
+  dir: './apps/web',
 });
 
 // Add any custom config to be passed to Jest
@@ -26,7 +26,7 @@ const customJestConfig = {
   ],
   // Critical fix: Add moduleNameMapper to handle @/ imports
   moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/$1',
+    '^@/(.*)$': '<rootDir>/apps/web/$1',
   },
   coverageDirectory: 'coverage',
   collectCoverageFrom: [

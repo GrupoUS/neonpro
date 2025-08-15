@@ -1,0 +1,107 @@
+{
+  "total_files_required": 11,
+  "files_found": 11,
+  "files_missing": [],
+  "compliance_coverage": {
+    "lgpd": {
+      "required": 3,
+      "found": 3,
+      "percentage": 100
+    },
+    "authentication": {
+      "required": 2,
+      "found": 2,
+      "percentage": 100
+    },
+    "anvisa": {
+      "required": 1,
+      "found": 1,
+      "percentage": 100
+    },
+    "cfm": {
+      "required": 1,
+      "found": 1,
+      "percentage": 100
+    },
+    "security": {
+      "required": 1,
+      "found": 1,
+      "percentage": 100
+    },
+    "database": {
+      "required": 3,
+      "found": 3,
+      "percentage": 100
+    }
+  },
+  "overall_score": 100,
+  "validation_timestamp": "2025-08-15T07:43:26.500Z",
+  "file_details": [
+    {
+      "file": "lib/compliance/consent-manager.ts",
+      "found": true,
+      "size": 4326,
+      "created": "2025-08-15T07:30:38.237Z"
+    },
+    {
+      "file": "lib/compliance/data-subject-rights.ts",
+      "found": true,
+      "size": 7547,
+      "created": "2025-08-15T07:31:09.717Z"
+    },
+    {
+      "file": "lib/compliance/integration.ts",
+      "found": true,
+      "size": 20469,
+      "created": "2025-08-15T07:41:13.493Z"
+    },
+    {
+      "file": "lib/auth/supabase.ts",
+      "found": true,
+      "size": 6239,
+      "created": "2025-08-15T07:31:37.915Z"
+    },
+    {
+      "file": "lib/auth/rbac.ts",
+      "found": true,
+      "size": 9412,
+      "created": "2025-08-15T07:32:13.765Z"
+    },
+    {
+      "file": "lib/compliance/anvisa.ts",
+      "found": true,
+      "size": 12023,
+      "created": "2025-08-15T07:33:39.087Z"
+    },
+    {
+      "file": "lib/compliance/cfm.ts",
+      "found": true,
+      "size": 17469,
+      "created": "2025-08-15T07:34:42.745Z"
+    },
+    {
+      "file": "lib/security/middleware.ts",
+      "found": true,
+      "size": 6496,
+      "created": "2025-08-15T07:35:56.800Z"
+    },
+    {
+      "file": "lib/database/rls.ts",
+      "found": true,
+      "size": 6523,
+      "created": "2025-08-15T07:37:25.057Z"
+    },
+    {
+      "file": "lib/database/audit.ts",
+      "found": true,
+      "size": 13826,
+      "created": "2025-08-15T07:38:22.825Z"
+    },
+    {
+      "file": "lib/database/anonymization.ts",
+      "found": true,
+      "size": 12190,
+      "created": "2025-08-15T07:40:03.356Z"
+    }
+  ]
+}
