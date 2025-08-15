@@ -6,20 +6,31 @@ node_modules/
 /node_modules
 
 # next.js
-/.next/
+.next/
+**/.next/
 /out/
+**/out/
 
 # production
 /build
 build/
+**/build/
 dist/
 **/dist/
+out/
+**/out/
 
 # cache and temporary files
 .turbo/
 **/.turbo/
 .cache/
 **/.cache/
+
+# temporary upload files (Google Drive sync)
+.tmp.driveupload/
+**/.tmp.driveupload/
+tmp.driveupload/
+**/tmp.driveupload/
 
 # IDE and tooling
 .vscode/
