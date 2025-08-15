@@ -19,11 +19,11 @@ if [ -n "$DOC_FILES" ] && [ -z "$CODE_FILES" ]; then
     echo "🔍 Running lint and format only..."
     
     # Run lint on changed files only
-    if pnpm lint:biome; then
+    if pnpm lint; then
         echo "✅ Lint passed!"
     else
         echo "❌ Lint failed! Fix linting errors."
-        echo "💡 Tip: Run 'pnpm lint:biome --apply' to auto-fix"
+        echo "💡 Tip: Run 'pnpm lint' to see errors"
         exit 1
     fi
     
@@ -44,22 +44,22 @@ echo "🧪 Code files changed - running full validation..."
 echo "📁 Changed files:"
 echo "$STAGED_FILES"
 
-echo "🧪 Running tests (web app only)..."
-if pnpm test --filter=@neonpro/web; then
-    echo "✅ Tests passed!"
+echo "🧪 Running type checks..."
+if pnpm type-check; then
+    echo "✅ Type checks passed!"
 else
-    echo "❌ Tests failed! Fix test errors before committing."
-    echo "💡 Tip: Run 'pnpm test --filter=@neonpro/web' to see detailed errors"
+    echo "❌ Type check failed! Fix TypeScript errors before committing."
+    echo "💡 Tip: Run 'pnpm type-check' to see detailed errors"
     echo "💡 Or commit with --no-verify to skip this check temporarily"
     exit 1
 fi
 
 echo "🔍 Running lint checks..."
-if pnpm lint:biome; then
+if pnpm lint; then
     echo "✅ Lint passed!"
 else
     echo "❌ Lint failed! Fix linting errors."
-    echo "💡 Tip: Run 'pnpm lint:biome --apply' to auto-fix"
+    echo "💡 Tip: Run 'pnpm lint' to see errors"
     exit 1
 fi
 

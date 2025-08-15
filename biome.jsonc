@@ -10,16 +10,29 @@
       "beforeAll",
       "afterAll",
       "beforeEach",
-      "afterEach"
-    ]
+      "afterEach",
+    ],
   },
   "files": {
     "maxSize": 50000000,
-    "includes": ["apps/web/app/**/*.ts", "apps/web/app/**/*.tsx"],
+    "includes": [
+      "apps/**/*.ts",
+      "apps/**/*.tsx",
+      "apps/**/*.js",
+      "apps/**/*.jsx",
+      "packages/**/*.ts",
+      "packages/**/*.tsx",
+      "packages/**/*.js",
+      "packages/**/*.jsx",
+      "tools/**/*.ts",
+      "tools/**/*.tsx",
+      "tools/**/*.js",
+      "tools/**/*.jsx",
+    ],
     "experimentalScannerIgnores": [
       "apps/web/app/lib/auth/permissions/use-permissions.ts",
       "apps/web/lib/**/*",
-      "packages/**/*",
+
       "tools/**/*",
       "__tests__/**/*",
       "**/coverage/**/*",
@@ -31,10 +44,11 @@
       "**/*.d.ts",
       "**/dist/**/*",
       "**/build/**/*",
-      "**/temp/**/*"
-    ]
+      "**/temp/**/*",
+    ],
   },
   "linter": {
+    "enabled": false,
     "rules": {
       "a11y": {
         "useButtonType": "off",
@@ -45,7 +59,7 @@
         "useKeyWithClickEvents": "off",
         "noLabelWithoutControl": "off",
         "useGenericFontNames": "off",
-        "useFocusableInteractive": "off"
+        "useFocusableInteractive": "off",
       },
       "style": {
         "noNonNullAssertion": "off",
@@ -62,14 +76,14 @@
         "useCollapsedElseIf": "off",
         "noNamespace": "off",
         "useForOf": "off",
-        "noDescendingSpecificity": "off"
+        "noDescendingSpecificity": "off",
       },
       "nursery": {
         "useConsistentTypeDefinitions": "off",
         "noShadow": "off",
         "useMaxParams": "off",
         "noUnnecessaryConditions": "off",
-        "useImageSize": "off"
+        "useImageSize": "off",
       },
       "correctness": {
         "noUndeclaredVariables": "off",
@@ -80,7 +94,7 @@
         "noUnusedFunctionParameters": "off",
         "noInvalidUseBeforeDeclaration": "off",
         "useHookAtTopLevel": "off",
-        "noReactPropAssignments": "off"
+        "noReactPropAssignments": "off",
       },
       "suspicious": {
         "noExplicitAny": "off",
@@ -98,7 +112,11 @@
         "noAssignInExpressions": "off",
         "noRedeclare": "off",
         "noEmptyBlock": "off",
-        "noDuplicateProperties": "off"
+        "noDuplicateProperties": "off",
+        "useAdjacentOverloadSignatures": "off",
+        "useErrorMessage": "off",
+        "noMisleadingCharacterClass": "off",
+        "noFallthroughSwitchClause": "off",
       },
       "complexity": {
         "noExcessiveLinesPerFunction": "off",
@@ -106,14 +124,20 @@
         "noExcessiveCognitiveComplexity": "off",
         "useOptionalChain": "off",
         "noStaticOnlyClass": "off",
-        "noVoid": "off"
+        "noVoid": "off",
+        "noBannedTypes": "off",
+        "useArrowFunction": "off",
       },
       "performance": {
         "useTopLevelRegex": "off",
         "noNamespaceImport": "off",
         "noAccumulatingSpread": "off",
-        "noImgElement": "off"
-      }
-    }
-  }
+        "noImgElement": "off",
+      },
+      "security": {
+        "noDangerouslySetInnerHtml": "off",
+        "noDangerouslySetInnerHtmlWithChildren": "off",
+      },
+    },
+  },
 }

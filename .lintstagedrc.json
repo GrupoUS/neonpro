@@ -1,9 +1,5 @@
 {
-  "apps/web/**/*.{js,jsx,ts,tsx}": [
-    "biome check --write --no-errors-on-unmatched --files-ignore-unknown=true",
-    "prettier --write"
-  ],
-  "packages/**/*.{js,jsx,ts,tsx}": [
+  "*.{js,jsx,ts,tsx}": [
     "biome check --write --no-errors-on-unmatched --files-ignore-unknown=true",
     "prettier --write"
   ],
