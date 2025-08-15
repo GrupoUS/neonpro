@@ -31,6 +31,10 @@ out/
 **/.tmp.driveupload/
 tmp.driveupload/
 **/tmp.driveupload/
+.tmp.drivedownload/
+**/.tmp.drivedownload/
+tmp.drivedownload/
+**/tmp.drivedownload/
 
 # IDE and tooling
 .vscode/
