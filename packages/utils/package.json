@@ -1,0 +1,26 @@
+{
+  "name": "@neonpro/utils",
+  "version": "1.0.0",
+  "description": "NeonPro shared utilities and helper functions",
+  "private": true,
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "date-fns": "^4.1.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^22.17.1",
+    "typescript": "^5.9.2"
+  }
+}

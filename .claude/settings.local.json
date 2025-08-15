@@ -49,7 +49,8 @@
       "mcp__supabase-mcp__apply_migration",
       "mcp__desktop-commander__list_sessions",
       "mcp__desktop-commander__force_terminate",
-      "mcp__desktop-commander__interact_with_process"
+      "mcp__desktop-commander__interact_with_process",
+      "mcp__tavily__tavily-search"
     ],
     "deny": [
       "Edit",
