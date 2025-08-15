@@ -3,9 +3,9 @@
 // Epic 6 - Story 6.3: Comprehensive supplier management with performance tracking
 // =====================================================================================
 
+import { type NextRequest, NextResponse } from 'next/server';
 import { SupplierManagementService } from '@/app/lib/services/supplier-management-service';
 import { createContactSchema } from '@/app/lib/validations/suppliers';
-import { NextRequest, NextResponse } from 'next/server';
 
 const supplierService = new SupplierManagementService();
 
@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const supplierId = searchParams.get('supplier_id');
-    
+
     if (!supplierId) {
       return NextResponse.json(
         { error: 'supplier_id é obrigatório' },

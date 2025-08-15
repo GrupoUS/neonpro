@@ -4,7 +4,7 @@
 // Comprehensive type system for retention analytics and churn prediction
 // =====================================================================================
 
-import { z } from "zod";
+import { z } from 'zod';
 
 // =====================================================================================
 // CORE RETENTION METRICS
@@ -14,38 +14,38 @@ export interface PatientRetentionMetrics {
   id: string;
   patient_id: string;
   clinic_id: string;
-  
+
   // Core Retention Metrics
   first_appointment_date: string;
   last_appointment_date: string;
   days_since_last_appointment: number;
   total_appointments: number;
   appointment_frequency: number; // appointments per month
-  
+
   // Engagement Metrics
   response_rate: number; // 0-1 (follow-up response rate)
   satisfaction_score: number; // 0-10 average
   referral_count: number;
   complaints_count: number;
-  
+
   // Financial Metrics
   total_spent: number;
   average_ticket: number;
   lifetime_value: number;
   payment_punctuality: number; // 0-1
-  
+
   // Behavioral Metrics
   cancellation_rate: number; // 0-1
   no_show_rate: number; // 0-1
   rebooking_rate: number; // 0-1
   treatment_completion_rate: number; // 0-1
-  
+
   // Churn Risk Assessment
   churn_risk_score: number; // 0-1 (0=low risk, 1=high risk)
   churn_risk_level: ChurnRiskLevel;
   churn_probability: number; // 0-1
   days_to_predicted_churn: number | null;
-  
+
   // Metadata
   last_calculated: string;
   created_at: string;
@@ -56,7 +56,7 @@ export enum ChurnRiskLevel {
   LOW = 'low',
   MEDIUM = 'medium',
   HIGH = 'high',
-  CRITICAL = 'critical'
+  CRITICAL = 'critical',
 }
 
 // =====================================================================================
@@ -67,32 +67,32 @@ export interface ChurnPrediction {
   id: string;
   patient_id: string;
   clinic_id: string;
-  
+
   // Prediction Details
   churn_probability: number; // 0-1
   confidence_score: number; // 0-1
   risk_level: ChurnRiskLevel;
   predicted_churn_date: string | null;
   days_until_churn: number | null;
-  
+
   // Model Information
   model_version: string;
   model_type: ChurnModelType;
   prediction_date: string;
-  
+
   // Feature Importance
   top_risk_factors: RiskFactor[];
   feature_scores: Record<string, number>;
-  
+
   // Intervention Recommendations
   recommended_actions: RetentionAction[];
   intervention_priority: InterventionPriority;
-  
+
   // Validation
   is_validated: boolean;
   actual_outcome: ChurnOutcome | null;
   prediction_accuracy: number | null;
-  
+
   created_at: string;
   updated_at: string;
 }
@@ -102,7 +102,7 @@ export enum ChurnModelType {
   RANDOM_FOREST = 'random_forest',
   GRADIENT_BOOSTING = 'gradient_boosting',
   NEURAL_NETWORK = 'neural_network',
-  ENSEMBLE = 'ensemble'
+  ENSEMBLE = 'ensemble',
 }
 
 export interface RiskFactor {
@@ -117,13 +117,13 @@ export enum InterventionPriority {
   LOW = 'low',
   MEDIUM = 'medium',
   HIGH = 'high',
-  URGENT = 'urgent'
+  URGENT = 'urgent',
 }
 
 export enum ChurnOutcome {
   CHURNED = 'churned',
   RETAINED = 'retained',
-  REACTIVATED = 'reactivated'
+  REACTIVATED = 'reactivated',
 }
 
 // =====================================================================================
@@ -133,29 +133,29 @@ export enum ChurnOutcome {
 export interface RetentionStrategy {
   id: string;
   clinic_id: string;
-  
+
   // Strategy Details
   name: string;
   description: string;
   strategy_type: RetentionStrategyType;
   target_risk_levels: ChurnRiskLevel[];
-  
+
   // Configuration
   trigger_conditions: TriggerCondition[];
   actions: RetentionAction[];
   timing: StrategyTiming;
-  
+
   // Performance Metrics
   success_rate: number; // 0-1
   patients_targeted: number;
   patients_retained: number;
   cost_per_retention: number;
   roi: number;
-  
+
   // Status
   is_active: boolean;
   auto_execution: boolean;
-  
+
   // Metadata
   created_by: string;
   created_at: string;
@@ -167,7 +167,7 @@ export enum RetentionStrategyType {
   PROACTIVE = 'proactive', // Before churn risk
   PERSONALIZED = 'personalized', // Based on patient profile
   BULK = 'bulk', // Mass strategy
-  AUTOMATED = 'automated' // Fully automated
+  AUTOMATED = 'automated', // Fully automated
 }
 
 export interface TriggerCondition {
@@ -180,29 +180,29 @@ export interface TriggerCondition {
 export interface RetentionAction {
   id: string;
   action_type: RetentionActionType;
-  
+
   // Action Details
   title: string;
   description: string;
-  
+
   // Configuration
   channel: CommunicationChannel;
   template_id?: string;
   personalization_rules: PersonalizationRule[];
-  
+
   // Timing
   delay_hours: number;
   max_attempts: number;
   retry_interval_hours: number;
-  
+
   // Targeting
   patient_segments: string[];
   exclusion_rules: ExclusionRule[];
-  
+
   // Performance
   success_rate: number;
   cost: number;
-  
+
   created_at: string;
 }
 
@@ -214,7 +214,7 @@ export enum RetentionActionType {
   SCHEDULE_FOLLOWUP = 'schedule_followup',
   ASSIGN_ACCOUNT_MANAGER = 'assign_account_manager',
   SEND_SURVEY = 'send_survey',
-  CREATE_TASK = 'create_task'
+  CREATE_TASK = 'create_task',
 }
 
 export enum CommunicationChannel {
@@ -222,7 +222,7 @@ export enum CommunicationChannel {
   SMS = 'sms',
   EMAIL = 'email',
   PHONE = 'phone',
-  IN_APP = 'in_app'
+  IN_APP = 'in_app',
 }
 
 export interface PersonalizationRule {
@@ -244,19 +244,19 @@ export interface ExclusionRule {
 
 export interface StrategyTiming {
   execution_type: ExecutionType;
-  
+
   // Immediate execution
   immediate?: boolean;
-  
+
   // Scheduled execution
   schedule?: ScheduleConfig;
-  
+
   // Event-based execution
   event_triggers?: EventTrigger[];
-  
+
   // Time-based execution
   time_windows?: TimeWindow[];
-  
+
   // Frequency limits
   max_executions_per_patient?: number;
   cooldown_period_days?: number;
@@ -266,7 +266,7 @@ export enum ExecutionType {
   IMMEDIATE = 'immediate',
   SCHEDULED = 'scheduled',
   EVENT_BASED = 'event_based',
-  TIME_BASED = 'time_based'
+  TIME_BASED = 'time_based',
 }
 
 export interface ScheduleConfig {
@@ -297,29 +297,29 @@ export interface RetentionPerformance {
   clinic_id: string;
   strategy_id: string;
   patient_id: string;
-  
+
   // Execution Details
   execution_date: string;
   actions_executed: string[]; // Array of action IDs
   total_cost: number;
-  
+
   // Results
   outcome: RetentionOutcome;
   success: boolean;
   retention_period_days: number;
   follow_up_appointments: number;
   revenue_generated: number;
-  
+
   // Patient Response
   patient_response: PatientResponse | null;
   satisfaction_change: number; // Change in satisfaction score
   engagement_change: number; // Change in engagement level
-  
+
   // Performance Metrics
   time_to_response: number; // hours
   cost_effectiveness: number; // revenue/cost
   retention_probability_improvement: number; // 0-1
-  
+
   // Tracking
   created_at: string;
   updated_at: string;
@@ -329,7 +329,7 @@ export enum RetentionOutcome {
   SUCCESSFUL = 'successful',
   FAILED = 'failed',
   PARTIAL = 'partial',
-  PENDING = 'pending'
+  PENDING = 'pending',
 }
 
 export interface PatientResponse {
@@ -348,25 +348,25 @@ export interface RetentionAnalyticsDashboard {
   clinic_id: string;
   period_start: string;
   period_end: string;
-  
+
   // Overall Metrics
   overview: RetentionOverview;
-  
+
   // Churn Analysis
   churn_analysis: ChurnAnalysis;
-  
+
   // Strategy Performance
   strategy_performance: StrategyPerformanceMetrics[];
-  
+
   // Patient Segmentation
   retention_by_segment: RetentionBySegment[];
-  
+
   // Trends
   retention_trends: RetentionTrend[];
-  
+
   // Predictions
   churn_predictions_summary: ChurnPredictionSummary;
-  
+
   generated_at: string;
 }
 
@@ -375,12 +375,12 @@ export interface RetentionOverview {
   active_patients: number;
   at_risk_patients: number;
   churned_patients: number;
-  
+
   overall_retention_rate: number; // 0-1
   churn_rate: number; // 0-1
   average_lifetime_value: number;
   average_retention_period_days: number;
-  
+
   // Period comparisons
   retention_rate_change: number;
   churn_rate_change: number;
@@ -418,16 +418,16 @@ export interface SeasonalTrend {
 export interface StrategyPerformanceMetrics {
   strategy_id: string;
   strategy_name: string;
-  
+
   executions: number;
   success_rate: number; // 0-1
   cost_per_retention: number;
   roi: number;
-  
+
   patients_targeted: number;
   patients_retained: number;
   revenue_protected: number;
-  
+
   avg_response_time: number; // hours
   satisfaction_improvement: number;
 }
@@ -456,7 +456,7 @@ export interface ChurnPredictionSummary {
   high_risk_patients: number;
   medium_risk_patients: number;
   low_risk_patients: number;
-  
+
   model_accuracy: number; // 0-1
   predictions_this_week: number;
   interventions_triggered: number;
@@ -471,135 +471,158 @@ export const PatientRetentionMetricsSchema = z.object({
   id: z.string().uuid(),
   patient_id: z.string().uuid(),
   clinic_id: z.string().uuid(),
-  
+
   first_appointment_date: z.string(),
   last_appointment_date: z.string(),
   days_since_last_appointment: z.number().min(0),
   total_appointments: z.number().min(0),
   appointment_frequency: z.number().min(0),
-  
+
   response_rate: z.number().min(0).max(1),
   satisfaction_score: z.number().min(0).max(10),
   referral_count: z.number().min(0),
   complaints_count: z.number().min(0),
-  
+
   total_spent: z.number().min(0),
   average_ticket: z.number().min(0),
   lifetime_value: z.number().min(0),
   payment_punctuality: z.number().min(0).max(1),
-  
+
   cancellation_rate: z.number().min(0).max(1),
   no_show_rate: z.number().min(0).max(1),
   rebooking_rate: z.number().min(0).max(1),
   treatment_completion_rate: z.number().min(0).max(1),
-  
+
   churn_risk_score: z.number().min(0).max(1),
   churn_risk_level: z.nativeEnum(ChurnRiskLevel),
   churn_probability: z.number().min(0).max(1),
   days_to_predicted_churn: z.number().nullable(),
-  
+
   last_calculated: z.string(),
   created_at: z.string(),
-  updated_at: z.string()
+  updated_at: z.string(),
 });
 
 export const ChurnPredictionSchema = z.object({
   id: z.string().uuid(),
   patient_id: z.string().uuid(),
   clinic_id: z.string().uuid(),
-  
+
   churn_probability: z.number().min(0).max(1),
   confidence_score: z.number().min(0).max(1),
   risk_level: z.nativeEnum(ChurnRiskLevel),
   predicted_churn_date: z.string().nullable(),
   days_until_churn: z.number().nullable(),
-  
+
   model_version: z.string(),
   model_type: z.nativeEnum(ChurnModelType),
   prediction_date: z.string(),
-  
-  top_risk_factors: z.array(z.object({
-    factor: z.string(),
-    importance: z.number().min(0).max(1),
-    current_value: z.number(),
-    threshold_value: z.number(),
-    description: z.string()
-  })),
-  
+
+  top_risk_factors: z.array(
+    z.object({
+      factor: z.string(),
+      importance: z.number().min(0).max(1),
+      current_value: z.number(),
+      threshold_value: z.number(),
+      description: z.string(),
+    })
+  ),
+
   feature_scores: z.record(z.string(), z.number()),
-  
-  recommended_actions: z.array(z.object({
-    id: z.string(),
-    action_type: z.nativeEnum(RetentionActionType),
-    title: z.string(),
-    description: z.string(),
-    channel: z.nativeEnum(CommunicationChannel),
-    template_id: z.string().optional(),
-    personalization_rules: z.array(z.any()),
-    delay_hours: z.number().min(0),
-    max_attempts: z.number().min(1),
-    retry_interval_hours: z.number().min(1),
-    patient_segments: z.array(z.string()),
-    exclusion_rules: z.array(z.any()),
-    success_rate: z.number().min(0).max(1),
-    cost: z.number().min(0),
-    created_at: z.string()
-  })),
-  
+
+  recommended_actions: z.array(
+    z.object({
+      id: z.string(),
+      action_type: z.nativeEnum(RetentionActionType),
+      title: z.string(),
+      description: z.string(),
+      channel: z.nativeEnum(CommunicationChannel),
+      template_id: z.string().optional(),
+      personalization_rules: z.array(z.any()),
+      delay_hours: z.number().min(0),
+      max_attempts: z.number().min(1),
+      retry_interval_hours: z.number().min(1),
+      patient_segments: z.array(z.string()),
+      exclusion_rules: z.array(z.any()),
+      success_rate: z.number().min(0).max(1),
+      cost: z.number().min(0),
+      created_at: z.string(),
+    })
+  ),
+
   intervention_priority: z.nativeEnum(InterventionPriority),
-  
+
   is_validated: z.boolean(),
   actual_outcome: z.nativeEnum(ChurnOutcome).nullable(),
   prediction_accuracy: z.number().min(0).max(1).nullable(),
-  
+
   created_at: z.string(),
-  updated_at: z.string()
+  updated_at: z.string(),
 });
 
 export const RetentionStrategySchema = z.object({
   id: z.string().uuid(),
   clinic_id: z.string().uuid(),
-  
+
   name: z.string().min(1).max(100),
   description: z.string().max(500),
   strategy_type: z.nativeEnum(RetentionStrategyType),
   target_risk_levels: z.array(z.nativeEnum(ChurnRiskLevel)),
-  
-  trigger_conditions: z.array(z.object({
-    metric: z.string(),
-    operator: z.enum(['gt', 'lt', 'eq', 'gte', 'lte', 'between']),
-    value: z.union([z.number(), z.string()]),
-    secondary_value: z.number().optional()
-  })),
-  
+
+  trigger_conditions: z.array(
+    z.object({
+      metric: z.string(),
+      operator: z.enum(['gt', 'lt', 'eq', 'gte', 'lte', 'between']),
+      value: z.union([z.number(), z.string()]),
+      secondary_value: z.number().optional(),
+    })
+  ),
+
   actions: z.array(z.any()), // Reference to RetentionAction schema
   timing: z.any(), // Reference to StrategyTiming schema
-  
+
   success_rate: z.number().min(0).max(1),
   patients_targeted: z.number().min(0),
   patients_retained: z.number().min(0),
   cost_per_retention: z.number().min(0),
   roi: z.number(),
-  
+
   is_active: z.boolean(),
   auto_execution: z.boolean(),
-  
+
   created_by: z.string().uuid(),
   created_at: z.string(),
-  updated_at: z.string()
+  updated_at: z.string(),
 });
 
 // =====================================================================================
 // UTILITY TYPES
 // =====================================================================================
 
-export type CreatePatientRetentionMetrics = Omit<PatientRetentionMetrics, 'id' | 'created_at' | 'updated_at'>;
-export type UpdatePatientRetentionMetrics = Partial<CreatePatientRetentionMetrics>;
+export type CreatePatientRetentionMetrics = Omit<
+  PatientRetentionMetrics,
+  'id' | 'created_at' | 'updated_at'
+>;
+export type UpdatePatientRetentionMetrics =
+  Partial<CreatePatientRetentionMetrics>;
 
-export type CreateChurnPrediction = Omit<ChurnPrediction, 'id' | 'created_at' | 'updated_at'>;
+export type CreateChurnPrediction = Omit<
+  ChurnPrediction,
+  'id' | 'created_at' | 'updated_at'
+>;
 export type UpdateChurnPrediction = Partial<CreateChurnPrediction>;
 
-export type CreateRetentionStrategy = Omit<RetentionStrategy, 'id' | 'created_at' | 'updated_at' | 'success_rate' | 'patients_targeted' | 'patients_retained' | 'cost_per_retention' | 'roi'>;
+export type CreateRetentionStrategy = Omit<
+  RetentionStrategy,
+  | 'id'
+  | 'created_at'
+  | 'updated_at'
+  | 'success_rate'
+  | 'patients_targeted'
+  | 'patients_retained'
+  | 'cost_per_retention'
+  | 'roi'
+>;
 export type UpdateRetentionStrategy = Partial<CreateRetentionStrategy>;
 
 // =====================================================================================

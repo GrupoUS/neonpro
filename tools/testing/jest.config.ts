@@ -1,94 +1,56 @@
-import type { Config } from 'jest'
-import nextJest from 'next/jest.js'
+import type { Config } from 'jest';
 
-// Set timezone to UTC for consistent date testing across all environments
-process.env.TZ = 'UTC';
-
-const createJestConfig = nextJest({
-  // Provide the path to your Next.js app to load next.config.js and .env files in your test environment
-  dir: './',
-})
-
-// Add any custom config to be passed to Jest
 const config: Config = {
-  coverageProvider: 'v8',
-  testEnvironment: 'jsdom',
-  
-  // Add more setup options before each test is run
-  setupFilesAfterEnv: [
-    '<rootDir>/jest.setup.ts',
-    '<rootDir>/__tests__/setup/api-setup.ts'
-  ],
-  
-  // Global setup for timezone configuration
-  globalSetup: '<rootDir>/jest.global-setup.js',
-  
-  // Coverage configuration
-  collectCoverage: true,
+  displayName: 'NeonPro Testing Suite',
+  preset: 'ts-jest',
+  testEnvironment: 'node',
+  rootDir: './',
+  testMatch: ['<rootDir>/tests/**/*.test.ts', '<rootDir>/tests/**/*.spec.ts'],
   collectCoverageFrom: [
-    '**/*.{js,jsx,ts,tsx}',
+    '<rootDir>/lib/**/*.{ts,tsx}',
+    '<rootDir>/components/**/*.{ts,tsx}',
+    '<rootDir>/app/**/*.{ts,tsx}',
     '!**/*.d.ts',
     '!**/node_modules/**',
-    '!<rootDir>/out/**',
-    '!<rootDir>/.next/**',
-    '!<rootDir>/*.config.js',
-    '!<rootDir>/coverage/**',
-    '!<rootDir>/.ai/**',
-    '!<rootDir>/docs/**',
+    '!**/.next/**',
   ],
-  
-  // Coverage thresholds (80% minimum as per enterprise standards)
-  coverageThreshold: {
-    global: {
-      branches: 80,
-      functions: 80,
-      lines: 80,
-      statements: 80,
-    },
-  },
-  
-  // Module name mapping for aliases and static assets
+  coverageDirectory: '<rootDir>/coverage',
+  coverageReporters: ['text', 'lcov', 'html'],
+  setupFilesAfterEnv: ['<rootDir>/__tests__/setup.ts'],
   moduleNameMapper: {
-    // Handle CSS imports (with CSS modules)
-    '^.+\\.module\\.(css|sass|scss)$': 'identity-obj-proxy',
-    
-    // Handle CSS imports (without CSS modules)
-    '^.+\\.(css|sass|scss)$': '<rootDir>/__mocks__/styleMock.js',
-    
-    // Handle image imports
-    '^.+\\.(png|jpg|jpeg|gif|webp|avif|ico|bmp|svg)$/i': '<rootDir>/__mocks__/fileMock.js',
-    
-    // Handle module aliases
     '^@/(.*)$': '<rootDir>/$1',
-    
-    // Handle next/font
-    'next/font/(.*)': '<rootDir>/__mocks__/nextFontMock.js',
-    
-    // Mock server-only
-    'server-only': '<rootDir>/__mocks__/empty.js',
+    '^@/lib/(.*)$': '<rootDir>/lib/$1',
+    '^@/components/(.*)$': '<rootDir>/components/$1',
+    '^@/app/(.*)$': '<rootDir>/app/$1',
   },
-  
-  // Test path ignore patterns
-  testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/.next/'],
-  
-  // Transform ignore patterns
-  transformIgnorePatterns: [
-    '/node_modules/',
-    '^.+\\.module\\.(css|sass|scss)$',
-  ],
-  
-  // Test match patterns
-  testMatch: [
-    '<rootDir>/__tests__/**/*.(test|spec).{js,jsx,ts,tsx}',
-    '<rootDir>/**/*.(test|spec).{js,jsx,ts,tsx}',
-  ],
-  
-  // Maximum worker processes for parallel testing
-  maxWorkers: '50%',
-  
-  // Verbose output
+  testTimeout: 30_000,
   verbose: true,
-}
+  projects: [
+    {
+      displayName: 'Unit Tests',
+      testMatch: ['<rootDir>/tests/unit/**/*.test.ts'],
+    },
+    {
+      displayName: 'Integration Tests',
+      testMatch: ['<rootDir>/tests/integration/**/*.test.ts'],
+    },
+    {
+      displayName: 'Performance Tests',
+      testMatch: ['<rootDir>/tests/performance/**/*.test.ts'],
+    },
+    {
+      displayName: 'Security Tests',
+      testMatch: ['<rootDir>/tests/security/**/*.test.ts'],
+    },
+    {
+      displayName: 'Authentication Tests',
+      testMatch: ['<rootDir>/tests/auth/**/*.test.ts'],
+    },
+    {
+      displayName: 'Accessibility Tests',
+      testMatch: ['<rootDir>/tests/accessibility/**/*.spec.ts'],
+    },
+  ],
+};
 
-// createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
-export default createJestConfig(config)
+export default config;

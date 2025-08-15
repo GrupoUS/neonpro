@@ -6,7 +6,7 @@ import { z } from 'zod';
 // Base enums
 export const RiskFactorType = z.enum([
   'historical_attendance',
-  'appointment_timing', 
+  'appointment_timing',
   'demographics',
   'communication_response',
   'weather_sensitivity',
@@ -14,7 +14,7 @@ export const RiskFactorType = z.enum([
   'appointment_type',
   'day_of_week',
   'season',
-  'confirmation_pattern'
+  'confirmation_pattern',
 ]);
 
 export const InterventionType = z.enum([
@@ -23,20 +23,20 @@ export const InterventionType = z.enum([
   'incentive_offer',
   'flexible_rescheduling',
   'personal_call',
-  'priority_booking'
+  'priority_booking',
 ]);
 
 export const AppointmentOutcome = z.enum([
   'attended',
   'no_show',
   'cancelled',
-  'rescheduled'
+  'rescheduled',
 ]);
 
 export const InterventionOutcome = z.enum([
   'successful',
   'failed',
-  'no_response'
+  'no_response',
 ]);
 
 // Core schemas
@@ -53,7 +53,7 @@ export const NoShowPredictionSchema = z.object({
   prediction_accuracy: z.number().min(0).max(1).optional(),
   model_version: z.string(),
   created_at: z.string().datetime(),
-  updated_at: z.string().datetime()
+  updated_at: z.string().datetime(),
 });
 
 export const RiskFactorSchema = z.object({
@@ -64,7 +64,7 @@ export const RiskFactorSchema = z.object({
   weight_score: z.number().min(0).max(1),
   last_updated: z.string().datetime(),
   calculation_details: z.record(z.any()),
-  created_at: z.string().datetime()
+  created_at: z.string().datetime(),
 });
 
 export const InterventionStrategySchema = z.object({
@@ -78,7 +78,7 @@ export const InterventionStrategySchema = z.object({
   result_outcome: InterventionOutcome.optional(),
   cost_impact: z.number(),
   created_at: z.string().datetime(),
-  updated_at: z.string().datetime()
+  updated_at: z.string().datetime(),
 });
 
 export const NoShowAnalyticsSchema = z.object({
@@ -93,7 +93,7 @@ export const NoShowAnalyticsSchema = z.object({
   model_performance_metrics: z.record(z.any()),
   clinic_id: z.string().uuid(),
   created_at: z.string().datetime(),
-  updated_at: z.string().datetime()
+  updated_at: z.string().datetime(),
 });
 
 // Input schemas for API endpoints
@@ -104,7 +104,7 @@ export const CreatePredictionInputSchema = z.object({
   prediction_confidence: z.number().min(0).max(1),
   factors_analyzed: z.record(z.any()),
   intervention_recommended: z.boolean(),
-  model_version: z.string().default('v1.0')
+  model_version: z.string().default('v1.0'),
 });
 
 export const UpdatePredictionInputSchema = z.object({
@@ -112,7 +112,7 @@ export const UpdatePredictionInputSchema = z.object({
   prediction_confidence: z.number().min(0).max(1).optional(),
   factors_analyzed: z.record(z.any()).optional(),
   intervention_recommended: z.boolean().optional(),
-  actual_outcome: AppointmentOutcome.optional()
+  actual_outcome: AppointmentOutcome.optional(),
 });
 
 export const CreateRiskFactorInputSchema = z.object({
@@ -120,14 +120,14 @@ export const CreateRiskFactorInputSchema = z.object({
   factor_type: RiskFactorType,
   factor_value: z.number(),
   weight_score: z.number().min(0).max(1),
-  calculation_details: z.record(z.any()).optional()
+  calculation_details: z.record(z.any()).optional(),
 });
 
 export const CreateInterventionInputSchema = z.object({
   prediction_id: z.string().uuid(),
   intervention_type: InterventionType,
   trigger_time: z.string().datetime(),
-  intervention_details: z.record(z.any()).optional()
+  intervention_details: z.record(z.any()).optional(),
 });
 
 export const UpdateInterventionInputSchema = z.object({
@@ -135,7 +135,7 @@ export const UpdateInterventionInputSchema = z.object({
   effectiveness_score: z.number().min(0).max(1).optional(),
   intervention_details: z.record(z.any()).optional(),
   result_outcome: InterventionOutcome.optional(),
-  cost_impact: z.number().optional()
+  cost_impact: z.number().optional(),
 });
 
 // Analysis and reporting schemas
@@ -147,14 +147,14 @@ export const PredictionAnalysisSchema = z.object({
     total_appointments: z.number().int(),
     no_shows: z.number().int(),
     attendance_rate: z.number().min(0).max(1),
-    last_attendance: z.string().datetime().optional()
+    last_attendance: z.string().datetime().optional(),
   }),
   prediction_result: z.object({
     risk_score: z.number().min(0).max(1),
     confidence: z.number().min(0).max(1),
     intervention_recommended: z.boolean(),
-    key_factors: z.array(z.string())
-  })
+    key_factors: z.array(z.string()),
+  }),
 });
 
 export const ModelPerformanceSchema = z.object({
@@ -169,14 +169,14 @@ export const ModelPerformanceSchema = z.object({
   false_negatives: z.number().int(),
   evaluation_period: z.object({
     start_date: z.string().date(),
-    end_date: z.string().date()
-  })
+    end_date: z.string().date(),
+  }),
 });
 
 export const NoShowTrendsSchema = z.object({
   period: z.object({
     start_date: z.string().date(),
-    end_date: z.string().date()
+    end_date: z.string().date(),
   }),
   overall_stats: z.object({
     total_appointments: z.number().int(),
@@ -184,18 +184,22 @@ export const NoShowTrendsSchema = z.object({
     actual_no_shows: z.number().int(),
     accuracy_rate: z.number().min(0).max(1),
     cost_impact: z.number(),
-    revenue_recovered: z.number()
+    revenue_recovered: z.number(),
   }),
-  trends_by_factor: z.record(z.object({
-    factor_impact: z.number().min(0).max(1),
-    trend_direction: z.enum(['increasing', 'decreasing', 'stable']),
-    correlation_strength: z.number().min(-1).max(1)
-  })),
-  intervention_effectiveness: z.record(z.object({
-    success_rate: z.number().min(0).max(1),
-    cost_per_prevention: z.number(),
-    roi: z.number()
-  }))
+  trends_by_factor: z.record(
+    z.object({
+      factor_impact: z.number().min(0).max(1),
+      trend_direction: z.enum(['increasing', 'decreasing', 'stable']),
+      correlation_strength: z.number().min(-1).max(1),
+    })
+  ),
+  intervention_effectiveness: z.record(
+    z.object({
+      success_rate: z.number().min(0).max(1),
+      cost_per_prevention: z.number(),
+      roi: z.number(),
+    })
+  ),
 });
 
 // Dashboard visualization schemas
@@ -204,20 +208,20 @@ export const NoShowDashboardStatsSchema = z.object({
     high_risk_appointments: z.number().int(),
     interventions_scheduled: z.number().int(),
     predicted_no_shows: z.number().int(),
-    estimated_cost_impact: z.number()
+    estimated_cost_impact: z.number(),
   }),
   this_week: z.object({
     accuracy_rate: z.number().min(0).max(1),
     interventions_executed: z.number().int(),
     successful_interventions: z.number().int(),
-    revenue_saved: z.number()
+    revenue_saved: z.number(),
   }),
   this_month: z.object({
     total_predictions: z.number().int(),
     model_accuracy: z.number().min(0).max(1),
     cost_savings: z.number(),
-    trend_analysis: z.string()
-  })
+    trend_analysis: z.string(),
+  }),
 });
 
 export const RiskFactorAnalysisSchema = z.object({
@@ -229,8 +233,8 @@ export const RiskFactorAnalysisSchema = z.object({
   sample_size: z.number().int(),
   confidence_interval: z.object({
     lower: z.number(),
-    upper: z.number()
-  })
+    upper: z.number(),
+  }),
 });
 
 // Type exports
@@ -242,8 +246,12 @@ export type NoShowAnalytics = z.infer<typeof NoShowAnalyticsSchema>;
 export type CreatePredictionInput = z.infer<typeof CreatePredictionInputSchema>;
 export type UpdatePredictionInput = z.infer<typeof UpdatePredictionInputSchema>;
 export type CreateRiskFactorInput = z.infer<typeof CreateRiskFactorInputSchema>;
-export type CreateInterventionInput = z.infer<typeof CreateInterventionInputSchema>;
-export type UpdateInterventionInput = z.infer<typeof UpdateInterventionInputSchema>;
+export type CreateInterventionInput = z.infer<
+  typeof CreateInterventionInputSchema
+>;
+export type UpdateInterventionInput = z.infer<
+  typeof UpdateInterventionInputSchema
+>;
 
 export type PredictionAnalysis = z.infer<typeof PredictionAnalysisSchema>;
 export type ModelPerformance = z.infer<typeof ModelPerformanceSchema>;

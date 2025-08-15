@@ -5,36 +5,35 @@
  * Compliance: LGPD + ANVISA + CFM + Brazilian regulations
  */
 
-import { 
-  NotificationChannel, 
-  NotificationProvider, 
-  NotificationResult,
-  NotificationMetadata,
+import type {
   HealthcareNotificationContext,
   LGPDCompliantData,
-  NotificationPreferences 
+  NotificationChannel,
+  NotificationMetadata,
+  NotificationPreferences,
+  NotificationResult,
 } from '../types/notifications';
 
 // Import all channel providers
-import { 
-  EmailProviderFactory, 
-  EmailParams, 
-  EmailProviderConfig 
+import {
+  type EmailParams,
+  type EmailProviderConfig,
+  EmailProviderFactory,
 } from './email-provider';
-import { 
-  PushProviderFactory, 
-  PushParams, 
-  PushProviderConfig 
+import {
+  type PushParams,
+  type PushProviderConfig,
+  PushProviderFactory,
 } from './push-provider';
-import { 
-  SMSProviderFactory, 
-  SMSParams, 
-  SMSProviderConfig 
+import {
+  type SMSParams,
+  type SMSProviderConfig,
+  SMSProviderFactory,
 } from './sms-provider';
-import { 
-  WhatsAppProviderFactory, 
-  WhatsAppParams, 
-  WhatsAppProviderConfig 
+import {
+  type WhatsAppParams,
+  type WhatsAppProviderConfig,
+  WhatsAppProviderFactory,
 } from './whatsapp-provider';
 
 // Channel orchestrator types
@@ -143,7 +142,8 @@ class NotificationChannelOrchestrator {
   private smsFactory: SMSProviderFactory;
   private whatsappFactory: WhatsAppProviderFactory;
   private config: ChannelOrchestratorConfig;
-  private healthCache: Map<NotificationChannel, ChannelHealthStatus> = new Map();
+  private healthCache: Map<NotificationChannel, ChannelHealthStatus> =
+    new Map();
   private lastHealthCheck: Date = new Date(0);
 
   constructor(config: ChannelOrchestratorConfig) {
@@ -157,7 +157,9 @@ class NotificationChannelOrchestrator {
   /**
    * Send notification across multiple channels with intelligent routing and fallback
    */
-  async sendMultiChannel(params: MultiChannelNotificationParams): Promise<MultiChannelResult> {
+  async sendMultiChannel(
+    params: MultiChannelNotificationParams
+  ): Promise<MultiChannelResult> {
     const startTime = Date.now();
     const results: MultiChannelResult['results'] = [];
     const deliveredChannels: NotificationChannel[] = [];
@@ -167,24 +169,34 @@ class NotificationChannelOrchestrator {
     try {
       // Determine optimal channels based on urgency, preferences, and health
       const optimalChannels = await this.determineOptimalChannels(params);
-      
+
       // Apply user preferences and compliance filters
-      const filteredChannels = await this.applyUserPreferences(optimalChannels, params);
-      
+      const filteredChannels = await this.applyUserPreferences(
+        optimalChannels,
+        params
+      );
+
       // Primary channel attempts
-      const primaryResults = await this.attemptChannels(filteredChannels, params, results);
-      
+      const primaryResults = await this.attemptChannels(
+        filteredChannels,
+        params,
+        results
+      );
+
       // Determine if fallback is needed
       const needsFallback = this.shouldUseFallback(primaryResults, params);
-      
+
       if (needsFallback && params.options?.allowFallback !== false) {
         fallbackUsed = true;
-        const fallbackChannels = await this.determineFallbackChannels(params, failedChannels);
+        const fallbackChannels = await this.determineFallbackChannels(
+          params,
+          failedChannels
+        );
         await this.attemptChannels(fallbackChannels, params, results);
       }
 
       // Categorize results
-      results.forEach(result => {
+      results.forEach((result) => {
         if (result.result.success) {
           deliveredChannels.push(result.channel);
         } else {
@@ -214,10 +226,9 @@ class NotificationChannelOrchestrator {
           deliveryRate: deliveredChannels.length / results.length,
         },
       };
-
     } catch (error) {
       const totalDuration = Date.now() - startTime;
-      
+
       return {
         success: false,
         results,
@@ -238,7 +249,7 @@ class NotificationChannelOrchestrator {
    * Send notification to specific channel
    */
   async sendToChannel(
-    channel: NotificationChannel, 
+    channel: NotificationChannel,
     params: MultiChannelNotificationParams
   ): Promise<NotificationResult> {
     try {
@@ -265,13 +276,18 @@ class NotificationChannelOrchestrator {
           if (!params.content.whatsapp) {
             throw new Error('WhatsApp content not provided');
           }
-          return await this.whatsappFactory.sendWhatsApp(params.content.whatsapp);
+          return await this.whatsappFactory.sendWhatsApp(
+            params.content.whatsapp
+          );
 
         case 'in_app':
           if (!params.content.inApp) {
             throw new Error('In-app content not provided');
           }
-          return await this.sendInAppNotification(params.content.inApp, params.metadata);
+          return await this.sendInAppNotification(
+            params.content.inApp,
+            params.metadata
+          );
 
         default:
           throw new Error(`Unsupported channel: ${channel}`);
@@ -293,9 +309,12 @@ class NotificationChannelOrchestrator {
    */
   async checkChannelHealth(): Promise<ChannelHealthStatus[]> {
     const now = new Date();
-    
+
     // Cache health checks for 1 minute
-    if (now.getTime() - this.lastHealthCheck.getTime() < 60000 && this.healthCache.size > 0) {
+    if (
+      now.getTime() - this.lastHealthCheck.getTime() < 60_000 &&
+      this.healthCache.size > 0
+    ) {
       return Array.from(this.healthCache.values());
     }
 
@@ -307,11 +326,16 @@ class NotificationChannelOrchestrator {
     ]);
 
     const healthStatuses: ChannelHealthStatus[] = [];
-    
+
     healthChecks.forEach((result, index) => {
-      const channels: NotificationChannel[] = ['email', 'push', 'sms', 'whatsapp'];
+      const channels: NotificationChannel[] = [
+        'email',
+        'push',
+        'sms',
+        'whatsapp',
+      ];
       const channel = channels[index];
-      
+
       if (result.status === 'fulfilled') {
         healthStatuses.push(result.value);
         this.healthCache.set(channel, result.value);
@@ -334,7 +358,7 @@ class NotificationChannelOrchestrator {
   /**
    * Get channel analytics and performance metrics
    */
-  async getChannelAnalytics(timeRange: { start: Date; end: Date }): Promise<{
+  async getChannelAnalytics(_timeRange: { start: Date; end: Date }): Promise<{
     [channel in NotificationChannel]?: {
       sent: number;
       delivered: number;
@@ -346,7 +370,7 @@ class NotificationChannelOrchestrator {
         costPerMessage: number;
         currency: string;
       };
-    }
+    };
   }> {
     // This would typically query analytics database
     // For now, return mock data structure
@@ -384,14 +408,17 @@ class NotificationChannelOrchestrator {
 
   // Private methods for internal orchestration
 
-  private async determineOptimalChannels(params: MultiChannelNotificationParams): Promise<NotificationChannel[]> {
+  private async determineOptimalChannels(
+    params: MultiChannelNotificationParams
+  ): Promise<NotificationChannel[]> {
     // Start with requested channels
     let channels = [...params.channels];
-    
+
     // Apply urgency-based routing
     if (this.config.routing.urgencyMapping[params.urgency]) {
-      const urgencyChannels = this.config.routing.urgencyMapping[params.urgency];
-      channels = channels.filter(ch => urgencyChannels.includes(ch));
+      const urgencyChannels =
+        this.config.routing.urgencyMapping[params.urgency];
+      channels = channels.filter((ch) => urgencyChannels.includes(ch));
     }
 
     // Apply time-based routing
@@ -401,17 +428,23 @@ class NotificationChannelOrchestrator {
     const isBusinessHours = hour >= 8 && hour < 18 && !isWeekend;
 
     if (isBusinessHours) {
-      channels = channels.filter(ch => this.config.routing.timeBasedRouting.businessHours.includes(ch));
+      channels = channels.filter((ch) =>
+        this.config.routing.timeBasedRouting.businessHours.includes(ch)
+      );
     } else if (isWeekend) {
-      channels = channels.filter(ch => this.config.routing.timeBasedRouting.weekends.includes(ch));
+      channels = channels.filter((ch) =>
+        this.config.routing.timeBasedRouting.weekends.includes(ch)
+      );
     } else {
-      channels = channels.filter(ch => this.config.routing.timeBasedRouting.afterHours.includes(ch));
+      channels = channels.filter((ch) =>
+        this.config.routing.timeBasedRouting.afterHours.includes(ch)
+      );
     }
 
     // Check channel health
     const healthStatuses = await this.checkChannelHealth();
-    channels = channels.filter(ch => {
-      const health = healthStatuses.find(h => h.channel === ch);
+    channels = channels.filter((ch) => {
+      const health = healthStatuses.find((h) => h.channel === ch);
       return health?.healthy !== false;
     });
 
@@ -419,7 +452,7 @@ class NotificationChannelOrchestrator {
   }
 
   private async applyUserPreferences(
-    channels: NotificationChannel[], 
+    channels: NotificationChannel[],
     params: MultiChannelNotificationParams
   ): Promise<NotificationChannel[]> {
     if (!params.metadata.userPreferences) {
@@ -427,16 +460,22 @@ class NotificationChannelOrchestrator {
     }
 
     const prefs = params.metadata.userPreferences;
-    
+
     // Filter by enabled channels
-    let filteredChannels = channels.filter(ch => {
+    let filteredChannels = channels.filter((ch) => {
       switch (ch) {
-        case 'email': return prefs.email.enabled;
-        case 'push': return prefs.push.enabled;
-        case 'sms': return prefs.sms.enabled;
-        case 'whatsapp': return prefs.whatsapp.enabled;
-        case 'in_app': return prefs.inApp.enabled;
-        default: return true;
+        case 'email':
+          return prefs.email.enabled;
+        case 'push':
+          return prefs.push.enabled;
+        case 'sms':
+          return prefs.sms.enabled;
+        case 'whatsapp':
+          return prefs.whatsapp.enabled;
+        case 'in_app':
+          return prefs.inApp.enabled;
+        default:
+          return true;
       }
     });
 
@@ -444,19 +483,18 @@ class NotificationChannelOrchestrator {
     if (params.options?.respectQuietHours !== false) {
       const now = new Date();
       const currentHour = now.getHours();
-      
-      filteredChannels = filteredChannels.filter(ch => {
+
+      filteredChannels = filteredChannels.filter((ch) => {
         const channelPrefs = prefs[ch as keyof NotificationPreferences] as any;
         if (channelPrefs?.quietHours) {
           const { start, end } = channelPrefs.quietHours;
-          const startHour = parseInt(start.split(':')[0]);
-          const endHour = parseInt(end.split(':')[0]);
-          
+          const startHour = Number.parseInt(start.split(':')[0], 10);
+          const endHour = Number.parseInt(end.split(':')[0], 10);
+
           if (startHour <= endHour) {
             return currentHour < startHour || currentHour >= endHour;
-          } else {
-            return currentHour >= endHour && currentHour < startHour;
           }
+          return currentHour >= endHour && currentHour < startHour;
         }
         return true;
       });
@@ -466,19 +504,20 @@ class NotificationChannelOrchestrator {
   }
 
   private async attemptChannels(
-    channels: NotificationChannel[], 
-    params: MultiChannelNotificationParams, 
+    channels: NotificationChannel[],
+    params: MultiChannelNotificationParams,
     results: MultiChannelResult['results']
   ): Promise<void> {
     for (const channel of channels) {
-      const attemptNumber = results.filter(r => r.channel === channel).length + 1;
-      
+      const attemptNumber =
+        results.filter((r) => r.channel === channel).length + 1;
+
       if (attemptNumber > this.config.fallback.maxRetries) {
         continue;
       }
 
       const result = await this.sendToChannel(channel, params);
-      
+
       results.push({
         channel,
         result,
@@ -492,13 +531,15 @@ class NotificationChannelOrchestrator {
 
       // If failed and retries are configured, wait and retry
       if (attemptNumber < this.config.fallback.maxRetries) {
-        await new Promise(resolve => setTimeout(resolve, this.config.fallback.retryDelayMs));
+        await new Promise((resolve) =>
+          setTimeout(resolve, this.config.fallback.retryDelayMs)
+        );
       }
     }
   }
 
   private shouldUseFallback(
-    results: MultiChannelResult['results'], 
+    results: MultiChannelResult['results'],
     params: MultiChannelNotificationParams
   ): boolean {
     if (!this.config.fallback.enabled) {
@@ -506,13 +547,16 @@ class NotificationChannelOrchestrator {
     }
 
     // Use fallback if no channels were successful
-    const successfulChannels = results.filter(r => r.result.success);
+    const successfulChannels = results.filter((r) => r.result.success);
     if (successfulChannels.length === 0) {
       return true;
     }
 
     // Use fallback for critical messages if primary channels failed
-    if (params.urgency === 'critical' && successfulChannels.length < params.channels.length) {
+    if (
+      params.urgency === 'critical' &&
+      successfulChannels.length < params.channels.length
+    ) {
       return true;
     }
 
@@ -520,23 +564,24 @@ class NotificationChannelOrchestrator {
   }
 
   private async determineFallbackChannels(
-    params: MultiChannelNotificationParams, 
+    params: MultiChannelNotificationParams,
     failedChannels: NotificationChannel[]
   ): Promise<NotificationChannel[]> {
-    const fallbackChannels = params.fallbackChannels || this.config.fallback.channelPriority;
-    
+    const fallbackChannels =
+      params.fallbackChannels || this.config.fallback.channelPriority;
+
     // Exclude channels that already failed
-    return fallbackChannels.filter(ch => !failedChannels.includes(ch));
+    return fallbackChannels.filter((ch) => !failedChannels.includes(ch));
   }
 
   private async sendInAppNotification(
-    params: InAppNotificationParams, 
+    _params: InAppNotificationParams,
     metadata: NotificationMetadata
   ): Promise<NotificationResult> {
     try {
       // This would typically save to database and push via WebSocket/SSE
       // For now, simulate success
-      
+
       return {
         success: true,
         messageId: `in-app-${Date.now()}`,
@@ -548,7 +593,8 @@ class NotificationChannelOrchestrator {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'In-app notification failed',
+        error:
+          error instanceof Error ? error.message : 'In-app notification failed',
         providerId: 'in-app-provider',
         channel: 'in_app',
         timestamp: new Date(),
@@ -569,7 +615,7 @@ class NotificationChannelOrchestrator {
         lastCheck: new Date(),
         provider: provider.id,
       };
-    } catch (error) {
+    } catch (_error) {
       return {
         channel: 'email',
         healthy: false,
@@ -591,7 +637,7 @@ class NotificationChannelOrchestrator {
         lastCheck: new Date(),
         provider: provider.id,
       };
-    } catch (error) {
+    } catch (_error) {
       return {
         channel: 'push',
         healthy: false,
@@ -613,7 +659,7 @@ class NotificationChannelOrchestrator {
         lastCheck: new Date(),
         provider: provider.id,
       };
-    } catch (error) {
+    } catch (_error) {
       return {
         channel: 'sms',
         healthy: false,
@@ -635,7 +681,7 @@ class NotificationChannelOrchestrator {
         lastCheck: new Date(),
         provider: provider.id,
       };
-    } catch (error) {
+    } catch (_error) {
       return {
         channel: 'whatsapp',
         healthy: false,
@@ -646,8 +692,8 @@ class NotificationChannelOrchestrator {
   }
 
   private async trackAnalytics(
-    params: MultiChannelNotificationParams, 
-    results: MultiChannelResult['results'], 
+    params: MultiChannelNotificationParams,
+    results: MultiChannelResult['results'],
     duration: number
   ): Promise<void> {
     // This would typically save analytics to database
@@ -656,7 +702,10 @@ class NotificationChannelOrchestrator {
       console.log('[Analytics] Notification delivery tracked:', {
         urgency: params.urgency,
         channels: params.channels,
-        results: results.map(r => ({ channel: r.channel, success: r.result.success })),
+        results: results.map((r) => ({
+          channel: r.channel,
+          success: r.result.success,
+        })),
         duration,
         timestamp: new Date(),
       });
@@ -665,11 +714,11 @@ class NotificationChannelOrchestrator {
 }
 
 // Export types and orchestrator
-export type { 
-  ChannelOrchestratorConfig, 
-  MultiChannelNotificationParams, 
-  MultiChannelResult, 
+export type {
+  ChannelOrchestratorConfig,
+  MultiChannelNotificationParams,
+  MultiChannelResult,
   ChannelHealthStatus,
-  InAppNotificationParams 
+  InAppNotificationParams,
 };
 export { NotificationChannelOrchestrator };

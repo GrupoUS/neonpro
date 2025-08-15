@@ -1,15 +1,15 @@
 // API Routes for Individual Threshold Management
 // Story 6.2: Automated Reorder Alerts + Threshold Management
 
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { IntelligentThresholdService } from '@/app/lib/services/intelligent-threshold-service';
 import { updateReorderThresholdSchema } from '@/app/lib/validations/reorder-alerts';
-import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
 
 const thresholdService = new IntelligentThresholdService();
 
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
@@ -29,10 +29,10 @@ export async function GET(
   } catch (error: any) {
     console.error('Error fetching threshold:', error);
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: 'Failed to fetch threshold',
-        details: error.message 
+        details: error.message,
       },
       { status: 500 }
     );
@@ -47,7 +47,10 @@ export async function PATCH(
     const body = await request.json();
     const validatedUpdates = updateReorderThresholdSchema.parse(body);
 
-    const threshold = await thresholdService.updateThreshold(params.id, validatedUpdates);
+    const threshold = await thresholdService.updateThreshold(
+      params.id,
+      validatedUpdates
+    );
 
     return NextResponse.json({
       success: true,
@@ -56,23 +59,23 @@ export async function PATCH(
     });
   } catch (error: any) {
     console.error('Error updating threshold:', error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { 
-          success: false, 
+        {
+          success: false,
           error: 'Validation failed',
-          details: error.errors 
+          details: error.errors,
         },
         { status: 400 }
       );
     }
 
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: 'Failed to update threshold',
-        details: error.message 
+        details: error.message,
       },
       { status: 500 }
     );
@@ -80,7 +83,7 @@ export async function PATCH(
 }
 
 export async function DELETE(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
@@ -98,10 +101,10 @@ export async function DELETE(
   } catch (error: any) {
     console.error('Error deactivating threshold:', error);
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: 'Failed to deactivate threshold',
-        details: error.message 
+        details: error.message,
       },
       { status: 500 }
     );

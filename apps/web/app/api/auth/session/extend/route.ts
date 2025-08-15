@@ -3,14 +3,11 @@
  * Extends session timeout with custom duration
  */
 
-import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import { type NextRequest, NextResponse } from 'next/server';
 import { SessionManager } from '@/lib/auth/session-manager';
 import { createClient } from '@/lib/supabase/server';
-import {
-  SecurityEventType,
-  SecuritySeverity
-} from '@/types/session';
+import { SecurityEventType, SecuritySeverity } from '@/types/session';
 
 // Initialize session manager
 let sessionManager: SessionManager | null = null;
@@ -24,9 +21,11 @@ async function getSessionManager() {
       enableDeviceTracking: true,
       enableSecurityMonitoring: true,
       enableSuspiciousActivityDetection: true,
-      sessionCleanupInterval: 300000,
+      sessionCleanupInterval: 300_000,
       securityEventRetention: 30 * 24 * 60 * 60 * 1000,
-      encryptionKey: process.env.SESSION_ENCRYPTION_KEY || 'default-key-change-in-production'
+      encryptionKey:
+        process.env.SESSION_ENCRYPTION_KEY ||
+        'default-key-change-in-production',
     });
   }
   return sessionManager;
@@ -37,7 +36,7 @@ export async function POST(request: NextRequest) {
     const { extendMinutes, reason } = await request.json();
     const cookieStore = cookies();
     const sessionToken = cookieStore.get('session-token')?.value;
-    
+
     if (!sessionToken) {
       return NextResponse.json(
         { error: 'No session token found' },
@@ -45,44 +44,46 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!extendMinutes || extendMinutes <= 0 || extendMinutes > 480) { // Max 8 hours
+    if (!extendMinutes || extendMinutes <= 0 || extendMinutes > 480) {
+      // Max 8 hours
       return NextResponse.json(
-        { error: 'Invalid extension duration. Must be between 1 and 480 minutes.' },
+        {
+          error:
+            'Invalid extension duration. Must be between 1 and 480 minutes.',
+        },
         { status: 400 }
       );
     }
 
     const manager = await getSessionManager();
-    const clientIP = request.headers.get('x-forwarded-for') || 
-                    request.headers.get('x-real-ip') || 
-                    '127.0.0.1';
+    const clientIP =
+      request.headers.get('x-forwarded-for') ||
+      request.headers.get('x-real-ip') ||
+      '127.0.0.1';
     const userAgent = request.headers.get('user-agent') || 'Unknown';
 
     // Validate current session first
     const validation = await manager.validateSession(sessionToken, {
       ip_address: clientIP,
-      user_agent: userAgent
+      user_agent: userAgent,
     });
 
     if (!validation.valid) {
-      return NextResponse.json(
-        { error: 'Invalid session' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Invalid session' }, { status: 401 });
     }
 
     // Get current session
     const currentSession = await manager.getSession(sessionToken);
     if (!currentSession) {
-      return NextResponse.json(
-        { error: 'Session not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Session not found' }, { status: 404 });
     }
 
     // Extend the session
-    const extendedSession = await manager.extendSession(sessionToken, extendMinutes);
-    
+    const extendedSession = await manager.extendSession(
+      sessionToken,
+      extendMinutes
+    );
+
     if (!extendedSession) {
       return NextResponse.json(
         { error: 'Failed to extend session' },
@@ -103,19 +104,18 @@ export async function POST(request: NextRequest) {
         reason: reason || 'User request',
         old_expires_at: currentSession.expires_at,
         new_expires_at: extendedSession.expires_at,
-        timestamp: new Date().toISOString()
-      }
+        timestamp: new Date().toISOString(),
+      },
     });
 
     return NextResponse.json({
       success: true,
       session: extendedSession,
-      message: `Session extended by ${extendMinutes} minutes`
+      message: `Session extended by ${extendMinutes} minutes`,
     });
-
   } catch (error) {
     console.error('Session extension error:', error);
-    
+
     return NextResponse.json(
       { error: 'Internal server error during session extension' },
       { status: 500 }
@@ -123,7 +123,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function OPTIONS(request: NextRequest) {
+export async function OPTIONS(_request: NextRequest) {
   return new NextResponse(null, {
     status: 200,
     headers: {

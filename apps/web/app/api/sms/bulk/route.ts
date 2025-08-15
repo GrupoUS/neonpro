@@ -1,7 +1,7 @@
 // SMS Bulk Send API for NeonPro
 // Send bulk SMS messages with rate limiting and batch processing
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { smsService } from '@/app/lib/services/sms-service';
 import { BulkSMSSchema } from '@/app/types/sms';
@@ -11,16 +11,18 @@ export async function POST(request: NextRequest) {
   try {
     // Check authentication
     const supabase = await createClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
     if (!session) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: { 
-            code: 'UNAUTHORIZED', 
-            message: 'Authentication required' 
-          } 
+        {
+          success: false,
+          error: {
+            code: 'UNAUTHORIZED',
+            message: 'Authentication required',
+          },
         },
         { status: 401 }
       );
@@ -37,8 +39,8 @@ export async function POST(request: NextRequest) {
           success: false,
           error: {
             code: 'BULK_LIMIT_EXCEEDED',
-            message: 'Maximum 1000 messages allowed per bulk request'
-          }
+            message: 'Maximum 1000 messages allowed per bulk request',
+          },
         },
         { status: 400 }
       );
@@ -50,7 +52,7 @@ export async function POST(request: NextRequest) {
       messages: validatedData.messages,
       template_id: validatedData.template_id,
       scheduled_at: validatedData.scheduled_at,
-      batch_size: validatedData.batch_size
+      batch_size: validatedData.batch_size,
     });
 
     return NextResponse.json(
@@ -61,12 +63,11 @@ export async function POST(request: NextRequest) {
           timestamp: new Date().toISOString(),
           request_id: `bulk_${Date.now()}`,
           user_id: session.user.id,
-          total_recipients: validatedData.messages.length
-        }
+          total_recipients: validatedData.messages.length,
+        },
       },
       { status: 200 }
     );
-
   } catch (error) {
     console.error('SMS bulk send error:', error);
 
@@ -78,8 +79,8 @@ export async function POST(request: NextRequest) {
           error: {
             code: 'VALIDATION_ERROR',
             message: 'Invalid request data',
-            details: error.errors
-          }
+            details: error.errors,
+          },
         },
         { status: 400 }
       );
@@ -94,8 +95,8 @@ export async function POST(request: NextRequest) {
           error: {
             code: error.code,
             message: error.message || 'SMS service error',
-            details: process.env.NODE_ENV === 'development' ? error : undefined
-          }
+            details: process.env.NODE_ENV === 'development' ? error : undefined,
+          },
         },
         { status: statusCode }
       );
@@ -108,8 +109,8 @@ export async function POST(request: NextRequest) {
         error: {
           code: 'INTERNAL_ERROR',
           message: 'Internal server error',
-          details: process.env.NODE_ENV === 'development' ? error : undefined
-        }
+          details: process.env.NODE_ENV === 'development' ? error : undefined,
+        },
       },
       { status: 500 }
     );
@@ -123,16 +124,18 @@ export async function GET(request: NextRequest) {
   try {
     // Check authentication
     const supabase = await createClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
     if (!session) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: { 
-            code: 'UNAUTHORIZED', 
-            message: 'Authentication required' 
-          } 
+        {
+          success: false,
+          error: {
+            code: 'UNAUTHORIZED',
+            message: 'Authentication required',
+          },
         },
         { status: 401 }
       );
@@ -159,8 +162,8 @@ export async function GET(request: NextRequest) {
             success: false,
             error: {
               code: 'BATCH_NOT_FOUND',
-              message: 'Bulk batch not found'
-            }
+              message: 'Bulk batch not found',
+            },
           },
           { status: 404 }
         );
@@ -169,22 +172,24 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(
         {
           success: true,
-          data: data,
+          data,
           metadata: {
             timestamp: new Date().toISOString(),
-            request_id: `batch_status_${Date.now()}`
-          }
+            request_id: `batch_status_${Date.now()}`,
+          },
         },
         { status: 200 }
       );
-    } else {
-      // Get bulk sending statistics
-      const hoursBack = timeframe === '24h' ? 24 : timeframe === '7d' ? 168 : 24;
-      const startDate = new Date(Date.now() - hoursBack * 60 * 60 * 1000).toISOString();
+    }
+    // Get bulk sending statistics
+    const hoursBack = timeframe === '24h' ? 24 : timeframe === '7d' ? 168 : 24;
+    const startDate = new Date(
+      Date.now() - hoursBack * 60 * 60 * 1000
+    ).toISOString();
 
-      const { data, error } = await supabase
-        .from('sms_bulk_batches')
-        .select(`
+    const { data, error } = await supabase
+      .from('sms_bulk_batches')
+      .select(`
           *,
           sms_messages(
             status,
@@ -192,53 +197,66 @@ export async function GET(request: NextRequest) {
             created_at
           )
         `)
-        .gte('created_at', startDate)
-        .order('created_at', { ascending: false });
+      .gte('created_at', startDate)
+      .order('created_at', { ascending: false });
 
-      if (error) throw error;
+    if (error) throw error;
 
-      const stats = {
-        total_batches: data?.length || 0,
-        total_messages: data?.reduce((sum, batch) => sum + (batch.sms_messages?.length || 0), 0) || 0,
-        total_cost: data?.reduce((sum, batch) => 
-          sum + (batch.sms_messages?.reduce((msgSum: number, msg: any) => msgSum + (msg.cost || 0), 0) || 0), 0
+    const stats = {
+      total_batches: data?.length || 0,
+      total_messages:
+        data?.reduce(
+          (sum, batch) => sum + (batch.sms_messages?.length || 0),
+          0
         ) || 0,
-        status_breakdown: data?.reduce((acc, batch) => {
-          batch.sms_messages?.forEach((msg: any) => {
-            acc[msg.status] = (acc[msg.status] || 0) + 1;
-          });
-          return acc;
-        }, {} as Record<string, number>) || {}
-      };
-
-      return NextResponse.json(
-        {
-          success: true,
-          data: {
-            batches: data || [],
-            statistics: stats
+      total_cost:
+        data?.reduce(
+          (sum, batch) =>
+            sum +
+            (batch.sms_messages?.reduce(
+              (msgSum: number, msg: any) => msgSum + (msg.cost || 0),
+              0
+            ) || 0),
+          0
+        ) || 0,
+      status_breakdown:
+        data?.reduce(
+          (acc, batch) => {
+            batch.sms_messages?.forEach((msg: any) => {
+              acc[msg.status] = (acc[msg.status] || 0) + 1;
+            });
+            return acc;
           },
-          metadata: {
-            timestamp: new Date().toISOString(),
-            request_id: `bulk_stats_${Date.now()}`,
-            timeframe
-          }
-        },
-        { status: 200 }
-      );
-    }
+          {} as Record<string, number>
+        ) || {},
+    };
 
+    return NextResponse.json(
+      {
+        success: true,
+        data: {
+          batches: data || [],
+          statistics: stats,
+        },
+        metadata: {
+          timestamp: new Date().toISOString(),
+          request_id: `bulk_stats_${Date.now()}`,
+          timeframe,
+        },
+      },
+      { status: 200 }
+    );
   } catch (error) {
     console.error('SMS bulk status error:', error);
-    
+
     return NextResponse.json(
       {
         success: false,
         error: {
           code: 'INTERNAL_ERROR',
           message: 'Failed to fetch bulk SMS status',
-          details: process.env.NODE_ENV === 'development' ? error : undefined
-        }
+          details: process.env.NODE_ENV === 'development' ? error : undefined,
+        },
       },
       { status: 500 }
     );
@@ -263,8 +281,6 @@ function getStatusCodeForError(errorCode: string): number {
     case 'OPT_OUT':
     case 'BLACKLISTED':
       return 403;
-    case 'PROVIDER_ERROR':
-    case 'NETWORK_ERROR':
     default:
       return 500;
   }
@@ -273,12 +289,12 @@ function getStatusCodeForError(errorCode: string): number {
 // Handle other HTTP methods
 export async function PUT() {
   return NextResponse.json(
-    { 
-      success: false, 
-      error: { 
-        code: 'METHOD_NOT_ALLOWED', 
-        message: 'Only POST and GET methods are allowed' 
-      } 
+    {
+      success: false,
+      error: {
+        code: 'METHOD_NOT_ALLOWED',
+        message: 'Only POST and GET methods are allowed',
+      },
     },
     { status: 405 }
   );
@@ -286,12 +302,12 @@ export async function PUT() {
 
 export async function DELETE() {
   return NextResponse.json(
-    { 
-      success: false, 
-      error: { 
-        code: 'METHOD_NOT_ALLOWED', 
-        message: 'Only POST and GET methods are allowed' 
-      } 
+    {
+      success: false,
+      error: {
+        code: 'METHOD_NOT_ALLOWED',
+        message: 'Only POST and GET methods are allowed',
+      },
     },
     { status: 405 }
   );

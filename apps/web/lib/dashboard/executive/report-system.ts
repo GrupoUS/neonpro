@@ -1,8 +1,7 @@
 import { z } from 'zod';
-import { createClient } from '@/lib/supabase/client';
 import { logger } from '@/lib/logger';
+import { createClient } from '@/lib/supabase/client';
 import { kpiCalculationService } from './kpi-calculation-service';
-import { widgetService } from './widget-service';
 
 // Report Types and Schemas
 export const ReportTypeSchema = z.enum([
@@ -11,12 +10,25 @@ export const ReportTypeSchema = z.enum([
   'operational_report',
   'patient_analytics',
   'staff_performance',
-  'custom_report'
+  'custom_report',
 ]);
 
 export const ReportFormatSchema = z.enum(['pdf', 'excel', 'csv', 'json']);
-export const ReportFrequencySchema = z.enum(['daily', 'weekly', 'monthly', 'quarterly', 'yearly', 'on_demand']);
-export const ReportStatusSchema = z.enum(['pending', 'generating', 'completed', 'failed', 'cancelled']);
+export const ReportFrequencySchema = z.enum([
+  'daily',
+  'weekly',
+  'monthly',
+  'quarterly',
+  'yearly',
+  'on_demand',
+]);
+export const ReportStatusSchema = z.enum([
+  'pending',
+  'generating',
+  'completed',
+  'failed',
+  'cancelled',
+]);
 
 export const ReportTemplateSchema = z.object({
   id: z.string().uuid(),
@@ -26,21 +38,25 @@ export const ReportTemplateSchema = z.object({
   type: ReportTypeSchema,
   isActive: z.boolean().default(true),
   configuration: z.object({
-    sections: z.array(z.object({
-      id: z.string(),
-      title: z.string(),
-      type: z.enum(['kpi_summary', 'chart', 'table', 'text', 'image']),
-      dataSource: z.string(),
-      parameters: z.record(z.any()).optional(),
-      styling: z.object({
-        fontSize: z.number().optional(),
-        fontFamily: z.string().optional(),
-        color: z.string().optional(),
-        backgroundColor: z.string().optional(),
-        padding: z.number().optional(),
-        margin: z.number().optional()
-      }).optional()
-    })),
+    sections: z.array(
+      z.object({
+        id: z.string(),
+        title: z.string(),
+        type: z.enum(['kpi_summary', 'chart', 'table', 'text', 'image']),
+        dataSource: z.string(),
+        parameters: z.record(z.any()).optional(),
+        styling: z
+          .object({
+            fontSize: z.number().optional(),
+            fontFamily: z.string().optional(),
+            color: z.string().optional(),
+            backgroundColor: z.string().optional(),
+            padding: z.number().optional(),
+            margin: z.number().optional(),
+          })
+          .optional(),
+      })
+    ),
     layout: z.object({
       orientation: z.enum(['portrait', 'landscape']).default('portrait'),
       pageSize: z.enum(['A4', 'A3', 'Letter', 'Legal']).default('A4'),
@@ -48,31 +64,35 @@ export const ReportTemplateSchema = z.object({
         top: z.number().default(20),
         right: z.number().default(20),
         bottom: z.number().default(20),
-        left: z.number().default(20)
+        left: z.number().default(20),
       }),
       header: z.object({
         enabled: z.boolean().default(true),
         content: z.string().optional(),
-        height: z.number().default(50)
+        height: z.number().default(50),
       }),
       footer: z.object({
         enabled: z.boolean().default(true),
         content: z.string().optional(),
-        height: z.number().default(30)
-      })
-    }),
-    filters: z.object({
-      dateRange: z.object({
-        enabled: z.boolean().default(true),
-        defaultPeriod: z.enum(['last_7_days', 'last_30_days', 'last_quarter', 'last_year']).default('last_30_days')
+        height: z.number().default(30),
       }),
-      departments: z.array(z.string()).optional(),
-      services: z.array(z.string()).optional(),
-      staff: z.array(z.string()).optional()
-    }).optional()
+    }),
+    filters: z
+      .object({
+        dateRange: z.object({
+          enabled: z.boolean().default(true),
+          defaultPeriod: z
+            .enum(['last_7_days', 'last_30_days', 'last_quarter', 'last_year'])
+            .default('last_30_days'),
+        }),
+        departments: z.array(z.string()).optional(),
+        services: z.array(z.string()).optional(),
+        staff: z.array(z.string()).optional(),
+      })
+      .optional(),
   }),
   createdAt: z.string().datetime(),
-  updatedAt: z.string().datetime()
+  updatedAt: z.string().datetime(),
 });
 
 export const ReportScheduleSchema = z.object({
@@ -87,18 +107,18 @@ export const ReportScheduleSchema = z.object({
     dayOfWeek: z.number().min(0).max(6).optional(), // For weekly reports
     dayOfMonth: z.number().min(1).max(31).optional(), // For monthly reports
     time: z.string().regex(/^\d{2}:\d{2}$/), // HH:MM format
-    timezone: z.string().default('America/Sao_Paulo')
+    timezone: z.string().default('America/Sao_Paulo'),
   }),
   recipients: z.object({
     emails: z.array(z.string().email()),
     includeAttachment: z.boolean().default(true),
-    includeLink: z.boolean().default(false)
+    includeLink: z.boolean().default(false),
   }),
   parameters: z.record(z.any()).optional(),
   lastRun: z.string().datetime().optional(),
   nextRun: z.string().datetime().optional(),
   createdAt: z.string().datetime(),
-  updatedAt: z.string().datetime()
+  updatedAt: z.string().datetime(),
 });
 
 export const ReportInstanceSchema = z.object({
@@ -119,12 +139,14 @@ export const ReportInstanceSchema = z.object({
   downloadUrl: z.string().optional(),
   expiresAt: z.string().datetime().optional(),
   errorMessage: z.string().optional(),
-  metadata: z.object({
-    totalPages: z.number().optional(),
-    totalRecords: z.number().optional(),
-    generationTime: z.number().optional(), // milliseconds
-    dataSourcesUsed: z.array(z.string()).optional()
-  }).optional()
+  metadata: z
+    .object({
+      totalPages: z.number().optional(),
+      totalRecords: z.number().optional(),
+      generationTime: z.number().optional(), // milliseconds
+      dataSourcesUsed: z.array(z.string()).optional(),
+    })
+    .optional(),
 });
 
 export type ReportType = z.infer<typeof ReportTypeSchema>;
@@ -139,7 +161,7 @@ export type ReportInstance = z.infer<typeof ReportInstanceSchema>;
 export class ReportSystem {
   private supabase = createClient();
   private schedulerTimer: NodeJS.Timeout | null = null;
-  private readonly SCHEDULER_INTERVAL = 60000; // 1 minute
+  private readonly SCHEDULER_INTERVAL = 60_000; // 1 minute
   private isRunning = false;
 
   /**
@@ -173,7 +195,7 @@ export class ReportSystem {
     }
 
     this.isRunning = false;
-    
+
     if (this.schedulerTimer) {
       clearInterval(this.schedulerTimer);
       this.schedulerTimer = null;
@@ -185,7 +207,9 @@ export class ReportSystem {
   /**
    * Create a new report template
    */
-  async createReportTemplate(template: Omit<ReportTemplate, 'id' | 'createdAt' | 'updatedAt'>): Promise<ReportTemplate | null> {
+  async createReportTemplate(
+    template: Omit<ReportTemplate, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<ReportTemplate | null> {
     try {
       const templateId = crypto.randomUUID();
       const now = new Date().toISOString();
@@ -201,7 +225,7 @@ export class ReportSystem {
           is_active: template.isActive,
           configuration: template.configuration,
           created_at: now,
-          updated_at: now
+          updated_at: now,
         })
         .select()
         .single();
@@ -220,7 +244,7 @@ export class ReportSystem {
         isActive: data.is_active,
         configuration: data.configuration,
         createdAt: data.created_at,
-        updatedAt: data.updated_at
+        updatedAt: data.updated_at,
       };
     } catch (error) {
       logger.error('Error creating report template:', error);
@@ -231,11 +255,16 @@ export class ReportSystem {
   /**
    * Create a new report schedule
    */
-  async createReportSchedule(schedule: Omit<ReportSchedule, 'id' | 'createdAt' | 'updatedAt' | 'nextRun'>): Promise<ReportSchedule | null> {
+  async createReportSchedule(
+    schedule: Omit<ReportSchedule, 'id' | 'createdAt' | 'updatedAt' | 'nextRun'>
+  ): Promise<ReportSchedule | null> {
     try {
       const scheduleId = crypto.randomUUID();
       const now = new Date().toISOString();
-      const nextRun = this.calculateNextRun(schedule.frequency, schedule.schedule);
+      const nextRun = this.calculateNextRun(
+        schedule.frequency,
+        schedule.schedule
+      );
 
       const { data, error } = await this.supabase
         .from('report_schedules')
@@ -252,7 +281,7 @@ export class ReportSystem {
           parameters: schedule.parameters,
           next_run: nextRun,
           created_at: now,
-          updated_at: now
+          updated_at: now,
         })
         .select()
         .single();
@@ -276,7 +305,7 @@ export class ReportSystem {
         lastRun: data.last_run,
         nextRun: data.next_run,
         createdAt: data.created_at,
-        updatedAt: data.updated_at
+        updatedAt: data.updated_at,
       };
     } catch (error) {
       logger.error('Error creating report schedule:', error);
@@ -315,14 +344,23 @@ export class ReportSystem {
         isActive: templateData.is_active,
         configuration: templateData.configuration,
         createdAt: templateData.created_at,
-        updatedAt: templateData.updated_at
+        updatedAt: templateData.updated_at,
       };
 
       // Create report instance
       const reportId = crypto.randomUUID();
       const now = new Date().toISOString();
 
-      const reportInstance: Omit<ReportInstance, 'completedAt' | 'filePath' | 'fileSize' | 'downloadUrl' | 'expiresAt' | 'errorMessage' | 'metadata'> = {
+      const reportInstance: Omit<
+        ReportInstance,
+        | 'completedAt'
+        | 'filePath'
+        | 'fileSize'
+        | 'downloadUrl'
+        | 'expiresAt'
+        | 'errorMessage'
+        | 'metadata'
+      > = {
         id: reportId,
         templateId: template.id,
         clinicId: template.clinicId,
@@ -332,7 +370,7 @@ export class ReportSystem {
         status: 'pending',
         parameters,
         generatedBy: userId,
-        startedAt: now
+        startedAt: now,
       };
 
       // Save to database
@@ -348,7 +386,7 @@ export class ReportSystem {
           status: reportInstance.status,
           parameters: reportInstance.parameters,
           generated_by: reportInstance.generatedBy,
-          started_at: reportInstance.startedAt
+          started_at: reportInstance.startedAt,
         });
 
       if (insertError) {
@@ -367,7 +405,7 @@ export class ReportSystem {
         downloadUrl: undefined,
         expiresAt: undefined,
         errorMessage: undefined,
-        metadata: undefined
+        metadata: undefined,
       };
     } catch (error) {
       logger.error('Error generating report:', error);
@@ -378,7 +416,10 @@ export class ReportSystem {
   /**
    * Get report instances for a clinic
    */
-  async getReportInstances(clinicId: string, limit = 50): Promise<ReportInstance[]> {
+  async getReportInstances(
+    clinicId: string,
+    limit = 50
+  ): Promise<ReportInstance[]> {
     try {
       const { data, error } = await this.supabase
         .from('report_instances')
@@ -392,7 +433,7 @@ export class ReportSystem {
         return [];
       }
 
-      return data.map(report => ({
+      return data.map((report) => ({
         id: report.id,
         templateId: report.template_id,
         scheduleId: report.schedule_id,
@@ -410,7 +451,7 @@ export class ReportSystem {
         downloadUrl: report.download_url,
         expiresAt: report.expires_at,
         errorMessage: report.error_message,
-        metadata: report.metadata
+        metadata: report.metadata,
       }));
     } catch (error) {
       logger.error('Error getting report instances:', error);
@@ -424,7 +465,7 @@ export class ReportSystem {
   private async processScheduledReports(): Promise<void> {
     try {
       const now = new Date();
-      
+
       const { data: schedules, error } = await this.supabase
         .from('report_schedules')
         .select('*')
@@ -451,7 +492,7 @@ export class ReportSystem {
           lastRun: scheduleData.last_run,
           nextRun: scheduleData.next_run,
           createdAt: scheduleData.created_at,
-          updatedAt: scheduleData.updated_at
+          updatedAt: scheduleData.updated_at,
         };
 
         await this.executeScheduledReport(schedule);
@@ -464,7 +505,9 @@ export class ReportSystem {
   /**
    * Execute a scheduled report
    */
-  private async executeScheduledReport(schedule: ReportSchedule): Promise<void> {
+  private async executeScheduledReport(
+    schedule: ReportSchedule
+  ): Promise<void> {
     try {
       logger.info(`Executing scheduled report: ${schedule.name}`);
 
@@ -481,13 +524,16 @@ export class ReportSystem {
       }
 
       // Update schedule
-      const nextRun = this.calculateNextRun(schedule.frequency, schedule.schedule);
-      
+      const nextRun = this.calculateNextRun(
+        schedule.frequency,
+        schedule.schedule
+      );
+
       await this.supabase
         .from('report_schedules')
         .update({
           last_run: new Date().toISOString(),
-          next_run: nextRun
+          next_run: nextRun,
         })
         .eq('id', schedule.id);
 
@@ -506,7 +552,10 @@ export class ReportSystem {
   /**
    * Generate report asynchronously
    */
-  private async generateReportAsync(reportInstance: any, template: ReportTemplate): Promise<void> {
+  private async generateReportAsync(
+    reportInstance: any,
+    template: ReportTemplate
+  ): Promise<void> {
     try {
       // Update status to generating
       await this.supabase
@@ -517,7 +566,10 @@ export class ReportSystem {
       const startTime = Date.now();
 
       // Collect data for all sections
-      const reportData = await this.collectReportData(template, reportInstance.parameters);
+      const reportData = await this.collectReportData(
+        template,
+        reportInstance.parameters
+      );
 
       // Generate the report file
       const filePath = await this.generateReportFile(
@@ -544,8 +596,8 @@ export class ReportSystem {
           metadata: {
             generationTime,
             totalRecords: this.countTotalRecords(reportData),
-            dataSourcesUsed: this.getDataSourcesUsed(template)
-          }
+            dataSourcesUsed: this.getDataSourcesUsed(template),
+          },
         })
         .eq('id', reportInstance.id);
 
@@ -558,7 +610,8 @@ export class ReportSystem {
         .from('report_instances')
         .update({
           status: 'failed',
-          error_message: error instanceof Error ? error.message : 'Unknown error'
+          error_message:
+            error instanceof Error ? error.message : 'Unknown error',
         })
         .eq('id', reportInstance.id);
     }
@@ -567,25 +620,39 @@ export class ReportSystem {
   /**
    * Collect data for report sections
    */
-  private async collectReportData(template: ReportTemplate, parameters: Record<string, any>): Promise<Record<string, any>> {
+  private async collectReportData(
+    template: ReportTemplate,
+    parameters: Record<string, any>
+  ): Promise<Record<string, any>> {
     const data: Record<string, any> = {};
 
     for (const section of template.configuration.sections) {
       try {
         switch (section.type) {
           case 'kpi_summary':
-            data[section.id] = await this.collectKPIData(template.clinicId, section.dataSource, parameters);
+            data[section.id] = await this.collectKPIData(
+              template.clinicId,
+              section.dataSource,
+              parameters
+            );
             break;
-          
+
           case 'chart':
           case 'table':
-            data[section.id] = await this.collectChartTableData(template.clinicId, section.dataSource, parameters);
+            data[section.id] = await this.collectChartTableData(
+              template.clinicId,
+              section.dataSource,
+              parameters
+            );
             break;
-          
+
           case 'text':
-            data[section.id] = await this.collectTextData(section.dataSource, parameters);
+            data[section.id] = await this.collectTextData(
+              section.dataSource,
+              parameters
+            );
             break;
-          
+
           default:
             data[section.id] = null;
         }
@@ -601,18 +668,35 @@ export class ReportSystem {
   /**
    * Collect KPI data
    */
-  private async collectKPIData(clinicId: string, dataSource: string, parameters: Record<string, any>): Promise<any> {
-    const periodStart = parameters.periodStart ? new Date(parameters.periodStart) : undefined;
-    const periodEnd = parameters.periodEnd ? new Date(parameters.periodEnd) : undefined;
+  private async collectKPIData(
+    clinicId: string,
+    dataSource: string,
+    parameters: Record<string, any>
+  ): Promise<any> {
+    const periodStart = parameters.periodStart
+      ? new Date(parameters.periodStart)
+      : undefined;
+    const periodEnd = parameters.periodEnd
+      ? new Date(parameters.periodEnd)
+      : undefined;
 
     switch (dataSource) {
       case 'all_kpis':
-        return await kpiCalculationService.calculateClinicKPIs(clinicId, periodStart, periodEnd);
-      
-      case 'financial_kpis':
-        const allKPIs = await kpiCalculationService.calculateClinicKPIs(clinicId, periodStart, periodEnd);
-        return allKPIs.filter(kpi => kpi.kpi.category === 'financial');
-      
+        return await kpiCalculationService.calculateClinicKPIs(
+          clinicId,
+          periodStart,
+          periodEnd
+        );
+
+      case 'financial_kpis': {
+        const allKPIs = await kpiCalculationService.calculateClinicKPIs(
+          clinicId,
+          periodStart,
+          periodEnd
+        );
+        return allKPIs.filter((kpi) => kpi.kpi.category === 'financial');
+      }
+
       default:
         return [];
     }
@@ -621,22 +705,31 @@ export class ReportSystem {
   /**
    * Collect chart/table data
    */
-  private async collectChartTableData(clinicId: string, dataSource: string, parameters: Record<string, any>): Promise<any> {
+  private async collectChartTableData(
+    _clinicId: string,
+    _dataSource: string,
+    _parameters: Record<string, any>
+  ): Promise<any> {
     // This would use the same data sources as widgets
     // For now, return mock data
     return {
       labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
-      datasets: [{
-        label: 'Revenue',
-        data: [10000, 12000, 15000, 13000, 16000]
-      }]
+      datasets: [
+        {
+          label: 'Revenue',
+          data: [10_000, 12_000, 15_000, 13_000, 16_000],
+        },
+      ],
     };
   }
 
   /**
    * Collect text data
    */
-  private async collectTextData(dataSource: string, parameters: Record<string, any>): Promise<string> {
+  private async collectTextData(
+    _dataSource: string,
+    _parameters: Record<string, any>
+  ): Promise<string> {
     // This would generate dynamic text content
     return `Report generated on ${new Date().toLocaleDateString('pt-BR')}`;
   }
@@ -655,16 +748,16 @@ export class ReportSystem {
     switch (reportInstance.format) {
       case 'pdf':
         return await this.generatePDFReport(filePath, template, data);
-      
+
       case 'excel':
         return await this.generateExcelReport(filePath, template, data);
-      
+
       case 'csv':
         return await this.generateCSVReport(filePath, template, data);
-      
+
       case 'json':
         return await this.generateJSONReport(filePath, template, data);
-      
+
       default:
         throw new Error(`Unsupported report format: ${reportInstance.format}`);
     }
@@ -673,10 +766,14 @@ export class ReportSystem {
   /**
    * Generate PDF report
    */
-  private async generatePDFReport(filePath: string, template: ReportTemplate, data: Record<string, any>): Promise<string> {
+  private async generatePDFReport(
+    filePath: string,
+    _template: ReportTemplate,
+    _data: Record<string, any>
+  ): Promise<string> {
     // Implementation would use a PDF library like puppeteer, jsPDF, or PDFKit
     logger.info(`Generating PDF report: ${filePath}`);
-    
+
     // Mock implementation
     return filePath;
   }
@@ -684,10 +781,14 @@ export class ReportSystem {
   /**
    * Generate Excel report
    */
-  private async generateExcelReport(filePath: string, template: ReportTemplate, data: Record<string, any>): Promise<string> {
+  private async generateExcelReport(
+    filePath: string,
+    _template: ReportTemplate,
+    _data: Record<string, any>
+  ): Promise<string> {
     // Implementation would use a library like ExcelJS
     logger.info(`Generating Excel report: ${filePath}`);
-    
+
     // Mock implementation
     return filePath;
   }
@@ -695,10 +796,14 @@ export class ReportSystem {
   /**
    * Generate CSV report
    */
-  private async generateCSVReport(filePath: string, template: ReportTemplate, data: Record<string, any>): Promise<string> {
+  private async generateCSVReport(
+    filePath: string,
+    _template: ReportTemplate,
+    _data: Record<string, any>
+  ): Promise<string> {
     // Implementation would generate CSV content
     logger.info(`Generating CSV report: ${filePath}`);
-    
+
     // Mock implementation
     return filePath;
   }
@@ -706,10 +811,14 @@ export class ReportSystem {
   /**
    * Generate JSON report
    */
-  private async generateJSONReport(filePath: string, template: ReportTemplate, data: Record<string, any>): Promise<string> {
+  private async generateJSONReport(
+    filePath: string,
+    _template: ReportTemplate,
+    _data: Record<string, any>
+  ): Promise<string> {
     // Implementation would serialize data to JSON
     logger.info(`Generating JSON report: ${filePath}`);
-    
+
     // Mock implementation
     return filePath;
   }
@@ -720,8 +829,8 @@ export class ReportSystem {
   private calculateNextRun(frequency: ReportFrequency, schedule: any): string {
     const now = new Date();
     const [hours, minutes] = schedule.time.split(':').map(Number);
-    
-    let nextRun = new Date(now);
+
+    const nextRun = new Date(now);
     nextRun.setHours(hours, minutes, 0, 0);
 
     // If the time has already passed today, move to next occurrence
@@ -730,22 +839,22 @@ export class ReportSystem {
         case 'daily':
           nextRun.setDate(nextRun.getDate() + 1);
           break;
-        
+
         case 'weekly':
           nextRun.setDate(nextRun.getDate() + 7);
           break;
-        
+
         case 'monthly':
           nextRun.setMonth(nextRun.getMonth() + 1);
           if (schedule.dayOfMonth) {
             nextRun.setDate(schedule.dayOfMonth);
           }
           break;
-        
+
         case 'quarterly':
           nextRun.setMonth(nextRun.getMonth() + 3);
           break;
-        
+
         case 'yearly':
           nextRun.setFullYear(nextRun.getFullYear() + 1);
           break;
@@ -760,13 +869,13 @@ export class ReportSystem {
    */
   private countTotalRecords(data: Record<string, any>): number {
     let total = 0;
-    
+
     for (const value of Object.values(data)) {
       if (Array.isArray(value)) {
         total += value.length;
       }
     }
-    
+
     return total;
   }
 
@@ -774,13 +883,15 @@ export class ReportSystem {
    * Get data sources used in template
    */
   private getDataSourcesUsed(template: ReportTemplate): string[] {
-    return template.configuration.sections.map(section => section.dataSource);
+    return template.configuration.sections.map((section) => section.dataSource);
   }
 
   /**
    * Get default report templates
    */
-  getDefaultTemplates(): Array<Omit<ReportTemplate, 'id' | 'clinicId' | 'createdAt' | 'updatedAt'>> {
+  getDefaultTemplates(): Array<
+    Omit<ReportTemplate, 'id' | 'clinicId' | 'createdAt' | 'updatedAt'>
+  > {
     return [
       {
         name: 'Relatório Executivo Mensal',
@@ -793,36 +904,41 @@ export class ReportSystem {
               id: 'financial_summary',
               title: 'Resumo Financeiro',
               type: 'kpi_summary',
-              dataSource: 'financial_kpis'
+              dataSource: 'financial_kpis',
             },
             {
               id: 'revenue_trend',
               title: 'Tendência de Receita',
               type: 'chart',
-              dataSource: 'monthly_revenue_trend'
+              dataSource: 'monthly_revenue_trend',
             },
             {
               id: 'operational_metrics',
               title: 'Métricas Operacionais',
               type: 'table',
-              dataSource: 'operational_summary'
-            }
+              dataSource: 'operational_summary',
+            },
           ],
           layout: {
             orientation: 'portrait',
             pageSize: 'A4',
             margins: { top: 20, right: 20, bottom: 20, left: 20 },
-            header: { enabled: true, content: 'Relatório Executivo', height: 50 },
-            footer: { enabled: true, content: 'Confidencial', height: 30 }
+            header: {
+              enabled: true,
+              content: 'Relatório Executivo',
+              height: 50,
+            },
+            footer: { enabled: true, content: 'Confidencial', height: 30 },
           },
           filters: {
-            dateRange: { enabled: true, defaultPeriod: 'last_30_days' }
-          }
-        }
+            dateRange: { enabled: true, defaultPeriod: 'last_30_days' },
+          },
+        },
       },
       {
         name: 'Relatório Financeiro Detalhado',
-        description: 'Análise financeira completa com receitas, custos e margens',
+        description:
+          'Análise financeira completa com receitas, custos e margens',
         type: 'financial_report',
         isActive: true,
         configuration: {
@@ -831,33 +947,37 @@ export class ReportSystem {
               id: 'revenue_analysis',
               title: 'Análise de Receita',
               type: 'chart',
-              dataSource: 'revenue_breakdown'
+              dataSource: 'revenue_breakdown',
             },
             {
               id: 'cost_analysis',
               title: 'Análise de Custos',
               type: 'table',
-              dataSource: 'cost_breakdown'
+              dataSource: 'cost_breakdown',
             },
             {
               id: 'profit_margins',
               title: 'Margens de Lucro',
               type: 'kpi_summary',
-              dataSource: 'profit_metrics'
-            }
+              dataSource: 'profit_metrics',
+            },
           ],
           layout: {
             orientation: 'landscape',
             pageSize: 'A4',
             margins: { top: 15, right: 15, bottom: 15, left: 15 },
-            header: { enabled: true, content: 'Relatório Financeiro', height: 40 },
-            footer: { enabled: true, content: 'Página {page}', height: 25 }
+            header: {
+              enabled: true,
+              content: 'Relatório Financeiro',
+              height: 40,
+            },
+            footer: { enabled: true, content: 'Página {page}', height: 25 },
           },
           filters: {
-            dateRange: { enabled: true, defaultPeriod: 'last_quarter' }
-          }
-        }
-      }
+            dateRange: { enabled: true, defaultPeriod: 'last_quarter' },
+          },
+        },
+      },
     ];
   }
 }

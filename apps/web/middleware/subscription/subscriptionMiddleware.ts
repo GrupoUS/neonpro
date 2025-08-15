@@ -2,24 +2,29 @@
  * Subscription Validation Middleware
  * Epic: EPIC-001 - Advanced Subscription Management
  * Story: EPIC-001.1 - Subscription Middleware & Management System
- * 
+ *
  * This middleware validates subscription status and feature access
  * for protected API endpoints based on the user's subscription tier.
  */
 
-import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
+import { type NextRequest, NextResponse } from 'next/server';
 import type { Database } from '@/types/database';
 
-type SubscriptionPlan = Database['public']['Tables']['subscription_plans']['Row'];
-type UserSubscription = Database['public']['Tables']['user_subscriptions']['Row'];
+type SubscriptionPlan =
+  Database['public']['Tables']['subscription_plans']['Row'];
+type UserSubscription =
+  Database['public']['Tables']['user_subscriptions']['Row'];
 
 interface SubscriptionContext {
   subscription: UserSubscription & {
     plan: SubscriptionPlan;
   };
   hasFeature: (feature: string) => boolean;
-  checkUsageLimit: (feature: string, currentUsage: number) => {
+  checkUsageLimit: (
+    feature: string,
+    currentUsage: number
+  ) => {
     allowed: boolean;
     limit?: number;
     remaining?: number;
@@ -34,23 +39,23 @@ const ENDPOINT_FEATURE_MAP: Record<string, string> = {
   '/api/dashboard/bi': 'bi_dashboard',
   '/api/dashboard/analytics': 'advanced_reports',
   '/api/dashboard/custom': 'custom_dashboards',
-  
+
   // Inventory Management
   '/api/inventory': 'inventory_management',
   '/api/stock': 'inventory_management',
-  
+
   // Financial Management
   '/api/financial': 'financial_management',
   '/api/billing': 'financial_management',
-  
+
   // Advanced Features
   '/api/templates/custom': 'custom_templates',
   '/api/webhooks': 'webhook_integration',
   '/api/sso': 'sso_integration',
-  
+
   // Multi-location
   '/api/locations': 'multi_location',
-  
+
   // API Access
   '/api/external': 'api_access',
 };
@@ -72,7 +77,7 @@ const USAGE_LIMIT_MAP: Record<string, string> = {
  */
 export async function subscriptionMiddleware(
   request: NextRequest,
-  context: { params?: any }
+  _context: { params?: any }
 ): Promise<NextResponse | null> {
   try {
     // Get user session
@@ -88,13 +93,13 @@ export async function subscriptionMiddleware(
       }
     );
 
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    const {
+      data: { session },
+      error: sessionError,
+    } = await supabase.auth.getSession();
 
     if (sessionError || !session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' }, 
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Get user's clinic and subscription
@@ -107,7 +112,7 @@ export async function subscriptionMiddleware(
 
     if (!userClinic) {
       return NextResponse.json(
-        { error: 'No active clinic found' }, 
+        { error: 'No active clinic found' },
         { status: 403 }
       );
     }
@@ -125,11 +130,11 @@ export async function subscriptionMiddleware(
 
     if (subscriptionError || !subscription) {
       return NextResponse.json(
-        { 
-          error: 'No active subscription found', 
+        {
+          error: 'No active subscription found',
           code: 'SUBSCRIPTION_REQUIRED',
-          message: 'Esta funcionalidade requer uma assinatura ativa.'
-        }, 
+          message: 'Esta funcionalidade requer uma assinatura ativa.',
+        },
         { status: 402 } // Payment Required
       );
     }
@@ -138,14 +143,15 @@ export async function subscriptionMiddleware(
     if (subscription.status === 'trial' && subscription.trial_end) {
       const now = new Date();
       const trialEnd = new Date(subscription.trial_end);
-      
+
       if (now > trialEnd) {
         return NextResponse.json(
-          { 
-            error: 'Trial period expired', 
+          {
+            error: 'Trial period expired',
             code: 'TRIAL_EXPIRED',
-            message: 'Seu período de teste expirou. Faça upgrade para continuar usando.'
-          }, 
+            message:
+              'Seu período de teste expirou. Faça upgrade para continuar usando.',
+          },
           { status: 402 }
         );
       }
@@ -154,20 +160,23 @@ export async function subscriptionMiddleware(
     // Validate feature access for current endpoint
     const endpoint = request.nextUrl.pathname;
     const requiredFeature = getRequiredFeature(endpoint);
-    
+
     if (requiredFeature) {
-      const hasAccess = hasFeatureAccess(subscription.plan as SubscriptionPlan, requiredFeature);
-      
+      const hasAccess = hasFeatureAccess(
+        subscription.plan as SubscriptionPlan,
+        requiredFeature
+      );
+
       if (!hasAccess) {
         return NextResponse.json(
-          { 
-            error: 'Feature not available in your plan', 
+          {
+            error: 'Feature not available in your plan',
             code: 'FEATURE_NOT_AVAILABLE',
             message: `Esta funcionalidade não está disponível no seu plano ${subscription.plan?.display_name}.`,
             required_feature: requiredFeature,
             current_plan: subscription.plan?.name,
-            upgrade_required: true
-          }, 
+            upgrade_required: true,
+          },
           { status: 403 }
         );
       }
@@ -181,17 +190,17 @@ export async function subscriptionMiddleware(
         subscription,
         usageLimitKey
       );
-      
+
       if (!usageCheck.allowed) {
         return NextResponse.json(
-          { 
-            error: 'Usage limit exceeded', 
+          {
+            error: 'Usage limit exceeded',
             code: 'USAGE_LIMIT_EXCEEDED',
             message: `Você atingiu o limite de ${usageLimitKey} do seu plano.`,
             limit: usageCheck.limit,
             current_usage: usageCheck.current,
-            upgrade_required: true
-          }, 
+            upgrade_required: true,
+          },
           { status: 429 } // Too Many Requests
         );
       }
@@ -199,21 +208,24 @@ export async function subscriptionMiddleware(
 
     // Add subscription context to response headers
     const response = NextResponse.next();
-    response.headers.set('x-subscription-tier', subscription.plan?.name || 'unknown');
+    response.headers.set(
+      'x-subscription-tier',
+      subscription.plan?.name || 'unknown'
+    );
     response.headers.set('x-subscription-id', subscription.id);
     response.headers.set('x-clinic-id', subscription.clinic_id);
-    
-    return response;
 
+    return response;
   } catch (error) {
     console.error('Subscription middleware error:', error);
-    
+
     return NextResponse.json(
-      { 
-        error: 'Internal server error', 
+      {
+        error: 'Internal server error',
         code: 'MIDDLEWARE_ERROR',
-        message: 'Erro interno do sistema. Tente novamente em alguns instantes.'
-      }, 
+        message:
+          'Erro interno do sistema. Tente novamente em alguns instantes.',
+      },
       { status: 500 }
     );
   }
@@ -258,7 +270,7 @@ async function checkUsageLimit(
   subscription: UserSubscription & { plan: SubscriptionPlan },
   limitKey: string
 ): Promise<{ allowed: boolean; limit?: number; current?: number }> {
-  const limits = subscription.plan?.limits as Record<string, number> || {};
+  const limits = (subscription.plan?.limits as Record<string, number>) || {};
   const limit = limits[limitKey];
 
   // -1 means unlimited
@@ -271,7 +283,7 @@ async function checkUsageLimit(
 
   try {
     switch (limitKey) {
-      case 'max_patients':
+      case 'max_patients': {
         const { count: patientCount } = await supabase
           .from('patients')
           .select('*', { count: 'exact', head: true })
@@ -279,12 +291,13 @@ async function checkUsageLimit(
           .eq('is_active', true);
         currentUsage = patientCount || 0;
         break;
+      }
 
-      case 'max_appointments_per_month':
+      case 'max_appointments_per_month': {
         const startOfMonth = new Date();
         startOfMonth.setDate(1);
         startOfMonth.setHours(0, 0, 0, 0);
-        
+
         const { count: appointmentCount } = await supabase
           .from('appointments')
           .select('*', { count: 'exact', head: true })
@@ -292,8 +305,9 @@ async function checkUsageLimit(
           .gte('appointment_date', startOfMonth.toISOString());
         currentUsage = appointmentCount || 0;
         break;
+      }
 
-      case 'max_users':
+      case 'max_users': {
         const { count: userCount } = await supabase
           .from('user_clinics')
           .select('*', { count: 'exact', head: true })
@@ -301,19 +315,28 @@ async function checkUsageLimit(
           .eq('is_active', true);
         currentUsage = userCount || 0;
         break;
+      }
 
       case 'sms_notifications':
-      case 'email_notifications':
+      case 'email_notifications': {
         // Get usage from subscription_usage table
         const { data: usage } = await supabase
           .from('subscription_usage')
           .select('usage_count')
           .eq('subscription_id', subscription.id)
           .eq('feature_name', limitKey)
-          .gte('usage_period_start', new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString())
+          .gte(
+            'usage_period_start',
+            new Date(
+              new Date().getFullYear(),
+              new Date().getMonth(),
+              1
+            ).toISOString()
+          )
           .single();
         currentUsage = usage?.usage_count || 0;
         break;
+      }
 
       default:
         // For unknown limits, allow by default
@@ -323,9 +346,8 @@ async function checkUsageLimit(
     return {
       allowed: currentUsage < limit,
       limit,
-      current: currentUsage
+      current: currentUsage,
     };
-
   } catch (error) {
     console.error(`Error checking usage limit for ${limitKey}:`, error);
     // On error, allow the request to proceed
@@ -337,11 +359,11 @@ async function checkUsageLimit(
  * Helper function to create subscription context for API routes
  */
 export async function getSubscriptionContext(
-  request: NextRequest
+  _request: NextRequest
 ): Promise<SubscriptionContext | null> {
   // This will be used in API routes to get subscription context
   // Implementation similar to middleware but returns context object
   // instead of NextResponse
-  
+
   return null; // Placeholder - will be implemented in next chunk
 }

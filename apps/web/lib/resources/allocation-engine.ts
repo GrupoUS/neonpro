@@ -3,7 +3,12 @@
 // Story 2.4: Smart Resource Management - Task 2
 // =====================================================
 
-import { ResourceManager, Resource, ResourceType, AllocationRequest } from './resource-manager';
+import {
+  type AllocationRequest,
+  type Resource,
+  ResourceManager,
+  type ResourceType,
+} from './resource-manager';
 
 // =====================================================
 // Types for Allocation Engine
@@ -95,13 +100,14 @@ export class AllocationEngine {
       console.log('Starting optimal allocation suggestion for:', criteria);
 
       // Step 1: Get available resources
-      const availableResources = await this.resourceManager.getAvailableResources(
-        clinicId,
-        criteria.startTime,
-        criteria.endTime,
-        criteria.resourceType,
-        criteria.requirements
-      );
+      const availableResources =
+        await this.resourceManager.getAvailableResources(
+          clinicId,
+          criteria.startTime,
+          criteria.endTime,
+          criteria.resourceType,
+          criteria.requirements
+        );
 
       console.log(`Found ${availableResources.length} available resources`);
 
@@ -127,7 +133,7 @@ export class AllocationEngine {
       return {
         suggestions,
         conflicts,
-        optimization_metrics: optimizationMetrics
+        optimization_metrics: optimizationMetrics,
       };
     } catch (error) {
       console.error('Error in optimal allocation suggestion:', error);
@@ -146,7 +152,10 @@ export class AllocationEngine {
       const confidence = this.calculateConfidence(resource, criteria);
       const reasoning = this.generateReasoning(resource, criteria, score);
       const estimatedCost = this.calculateEstimatedCost(resource, criteria);
-      const utilizationImpact = await this.calculateUtilizationImpact(resource, criteria);
+      const utilizationImpact = await this.calculateUtilizationImpact(
+        resource,
+        criteria
+      );
 
       suggestions.push({
         resource,
@@ -154,7 +163,7 @@ export class AllocationEngine {
         score,
         reasoning,
         estimatedCost,
-        utilizationImpact
+        utilizationImpact,
       });
     }
 
@@ -176,30 +185,35 @@ export class AllocationEngine {
     // Factor 2: Requirements matching
     if (criteria.requirements) {
       const req = criteria.requirements;
-      
+
       // Category match
       if (req.category && resource.category !== req.category) {
         score -= 20;
       }
-      
+
       // Capacity requirements
       if (req.capacity && resource.capacity < req.capacity) {
         score -= 30;
       }
-      
+
       // Skills matching (for staff)
       if (req.skills && resource.type === 'staff') {
         const resourceSkills = resource.skills || [];
-        const matchedSkills = req.skills.filter(skill => resourceSkills.includes(skill));
+        const matchedSkills = req.skills.filter((skill) =>
+          resourceSkills.includes(skill)
+        );
         const skillScore = (matchedSkills.length / req.skills.length) * 20;
         score += skillScore;
       }
-      
+
       // Equipment requirements (for rooms)
       if (req.equipment && resource.type === 'room') {
         const resourceEquipment = resource.equipment_ids || [];
-        const matchedEquipment = req.equipment.filter(eq => resourceEquipment.includes(eq));
-        const equipmentScore = (matchedEquipment.length / req.equipment.length) * 15;
+        const matchedEquipment = req.equipment.filter((eq) =>
+          resourceEquipment.includes(eq)
+        );
+        const equipmentScore =
+          (matchedEquipment.length / req.equipment.length) * 15;
         score += equipmentScore;
       }
     }
@@ -207,17 +221,17 @@ export class AllocationEngine {
     // Factor 3: Preferences
     if (criteria.preferences) {
       const pref = criteria.preferences;
-      
+
       // Preferred resources bonus
       if (pref.preferredResources?.includes(resource.id)) {
         score += 25;
       }
-      
+
       // Avoided resources penalty
       if (pref.avoidResources?.includes(resource.id)) {
         score -= 40;
       }
-      
+
       // Cost optimization
       if (pref.costOptimization && resource.cost_per_hour) {
         // Lower cost = higher score
@@ -236,7 +250,10 @@ export class AllocationEngine {
 
     // Factor 5: Staff workload and fatigue (for staff resources)
     if (resource.type === 'staff') {
-      const workload = await this.getStaffWorkload(resource.id, criteria.startTime);
+      const workload = await this.getStaffWorkload(
+        resource.id,
+        criteria.startTime
+      );
       if (workload.fatigue_score > 80) {
         score -= 25; // High fatigue penalty
       } else if (workload.fatigue_score < 30) {
@@ -249,9 +266,10 @@ export class AllocationEngine {
       const maintenanceDate = new Date(resource.next_maintenance);
       const appointmentDate = new Date(criteria.startTime);
       const daysUntilMaintenance = Math.ceil(
-        (maintenanceDate.getTime() - appointmentDate.getTime()) / (1000 * 60 * 60 * 24)
+        (maintenanceDate.getTime() - appointmentDate.getTime()) /
+          (1000 * 60 * 60 * 24)
       );
-      
+
       if (daysUntilMaintenance <= 3) {
         score -= 30; // Close to maintenance
       } else if (daysUntilMaintenance <= 7) {
@@ -262,13 +280,16 @@ export class AllocationEngine {
     return Math.max(0, Math.min(100, score));
   }
 
-  private calculateConfidence(resource: Resource, criteria: AllocationCriteria): number {
+  private calculateConfidence(
+    resource: Resource,
+    criteria: AllocationCriteria
+  ): number {
     let confidence = 100;
 
     // Reduce confidence based on missing information
     if (!resource.specifications) confidence -= 5;
     if (!resource.usage_instructions) confidence -= 5;
-    
+
     // Reduce confidence for complex requirements
     if (criteria.requirements) {
       const reqCount = Object.keys(criteria.requirements).length;
@@ -286,7 +307,7 @@ export class AllocationEngine {
 
   private generateReasoning(
     resource: Resource,
-    criteria: AllocationCriteria,
+    _criteria: AllocationCriteria,
     score: number
   ): string[] {
     const reasoning: string[] = [];
@@ -305,11 +326,11 @@ export class AllocationEngine {
     if (resource.type === 'staff' && resource.skills?.length) {
       reasoning.push(`Staff has ${resource.skills.length} relevant skills`);
     }
-    
+
     if (resource.type === 'room' && resource.amenities) {
       reasoning.push('Room has required amenities available');
     }
-    
+
     if (resource.type === 'equipment' && resource.last_maintenance) {
       reasoning.push('Equipment recently maintained and operational');
     }
@@ -329,7 +350,7 @@ export class AllocationEngine {
     const startTime = new Date(criteria.startTime);
     const endTime = new Date(criteria.endTime);
     const hours = (endTime.getTime() - startTime.getTime()) / (1000 * 60 * 60);
-    
+
     return (resource.cost_per_hour || 0) * hours;
   }
 
@@ -341,12 +362,13 @@ export class AllocationEngine {
       const currentUtilization = await this.getCurrentUtilization(resource.id);
       const startTime = new Date(criteria.startTime);
       const endTime = new Date(criteria.endTime);
-      const hours = (endTime.getTime() - startTime.getTime()) / (1000 * 60 * 60);
-      
+      const hours =
+        (endTime.getTime() - startTime.getTime()) / (1000 * 60 * 60);
+
       // Calculate impact on daily utilization
       const dailyHours = 8; // Assume 8-hour work day
       const utilizationIncrease = (hours / dailyHours) * 100;
-      
+
       return currentUtilization + utilizationIncrease;
     } catch (error) {
       console.error('Error calculating utilization impact:', error);
@@ -363,9 +385,11 @@ export class AllocationEngine {
     criteria: AllocationCriteria
   ): Promise<{ valid: boolean; violations: string[] }> {
     const violations: string[] = [];
-    
+
     try {
-      const resource = await this.resourceManager.getResourceById(allocation.resource_id);
+      const resource = await this.resourceManager.getResourceById(
+        allocation.resource_id
+      );
       if (!resource) {
         violations.push('Resource not found');
         return { valid: false, violations };
@@ -374,39 +398,58 @@ export class AllocationEngine {
       // Check business rules if provided
       if (criteria.businessRules) {
         const rules = criteria.businessRules;
-        
+
         // Check maximum consecutive hours (for staff)
         if (rules.maxConsecutiveHours && resource.type === 'staff') {
-          const workload = await this.getStaffWorkload(resource.id, allocation.start_time);
+          const workload = await this.getStaffWorkload(
+            resource.id,
+            allocation.start_time
+          );
           if (workload.consecutive_hours >= rules.maxConsecutiveHours) {
-            violations.push(`Exceeds maximum consecutive hours (${rules.maxConsecutiveHours})`);
+            violations.push(
+              `Exceeds maximum consecutive hours (${rules.maxConsecutiveHours})`
+            );
           }
         }
-        
+
         // Check minimum break requirement
         if (rules.minimumBreak && resource.type === 'staff') {
-          const workload = await this.getStaffWorkload(resource.id, allocation.start_time);
+          const workload = await this.getStaffWorkload(
+            resource.id,
+            allocation.start_time
+          );
           if (workload.last_break) {
             const lastBreak = new Date(workload.last_break);
             const appointmentStart = new Date(allocation.start_time);
-            const minutesSinceBreak = (appointmentStart.getTime() - lastBreak.getTime()) / (1000 * 60);
-            
+            const minutesSinceBreak =
+              (appointmentStart.getTime() - lastBreak.getTime()) / (1000 * 60);
+
             if (minutesSinceBreak < rules.minimumBreak) {
-              violations.push(`Insufficient break time (minimum ${rules.minimumBreak} minutes)`);
+              violations.push(
+                `Insufficient break time (minimum ${rules.minimumBreak} minutes)`
+              );
             }
           }
         }
-        
+
         // Check maximum daily hours
         if (rules.maxDailyHours && resource.type === 'staff') {
-          const workload = await this.getStaffWorkload(resource.id, allocation.start_time);
-          const appointmentHours = (new Date(allocation.end_time).getTime() - new Date(allocation.start_time).getTime()) / (1000 * 60 * 60);
-          
+          const workload = await this.getStaffWorkload(
+            resource.id,
+            allocation.start_time
+          );
+          const appointmentHours =
+            (new Date(allocation.end_time).getTime() -
+              new Date(allocation.start_time).getTime()) /
+            (1000 * 60 * 60);
+
           if (workload.total_hours + appointmentHours > rules.maxDailyHours) {
-            violations.push(`Exceeds maximum daily hours (${rules.maxDailyHours})`);
+            violations.push(
+              `Exceeds maximum daily hours (${rules.maxDailyHours})`
+            );
           }
         }
-        
+
         // Check holiday restrictions
         if (rules.holidayRestrictions) {
           const appointmentDate = new Date(allocation.start_time);
@@ -433,12 +476,14 @@ export class AllocationEngine {
     clinicId: string,
     startTime: string,
     endTime: string
-  ): Promise<Array<{
-    resource_id: string;
-    conflict_type: string;
-    severity: string;
-    resolution_options: string[];
-  }>> {
+  ): Promise<
+    Array<{
+      resource_id: string;
+      conflict_type: string;
+      severity: string;
+      resolution_options: string[];
+    }>
+  > {
     try {
       const conflicts = [];
       const resources = await this.resourceManager.getResources(clinicId);
@@ -459,8 +504,8 @@ export class AllocationEngine {
               'Find alternative resource',
               'Reschedule appointment',
               'Extend appointment duration',
-              'Split into multiple sessions'
-            ]
+              'Split into multiple sessions',
+            ],
           });
         }
       }
@@ -477,7 +522,7 @@ export class AllocationEngine {
   // =====================================================
 
   private async calculateOptimizationMetrics(
-    clinicId: string,
+    _clinicId: string,
     suggestions: AllocationSuggestion[]
   ): Promise<{
     overall_efficiency: number;
@@ -496,18 +541,20 @@ export class AllocationEngine {
       }
 
       const count = suggestions.length || 1;
-      
+
       return {
         overall_efficiency: Math.round(totalScore / count),
-        cost_efficiency: Math.round(100 - (totalCost / count)), // Inverse of cost
-        utilization_balance: Math.round(100 - Math.abs(50 - (totalUtilization / count))) // Closer to 50% = better balance
+        cost_efficiency: Math.round(100 - totalCost / count), // Inverse of cost
+        utilization_balance: Math.round(
+          100 - Math.abs(50 - totalUtilization / count)
+        ), // Closer to 50% = better balance
       };
     } catch (error) {
       console.error('Error calculating optimization metrics:', error);
       return {
         overall_efficiency: 0,
         cost_efficiency: 0,
-        utilization_balance: 0
+        utilization_balance: 0,
       };
     }
   }
@@ -540,9 +587,14 @@ export class AllocationEngine {
     }
   }
 
-  private async getStaffWorkload(staffId: string, appointmentTime: string): Promise<StaffWorkload> {
+  private async getStaffWorkload(
+    staffId: string,
+    appointmentTime: string
+  ): Promise<StaffWorkload> {
     try {
-      const appointmentDate = new Date(appointmentTime).toISOString().split('T')[0];
+      const appointmentDate = new Date(appointmentTime)
+        .toISOString()
+        .split('T')[0];
       const allocations = await this.resourceManager.getAllocations(
         staffId,
         `${appointmentDate}T00:00:00Z`,
@@ -552,23 +604,26 @@ export class AllocationEngine {
       // Calculate workload metrics
       let totalHours = 0;
       let consecutiveHours = 0;
-      let lastBreak: string | null = null;
+      const lastBreak: string | null = null;
 
       for (const allocation of allocations) {
         const start = new Date(allocation.start_time);
         const end = new Date(allocation.end_time);
         const hours = (end.getTime() - start.getTime()) / (1000 * 60 * 60);
         totalHours += hours;
-        
+
         // Simplified consecutive hours calculation
-        if (allocation.status === 'completed' || allocation.status === 'in_use') {
+        if (
+          allocation.status === 'completed' ||
+          allocation.status === 'in_use'
+        ) {
           consecutiveHours += hours;
         }
       }
 
       // Calculate fatigue score (simplified)
       const fatigueScore = Math.min(100, (totalHours / 8) * 100);
-      
+
       // Get staff details
       const staff = await this.resourceManager.getResourceById(staffId);
 
@@ -580,7 +635,7 @@ export class AllocationEngine {
         last_break: lastBreak,
         fatigue_score: fatigueScore,
         efficiency_rating: Math.max(0, 100 - fatigueScore),
-        available_skills: staff?.skills || []
+        available_skills: staff?.skills || [],
       };
     } catch (error) {
       console.error('Error getting staff workload:', error);
@@ -592,7 +647,7 @@ export class AllocationEngine {
         last_break: null,
         fatigue_score: 0,
         efficiency_rating: 100,
-        available_skills: []
+        available_skills: [],
       };
     }
   }
@@ -620,17 +675,22 @@ export class AllocationEngine {
     efficiency_improvement: number;
   }> {
     try {
-      const staffResources = await this.resourceManager.getResources(clinicId, { type: 'staff' });
+      const staffResources = await this.resourceManager.getResources(clinicId, {
+        type: 'staff',
+      });
       const recommendations = [];
       let totalImprovement = 0;
 
       for (const staff of staffResources) {
-        const workload = await this.getStaffWorkload(staff.id, `${date}T09:00:00Z`);
+        const workload = await this.getStaffWorkload(
+          staff.id,
+          `${date}T09:00:00Z`
+        );
         const optimalWorkload = 7; // 7 hours optimal
         const currentWorkload = workload.total_hours;
-        
+
         const actions: string[] = [];
-        
+
         if (currentWorkload < 5) {
           actions.push('Add more appointments to increase utilization');
           actions.push('Consider cross-training for additional services');
@@ -647,13 +707,15 @@ export class AllocationEngine {
           staff_id: staff.id,
           current_workload: currentWorkload,
           optimal_workload: optimalWorkload,
-          rebalancing_actions: actions
+          rebalancing_actions: actions,
         });
       }
 
       return {
         recommendations,
-        efficiency_improvement: Math.round(totalImprovement / staffResources.length)
+        efficiency_improvement: Math.round(
+          totalImprovement / staffResources.length
+        ),
       };
     } catch (error) {
       console.error('Error optimizing staff workload:', error);

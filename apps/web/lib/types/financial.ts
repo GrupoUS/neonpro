@@ -5,7 +5,6 @@
  * Standards: Brazilian NFSe compliance + Shadow validation
  */
 
-
 // Base financial types
 export type Currency = 'BRL';
 export type AmountInCentavos = number; // Always store amounts in centavos for precision
@@ -17,19 +16,19 @@ export interface Invoice {
   patient_id: string;
   clinic_id: string;
   professional_id?: string;
-  
+
   // Invoice Details
   description: string;
   service_list_code?: string; // Brazilian service code
   issue_date: string;
   due_date?: string;
-  
+
   // Financial Amounts (in centavos)
   subtotal_amount: AmountInCentavos;
   discount_amount: AmountInCentavos;
   tax_amount: AmountInCentavos;
   total_amount: AmountInCentavos;
-  
+
   // Brazilian NFSe Compliance
   nfse_number?: string;
   nfse_verification_code?: string;
@@ -37,25 +36,25 @@ export interface Invoice {
   nfse_issued_at?: string;
   nfse_xml_url?: string;
   cnpj_issuer: string;
-  
+
   // Status
   status: InvoiceStatus;
   payment_status: PaymentStatus;
-  
+
   // Shadow Validation
   shadow_validation_status: ShadowValidationStatus;
   shadow_validation_at?: string;
   shadow_variance: number;
-  
+
   // Audit
   created_at: string;
   updated_at: string;
   created_by?: string;
   updated_by?: string;
-  
+
   // Metadata
   metadata: Record<string, any>;
-  
+
   // Relations (populated by joins)
   invoice_items?: InvoiceItem[];
   payments?: Payment[];
@@ -77,60 +76,60 @@ export interface Invoice {
 export interface InvoiceItem {
   id: string;
   invoice_id: string;
-  
+
   // Item Details
   description: string;
   quantity: number;
   unit_price: AmountInCentavos;
   discount_amount: AmountInCentavos;
   total_amount: AmountInCentavos;
-  
+
   // Service References
   treatment_plan_id?: string;
   procedure_id?: string;
-  
+
   // Brazilian Tax Information
   service_code?: string;
   tax_rate: number;
   tax_amount: AmountInCentavos;
-  
+
   created_at: string;
 }
 
 export interface Payment {
   id: string;
   invoice_id: string;
-  
+
   // Payment Details
   payment_method: PaymentMethod;
   amount: AmountInCentavos;
-  
+
   // Payment Processing
   external_transaction_id?: string;
   payment_processor?: string;
   authorization_code?: string;
-  
+
   // Status
   status: PaymentProcessingStatus;
   processed_at?: string;
   confirmed_at?: string;
-  
+
   // Fees
   processing_fee: AmountInCentavos;
   net_amount?: AmountInCentavos;
-  
+
   // PIX specific
   pix_key?: string;
   pix_qr_code?: string;
   pix_copy_paste?: string;
-  
+
   // Audit
   created_at: string;
   updated_at: string;
   created_by?: string;
-  
+
   metadata: Record<string, any>;
-  
+
   // Relations
   installments?: PaymentInstallment[];
 }
@@ -139,28 +138,28 @@ export interface PaymentInstallment {
   id: string;
   payment_id: string;
   invoice_id: string;
-  
+
   // Installment Details
   installment_number: number;
   total_installments: number;
   amount: AmountInCentavos;
-  
+
   // Scheduling
   due_date: string;
   paid_date?: string;
-  
+
   // Status
   status: InstallmentStatus;
-  
+
   // Late fees
   late_fee: AmountInCentavos;
   interest_amount: AmountInCentavos;
   final_amount?: AmountInCentavos;
-  
+
   // Payment processing
   payment_transaction_id?: string;
   paid_amount?: AmountInCentavos;
-  
+
   created_at: string;
   updated_at: string;
 }
@@ -170,21 +169,21 @@ export interface ShadowValidation {
   operation_type: ShadowOperationType;
   reference_id: string;
   reference_table: string;
-  
+
   // Validation Results
   original_calculation: Record<string, any>;
   shadow_calculation: Record<string, any>;
   variance: number;
   variance_percentage: number;
-  
+
   // Status
   validation_status: ShadowValidationStatus;
   validation_message?: string;
-  
+
   // Tolerances
   tolerance_absolute: number;
   tolerance_percentage: number;
-  
+
   validated_at: string;
   validated_by?: string;
   metadata: Record<string, any>;
@@ -194,45 +193,78 @@ export interface PaymentReminder {
   id: string;
   invoice_id: string;
   installment_id?: string;
-  
+
   // Reminder Details
   reminder_type: ReminderType;
   days_before_due: number;
   days_after_due: number;
-  
+
   // Delivery
   delivery_method: DeliveryMethod;
   recipient_contact: string;
-  
+
   // Status
   status: ReminderStatus;
   sent_at?: string;
   delivered_at?: string;
-  
+
   // Content
   subject?: string;
   message?: string;
-  
+
   // Response tracking
   viewed_at?: string;
   responded_at?: string;
-  
+
   created_at: string;
   updated_at: string;
 }
 
 // Enums
-export type InvoiceStatus = 'draft' | 'issued' | 'sent' | 'paid' | 'cancelled' | 'overdue';
-export type PaymentStatus = 'pending' | 'partial' | 'paid' | 'overdue' | 'cancelled';
+export type InvoiceStatus =
+  | 'draft'
+  | 'issued'
+  | 'sent'
+  | 'paid'
+  | 'cancelled'
+  | 'overdue';
+export type PaymentStatus =
+  | 'pending'
+  | 'partial'
+  | 'paid'
+  | 'overdue'
+  | 'cancelled';
 export type NFSeStatus = 'pending' | 'issued' | 'cancelled' | 'rejected';
-export type PaymentMethod = 'cash' | 'credit_card' | 'debit_card' | 'pix' | 'bank_transfer' | 'financing' | 'installment';
-export type PaymentProcessingStatus = 'pending' | 'processing' | 'completed' | 'failed' | 'cancelled' | 'refunded';
+export type PaymentMethod =
+  | 'cash'
+  | 'credit_card'
+  | 'debit_card'
+  | 'pix'
+  | 'bank_transfer'
+  | 'financing'
+  | 'installment';
+export type PaymentProcessingStatus =
+  | 'pending'
+  | 'processing'
+  | 'completed'
+  | 'failed'
+  | 'cancelled'
+  | 'refunded';
 export type InstallmentStatus = 'pending' | 'paid' | 'overdue' | 'cancelled';
 export type ShadowValidationStatus = 'pending' | 'validated' | 'failed';
-export type ShadowOperationType = 'invoice_calculation' | 'payment_processing' | 'tax_calculation' | 'installment_calculation';
+export type ShadowOperationType =
+  | 'invoice_calculation'
+  | 'payment_processing'
+  | 'tax_calculation'
+  | 'installment_calculation';
 export type ReminderType = 'pre_due' | 'due' | 'overdue' | 'final_notice';
 export type DeliveryMethod = 'email' | 'sms' | 'whatsapp' | 'phone';
-export type ReminderStatus = 'pending' | 'sent' | 'delivered' | 'failed' | 'cancelled';
+export type ReminderStatus =
+  | 'pending'
+  | 'sent'
+  | 'delivered'
+  | 'failed'
+  | 'cancelled';
 
 // Input Types for API
 export interface CreateInvoiceInput {
@@ -403,14 +435,20 @@ export interface FinancialSummary {
   total_paid: AmountInCentavos;
   total_pending: AmountInCentavos;
   total_overdue: AmountInCentavos;
-  payment_methods: Record<PaymentMethod, {
-    count: number;
-    amount: AmountInCentavos;
-  }>;
-  by_status: Record<InvoiceStatus, {
-    count: number;
-    amount: AmountInCentavos;
-  }>;
+  payment_methods: Record<
+    PaymentMethod,
+    {
+      count: number;
+      amount: AmountInCentavos;
+    }
+  >;
+  by_status: Record<
+    InvoiceStatus,
+    {
+      count: number;
+      amount: AmountInCentavos;
+    }
+  >;
 }
 
 // Utility Functions Types
@@ -426,7 +464,10 @@ export interface InvoiceNumberGenerator {
 }
 
 export interface TaxCalculator {
-  calculateServiceTax(amount: AmountInCentavos, service_code: string): AmountInCentavos;
+  calculateServiceTax(
+    amount: AmountInCentavos,
+    service_code: string
+  ): AmountInCentavos;
   calculateTotalTax(items: InvoiceItem[]): AmountInCentavos;
   getServiceTaxRate(service_code: string): number;
 }

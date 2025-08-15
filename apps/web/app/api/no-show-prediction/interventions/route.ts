@@ -1,24 +1,24 @@
 // Story 11.2: No-Show Prediction Interventions API
 // Record and track intervention effectiveness
 
-import { NextRequest, NextResponse } from 'next/server';
-import { InterventionCreateSchema, InterventionUpdateSchema } from '@/app/lib/validations/no-show-prediction';
+import { type NextRequest, NextResponse } from 'next/server';
+import { InterventionCreateSchema } from '@/app/lib/validations/no-show-prediction';
 import { createClient } from '@/app/utils/supabase/server';
 
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
-    
-    let query = supabase
-      .from('no_show_interventions')
-      .select(`
+
+    let query = supabase.from('no_show_interventions').select(`
         *,
         patient:patients(id, name, email, phone)
       `);
@@ -27,22 +27,22 @@ export async function GET(request: NextRequest) {
     if (searchParams.get('prediction_id')) {
       query = query.eq('prediction_id', searchParams.get('prediction_id'));
     }
-    
+
     if (searchParams.get('patient_id')) {
       query = query.eq('patient_id', searchParams.get('patient_id'));
     }
-    
+
     if (searchParams.get('type')) {
       query = query.eq('intervention_type', searchParams.get('type'));
     }
-    
+
     if (searchParams.get('status')) {
       query = query.eq('status', searchParams.get('status'));
     }
 
     // Apply sorting and pagination
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '20');
+    const page = Number.parseInt(searchParams.get('page') || '1', 10);
+    const limit = Number.parseInt(searchParams.get('limit') || '20', 10);
     const offset = (page - 1) * limit;
 
     query = query
@@ -53,7 +53,10 @@ export async function GET(request: NextRequest) {
 
     if (error) {
       console.error('Database error:', error);
-      return NextResponse.json({ error: 'Failed to fetch interventions' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Failed to fetch interventions' },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json({
@@ -61,10 +64,9 @@ export async function GET(request: NextRequest) {
       pagination: {
         page,
         limit,
-        total: interventions?.length || 0
-      }
+        total: interventions?.length || 0,
+      },
     });
-
   } catch (error) {
     console.error('API error:', error);
     return NextResponse.json(
@@ -77,8 +79,10 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -91,18 +95,20 @@ export async function POST(request: NextRequest) {
       .insert({
         ...validatedData,
         created_by: session.user.id,
-        status: 'pending'
+        status: 'pending',
       })
       .select()
       .single();
 
     if (error) {
       console.error('Database error:', error);
-      return NextResponse.json({ error: 'Failed to create intervention' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Failed to create intervention' },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json(intervention, { status: 201 });
-
   } catch (error) {
     console.error('API error:', error);
     return NextResponse.json(

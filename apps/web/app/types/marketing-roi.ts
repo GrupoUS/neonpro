@@ -1,10 +1,10 @@
 /**
  * Marketing ROI Analysis Types
  * Comprehensive ROI calculation and optimization for marketing campaigns and treatments
- * 
+ *
  * Features:
  * - Marketing campaign ROI tracking
- * - Treatment profitability analysis  
+ * - Treatment profitability analysis
  * - CAC (Customer Acquisition Cost) & LTV (Lifetime Value) analytics
  * - Real-time ROI monitoring and alerts
  * - Cost optimization recommendations
@@ -33,7 +33,7 @@ export enum MarketingChannel {
   OUTDOOR = 'outdoor',
   EVENT = 'event',
   PARTNERSHIP = 'partnership',
-  OTHER = 'other'
+  OTHER = 'other',
 }
 
 export enum CampaignType {
@@ -45,7 +45,7 @@ export enum CampaignType {
   SEASONAL = 'seasonal',
   PROMOTIONAL = 'promotional',
   EDUCATIONAL = 'educational',
-  OTHER = 'other'
+  OTHER = 'other',
 }
 
 export enum CampaignStatus {
@@ -53,7 +53,7 @@ export enum CampaignStatus {
   ACTIVE = 'active',
   PAUSED = 'paused',
   COMPLETED = 'completed',
-  CANCELLED = 'cancelled'
+  CANCELLED = 'cancelled',
 }
 
 export enum ROIMetricType {
@@ -61,7 +61,7 @@ export enum ROIMetricType {
   PROFIT_ROI = 'profit_roi',
   CUSTOMER_ROI = 'customer_roi',
   LIFETIME_ROI = 'lifetime_roi',
-  ACQUISITION_ROI = 'acquisition_roi'
+  ACQUISITION_ROI = 'acquisition_roi',
 }
 
 export enum AlertType {
@@ -70,7 +70,7 @@ export enum AlertType {
   LOW_LTV = 'low_ltv',
   NEGATIVE_ROI = 'negative_roi',
   BUDGET_EXCEEDED = 'budget_exceeded',
-  OPPORTUNITY = 'opportunity'
+  OPPORTUNITY = 'opportunity',
 }
 
 export enum OptimizationArea {
@@ -79,7 +79,7 @@ export enum OptimizationArea {
   CAMPAIGN_TARGETING = 'campaign_targeting',
   PRICING_STRATEGY = 'pricing_strategy',
   COST_REDUCTION = 'cost_reduction',
-  RESOURCE_ALLOCATION = 'resource_allocation'
+  RESOURCE_ALLOCATION = 'resource_allocation',
 }
 
 // ===== CAMPAIGN MANAGEMENT =====
@@ -94,7 +94,7 @@ export interface MarketingCampaign {
   status: CampaignStatus;
   start_date: Date;
   end_date?: Date;
-  
+
   // Budget & Costs
   budget: number;
   actual_spend: number;
@@ -102,7 +102,7 @@ export interface MarketingCampaign {
   cost_per_impression?: number;
   cost_per_lead?: number;
   cost_per_acquisition?: number;
-  
+
   // Performance Metrics
   impressions: number;
   clicks: number;
@@ -110,13 +110,13 @@ export interface MarketingCampaign {
   conversions: number;
   revenue_generated: number;
   profit_generated: number;
-  
+
   // ROI Metrics
   roi_percentage: number;
   profit_roi_percentage: number;
   ltv_cac_ratio: number;
   payback_period_days: number;
-  
+
   // Metadata
   created_at: Date;
   updated_at: Date;
@@ -143,7 +143,7 @@ export interface TreatmentROI {
   clinic_id: string;
   treatment_id: string;
   treatment_name: string;
-  
+
   // Cost Analysis
   direct_costs: number;
   indirect_costs: number;
@@ -152,34 +152,34 @@ export interface TreatmentROI {
   equipment_costs: number;
   overhead_costs: number;
   total_costs: number;
-  
+
   // Revenue Analysis
   base_price: number;
   average_selling_price: number;
   total_revenue: number;
-  
+
   // Profitability Metrics
   gross_profit: number;
   gross_margin_percentage: number;
   roi_percentage: number;
   profit_per_procedure: number;
-  
+
   // Volume Analysis
   procedures_count: number;
   monthly_volume: number;
   capacity_utilization: number;
-  
+
   // Comparative Metrics
   clinic_average_roi: number;
   industry_benchmark_roi: number;
   ranking_among_treatments: number;
-  
+
   // Optimization Potential
   optimization_score: number;
   cost_reduction_potential: number;
   price_optimization_potential: number;
   volume_optimization_potential: number;
-  
+
   period_start: Date;
   period_end: Date;
   created_at: Date;
@@ -192,30 +192,30 @@ export interface CustomerAcquisitionCost {
   id: string;
   clinic_id: string;
   channel: MarketingChannel;
-  
+
   // Acquisition Metrics
   period_start: Date;
   period_end: Date;
   total_marketing_spend: number;
   customers_acquired: number;
   cac: number;
-  
+
   // Channel Performance
   conversion_rate: number;
   cost_per_lead: number;
   lead_to_customer_rate: number;
-  
+
   // Comparative Analysis
   previous_period_cac: number;
   cac_change_percentage: number;
   clinic_average_cac: number;
   industry_benchmark_cac: number;
-  
+
   // Quality Metrics
   customer_quality_score: number;
   first_purchase_value: number;
   time_to_first_purchase_days: number;
-  
+
   created_at: Date;
   updated_at: Date;
 }
@@ -224,41 +224,41 @@ export interface CustomerLifetimeValue {
   id: string;
   clinic_id: string;
   patient_id?: string; // Optional for individual vs aggregate analysis
-  
+
   // LTV Calculation
   lifetime_value: number;
   predicted_ltv: number;
   ltv_calculation_method: string;
-  
+
   // Revenue Components
   total_revenue: number;
   average_order_value: number;
   purchase_frequency: number;
   customer_lifespan_months: number;
-  
+
   // Profitability Components
   total_profit: number;
   gross_margin_percentage: number;
   profit_ltv: number;
-  
+
   // Acquisition Context
   acquisition_channel: MarketingChannel;
   acquisition_date: Date;
   cac: number;
   ltv_cac_ratio: number;
   payback_period_months: number;
-  
+
   // Predictive Metrics
   churn_probability: number;
   next_purchase_probability: number;
   upsell_probability: number;
   retention_months: number;
-  
+
   // Segmentation
   customer_segment: string;
   value_tier: string;
   risk_level: string;
-  
+
   period_start: Date;
   period_end: Date;
   created_at: Date;
@@ -272,7 +272,7 @@ export interface ROIAlert {
   clinic_id: string;
   type: AlertType;
   severity: 'low' | 'medium' | 'high' | 'critical';
-  
+
   // Alert Details
   title: string;
   description: string;
@@ -280,23 +280,23 @@ export interface ROIAlert {
   current_value: number;
   threshold_value: number;
   variance_percentage: number;
-  
+
   // Context
   entity_type: 'campaign' | 'treatment' | 'channel' | 'clinic';
   entity_id: string;
   entity_name: string;
-  
+
   // Actions
   suggested_actions: string[];
   potential_impact: number;
   priority_score: number;
-  
+
   // Status
   status: 'active' | 'acknowledged' | 'resolved' | 'dismissed';
   acknowledged_at?: Date;
   acknowledged_by?: string;
   resolved_at?: Date;
-  
+
   created_at: Date;
   updated_at: Date;
 }
@@ -306,28 +306,28 @@ export interface ROIMonitoringRule {
   clinic_id: string;
   name: string;
   description: string;
-  
+
   // Rule Configuration
   metric_type: ROIMetricType;
   entity_type: 'campaign' | 'treatment' | 'channel';
   threshold_value: number;
   comparison_operator: 'less_than' | 'greater_than' | 'equals' | 'not_equals';
-  
+
   // Trigger Conditions
   minimum_sample_size: number;
   evaluation_period_days: number;
   consecutive_violations: number;
-  
+
   // Alert Configuration
   alert_type: AlertType;
   alert_severity: 'low' | 'medium' | 'high' | 'critical';
   notification_channels: string[];
-  
+
   // Status
   is_active: boolean;
   last_evaluated: Date;
   violations_count: number;
-  
+
   created_at: Date;
   updated_at: Date;
   created_by: string;
@@ -339,12 +339,12 @@ export interface OptimizationRecommendation {
   id: string;
   clinic_id: string;
   area: OptimizationArea;
-  
+
   // Recommendation Details
   title: string;
   description: string;
   rationale: string;
-  
+
   // Impact Analysis
   current_roi: number;
   projected_roi: number;
@@ -352,19 +352,19 @@ export interface OptimizationRecommendation {
   estimated_revenue_impact: number;
   estimated_cost_impact: number;
   estimated_profit_impact: number;
-  
+
   // Implementation
   complexity_score: number; // 1-10
   implementation_effort: 'low' | 'medium' | 'high';
   implementation_timeline_days: number;
   required_resources: string[];
-  
+
   // Context
   entity_type: 'campaign' | 'treatment' | 'channel' | 'clinic';
   entity_ids: string[];
   priority_score: number;
   confidence_level: number; // 0-100
-  
+
   // Actions
   recommended_actions: {
     action: string;
@@ -372,14 +372,14 @@ export interface OptimizationRecommendation {
     priority: number;
     estimated_impact: number;
   }[];
-  
+
   // Status
   status: 'pending' | 'approved' | 'in_progress' | 'completed' | 'rejected';
   approved_at?: Date;
   approved_by?: string;
   implementation_started_at?: Date;
   completed_at?: Date;
-  
+
   created_at: Date;
   updated_at: Date;
   created_by: string;
@@ -391,14 +391,14 @@ export interface ROIDashboardMetrics {
   clinic_id: string;
   period_start: Date;
   period_end: Date;
-  
+
   // Overall ROI Summary
   total_marketing_spend: number;
   total_revenue_generated: number;
   total_profit_generated: number;
   overall_roi_percentage: number;
   overall_profit_roi_percentage: number;
-  
+
   // Campaign Performance
   active_campaigns_count: number;
   total_campaigns_count: number;
@@ -413,7 +413,7 @@ export interface ROIDashboardMetrics {
     name: string;
     roi_percentage: number;
   };
-  
+
   // Channel Performance
   channel_performance: {
     channel: MarketingChannel;
@@ -423,13 +423,13 @@ export interface ROIDashboardMetrics {
     customers_acquired: number;
     cac: number;
   }[];
-  
+
   // CAC & LTV
   average_cac: number;
   average_ltv: number;
   ltv_cac_ratio: number;
   average_payback_period_months: number;
-  
+
   // Treatment Profitability
   most_profitable_treatments: {
     treatment_id: string;
@@ -437,17 +437,17 @@ export interface ROIDashboardMetrics {
     roi_percentage: number;
     profit_margin: number;
   }[];
-  
+
   // Alerts & Opportunities
   active_alerts_count: number;
   optimization_opportunities_count: number;
   potential_roi_improvement: number;
-  
+
   // Trends
   roi_trend_percentage: number;
   cac_trend_percentage: number;
   ltv_trend_percentage: number;
-  
+
   generated_at: Date;
 }
 
@@ -483,13 +483,13 @@ export interface ROIForecast {
   clinic_id: string;
   forecast_type: 'campaign' | 'treatment' | 'channel' | 'overall';
   entity_id?: string;
-  
+
   // Forecast Details
   forecast_period_start: Date;
   forecast_period_end: Date;
   confidence_level: number;
   model_accuracy: number;
-  
+
   // Predictions
   predicted_spend: number;
   predicted_revenue: number;
@@ -498,7 +498,7 @@ export interface ROIForecast {
   predicted_customers_acquired: number;
   predicted_cac: number;
   predicted_ltv: number;
-  
+
   // Scenarios
   optimistic_scenario: {
     roi_percentage: number;
@@ -515,11 +515,11 @@ export interface ROIForecast {
     revenue: number;
     probability: number;
   };
-  
+
   // Assumptions
   assumptions: string[];
   risk_factors: string[];
-  
+
   created_at: Date;
   updated_at: Date;
   created_by: string;
@@ -555,7 +555,7 @@ export const MarketingCampaignSchema = z.object({
   payback_period_days: z.number().min(0),
   created_at: z.date(),
   updated_at: z.date(),
-  created_by: z.string()
+  created_by: z.string(),
 });
 
 export const TreatmentROISchema = z.object({
@@ -567,7 +567,9 @@ export const TreatmentROISchema = z.object({
   indirect_costs: z.number().min(0, 'Custos indiretos devem ser positivos'),
   labor_costs: z.number().min(0, 'Custos de mão de obra devem ser positivos'),
   material_costs: z.number().min(0, 'Custos de material devem ser positivos'),
-  equipment_costs: z.number().min(0, 'Custos de equipamento devem ser positivos'),
+  equipment_costs: z
+    .number()
+    .min(0, 'Custos de equipamento devem ser positivos'),
   overhead_costs: z.number().min(0, 'Custos gerais devem ser positivos'),
   total_costs: z.number().min(0, 'Custos totais devem ser positivos'),
   base_price: z.number().min(0, 'Preço base deve ser positivo'),
@@ -577,9 +579,14 @@ export const TreatmentROISchema = z.object({
   gross_margin_percentage: z.number(),
   roi_percentage: z.number(),
   profit_per_procedure: z.number(),
-  procedures_count: z.number().min(0, 'Contagem de procedimentos deve ser positiva'),
+  procedures_count: z
+    .number()
+    .min(0, 'Contagem de procedimentos deve ser positiva'),
   monthly_volume: z.number().min(0, 'Volume mensal deve ser positivo'),
-  capacity_utilization: z.number().min(0).max(100, 'Utilização de capacidade deve estar entre 0 e 100'),
+  capacity_utilization: z
+    .number()
+    .min(0)
+    .max(100, 'Utilização de capacidade deve estar entre 0 e 100'),
   clinic_average_roi: z.number(),
   industry_benchmark_roi: z.number(),
   ranking_among_treatments: z.number().min(1),
@@ -590,7 +597,7 @@ export const TreatmentROISchema = z.object({
   period_start: z.date(),
   period_end: z.date(),
   created_at: z.date(),
-  updated_at: z.date()
+  updated_at: z.date(),
 });
 
 export const CustomerAcquisitionCostSchema = z.object({
@@ -599,12 +606,22 @@ export const CustomerAcquisitionCostSchema = z.object({
   channel: z.nativeEnum(MarketingChannel),
   period_start: z.date(),
   period_end: z.date(),
-  total_marketing_spend: z.number().min(0, 'Gasto de marketing deve ser positivo'),
-  customers_acquired: z.number().min(0, 'Clientes adquiridos devem ser positivos'),
+  total_marketing_spend: z
+    .number()
+    .min(0, 'Gasto de marketing deve ser positivo'),
+  customers_acquired: z
+    .number()
+    .min(0, 'Clientes adquiridos devem ser positivos'),
   cac: z.number().min(0, 'CAC deve ser positivo'),
-  conversion_rate: z.number().min(0).max(100, 'Taxa de conversão deve estar entre 0 e 100'),
+  conversion_rate: z
+    .number()
+    .min(0)
+    .max(100, 'Taxa de conversão deve estar entre 0 e 100'),
   cost_per_lead: z.number().min(0, 'Custo por lead deve ser positivo'),
-  lead_to_customer_rate: z.number().min(0).max(100, 'Taxa lead-cliente deve estar entre 0 e 100'),
+  lead_to_customer_rate: z
+    .number()
+    .min(0)
+    .max(100, 'Taxa lead-cliente deve estar entre 0 e 100'),
   previous_period_cac: z.number().min(0),
   cac_change_percentage: z.number(),
   clinic_average_cac: z.number().min(0),
@@ -613,7 +630,7 @@ export const CustomerAcquisitionCostSchema = z.object({
   first_purchase_value: z.number().min(0),
   time_to_first_purchase_days: z.number().min(0),
   created_at: z.date(),
-  updated_at: z.date()
+  updated_at: z.date(),
 });
 
 export const CustomerLifetimeValueSchema = z.object({
@@ -624,9 +641,15 @@ export const CustomerLifetimeValueSchema = z.object({
   predicted_ltv: z.number().min(0, 'LTV previsto deve ser positivo'),
   ltv_calculation_method: z.string(),
   total_revenue: z.number().min(0, 'Receita total deve ser positiva'),
-  average_order_value: z.number().min(0, 'Valor médio de compra deve ser positivo'),
-  purchase_frequency: z.number().min(0, 'Frequência de compra deve ser positiva'),
-  customer_lifespan_months: z.number().min(0, 'Tempo de vida deve ser positivo'),
+  average_order_value: z
+    .number()
+    .min(0, 'Valor médio de compra deve ser positivo'),
+  purchase_frequency: z
+    .number()
+    .min(0, 'Frequência de compra deve ser positiva'),
+  customer_lifespan_months: z
+    .number()
+    .min(0, 'Tempo de vida deve ser positivo'),
   total_profit: z.number(),
   gross_margin_percentage: z.number(),
   profit_ltv: z.number(),
@@ -645,7 +668,7 @@ export const CustomerLifetimeValueSchema = z.object({
   period_start: z.date(),
   period_end: z.date(),
   created_at: z.date(),
-  updated_at: z.date()
+  updated_at: z.date(),
 });
 
 export const ROIAlertSchema = z.object({
@@ -670,7 +693,7 @@ export const ROIAlertSchema = z.object({
   acknowledged_by: z.string().optional(),
   resolved_at: z.date().optional(),
   created_at: z.date(),
-  updated_at: z.date()
+  updated_at: z.date(),
 });
 
 export const OptimizationRecommendationSchema = z.object({
@@ -694,20 +717,28 @@ export const OptimizationRecommendationSchema = z.object({
   entity_ids: z.array(z.string()),
   priority_score: z.number().min(0).max(100),
   confidence_level: z.number().min(0).max(100),
-  recommended_actions: z.array(z.object({
-    action: z.string(),
-    description: z.string(),
-    priority: z.number(),
-    estimated_impact: z.number()
-  })),
-  status: z.enum(['pending', 'approved', 'in_progress', 'completed', 'rejected']),
+  recommended_actions: z.array(
+    z.object({
+      action: z.string(),
+      description: z.string(),
+      priority: z.number(),
+      estimated_impact: z.number(),
+    })
+  ),
+  status: z.enum([
+    'pending',
+    'approved',
+    'in_progress',
+    'completed',
+    'rejected',
+  ]),
   approved_at: z.date().optional(),
   approved_by: z.string().optional(),
   implementation_started_at: z.date().optional(),
   completed_at: z.date().optional(),
   created_at: z.date(),
   updated_at: z.date(),
-  created_by: z.string()
+  created_by: z.string(),
 });
 
 export const ROIForecastSchema = z.object({
@@ -729,23 +760,23 @@ export const ROIForecastSchema = z.object({
   optimistic_scenario: z.object({
     roi_percentage: z.number(),
     revenue: z.number(),
-    probability: z.number().min(0).max(100)
+    probability: z.number().min(0).max(100),
   }),
   realistic_scenario: z.object({
     roi_percentage: z.number(),
     revenue: z.number(),
-    probability: z.number().min(0).max(100)
+    probability: z.number().min(0).max(100),
   }),
   pessimistic_scenario: z.object({
     roi_percentage: z.number(),
     revenue: z.number(),
-    probability: z.number().min(0).max(100)
+    probability: z.number().min(0).max(100),
   }),
   assumptions: z.array(z.string()),
   risk_factors: z.array(z.string()),
   created_at: z.date(),
   updated_at: z.date(),
-  created_by: z.string()
+  created_by: z.string(),
 });
 
 // ===== API REQUEST/RESPONSE TYPES =====
@@ -963,5 +994,5 @@ export type {
   MarketingROIFilters,
   TreatmentROIFilters,
   ROIMetric,
-  ROIInsight
+  ROIInsight,
 };

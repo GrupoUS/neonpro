@@ -5,6 +5,31 @@
 
 import '@testing-library/jest-dom';
 
+// Polyfill for Web APIs in Node.js environment
+import { ReadableStream } from 'stream/web';
+import { TextDecoder, TextEncoder } from 'util';
+
+// Add Web APIs to global scope
+if (!globalThis.Request) {
+  const { Request, Response, Headers, fetch } = require('undici');
+  globalThis.Request = Request;
+  globalThis.Response = Response;
+  globalThis.Headers = Headers;
+  globalThis.fetch = fetch;
+}
+
+if (!globalThis.ReadableStream) {
+  globalThis.ReadableStream = ReadableStream;
+}
+
+if (!globalThis.TextEncoder) {
+  globalThis.TextEncoder = TextEncoder;
+}
+
+if (!globalThis.TextDecoder) {
+  globalThis.TextDecoder = TextDecoder;
+}
+
 // Mock Next.js router
 jest.mock('next/router', () => ({
   useRouter: () => ({
@@ -39,12 +64,90 @@ jest.mock('next/navigation', () => ({
   }),
   usePathname: () => '/',
   useSearchParams: () => new URLSearchParams(),
+  notFound: jest.fn(),
+  redirect: jest.fn(),
 }));
+
+// Mock Next.js 15 server functions to prevent "outside request scope" errors
+jest.mock('next/headers', () => ({
+  cookies: jest.fn(() => ({
+    get: jest.fn(() => ({ name: 'test', value: 'test-value' })),
+    set: jest.fn(),
+    delete: jest.fn(),
+    has: jest.fn(() => false),
+    getAll: jest.fn(() => []),
+    toString: jest.fn(() => ''),
+  })),
+  headers: jest.fn(() => ({
+    get: jest.fn(() => 'test-header-value'),
+    has: jest.fn(() => false),
+    forEach: jest.fn(),
+    keys: jest.fn(() => []),
+    values: jest.fn(() => []),
+    entries: jest.fn(() => []),
+  })),
+}));
+
+// Mock Next.js dynamic imports
+jest.mock('next/dynamic', () => (fn: any) => {
+  const Component = fn();
+  Component.displayName = 'DynamicComponent';
+  return Component;
+});
+
+// Mock server-side rendering context to prevent async local storage errors
+const mockRequestContext = {
+  cookies: new Map(),
+  headers: new Map(),
+  url: 'http://localhost:3000/test',
+};
+
+// Mock Next.js async local storage
+jest.mock(
+  'next/dist/server/app-render/work-unit-async-storage.external',
+  () => ({
+    workUnitAsyncStorage: {
+      getStore: () => mockRequestContext,
+      run: (store: any, fn: any) => fn(),
+    },
+  })
+);
+
+// Mock Next.js request context APIs
+Object.defineProperty(global, 'Request', {
+  value: class MockRequest {
+    constructor(url: string, init?: RequestInit) {
+      this.url = url;
+      this.method = init?.method || 'GET';
+    }
+    url: string;
+    method: string;
+    headers = new Map();
+    json = jest.fn();
+    text = jest.fn();
+  },
+});
+
+Object.defineProperty(global, 'Response', {
+  value: class MockResponse {
+    constructor(body?: BodyInit, init?: ResponseInit) {
+      this.status = init?.status || 200;
+      this.statusText = init?.statusText || 'OK';
+      this.ok = this.status >= 200 && this.status < 300;
+    }
+    status: number;
+    statusText: string;
+    ok: boolean;
+    headers = new Map();
+    json = jest.fn();
+    text = jest.fn();
+  },
+});
 
 // Mock window.matchMedia for responsive tests
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: jest.fn().mockImplementation(query => ({
+  value: jest.fn().mockImplementation((query) => ({
     matches: false,
     media: query,
     onchange: null,
@@ -78,10 +181,10 @@ const localStorageMock = {
   clear: jest.fn(),
 };
 Object.defineProperty(window, 'localStorage', {
-  value: localStorageMock
+  value: localStorageMock,
 });
 Object.defineProperty(window, 'sessionStorage', {
-  value: localStorageMock
+  value: localStorageMock,
 });
 
 // Mock fetch for API tests
@@ -96,7 +199,7 @@ global.fetch = jest.fn();
 // };
 
 // Set default timeout for all tests
-jest.setTimeout(30000);
+jest.setTimeout(30_000);
 
 // Global test environment configuration
 process.env.NODE_ENV = 'test';

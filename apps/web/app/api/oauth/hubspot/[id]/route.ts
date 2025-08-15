@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { randomBytes } from 'node:crypto';
+import { type NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
-import { HubSpotOAuthHandler } from '@/lib/oauth/platforms/hubspot-handler';
 import { Logger } from '@/lib/logger';
-import { randomBytes } from 'crypto';
+import { HubSpotOAuthHandler } from '@/lib/oauth/platforms/hubspot-handler';
 
 export async function GET(
   request: NextRequest,
@@ -11,28 +11,33 @@ export async function GET(
   const requestId = randomBytes(16).toString('hex');
   const { id } = await params;
   const connectionId = id;
-  
+
   try {
     Logger.info('HubSpot connection details request initiated', {
       requestId,
       provider: 'hubspot',
       connectionId,
       userAgent: request.headers.get('user-agent'),
-      ip: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip')
+      ip:
+        request.headers.get('x-forwarded-for') ||
+        request.headers.get('x-real-ip'),
     });
 
     // Verify user session
     const supabase = await createClient();
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+      error: sessionError,
+    } = await supabase.auth.getSession();
+
     if (sessionError || !session?.user) {
       Logger.warn('HubSpot connection details request without valid session', {
         requestId,
         provider: 'hubspot',
         connectionId,
-        error: sessionError?.message
+        error: sessionError?.message,
       });
-      
+
       return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
@@ -42,7 +47,9 @@ export async function GET(
     // Get HubSpot connection
     const { data: connection, error: connectionError } = await supabase
       .from('marketing_platform_connections')
-      .select('id, platform_type, platform_user_id, platform_username, status, connected_at, token_expires_at, scopes, platform_data')
+      .select(
+        'id, platform_type, platform_user_id, platform_username, status, connected_at, token_expires_at, scopes, platform_data'
+      )
       .eq('id', connectionId)
       .eq('profile_id', session.user.id)
       .eq('platform_type', 'hubspot')
@@ -54,9 +61,9 @@ export async function GET(
         provider: 'hubspot',
         connectionId,
         userId: session.user.id,
-        error: connectionError?.message
+        error: connectionError?.message,
       });
-      
+
       return NextResponse.json(
         { error: 'HubSpot connection not found' },
         { status: 404 }
@@ -67,7 +74,9 @@ export async function GET(
     const tokenExpiresAt = new Date(connection.token_expires_at);
     const now = new Date();
     const isTokenExpired = tokenExpiresAt < now;
-    const minutesUntilExpiry = Math.round((tokenExpiresAt.getTime() - now.getTime()) / (1000 * 60));
+    const minutesUntilExpiry = Math.round(
+      (tokenExpiresAt.getTime() - now.getTime()) / (1000 * 60)
+    );
 
     Logger.info('HubSpot connection details retrieved successfully', {
       requestId,
@@ -76,7 +85,7 @@ export async function GET(
       userId: session.user.id,
       status: connection.status,
       isTokenExpired,
-      minutesUntilExpiry
+      minutesUntilExpiry,
     });
 
     return NextResponse.json({
@@ -90,22 +99,21 @@ export async function GET(
       isTokenExpired,
       minutesUntilExpiry: isTokenExpired ? 0 : Math.max(0, minutesUntilExpiry),
       scopes: connection.scopes,
-      platformData: connection.platform_data
+      platformData: connection.platform_data,
     });
-
   } catch (error) {
     Logger.error('HubSpot connection details error', {
       requestId,
       provider: 'hubspot',
       connectionId,
       error: error instanceof Error ? error.message : 'Unknown error',
-      stack: error instanceof Error ? error.stack : undefined
+      stack: error instanceof Error ? error.stack : undefined,
     });
 
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to retrieve HubSpot connection details',
-        requestId 
+        requestId,
       },
       { status: 500 }
     );
@@ -119,28 +127,33 @@ export async function DELETE(
   const requestId = randomBytes(16).toString('hex');
   const { id } = await params;
   const connectionId = id;
-  
+
   try {
     Logger.info('HubSpot connection disconnection request initiated', {
       requestId,
       provider: 'hubspot',
       connectionId,
       userAgent: request.headers.get('user-agent'),
-      ip: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip')
+      ip:
+        request.headers.get('x-forwarded-for') ||
+        request.headers.get('x-real-ip'),
     });
 
     // Verify user session
     const supabase = await createClient();
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+      error: sessionError,
+    } = await supabase.auth.getSession();
+
     if (sessionError || !session?.user) {
       Logger.warn('HubSpot disconnection request without valid session', {
         requestId,
         provider: 'hubspot',
         connectionId,
-        error: sessionError?.message
+        error: sessionError?.message,
       });
-      
+
       return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
@@ -162,9 +175,9 @@ export async function DELETE(
         provider: 'hubspot',
         connectionId,
         userId: session.user.id,
-        error: connectionError?.message
+        error: connectionError?.message,
       });
-      
+
       return NextResponse.json(
         { error: 'HubSpot connection not found' },
         { status: 404 }
@@ -176,12 +189,18 @@ export async function DELETE(
       const oauthHandler = new HubSpotOAuthHandler();
       await oauthHandler.revokeToken(connection.encrypted_token);
     } catch (revokeError) {
-      Logger.warn('Failed to revoke HubSpot token, continuing with disconnection', {
-        requestId,
-        provider: 'hubspot',
-        connectionId,
-        error: revokeError instanceof Error ? revokeError.message : 'Unknown error'
-      });
+      Logger.warn(
+        'Failed to revoke HubSpot token, continuing with disconnection',
+        {
+          requestId,
+          provider: 'hubspot',
+          connectionId,
+          error:
+            revokeError instanceof Error
+              ? revokeError.message
+              : 'Unknown error',
+        }
+      );
     }
 
     // Update connection status to disconnected
@@ -190,7 +209,7 @@ export async function DELETE(
       .update({
         status: 'disconnected',
         disconnected_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', connectionId);
 
@@ -199,9 +218,9 @@ export async function DELETE(
         requestId,
         provider: 'hubspot',
         connectionId,
-        error: updateError.message
+        error: updateError.message,
       });
-      
+
       return NextResponse.json(
         { error: 'Failed to disconnect HubSpot account' },
         { status: 500 }
@@ -209,61 +228,54 @@ export async function DELETE(
     }
 
     // Log disconnection
-    await supabase
-      .from('oauth_audit_log')
-      .insert({
-        profile_id: session.user.id,
-        provider: 'hubspot',
-        action: 'connection_disconnected',
-        request_id: requestId,
-        ip_address: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip'),
-        user_agent: request.headers.get('user-agent'),
-        details: {
-          connectionId
-        }
-      });
+    await supabase.from('oauth_audit_log').insert({
+      profile_id: session.user.id,
+      provider: 'hubspot',
+      action: 'connection_disconnected',
+      request_id: requestId,
+      ip_address:
+        request.headers.get('x-forwarded-for') ||
+        request.headers.get('x-real-ip'),
+      user_agent: request.headers.get('user-agent'),
+      details: {
+        connectionId,
+      },
+    });
 
     Logger.info('HubSpot disconnection successful', {
       requestId,
       provider: 'hubspot',
       connectionId,
-      userId: session.user.id
+      userId: session.user.id,
     });
 
     return NextResponse.json({
       message: 'HubSpot account disconnected successfully',
-      connectionId
+      connectionId,
     });
-
   } catch (error) {
     Logger.error('HubSpot disconnection error', {
       requestId,
       provider: 'hubspot',
       connectionId,
       error: error instanceof Error ? error.message : 'Unknown error',
-      stack: error instanceof Error ? error.stack : undefined
+      stack: error instanceof Error ? error.stack : undefined,
     });
 
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to disconnect HubSpot account',
-        requestId 
+        requestId,
       },
       { status: 500 }
     );
   }
 }
 
-export async function POST(request: NextRequest) {
-  return NextResponse.json(
-    { error: 'Method not allowed' },
-    { status: 405 }
-  );
+export async function POST(_request: NextRequest) {
+  return NextResponse.json({ error: 'Method not allowed' }, { status: 405 });
 }
 
-export async function PUT(request: NextRequest) {
-  return NextResponse.json(
-    { error: 'Method not allowed' },
-    { status: 405 }
-  );
+export async function PUT(_request: NextRequest) {
+  return NextResponse.json({ error: 'Method not allowed' }, { status: 405 });
 }

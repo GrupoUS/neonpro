@@ -6,31 +6,31 @@ export interface ReorderThreshold {
   id: string;
   item_id: string;
   clinic_id: string;
-  
+
   // Threshold levels
   reorder_point: number;
   safety_stock: number;
   maximum_stock?: number;
   minimum_order_quantity?: number;
-  
+
   // Intelligent calculations
   calculated_reorder_point?: number;
   calculated_safety_stock?: number;
   demand_forecast_weekly?: number;
   seasonal_adjustment_factor?: number;
   lead_time_days?: number;
-  
+
   // Alert levels
   warning_threshold_percentage?: number;
   critical_threshold_percentage?: number;
   emergency_threshold_percentage?: number;
-  
+
   // Automation settings
   auto_reorder_enabled?: boolean;
   preferred_supplier_id?: string;
   budget_approval_required?: boolean;
   budget_threshold_amount?: number;
-  
+
   // Metadata
   is_active?: boolean;
   last_calculation_date?: string;
@@ -43,44 +43,44 @@ export interface ReorderAlert {
   item_id: string;
   threshold_id: string;
   clinic_id: string;
-  
+
   // Alert details
   alert_type: 'warning' | 'critical' | 'emergency' | 'reorder' | 'overstock';
   alert_level: number; // 1-5
   current_stock: number;
   recommended_order_quantity?: number;
   estimated_stockout_date?: string;
-  
+
   // Message and context
   alert_title: string;
   alert_message: string;
   context_data?: Record<string, any>;
-  
+
   // Status and tracking
   status: 'pending' | 'acknowledged' | 'resolved' | 'escalated' | 'dismissed';
   priority: 'low' | 'medium' | 'high' | 'critical' | 'emergency';
-  
+
   // Escalation
   escalation_level?: number;
   escalated_to?: string;
   escalated_at?: string;
-  
+
   // Resolution
   acknowledged_by?: string;
   acknowledged_at?: string;
   resolved_by?: string;
   resolved_at?: string;
   resolution_notes?: string;
-  
+
   // Purchase order integration
   purchase_order_id?: string;
   auto_generated?: boolean;
-  
+
   // Delivery tracking
   notification_sent?: boolean;
   notification_channels?: string[];
   delivery_time_ms?: number;
-  
+
   // Metadata
   expires_at?: string;
   created_at: string;
@@ -91,32 +91,32 @@ export interface DemandForecast {
   id: string;
   item_id: string;
   clinic_id: string;
-  
+
   // Forecast period
   forecast_date: string;
   forecast_period: 'daily' | 'weekly' | 'monthly' | 'quarterly';
-  
+
   // Forecast data
   predicted_demand: number;
   confidence_interval?: number;
   seasonal_factor?: number;
   trend_factor?: number;
-  
+
   // Historical analysis
   historical_average?: number;
   variance?: number;
   standard_deviation?: number;
-  
+
   // Context
   special_events?: any[];
   promotion_impact?: number;
   appointment_based_demand?: number;
-  
+
   // Accuracy tracking
   actual_demand?: number;
   forecast_accuracy?: number;
   model_version?: string;
-  
+
   // Metadata
   calculated_at: string;
   created_at: string;
@@ -126,11 +126,11 @@ export interface PurchaseOrder {
   id: string;
   clinic_id: string;
   supplier_id: string;
-  
+
   // Order details
   order_number: string;
   order_type: 'reorder' | 'emergency' | 'bulk' | 'special';
-  
+
   // Financial
   subtotal: number;
   tax_amount?: number;
@@ -138,38 +138,46 @@ export interface PurchaseOrder {
   discount_amount?: number;
   total_amount: number;
   currency?: string;
-  
+
   // Status tracking
-  status: 'draft' | 'pending_approval' | 'approved' | 'sent' | 'confirmed' | 'partially_received' | 'received' | 'cancelled';
+  status:
+    | 'draft'
+    | 'pending_approval'
+    | 'approved'
+    | 'sent'
+    | 'confirmed'
+    | 'partially_received'
+    | 'received'
+    | 'cancelled';
   priority: 'low' | 'medium' | 'high' | 'urgent';
-  
+
   // Dates
   order_date: string;
   requested_delivery_date?: string;
   confirmed_delivery_date?: string;
   actual_delivery_date?: string;
-  
+
   // Automation
   auto_generated?: boolean;
   generated_from_alert_id?: string;
-  
+
   // Approval workflow
   requires_approval?: boolean;
   approved_by?: string;
   approved_at?: string;
   approval_notes?: string;
-  
+
   // Supplier communication
   sent_to_supplier?: boolean;
   sent_at?: string;
   supplier_confirmation?: string;
   supplier_order_number?: string;
-  
+
   // Notes and context
   notes?: string;
   internal_notes?: string;
   context_data?: Record<string, any>;
-  
+
   // Metadata
   created_by?: string;
   created_at: string;
@@ -180,27 +188,27 @@ export interface PurchaseOrderItem {
   id: string;
   purchase_order_id: string;
   item_id: string;
-  
+
   // Order details
   quantity: number;
   unit_price: number;
   total_price: number;
-  
+
   // Received tracking
   quantity_received?: number;
   quantity_remaining?: number;
-  
+
   // Item details at time of order
   item_name: string;
   item_sku?: string;
   item_description?: string;
   supplier_item_code?: string;
-  
+
   // Quality control
   quality_check_required?: boolean;
   quality_check_passed?: boolean;
   quality_notes?: string;
-  
+
   // Metadata
   created_at: string;
   updated_at: string;
@@ -209,28 +217,28 @@ export interface PurchaseOrderItem {
 export interface ApprovalWorkflow {
   id: string;
   clinic_id: string;
-  
+
   // Workflow details
   workflow_name: string;
   workflow_type: 'purchase_order' | 'budget_approval' | 'emergency_order';
-  
+
   // Trigger conditions
   trigger_amount_threshold?: number;
   trigger_item_categories?: string[];
   trigger_suppliers?: string[];
-  
+
   // Approval chain
   approval_chain: string[]; // Array of user IDs in order
   current_step?: number;
-  
+
   // Settings
   parallel_approval?: boolean;
   auto_approve_conditions?: Record<string, any>;
   escalation_timeout_hours?: number;
-  
+
   // Status
   is_active?: boolean;
-  
+
   // Metadata
   created_by?: string;
   created_at: string;
@@ -329,7 +337,8 @@ export interface CreateReorderThresholdRequest {
   budget_threshold_amount?: number;
 }
 
-export interface UpdateReorderThresholdRequest extends Partial<CreateReorderThresholdRequest> {
+export interface UpdateReorderThresholdRequest
+  extends Partial<CreateReorderThresholdRequest> {
   id: string;
 }
 
@@ -446,13 +455,23 @@ export type PurchaseOrderFilter = {
 
 // Event types for real-time updates
 export type ReorderEvent = {
-  type: 'alert_created' | 'alert_acknowledged' | 'alert_resolved' | 'threshold_updated' | 'order_created';
+  type:
+    | 'alert_created'
+    | 'alert_acknowledged'
+    | 'alert_resolved'
+    | 'threshold_updated'
+    | 'order_created';
   data: ReorderAlert | ReorderThreshold | PurchaseOrder;
   timestamp: string;
   clinic_id: string;
 };
 
-export type NotificationChannel = 'dashboard' | 'email' | 'sms' | 'push' | 'webhook';
+export type NotificationChannel =
+  | 'dashboard'
+  | 'email'
+  | 'sms'
+  | 'push'
+  | 'webhook';
 
 export interface NotificationSettings {
   clinic_id: string;
@@ -462,7 +481,7 @@ export interface NotificationSettings {
   priority_threshold: ReorderAlert['priority'];
   quiet_hours?: {
     start: string; // HH:mm format
-    end: string;   // HH:mm format
+    end: string; // HH:mm format
   };
   frequency_limit?: {
     max_per_hour: number;

@@ -1,6 +1,7 @@
 // app/api/auth/signout/route.ts
-import { createClient } from "@/app/utils/supabase/server";
-import { NextResponse } from "next/server";
+
+import { NextResponse } from 'next/server';
+import { createClient } from '@/app/utils/supabase/server';
 
 export async function POST(request: Request) {
   const supabase = await createClient();
@@ -9,5 +10,5 @@ export async function POST(request: Request) {
   await supabase.auth.signOut();
 
   // Redireciona para a página de login
-  return NextResponse.redirect(new URL("/login", request.url));
+  return NextResponse.redirect(new URL('/login', request.url));
 }

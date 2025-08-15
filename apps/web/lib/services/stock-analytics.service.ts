@@ -9,7 +9,13 @@ export interface AlertResolutionMetrics {
   id: string;
   clinic_id: string;
   metric_date: Date;
-  alert_type: 'low_stock' | 'expiring' | 'expired' | 'overstock' | 'critical_shortage' | 'all';
+  alert_type:
+    | 'low_stock'
+    | 'expiring'
+    | 'expired'
+    | 'overstock'
+    | 'critical_shortage'
+    | 'all';
   severity_level: 'low' | 'medium' | 'high' | 'critical' | 'all';
   total_alerts_created: number;
   total_alerts_resolved: number;
@@ -73,7 +79,7 @@ class StockAnalyticsService {
       const supabase = await this.getSupabaseClient();
       const startOfDay = new Date(date);
       startOfDay.setHours(0, 0, 0, 0);
-      
+
       const endOfDay = new Date(date);
       endOfDay.setHours(23, 59, 59, 999);
 
@@ -103,15 +109,15 @@ class StockAnalyticsService {
 
       // Calculate metrics
       const totalAlertsCreated = alerts.length;
-      const resolvedAlerts = alerts.filter(a => a.status === 'resolved');
-      const dismissedAlerts = alerts.filter(a => a.status === 'dismissed');
+      const resolvedAlerts = alerts.filter((a) => a.status === 'resolved');
+      const dismissedAlerts = alerts.filter((a) => a.status === 'dismissed');
       const totalAlertsResolved = resolvedAlerts.length;
       const totalAlertsDismissed = dismissedAlerts.length;
 
       // Calculate resolution times
       const resolutionTimes = resolvedAlerts
-        .filter(a => a.resolved_at)
-        .map(a => {
+        .filter((a) => a.resolved_at)
+        .map((a) => {
           const created = new Date(a.created_at);
           const resolved = new Date(a.resolved_at);
           return (resolved.getTime() - created.getTime()) / (1000 * 60 * 60); // hours
@@ -119,34 +125,54 @@ class StockAnalyticsService {
 
       // Calculate acknowledgment times
       const acknowledgmentTimes = alerts
-        .filter(a => a.acknowledged_at)
-        .map(a => {
+        .filter((a) => a.acknowledged_at)
+        .map((a) => {
           const created = new Date(a.created_at);
           const acknowledged = new Date(a.acknowledged_at);
-          return (acknowledged.getTime() - created.getTime()) / (1000 * 60 * 60); // hours
+          return (
+            (acknowledged.getTime() - created.getTime()) / (1000 * 60 * 60)
+          ); // hours
         });
 
-      const avgResolutionTime = resolutionTimes.length > 0 
-        ? resolutionTimes.reduce((sum, time) => sum + time, 0) / resolutionTimes.length 
-        : undefined;
+      const avgResolutionTime =
+        resolutionTimes.length > 0
+          ? resolutionTimes.reduce((sum, time) => sum + time, 0) /
+            resolutionTimes.length
+          : undefined;
 
-      const avgAcknowledgmentTime = acknowledgmentTimes.length > 0
-        ? acknowledgmentTimes.reduce((sum, time) => sum + time, 0) / acknowledgmentTimes.length
-        : undefined;
+      const avgAcknowledgmentTime =
+        acknowledgmentTimes.length > 0
+          ? acknowledgmentTimes.reduce((sum, time) => sum + time, 0) /
+            acknowledgmentTimes.length
+          : undefined;
 
-      const fastestResolutionTime = resolutionTimes.length > 0 ? Math.min(...resolutionTimes) : undefined;
-      const slowestResolutionTime = resolutionTimes.length > 0 ? Math.max(...resolutionTimes) : undefined;
+      const fastestResolutionTime =
+        resolutionTimes.length > 0 ? Math.min(...resolutionTimes) : undefined;
+      const slowestResolutionTime =
+        resolutionTimes.length > 0 ? Math.max(...resolutionTimes) : undefined;
 
-      const resolutionRate = totalAlertsCreated > 0 
-        ? (totalAlertsResolved / totalAlertsCreated) * 100 
-        : 0;
+      const resolutionRate =
+        totalAlertsCreated > 0
+          ? (totalAlertsResolved / totalAlertsCreated) * 100
+          : 0;
 
       // Calculate recurrence count (alerts for same product in last 30 days)
-      const thirtyDaysAgo = new Date(date.getTime() - (30 * 24 * 60 * 60 * 1000));
-      const recurrenceCount = await this.calculateRecurrenceCount(clinicId, thirtyDaysAgo, date, alertType, severityLevel);
+      const thirtyDaysAgo = new Date(date.getTime() - 30 * 24 * 60 * 60 * 1000);
+      const recurrenceCount = await this.calculateRecurrenceCount(
+        clinicId,
+        thirtyDaysAgo,
+        date,
+        alertType,
+        severityLevel
+      );
 
       // Get notification metrics
-      const notificationMetrics = await this.calculateNotificationMetrics(clinicId, date, alertType, severityLevel);
+      const notificationMetrics = await this.calculateNotificationMetrics(
+        clinicId,
+        date,
+        alertType,
+        severityLevel
+      );
 
       return {
         id: '', // Will be set when saving to database
@@ -205,12 +231,15 @@ class StockAnalyticsService {
       }
 
       // Count products with more than 1 alert
-      const productCounts = alerts.reduce((acc, alert) => {
-        acc[alert.product_id] = (acc[alert.product_id] || 0) + 1;
-        return acc;
-      }, {} as Record<string, number>);
+      const productCounts = alerts.reduce(
+        (acc, alert) => {
+          acc[alert.product_id] = (acc[alert.product_id] || 0) + 1;
+          return acc;
+        },
+        {} as Record<string, number>
+      );
 
-      return Object.values(productCounts).filter(count => count > 1).length;
+      return Object.values(productCounts).filter((count) => count > 1).length;
     } catch (error) {
       console.error('Error in calculateRecurrenceCount:', error);
       return 0;
@@ -230,7 +259,7 @@ class StockAnalyticsService {
     try {
       const startOfDay = new Date(date);
       startOfDay.setHours(0, 0, 0, 0);
-      
+
       const endOfDay = new Date(date);
       endOfDay.setHours(23, 59, 59, 999);
 
@@ -257,27 +286,39 @@ class StockAnalyticsService {
       // Filter notifications based on alert type and severity
       const filteredNotifications = notifications?.filter((notif: any) => {
         const alert = notif.stock_alerts_history;
-        if (alertType && alertType !== 'all' && alert.alert_type !== alertType) return false;
-        if (severityLevel && severityLevel !== 'all' && alert.severity_level !== severityLevel) return false;
+        if (alertType && alertType !== 'all' && alert.alert_type !== alertType)
+          return false;
+        if (
+          severityLevel &&
+          severityLevel !== 'all' &&
+          alert.severity_level !== severityLevel
+        )
+          return false;
         return true;
       });
 
       const totalNotifications = filteredNotifications.length;
-      const successfulNotifications = filteredNotifications.filter(n => 
-        n.status === 'sent' || n.status === 'delivered'
+      const successfulNotifications = filteredNotifications.filter(
+        (n) => n.status === 'sent' || n.status === 'delivered'
       ).length;
 
-      const successRate = totalNotifications > 0 
-        ? (successfulNotifications / totalNotifications) * 100 
-        : 0;
+      const successRate =
+        totalNotifications > 0
+          ? (successfulNotifications / totalNotifications) * 100
+          : 0;
 
       // Count automation triggers (purchase orders created, config updates, etc.)
-      const automationTriggered = await this.countAutomationTriggers(clinicId, date, alertType, severityLevel);
+      const automationTriggered = await this.countAutomationTriggers(
+        clinicId,
+        date,
+        alertType,
+        severityLevel
+      );
 
       return {
         automationTriggered,
         notificationsSent: totalNotifications,
-        successRate
+        successRate,
       };
     } catch (error) {
       console.error('Error in calculateNotificationMetrics:', error);
@@ -288,18 +329,18 @@ class StockAnalyticsService {
   private async countAutomationTriggers(
     clinicId: string,
     date: Date,
-    alertType?: string,
-    severityLevel?: string
+    _alertType?: string,
+    _severityLevel?: string
   ): Promise<number> {
     try {
       const startOfDay = new Date(date);
       startOfDay.setHours(0, 0, 0, 0);
-      
+
       const endOfDay = new Date(date);
       endOfDay.setHours(23, 59, 59, 999);
 
       const supabase = await this.getSupabaseClient();
-      
+
       // Count purchase orders created from alerts
       const purchaseOrderQuery = supabase
         .from('purchase_order_items')
@@ -308,7 +349,8 @@ class StockAnalyticsService {
         .gte('created_at', startOfDay.toISOString())
         .lte('created_at', endOfDay.toISOString());
 
-      const { data: purchaseItems, error: purchaseError } = await purchaseOrderQuery;
+      const { data: purchaseItems, error: purchaseError } =
+        await purchaseOrderQuery;
       const purchaseOrderTriggers = purchaseItems?.length || 0;
 
       // Count config updates triggered by alerts
@@ -319,7 +361,8 @@ class StockAnalyticsService {
         .gte('created_at', startOfDay.toISOString())
         .lte('created_at', endOfDay.toISOString());
 
-      const { data: configUpdates, error: configError } = await configUpdateQuery;
+      const { data: configUpdates, error: configError } =
+        await configUpdateQuery;
       const configUpdateTriggers = configUpdates?.length || 0;
 
       // Count reorder suggestions created
@@ -331,7 +374,8 @@ class StockAnalyticsService {
         .gte('created_at', startOfDay.toISOString())
         .lte('created_at', endOfDay.toISOString());
 
-      const { data: reorderSuggestions, error: reorderError } = await reorderQuery;
+      const { data: reorderSuggestions, error: reorderError } =
+        await reorderQuery;
       const reorderTriggers = reorderSuggestions?.length || 0;
 
       return purchaseOrderTriggers + configUpdateTriggers + reorderTriggers;
@@ -403,14 +447,16 @@ class StockAnalyticsService {
         dbQuery = dbQuery.eq('severity_level', query.severityLevel);
       }
 
-      const { data, error } = await dbQuery.order('metric_date', { ascending: true });
+      const { data, error } = await dbQuery.order('metric_date', {
+        ascending: true,
+      });
 
       if (error) {
         console.error('Error fetching metrics:', error);
         return [];
       }
 
-      return data.map(row => ({
+      return data.map((row) => ({
         ...row,
         metric_date: new Date(row.metric_date),
       }));
@@ -447,16 +493,19 @@ class StockAnalyticsService {
         return [];
       }
 
-      return alerts.map(alert => {
+      return alerts.map((alert) => {
         const created = new Date(alert.created_at);
-        const acknowledged = alert.acknowledged_at ? new Date(alert.acknowledged_at) : undefined;
+        const acknowledged = alert.acknowledged_at
+          ? new Date(alert.acknowledged_at)
+          : undefined;
         const resolved = new Date(alert.resolved_at);
 
-        const acknowledgmentTime = acknowledged 
+        const acknowledgmentTime = acknowledged
           ? (acknowledged.getTime() - created.getTime()) / (1000 * 60 * 60)
           : undefined;
 
-        const resolutionTime = (resolved.getTime() - created.getTime()) / (1000 * 60 * 60);
+        const resolutionTime =
+          (resolved.getTime() - created.getTime()) / (1000 * 60 * 60);
 
         return {
           alert_id: alert.id,
@@ -476,12 +525,12 @@ class StockAnalyticsService {
 
   async getRecurrencePatterns(
     clinicId: string,
-    lookbackDays: number = 90
+    lookbackDays = 90
   ): Promise<RecurrencePattern[]> {
     try {
       const startDate = new Date();
       startDate.setDate(startDate.getDate() - lookbackDays);
-      
+
       const supabase = await this.getSupabaseClient();
       const { data: alerts, error } = await supabase
         .from('stock_alerts_history')
@@ -501,14 +550,17 @@ class StockAnalyticsService {
       }
 
       // Group by product and alert type
-      const patterns = new Map<string, {
-        product_id: string;
-        product_name: string;
-        alert_type: string;
-        dates: Date[];
-      }>();
+      const patterns = new Map<
+        string,
+        {
+          product_id: string;
+          product_name: string;
+          alert_type: string;
+          dates: Date[];
+        }
+      >();
 
-      alerts.forEach(alert => {
+      alerts.forEach((alert) => {
         const key = `${alert.product_id}_${alert.alert_type}`;
         if (!patterns.has(key)) {
           patterns.set(key, {
@@ -518,28 +570,36 @@ class StockAnalyticsService {
             dates: [],
           });
         }
-        patterns.get(key)!.dates.push(new Date(alert.created_at));
+        patterns.get(key)?.dates.push(new Date(alert.created_at));
       });
 
       // Calculate patterns for products with multiple alerts
       return Array.from(patterns.values())
-        .filter(pattern => pattern.dates.length > 1)
-        .map(pattern => {
-          const sortedDates = pattern.dates.sort((a, b) => a.getTime() - b.getTime());
+        .filter((pattern) => pattern.dates.length > 1)
+        .map((pattern) => {
+          const sortedDates = pattern.dates.sort(
+            (a, b) => a.getTime() - b.getTime()
+          );
           const intervals = [];
-          
+
           for (let i = 1; i < sortedDates.length; i++) {
-            const days = (sortedDates[i].getTime() - sortedDates[i-1].getTime()) / (1000 * 60 * 60 * 24);
+            const days =
+              (sortedDates[i].getTime() - sortedDates[i - 1].getTime()) /
+              (1000 * 60 * 60 * 24);
             intervals.push(days);
           }
 
-          const avgDaysBetween = intervals.reduce((sum, days) => sum + days, 0) / intervals.length;
-          
+          const avgDaysBetween =
+            intervals.reduce((sum, days) => sum + days, 0) / intervals.length;
+
           // Determine trend (simplified - compare first half to second half)
           const mid = Math.floor(intervals.length / 2);
-          const firstHalfAvg = intervals.slice(0, mid).reduce((sum, days) => sum + days, 0) / mid;
-          const secondHalfAvg = intervals.slice(mid).reduce((sum, days) => sum + days, 0) / (intervals.length - mid);
-          
+          const firstHalfAvg =
+            intervals.slice(0, mid).reduce((sum, days) => sum + days, 0) / mid;
+          const secondHalfAvg =
+            intervals.slice(mid).reduce((sum, days) => sum + days, 0) /
+            (intervals.length - mid);
+
           let trend: 'increasing' | 'decreasing' | 'stable' = 'stable';
           if (secondHalfAvg < firstHalfAvg * 0.8) {
             trend = 'increasing'; // Shorter intervals = increasing frequency
@@ -570,7 +630,7 @@ class StockAnalyticsService {
 
   async getDashboardSummary(
     clinicId: string,
-    days: number = 30
+    days = 30
   ): Promise<{
     totalAlerts: number;
     resolvedAlerts: number;
@@ -596,25 +656,37 @@ class StockAnalyticsService {
       });
 
       // Aggregate totals
-      const totalAlerts = metrics.reduce((sum, m) => sum + m.total_alerts_created, 0);
-      const resolvedAlerts = metrics.reduce((sum, m) => sum + m.total_alerts_resolved, 0);
-      const resolutionRate = totalAlerts > 0 ? (resolvedAlerts / totalAlerts) * 100 : 0;
+      const totalAlerts = metrics.reduce(
+        (sum, m) => sum + m.total_alerts_created,
+        0
+      );
+      const resolvedAlerts = metrics.reduce(
+        (sum, m) => sum + m.total_alerts_resolved,
+        0
+      );
+      const resolutionRate =
+        totalAlerts > 0 ? (resolvedAlerts / totalAlerts) * 100 : 0;
 
-      const avgResolutionTime = metrics
-        .filter(m => m.avg_resolution_time_hours)
-        .reduce((sum, m) => sum + (m.avg_resolution_time_hours || 0), 0) / 
-        metrics.filter(m => m.avg_resolution_time_hours).length || 0;
+      const avgResolutionTime =
+        metrics
+          .filter((m) => m.avg_resolution_time_hours)
+          .reduce((sum, m) => sum + (m.avg_resolution_time_hours || 0), 0) /
+          metrics.filter((m) => m.avg_resolution_time_hours).length || 0;
 
       const criticalAlertsCount = metrics
-        .filter(m => m.severity_level === 'critical')
+        .filter((m) => m.severity_level === 'critical')
         .reduce((sum, m) => sum + m.total_alerts_created, 0);
 
-      const recurringIssuesCount = metrics.reduce((sum, m) => sum + m.recurrence_count, 0);
+      const recurringIssuesCount = metrics.reduce(
+        (sum, m) => sum + m.recurrence_count,
+        0
+      );
 
-      const notificationSuccessRate = metrics
-        .filter(m => m.notification_success_rate)
-        .reduce((sum, m) => sum + (m.notification_success_rate || 0), 0) / 
-        metrics.filter(m => m.notification_success_rate).length || 0;
+      const notificationSuccessRate =
+        metrics
+          .filter((m) => m.notification_success_rate)
+          .reduce((sum, m) => sum + (m.notification_success_rate || 0), 0) /
+          metrics.filter((m) => m.notification_success_rate).length || 0;
 
       // Get top alert types
       const supabase = await this.getSupabaseClient();
@@ -625,22 +697,25 @@ class StockAnalyticsService {
         .gte('created_at', startDate.toISOString())
         .lte('created_at', endDate.toISOString());
 
-      const topAlertTypes = alertTypes 
+      const topAlertTypes = alertTypes
         ? Object.entries(
-            alertTypes.reduce((acc, alert) => {
-              acc[alert.alert_type] = (acc[alert.alert_type] || 0) + 1;
-              return acc;
-            }, {} as Record<string, number>)
+            alertTypes.reduce(
+              (acc, alert) => {
+                acc[alert.alert_type] = (acc[alert.alert_type] || 0) + 1;
+                return acc;
+              },
+              {} as Record<string, number>
+            )
           )
-          .map(([type, count]) => ({ type, count }))
-          .sort((a, b) => b.count - a.count)
-          .slice(0, 5)
+            .map(([type, count]) => ({ type, count }))
+            .sort((a, b) => b.count - a.count)
+            .slice(0, 5)
         : [];
 
       // Get resolution trend (daily)
       const resolutionTrend = metrics
-        .filter(m => m.alert_type === 'all' && m.severity_level === 'all')
-        .map(m => ({
+        .filter((m) => m.alert_type === 'all' && m.severity_level === 'all')
+        .map((m) => ({
           date: m.metric_date.toISOString().split('T')[0],
           resolved: m.total_alerts_resolved,
           created: m.total_alerts_created,
@@ -653,7 +728,8 @@ class StockAnalyticsService {
         avgResolutionTime: Math.round(avgResolutionTime * 100) / 100,
         criticalAlertsCount,
         recurringIssuesCount,
-        notificationSuccessRate: Math.round(notificationSuccessRate * 100) / 100,
+        notificationSuccessRate:
+          Math.round(notificationSuccessRate * 100) / 100,
         topAlertTypes,
         resolutionTrend,
       };
@@ -693,7 +769,14 @@ class StockAnalyticsService {
       errors: [] as string[],
     };
 
-    const alertTypes = ['low_stock', 'expiring', 'expired', 'overstock', 'critical_shortage', 'all'];
+    const alertTypes = [
+      'low_stock',
+      'expiring',
+      'expired',
+      'overstock',
+      'critical_shortage',
+      'all',
+    ];
     const severityLevels = ['low', 'medium', 'high', 'critical', 'all'];
 
     try {
@@ -702,18 +785,27 @@ class StockAnalyticsService {
         for (const severityLevel of severityLevels) {
           results.processed++;
 
-          const metrics = await this.calculateDailyMetrics(clinicId, date, alertType, severityLevel);
+          const metrics = await this.calculateDailyMetrics(
+            clinicId,
+            date,
+            alertType,
+            severityLevel
+          );
           if (metrics) {
             const saved = await this.saveMetrics(metrics);
             if (saved) {
               results.success++;
             } else {
               results.failed++;
-              results.errors.push(`Failed to save metrics for ${alertType}/${severityLevel}`);
+              results.errors.push(
+                `Failed to save metrics for ${alertType}/${severityLevel}`
+              );
             }
           } else {
             results.failed++;
-            results.errors.push(`Failed to calculate metrics for ${alertType}/${severityLevel}`);
+            results.errors.push(
+              `Failed to calculate metrics for ${alertType}/${severityLevel}`
+            );
           }
         }
       }
@@ -721,7 +813,9 @@ class StockAnalyticsService {
       return results;
     } catch (error) {
       console.error('Error in processMetricsForDate:', error);
-      results.errors.push(error instanceof Error ? error.message : 'Unknown error');
+      results.errors.push(
+        error instanceof Error ? error.message : 'Unknown error'
+      );
       return results;
     }
   }

@@ -1,28 +1,27 @@
 /**
  * NeonPro Backup Monitoring Service
  * Story 1.8: Sistema de Backup e Recovery
- * 
+ *
  * Serviço de monitoramento para métricas, alertas e
  * performance do sistema de backup.
  */
 
 import { createClient } from '@supabase/supabase-js';
-import { 
-  BackupMetrics, 
-  BackupAlert, 
-  AlertType, 
-  AlertSeverity,
-  BackupConfig,
-  BackupRecord,
-  BackupStatus,
-  MonitoringConfig,
-  PerformanceMetrics,
-  HealthCheck,
-  ApiResponse,
-  NotificationChannel
-} from './types';
 import { auditLogger } from '../auth/audit/audit-logger';
 import { notificationManager } from '../notifications';
+import {
+  AlertSeverity,
+  AlertType,
+  type ApiResponse,
+  type BackupAlert,
+  type BackupConfig,
+  type BackupMetrics,
+  BackupStatus,
+  type HealthCheck,
+  type MonitoringConfig,
+  type NotificationChannel,
+  type PerformanceMetrics,
+} from './types';
 
 /**
  * Interface para métricas em tempo real
@@ -55,27 +54,27 @@ export class MonitoringService {
       process.env.SUPABASE_ANON_KEY!
     );
     this.backupManager = backupManager;
-    
+
     // Configuração padrão
     this.config = {
       enabled: true,
-      checkInterval: 60000, // 1 minuto
+      checkInterval: 60_000, // 1 minuto
       alertThresholds: {
         failureRate: 0.1, // 10%
         maxBackupTime: 3600, // 1 hora
-        minFreeSpace: 1073741824, // 1GB
-        maxRetries: 3
+        minFreeSpace: 1_073_741_824, // 1GB
+        maxRetries: 3,
       },
       notifications: {
         email: true,
         sms: false,
         push: true,
-        webhook: false
+        webhook: false,
       },
       retention: {
         metricsRetention: 90, // 90 dias
-        alertsRetention: 30 // 30 dias
-      }
+        alertsRetention: 30, // 30 dias
+      },
     };
 
     // Métricas iniciais
@@ -86,7 +85,7 @@ export class MonitoringService {
       totalStorage: 0,
       averageBackupTime: 0,
       successRate: 100,
-      lastUpdate: new Date()
+      lastUpdate: new Date(),
     };
 
     this.startMonitoring();
@@ -123,9 +122,13 @@ export class MonitoringService {
   /**
    * Calcular métricas de backup
    */
-  async calculateMetrics(startDate?: Date, endDate?: Date): Promise<BackupMetrics> {
+  async calculateMetrics(
+    startDate?: Date,
+    endDate?: Date
+  ): Promise<BackupMetrics> {
     try {
-      const start = startDate || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000); // 30 dias
+      const start =
+        startDate || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000); // 30 dias
       const end = endDate || new Date();
 
       // Buscar backups no período
@@ -140,22 +143,29 @@ export class MonitoringService {
 
       const records = backups || [];
       const totalBackups = records.length;
-      const successfulBackups = records.filter(b => b.status === BackupStatus.COMPLETED).length;
-      const failedBackups = records.filter(b => b.status === BackupStatus.FAILED).length;
+      const successfulBackups = records.filter(
+        (b) => b.status === BackupStatus.COMPLETED
+      ).length;
+      const failedBackups = records.filter(
+        (b) => b.status === BackupStatus.FAILED
+      ).length;
       const totalSize = records.reduce((sum, b) => sum + (b.size || 0), 0);
       const totalDuration = records
-        .filter(b => b.duration)
+        .filter((b) => b.duration)
         .reduce((sum, b) => sum + b.duration, 0);
 
       // Calcular métricas
-      const successRate = totalBackups > 0 ? (successfulBackups / totalBackups) * 100 : 100;
+      const successRate =
+        totalBackups > 0 ? (successfulBackups / totalBackups) * 100 : 100;
       const averageSize = totalBackups > 0 ? totalSize / totalBackups : 0;
-      const averageDuration = records.filter(b => b.duration).length > 0 
-        ? totalDuration / records.filter(b => b.duration).length 
-        : 0;
+      const averageDuration =
+        records.filter((b) => b.duration).length > 0
+          ? totalDuration / records.filter((b) => b.duration).length
+          : 0;
 
       // Backup mais recente
-      const lastBackup = records.length > 0 ? new Date(records[0].startTime) : null;
+      const lastBackup =
+        records.length > 0 ? new Date(records[0].startTime) : null;
 
       // Próximo backup agendado
       const { data: nextScheduled } = await this.supabase
@@ -169,7 +179,9 @@ export class MonitoringService {
       const nextBackup = nextScheduled ? new Date(nextScheduled.nextRun) : null;
 
       // Tendências (comparar com período anterior)
-      const previousPeriod = new Date(start.getTime() - (end.getTime() - start.getTime()));
+      const previousPeriod = new Date(
+        start.getTime() - (end.getTime() - start.getTime())
+      );
       const { data: previousBackups } = await this.supabase
         .from('backup_records')
         .select('*')
@@ -177,14 +189,17 @@ export class MonitoringService {
         .lt('startTime', start.toISOString());
 
       const previousTotal = previousBackups?.length || 0;
-      const previousSuccessful = previousBackups?.filter(b => b.status === BackupStatus.COMPLETED).length || 0;
-      const previousSuccessRate = previousTotal > 0 ? (previousSuccessful / previousTotal) * 100 : 100;
+      const previousSuccessful =
+        previousBackups?.filter((b) => b.status === BackupStatus.COMPLETED)
+          .length || 0;
+      const previousSuccessRate =
+        previousTotal > 0 ? (previousSuccessful / previousTotal) * 100 : 100;
 
       const trends = {
         backupCount: totalBackups - previousTotal,
         successRate: successRate - previousSuccessRate,
         averageSize: 0, // Calcular se necessário
-        averageDuration: 0 // Calcular se necessário
+        averageDuration: 0, // Calcular se necessário
       };
 
       return {
@@ -200,8 +215,8 @@ export class MonitoringService {
         trends,
         period: {
           start,
-          end
-        }
+          end,
+        },
       };
     } catch (error) {
       console.error('Erro ao calcular métricas:', error);
@@ -216,12 +231,12 @@ export class MonitoringService {
     try {
       // Atualizar métricas
       await this.updateRealTimeMetrics();
-      
+
       return {
         success: true,
         data: { ...this.realTimeMetrics },
         timestamp: new Date(),
-        requestId: crypto.randomUUID()
+        requestId: crypto.randomUUID(),
       };
     } catch (error) {
       return this.handleError('Erro ao obter métricas em tempo real', error);
@@ -259,7 +274,8 @@ export class MonitoringService {
         .select('size')
         .eq('status', BackupStatus.COMPLETED);
 
-      const totalStorage = storageData?.reduce((sum, b) => sum + (b.size || 0), 0) || 0;
+      const totalStorage =
+        storageData?.reduce((sum, b) => sum + (b.size || 0), 0) || 0;
 
       // Taxa de sucesso nas últimas 24h
       const { data: recentBackups } = await this.supabase
@@ -268,8 +284,11 @@ export class MonitoringService {
         .gte('startTime', yesterday.toISOString());
 
       const recentTotal = recentBackups?.length || 0;
-      const recentSuccessful = recentBackups?.filter(b => b.status === BackupStatus.COMPLETED).length || 0;
-      const successRate = recentTotal > 0 ? (recentSuccessful / recentTotal) * 100 : 100;
+      const recentSuccessful =
+        recentBackups?.filter((b) => b.status === BackupStatus.COMPLETED)
+          .length || 0;
+      const successRate =
+        recentTotal > 0 ? (recentSuccessful / recentTotal) * 100 : 100;
 
       // Tempo médio de backup
       const { data: completedBackups } = await this.supabase
@@ -279,9 +298,11 @@ export class MonitoringService {
         .gte('startTime', yesterday.toISOString())
         .not('duration', 'is', null);
 
-      const averageBackupTime = completedBackups?.length > 0
-        ? completedBackups.reduce((sum, b) => sum + b.duration, 0) / completedBackups.length
-        : 0;
+      const averageBackupTime =
+        completedBackups?.length > 0
+          ? completedBackups.reduce((sum, b) => sum + b.duration, 0) /
+            completedBackups.length
+          : 0;
 
       // Atualizar métricas
       this.realTimeMetrics = {
@@ -291,7 +312,7 @@ export class MonitoringService {
         totalStorage,
         averageBackupTime,
         successRate,
-        lastUpdate: new Date()
+        lastUpdate: new Date(),
       };
     } catch (error) {
       console.error('Erro ao atualizar métricas em tempo real:', error);
@@ -321,13 +342,11 @@ export class MonitoringService {
       entityId,
       timestamp: new Date(),
       acknowledged: false,
-      resolved: false
+      resolved: false,
     };
 
     // Salvar no banco
-    await this.supabase
-      .from('backup_alerts')
-      .insert(alert);
+    await this.supabase.from('backup_alerts').insert(alert);
 
     // Adicionar ao histórico
     const entityAlerts = this.alertHistory.get(entityId || 'system') || [];
@@ -342,7 +361,7 @@ export class MonitoringService {
       entityType: 'ALERT',
       entityId: alert.id,
       details: { type, severity, message },
-      userId: 'system'
+      userId: 'system',
     });
 
     return alert;
@@ -354,7 +373,7 @@ export class MonitoringService {
   private async sendAlertNotification(alert: BackupAlert): Promise<void> {
     try {
       const channels: NotificationChannel[] = [];
-      
+
       if (this.config.notifications.email) channels.push('EMAIL');
       if (this.config.notifications.sms) channels.push('SMS');
       if (this.config.notifications.push) channels.push('PUSH');
@@ -368,10 +387,10 @@ export class MonitoringService {
           alertId: alert.id,
           type: alert.type,
           severity: alert.severity,
-          timestamp: alert.timestamp.toISOString()
+          timestamp: alert.timestamp.toISOString(),
         },
         channels,
-        priority: alert.severity === AlertSeverity.CRITICAL ? 'HIGH' : 'MEDIUM'
+        priority: alert.severity === AlertSeverity.CRITICAL ? 'HIGH' : 'MEDIUM',
       };
 
       await notificationManager.send(notification);
@@ -387,13 +406,19 @@ export class MonitoringService {
     try {
       // Verificar taxa de falha
       const metrics = await this.calculateMetrics();
-      
-      if (metrics.successRate < (100 - this.config.alertThresholds.failureRate * 100)) {
+
+      if (
+        metrics.successRate <
+        100 - this.config.alertThresholds.failureRate * 100
+      ) {
         await this.createAlert(
           AlertType.BACKUP_FAILURE,
           AlertSeverity.HIGH,
           `Taxa de sucesso baixa: ${metrics.successRate.toFixed(1)}%`,
-          { successRate: metrics.successRate, threshold: this.config.alertThresholds.failureRate }
+          {
+            successRate: metrics.successRate,
+            threshold: this.config.alertThresholds.failureRate,
+          }
         );
       }
 
@@ -403,7 +428,10 @@ export class MonitoringService {
           AlertType.PERFORMANCE,
           AlertSeverity.MEDIUM,
           `Tempo de backup acima do limite: ${Math.round(metrics.averageDuration / 60)} minutos`,
-          { averageDuration: metrics.averageDuration, threshold: this.config.alertThresholds.maxBackupTime }
+          {
+            averageDuration: metrics.averageDuration,
+            threshold: this.config.alertThresholds.maxBackupTime,
+          }
         );
       }
 
@@ -412,7 +440,6 @@ export class MonitoringService {
 
       // Verificar backups antigos
       await this.checkStaleBackups();
-
     } catch (error) {
       console.error('Erro ao verificar condições de alerta:', error);
     }
@@ -440,15 +467,24 @@ export class MonitoringService {
 
         if (lastBackup) {
           const lastBackupTime = new Date(lastBackup.startTime);
-          const hoursSinceLastBackup = (Date.now() - lastBackupTime.getTime()) / (1000 * 60 * 60);
-          
+          const hoursSinceLastBackup =
+            (Date.now() - lastBackupTime.getTime()) / (1000 * 60 * 60);
+
           // Verificar baseado na frequência do backup
           let maxHours = 24; // Default
           switch (config.schedule?.frequency) {
-            case 'HOURLY': maxHours = 2; break;
-            case 'DAILY': maxHours = 26; break;
-            case 'WEEKLY': maxHours = 168 + 24; break; // 1 semana + 1 dia
-            case 'MONTHLY': maxHours = 30 * 24 + 24; break; // 1 mês + 1 dia
+            case 'HOURLY':
+              maxHours = 2;
+              break;
+            case 'DAILY':
+              maxHours = 26;
+              break;
+            case 'WEEKLY':
+              maxHours = 168 + 24;
+              break; // 1 semana + 1 dia
+            case 'MONTHLY':
+              maxHours = 30 * 24 + 24;
+              break; // 1 mês + 1 dia
           }
 
           if (hoursSinceLastBackup > maxHours) {
@@ -456,11 +492,11 @@ export class MonitoringService {
               AlertType.BACKUP_OVERDUE,
               AlertSeverity.HIGH,
               `Backup atrasado para configuração "${config.name}": ${Math.round(hoursSinceLastBackup)} horas`,
-              { 
-                configId: config.id, 
+              {
+                configId: config.id,
                 configName: config.name,
                 hoursSinceLastBackup,
-                maxHours
+                maxHours,
               },
               config.id
             );
@@ -487,22 +523,22 @@ export class MonitoringService {
         database: 'HEALTHY',
         storage: 'HEALTHY',
         scheduler: 'HEALTHY',
-        notifications: 'HEALTHY'
+        notifications: 'HEALTHY',
       },
       metrics: {
         uptime: process.uptime(),
         memoryUsage: process.memoryUsage().heapUsed,
         activeConnections: 0,
-        queueSize: this.realTimeMetrics.queuedBackups
+        queueSize: this.realTimeMetrics.queuedBackups,
       },
-      issues: []
+      issues: [],
     };
 
     try {
       // Verificar banco de dados
       try {
         await this.supabase.from('backup_configs').select('id').limit(1);
-      } catch (error) {
+      } catch (_error) {
         healthCheck.components.database = 'UNHEALTHY';
         healthCheck.issues.push('Falha na conexão com o banco de dados');
       }
@@ -537,16 +573,15 @@ export class MonitoringService {
         storageUsed: this.realTimeMetrics.totalStorage,
         memoryUsage: healthCheck.metrics.memoryUsage,
         cpuUsage: 0, // Implementar se necessário
-        networkLatency: 0 // Implementar se necessário
+        networkLatency: 0, // Implementar se necessário
       };
 
       this.performanceHistory.push(performanceMetric);
-      
+
       // Manter apenas últimas 1000 entradas
       if (this.performanceHistory.length > 1000) {
         this.performanceHistory = this.performanceHistory.slice(-1000);
       }
-
     } catch (error) {
       console.error('Erro no health check:', error);
       healthCheck.overall = 'UNHEALTHY';
@@ -563,7 +598,10 @@ export class MonitoringService {
   /**
    * Notificar sucesso de backup
    */
-  async notifyBackupSuccess(backupId: string, config: BackupConfig): Promise<void> {
+  async notifyBackupSuccess(
+    backupId: string,
+    config: BackupConfig
+  ): Promise<void> {
     try {
       if (config.notifications?.onSuccess) {
         const notification = {
@@ -572,10 +610,10 @@ export class MonitoringService {
           data: {
             backupId,
             configId: config.id,
-            configName: config.name
+            configName: config.name,
           },
           channels: ['EMAIL', 'PUSH'] as NotificationChannel[],
-          priority: 'LOW' as const
+          priority: 'LOW' as const,
         };
 
         await notificationManager.send(notification);
@@ -588,7 +626,11 @@ export class MonitoringService {
   /**
    * Notificar falha de backup
    */
-  async notifyBackupFailure(backupId: string, config: BackupConfig, errorMessage: string): Promise<void> {
+  async notifyBackupFailure(
+    backupId: string,
+    config: BackupConfig,
+    errorMessage: string
+  ): Promise<void> {
     try {
       const notification = {
         title: 'Falha no Backup',
@@ -597,10 +639,10 @@ export class MonitoringService {
           backupId,
           configId: config.id,
           configName: config.name,
-          error: errorMessage
+          error: errorMessage,
         },
         channels: ['EMAIL', 'PUSH', 'SMS'] as NotificationChannel[],
-        priority: 'HIGH' as const
+        priority: 'HIGH' as const,
       };
 
       await notificationManager.send(notification);
@@ -625,9 +667,9 @@ export class MonitoringService {
   /**
    * Obter histórico de performance
    */
-  getPerformanceHistory(hours: number = 24): PerformanceMetrics[] {
+  getPerformanceHistory(hours = 24): PerformanceMetrics[] {
     const cutoff = new Date(Date.now() - hours * 60 * 60 * 1000);
-    return this.performanceHistory.filter(m => m.timestamp >= cutoff);
+    return this.performanceHistory.filter((m) => m.timestamp >= cutoff);
   }
 
   /**
@@ -647,7 +689,7 @@ export class MonitoringService {
         success: true,
         data: alerts as BackupAlert[],
         timestamp: new Date(),
-        requestId: crypto.randomUUID()
+        requestId: crypto.randomUUID(),
       };
     } catch (error) {
       return this.handleError('Erro ao obter alertas ativos', error);
@@ -657,14 +699,17 @@ export class MonitoringService {
   /**
    * Reconhecer alerta
    */
-  async acknowledgeAlert(alertId: string, userId: string): Promise<ApiResponse> {
+  async acknowledgeAlert(
+    alertId: string,
+    userId: string
+  ): Promise<ApiResponse> {
     try {
       const { error } = await this.supabase
         .from('backup_alerts')
-        .update({ 
+        .update({
           acknowledged: true,
           acknowledgedBy: userId,
-          acknowledgedAt: new Date().toISOString()
+          acknowledgedAt: new Date().toISOString(),
         })
         .eq('id', alertId);
 
@@ -675,14 +720,14 @@ export class MonitoringService {
         entityType: 'ALERT',
         entityId: alertId,
         details: {},
-        userId
+        userId,
       });
 
       return {
         success: true,
         message: 'Alerta reconhecido',
         timestamp: new Date(),
-        requestId: crypto.randomUUID()
+        requestId: crypto.randomUUID(),
       };
     } catch (error) {
       return this.handleError('Erro ao reconhecer alerta', error);
@@ -692,15 +737,19 @@ export class MonitoringService {
   /**
    * Resolver alerta
    */
-  async resolveAlert(alertId: string, userId: string, resolution?: string): Promise<ApiResponse> {
+  async resolveAlert(
+    alertId: string,
+    userId: string,
+    resolution?: string
+  ): Promise<ApiResponse> {
     try {
       const { error } = await this.supabase
         .from('backup_alerts')
-        .update({ 
+        .update({
           resolved: true,
           resolvedBy: userId,
           resolvedAt: new Date().toISOString(),
-          resolution
+          resolution,
         })
         .eq('id', alertId);
 
@@ -711,14 +760,14 @@ export class MonitoringService {
         entityType: 'ALERT',
         entityId: alertId,
         details: { resolution },
-        userId
+        userId,
       });
 
       return {
         success: true,
         message: 'Alerta resolvido',
         timestamp: new Date(),
-        requestId: crypto.randomUUID()
+        requestId: crypto.randomUUID(),
       };
     } catch (error) {
       return this.handleError('Erro ao resolver alerta', error);
@@ -732,7 +781,7 @@ export class MonitoringService {
       error: error.message || 'Erro interno do servidor',
       message,
       timestamp: new Date(),
-      requestId: crypto.randomUUID()
+      requestId: crypto.randomUUID(),
     };
   }
 }

@@ -1,9 +1,15 @@
 // lib/security/csrf.ts
 export function generateCSRFToken(): string {
-  return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+  return (
+    Math.random().toString(36).substring(2, 15) +
+    Math.random().toString(36).substring(2, 15)
+  );
 }
 
-export function validateCSRFToken(token: string, sessionToken?: string): boolean {
+export function validateCSRFToken(
+  token: string,
+  _sessionToken?: string
+): boolean {
   // Simple validation for build purposes
   return token && token.length > 10;
 }

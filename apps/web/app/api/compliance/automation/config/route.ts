@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 // Schema de validação para configuração de automação
@@ -11,40 +11,40 @@ const AutomationConfigSchema = z.object({
     dataRetention: z.string(),
     auditReports: z.string(),
     healthChecks: z.string(),
-    anonymization: z.string()
+    anonymization: z.string(),
   }),
   notifications: z.object({
     email: z.boolean(),
     webhook: z.boolean(),
     dashboard: z.boolean(),
-    webhookUrl: z.string().url().optional()
+    webhookUrl: z.string().url().optional(),
   }),
   thresholds: z.object({
     riskScore: z.number().min(0).max(100),
     complianceScore: z.number().min(0).max(100),
     auditCoverage: z.number().min(0).max(100),
-    consentExpiryDays: z.number().min(1).max(365)
+    consentExpiryDays: z.number().min(1).max(365),
   }),
   features: z.object({
     autoConsentManagement: z.boolean(),
     autoDataSubjectRights: z.boolean(),
     autoAuditReporting: z.boolean(),
     autoAnonymization: z.boolean(),
-    realTimeMonitoring: z.boolean()
-  })
+    realTimeMonitoring: z.boolean(),
+  }),
 });
 // GET - Obter configuração atual
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    
+
     // Verificar autenticação
-    const { data: { session }, error: authError } = await supabase.auth.getSession();
+    const {
+      data: { session },
+      error: authError,
+    } = await supabase.auth.getSession();
     if (authError || !session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Buscar configuração atual
@@ -67,44 +67,45 @@ export async function GET(request: NextRequest) {
           dataRetention: '0 3 * * 0', // 3h da manhã aos domingos
           auditReports: '0 1 1 * *', // 1h da manhã no primeiro dia do mês
           healthChecks: '0 */6 * * *', // A cada 6 horas
-          anonymization: '0 4 * * 0' // 4h da manhã aos domingos
-        },        notifications: {
+          anonymization: '0 4 * * 0', // 4h da manhã aos domingos
+        },
+        notifications: {
           email: true,
           webhook: false,
           dashboard: true,
-          webhookUrl: ''
+          webhookUrl: '',
         },
         thresholds: {
           riskScore: 70,
           complianceScore: 85,
           auditCoverage: 90,
-          consentExpiryDays: 365
+          consentExpiryDays: 365,
         },
         features: {
           autoConsentManagement: true,
           autoDataSubjectRights: true,
           autoAuditReporting: true,
           autoAnonymization: false,
-          realTimeMonitoring: true
-        }
+          realTimeMonitoring: true,
+        },
       };
-      
+
       return NextResponse.json({
         success: true,
-        data: defaultConfig
+        data: defaultConfig,
       });
     }
 
     return NextResponse.json({
       success: true,
-      data: config.config
+      data: config.config,
     });
-    
   } catch (error) {
-    console.error('Erro ao obter configuração:', error);    return NextResponse.json(
-      { 
+    console.error('Erro ao obter configuração:', error);
+    return NextResponse.json(
+      {
         error: 'Erro interno do servidor',
-        details: error instanceof Error ? error.message : 'Erro desconhecido'
+        details: error instanceof Error ? error.message : 'Erro desconhecido',
       },
       { status: 500 }
     );
@@ -115,28 +116,29 @@ export async function GET(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    
+
     // Verificar autenticação
-    const { data: { session }, error: authError } = await supabase.auth.getSession();
+    const {
+      data: { session },
+      error: authError,
+    } = await supabase.auth.getSession();
     if (authError || !session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
-    
+
     // Validar dados
     const validationResult = AutomationConfigSchema.safeParse(body);
     if (!validationResult.success) {
       return NextResponse.json(
-        { 
+        {
           error: 'Dados inválidos',
-          details: validationResult.error.errors
+          details: validationResult.error.errors,
         },
         { status: 400 }
-      );    }
+      );
+    }
 
     const config = validationResult.data;
     const clinicId = session.user.user_metadata.clinic_id;
@@ -146,9 +148,9 @@ export async function PUT(request: NextRequest) {
       .from('lgpd_automation_config')
       .upsert({
         clinic_id: clinicId,
-        config: config,
+        config,
         updated_at: new Date().toISOString(),
-        updated_by: session.user.id
+        updated_by: session.user.id,
       })
       .select()
       .single();
@@ -158,31 +160,28 @@ export async function PUT(request: NextRequest) {
     }
 
     // Registrar evento de auditoria
-    await supabase
-      .from('lgpd_audit_trail')
-      .insert({
-        clinic_id: clinicId,
-        event_type: 'system',
-        action: 'automation_config_updated',
-        user_id: session.user.id,
-        details: {
-          previousConfig: body.previousConfig || null,
-          newConfig: config
-        },
-        severity: 'info'
-      });
+    await supabase.from('lgpd_audit_trail').insert({
+      clinic_id: clinicId,
+      event_type: 'system',
+      action: 'automation_config_updated',
+      user_id: session.user.id,
+      details: {
+        previousConfig: body.previousConfig || null,
+        newConfig: config,
+      },
+      severity: 'info',
+    });
     return NextResponse.json({
       success: true,
       data: data.config,
-      message: 'Configuração atualizada com sucesso'
+      message: 'Configuração atualizada com sucesso',
     });
-    
   } catch (error) {
     console.error('Erro ao atualizar configuração:', error);
     return NextResponse.json(
-      { 
+      {
         error: 'Erro interno do servidor',
-        details: error instanceof Error ? error.message : 'Erro desconhecido'
+        details: error instanceof Error ? error.message : 'Erro desconhecido',
       },
       { status: 500 }
     );

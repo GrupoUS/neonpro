@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { createClient } from '@/lib/supabase/client';
 import { logger } from '@/lib/logger';
+import { createClient } from '@/lib/supabase/client';
 
 // Types and Schemas
 export const WidgetPositionSchema = z.object({
@@ -14,7 +14,7 @@ export const WidgetPositionSchema = z.object({
   maxH: z.number().max(12).optional(),
   static: z.boolean().default(false),
   isDraggable: z.boolean().default(true),
-  isResizable: z.boolean().default(true)
+  isResizable: z.boolean().default(true),
 });
 
 export const WidgetConfigSchema = z.object({
@@ -28,7 +28,7 @@ export const WidgetConfigSchema = z.object({
   permissions: z.array(z.string()).default([]),
   isVisible: z.boolean().default(true),
   createdAt: z.string().datetime(),
-  updatedAt: z.string().datetime()
+  updatedAt: z.string().datetime(),
 });
 
 export const DashboardLayoutSchema = z.object({
@@ -42,20 +42,20 @@ export const DashboardLayoutSchema = z.object({
       md: 996,
       sm: 768,
       xs: 480,
-      xxs: 0
+      xxs: 0,
     }),
     cols: z.record(z.number()).default({
       lg: 12,
       md: 10,
       sm: 6,
       xs: 4,
-      xxs: 2
+      xxs: 2,
     }),
     rowHeight: z.number().min(30).default(60),
     margin: z.tuple([z.number(), z.number()]).default([10, 10]),
     containerPadding: z.tuple([z.number(), z.number()]).default([10, 10]),
     compactType: z.enum(['vertical', 'horizontal', null]).default('vertical'),
-    preventCollision: z.boolean().default(false)
+    preventCollision: z.boolean().default(false),
   }),
   widgets: z.array(WidgetConfigSchema),
   filters: z.record(z.any()).default({}),
@@ -63,7 +63,7 @@ export const DashboardLayoutSchema = z.object({
   isPublic: z.boolean().default(false),
   createdBy: z.string().uuid(),
   createdAt: z.string().datetime(),
-  updatedAt: z.string().datetime()
+  updatedAt: z.string().datetime(),
 });
 
 export type WidgetPosition = z.infer<typeof WidgetPositionSchema>;
@@ -80,7 +80,9 @@ export class DashboardLayoutEngine {
   /**
    * Get dashboard layout by ID with caching
    */
-  async getDashboardLayout(dashboardId: string): Promise<DashboardLayout | null> {
+  async getDashboardLayout(
+    dashboardId: string
+  ): Promise<DashboardLayout | null> {
     try {
       // Check cache first
       const cached = this.getCachedLayout(dashboardId);
@@ -108,7 +110,7 @@ export class DashboardLayoutEngine {
 
       const layout = this.transformDatabaseToLayout(data);
       this.setCachedLayout(dashboardId, layout);
-      
+
       return layout;
     } catch (error) {
       logger.error('Error in getDashboardLayout:', error);
@@ -135,7 +137,7 @@ export class DashboardLayoutEngine {
         return [];
       }
 
-      return data.map(item => this.transformDatabaseToLayout(item));
+      return data.map((item) => this.transformDatabaseToLayout(item));
     } catch (error) {
       logger.error('Error in getClinicDashboards:', error);
       return [];
@@ -166,7 +168,7 @@ export class DashboardLayoutEngine {
           is_public: layout.isPublic,
           created_by: layout.createdBy,
           created_at: now,
-          updated_at: now
+          updated_at: now,
         })
         .select()
         .single();
@@ -178,7 +180,7 @@ export class DashboardLayoutEngine {
 
       // Create widget records
       if (layout.widgets.length > 0) {
-        const widgetInserts = layout.widgets.map(widget => ({
+        const widgetInserts = layout.widgets.map((widget) => ({
           id: widget.id,
           dashboard_id: dashboardId,
           widget_type: widget.type,
@@ -186,13 +188,13 @@ export class DashboardLayoutEngine {
           config: {
             ...widget.config,
             permissions: widget.permissions,
-            isVisible: widget.isVisible
+            isVisible: widget.isVisible,
           },
           position: widget.position,
           data_source: widget.dataSource,
           refresh_interval: widget.refreshInterval,
           created_at: now,
-          updated_at: now
+          updated_at: now,
         }));
 
         const { error: widgetsError } = await this.supabase
@@ -214,7 +216,7 @@ export class DashboardLayoutEngine {
         ...layout,
         id: dashboardId,
         createdAt: now,
-        updatedAt: now
+        updatedAt: now,
       };
 
       this.setCachedLayout(dashboardId, newLayout);
@@ -237,15 +239,18 @@ export class DashboardLayoutEngine {
 
       // Update dashboard record
       const dashboardUpdates: any = {
-        updated_at: now
+        updated_at: now,
       };
 
       if (updates.name) dashboardUpdates.name = updates.name;
-      if (updates.description !== undefined) dashboardUpdates.description = updates.description;
+      if (updates.description !== undefined)
+        dashboardUpdates.description = updates.description;
       if (updates.layout) dashboardUpdates.layout = updates.layout;
       if (updates.filters) dashboardUpdates.filters = updates.filters;
-      if (updates.isDefault !== undefined) dashboardUpdates.is_default = updates.isDefault;
-      if (updates.isPublic !== undefined) dashboardUpdates.is_public = updates.isPublic;
+      if (updates.isDefault !== undefined)
+        dashboardUpdates.is_default = updates.isDefault;
+      if (updates.isPublic !== undefined)
+        dashboardUpdates.is_public = updates.isPublic;
 
       const { error: dashboardError } = await this.supabase
         .from('executive_dashboards')
@@ -267,7 +272,7 @@ export class DashboardLayoutEngine {
 
         // Insert new widgets
         if (updates.widgets.length > 0) {
-          const widgetInserts = updates.widgets.map(widget => ({
+          const widgetInserts = updates.widgets.map((widget) => ({
             id: widget.id,
             dashboard_id: dashboardId,
             widget_type: widget.type,
@@ -275,13 +280,13 @@ export class DashboardLayoutEngine {
             config: {
               ...widget.config,
               permissions: widget.permissions,
-              isVisible: widget.isVisible
+              isVisible: widget.isVisible,
             },
             position: widget.position,
             data_source: widget.dataSource,
             refresh_interval: widget.refreshInterval,
             created_at: widget.createdAt,
-            updated_at: now
+            updated_at: now,
           }));
 
           const { error: widgetsError } = await this.supabase
@@ -346,7 +351,7 @@ export class DashboardLayoutEngine {
         .from('dashboard_widgets')
         .update({
           position,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', widgetId);
 
@@ -373,12 +378,14 @@ export class DashboardLayoutEngine {
       if (error instanceof z.ZodError) {
         return {
           isValid: false,
-          errors: error.errors.map(err => `${err.path.join('.')}: ${err.message}`)
+          errors: error.errors.map(
+            (err) => `${err.path.join('.')}: ${err.message}`
+          ),
         };
       }
       return {
         isValid: false,
-        errors: ['Unknown validation error']
+        errors: ['Unknown validation error'],
       };
     }
   }
@@ -389,7 +396,7 @@ export class DashboardLayoutEngine {
   generateDefaultLayout(
     clinicId: string,
     createdBy: string,
-    name: string = 'Dashboard Executivo'
+    name = 'Dashboard Executivo'
   ): Omit<DashboardLayout, 'id' | 'createdAt' | 'updatedAt'> {
     const now = new Date().toISOString();
 
@@ -404,7 +411,7 @@ export class DashboardLayoutEngine {
         margin: [10, 10],
         containerPadding: [10, 10],
         compactType: 'vertical',
-        preventCollision: false
+        preventCollision: false,
       },
       widgets: [
         {
@@ -416,13 +423,13 @@ export class DashboardLayoutEngine {
           config: {
             kpiType: 'revenue',
             format: 'currency',
-            comparison: 'previous_month'
+            comparison: 'previous_month',
           },
           position: { x: 0, y: 0, w: 3, h: 2 },
           permissions: ['admin', 'manager'],
           isVisible: true,
           createdAt: now,
-          updatedAt: now
+          updatedAt: now,
         },
         {
           id: crypto.randomUUID(),
@@ -433,13 +440,13 @@ export class DashboardLayoutEngine {
           config: {
             kpiType: 'count',
             format: 'number',
-            comparison: 'previous_month'
+            comparison: 'previous_month',
           },
           position: { x: 3, y: 0, w: 3, h: 2 },
           permissions: ['admin', 'manager'],
           isVisible: true,
           createdAt: now,
-          updatedAt: now
+          updatedAt: now,
         },
         {
           id: crypto.randomUUID(),
@@ -450,13 +457,13 @@ export class DashboardLayoutEngine {
           config: {
             kpiType: 'percentage',
             format: 'percent',
-            comparison: 'previous_month'
+            comparison: 'previous_month',
           },
           position: { x: 6, y: 0, w: 3, h: 2 },
           permissions: ['admin', 'manager'],
           isVisible: true,
           createdAt: now,
-          updatedAt: now
+          updatedAt: now,
         },
         {
           id: crypto.randomUUID(),
@@ -467,13 +474,13 @@ export class DashboardLayoutEngine {
           config: {
             kpiType: 'score',
             format: 'decimal',
-            comparison: 'previous_month'
+            comparison: 'previous_month',
           },
           position: { x: 9, y: 0, w: 3, h: 2 },
           permissions: ['admin', 'manager'],
           isVisible: true,
           createdAt: now,
-          updatedAt: now
+          updatedAt: now,
         },
         {
           id: crypto.randomUUID(),
@@ -484,13 +491,13 @@ export class DashboardLayoutEngine {
           config: {
             chartType: 'line',
             period: '12_months',
-            showComparison: true
+            showComparison: true,
           },
           position: { x: 0, y: 2, w: 6, h: 4 },
           permissions: ['admin', 'manager'],
           isVisible: true,
           createdAt: now,
-          updatedAt: now
+          updatedAt: now,
         },
         {
           id: crypto.randomUUID(),
@@ -501,19 +508,19 @@ export class DashboardLayoutEngine {
           config: {
             chartType: 'pie',
             period: 'current_month',
-            groupBy: 'service_type'
+            groupBy: 'service_type',
           },
           position: { x: 6, y: 2, w: 6, h: 4 },
           permissions: ['admin', 'manager'],
           isVisible: true,
           createdAt: now,
-          updatedAt: now
-        }
+          updatedAt: now,
+        },
       ],
       filters: {},
       isDefault: true,
       isPublic: false,
-      createdBy
+      createdBy,
     };
   }
 
@@ -555,14 +562,14 @@ export class DashboardLayoutEngine {
         permissions: widget.config?.permissions || [],
         isVisible: widget.config?.isVisible ?? true,
         createdAt: widget.created_at,
-        updatedAt: widget.updated_at
+        updatedAt: widget.updated_at,
       })),
       filters: data.filters || {},
       isDefault: data.is_default,
       isPublic: data.is_public,
       createdBy: data.created_by,
       createdAt: data.created_at,
-      updatedAt: data.updated_at
+      updatedAt: data.updated_at,
     };
   }
 }

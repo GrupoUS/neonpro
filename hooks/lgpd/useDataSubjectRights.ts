@@ -1,9 +1,13 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import { LGPDComplianceManager } from '@/lib/lgpd/LGPDComplianceManager';
-import { DataSubjectRequest, DataSubjectRequestFilters, PaginatedResponse } from '@/types/lgpd';
+import { useCallback, useEffect, useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { LGPDComplianceManager } from '@/lib/lgpd/LGPDComplianceManager';
+import type {
+  DataSubjectRequest,
+  DataSubjectRequestFilters,
+  PaginatedResponse,
+} from '@/types/lgpd';
 
 interface UseDataSubjectRightsReturn {
   // Data
@@ -16,24 +20,32 @@ interface UseDataSubjectRightsReturn {
     completed: number;
     rejected: number;
   };
-  
+
   // Loading states
   isLoading: boolean;
   isProcessing: boolean;
-  
+
   // Filters
   filters: DataSubjectRequestFilters;
   setFilters: (filters: DataSubjectRequestFilters) => void;
-  
+
   // Actions
   loadRequests: () => Promise<void>;
-  processRequest: (requestId: string, action: 'approve' | 'reject', notes?: string) => Promise<void>;
-  updateRequestStatus: (requestId: string, status: DataSubjectRequest['status'], notes?: string) => Promise<void>;
+  processRequest: (
+    requestId: string,
+    action: 'approve' | 'reject',
+    notes?: string
+  ) => Promise<void>;
+  updateRequestStatus: (
+    requestId: string,
+    status: DataSubjectRequest['status'],
+    notes?: string
+  ) => Promise<void>;
   exportRequests: () => Promise<void>;
-  
+
   // Pagination
   goToPage: (page: number) => void;
-  
+
   // Error handling
   error: string | null;
 }
@@ -46,33 +58,34 @@ export function useDataSubjectRights(): UseDataSubjectRightsReturn {
     pending: 0,
     inProgress: 0,
     completed: 0,
-    rejected: 0
+    rejected: 0,
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   const [filters, setFilters] = useState<DataSubjectRequestFilters>({
     limit: 20,
     offset: 0,
     sortBy: 'created_at',
-    sortOrder: 'desc'
+    sortOrder: 'desc',
   });
-  
+
   const { toast } = useToast();
   const complianceManager = new LGPDComplianceManager();
 
   const loadRequests = useCallback(async () => {
     try {
       setError(null);
-      const response: PaginatedResponse<DataSubjectRequest> = await complianceManager.getDataSubjectRequests({
-        ...filters,
-        offset: (currentPage - 1) * (filters.limit || 20)
-      });
-      
+      const response: PaginatedResponse<DataSubjectRequest> =
+        await complianceManager.getDataSubjectRequests({
+          ...filters,
+          offset: (currentPage - 1) * (filters.limit || 20),
+        });
+
       setRequests(response.data);
       setTotalCount(response.total);
-      
+
       // Calculate statistics
       const stats = response.data.reduce(
         (acc, request) => {
@@ -83,118 +96,139 @@ export function useDataSubjectRights(): UseDataSubjectRightsReturn {
       );
       setStatistics(stats);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao carregar solicitações';
+      const errorMessage =
+        err instanceof Error ? err.message : 'Erro ao carregar solicitações';
       setError(errorMessage);
       toast({
         title: 'Erro',
         description: errorMessage,
-        variant: 'destructive'
+        variant: 'destructive',
       });
     }
   }, [filters, currentPage, complianceManager, toast]);
 
-  const processRequest = useCallback(async (requestId: string, action: 'approve' | 'reject', notes?: string) => {
-    setIsProcessing(true);
-    try {
-      setError(null);
-      
-      const newStatus = action === 'approve' ? 'completed' : 'rejected';
-      const updateData = {
-        status: newStatus as DataSubjectRequest['status'],
-        processed_at: new Date().toISOString(),
-        notes: notes || ''
-      };
-      
-      await complianceManager.updateDataSubjectRequest(requestId, updateData);
-      
-      // Update local state
-      setRequests(prev => prev.map(request => 
-        request.id === requestId 
-          ? { ...request, ...updateData, updated_at: new Date().toISOString() }
-          : request
-      ));
-      
-      // Update statistics
-      setStatistics(prev => {
-        const request = requests.find(r => r.id === requestId);
-        if (!request) return prev;
-        
-        const newStats = { ...prev };
-        newStats[request.status as keyof typeof newStats]--;
-        newStats[newStatus as keyof typeof newStats]++;
-        return newStats;
-      });
-      
-      toast({
-        title: 'Solicitação processada',
-        description: `Solicitação foi ${action === 'approve' ? 'aprovada' : 'rejeitada'} com sucesso.`
-      });
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao processar solicitação';
-      setError(errorMessage);
-      toast({
-        title: 'Erro',
-        description: errorMessage,
-        variant: 'destructive'
-      });
-    } finally {
-      setIsProcessing(false);
-    }
-  }, [complianceManager, requests, toast]);
+  const processRequest = useCallback(
+    async (requestId: string, action: 'approve' | 'reject', notes?: string) => {
+      setIsProcessing(true);
+      try {
+        setError(null);
 
-  const updateRequestStatus = useCallback(async (requestId: string, status: DataSubjectRequest['status'], notes?: string) => {
-    setIsProcessing(true);
-    try {
-      setError(null);
-      
-      const updateData = {
-        status,
-        updated_at: new Date().toISOString(),
-        ...(notes && { notes }),
-        ...(status === 'completed' && { processed_at: new Date().toISOString() })
-      };
-      
-      await complianceManager.updateDataSubjectRequest(requestId, updateData);
-      
-      // Update local state
-      setRequests(prev => prev.map(request => 
-        request.id === requestId 
-          ? { ...request, ...updateData }
-          : request
-      ));
-      
-      // Update statistics
-      setStatistics(prev => {
-        const request = requests.find(r => r.id === requestId);
-        if (!request) return prev;
-        
-        const newStats = { ...prev };
-        newStats[request.status as keyof typeof newStats]--;
-        newStats[status as keyof typeof newStats]++;
-        return newStats;
-      });
-      
-      toast({
-        title: 'Status atualizado',
-        description: 'Status da solicitação foi atualizado com sucesso.'
-      });
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao atualizar status';
-      setError(errorMessage);
-      toast({
-        title: 'Erro',
-        description: errorMessage,
-        variant: 'destructive'
-      });
-    } finally {
-      setIsProcessing(false);
-    }
-  }, [complianceManager, requests, toast]);
+        const newStatus = action === 'approve' ? 'completed' : 'rejected';
+        const updateData = {
+          status: newStatus as DataSubjectRequest['status'],
+          processed_at: new Date().toISOString(),
+          notes: notes || '',
+        };
+
+        await complianceManager.updateDataSubjectRequest(requestId, updateData);
+
+        // Update local state
+        setRequests((prev) =>
+          prev.map((request) =>
+            request.id === requestId
+              ? {
+                  ...request,
+                  ...updateData,
+                  updated_at: new Date().toISOString(),
+                }
+              : request
+          )
+        );
+
+        // Update statistics
+        setStatistics((prev) => {
+          const request = requests.find((r) => r.id === requestId);
+          if (!request) return prev;
+
+          const newStats = { ...prev };
+          newStats[request.status as keyof typeof newStats]--;
+          newStats[newStatus as keyof typeof newStats]++;
+          return newStats;
+        });
+
+        toast({
+          title: 'Solicitação processada',
+          description: `Solicitação foi ${action === 'approve' ? 'aprovada' : 'rejeitada'} com sucesso.`,
+        });
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : 'Erro ao processar solicitação';
+        setError(errorMessage);
+        toast({
+          title: 'Erro',
+          description: errorMessage,
+          variant: 'destructive',
+        });
+      } finally {
+        setIsProcessing(false);
+      }
+    },
+    [complianceManager, requests, toast]
+  );
+
+  const updateRequestStatus = useCallback(
+    async (
+      requestId: string,
+      status: DataSubjectRequest['status'],
+      notes?: string
+    ) => {
+      setIsProcessing(true);
+      try {
+        setError(null);
+
+        const updateData = {
+          status,
+          updated_at: new Date().toISOString(),
+          ...(notes && { notes }),
+          ...(status === 'completed' && {
+            processed_at: new Date().toISOString(),
+          }),
+        };
+
+        await complianceManager.updateDataSubjectRequest(requestId, updateData);
+
+        // Update local state
+        setRequests((prev) =>
+          prev.map((request) =>
+            request.id === requestId ? { ...request, ...updateData } : request
+          )
+        );
+
+        // Update statistics
+        setStatistics((prev) => {
+          const request = requests.find((r) => r.id === requestId);
+          if (!request) return prev;
+
+          const newStats = { ...prev };
+          newStats[request.status as keyof typeof newStats]--;
+          newStats[status as keyof typeof newStats]++;
+          return newStats;
+        });
+
+        toast({
+          title: 'Status atualizado',
+          description: 'Status da solicitação foi atualizado com sucesso.',
+        });
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : 'Erro ao atualizar status';
+        setError(errorMessage);
+        toast({
+          title: 'Erro',
+          description: errorMessage,
+          variant: 'destructive',
+        });
+      } finally {
+        setIsProcessing(false);
+      }
+    },
+    [complianceManager, requests, toast]
+  );
 
   const exportRequests = useCallback(async () => {
     try {
       setError(null);
-      
+
       // Create CSV content
       const csvHeaders = [
         'ID',
@@ -206,10 +240,10 @@ export function useDataSubjectRights(): UseDataSubjectRightsReturn {
         'Data de Processamento',
         'Prazo',
         'Descrição',
-        'Observações'
+        'Observações',
       ];
-      
-      const csvRows = requests.map(request => [
+
+      const csvRows = requests.map((request) => [
         request.id,
         request.request_type,
         request.user_id || '',
@@ -219,35 +253,39 @@ export function useDataSubjectRights(): UseDataSubjectRightsReturn {
         request.processed_at || '',
         request.deadline || '',
         request.description || '',
-        request.notes || ''
+        request.notes || '',
       ]);
-      
+
       const csvContent = [csvHeaders, ...csvRows]
-        .map(row => row.map(cell => `"${cell}"`).join(','))
+        .map((row) => row.map((cell) => `"${cell}"`).join(','))
         .join('\n');
-      
+
       // Create and download file
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement('a');
       const url = URL.createObjectURL(blob);
       link.setAttribute('href', url);
-      link.setAttribute('download', `lgpd-requests-${new Date().toISOString().split('T')[0]}.csv`);
+      link.setAttribute(
+        'download',
+        `lgpd-requests-${new Date().toISOString().split('T')[0]}.csv`
+      );
       link.style.visibility = 'hidden';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      
+
       toast({
         title: 'Exportação concluída',
-        description: 'Solicitações exportadas com sucesso.'
+        description: 'Solicitações exportadas com sucesso.',
       });
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao exportar solicitações';
+      const errorMessage =
+        err instanceof Error ? err.message : 'Erro ao exportar solicitações';
       setError(errorMessage);
       toast({
         title: 'Erro na exportação',
         description: errorMessage,
-        variant: 'destructive'
+        variant: 'destructive',
       });
     }
   }, [requests, toast]);
@@ -263,7 +301,7 @@ export function useDataSubjectRights(): UseDataSubjectRightsReturn {
       await loadRequests();
       setIsLoading(false);
     };
-    
+
     loadData();
   }, [loadRequests]);
 
@@ -273,25 +311,25 @@ export function useDataSubjectRights(): UseDataSubjectRightsReturn {
     totalCount,
     currentPage,
     statistics,
-    
+
     // Loading states
     isLoading,
     isProcessing,
-    
+
     // Filters
     filters,
     setFilters,
-    
+
     // Actions
     loadRequests,
     processRequest,
     updateRequestStatus,
     exportRequests,
-    
+
     // Pagination
     goToPage,
-    
+
     // Error handling
-    error
+    error,
   };
 }

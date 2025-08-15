@@ -2,151 +2,149 @@
 // Unified export for all authentication components
 // Complete session management with security, monitoring, and compliance
 
-// Core system
-export { AdvancedAuthSystem, getAdvancedAuthSystem, resetAdvancedAuthSystem } from './advanced-auth-system';
+// Re-export common types from session types
+export type {
+  SessionConfig as SessionConfigType,
+  SessionMetrics,
+  SessionPermission,
+  SessionRole,
+  SessionStatus,
+  UserSession,
+} from '@/types/session';
 export type {
   AdvancedAuthConfig,
+  AuthSystemEvent,
   AuthSystemStatus,
   ComponentStatus,
-  SystemMetrics,
-  PerformanceMetrics,
-  HealthStatus,
   HealthIssue,
+  HealthStatus,
+  PerformanceMetrics,
   SystemAlert,
-  AuthSystemEvent
+  SystemMetrics,
 } from './advanced-auth-system';
-
-// Configuration
-export { SessionConfig } from './config/session-config';
+// Core system
+export {
+  AdvancedAuthSystem,
+  getAdvancedAuthSystem,
+  resetAdvancedAuthSystem,
+} from './advanced-auth-system';
 export type {
-  SessionConfigOptions,
-  SecuritySettings,
-  ComplianceSettings,
-  PerformanceSettings,
-  IntegrationSettings
-} from './config/session-config';
-
-// Utilities
-export { SessionUtils } from './utils/session-utils';
+  AuditEvent,
+  AuditMetrics,
+  AuditQuery,
+  AuditReport,
+  ComplianceReport,
+} from './audit/audit-trail';
+// Audit trail
+export { AuditTrailManager } from './audit/audit-trail';
 export type {
-  DeviceFingerprint,
-  LocationInfo,
-  SecurityContext,
-  SessionValidationResult,
-  SessionMetadata
-} from './utils/session-utils';
-
-// Intelligent timeout management
-export { IntelligentTimeoutManager } from './timeout/intelligent-timeout';
+  CleanupMetrics,
+  CleanupSchedule,
+  CleanupTarget,
+  CleanupTask,
+  RetentionPolicy,
+} from './cleanup/data-cleanup';
+// Data cleanup
+export { DataCleanupManager } from './cleanup/data-cleanup';
 export type {
-  TimeoutConfig,
-  SessionTimeoutInfo,
-  TimeoutEvent,
-  ActivityPattern,
-  TimeoutStrategy,
-  AdaptiveSettings
-} from './timeout/intelligent-timeout';
+  ConcurrentSessionConfig,
+  ConcurrentSessionMetrics,
+  ConflictResolution,
+  SessionCreationCheck,
+  SessionTransfer,
+} from './concurrent/concurrent-session-manager';
 
 // Concurrent session management
 export { ConcurrentSessionManager } from './concurrent/concurrent-session-manager';
 export type {
-  ConcurrentSessionConfig,
-  SessionCreationCheck,
-  ConflictResolution,
-  SessionTransfer,
-  ConcurrentSessionMetrics
-} from './concurrent/concurrent-session-manager';
-
-// Suspicious activity detection
-export { SuspiciousActivityDetector } from './suspicious/suspicious-activity-detector';
+  ComplianceSettings,
+  IntegrationSettings,
+  PerformanceSettings,
+  SecuritySettings,
+  SessionConfigOptions,
+} from './config/session-config';
+// Configuration
+export { SessionConfig } from './config/session-config';
 export type {
-  SuspiciousActivityConfig,
-  BehaviorPattern,
-  AnomalyDetection,
-  RiskProfile,
-  SecurityAction,
-  ActivityEvent
-} from './suspicious/suspicious-activity-detector';
-
-// Security monitoring
-export { SecurityMonitor } from './monitoring/security-monitor';
+  EmergencyAction,
+  EmergencyEvent,
+  EmergencyResponse,
+  EmergencyStatus,
+  ShutdownScope,
+} from './emergency/emergency-shutdown';
+// Emergency shutdown
+export { EmergencyShutdownManager } from './emergency/emergency-shutdown';
 export type {
+  MitigationAction,
+  MonitoringRule,
+  SecurityIndicator,
+  SecurityMetrics,
   SecurityThreat,
   ThreatSeverity,
   ThreatSource,
   ThreatTarget,
-  SecurityIndicator,
-  MitigationAction,
-  SecurityMetrics,
-  MonitoringRule
 } from './monitoring/security-monitor';
-
-// Session synchronization
-export { SessionSyncManager } from './sync/session-sync';
+// Security monitoring
+export { SecurityMonitor } from './monitoring/security-monitor';
 export type {
-  SyncEvent,
-  SyncConflict,
-  ConflictResolutionStrategy,
-  SyncStatus,
-  DeviceSync
-} from './sync/session-sync';
+  PreservationConfig,
+  RestorationResult,
+  SessionSnapshot,
+  SnapshotMetadata,
+  StorageBackend,
+} from './preservation/session-preservation';
 
 // Session preservation
 export { SessionPreservationManager } from './preservation/session-preservation';
 export type {
-  SessionSnapshot,
-  SnapshotMetadata,
-  PreservationConfig,
-  StorageBackend,
-  RestorationResult
-} from './preservation/session-preservation';
-
-// Emergency shutdown
-export { EmergencyShutdownManager } from './emergency/emergency-shutdown';
+  ActivityEvent,
+  AnomalyDetection,
+  BehaviorPattern,
+  RiskProfile,
+  SecurityAction,
+  SuspiciousActivityConfig,
+} from './suspicious/suspicious-activity-detector';
+// Suspicious activity detection
+export { SuspiciousActivityDetector } from './suspicious/suspicious-activity-detector';
 export type {
-  EmergencyEvent,
-  EmergencyAction,
-  EmergencyResponse,
-  ShutdownScope,
-  EmergencyStatus
-} from './emergency/emergency-shutdown';
-
-// Audit trail
-export { AuditTrailManager } from './audit/audit-trail';
+  ConflictResolutionStrategy,
+  DeviceSync,
+  SyncConflict,
+  SyncEvent,
+  SyncStatus,
+} from './sync/session-sync';
+// Session synchronization
+export { SessionSyncManager } from './sync/session-sync';
 export type {
-  AuditEvent,
-  AuditQuery,
-  AuditReport,
-  ComplianceReport,
-  AuditMetrics
-} from './audit/audit-trail';
-
-// Data cleanup
-export { DataCleanupManager } from './cleanup/data-cleanup';
+  ActivityPattern,
+  AdaptiveSettings,
+  SessionTimeoutInfo,
+  TimeoutConfig,
+  TimeoutEvent,
+  TimeoutStrategy,
+} from './timeout/intelligent-timeout';
+// Intelligent timeout management
+export { IntelligentTimeoutManager } from './timeout/intelligent-timeout';
 export type {
-  CleanupTask,
-  CleanupSchedule,
-  RetentionPolicy,
-  CleanupTarget,
-  CleanupMetrics
-} from './cleanup/data-cleanup';
-
-// Re-export common types from session types
-export type {
-  UserSession,
-  SessionConfig as SessionConfigType,
-  SessionMetrics,
-  SessionStatus,
-  SessionRole,
-  SessionPermission
-} from '@/types/session';
+  DeviceFingerprint,
+  LocationInfo,
+  SecurityContext,
+  SessionMetadata,
+  SessionValidationResult,
+} from './utils/session-utils';
+// Utilities
+export { SessionUtils } from './utils/session-utils';
 
 // Utility functions for quick setup
-export const createAdvancedAuthSystem = (config?: Partial<AdvancedAuthConfig>) => {
+export const createAdvancedAuthSystem = (
+  config?: Partial<AdvancedAuthConfig>
+) => {
   return getAdvancedAuthSystem(config);
 };
 
-export const initializeAuthSystem = async (config?: Partial<AdvancedAuthConfig>) => {
+export const initializeAuthSystem = async (
+  config?: Partial<AdvancedAuthConfig>
+) => {
   const authSystem = getAdvancedAuthSystem(config);
   await authSystem.initialize();
   return authSystem;
@@ -182,7 +180,7 @@ export const SECURITY_LEVELS = {
     threatResponseLevel: 'passive' as const,
     enableSuspiciousDetection: false,
     enableSecurityMonitoring: true,
-    auditLevel: 'basic' as const
+    auditLevel: 'basic' as const,
   },
   MEDIUM: {
     sessionTimeout: 45 * 60 * 1000, // 45 minutes
@@ -191,7 +189,7 @@ export const SECURITY_LEVELS = {
     threatResponseLevel: 'active' as const,
     enableSuspiciousDetection: true,
     enableSecurityMonitoring: true,
-    auditLevel: 'detailed' as const
+    auditLevel: 'detailed' as const,
   },
   HIGH: {
     sessionTimeout: 30 * 60 * 1000, // 30 minutes
@@ -200,7 +198,7 @@ export const SECURITY_LEVELS = {
     threatResponseLevel: 'active' as const,
     enableSuspiciousDetection: true,
     enableSecurityMonitoring: true,
-    auditLevel: 'detailed' as const
+    auditLevel: 'detailed' as const,
   },
   MAXIMUM: {
     sessionTimeout: 15 * 60 * 1000, // 15 minutes
@@ -209,8 +207,8 @@ export const SECURITY_LEVELS = {
     threatResponseLevel: 'aggressive' as const,
     enableSuspiciousDetection: true,
     enableSecurityMonitoring: true,
-    auditLevel: 'comprehensive' as const
-  }
+    auditLevel: 'comprehensive' as const,
+  },
 } as const;
 
 // Helper function to create config based on security level
@@ -223,7 +221,7 @@ export const createSecurityConfig = (
     ...DEFAULT_AUTH_CONFIG,
     ...baseConfig,
     securityLevel: level.toLowerCase() as any,
-    ...overrides
+    ...overrides,
   };
 };
 
@@ -249,13 +247,15 @@ export const setupMaximumSecurityAuth = async () => {
 };
 
 // Enterprise setup with custom compliance
-export const setupEnterpriseAuth = async (complianceFrameworks: string[] = ['LGPD', 'GDPR', 'SOX']) => {
+export const setupEnterpriseAuth = async (
+  complianceFrameworks: string[] = ['LGPD', 'GDPR', 'SOX']
+) => {
   const config = createSecurityConfig('HIGH', {
     complianceFrameworks,
     auditLevel: 'comprehensive',
     dataRetentionPeriod: 7 * 365 * 24 * 60 * 60 * 1000, // 7 years
     enableAuditTrail: true,
-    enableDataCleanup: true
+    enableDataCleanup: true,
   });
   return await initializeAuthSystem(config);
 };
@@ -269,7 +269,7 @@ export const setupDevelopmentAuth = async () => {
     enableSecurityMonitoring: false,
     enableEmergencyShutdown: false,
     auditLevel: 'basic',
-    threatResponseLevel: 'passive'
+    threatResponseLevel: 'passive',
   });
   return await initializeAuthSystem(config);
 };
@@ -293,7 +293,7 @@ export const FEATURES = {
   BEHAVIORAL_ANALYSIS: true,
   THREAT_DETECTION: true,
   COMPLIANCE_REPORTING: true,
-  AUTOMATED_RESPONSE: true
+  AUTOMATED_RESPONSE: true,
 } as const;
 
 // Export component status
@@ -311,7 +311,7 @@ export const performHealthCheck = async () => {
     score: status.health.score,
     issues: status.health.issues,
     recommendations: status.health.recommendations,
-    timestamp: Date.now()
+    timestamp: Date.now(),
   };
 };
 
@@ -328,7 +328,7 @@ export const getSystemInfo = () => {
     buildDate: BUILD_DATE,
     features: FEATURES,
     defaultConfig: DEFAULT_AUTH_CONFIG,
-    securityLevels: Object.keys(SECURITY_LEVELS)
+    securityLevels: Object.keys(SECURITY_LEVELS),
   };
 };
 

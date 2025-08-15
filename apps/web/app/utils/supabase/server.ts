@@ -1,9 +1,9 @@
 // app/utils/supabase/server.ts
 // Task 1.3 - CONNECTION POOLING OPTIMIZATION
 // Updated server client with connection pooling integration
-import { createServerClient, type CookieOptions } from "@supabase/ssr";
-import { cookies } from "next/headers";
-import { getConnectionPoolManager } from "@/lib/supabase/connection-pool-manager";
+import { type CookieOptions, createServerClient } from '@supabase/ssr';
+import { cookies } from 'next/headers';
+import { getConnectionPoolManager } from '@/lib/supabase/connection-pool-manager';
 
 export async function createClient() {
   const cookieStore = await cookies();
@@ -19,15 +19,15 @@ export async function createClient() {
         set(name: string, value: string, options: CookieOptions) {
           try {
             cookieStore.set({ name, value, ...options });
-          } catch (error) {
+          } catch (_error) {
             // Ocorre em Server Actions quando se tenta setar um cookie.
             // A middleware se encarregará de atualizar os cookies.
           }
         },
         remove(name: string, options: CookieOptions) {
           try {
-            cookieStore.set({ name, value: "", ...options });
-          } catch (error) {
+            cookieStore.set({ name, value: '', ...options });
+          } catch (_error) {
             // Ocorre em Server Actions quando se tenta remover um cookie.
           }
         },
@@ -41,8 +41,8 @@ export { createClient as createServerClient };
 
 // New optimized server client factory with pooling
 export async function createOptimizedServerClient(clinicId: string) {
-  const poolManager = getConnectionPoolManager()
-  return await poolManager.getServerClient(clinicId)
+  const poolManager = getConnectionPoolManager();
+  return await poolManager.getServerClient(clinicId);
 }
 
 // Legacy support - gradually migrate to optimized version

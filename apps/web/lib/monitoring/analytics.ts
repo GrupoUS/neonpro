@@ -1,7 +1,7 @@
 /**
  * TASK-001: Foundation Setup & Baseline
  * User Analytics Tracking System
- * 
+ *
  * Provides comprehensive user behavior tracking for UX baseline measurement
  * including page views, clicks, session duration, and feature adoption.
  */
@@ -35,7 +35,6 @@ export interface FeatureAdoptionMetric {
 class UserAnalytics {
   private supabase = createClient();
   private currentSession: UserSession | null = null;
-  private sessionTimeout = 30 * 60 * 1000; // 30 minutes
   private eventQueue: AnalyticsEvent[] = [];
   private flushInterval: NodeJS.Timeout | null = null;
 
@@ -56,7 +55,7 @@ class UserAnalytics {
       startTime: Date.now(),
       lastActivity: Date.now(),
       pageViews: 0,
-      events: []
+      events: [],
     };
 
     this.trackEvent('session_start', {
@@ -64,7 +63,7 @@ class UserAnalytics {
       timestamp: new Date().toISOString(),
       user_agent: navigator.userAgent,
       screen_resolution: `${screen.width}x${screen.height}`,
-      viewport_size: `${window.innerWidth}x${window.innerHeight}`
+      viewport_size: `${window.innerWidth}x${window.innerHeight}`,
     });
   }
 
@@ -74,19 +73,22 @@ class UserAnalytics {
   private getOrCreateSessionId(): string {
     const storageKey = 'neonpro_session_id';
     let sessionId = localStorage.getItem(storageKey);
-    
+
     if (!sessionId) {
       sessionId = crypto.randomUUID();
       localStorage.setItem(storageKey, sessionId);
     }
-    
+
     return sessionId;
   }
 
   /**
    * Track user event
    */
-  async trackEvent(eventType: string, eventData?: Record<string, any>): Promise<void> {
+  async trackEvent(
+    eventType: string,
+    eventData?: Record<string, any>
+  ): Promise<void> {
     if (!this.currentSession) return;
 
     this.currentSession.lastActivity = Date.now();
@@ -97,7 +99,7 @@ class UserAnalytics {
       event_data: eventData,
       page_url: window.location.href,
       user_agent: navigator.userAgent,
-      session_id: this.currentSession.sessionId
+      session_id: this.currentSession.sessionId,
     };
 
     this.eventQueue.push(event);
@@ -115,12 +117,12 @@ class UserAnalytics {
     if (!this.currentSession) return;
 
     this.currentSession.pageViews++;
-    
+
     await this.trackEvent('page_view', {
       page_path: pagePath || window.location.pathname,
       page_title: document.title,
       referrer: document.referrer,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -138,7 +140,7 @@ class UserAnalytics {
       epic_name: epicName,
       action_type: actionType,
       metadata,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -158,7 +160,7 @@ class UserAnalytics {
       completion_time_ms: completionTimeMs,
       success,
       error_message: errorMessage,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -176,7 +178,7 @@ class UserAnalytics {
       score,
       feedback,
       context,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -194,7 +196,7 @@ class UserAnalytics {
       element_id: elementId,
       element_type: elementType,
       position,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -210,7 +212,7 @@ class UserAnalytics {
    */
   async getFeatureAdoptionMetrics(
     epicName?: string,
-    days: number = 30
+    days = 30
   ): Promise<FeatureAdoptionMetric[]> {
     try {
       const startDate = new Date();
@@ -236,12 +238,12 @@ class UserAnalytics {
       // Process data to calculate adoption metrics
       const featureStats: Record<string, any> = {};
 
-      data.forEach(record => {
+      data.forEach((record) => {
         const eventData = record.event_data as any;
-        if (!eventData?.feature_name || !eventData?.epic_name) return;
+        if (!(eventData?.feature_name && eventData?.epic_name)) return;
 
         const key = `${eventData.epic_name}_${eventData.feature_name}`;
-        
+
         if (!featureStats[key]) {
           featureStats[key] = {
             feature_name: eventData.feature_name,
@@ -249,13 +251,13 @@ class UserAnalytics {
             users: new Set(),
             total_interactions: 0,
             completions: 0,
-            errors: 0
+            errors: 0,
           };
         }
 
         featureStats[key].users.add(record.user_id);
         featureStats[key].total_interactions++;
-        
+
         if (eventData.action_type === 'complete') {
           featureStats[key].completions++;
         } else if (eventData.action_type === 'error') {
@@ -269,9 +271,9 @@ class UserAnalytics {
         epic_name: stat.epic_name,
         adoption_rate: stat.users.size, // Number of unique users
         usage_frequency: stat.total_interactions / stat.users.size,
-        task_completion_rate: stat.completions / (stat.completions + stat.errors) || 0
+        task_completion_rate:
+          stat.completions / (stat.completions + stat.errors) || 0,
       }));
-
     } catch (error) {
       console.error('Error calculating feature adoption metrics:', error);
       return [];
@@ -312,7 +314,7 @@ class UserAnalytics {
       'session_end',
       'error',
       'user_satisfaction',
-      'task_completion'
+      'task_completion',
     ];
     return criticalEvents.includes(eventType);
   }
@@ -323,7 +325,7 @@ class UserAnalytics {
   private startEventFlushing(): void {
     this.flushInterval = setInterval(() => {
       this.flushEvents();
-    }, 10000); // Flush every 10 seconds
+    }, 10_000); // Flush every 10 seconds
   }
 
   /**
@@ -346,7 +348,7 @@ class UserAnalytics {
         this.trackEvent('session_end', {
           session_duration_ms: sessionDuration,
           page_views: this.currentSession.pageViews,
-          total_events: this.currentSession.events.length
+          total_events: this.currentSession.events.length,
         });
         this.flushEvents();
       }
@@ -360,13 +362,21 @@ class UserAnalytics {
     // Track page load performance
     window.addEventListener('load', () => {
       setTimeout(() => {
-        const navigationTiming = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
-        
+        const navigationTiming = performance.getEntriesByType(
+          'navigation'
+        )[0] as PerformanceNavigationTiming;
+
         this.trackEvent('page_performance', {
-          load_time: navigationTiming.loadEventEnd - navigationTiming.fetchStart,
-          dom_ready_time: navigationTiming.domContentLoadedEventEnd - navigationTiming.fetchStart,
-          first_paint: performance.getEntriesByName('first-paint')[0]?.startTime || 0,
-          first_contentful_paint: performance.getEntriesByName('first-contentful-paint')[0]?.startTime || 0
+          load_time:
+            navigationTiming.loadEventEnd - navigationTiming.fetchStart,
+          dom_ready_time:
+            navigationTiming.domContentLoadedEventEnd -
+            navigationTiming.fetchStart,
+          first_paint:
+            performance.getEntriesByName('first-paint')[0]?.startTime || 0,
+          first_contentful_paint:
+            performance.getEntriesByName('first-contentful-paint')[0]
+              ?.startTime || 0,
         });
       }, 0);
     });
@@ -387,7 +397,10 @@ class UserAnalytics {
 export const userAnalytics = new UserAnalytics();
 
 // Export logAnalyticsEvent function for compatibility
-export function logAnalyticsEvent(eventType: string, eventData?: Record<string, any>): Promise<void> {
+export function logAnalyticsEvent(
+  eventType: string,
+  eventData?: Record<string, any>
+): Promise<void> {
   return userAnalytics.trackEvent(eventType, eventData);
 }
 
@@ -398,9 +411,12 @@ export function useAnalytics() {
     trackPageView: userAnalytics.trackPageView.bind(userAnalytics),
     trackFeatureUsage: userAnalytics.trackFeatureUsage.bind(userAnalytics),
     trackTaskCompletion: userAnalytics.trackTaskCompletion.bind(userAnalytics),
-    trackUserSatisfaction: userAnalytics.trackUserSatisfaction.bind(userAnalytics),
-    trackUserInteraction: userAnalytics.trackUserInteraction.bind(userAnalytics),
+    trackUserSatisfaction:
+      userAnalytics.trackUserSatisfaction.bind(userAnalytics),
+    trackUserInteraction:
+      userAnalytics.trackUserInteraction.bind(userAnalytics),
     getSessionStats: userAnalytics.getSessionStats.bind(userAnalytics),
-    getFeatureAdoptionMetrics: userAnalytics.getFeatureAdoptionMetrics.bind(userAnalytics)
+    getFeatureAdoptionMetrics:
+      userAnalytics.getFeatureAdoptionMetrics.bind(userAnalytics),
   };
 }

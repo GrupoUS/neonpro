@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
 import { FacebookOAuthHandler } from '@/lib/oauth/platforms/facebook-handler';
 import { TokenEncryptionService } from '@/lib/oauth/token-encryption';
@@ -6,7 +6,7 @@ import { TokenEncryptionService } from '@/lib/oauth/token-encryption';
 /**
  * Facebook OAuth Account Management Endpoint
  * Handles individual Facebook account operations
- * 
+ *
  * Features:
  * - Account status retrieval
  * - Token validation and refresh
@@ -15,14 +15,16 @@ import { TokenEncryptionService } from '@/lib/oauth/token-encryption';
  */
 
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const supabase = await createClient();
-    
+
     // Verify user authentication
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session?.user) {
       return NextResponse.json(
         { error: 'Unauthorized - Please log in to access account information' },
@@ -65,7 +67,8 @@ export async function GET(
     // Check token expiration status
     const tokenExpiresAt = new Date(account.token_expires_at);
     const now = new Date();
-    const hoursUntilExpiry = (tokenExpiresAt.getTime() - now.getTime()) / (1000 * 60 * 60);
+    const hoursUntilExpiry =
+      (tokenExpiresAt.getTime() - now.getTime()) / (1000 * 60 * 60);
     const isExpiringSoon = hoursUntilExpiry < 24;
     const isExpired = hoursUntilExpiry < 0;
 
@@ -88,18 +91,17 @@ export async function GET(
           hoursUntilExpiry: Math.max(0, hoursUntilExpiry),
           isExpired,
           isExpiringSoon,
-          needsRefresh: isExpiringSoon
-        }
-      }
+          needsRefresh: isExpiringSoon,
+        },
+      },
     });
-
   } catch (error) {
     console.error('Facebook account retrieval error:', error);
-    
+
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to retrieve Facebook account information',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );
@@ -107,14 +109,16 @@ export async function GET(
 }
 
 export async function DELETE(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const supabase = await createClient();
-    
+
     // Verify user authentication
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session?.user) {
       return NextResponse.json(
         { error: 'Unauthorized - Please log in to disconnect account' },
@@ -147,7 +151,10 @@ export async function DELETE(
       const encryptedAccessToken = JSON.parse(account.encrypted_access_token);
       accessToken = TokenEncryptionService.decryptToken(encryptedAccessToken);
     } catch (decryptError) {
-      console.warn('Could not decrypt access token for revocation:', decryptError);
+      console.warn(
+        'Could not decrypt access token for revocation:',
+        decryptError
+      );
       // Continue with disconnection even if token decryption fails
     }
 
@@ -168,29 +175,32 @@ export async function DELETE(
       .from('social_media_accounts')
       .update({
         is_active: false,
-        disconnected_at: new Date().toISOString()
+        disconnected_at: new Date().toISOString(),
       })
       .eq('id', accountId);
 
     if (deactivateError) {
-      throw new Error(`Failed to disconnect account: ${deactivateError.message}`);
+      throw new Error(
+        `Failed to disconnect account: ${deactivateError.message}`
+      );
     }
 
     // Log successful disconnection
-    console.log(`Facebook account disconnected: ${accountId} (${account.platform_username})`);
+    console.log(
+      `Facebook account disconnected: ${accountId} (${account.platform_username})`
+    );
 
     return NextResponse.json({
       success: true,
-      message: 'Facebook account disconnected successfully'
+      message: 'Facebook account disconnected successfully',
     });
-
   } catch (error) {
     console.error('Facebook account disconnection error:', error);
-    
+
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to disconnect Facebook account',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );

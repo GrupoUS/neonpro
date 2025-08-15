@@ -24,35 +24,35 @@ export const RATE_LIMIT_CONFIGS: RateLimitConfigs = {
     maxRequests: 100, // 100 requests per minute
     skipSuccessfulRequests: false,
   },
-  
+
   // Trial management - moderate limits
   'trial-management': {
     windowMs: 60 * 1000, // 1 minute
     maxRequests: 50, // 50 requests per minute
     skipSuccessfulRequests: false,
   },
-  
+
   // Auth endpoints - strict limits to prevent brute force
   auth: {
     windowMs: 15 * 60 * 1000, // 15 minutes
     maxRequests: 5, // 5 attempts per 15 minutes
     skipSuccessfulRequests: true,
   },
-  
+
   // WebSocket connection attempts - prevent connection flooding
   websocket: {
     windowMs: 60 * 1000, // 1 minute
     maxRequests: 10, // 10 connection attempts per minute
     skipSuccessfulRequests: true,
   },
-  
+
   // General API endpoints
   default: {
     windowMs: 60 * 1000, // 1 minute
     maxRequests: 60, // 60 requests per minute
     skipSuccessfulRequests: false,
   },
-  
+
   // Admin endpoints - higher limits for management operations
   admin: {
     windowMs: 60 * 1000, // 1 minute

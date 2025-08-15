@@ -1,56 +1,61 @@
 /**
  * Computer Vision Analysis API Route
  * POST /api/vision/analysis
- * 
+ *
  * Handles before/after image analysis with ≥95% accuracy and <30s processing time
  * Epic 10 - Story 10.1: Automated Before/After Analysis
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
-import { visionAnalysisEngine } from '@/lib/vision/analysis-engine';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { createClient } from '@/app/utils/supabase/server';
 import { withErrorMonitoring } from '@/lib/monitoring';
+import { visionAnalysisEngine } from '@/lib/vision/analysis-engine';
 
 // Request validation schema
 const analysisRequestSchema = z.object({
   beforeImageUrl: z.string().url('URL da imagem "antes" é obrigatória'),
   afterImageUrl: z.string().url('URL da imagem "depois" é obrigatória'),
   patientId: z.string().min(1, 'ID do paciente é obrigatório'),
-  treatmentType: z.enum([
-    'acne_treatment',
-    'anti_aging',
-    'skin_rejuvenation',
-    'scar_treatment',
-    'pigmentation',
-    'wrinkle_reduction',
-    'other'
-  ], { required_error: 'Tipo de tratamento é obrigatório' }),
-  analysisOptions: z.object({
-    enableDetailedMetrics: z.boolean().default(true),
-    generateAnnotations: z.boolean().default(true),
-    qualityThreshold: z.number().min(0.8).max(1.0).default(0.95)
-  }).optional()
+  treatmentType: z.enum(
+    [
+      'acne_treatment',
+      'anti_aging',
+      'skin_rejuvenation',
+      'scar_treatment',
+      'pigmentation',
+      'wrinkle_reduction',
+      'other',
+    ],
+    { required_error: 'Tipo de tratamento é obrigatório' }
+  ),
+  analysisOptions: z
+    .object({
+      enableDetailedMetrics: z.boolean().default(true),
+      generateAnnotations: z.boolean().default(true),
+      qualityThreshold: z.number().min(0.8).max(1.0).default(0.95),
+    })
+    .optional(),
 });
 
 // GET - Retrieve analysis history
 export const GET = withErrorMonitoring(async (request: NextRequest) => {
   const supabase = createClient();
-  
+
   try {
     // Authenticate user
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Não autorizado' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
     const patientId = searchParams.get('patientId');
-    const limit = parseInt(searchParams.get('limit') || '10');
-    const offset = parseInt(searchParams.get('offset') || '0');
+    const limit = Number.parseInt(searchParams.get('limit') || '10', 10);
+    const offset = Number.parseInt(searchParams.get('offset') || '0', 10);
 
     if (!patientId) {
       return NextResponse.json(
@@ -72,16 +77,15 @@ export const GET = withErrorMonitoring(async (request: NextRequest) => {
       pagination: {
         limit,
         offset,
-        total: history.length
-      }
+        total: history.length,
+      },
     });
-
   } catch (error) {
     console.error('Vision analysis history error:', error);
     return NextResponse.json(
-      { 
+      {
         error: 'Erro interno do servidor',
-        details: error instanceof Error ? error.message : 'Erro desconhecido'
+        details: error instanceof Error ? error.message : 'Erro desconhecido',
       },
       { status: 500 }
     );
@@ -91,15 +95,15 @@ export const GET = withErrorMonitoring(async (request: NextRequest) => {
 // POST - Start new analysis
 export const POST = withErrorMonitoring(async (request: NextRequest) => {
   const supabase = createClient();
-  
+
   try {
     // Authenticate user
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Não autorizado' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
     // Parse and validate request body
@@ -126,7 +130,7 @@ export const POST = withErrorMonitoring(async (request: NextRequest) => {
         `Precisão abaixo do esperado: ${(analysisResult.accuracyScore * 100).toFixed(1)}%`
       );
     }
-    if (processingTime > 30000) {
+    if (processingTime > 30_000) {
       performanceWarnings.push(
         `Tempo de processamento excedeu 30s: ${(processingTime / 1000).toFixed(1)}s`
       );
@@ -139,7 +143,7 @@ export const POST = withErrorMonitoring(async (request: NextRequest) => {
       accuracy_score: analysisResult.accuracyScore,
       confidence_score: analysisResult.confidence,
       user_id: user.id,
-      created_at: new Date().toISOString()
+      created_at: new Date().toISOString(),
     });
 
     return NextResponse.json({
@@ -148,28 +152,27 @@ export const POST = withErrorMonitoring(async (request: NextRequest) => {
       performance: {
         processingTime,
         meetsAccuracyTarget: analysisResult.accuracyScore >= 0.95,
-        meetsTimeTarget: processingTime <= 30000,
-        warnings: performanceWarnings
-      }
+        meetsTimeTarget: processingTime <= 30_000,
+        warnings: performanceWarnings,
+      },
     });
-
   } catch (error) {
     console.error('Vision analysis error:', error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { 
+        {
           error: 'Dados de entrada inválidos',
-          details: error.errors
+          details: error.errors,
         },
         { status: 400 }
       );
     }
 
     return NextResponse.json(
-      { 
+      {
         error: 'Erro interno do servidor',
-        details: error instanceof Error ? error.message : 'Erro desconhecido'
+        details: error instanceof Error ? error.message : 'Erro desconhecido',
       },
       { status: 500 }
     );
@@ -179,15 +182,15 @@ export const POST = withErrorMonitoring(async (request: NextRequest) => {
 // PUT - Update analysis
 export const PUT = withErrorMonitoring(async (request: NextRequest) => {
   const supabase = createClient();
-  
+
   try {
     // Authenticate user
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Não autorizado' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
@@ -211,7 +214,7 @@ export const PUT = withErrorMonitoring(async (request: NextRequest) => {
         quality_rating: qualityRating,
         review_status: reviewStatus,
         reviewed_at: new Date().toISOString(),
-        reviewed_by: user.id
+        reviewed_by: user.id,
       })
       .eq('id', analysisId)
       .eq('user_id', user.id) // Ensure user can only update their own analyses
@@ -224,15 +227,14 @@ export const PUT = withErrorMonitoring(async (request: NextRequest) => {
 
     return NextResponse.json({
       success: true,
-      data
+      data,
     });
-
   } catch (error) {
     console.error('Vision analysis update error:', error);
     return NextResponse.json(
-      { 
+      {
         error: 'Erro interno do servidor',
-        details: error instanceof Error ? error.message : 'Erro desconhecido'
+        details: error instanceof Error ? error.message : 'Erro desconhecido',
       },
       { status: 500 }
     );
@@ -242,15 +244,15 @@ export const PUT = withErrorMonitoring(async (request: NextRequest) => {
 // DELETE - Delete analysis
 export const DELETE = withErrorMonitoring(async (request: NextRequest) => {
   const supabase = createClient();
-  
+
   try {
     // Authenticate user
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Não autorizado' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
@@ -266,9 +268,9 @@ export const DELETE = withErrorMonitoring(async (request: NextRequest) => {
     // Delete analysis (soft delete)
     const { error } = await supabase
       .from('image_analysis')
-      .update({ 
+      .update({
         deleted_at: new Date().toISOString(),
-        deleted_by: user.id
+        deleted_by: user.id,
       })
       .eq('id', analysisId)
       .eq('user_id', user.id); // Ensure user can only delete their own analyses
@@ -279,15 +281,14 @@ export const DELETE = withErrorMonitoring(async (request: NextRequest) => {
 
     return NextResponse.json({
       success: true,
-      message: 'Análise removida com sucesso'
+      message: 'Análise removida com sucesso',
     });
-
   } catch (error) {
     console.error('Vision analysis delete error:', error);
     return NextResponse.json(
-      { 
+      {
         error: 'Erro interno do servidor',
-        details: error instanceof Error ? error.message : 'Erro desconhecido'
+        details: error instanceof Error ? error.message : 'Erro desconhecido',
       },
       { status: 500 }
     );

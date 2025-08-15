@@ -2,18 +2,12 @@
 // Provides React integration for WhatsApp Business API
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'react-hot-toast';
 import { whatsAppService } from '@/app/lib/services/whatsapp-service';
 import {
-  WhatsAppConfig,
-  WhatsAppTemplate,
-  WhatsAppMessage,
-  WhatsAppAnalytics,
-  WhatsAppConfigForm,
-  WhatsAppTemplateForm,
-  SendBulkMessageForm,
-  WhatsAppMessageType
+  type WhatsAppConfigForm,
+  WhatsAppMessageType,
 } from '@/app/types/whatsapp';
-import { toast } from 'react-hot-toast';
 
 // Configuration hooks
 export function useWhatsAppConfig() {
@@ -28,7 +22,8 @@ export function useUpdateWhatsAppConfig() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (config: WhatsAppConfigForm) => whatsAppService.updateConfig(config),
+    mutationFn: (config: WhatsAppConfigForm) =>
+      whatsAppService.updateConfig(config),
     onSuccess: (data) => {
       queryClient.setQueryData(['whatsapp-config'], data);
       toast.success('Configuração do WhatsApp atualizada com sucesso!');
@@ -66,7 +61,7 @@ export function useSendWhatsAppMessage() {
       content,
       type = WhatsAppMessageType.TEXT,
       patientId,
-      templateName
+      templateName,
     }: {
       phoneNumber: string;
       content: string;
@@ -74,7 +69,13 @@ export function useSendWhatsAppMessage() {
       patientId?: string;
       templateName?: string;
     }) => {
-      return whatsAppService.sendMessage(phoneNumber, content, type, patientId, templateName);
+      return whatsAppService.sendMessage(
+        phoneNumber,
+        content,
+        type,
+        patientId,
+        templateName
+      );
     },
     onSuccess: () => {
       toast.success('Mensagem WhatsApp enviada com sucesso!');
@@ -92,14 +93,19 @@ export function useSendWhatsAppTemplate() {
       phoneNumber,
       templateName,
       parameters = {},
-      patientId
+      patientId,
     }: {
       phoneNumber: string;
       templateName: string;
       parameters?: Record<string, string>;
       patientId?: string;
     }) => {
-      return whatsAppService.sendTemplateMessage(phoneNumber, templateName, parameters, patientId);
+      return whatsAppService.sendTemplateMessage(
+        phoneNumber,
+        templateName,
+        parameters,
+        patientId
+      );
     },
     onSuccess: () => {
       toast.success('Template WhatsApp enviado com sucesso!');
@@ -116,13 +122,17 @@ export function useSendBulkWhatsAppMessages() {
     mutationFn: async ({
       phoneNumbers,
       templateName,
-      parameters = {}
+      parameters = {},
     }: {
       phoneNumbers: string[];
       templateName: string;
       parameters?: Record<string, string>;
     }) => {
-      return whatsAppService.sendBulkMessages(phoneNumbers, templateName, parameters);
+      return whatsAppService.sendBulkMessages(
+        phoneNumbers,
+        templateName,
+        parameters
+      );
     },
     onSuccess: (results) => {
       toast.success(
@@ -154,17 +164,25 @@ export function useRecordWhatsAppOptIn() {
       patientId,
       phoneNumber,
       source = 'manual',
-      consentMessage
+      consentMessage,
     }: {
       patientId: string;
       phoneNumber: string;
       source?: string;
       consentMessage?: string;
     }) => {
-      return whatsAppService.recordOptIn(patientId, phoneNumber, source, consentMessage);
+      return whatsAppService.recordOptIn(
+        patientId,
+        phoneNumber,
+        source,
+        consentMessage
+      );
     },
     onSuccess: (_, variables) => {
-      queryClient.setQueryData(['whatsapp-opt-in', variables.phoneNumber], true);
+      queryClient.setQueryData(
+        ['whatsapp-opt-in', variables.phoneNumber],
+        true
+      );
       toast.success('Consentimento WhatsApp registrado com sucesso!');
     },
     onError: (error: Error) => {
@@ -177,7 +195,11 @@ export function useRecordWhatsAppOptIn() {
 // Analytics hooks
 export function useWhatsAppAnalytics(startDate: Date, endDate: Date) {
   return useQuery({
-    queryKey: ['whatsapp-analytics', startDate.toISOString(), endDate.toISOString()],
+    queryKey: [
+      'whatsapp-analytics',
+      startDate.toISOString(),
+      endDate.toISOString(),
+    ],
     queryFn: () => whatsAppService.getAnalytics(startDate, endDate),
     enabled: !!startDate && !!endDate,
     staleTime: 60 * 1000, // 1 minute for analytics
@@ -187,7 +209,8 @@ export function useWhatsAppAnalytics(startDate: Date, endDate: Date) {
 // Utility hooks
 export function useWhatsAppStatus() {
   const { data: config, isLoading: configLoading } = useWhatsAppConfig();
-  const { data: templates, isLoading: templatesLoading } = useWhatsAppTemplates();
+  const { data: templates, isLoading: templatesLoading } =
+    useWhatsAppTemplates();
 
   const isConfigured = !!(
     config?.phoneNumberId &&
@@ -206,7 +229,7 @@ export function useWhatsAppStatus() {
     isReady,
     isLoading: configLoading || templatesLoading,
     config,
-    templates
+    templates,
   };
 }
 
@@ -217,30 +240,30 @@ export function useWhatsAppConfigValidation() {
       required: 'Phone Number ID é obrigatório',
       pattern: {
         value: /^\d+$/,
-        message: 'Phone Number ID deve conter apenas números'
-      }
+        message: 'Phone Number ID deve conter apenas números',
+      },
     },
     accessToken: {
       required: 'Access Token é obrigatório',
       minLength: {
         value: 50,
-        message: 'Access Token deve ter pelo menos 50 caracteres'
-      }
+        message: 'Access Token deve ter pelo menos 50 caracteres',
+      },
     },
     webhookVerifyToken: {
       required: 'Webhook Verify Token é obrigatório',
       minLength: {
         value: 8,
-        message: 'Webhook Verify Token deve ter pelo menos 8 caracteres'
-      }
+        message: 'Webhook Verify Token deve ter pelo menos 8 caracteres',
+      },
     },
     businessName: {
       required: 'Nome do negócio é obrigatório',
       maxLength: {
         value: 100,
-        message: 'Nome do negócio deve ter no máximo 100 caracteres'
-      }
-    }
+        message: 'Nome do negócio deve ter no máximo 100 caracteres',
+      },
+    },
   };
 }
 
@@ -250,35 +273,36 @@ export function useWhatsAppTemplateValidation() {
       required: 'Nome do template é obrigatório',
       pattern: {
         value: /^[a-z0-9_]+$/,
-        message: 'Nome deve conter apenas letras minúsculas, números e underscore'
-      }
+        message:
+          'Nome deve conter apenas letras minúsculas, números e underscore',
+      },
     },
     bodyText: {
       required: 'Texto do corpo é obrigatório',
       maxLength: {
         value: 1024,
-        message: 'Texto do corpo deve ter no máximo 1024 caracteres'
-      }
+        message: 'Texto do corpo deve ter no máximo 1024 caracteres',
+      },
     },
     headerText: {
       maxLength: {
         value: 60,
-        message: 'Texto do cabeçalho deve ter no máximo 60 caracteres'
-      }
+        message: 'Texto do cabeçalho deve ter no máximo 60 caracteres',
+      },
     },
     footerText: {
       maxLength: {
         value: 60,
-        message: 'Texto do rodapé deve ter no máximo 60 caracteres'
-      }
-    }
+        message: 'Texto do rodapé deve ter no máximo 60 caracteres',
+      },
+    },
   };
 }
 
 // Custom hook for automatic WhatsApp notifications based on appointments
 export function useWhatsAppNotifications() {
   const sendTemplate = useSendWhatsAppTemplate();
-  const checkOptIn = useCheckWhatsAppOptIn;
+  const _checkOptIn = useCheckWhatsAppOptIn;
 
   const sendAppointmentReminder = async (
     patientId: string,
@@ -299,9 +323,9 @@ export function useWhatsAppNotifications() {
         parameters: {
           appointment_date: appointmentDate,
           appointment_time: appointmentTime,
-          doctor_name: doctorName
+          doctor_name: doctorName,
         },
-        patientId
+        patientId,
       });
     } catch (error) {
       console.error('Error sending appointment reminder:', error);
@@ -328,9 +352,9 @@ export function useWhatsAppNotifications() {
         parameters: {
           treatment_name: treatmentName,
           doctor_name: doctorName,
-          days_after: daysAfterTreatment.toString()
+          days_after: daysAfterTreatment.toString(),
         },
-        patientId
+        patientId,
       });
     } catch (error) {
       console.error('Error sending treatment followup:', error);
@@ -341,6 +365,6 @@ export function useWhatsAppNotifications() {
   return {
     sendAppointmentReminder,
     sendTreatmentFollowup,
-    isLoading: sendTemplate.isPending
+    isLoading: sendTemplate.isPending,
   };
 }

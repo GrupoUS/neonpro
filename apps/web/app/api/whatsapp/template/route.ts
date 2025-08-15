@@ -1,7 +1,7 @@
 // WhatsApp Template Message API Route
 // Handles sending template messages with parameters
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { whatsAppService } from '@/app/lib/services/whatsapp-service';
 import { createClient } from '@/app/utils/supabase/server';
 
@@ -29,18 +29,17 @@ export async function POST(request: NextRequest) {
 
     // Verify user authentication
     const supabase = await createClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
     if (!session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Check if WhatsApp is configured
     const config = await whatsAppService.getConfig();
-    if (!config || !config.isActive) {
+    if (!(config && config.isActive)) {
       return NextResponse.json(
         { error: 'WhatsApp is not configured or inactive' },
         { status: 400 }
@@ -71,16 +70,15 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       messageId,
-      message: 'Template message sent successfully'
+      message: 'Template message sent successfully',
     });
-
   } catch (error) {
     console.error('Error sending WhatsApp template message:', error);
-    
+
     return NextResponse.json(
-      { 
+      {
         error: error instanceof Error ? error.message : 'Internal server error',
-        details: error instanceof Error ? error.stack : undefined
+        details: error instanceof Error ? error.stack : undefined,
       },
       { status: 500 }
     );

@@ -5,8 +5,8 @@
  * Verifica configurações, variáveis de ambiente e rotas
  */
 
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const _path = require('node:path');
 
 console.log('🔍 DIAGNÓSTICO DE PRODUÇÃO - NEONPRO');
 console.log('='.repeat(50));
@@ -19,11 +19,11 @@ const requiredFiles = [
   'app/dashboard/page.tsx',
   'contexts/auth-context.tsx',
   'middleware.ts',
-  'vercel.json'
+  'vercel.json',
 ];
 
-let missingFiles = [];
-requiredFiles.forEach(file => {
+const missingFiles = [];
+requiredFiles.forEach((file) => {
   if (fs.existsSync(file)) {
     console.log(`✅ ${file}`);
   } else {
@@ -39,10 +39,10 @@ if (fs.existsSync(envFile)) {
   const envContent = fs.readFileSync(envFile, 'utf8');
   const requiredVars = [
     'NEXT_PUBLIC_SUPABASE_URL',
-    'NEXT_PUBLIC_SUPABASE_ANON_KEY'
+    'NEXT_PUBLIC_SUPABASE_ANON_KEY',
   ];
-  
-  requiredVars.forEach(varName => {
+
+  requiredVars.forEach((varName) => {
     if (envContent.includes(varName)) {
       console.log(`✅ ${varName} - Presente`);
     } else {
@@ -72,11 +72,11 @@ if (fs.existsSync('vercel.json')) {
   try {
     const vercelConfig = JSON.parse(fs.readFileSync('vercel.json', 'utf8'));
     console.log('✅ vercel.json é válido');
-    
+
     if (vercelConfig.functions) {
       console.log('✅ Configurações de função definidas');
     }
-    
+
     if (vercelConfig.rewrites) {
       console.log('✅ Rewrites configurados');
     }
@@ -91,26 +91,26 @@ if (fs.existsSync('vercel.json')) {
 console.log('\n🔐 5. VERIFICANDO ROTAS DE AUTENTICAÇÃO');
 const authRoutes = [
   'app/auth/popup-callback/route.ts',
-  'app/auth/callback/route.ts'
+  'app/auth/callback/route.ts',
 ];
 
-authRoutes.forEach(route => {
+authRoutes.forEach((route) => {
   if (fs.existsSync(route)) {
     const content = fs.readFileSync(route, 'utf8');
     console.log(`✅ ${route}`);
-    
+
     // Verificar se exporta GET
     if (content.includes('export async function GET')) {
-      console.log(`  ✅ Exporta função GET`);
+      console.log('  ✅ Exporta função GET');
     } else {
-      console.log(`  ❌ Não exporta função GET`);
+      console.log('  ❌ Não exporta função GET');
     }
-    
+
     // Verificar se usa createClient
     if (content.includes('createClient')) {
-      console.log(`  ✅ Usa createClient`);
+      console.log('  ✅ Usa createClient');
     } else {
-      console.log(`  ❌ Não usa createClient`);
+      console.log('  ❌ Não usa createClient');
     }
   }
 });
@@ -119,7 +119,7 @@ authRoutes.forEach(route => {
 console.log('\n📋 6. RESUMO E RECOMENDAÇÕES');
 if (missingFiles.length > 0) {
   console.log('❌ PROBLEMAS ENCONTRADOS:');
-  missingFiles.forEach(file => {
+  missingFiles.forEach((file) => {
     console.log(`   - ${file} está ausente`);
   });
 }

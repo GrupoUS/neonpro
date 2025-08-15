@@ -3,8 +3,8 @@
  * Provides Cross-Site Request Forgery protection for forms and API endpoints
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { createHash, randomBytes } from 'crypto';
+import { createHash, randomBytes } from 'node:crypto';
+import { type NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/client';
 
 export interface CSRFTokenData {
@@ -30,7 +30,7 @@ export class CSRFProtection {
   private static readonly TOKEN_LENGTH = 32;
   private static readonly HEADER_NAME = 'X-CSRF-Token';
   private static readonly COOKIE_NAME = 'csrf-token';
-  
+
   /**
    * Generate a new CSRF token
    */
@@ -39,54 +39,54 @@ export class CSRFProtection {
     userAgent: string,
     ipAddress: string
   ): CSRFTokenData {
-    const token = randomBytes(this.TOKEN_LENGTH).toString('hex');
+    const token = randomBytes(CSRFProtection.TOKEN_LENGTH).toString('hex');
     const now = Date.now();
-    
+
     return {
       token,
       sessionId,
       createdAt: now,
-      expiresAt: now + this.TOKEN_EXPIRY,
+      expiresAt: now + CSRFProtection.TOKEN_EXPIRY,
       userAgent,
       ipAddress,
     };
   }
-  
+
   /**
    * Create token hash for storage
    */
   static createTokenHash(tokenData: CSRFTokenData): string {
     return createHash('sha256')
-      .update(`${tokenData.token}:${tokenData.sessionId}:${tokenData.userAgent}`)
+      .update(
+        `${tokenData.token}:${tokenData.sessionId}:${tokenData.userAgent}`
+      )
       .digest('hex');
   }
-  
+
   /**
    * Store CSRF token in database
    */
   static async storeToken(tokenData: CSRFTokenData): Promise<boolean> {
     try {
       const supabase = createClient();
-      const tokenHash = this.createTokenHash(tokenData);
-      
-      const { error } = await supabase
-        .from('csrf_tokens')
-        .insert({
-          token_hash: tokenHash,
-          session_id: tokenData.sessionId,
-          expires_at: new Date(tokenData.expiresAt).toISOString(),
-          user_agent: tokenData.userAgent,
-          ip_address: tokenData.ipAddress,
-          created_at: new Date(tokenData.createdAt).toISOString(),
-        });
-      
+      const tokenHash = CSRFProtection.createTokenHash(tokenData);
+
+      const { error } = await supabase.from('csrf_tokens').insert({
+        token_hash: tokenHash,
+        session_id: tokenData.sessionId,
+        expires_at: new Date(tokenData.expiresAt).toISOString(),
+        user_agent: tokenData.userAgent,
+        ip_address: tokenData.ipAddress,
+        created_at: new Date(tokenData.createdAt).toISOString(),
+      });
+
       return !error;
     } catch (error) {
       console.error('Failed to store CSRF token:', error);
       return false;
     }
   }
-  
+
   /**
    * Validate CSRF token
    */
@@ -97,10 +97,10 @@ export class CSRFProtection {
     ipAddress: string
   ): Promise<CSRFValidationResult> {
     try {
-      if (!token || !sessionId) {
+      if (!(token && sessionId)) {
         return { valid: false, error: 'Missing CSRF token or session ID' };
       }
-      
+
       const tokenData: CSRFTokenData = {
         token,
         sessionId,
@@ -109,39 +109,45 @@ export class CSRFProtection {
         userAgent,
         ipAddress,
       };
-      
-      const tokenHash = this.createTokenHash(tokenData);
+
+      const tokenHash = CSRFProtection.createTokenHash(tokenData);
       const supabase = createClient();
-      
+
       const { data, error } = await supabase
         .from('csrf_tokens')
         .select('*')
         .eq('token_hash', tokenHash)
         .eq('session_id', sessionId)
         .single();
-      
+
       if (error || !data) {
         return { valid: false, error: 'Invalid CSRF token' };
       }
-      
+
       // Check expiration
       const expiresAt = new Date(data.expires_at).getTime();
       if (Date.now() > expiresAt) {
         // Clean up expired token
-        await this.cleanupExpiredTokens();
+        await CSRFProtection.cleanupExpiredTokens();
         return { valid: false, error: 'CSRF token expired' };
       }
-      
+
       // Validate user agent (optional strict check)
-      if (process.env.CSRF_STRICT_UA === 'true' && data.user_agent !== userAgent) {
+      if (
+        process.env.CSRF_STRICT_UA === 'true' &&
+        data.user_agent !== userAgent
+      ) {
         return { valid: false, error: 'User agent mismatch' };
       }
-      
+
       // Validate IP address (optional strict check)
-      if (process.env.CSRF_STRICT_IP === 'true' && data.ip_address !== ipAddress) {
+      if (
+        process.env.CSRF_STRICT_IP === 'true' &&
+        data.ip_address !== ipAddress
+      ) {
         return { valid: false, error: 'IP address mismatch' };
       }
-      
+
       return {
         valid: true,
         tokenData: {
@@ -158,7 +164,7 @@ export class CSRFProtection {
       return { valid: false, error: 'Token validation failed' };
     }
   }
-  
+
   /**
    * Clean up expired tokens
    */
@@ -166,16 +172,13 @@ export class CSRFProtection {
     try {
       const supabase = createClient();
       const now = new Date().toISOString();
-      
-      await supabase
-        .from('csrf_tokens')
-        .delete()
-        .lt('expires_at', now);
+
+      await supabase.from('csrf_tokens').delete().lt('expires_at', now);
     } catch (error) {
       console.error('Failed to cleanup expired CSRF tokens:', error);
     }
   }
-  
+
   /**
    * Middleware to validate CSRF tokens
    */
@@ -186,56 +189,58 @@ export class CSRFProtection {
     if (['GET', 'HEAD', 'OPTIONS'].includes(request.method)) {
       return null;
     }
-    
+
     // Skip for health checks and monitoring
     const pathname = request.nextUrl.pathname;
     if (pathname.includes('/health') || pathname.includes('/monitoring')) {
       return null;
     }
-    
+
     // Extract CSRF token from header or body
-    const csrfToken = request.headers.get(this.HEADER_NAME) ||
-                     request.cookies.get(this.COOKIE_NAME)?.value;
-    
+    const csrfToken =
+      request.headers.get(CSRFProtection.HEADER_NAME) ||
+      request.cookies.get(CSRFProtection.COOKIE_NAME)?.value;
+
     if (!csrfToken) {
       return new NextResponse(
         JSON.stringify({ error: 'CSRF token required' }),
         { status: 403, headers: { 'Content-Type': 'application/json' } }
       );
     }
-    
+
     // Extract session information
-    const sessionId = request.cookies.get('session-id')?.value ||
-                     request.headers.get('X-Session-ID');
-    
+    const sessionId =
+      request.cookies.get('session-id')?.value ||
+      request.headers.get('X-Session-ID');
+
     if (!sessionId) {
       return new NextResponse(
         JSON.stringify({ error: 'Session ID required' }),
         { status: 403, headers: { 'Content-Type': 'application/json' } }
       );
     }
-    
+
     const userAgent = request.headers.get('user-agent') || '';
-    const ipAddress = this.getClientIP(request);
-    
+    const ipAddress = CSRFProtection.getClientIP(request);
+
     // Validate CSRF token
-    const validation = await this.validateToken(
+    const validation = await CSRFProtection.validateToken(
       csrfToken,
       sessionId,
       userAgent,
       ipAddress
     );
-    
+
     if (!validation.valid) {
       return new NextResponse(
         JSON.stringify({ error: validation.error || 'Invalid CSRF token' }),
         { status: 403, headers: { 'Content-Type': 'application/json' } }
       );
     }
-    
+
     return null; // Validation passed
   }
-  
+
   /**
    * Generate CSRF token for client
    */
@@ -243,23 +248,28 @@ export class CSRFProtection {
     request: NextRequest
   ): Promise<{ token: string; expires: number } | null> {
     try {
-      const sessionId = request.cookies.get('session-id')?.value ||
-                       request.headers.get('X-Session-ID');
-      
+      const sessionId =
+        request.cookies.get('session-id')?.value ||
+        request.headers.get('X-Session-ID');
+
       if (!sessionId) {
         return null;
       }
-      
+
       const userAgent = request.headers.get('user-agent') || '';
-      const ipAddress = this.getClientIP(request);
-      
-      const tokenData = this.generateToken(sessionId, userAgent, ipAddress);
-      const stored = await this.storeToken(tokenData);
-      
+      const ipAddress = CSRFProtection.getClientIP(request);
+
+      const tokenData = CSRFProtection.generateToken(
+        sessionId,
+        userAgent,
+        ipAddress
+      );
+      const stored = await CSRFProtection.storeToken(tokenData);
+
       if (!stored) {
         return null;
       }
-      
+
       return {
         token: tokenData.token,
         expires: tokenData.expiresAt,
@@ -269,7 +279,7 @@ export class CSRFProtection {
       return null;
     }
   }
-  
+
   /**
    * Get client IP address
    */
@@ -277,11 +287,11 @@ export class CSRFProtection {
     const forwarded = request.headers.get('x-forwarded-for');
     const realIP = request.headers.get('x-real-ip');
     const cfConnectingIP = request.headers.get('cf-connecting-ip');
-    
+
     if (cfConnectingIP) return cfConnectingIP;
     if (realIP) return realIP;
     if (forwarded) return forwarded.split(',')[0].trim();
-    
+
     return request.ip || 'unknown';
   }
 }
@@ -292,7 +302,7 @@ export class CSRFProtection {
 export function useCSRFToken() {
   const [csrfToken, setCSRFToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  
+
   useEffect(() => {
     async function fetchCSRFToken() {
       try {
@@ -307,10 +317,10 @@ export function useCSRFToken() {
         setLoading(false);
       }
     }
-    
+
     fetchCSRFToken();
   }, []);
-  
+
   return { csrfToken, loading };
 }
 

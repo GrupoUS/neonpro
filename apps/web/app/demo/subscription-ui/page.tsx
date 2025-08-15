@@ -19,31 +19,31 @@ import {
   SubscriptionNotificationProvider,
   SubscriptionStatusCard,
   UsageLimitGate,
-} from "@/components/subscription";
-import { Badge } from "@/components/ui/badge";
+} from '@/components/subscription';
+import { Badge } from '@/components/ui/badge';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
+} from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
 
 export default function SubscriptionUIDemo() {
   const handleUpgrade = () => {
-    console.log("Navigate to upgrade page");
+    console.log('Navigate to upgrade page');
   };
 
   const handleManage = () => {
-    console.log("Navigate to billing management");
+    console.log('Navigate to billing management');
   };
 
   return (
-    <div className="container mx-auto p-6 space-y-8">
+    <div className="container mx-auto space-y-8 p-6">
       {/* Page Header */}
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold">Subscription UI Components</h1>
+        <h1 className="font-bold text-3xl">Subscription UI Components</h1>
         <p className="text-muted-foreground">
           Demonstração dos novos componentes de interface para gestão de
           assinaturas (Task 4).
@@ -56,10 +56,10 @@ export default function SubscriptionUIDemo() {
       {/* Subscription Status Cards */}
       <section className="space-y-4">
         <div>
-          <h2 className="text-2xl font-semibold mb-2">
+          <h2 className="mb-2 font-semibold text-2xl">
             Subscription Status Cards
           </h2>
-          <p className="text-muted-foreground mb-4">
+          <p className="mb-4 text-muted-foreground">
             Cartões para exibir status detalhado da assinatura com informações
             completas.
           </p>
@@ -67,28 +67,28 @@ export default function SubscriptionUIDemo() {
 
         <div className="grid gap-6 md:grid-cols-2">
           <div className="space-y-2">
-            <h3 className="text-lg font-medium">Variante Padrão</h3>
+            <h3 className="font-medium text-lg">Variante Padrão</h3>
             <SubscriptionStatusCard
-              onUpgrade={handleUpgrade}
               onManage={handleManage}
+              onUpgrade={handleUpgrade}
             />
           </div>
 
           <div className="space-y-2">
-            <h3 className="text-lg font-medium">Variante Compacta</h3>
+            <h3 className="font-medium text-lg">Variante Compacta</h3>
             <SubscriptionStatusCard
-              variant="compact"
-              onUpgrade={handleUpgrade}
               onManage={handleManage}
+              onUpgrade={handleUpgrade}
+              variant="compact"
             />
           </div>
 
           <div className="space-y-2 md:col-span-2">
-            <h3 className="text-lg font-medium">Variante Detalhada</h3>
+            <h3 className="font-medium text-lg">Variante Detalhada</h3>
             <SubscriptionStatusCard
-              variant="detailed"
-              onUpgrade={handleUpgrade}
               onManage={handleManage}
+              onUpgrade={handleUpgrade}
+              variant="detailed"
             />
           </div>
         </div>
@@ -99,8 +99,8 @@ export default function SubscriptionUIDemo() {
       {/* Dashboard Widgets */}
       <section className="space-y-4">
         <div>
-          <h2 className="text-2xl font-semibold mb-2">Dashboard Widgets</h2>
-          <p className="text-muted-foreground mb-4">
+          <h2 className="mb-2 font-semibold text-2xl">Dashboard Widgets</h2>
+          <p className="mb-4 text-muted-foreground">
             Widgets compactos para exibir informações de assinatura no
             dashboard.
           </p>
@@ -108,26 +108,26 @@ export default function SubscriptionUIDemo() {
 
         <div className="grid gap-6 md:grid-cols-3">
           <div className="space-y-2">
-            <h3 className="text-lg font-medium">Widget Compacto</h3>
+            <h3 className="font-medium text-lg">Widget Compacto</h3>
             <CompactSubscriptionWidget
-              onUpgrade={handleUpgrade}
               onManage={handleManage}
+              onUpgrade={handleUpgrade}
             />
           </div>
 
           <div className="space-y-2">
-            <h3 className="text-lg font-medium">Widget Padrão</h3>
+            <h3 className="font-medium text-lg">Widget Padrão</h3>
             <SubscriptionDashboardWidget
-              onUpgrade={handleUpgrade}
               onManage={handleManage}
+              onUpgrade={handleUpgrade}
             />
           </div>
 
           <div className="space-y-2">
-            <h3 className="text-lg font-medium">Widget Detalhado</h3>
+            <h3 className="font-medium text-lg">Widget Detalhado</h3>
             <DetailedSubscriptionWidget
-              onUpgrade={handleUpgrade}
               onManage={handleManage}
+              onUpgrade={handleUpgrade}
             />
           </div>
         </div>
@@ -138,8 +138,8 @@ export default function SubscriptionUIDemo() {
       {/* Feature Gates */}
       <section className="space-y-4">
         <div>
-          <h2 className="text-2xl font-semibold mb-2">Feature Gates</h2>
-          <p className="text-muted-foreground mb-4">
+          <h2 className="mb-2 font-semibold text-2xl">Feature Gates</h2>
+          <p className="mb-4 text-muted-foreground">
             Componentes para controlar acesso a funcionalidades baseado na
             assinatura.
           </p>
@@ -147,18 +147,18 @@ export default function SubscriptionUIDemo() {
 
         <div className="grid gap-6 md:grid-cols-2">
           <div className="space-y-4">
-            <h3 className="text-lg font-medium">Feature Gate Básico</h3>
+            <h3 className="font-medium text-lg">Feature Gate Básico</h3>
             <FeatureGate
               feature="basic_reports"
-              requiredPlan="basic"
               onUpgrade={handleUpgrade}
+              requiredPlan="basic"
             >
               <Card>
                 <CardContent className="p-6">
                   <h4 className="font-semibold text-green-600">
                     ✅ Acesso Liberado!
                   </h4>
-                  <p className="text-sm text-muted-foreground mt-1">
+                  <p className="mt-1 text-muted-foreground text-sm">
                     Este conteúdo está acessível com seu plano atual.
                   </p>
                 </CardContent>
@@ -167,7 +167,7 @@ export default function SubscriptionUIDemo() {
           </div>
 
           <div className="space-y-4">
-            <h3 className="text-lg font-medium">Pro Feature Gate</h3>
+            <h3 className="font-medium text-lg">Pro Feature Gate</h3>
             <ProFeatureGate
               feature="advanced_analytics"
               onUpgrade={handleUpgrade}
@@ -177,7 +177,7 @@ export default function SubscriptionUIDemo() {
                   <h4 className="font-semibold text-blue-600">
                     ⭐ Funcionalidade Pro!
                   </h4>
-                  <p className="text-sm text-muted-foreground mt-1">
+                  <p className="mt-1 text-muted-foreground text-sm">
                     Analytics avançados disponíveis no plano Pro.
                   </p>
                 </CardContent>
@@ -186,7 +186,7 @@ export default function SubscriptionUIDemo() {
           </div>
 
           <div className="space-y-4">
-            <h3 className="text-lg font-medium">Enterprise Feature Gate</h3>
+            <h3 className="font-medium text-lg">Enterprise Feature Gate</h3>
             <EnterpriseFeatureGate
               feature="white_label"
               onUpgrade={handleUpgrade}
@@ -196,7 +196,7 @@ export default function SubscriptionUIDemo() {
                   <h4 className="font-semibold text-purple-600">
                     👑 Funcionalidade Enterprise!
                   </h4>
-                  <p className="text-sm text-muted-foreground mt-1">
+                  <p className="mt-1 text-muted-foreground text-sm">
                     White label customization para clientes enterprise.
                   </p>
                 </CardContent>
@@ -205,11 +205,11 @@ export default function SubscriptionUIDemo() {
           </div>
 
           <div className="space-y-4">
-            <h3 className="text-lg font-medium">Usage Limit Gate</h3>
+            <h3 className="font-medium text-lg">Usage Limit Gate</h3>
             <UsageLimitGate
               current={85}
-              limit={100}
               feature="relatórios mensais"
+              limit={100}
               onUpgrade={handleUpgrade}
             >
               <Card>
@@ -217,7 +217,7 @@ export default function SubscriptionUIDemo() {
                   <h4 className="font-semibold text-orange-600">
                     ⚡ Limite Próximo!
                   </h4>
-                  <p className="text-sm text-muted-foreground mt-1">
+                  <p className="mt-1 text-muted-foreground text-sm">
                     Você está próximo do limite de uso.
                   </p>
                 </CardContent>
@@ -232,21 +232,21 @@ export default function SubscriptionUIDemo() {
       {/* Notifications System */}
       <section className="space-y-4">
         <div>
-          <h2 className="text-2xl font-semibold mb-2">Notifications System</h2>
-          <p className="text-muted-foreground mb-4">
+          <h2 className="mb-2 font-semibold text-2xl">Notifications System</h2>
+          <p className="mb-4 text-muted-foreground">
             Sistema de notificações e alertas para status de assinatura.
           </p>
         </div>
 
         <div className="space-y-4">
-          <h3 className="text-lg font-medium">Subscription Alert</h3>
+          <h3 className="font-medium text-lg">Subscription Alert</h3>
           <SubscriptionAlert />
 
-          <div className="p-4 border border-dashed border-gray-300 rounded-lg">
-            <p className="text-sm text-muted-foreground mb-2">
+          <div className="rounded-lg border border-gray-300 border-dashed p-4">
+            <p className="mb-2 text-muted-foreground text-sm">
               📱 <strong>Notification Provider</strong> - Ativo em segundo plano
             </p>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-muted-foreground text-xs">
               O SubscriptionNotificationProvider está ativo e monitora mudanças
               de status para exibir notificações automáticas no canto superior
               direito da tela.
@@ -260,10 +260,10 @@ export default function SubscriptionUIDemo() {
       {/* Implementation Notes */}
       <section className="space-y-4">
         <div>
-          <h2 className="text-2xl font-semibold mb-2">
+          <h2 className="mb-2 font-semibold text-2xl">
             Task 4 - Implementation Summary
           </h2>
-          <p className="text-muted-foreground mb-4">
+          <p className="mb-4 text-muted-foreground">
             Resumo da implementação dos componentes de UI para assinaturas.
           </p>
         </div>
@@ -280,8 +280,8 @@ export default function SubscriptionUIDemo() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <h4 className="font-semibold mb-2">Componentes Implementados:</h4>
-              <ul className="space-y-1 text-sm text-muted-foreground">
+              <h4 className="mb-2 font-semibold">Componentes Implementados:</h4>
+              <ul className="space-y-1 text-muted-foreground text-sm">
                 <li>
                   ✅ <strong>SubscriptionStatusCard</strong> - Cartão completo
                   com status detalhado
@@ -306,8 +306,8 @@ export default function SubscriptionUIDemo() {
             </div>
 
             <div>
-              <h4 className="font-semibold mb-2">Funcionalidades:</h4>
-              <ul className="space-y-1 text-sm text-muted-foreground">
+              <h4 className="mb-2 font-semibold">Funcionalidades:</h4>
+              <ul className="space-y-1 text-muted-foreground text-sm">
                 <li>• Exibição em tempo real do status da assinatura</li>
                 <li>• Controle granular de acesso a funcionalidades</li>
                 <li>• Notificações automáticas para mudanças de status</li>
@@ -317,10 +317,10 @@ export default function SubscriptionUIDemo() {
             </div>
 
             <div>
-              <h4 className="font-semibold mb-2">
+              <h4 className="mb-2 font-semibold">
                 Arquivos Criados/Modificados:
               </h4>
-              <ul className="space-y-1 text-sm text-muted-foreground font-mono">
+              <ul className="space-y-1 font-mono text-muted-foreground text-sm">
                 <li>+ components/subscription/subscription-status-card.tsx</li>
                 <li>+ components/subscription/subscription-feature-gate.tsx</li>
                 <li>

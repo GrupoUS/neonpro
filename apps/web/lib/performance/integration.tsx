@@ -3,17 +3,17 @@
  * Seamlessly integrate performance monitor into NeonPro layout
  */
 
-'use client'
+'use client';
 
-import { useEffect } from 'react'
-import { onCLS, onFID, onFCP, onLCP, onTTFB } from 'web-vitals'
+import { useEffect } from 'react';
+import { onCLS, onFCP, onFID, onLCP, onTTFB } from 'web-vitals';
 
 interface PerformanceMetrics {
-  lcp: number
-  fid: number
-  cls: number
-  fcp: number
-  ttfb: number
+  lcp: number;
+  fid: number;
+  cls: number;
+  fcp: number;
+  ttfb: number;
 }
 
 /**
@@ -22,20 +22,23 @@ interface PerformanceMetrics {
 export function usePerformanceMonitoring() {
   useEffect(() => {
     // Only run in production or when explicitly enabled
-    if (process.env.NODE_ENV !== 'production' && !process.env.NEXT_PUBLIC_ENABLE_PERFORMANCE_TRACKING) {
-      return
+    if (
+      process.env.NODE_ENV !== 'production' &&
+      !process.env.NEXT_PUBLIC_ENABLE_PERFORMANCE_TRACKING
+    ) {
+      return;
     }
 
-    const metrics: Partial<PerformanceMetrics> = {}
-    let reportingTimeout: NodeJS.Timeout
+    const metrics: Partial<PerformanceMetrics> = {};
+    let reportingTimeout: NodeJS.Timeout;
 
     /**
      * Send metrics to API when all are collected
      */
     const sendMetrics = async () => {
       // Calculate performance score based on Google's guidelines
-      const score = calculatePerformanceScore(metrics as PerformanceMetrics)
-      
+      const score = calculatePerformanceScore(metrics as PerformanceMetrics);
+
       const performanceData = {
         ...metrics,
         score,
@@ -43,56 +46,56 @@ export function usePerformanceMonitoring() {
         userAgent: navigator.userAgent,
         connection: (navigator as any).connection?.effectiveType || 'unknown',
         deviceType: getDeviceType(),
-        timestamp: new Date().toISOString()
-      }
+        timestamp: new Date().toISOString(),
+      };
 
       try {
         await fetch('/api/analytics/performance', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
           },
-          body: JSON.stringify(performanceData)
-        })
+          body: JSON.stringify(performanceData),
+        });
 
-        console.log('✅ Performance metrics sent:', performanceData)
+        console.log('✅ Performance metrics sent:', performanceData);
       } catch (error) {
-        console.error('❌ Failed to send performance metrics:', error)
+        console.error('❌ Failed to send performance metrics:', error);
       }
-    }
+    };
 
     /**
      * Collect metrics with debounced reporting
      */
     const collectMetric = (name: keyof PerformanceMetrics, value: number) => {
-      metrics[name] = value
-      
+      metrics[name] = value;
+
       // Clear existing timeout
       if (reportingTimeout) {
-        clearTimeout(reportingTimeout)
+        clearTimeout(reportingTimeout);
       }
-      
+
       // Report metrics after 2 seconds of inactivity or when all metrics are collected
-      const hasAllMetrics = Object.keys(metrics).length >= 5
-      const delay = hasAllMetrics ? 100 : 2000
-      
-      reportingTimeout = setTimeout(sendMetrics, delay)
-    }
+      const hasAllMetrics = Object.keys(metrics).length >= 5;
+      const delay = hasAllMetrics ? 100 : 2000;
+
+      reportingTimeout = setTimeout(sendMetrics, delay);
+    };
 
     // Collect Core Web Vitals
-    onCLS((metric) => collectMetric('cls', metric.value))
-    onFID((metric) => collectMetric('fid', metric.value))
-    onFCP((metric) => collectMetric('fcp', metric.value / 1000)) // Convert to seconds
-    onLCP((metric) => collectMetric('lcp', metric.value / 1000)) // Convert to seconds
-    onTTFB((metric) => collectMetric('ttfb', metric.value))
+    onCLS((metric) => collectMetric('cls', metric.value));
+    onFID((metric) => collectMetric('fid', metric.value));
+    onFCP((metric) => collectMetric('fcp', metric.value / 1000)); // Convert to seconds
+    onLCP((metric) => collectMetric('lcp', metric.value / 1000)); // Convert to seconds
+    onTTFB((metric) => collectMetric('ttfb', metric.value));
 
     // Cleanup on unmount
     return () => {
       if (reportingTimeout) {
-        clearTimeout(reportingTimeout)
+        clearTimeout(reportingTimeout);
       }
-    }
-  }, [])
+    };
+  }, []);
 }
 
 /**
@@ -100,8 +103,8 @@ export function usePerformanceMonitoring() {
  * Uses Google's performance scoring methodology
  */
 function calculatePerformanceScore(metrics: PerformanceMetrics): number {
-  if (!metrics.lcp || !metrics.fid || !metrics.cls) {
-    return 0
+  if (!(metrics.lcp && metrics.fid && metrics.cls)) {
+    return 0;
   }
 
   // Weight factors based on Google's Core Web Vitals importance
@@ -110,8 +113,8 @@ function calculatePerformanceScore(metrics: PerformanceMetrics): number {
     fid: 0.25, // First Input Delay
     cls: 0.25, // Cumulative Layout Shift
     fcp: 0.15, // First Contentful Paint
-    ttfb: 0.10  // Time to First Byte
-  }
+    ttfb: 0.1, // Time to First Byte
+  };
 
   // Score thresholds (good/needs improvement/poor)
   const thresholds = {
@@ -119,62 +122,69 @@ function calculatePerformanceScore(metrics: PerformanceMetrics): number {
     fid: { good: 100, poor: 300 },
     cls: { good: 0.1, poor: 0.25 },
     fcp: { good: 1.8, poor: 3.0 },
-    ttfb: { good: 800, poor: 1800 }
-  }
+    ttfb: { good: 800, poor: 1800 },
+  };
 
-  let totalScore = 0
+  let totalScore = 0;
 
   // Calculate score for each metric
   Object.entries(metrics).forEach(([key, value]) => {
-    const threshold = thresholds[key as keyof typeof thresholds]
-    const weight = weights[key as keyof typeof weights]
-    
-    if (!threshold || !weight) return
+    const threshold = thresholds[key as keyof typeof thresholds];
+    const weight = weights[key as keyof typeof weights];
 
-    let score = 100
-    
+    if (!(threshold && weight)) return;
+
+    let score = 100;
+
     if (value <= threshold.good) {
-      score = 100 // Perfect score
+      score = 100; // Perfect score
     } else if (value <= threshold.poor) {
       // Linear interpolation between good and poor
-      const range = threshold.poor - threshold.good
-      const position = value - threshold.good
-      score = 100 - ((position / range) * 50)
+      const range = threshold.poor - threshold.good;
+      const position = value - threshold.good;
+      score = 100 - (position / range) * 50;
     } else {
-      score = 50 // Poor performance
+      score = 50; // Poor performance
     }
-    
-    totalScore += score * weight
-  })
 
-  return Math.round(totalScore)
+    totalScore += score * weight;
+  });
+
+  return Math.round(totalScore);
 }
 
 /**
  * Detect device type based on user agent and screen size
  */
 function getDeviceType(): 'desktop' | 'mobile' | 'tablet' {
-  const userAgent = navigator.userAgent.toLowerCase()
-  const screenWidth = window.screen.width
+  const userAgent = navigator.userAgent.toLowerCase();
+  const screenWidth = window.screen.width;
 
   if (/mobile|android|iphone/.test(userAgent) || screenWidth < 768) {
-    return 'mobile'
+    return 'mobile';
   }
-  
-  if (/tablet|ipad/.test(userAgent) || (screenWidth >= 768 && screenWidth < 1024)) {
-    return 'tablet'
+
+  if (
+    /tablet|ipad/.test(userAgent) ||
+    (screenWidth >= 768 && screenWidth < 1024)
+  ) {
+    return 'tablet';
   }
-  
-  return 'desktop'
+
+  return 'desktop';
 }
 
 /**
  * Performance monitoring component for layout integration
  */
-export function PerformanceMonitor({ children }: { children: React.ReactNode }) {
+export function PerformanceMonitor({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   // Initialize performance monitoring
-  usePerformanceMonitoring()
-  
+  usePerformanceMonitoring();
+
   // Return children without additional wrapper to avoid layout impact
-  return <>{children}</>
+  return <>{children}</>;
 }

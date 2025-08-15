@@ -1,9 +1,14 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import { LGPDComplianceManager } from '@/lib/lgpd/LGPDComplianceManager';
-import { ConsentRecord, ConsentPurpose, ConsentFilters, PaginatedResponse } from '@/types/lgpd';
+import { useCallback, useEffect, useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { LGPDComplianceManager } from '@/lib/lgpd/LGPDComplianceManager';
+import type {
+  ConsentFilters,
+  ConsentPurpose,
+  ConsentRecord,
+  PaginatedResponse,
+} from '@/types/lgpd';
 
 interface UseConsentManagementReturn {
   // Data
@@ -11,29 +16,34 @@ interface UseConsentManagementReturn {
   purposes: ConsentPurpose[];
   totalCount: number;
   currentPage: number;
-  
+
   // Loading states
   isLoading: boolean;
   isCreating: boolean;
   isUpdating: boolean;
   isDeleting: boolean;
-  
+
   // Filters
   filters: ConsentFilters;
   setFilters: (filters: ConsentFilters) => void;
-  
+
   // Actions
   loadConsents: () => Promise<void>;
   loadPurposes: () => Promise<void>;
-  createPurpose: (purpose: Omit<ConsentPurpose, 'id' | 'created_at' | 'updated_at'>) => Promise<void>;
-  updatePurpose: (id: string, updates: Partial<ConsentPurpose>) => Promise<void>;
+  createPurpose: (
+    purpose: Omit<ConsentPurpose, 'id' | 'created_at' | 'updated_at'>
+  ) => Promise<void>;
+  updatePurpose: (
+    id: string,
+    updates: Partial<ConsentPurpose>
+  ) => Promise<void>;
   deletePurpose: (id: string) => Promise<void>;
   withdrawConsent: (consentId: string, reason?: string) => Promise<void>;
   exportConsents: () => Promise<void>;
-  
+
   // Pagination
   goToPage: (page: number) => void;
-  
+
   // Error handling
   error: string | null;
 }
@@ -48,34 +58,36 @@ export function useConsentManagement(): UseConsentManagementReturn {
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   const [filters, setFilters] = useState<ConsentFilters>({
     limit: 20,
     offset: 0,
     sortBy: 'created_at',
-    sortOrder: 'desc'
+    sortOrder: 'desc',
   });
-  
+
   const { toast } = useToast();
   const complianceManager = new LGPDComplianceManager();
 
   const loadConsents = useCallback(async () => {
     try {
       setError(null);
-      const response: PaginatedResponse<ConsentRecord> = await complianceManager.getConsents({
-        ...filters,
-        offset: (currentPage - 1) * (filters.limit || 20)
-      });
-      
+      const response: PaginatedResponse<ConsentRecord> =
+        await complianceManager.getConsents({
+          ...filters,
+          offset: (currentPage - 1) * (filters.limit || 20),
+        });
+
       setConsents(response.data);
       setTotalCount(response.total);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao carregar consentimentos';
+      const errorMessage =
+        err instanceof Error ? err.message : 'Erro ao carregar consentimentos';
       setError(errorMessage);
       toast({
         title: 'Erro',
         description: errorMessage,
-        variant: 'destructive'
+        variant: 'destructive',
       });
     }
   }, [filters, currentPage, complianceManager, toast]);
@@ -96,7 +108,7 @@ export function useConsentManagement(): UseConsentManagementReturn {
           legal_basis: 'consent',
           is_active: true,
           created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         },
         {
           id: '2',
@@ -108,7 +120,7 @@ export function useConsentManagement(): UseConsentManagementReturn {
           legal_basis: 'legitimate_interest',
           is_active: true,
           created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         },
         {
           id: '3',
@@ -120,142 +132,169 @@ export function useConsentManagement(): UseConsentManagementReturn {
           legal_basis: 'contract',
           is_active: true,
           created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        }
+          updated_at: new Date().toISOString(),
+        },
       ];
-      
+
       setPurposes(mockPurposes);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao carregar finalidades';
+      const errorMessage =
+        err instanceof Error ? err.message : 'Erro ao carregar finalidades';
       setError(errorMessage);
       toast({
         title: 'Erro',
         description: errorMessage,
-        variant: 'destructive'
+        variant: 'destructive',
       });
     }
   }, [complianceManager, toast]);
 
-  const createPurpose = useCallback(async (purpose: Omit<ConsentPurpose, 'id' | 'created_at' | 'updated_at'>) => {
-    setIsCreating(true);
-    try {
-      setError(null);
-      
-      // Create new purpose with generated ID
-      const newPurpose: ConsentPurpose = {
-        ...purpose,
-        id: Date.now().toString(),
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      };
-      
-      setPurposes(prev => [...prev, newPurpose]);
-      
-      toast({
-        title: 'Finalidade criada',
-        description: `Finalidade "${purpose.name}" foi criada com sucesso.`
-      });
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao criar finalidade';
-      setError(errorMessage);
-      toast({
-        title: 'Erro',
-        description: errorMessage,
-        variant: 'destructive'
-      });
-    } finally {
-      setIsCreating(false);
-    }
-  }, [toast]);
+  const createPurpose = useCallback(
+    async (
+      purpose: Omit<ConsentPurpose, 'id' | 'created_at' | 'updated_at'>
+    ) => {
+      setIsCreating(true);
+      try {
+        setError(null);
 
-  const updatePurpose = useCallback(async (id: string, updates: Partial<ConsentPurpose>) => {
-    setIsUpdating(true);
-    try {
-      setError(null);
-      
-      setPurposes(prev => prev.map(purpose => 
-        purpose.id === id 
-          ? { ...purpose, ...updates, updated_at: new Date().toISOString() }
-          : purpose
-      ));
-      
-      toast({
-        title: 'Finalidade atualizada',
-        description: 'Finalidade foi atualizada com sucesso.'
-      });
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao atualizar finalidade';
-      setError(errorMessage);
-      toast({
-        title: 'Erro',
-        description: errorMessage,
-        variant: 'destructive'
-      });
-    } finally {
-      setIsUpdating(false);
-    }
-  }, [toast]);
+        // Create new purpose with generated ID
+        const newPurpose: ConsentPurpose = {
+          ...purpose,
+          id: Date.now().toString(),
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        };
 
-  const deletePurpose = useCallback(async (id: string) => {
-    setIsDeleting(true);
-    try {
-      setError(null);
-      
-      const purpose = purposes.find(p => p.id === id);
-      if (purpose?.required) {
-        throw new Error('Não é possível excluir finalidades obrigatórias');
+        setPurposes((prev) => [...prev, newPurpose]);
+
+        toast({
+          title: 'Finalidade criada',
+          description: `Finalidade "${purpose.name}" foi criada com sucesso.`,
+        });
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : 'Erro ao criar finalidade';
+        setError(errorMessage);
+        toast({
+          title: 'Erro',
+          description: errorMessage,
+          variant: 'destructive',
+        });
+      } finally {
+        setIsCreating(false);
       }
-      
-      setPurposes(prev => prev.filter(purpose => purpose.id !== id));
-      
-      toast({
-        title: 'Finalidade excluída',
-        description: 'Finalidade foi excluída com sucesso.'
-      });
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao excluir finalidade';
-      setError(errorMessage);
-      toast({
-        title: 'Erro',
-        description: errorMessage,
-        variant: 'destructive'
-      });
-    } finally {
-      setIsDeleting(false);
-    }
-  }, [purposes, toast]);
+    },
+    [toast]
+  );
 
-  const withdrawConsent = useCallback(async (consentId: string, reason?: string) => {
-    try {
-      setError(null);
-      await complianceManager.withdrawConsent(consentId, reason);
-      
-      // Update local state
-      setConsents(prev => prev.map(consent => 
-        consent.id === consentId 
-          ? { ...consent, status: 'withdrawn', updated_at: new Date().toISOString() }
-          : consent
-      ));
-      
-      toast({
-        title: 'Consentimento retirado',
-        description: 'Consentimento foi retirado com sucesso.'
-      });
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao retirar consentimento';
-      setError(errorMessage);
-      toast({
-        title: 'Erro',
-        description: errorMessage,
-        variant: 'destructive'
-      });
-    }
-  }, [complianceManager, toast]);
+  const updatePurpose = useCallback(
+    async (id: string, updates: Partial<ConsentPurpose>) => {
+      setIsUpdating(true);
+      try {
+        setError(null);
+
+        setPurposes((prev) =>
+          prev.map((purpose) =>
+            purpose.id === id
+              ? { ...purpose, ...updates, updated_at: new Date().toISOString() }
+              : purpose
+          )
+        );
+
+        toast({
+          title: 'Finalidade atualizada',
+          description: 'Finalidade foi atualizada com sucesso.',
+        });
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : 'Erro ao atualizar finalidade';
+        setError(errorMessage);
+        toast({
+          title: 'Erro',
+          description: errorMessage,
+          variant: 'destructive',
+        });
+      } finally {
+        setIsUpdating(false);
+      }
+    },
+    [toast]
+  );
+
+  const deletePurpose = useCallback(
+    async (id: string) => {
+      setIsDeleting(true);
+      try {
+        setError(null);
+
+        const purpose = purposes.find((p) => p.id === id);
+        if (purpose?.required) {
+          throw new Error('Não é possível excluir finalidades obrigatórias');
+        }
+
+        setPurposes((prev) => prev.filter((purpose) => purpose.id !== id));
+
+        toast({
+          title: 'Finalidade excluída',
+          description: 'Finalidade foi excluída com sucesso.',
+        });
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : 'Erro ao excluir finalidade';
+        setError(errorMessage);
+        toast({
+          title: 'Erro',
+          description: errorMessage,
+          variant: 'destructive',
+        });
+      } finally {
+        setIsDeleting(false);
+      }
+    },
+    [purposes, toast]
+  );
+
+  const withdrawConsent = useCallback(
+    async (consentId: string, reason?: string) => {
+      try {
+        setError(null);
+        await complianceManager.withdrawConsent(consentId, reason);
+
+        // Update local state
+        setConsents((prev) =>
+          prev.map((consent) =>
+            consent.id === consentId
+              ? {
+                  ...consent,
+                  status: 'withdrawn',
+                  updated_at: new Date().toISOString(),
+                }
+              : consent
+          )
+        );
+
+        toast({
+          title: 'Consentimento retirado',
+          description: 'Consentimento foi retirado com sucesso.',
+        });
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : 'Erro ao retirar consentimento';
+        setError(errorMessage);
+        toast({
+          title: 'Erro',
+          description: errorMessage,
+          variant: 'destructive',
+        });
+      }
+    },
+    [complianceManager, toast]
+  );
 
   const exportConsents = useCallback(async () => {
     try {
       setError(null);
-      
+
       // Create CSV content
       const csvHeaders = [
         'ID',
@@ -264,45 +303,49 @@ export function useConsentManagement(): UseConsentManagementReturn {
         'Status',
         'Data de Consentimento',
         'Data de Expiração',
-        'Última Atualização'
+        'Última Atualização',
       ];
-      
-      const csvRows = consents.map(consent => [
+
+      const csvRows = consents.map((consent) => [
         consent.id,
         consent.user_id,
         consent.purpose_id,
         consent.status,
         consent.granted_at || '',
         consent.expires_at || '',
-        consent.updated_at
+        consent.updated_at,
       ]);
-      
+
       const csvContent = [csvHeaders, ...csvRows]
-        .map(row => row.map(cell => `"${cell}"`).join(','))
+        .map((row) => row.map((cell) => `"${cell}"`).join(','))
         .join('\n');
-      
+
       // Create and download file
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement('a');
       const url = URL.createObjectURL(blob);
       link.setAttribute('href', url);
-      link.setAttribute('download', `lgpd-consents-${new Date().toISOString().split('T')[0]}.csv`);
+      link.setAttribute(
+        'download',
+        `lgpd-consents-${new Date().toISOString().split('T')[0]}.csv`
+      );
       link.style.visibility = 'hidden';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      
+
       toast({
         title: 'Exportação concluída',
-        description: 'Consentimentos exportados com sucesso.'
+        description: 'Consentimentos exportados com sucesso.',
       });
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao exportar consentimentos';
+      const errorMessage =
+        err instanceof Error ? err.message : 'Erro ao exportar consentimentos';
       setError(errorMessage);
       toast({
         title: 'Erro na exportação',
         description: errorMessage,
-        variant: 'destructive'
+        variant: 'destructive',
       });
     }
   }, [consents, toast]);
@@ -318,7 +361,7 @@ export function useConsentManagement(): UseConsentManagementReturn {
       await Promise.all([loadConsents(), loadPurposes()]);
       setIsLoading(false);
     };
-    
+
     loadData();
   }, [loadConsents, loadPurposes]);
 
@@ -328,17 +371,17 @@ export function useConsentManagement(): UseConsentManagementReturn {
     purposes,
     totalCount,
     currentPage,
-    
+
     // Loading states
     isLoading,
     isCreating,
     isUpdating,
     isDeleting,
-    
+
     // Filters
     filters,
     setFilters,
-    
+
     // Actions
     loadConsents,
     loadPurposes,
@@ -347,11 +390,11 @@ export function useConsentManagement(): UseConsentManagementReturn {
     deletePurpose,
     withdrawConsent,
     exportConsents,
-    
+
     // Pagination
     goToPage,
-    
+
     // Error handling
-    error
+    error,
   };
 }

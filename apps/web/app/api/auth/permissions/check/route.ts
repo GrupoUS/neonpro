@@ -1,16 +1,20 @@
 /**
  * API Route: Permission Check Endpoint
  * Story 1.2: Role-Based Access Control Implementation
- * 
+ *
  * Provides REST API for frontend permission validation
  * Integrates with RBAC permission system
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { authenticateRequest } from '@/lib/middleware/auth';
-import { hasPermission, hasAnyPermission, hasAllPermissions } from '@/lib/auth/rbac/permissions';
-import { Permission, PermissionContext } from '@/types/rbac';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import {
+  hasAllPermissions,
+  hasAnyPermission,
+  hasPermission,
+} from '@/lib/auth/rbac/permissions';
+import { authenticateRequest } from '@/lib/middleware/auth';
+import type { Permission, PermissionContext } from '@/types/rbac';
 
 /**
  * Request validation schemas
@@ -18,34 +22,38 @@ import { z } from 'zod';
 const SinglePermissionSchema = z.object({
   permission: z.string(),
   resourceId: z.string().optional(),
-  context: z.object({
-    clinicId: z.string().optional(),
-    departmentId: z.string().optional(),
-    metadata: z.record(z.any()).optional()
-  }).optional()
+  context: z
+    .object({
+      clinicId: z.string().optional(),
+      departmentId: z.string().optional(),
+      metadata: z.record(z.any()).optional(),
+    })
+    .optional(),
 });
 
 const MultiplePermissionsSchema = z.object({
   permissions: z.array(z.string()),
   resourceId: z.string().optional(),
-  context: z.object({
-    clinicId: z.string().optional(),
-    departmentId: z.string().optional(),
-    metadata: z.record(z.any()).optional()
-  }).optional(),
-  requireAll: z.boolean().default(false)
+  context: z
+    .object({
+      clinicId: z.string().optional(),
+      departmentId: z.string().optional(),
+      metadata: z.record(z.any()).optional(),
+    })
+    .optional(),
+  requireAll: z.boolean().default(false),
 });
 
 const PermissionCheckSchema = z.union([
   SinglePermissionSchema,
-  MultiplePermissionsSchema
+  MultiplePermissionsSchema,
 ]);
 
 /**
  * POST /api/auth/permissions/check
- * 
+ *
  * Check user permissions against RBAC system
- * 
+ *
  * @param request - NextRequest containing permission check data
  * @returns Permission check result with granted status and metadata
  */
@@ -53,13 +61,13 @@ export async function POST(request: NextRequest) {
   try {
     // Authenticate the request
     const authResult = await authenticateRequest(request);
-    
-    if (!authResult.success || !authResult.user) {
+
+    if (!(authResult.success && authResult.user)) {
       return NextResponse.json(
-        { 
+        {
           error: 'Authentication required',
           granted: false,
-          reason: authResult.error || 'Invalid authentication'
+          reason: authResult.error || 'Invalid authentication',
         },
         { status: 401 }
       );
@@ -69,12 +77,12 @@ export async function POST(request: NextRequest) {
     let requestBody;
     try {
       requestBody = await request.json();
-    } catch (error) {
+    } catch (_error) {
       return NextResponse.json(
         {
           error: 'Invalid JSON in request body',
           granted: false,
-          reason: 'Malformed request data'
+          reason: 'Malformed request data',
         },
         { status: 400 }
       );
@@ -82,14 +90,14 @@ export async function POST(request: NextRequest) {
 
     // Validate request schema
     const validationResult = PermissionCheckSchema.safeParse(requestBody);
-    
+
     if (!validationResult.success) {
       return NextResponse.json(
         {
           error: 'Invalid request format',
           granted: false,
           reason: 'Request validation failed',
-          details: validationResult.error.errors
+          details: validationResult.error.errors,
         },
         { status: 400 }
       );
@@ -115,14 +123,14 @@ export async function POST(request: NextRequest) {
         resourceId: data.resourceId,
         context: data.context,
         timestamp: new Date().toISOString(),
-        userId: user.id
+        userId: user.id,
       });
     }
 
     // Handle multiple permissions check
     if ('permissions' in data) {
       const permissions = data.permissions as Permission[];
-      
+
       let result;
       if (data.requireAll) {
         result = await hasAllPermissions(user, permissions);
@@ -139,7 +147,7 @@ export async function POST(request: NextRequest) {
         resourceId: data.resourceId,
         context: data.context,
         timestamp: new Date().toISOString(),
-        userId: user.id
+        userId: user.id,
       });
     }
 
@@ -148,20 +156,19 @@ export async function POST(request: NextRequest) {
       {
         error: 'Invalid request type',
         granted: false,
-        reason: 'Unknown permission check format'
+        reason: 'Unknown permission check format',
       },
       { status: 400 }
     );
-
   } catch (error) {
     console.error('Permission check API error:', error);
-    
+
     return NextResponse.json(
       {
         error: 'Internal server error',
         granted: false,
         reason: 'Permission validation failed due to server error',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       },
       { status: 500 }
     );
@@ -170,7 +177,7 @@ export async function POST(request: NextRequest) {
 
 /**
  * GET /api/auth/permissions/check
- * 
+ *
  * Get current user's role and basic permission info
  * Useful for frontend initialization and caching
  */
@@ -178,12 +185,12 @@ export async function GET(request: NextRequest) {
   try {
     // Authenticate the request
     const authResult = await authenticateRequest(request);
-    
-    if (!authResult.success || !authResult.user) {
+
+    if (!(authResult.success && authResult.user)) {
       return NextResponse.json(
-        { 
+        {
           error: 'Authentication required',
-          authenticated: false
+          authenticated: false,
         },
         { status: 401 }
       );
@@ -198,7 +205,7 @@ export async function GET(request: NextRequest) {
       role: user.role,
       clinicId: user.clinicId,
       authenticated: true,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     // Optionally include role capabilities (without specific permission checks)
@@ -206,17 +213,16 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       ...userInfo,
-      capabilities: roleCapabilities
+      capabilities: roleCapabilities,
     });
-
   } catch (error) {
     console.error('Permission info API error:', error);
-    
+
     return NextResponse.json(
       {
         error: 'Internal server error',
         authenticated: false,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       },
       { status: 500 }
     );
@@ -236,7 +242,7 @@ function getRoleCapabilities(role: string) {
     canManageBilling: false,
     canManageClinic: false,
     canViewReports: false,
-    canManageSystem: false
+    canManageSystem: false,
   };
 
   switch (role) {
@@ -250,7 +256,7 @@ function getRoleCapabilities(role: string) {
         canManageBilling: true,
         canManageClinic: true,
         canViewReports: true,
-        canManageSystem: true
+        canManageSystem: true,
       };
 
     case 'manager':
@@ -261,19 +267,19 @@ function getRoleCapabilities(role: string) {
         canManageAppointments: true,
         canViewBilling: true,
         canManageBilling: true,
-        canViewReports: true
+        canViewReports: true,
       };
 
     case 'staff':
       return {
         ...capabilities,
         canManagePatients: true,
-        canManageAppointments: true
+        canManageAppointments: true,
       };
 
     case 'patient':
       return {
-        ...capabilities
+        ...capabilities,
         // Patients have very limited capabilities
       };
 
@@ -285,14 +291,14 @@ function getRoleCapabilities(role: string) {
 /**
  * OPTIONS handler for CORS preflight requests
  */
-export async function OPTIONS(request: NextRequest) {
+export async function OPTIONS(_request: NextRequest) {
   return new NextResponse(null, {
     status: 200,
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-      'Access-Control-Max-Age': '86400'
-    }
+      'Access-Control-Max-Age': '86400',
+    },
   });
 }

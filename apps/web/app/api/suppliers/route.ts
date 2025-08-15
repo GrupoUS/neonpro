@@ -3,12 +3,12 @@
 // Epic 6 - Story 6.3: Comprehensive supplier management with performance tracking
 // =====================================================================================
 
+import { type NextRequest, NextResponse } from 'next/server';
 import { SupplierManagementService } from '@/app/lib/services/supplier-management-service';
 import {
-    createSupplierSchema,
-    supplierFiltersSchema
+  createSupplierSchema,
+  supplierFiltersSchema,
 } from '@/app/lib/validations/suppliers';
-import { NextRequest, NextResponse } from 'next/server';
 
 const supplierService = new SupplierManagementService();
 
@@ -18,7 +18,7 @@ const supplierService = new SupplierManagementService();
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    
+
     // Extract clinic_id from auth or headers
     const clinicId = searchParams.get('clinic_id');
     if (!clinicId) {
@@ -29,36 +29,40 @@ export async function GET(request: NextRequest) {
     }
 
     // Parse pagination
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '50');
+    const page = Number.parseInt(searchParams.get('page') || '1', 10);
+    const limit = Number.parseInt(searchParams.get('limit') || '50', 10);
 
     // Parse filters
     const filters: any = {};
-    
+
     if (searchParams.get('supplier_type')) {
       filters.supplier_type = searchParams.get('supplier_type')?.split(',');
     }
-    
+
     if (searchParams.get('status')) {
       filters.status = searchParams.get('status')?.split(',');
     }
-    
+
     if (searchParams.get('is_preferred')) {
       filters.is_preferred = searchParams.get('is_preferred') === 'true';
     }
-    
+
     if (searchParams.get('is_critical')) {
       filters.is_critical = searchParams.get('is_critical') === 'true';
     }
-    
+
     if (searchParams.get('performance_score_min')) {
-      filters.performance_score_min = parseFloat(searchParams.get('performance_score_min')!);
+      filters.performance_score_min = Number.parseFloat(
+        searchParams.get('performance_score_min')!
+      );
     }
-    
+
     if (searchParams.get('performance_score_max')) {
-      filters.performance_score_max = parseFloat(searchParams.get('performance_score_max')!);
+      filters.performance_score_max = Number.parseFloat(
+        searchParams.get('performance_score_max')!
+      );
     }
-    
+
     if (searchParams.get('search')) {
       filters.search = searchParams.get('search');
     }
@@ -95,7 +99,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    
+
     // Extract clinic_id from auth or body
     const clinicId = body.clinic_id;
     if (!clinicId) {
@@ -122,14 +126,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(supplier, { status: 201 });
   } catch (error) {
     console.error('Erro ao criar fornecedor:', error);
-    
+
     if (error instanceof Error && error.message.includes('já existe')) {
-      return NextResponse.json(
-        { error: error.message },
-        { status: 409 }
-      );
+      return NextResponse.json({ error: error.message }, { status: 409 });
     }
-    
+
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }

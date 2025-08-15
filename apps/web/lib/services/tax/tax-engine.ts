@@ -2,21 +2,22 @@
 // Story 5.5: Core tax calculation logic for Brazilian healthcare clinics
 
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { 
+import {
+  type ServiceTaxCode,
+  type TaxBreakdown,
+  type TaxCalculation,
+  type TaxConfiguration,
   taxCalculationRequestSchema,
   taxConfigurationSchema,
-  serviceTaxCodeSchema,
-  type TaxConfiguration,
-  type ServiceTaxCode,
-  type TaxCalculation,
-  type TaxBreakdown
 } from '@/lib/types/brazilian-tax';
 
 export class BrazilianTaxEngine {
   private supabase = createClientComponentClient();
 
   // Get clinic tax configuration
-  async getTaxConfiguration(clinicId: string): Promise<TaxConfiguration | null> {
+  async getTaxConfiguration(
+    clinicId: string
+  ): Promise<TaxConfiguration | null> {
     try {
       const { data, error } = await this.supabase
         .from('tax_configuration')
@@ -71,9 +72,11 @@ export class BrazilianTaxEngine {
     try {
       // Validate request
       const validatedRequest = taxCalculationRequestSchema.parse(request);
-      
+
       // Get tax configuration
-      const taxConfig = await this.getTaxConfiguration(validatedRequest.clinic_id);
+      const taxConfig = await this.getTaxConfiguration(
+        validatedRequest.clinic_id
+      );
       if (!taxConfig) {
         throw new Error('Tax configuration not found for clinic');
       }
@@ -81,11 +84,14 @@ export class BrazilianTaxEngine {
       // Get service tax code information if provided
       let serviceTaxCode: ServiceTaxCode | null = null;
       if (validatedRequest.codigo_servico) {
-        serviceTaxCode = await this.getServiceTaxCode(validatedRequest.codigo_servico);
+        serviceTaxCode = await this.getServiceTaxCode(
+          validatedRequest.codigo_servico
+        );
       }
 
       // Calculate taxes based on regime
-      const regime = validatedRequest.regime_tributario || taxConfig.regime_tributario;
+      const regime =
+        validatedRequest.regime_tributario || taxConfig.regime_tributario;
       let taxBreakdown: TaxBreakdown;
 
       switch (regime) {
@@ -118,7 +124,10 @@ export class BrazilianTaxEngine {
       }
 
       // Calculate totals
-      const totalTaxes = Object.values(taxBreakdown).reduce((sum, value) => sum + value, 0);
+      const totalTaxes = Object.values(taxBreakdown).reduce(
+        (sum, value) => sum + value,
+        0
+      );
       const netValue = validatedRequest.valor_base - totalTaxes;
 
       const calculation: TaxCalculation = {
@@ -130,7 +139,7 @@ export class BrazilianTaxEngine {
         effective_rate: (totalTaxes / validatedRequest.valor_base) * 100,
         calculated_at: new Date().toISOString(),
         service_code: validatedRequest.codigo_servico,
-        service_type: validatedRequest.tipo_servico
+        service_type: validatedRequest.tipo_servico,
       };
 
       return calculation;
@@ -155,7 +164,7 @@ export class BrazilianTaxEngine {
       csll: 0,
       simples_nacional: 0,
       inss: 0,
-      outros: 0
+      outros: 0,
     };
 
     // Simples Nacional unified rate
@@ -177,7 +186,7 @@ export class BrazilianTaxEngine {
   private calculateLucroPresumido(
     valorBase: number,
     taxConfig: TaxConfiguration,
-    serviceTaxCode?: ServiceTaxCode | null
+    _serviceTaxCode?: ServiceTaxCode | null
   ): TaxBreakdown {
     const breakdown: TaxBreakdown = {
       icms: 0,
@@ -188,7 +197,7 @@ export class BrazilianTaxEngine {
       csll: 0,
       simples_nacional: 0,
       inss: 0,
-      outros: 0
+      outros: 0,
     };
 
     // ISS (municipal tax on services)
@@ -205,7 +214,7 @@ export class BrazilianTaxEngine {
     // For healthcare services, presumed profit is typically 32%
     const presumedProfitRate = 0.32;
     const presumedProfit = valorBase * presumedProfitRate;
-    
+
     const irpjRate = taxConfig.irpj_rate / 100;
     const csllRate = taxConfig.csll_rate / 100;
     breakdown.irpj = presumedProfit * irpjRate;
@@ -218,7 +227,7 @@ export class BrazilianTaxEngine {
   private calculateLucroReal(
     valorBase: number,
     taxConfig: TaxConfiguration,
-    serviceTaxCode?: ServiceTaxCode | null
+    _serviceTaxCode?: ServiceTaxCode | null
   ): TaxBreakdown {
     const breakdown: TaxBreakdown = {
       icms: 0,
@@ -229,7 +238,7 @@ export class BrazilianTaxEngine {
       csll: 0,
       simples_nacional: 0,
       inss: 0,
-      outros: 0
+      outros: 0,
     };
 
     // ISS (municipal tax on services)
@@ -248,7 +257,7 @@ export class BrazilianTaxEngine {
     // assuming 25% profit margin for healthcare services
     const profitMargin = 0.25;
     const estimatedProfit = valorBase * profitMargin;
-    
+
     const irpjRate = taxConfig.irpj_rate / 100;
     const csllRate = taxConfig.csll_rate / 100;
     breakdown.irpj = estimatedProfit * irpjRate;
@@ -261,13 +270,13 @@ export class BrazilianTaxEngine {
   async getEffectiveTaxRate(
     clinicId: string,
     serviceType: string,
-    valorBase: number = 1000
+    valorBase = 1000
   ): Promise<number> {
     try {
       const calculation = await this.calculateTaxes({
         clinic_id: clinicId,
         valor_base: valorBase,
-        tipo_servico: serviceType
+        tipo_servico: serviceType,
       });
 
       return calculation.effective_rate;
@@ -278,12 +287,14 @@ export class BrazilianTaxEngine {
   }
 
   // Calculate taxes for multiple services
-  async calculateBulkTaxes(requests: Array<{
-    clinic_id: string;
-    valor_base: number;
-    tipo_servico: string;
-    codigo_servico?: string;
-  }>): Promise<TaxCalculation[]> {
+  async calculateBulkTaxes(
+    requests: Array<{
+      clinic_id: string;
+      valor_base: number;
+      tipo_servico: string;
+      codigo_servico?: string;
+    }>
+  ): Promise<TaxCalculation[]> {
     const calculations: TaxCalculation[] = [];
 
     for (const request of requests) {
@@ -291,7 +302,11 @@ export class BrazilianTaxEngine {
         const calculation = await this.calculateTaxes(request);
         calculations.push(calculation);
       } catch (error) {
-        console.error(`Bulk tax calculation error for request:`, request, error);
+        console.error(
+          'Bulk tax calculation error for request:',
+          request,
+          error
+        );
         // Continue with other calculations
       }
     }
@@ -320,45 +335,57 @@ export class BrazilianTaxEngine {
       try {
         taxConfigurationSchema.parse(taxConfig);
       } catch (validationError: any) {
-        errors.push(`Tax configuration validation failed: ${validationError.message}`);
+        errors.push(
+          `Tax configuration validation failed: ${validationError.message}`
+        );
       }
 
       // Check for common issues
-      if (taxConfig.regime_tributario === 'simples_nacional' && !taxConfig.optante_simples_nacional) {
-        warnings.push('Tax regime is Simples Nacional but clinic is not marked as optant');
+      if (
+        taxConfig.regime_tributario === 'simples_nacional' &&
+        !taxConfig.optante_simples_nacional
+      ) {
+        warnings.push(
+          'Tax regime is Simples Nacional but clinic is not marked as optant'
+        );
       }
 
       if (taxConfig.iss_rate === 0) {
-        warnings.push('ISS rate is 0% - verify if this is correct for your municipality');
+        warnings.push(
+          'ISS rate is 0% - verify if this is correct for your municipality'
+        );
       }
 
-      if (taxConfig.regime_tributario === 'simples_nacional' && taxConfig.simples_nacional_rate === 0) {
+      if (
+        taxConfig.regime_tributario === 'simples_nacional' &&
+        taxConfig.simples_nacional_rate === 0
+      ) {
         errors.push('Simples Nacional rate cannot be 0%');
       }
 
       // Check address completeness
-      if (!taxConfig.endereco.cep || !taxConfig.endereco.uf) {
+      if (!(taxConfig.endereco.cep && taxConfig.endereco.uf)) {
         errors.push('Incomplete address information in tax configuration');
       }
 
       return {
         isValid: errors.length === 0,
         errors,
-        warnings
+        warnings,
       };
     } catch (error) {
       console.error('Tax setup validation error:', error);
       return {
         isValid: false,
         errors: ['Failed to validate tax setup'],
-        warnings
+        warnings,
       };
     }
   }
 
   // Get tax summary for reporting
   async getTaxSummary(
-    clinicId: string,
+    _clinicId: string,
     startDate: string,
     endDate: string
   ): Promise<{
@@ -384,12 +411,12 @@ export class BrazilianTaxEngine {
           csll: 0,
           simples_nacional: 0,
           inss: 0,
-          outros: 0
+          outros: 0,
         },
         period: {
           start: startDate,
-          end: endDate
-        }
+          end: endDate,
+        },
       };
 
       // TODO: Implement actual data aggregation from invoices/payments
@@ -414,17 +441,17 @@ export class BrazilianTaxEngine {
     clinicId: string
   ): Promise<TaxCalculationResult[]> {
     const results: TaxCalculationResult[] = [];
-    
+
     for (const calculation of calculations) {
       try {
-        const result = await this.calculateServiceTax(
+        const result = await BrazilianTaxEngine.calculateServiceTax(
           calculation.service_type,
           calculation.amount,
           clinicId,
           {
             customerCnpjCpf: calculation.customer_cnpj_cpf,
             customerCity: calculation.customer_city,
-            description: calculation.description
+            description: calculation.description,
           }
         );
         results.push(result);
@@ -440,11 +467,11 @@ export class BrazilianTaxEngine {
           irrf: 0,
           total_taxes: 0,
           net_amount: calculation.amount,
-          error: error instanceof Error ? error.message : 'Erro no cálculo'
+          error: error instanceof Error ? error.message : 'Erro no cálculo',
         });
       }
     }
-    
+
     return results;
   }
 }

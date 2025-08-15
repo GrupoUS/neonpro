@@ -3,11 +3,14 @@
 // Author: Dev Agent
 // Date: 2025-01-26
 
-import { NextRequest, NextResponse } from 'next/server';
-import { DashboardBuilder } from '@/lib/analytics/dashboard-builder';
-import { dashboardLayoutSchema, dashboardWidgetSchema } from '@/lib/validations/kpi-validations';
-import { createClient } from '@/app/utils/supabase/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { createClient } from '@/app/utils/supabase/server';
+import { DashboardBuilder } from '@/lib/analytics/dashboard-builder';
+import {
+  dashboardLayoutSchema,
+  dashboardWidgetSchema,
+} from '@/lib/validations/kpi-validations';
 
 const createDashboardSchema = z.object({
   dashboard_name: z.string().min(1).max(255),
@@ -18,7 +21,9 @@ const createDashboardSchema = z.object({
     time_period: z.object({
       start_date: z.string(),
       end_date: z.string(),
-      preset: z.enum(['today', 'week', 'month', 'quarter', 'year', 'custom']).optional(),
+      preset: z
+        .enum(['today', 'week', 'month', 'quarter', 'year', 'custom'])
+        .optional(),
     }),
     service_types: z.array(z.string()).optional(),
     doctor_ids: z.array(z.string()).optional(),
@@ -32,7 +37,7 @@ const createDashboardSchema = z.object({
 export async function GET(request: NextRequest) {
   try {
     const supabase = createClient();
-    
+
     // Get current user
     const {
       data: { user },
@@ -76,19 +81,20 @@ export async function GET(request: NextRequest) {
     }
 
     // Format results
-    const formattedDashboards = dashboards?.map(dashboard => ({
-      id: dashboard.id,
-      dashboard_name: dashboard.dashboard_name,
-      description: dashboard.description,
-      layout: dashboard.layout,
-      filters: dashboard.filters,
-      is_default: dashboard.is_default,
-      is_public: dashboard.is_public,
-      created_by: dashboard.created_by,
-      created_at: dashboard.created_at,
-      updated_at: dashboard.updated_at,
-      widgets: dashboard.dashboard_widgets || [],
-    })) || [];
+    const formattedDashboards =
+      dashboards?.map((dashboard) => ({
+        id: dashboard.id,
+        dashboard_name: dashboard.dashboard_name,
+        description: dashboard.description,
+        layout: dashboard.layout,
+        filters: dashboard.filters,
+        is_default: dashboard.is_default,
+        is_public: dashboard.is_public,
+        created_by: dashboard.created_by,
+        created_at: dashboard.created_at,
+        updated_at: dashboard.updated_at,
+        widgets: dashboard.dashboard_widgets || [],
+      })) || [];
 
     return NextResponse.json({
       success: true,
@@ -99,7 +105,6 @@ export async function GET(request: NextRequest) {
         user_id: user.id,
       },
     });
-
   } catch (error) {
     console.error('Error retrieving dashboards:', error);
     return NextResponse.json(
@@ -116,7 +121,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const supabase = createClient();
-    
+
     // Get current user
     const {
       data: { user },
@@ -149,7 +154,7 @@ export async function POST(request: NextRequest) {
     // Add widgets
     if (validatedData.widgets.length > 0) {
       await Promise.all(
-        validatedData.widgets.map(widget =>
+        validatedData.widgets.map((widget) =>
           dashboardBuilder.addWidget(result.id, {
             ...widget,
             position: widget.position || { x: 0, y: 0, w: 4, h: 4 },
@@ -189,10 +194,9 @@ export async function POST(request: NextRequest) {
       },
       message: 'Dashboard created successfully',
     });
-
   } catch (error) {
     console.error('Error creating dashboard:', error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {

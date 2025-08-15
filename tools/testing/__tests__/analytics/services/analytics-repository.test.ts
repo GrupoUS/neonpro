@@ -1,11 +1,20 @@
-import { describe, expect, test, beforeEach, afterEach, jest } from '@jest/globals';
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  jest,
+  test,
+} from '@jest/globals';
+import type { SupabaseClient } from '@supabase/supabase-js';
 import { AnalyticsRepository } from '@/lib/analytics/repository';
 import { createClient } from '@/utils/supabase/server';
-import type { SupabaseClient } from '@supabase/supabase-js';
 
 // Mock Supabase client
 jest.mock('@/utils/supabase/server');
-const mockCreateClient = createClient as jest.MockedFunction<typeof createClient>;
+const mockCreateClient = createClient as jest.MockedFunction<
+  typeof createClient
+>;
 
 describe('AnalyticsRepository', () => {
   let repository: AnalyticsRepository;
@@ -17,8 +26,8 @@ describe('AnalyticsRepository', () => {
       from: jest.fn(),
       rpc: jest.fn(),
       auth: {
-        getUser: jest.fn()
-      }
+        getUser: jest.fn(),
+      },
     } as any;
 
     // Mock the createClient function to return our mock
@@ -38,19 +47,19 @@ describe('AnalyticsRepository', () => {
         data: {
           total_subscriptions: 150,
           active_subscriptions: 125,
-          mrr: 15000,
-          arr: 180000,
+          mrr: 15_000,
+          arr: 180_000,
           churn_rate: 0.05,
           growth_rate: 0.12,
-          conversion_rate: 0.25
+          conversion_rate: 0.25,
         },
-        error: null
+        error: null,
       };
 
       const mockFrom = {
         select: jest.fn().mockReturnThis(),
         eq: jest.fn().mockReturnThis(),
-        single: jest.fn().mockResolvedValue(mockData)
+        single: jest.fn().mockResolvedValue(mockData),
       };
 
       mockSupabase.from.mockReturnValue(mockFrom as any);
@@ -62,13 +71,13 @@ describe('AnalyticsRepository', () => {
       expect(result).toEqual({
         totalSubscriptions: 150,
         activeSubscriptions: 125,
-        mrr: 15000,
-        arr: 180000,
+        mrr: 15_000,
+        arr: 180_000,
         churnRate: 0.05,
         growthRate: 0.12,
         conversionRate: 0.25,
         period: 'monthly',
-        generatedAt: expect.any(Date)
+        generatedAt: expect.any(Date),
       });
 
       expect(mockSupabase.from).toHaveBeenCalledWith('subscription_metrics');
@@ -82,15 +91,15 @@ describe('AnalyticsRepository', () => {
       const mockFrom = {
         select: jest.fn().mockReturnThis(),
         eq: jest.fn().mockReturnThis(),
-        single: jest.fn().mockResolvedValue({ data: null, error: mockError })
+        single: jest.fn().mockResolvedValue({ data: null, error: mockError }),
       };
 
       mockSupabase.from.mockReturnValue(mockFrom as any);
 
       // Act & Assert
-      await expect(repository.getSubscriptionMetrics('monthly'))
-        .rejects
-        .toThrow('Database connection failed');
+      await expect(
+        repository.getSubscriptionMetrics('monthly')
+      ).rejects.toThrow('Database connection failed');
     });
 
     test('should handle missing data gracefully', async () => {
@@ -98,15 +107,15 @@ describe('AnalyticsRepository', () => {
       const mockFrom = {
         select: jest.fn().mockReturnThis(),
         eq: jest.fn().mockReturnThis(),
-        single: jest.fn().mockResolvedValue({ data: null, error: null })
+        single: jest.fn().mockResolvedValue({ data: null, error: null }),
       };
 
       mockSupabase.from.mockReturnValue(mockFrom as any);
 
       // Act & Assert
-      await expect(repository.getSubscriptionMetrics('monthly'))
-        .rejects
-        .toThrow('No subscription metrics found for period: monthly');
+      await expect(
+        repository.getSubscriptionMetrics('monthly')
+      ).rejects.toThrow('No subscription metrics found for period: monthly');
     });
   });
 
@@ -121,18 +130,26 @@ describe('AnalyticsRepository', () => {
             converted_trials: 125,
             expired_trials: 225,
             conversion_rate: 0.25,
-            average_trial_duration: 14
-          }
+            average_trial_duration: 14,
+          },
         ],
-        error: null
+        error: null,
       };
 
       const mockPredictionData = {
         data: [
-          { user_id: 'user1', conversion_probability: 0.85, conversion_factors: ['high_engagement'] },
-          { user_id: 'user2', conversion_probability: 0.60, conversion_factors: ['moderate_usage'] }
+          {
+            user_id: 'user1',
+            conversion_probability: 0.85,
+            conversion_factors: ['high_engagement'],
+          },
+          {
+            user_id: 'user2',
+            conversion_probability: 0.6,
+            conversion_factors: ['moderate_usage'],
+          },
         ],
-        error: null
+        error: null,
       };
 
       const mockFrom = {
@@ -141,7 +158,7 @@ describe('AnalyticsRepository', () => {
         gte: jest.fn().mockReturnThis(),
         lt: jest.fn().mockReturnThis(),
         single: jest.fn().mockResolvedValue(mockTrialData),
-        limit: jest.fn().mockResolvedValue(mockPredictionData)
+        limit: jest.fn().mockResolvedValue(mockPredictionData),
       };
 
       mockSupabase.from.mockReturnValue(mockFrom as any);
@@ -163,21 +180,25 @@ describe('AnalyticsRepository', () => {
         data: {
           engagement_score: 0.85,
           conversion_factors: ['email_response', 'support_interaction'],
-          predicted_conversion_date: '2024-02-15'
+          predicted_conversion_date: '2024-02-15',
         },
-        error: null
+        error: null,
       };
 
       mockSupabase.rpc.mockResolvedValue(mockRpcResult);
 
       // Act
-      const result = await repository.calculateTrialConversionProbability('user123');
+      const result =
+        await repository.calculateTrialConversionProbability('user123');
 
       // Assert
       expect(result).toEqual(mockRpcResult.data);
-      expect(mockSupabase.rpc).toHaveBeenCalledWith('calculate_trial_conversion_ai', {
-        user_id: 'user123'
-      });
+      expect(mockSupabase.rpc).toHaveBeenCalledWith(
+        'calculate_trial_conversion_ai',
+        {
+          user_id: 'user123',
+        }
+      );
     });
   });
 
@@ -194,24 +215,24 @@ describe('AnalyticsRepository', () => {
             period_number: 0,
             customers_count: 100,
             revenue_amount: 5000,
-            retention_rate: 1.0
+            retention_rate: 1.0,
           },
           {
             cohort_month: '2024-01',
             period_number: 1,
             customers_count: 85,
             revenue_amount: 4250,
-            retention_rate: 0.85
-          }
+            retention_rate: 0.85,
+          },
         ],
-        error: null
+        error: null,
       };
 
       const mockFrom = {
         select: jest.fn().mockReturnThis(),
         gte: jest.fn().mockReturnThis(),
         lte: jest.fn().mockReturnThis(),
-        order: jest.fn().mockResolvedValue(mockCohortData)
+        order: jest.fn().mockResolvedValue(mockCohortData),
       };
 
       mockSupabase.from.mockReturnValue(mockFrom as any);
@@ -236,12 +257,12 @@ describe('AnalyticsRepository', () => {
           {
             forecast_date: '2024-02-01',
             forecast_type: 'mrr',
-            predicted_value: 16000,
-            confidence_interval: { lower: 14500, upper: 17500 },
-            model_version: 'v2.1'
-          }
+            predicted_value: 16_000,
+            confidence_interval: { lower: 14_500, upper: 17_500 },
+            model_version: 'v2.1',
+          },
         ],
-        error: null
+        error: null,
       };
 
       const mockFrom = {
@@ -249,7 +270,7 @@ describe('AnalyticsRepository', () => {
         eq: jest.fn().mockReturnThis(),
         gte: jest.fn().mockReturnThis(),
         limit: jest.fn().mockReturnThis(),
-        order: jest.fn().mockResolvedValue(mockForecastData)
+        order: jest.fn().mockResolvedValue(mockForecastData),
       };
 
       mockSupabase.from.mockReturnValue(mockFrom as any);
@@ -260,8 +281,10 @@ describe('AnalyticsRepository', () => {
       // Assert
       expect(result.predictions).toBeDefined();
       expect(result.predictions).toHaveLength(1);
-      expect(result.predictions[0].value).toBe(16000);
-      expect(result.predictions[0].confidence.lower).toBeLessThan(result.predictions[0].value);
+      expect(result.predictions[0].value).toBe(16_000);
+      expect(result.predictions[0].confidence.lower).toBeLessThan(
+        result.predictions[0].value
+      );
       expect(result.modelVersion).toBe('v2.1');
     });
   });
@@ -272,7 +295,7 @@ describe('AnalyticsRepository', () => {
       const mockCallback = jest.fn();
       const mockChannel = {
         on: jest.fn().mockReturnThis(),
-        subscribe: jest.fn()
+        subscribe: jest.fn(),
       };
 
       mockSupabase.channel = jest.fn().mockReturnValue(mockChannel);
@@ -287,7 +310,7 @@ describe('AnalyticsRepository', () => {
         expect.objectContaining({
           event: '*',
           schema: 'public',
-          table: 'subscription_metrics'
+          table: 'subscription_metrics',
         }),
         mockCallback
       );
@@ -302,23 +325,23 @@ describe('AnalyticsRepository', () => {
         data: {
           total_subscriptions: 'invalid', // Should be number
           active_subscriptions: 125,
-          mrr: -1000 // Should be positive
+          mrr: -1000, // Should be positive
         },
-        error: null
+        error: null,
       };
 
       const mockFrom = {
         select: jest.fn().mockReturnThis(),
         eq: jest.fn().mockReturnThis(),
-        single: jest.fn().mockResolvedValue(invalidData)
+        single: jest.fn().mockResolvedValue(invalidData),
       };
 
       mockSupabase.from.mockReturnValue(mockFrom as any);
 
       // Act & Assert
-      await expect(repository.getSubscriptionMetrics('monthly'))
-        .rejects
-        .toThrow('Invalid subscription metrics data format');
+      await expect(
+        repository.getSubscriptionMetrics('monthly')
+      ).rejects.toThrow('Invalid subscription metrics data format');
     });
 
     test('should validate date ranges for cohort analysis', async () => {
@@ -327,9 +350,9 @@ describe('AnalyticsRepository', () => {
       const endDate = new Date('2024-01-31');
 
       // Act & Assert
-      await expect(repository.getCohortAnalysis(startDate, endDate))
-        .rejects
-        .toThrow('Invalid date range provided');
+      await expect(
+        repository.getCohortAnalysis(startDate, endDate)
+      ).rejects.toThrow('Invalid date range provided');
     });
   });
 
@@ -338,22 +361,22 @@ describe('AnalyticsRepository', () => {
       // Arrange
       const mockMetrics = {
         data: { total_subscriptions: 100, active_subscriptions: 80 },
-        error: null
+        error: null,
       };
 
       const mockFrom = {
         select: jest.fn().mockReturnThis(),
         eq: jest.fn().mockReturnThis(),
-        single: jest.fn().mockResolvedValue(mockMetrics)
+        single: jest.fn().mockResolvedValue(mockMetrics),
       };
 
       mockSupabase.from.mockReturnValue(mockFrom as any);
 
       // Act - Make multiple concurrent requests
-      const promises = Array(5).fill(null).map(() => 
-        repository.getSubscriptionMetrics('monthly')
-      );
-      
+      const promises = Array(5)
+        .fill(null)
+        .map(() => repository.getSubscriptionMetrics('monthly'));
+
       await Promise.all(promises);
 
       // Assert - Should reuse connection
@@ -364,23 +387,23 @@ describe('AnalyticsRepository', () => {
       // Arrange
       const mockData = {
         data: { total_subscriptions: 150 },
-        error: null
+        error: null,
       };
 
       const mockFrom = {
         select: jest.fn().mockReturnThis(),
         eq: jest.fn().mockReturnThis(),
-        single: jest.fn().mockResolvedValue(mockData)
+        single: jest.fn().mockResolvedValue(mockData),
       };
 
       mockSupabase.from.mockReturnValue(mockFrom as any);
 
       // Act
       const startTime = Date.now();
-      const promises = Array(10).fill(null).map(() => 
-        repository.getSubscriptionMetrics('monthly')
-      );
-      
+      const promises = Array(10)
+        .fill(null)
+        .map(() => repository.getSubscriptionMetrics('monthly'));
+
       const results = await Promise.all(promises);
       const duration = Date.now() - startTime;
 

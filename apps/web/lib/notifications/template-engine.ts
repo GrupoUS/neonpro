@@ -1,17 +1,16 @@
 /**
  * NeonPro Notification System - Template Engine
  * Story 1.7: Sistema de Notificações
- * 
+ *
  * Engine para renderização de templates de notificação
  * Suporte a variáveis, condicionais e formatação
  */
 
 import {
-  NotificationTemplate,
-  NotificationContext,
-  NotificationType,
   NotificationChannel,
-  TemplateVariables
+  type NotificationContext,
+  type NotificationTemplate,
+  NotificationType,
 } from './types';
 
 // ============================================================================
@@ -25,9 +24,7 @@ interface RenderedContent {
   variables: Record<string, any>;
 }
 
-interface TemplateFunction {
-  (context: NotificationContext): string;
-}
+type TemplateFunction = (context: NotificationContext) => string;
 
 // ============================================================================
 // TEMPLATE ENGINE CLASS
@@ -39,7 +36,6 @@ interface TemplateFunction {
 export class TemplateEngine {
   private templates: Map<string, NotificationTemplate> = new Map();
   private functions: Map<string, TemplateFunction> = new Map();
-  private isInitialized = false;
 
   // ============================================================================
   // INICIALIZAÇÃO
@@ -59,25 +55,25 @@ export class TemplateEngine {
    */
   private registerDefaultFunctions(): void {
     // Formatação de data
-    this.functions.set('formatDate', (context) => {
-      return (date: Date | string, format: string = 'dd/MM/yyyy') => {
+    this.functions.set('formatDate', (_context) => {
+      return (date: Date | string, format = 'dd/MM/yyyy') => {
         const d = typeof date === 'string' ? new Date(date) : date;
         return this.formatDate(d, format);
       };
     });
 
     // Formatação de moeda
-    this.functions.set('formatCurrency', (context) => {
-      return (value: number, currency: string = 'BRL') => {
+    this.functions.set('formatCurrency', (_context) => {
+      return (value: number, currency = 'BRL') => {
         return new Intl.NumberFormat('pt-BR', {
           style: 'currency',
-          currency
+          currency,
         }).format(value);
       };
     });
 
     // Formatação de telefone
-    this.functions.set('formatPhone', (context) => {
+    this.functions.set('formatPhone', (_context) => {
       return (phone: string) => {
         const cleaned = phone.replace(/\D/g, '');
         if (cleaned.length === 11) {
@@ -88,7 +84,7 @@ export class TemplateEngine {
     });
 
     // Saudação baseada no horário
-    this.functions.set('greeting', (context) => {
+    this.functions.set('greeting', (_context) => {
       return () => {
         const hour = new Date().getHours();
         if (hour < 12) return 'Bom dia';
@@ -98,7 +94,7 @@ export class TemplateEngine {
     });
 
     // Nome do primeiro nome
-    this.functions.set('firstName', (context) => {
+    this.functions.set('firstName', (_context) => {
       return (fullName: string) => {
         return fullName.split(' ')[0];
       };
@@ -119,7 +115,9 @@ export class TemplateEngine {
   /**
    * Obtém template por ID
    */
-  async getTemplate(templateId: string): Promise<NotificationTemplate | undefined> {
+  async getTemplate(
+    templateId: string
+  ): Promise<NotificationTemplate | undefined> {
     return this.templates.get(templateId);
   }
 
@@ -131,11 +129,15 @@ export class TemplateEngine {
     channel: NotificationChannel
   ): Promise<NotificationTemplate | undefined> {
     for (const template of this.templates.values()) {
-      if (template.type === type && template.channel === channel && template.isActive) {
+      if (
+        template.type === type &&
+        template.channel === channel &&
+        template.isActive
+      ) {
         return template;
       }
     }
-    
+
     // Fallback para template padrão
     return this.getDefaultTemplate(type, channel);
   }
@@ -169,17 +171,19 @@ export class TemplateEngine {
       return {
         title: context.data.title || 'Notificação',
         body: context.data.message || 'Você tem uma nova notificação.',
-        variables: {}
+        variables: {},
       };
     }
 
     const variables = this.extractVariables(context);
-    
+
     return {
-      subject: template.subject ? this.renderString(template.subject, variables, context) : undefined,
+      subject: template.subject
+        ? this.renderString(template.subject, variables, context)
+        : undefined,
       title: this.renderString(template.title, variables, context),
       body: this.renderString(template.body, variables, context),
-      variables
+      variables,
     };
   }
 
@@ -211,15 +215,22 @@ export class TemplateEngine {
     });
 
     // Processar condicionais {?condition}content{/condition}
-    result = result.replace(/\{\?\s*([^}]+)\s*\}([\s\S]*?)\{\/\1\}/g, (match, condition, content) => {
-      try {
-        const shouldShow = this.evaluateCondition(condition.trim(), variables, context);
-        return shouldShow ? content : '';
-      } catch (error) {
-        console.warn(`Erro ao avaliar condição: ${condition}`, error);
-        return '';
+    result = result.replace(
+      /\{\?\s*([^}]+)\s*\}([\s\S]*?)\{\/\1\}/g,
+      (_match, condition, content) => {
+        try {
+          const shouldShow = this.evaluateCondition(
+            condition.trim(),
+            variables,
+            context
+          );
+          return shouldShow ? content : '';
+        } catch (error) {
+          console.warn(`Erro ao avaliar condição: ${condition}`, error);
+          return '';
+        }
       }
-    });
+    );
 
     return result;
   }
@@ -235,29 +246,29 @@ export class TemplateEngine {
         email: context.recipient.email,
         phone: context.recipient.phone,
         timezone: context.recipient.timezone,
-        language: context.recipient.language
+        language: context.recipient.language,
       },
-      
+
       // Dados da clínica
       clinic: context.clinic,
-      
+
       // Dados específicos da notificação
       ...context.data,
-      
+
       // Dados de sistema
       timestamp: context.timestamp,
       locale: context.locale,
-      
+
       // Dados de data/hora
       now: new Date(),
       today: new Date().toISOString().split('T')[0],
-      
+
       // URLs úteis
       urls: {
         app: process.env.NEXT_PUBLIC_APP_URL || 'https://app.neonpro.com',
         unsubscribe: `${process.env.NEXT_PUBLIC_APP_URL}/unsubscribe?token=${context.recipient.id}`,
-        preferences: `${process.env.NEXT_PUBLIC_APP_URL}/preferences?token=${context.recipient.id}`
-      }
+        preferences: `${process.env.NEXT_PUBLIC_APP_URL}/preferences?token=${context.recipient.id}`,
+      },
     };
   }
 
@@ -267,60 +278,69 @@ export class TemplateEngine {
   private getVariableValue(
     path: string,
     variables: Record<string, any>,
-    context: NotificationContext
+    _context: NotificationContext
   ): any {
     const keys = path.split('.');
     let value = variables;
-    
+
     for (const key of keys) {
       if (value && typeof value === 'object' && key in value) {
         value = value[key];
       } else {
-        return undefined;
+        return;
       }
     }
-    
+
     return value;
   }
 
   /**
    * Avalia função do template
    */
-  private evaluateFunction(funcCall: string, context: NotificationContext): any {
+  private evaluateFunction(
+    funcCall: string,
+    context: NotificationContext
+  ): any {
     // Parse simples de função: functionName(arg1, arg2)
     const match = funcCall.match(/^(\w+)\((.*)\)$/);
     if (!match) {
       throw new Error(`Formato de função inválido: ${funcCall}`);
     }
-    
+
     const [, funcName, argsStr] = match;
     const func = this.functions.get(funcName);
-    
+
     if (!func) {
       throw new Error(`Função não encontrada: ${funcName}`);
     }
-    
+
     // Parse simples de argumentos (sem suporte a objetos complexos)
-    const args = argsStr ? argsStr.split(',').map(arg => {
-      const trimmed = arg.trim();
-      // String literal
-      if (trimmed.startsWith("'") && trimmed.endsWith("'")) {
-        return trimmed.slice(1, -1);
-      }
-      if (trimmed.startsWith('"') && trimmed.endsWith('"')) {
-        return trimmed.slice(1, -1);
-      }
-      // Número
-      if (/^\d+(\.\d+)?$/.test(trimmed)) {
-        return parseFloat(trimmed);
-      }
-      // Boolean
-      if (trimmed === 'true') return true;
-      if (trimmed === 'false') return false;
-      // Variável
-      return this.getVariableValue(trimmed, this.extractVariables(context), context);
-    }) : [];
-    
+    const args = argsStr
+      ? argsStr.split(',').map((arg) => {
+          const trimmed = arg.trim();
+          // String literal
+          if (trimmed.startsWith("'") && trimmed.endsWith("'")) {
+            return trimmed.slice(1, -1);
+          }
+          if (trimmed.startsWith('"') && trimmed.endsWith('"')) {
+            return trimmed.slice(1, -1);
+          }
+          // Número
+          if (/^\d+(\.\d+)?$/.test(trimmed)) {
+            return Number.parseFloat(trimmed);
+          }
+          // Boolean
+          if (trimmed === 'true') return true;
+          if (trimmed === 'false') return false;
+          // Variável
+          return this.getVariableValue(
+            trimmed,
+            this.extractVariables(context),
+            context
+          );
+        })
+      : [];
+
     const templateFunc = func(context);
     return templateFunc(...args);
   }
@@ -335,27 +355,27 @@ export class TemplateEngine {
   ): boolean {
     // Condições simples: variable, !variable, variable == value
     condition = condition.trim();
-    
+
     // Negação
     if (condition.startsWith('!')) {
       const varName = condition.slice(1).trim();
       const value = this.getVariableValue(varName, variables, context);
       return !value;
     }
-    
+
     // Comparação
     const operators = ['==', '!=', '>', '<', '>=', '<='];
     for (const op of operators) {
       if (condition.includes(op)) {
-        const [left, right] = condition.split(op).map(s => s.trim());
+        const [left, right] = condition.split(op).map((s) => s.trim());
         const leftValue = this.getVariableValue(left, variables, context);
         const rightValue = this.parseValue(right, variables, context);
-        
+
         switch (op) {
           case '==':
-            return leftValue == rightValue;
+            return leftValue === rightValue;
           case '!=':
-            return leftValue != rightValue;
+            return leftValue !== rightValue;
           case '>':
             return leftValue > rightValue;
           case '<':
@@ -367,7 +387,7 @@ export class TemplateEngine {
         }
       }
     }
-    
+
     // Existência da variável
     const value = this.getVariableValue(condition, variables, context);
     return !!value;
@@ -382,22 +402,24 @@ export class TemplateEngine {
     context: NotificationContext
   ): any {
     value = value.trim();
-    
+
     // String literal
-    if ((value.startsWith("'") && value.endsWith("'")) ||
-        (value.startsWith('"') && value.endsWith('"'))) {
+    if (
+      (value.startsWith("'") && value.endsWith("'")) ||
+      (value.startsWith('"') && value.endsWith('"'))
+    ) {
       return value.slice(1, -1);
     }
-    
+
     // Número
     if (/^\d+(\.\d+)?$/.test(value)) {
-      return parseFloat(value);
+      return Number.parseFloat(value);
     }
-    
+
     // Boolean
     if (value === 'true') return true;
     if (value === 'false') return false;
-    
+
     // Variável
     return this.getVariableValue(value, variables, context);
   }
@@ -411,7 +433,7 @@ export class TemplateEngine {
    */
   private async loadDefaultTemplates(): Promise<void> {
     const defaultTemplates = this.getDefaultTemplates();
-    
+
     for (const template of defaultTemplates) {
       await this.addTemplate(template);
     }
@@ -425,12 +447,14 @@ export class TemplateEngine {
     channel: NotificationChannel
   ): NotificationTemplate {
     const templates = this.getDefaultTemplates();
-    
-    const template = templates.find(t => t.type === type && t.channel === channel);
+
+    const template = templates.find(
+      (t) => t.type === type && t.channel === channel
+    );
     if (template) {
       return template;
     }
-    
+
     // Template genérico
     return {
       id: `default_${type}_${channel}`,
@@ -443,7 +467,7 @@ export class TemplateEngine {
       isActive: true,
       version: 1,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
   }
 
@@ -487,16 +511,23 @@ export class TemplateEngine {
           </p>
         `,
         variables: [
-          'recipient.name', 'appointment.procedure', 'appointment.date',
-          'appointment.time', 'appointment.professional', 'appointment.location',
-          'clinic.name', 'clinic.contact.phone', 'clinic.contact.email', 'clinic.contact.address'
+          'recipient.name',
+          'appointment.procedure',
+          'appointment.date',
+          'appointment.time',
+          'appointment.professional',
+          'appointment.location',
+          'clinic.name',
+          'clinic.contact.phone',
+          'clinic.contact.email',
+          'clinic.contact.address',
         ],
         isActive: true,
         version: 1,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       },
-      
+
       // Templates de Agendamento - SMS
       {
         id: 'appointment_reminder_sms',
@@ -518,15 +549,19 @@ export class TemplateEngine {
           Para cancelar: {{urls.app}}/cancel/{{appointment.id}}
         `,
         variables: [
-          'recipient.name', 'appointment.date', 'appointment.time',
-          'appointment.professional', 'appointment.id', 'clinic.name'
+          'recipient.name',
+          'appointment.date',
+          'appointment.time',
+          'appointment.professional',
+          'appointment.id',
+          'clinic.name',
         ],
         isActive: true,
         version: 1,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       },
-      
+
       // Templates de Sistema - In-App
       {
         id: 'system_alert_in_app',
@@ -549,15 +584,19 @@ export class TemplateEngine {
           </div>
         `,
         variables: [
-          'alert.title', 'alert.message', 'alert.severity',
-          'alert.action.label', 'alert.action.handler', 'timestamp'
+          'alert.title',
+          'alert.message',
+          'alert.severity',
+          'alert.action.label',
+          'alert.action.handler',
+          'timestamp',
         ],
         isActive: true,
         version: 1,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       },
-      
+
       // Templates de Pagamento - Email
       {
         id: 'payment_received_email',
@@ -586,14 +625,18 @@ export class TemplateEngine {
           <p>Atenciosamente,<br>{{clinic.name}}</p>
         `,
         variables: [
-          'recipient.name', 'payment.amount', 'payment.method',
-          'payment.date', 'payment.reference', 'clinic.name'
+          'recipient.name',
+          'payment.amount',
+          'payment.method',
+          'payment.date',
+          'payment.reference',
+          'clinic.name',
         ],
         isActive: true,
         version: 1,
         createdAt: new Date(),
-        updatedAt: new Date()
-      }
+        updatedAt: new Date(),
+      },
     ];
   }
 
@@ -610,7 +653,7 @@ export class TemplateEngine {
     const year = date.getFullYear();
     const hours = date.getHours().toString().padStart(2, '0');
     const minutes = date.getMinutes().toString().padStart(2, '0');
-    
+
     return format
       .replace('dd', day)
       .replace('MM', month)
@@ -624,22 +667,22 @@ export class TemplateEngine {
    */
   validateTemplate(template: NotificationTemplate): string[] {
     const errors: string[] = [];
-    
+
     if (!template.title.trim()) {
       errors.push('Título é obrigatório');
     }
-    
+
     if (!template.body.trim()) {
       errors.push('Corpo é obrigatório');
     }
-    
+
     // Validar sintaxe de variáveis
     const variableRegex = /\{\{\s*([^}]+)\s*\}\}/g;
     const functionRegex = /\{%\s*([^}]+)\s*%\}/g;
-    const conditionalRegex = /\{\?\s*([^}]+)\s*\}/g;
-    
+    const _conditionalRegex = /\{\?\s*([^}]+)\s*\}/g;
+
     let match;
-    
+
     // Verificar variáveis
     while ((match = variableRegex.exec(template.body)) !== null) {
       const varName = match[1].trim();
@@ -647,15 +690,15 @@ export class TemplateEngine {
         errors.push(`Variável vazia encontrada: ${match[0]}`);
       }
     }
-    
+
     // Verificar funções
     while ((match = functionRegex.exec(template.body)) !== null) {
       const funcCall = match[1].trim();
-      if (!funcCall.includes('(') || !funcCall.includes(')')) {
+      if (!(funcCall.includes('(') && funcCall.includes(')'))) {
         errors.push(`Sintaxe de função inválida: ${match[0]}`);
       }
     }
-    
+
     return errors;
   }
 }

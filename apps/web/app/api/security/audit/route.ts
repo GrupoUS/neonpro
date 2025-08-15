@@ -1,22 +1,21 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/app/utils/supabase/server';
 import { securityAuditFramework } from '@/lib/auth/security-audit-framework';
 
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createServerClient();
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
     if (!session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { start, end } = await request.json();
 
-    if (!start || !end) {
+    if (!(start && end)) {
       return NextResponse.json(
         { error: 'Start and end dates are required' },
         { status: 400 }
@@ -29,7 +28,8 @@ export async function POST(request: NextRequest) {
     };
 
     // Generate compliance report
-    const report = await securityAuditFramework.generateComplianceReport(period);
+    const report =
+      await securityAuditFramework.generateComplianceReport(period);
 
     // Log report generation
     await securityAuditFramework.logSecurityEvent({
@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
       resource: 'compliance_report',
       action: 'generate',
       outcome: 'success',
-      metadata: { 
+      metadata: {
         period,
         reportId: crypto.randomUUID(),
         overallRiskScore: report.riskAssessment.overallRiskScore,
@@ -52,7 +52,6 @@ export async function POST(request: NextRequest) {
       success: true,
       report,
     });
-
   } catch (error) {
     console.error('Compliance report generation error:', error);
     return NextResponse.json(

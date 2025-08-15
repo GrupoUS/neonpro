@@ -2,10 +2,10 @@
 // Story 6.1 - Task 4: Bank Reconciliation System
 // API endpoints for individual bank transaction management
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { createClient } from '@/lib/supabase/server';
 import { EnhancedBankReconciliationService } from '@/lib/payments/reconciliation/enhanced-bank-reconciliation-service';
+import { createClient } from '@/lib/supabase/server';
 
 // Validation schemas
 const GetTransactionsQuerySchema = z.object({
@@ -25,7 +25,9 @@ const GetTransactionsQuerySchema = z.object({
 
 const UpdateTransactionSchema = z.object({
   transactionId: z.string().uuid(),
-  reconciliationStatus: z.enum(['unmatched', 'matched', 'disputed', 'ignored']).optional(),
+  reconciliationStatus: z
+    .enum(['unmatched', 'matched', 'disputed', 'ignored'])
+    .optional(),
   matchedPaymentId: z.string().uuid().nullable().optional(),
   matchingConfidence: z.number().min(0).max(1).optional(),
   category: z.string().optional(),
@@ -34,12 +36,22 @@ const UpdateTransactionSchema = z.object({
 
 const BulkUpdateSchema = z.object({
   transactionIds: z.array(z.string().uuid()).min(1),
-  action: z.enum(['mark_matched', 'mark_unmatched', 'mark_disputed', 'mark_ignored', 'set_category']),
-  data: z.object({
-    reconciliationStatus: z.enum(['unmatched', 'matched', 'disputed', 'ignored']).optional(),
-    category: z.string().optional(),
-    notes: z.string().optional(),
-  }).optional(),
+  action: z.enum([
+    'mark_matched',
+    'mark_unmatched',
+    'mark_disputed',
+    'mark_ignored',
+    'set_category',
+  ]),
+  data: z
+    .object({
+      reconciliationStatus: z
+        .enum(['unmatched', 'matched', 'disputed', 'ignored'])
+        .optional(),
+      category: z.string().optional(),
+      notes: z.string().optional(),
+    })
+    .optional(),
 });
 
 const MatchTransactionSchema = z.object({
@@ -56,14 +68,14 @@ const MatchTransactionSchema = z.object({
 export async function GET(request: NextRequest) {
   try {
     const supabase = createClient();
-    
+
     // Check authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Parse and validate query parameters
@@ -95,53 +107,63 @@ export async function GET(request: NextRequest) {
     if (validatedQuery.statementId) {
       query = query.eq('statement_id', validatedQuery.statementId);
     }
-    
+
     if (validatedQuery.status) {
       query = query.eq('reconciliation_status', validatedQuery.status);
     }
-    
+
     if (validatedQuery.dateFrom) {
       query = query.gte('transaction_date', validatedQuery.dateFrom);
     }
-    
+
     if (validatedQuery.dateTo) {
       query = query.lte('transaction_date', validatedQuery.dateTo);
     }
-    
+
     if (validatedQuery.transactionType) {
       query = query.eq('transaction_type', validatedQuery.transactionType);
     }
-    
+
     if (validatedQuery.amountMin !== undefined) {
-      query = query.or(`debit_amount.gte.${validatedQuery.amountMin},credit_amount.gte.${validatedQuery.amountMin}`);
+      query = query.or(
+        `debit_amount.gte.${validatedQuery.amountMin},credit_amount.gte.${validatedQuery.amountMin}`
+      );
     }
-    
+
     if (validatedQuery.amountMax !== undefined) {
-      query = query.or(`debit_amount.lte.${validatedQuery.amountMax},credit_amount.lte.${validatedQuery.amountMax}`);
+      query = query.or(
+        `debit_amount.lte.${validatedQuery.amountMax},credit_amount.lte.${validatedQuery.amountMax}`
+      );
     }
-    
+
     if (validatedQuery.searchTerm) {
-      query = query.or(`description.ilike.%${validatedQuery.searchTerm}%,reference_number.ilike.%${validatedQuery.searchTerm}%`);
+      query = query.or(
+        `description.ilike.%${validatedQuery.searchTerm}%,reference_number.ilike.%${validatedQuery.searchTerm}%`
+      );
     }
 
     // Apply sorting
-    const sortColumn = validatedQuery.sortBy === 'amount' 
-      ? 'debit_amount' 
-      : validatedQuery.sortBy === 'date' 
-      ? 'transaction_date'
-      : validatedQuery.sortBy;
-    
-    query = query.order(sortColumn, { ascending: validatedQuery.sortOrder === 'asc' });
+    const sortColumn =
+      validatedQuery.sortBy === 'amount'
+        ? 'debit_amount'
+        : validatedQuery.sortBy === 'date'
+          ? 'transaction_date'
+          : validatedQuery.sortBy;
+
+    query = query.order(sortColumn, {
+      ascending: validatedQuery.sortOrder === 'asc',
+    });
 
     // Apply pagination
-    const { data: transactions, error: transactionsError } = await query
-      .range(
-        (validatedQuery.page - 1) * validatedQuery.limit,
-        validatedQuery.page * validatedQuery.limit - 1
-      );
+    const { data: transactions, error: transactionsError } = await query.range(
+      (validatedQuery.page - 1) * validatedQuery.limit,
+      validatedQuery.page * validatedQuery.limit - 1
+    );
 
     if (transactionsError) {
-      throw new Error(`Failed to fetch transactions: ${transactionsError.message}`);
+      throw new Error(
+        `Failed to fetch transactions: ${transactionsError.message}`
+      );
     }
 
     // Get total count for pagination
@@ -155,7 +177,10 @@ export async function GET(request: NextRequest) {
       countQuery = countQuery.eq('statement_id', validatedQuery.statementId);
     }
     if (validatedQuery.status) {
-      countQuery = countQuery.eq('reconciliation_status', validatedQuery.status);
+      countQuery = countQuery.eq(
+        'reconciliation_status',
+        validatedQuery.status
+      );
     }
     if (validatedQuery.dateFrom) {
       countQuery = countQuery.gte('transaction_date', validatedQuery.dateFrom);
@@ -164,10 +189,15 @@ export async function GET(request: NextRequest) {
       countQuery = countQuery.lte('transaction_date', validatedQuery.dateTo);
     }
     if (validatedQuery.transactionType) {
-      countQuery = countQuery.eq('transaction_type', validatedQuery.transactionType);
+      countQuery = countQuery.eq(
+        'transaction_type',
+        validatedQuery.transactionType
+      );
     }
     if (validatedQuery.searchTerm) {
-      countQuery = countQuery.or(`description.ilike.%${validatedQuery.searchTerm}%,reference_number.ilike.%${validatedQuery.searchTerm}%`);
+      countQuery = countQuery.or(
+        `description.ilike.%${validatedQuery.searchTerm}%,reference_number.ilike.%${validatedQuery.searchTerm}%`
+      );
     }
 
     const { count, error: countError } = await countQuery;
@@ -179,12 +209,19 @@ export async function GET(request: NextRequest) {
     // Calculate summary statistics
     const summary = {
       totalTransactions: count || 0,
-      matchedCount: transactions?.filter(t => t.reconciliation_status === 'matched').length || 0,
-      unmatchedCount: transactions?.filter(t => t.reconciliation_status === 'unmatched').length || 0,
-      disputedCount: transactions?.filter(t => t.reconciliation_status === 'disputed').length || 0,
-      totalAmount: transactions?.reduce((sum, t) => {
-        return sum + (t.debit_amount || t.credit_amount || 0);
-      }, 0) || 0,
+      matchedCount:
+        transactions?.filter((t) => t.reconciliation_status === 'matched')
+          .length || 0,
+      unmatchedCount:
+        transactions?.filter((t) => t.reconciliation_status === 'unmatched')
+          .length || 0,
+      disputedCount:
+        transactions?.filter((t) => t.reconciliation_status === 'disputed')
+          .length || 0,
+      totalAmount:
+        transactions?.reduce((sum, t) => {
+          return sum + (t.debit_amount || t.credit_amount || 0);
+        }, 0) || 0,
     };
 
     return NextResponse.json({
@@ -200,7 +237,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('Error fetching bank transactions:', error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -229,14 +266,14 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const supabase = createClient();
-    
+
     // Check authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
@@ -246,7 +283,7 @@ export async function POST(request: NextRequest) {
       case 'match_transaction': {
         const validatedData = MatchTransactionSchema.parse(body);
         const reconciliationManager = new EnhancedBankReconciliationService();
-        
+
         const result = await reconciliationManager.performManualMatching(
           validatedData.transactionId,
           validatedData.paymentId,
@@ -257,7 +294,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({
           success: result.success,
           data: result,
-          message: result.success 
+          message: result.success
             ? 'Transaction matched successfully'
             : 'Failed to match transaction',
         });
@@ -265,9 +302,9 @@ export async function POST(request: NextRequest) {
 
       case 'bulk_update': {
         const validatedData = BulkUpdateSchema.parse(body);
-        
-        let updateData: any = {};
-        
+
+        const updateData: any = {};
+
         switch (validatedData.action) {
           case 'mark_matched':
             updateData.reconciliation_status = 'matched';
@@ -289,7 +326,7 @@ export async function POST(request: NextRequest) {
             }
             break;
         }
-        
+
         if (validatedData.data?.notes) {
           updateData.notes = validatedData.data.notes;
         }
@@ -305,7 +342,9 @@ export async function POST(request: NextRequest) {
           .eq('bank_statements.created_by', user.id);
 
         if (updateError) {
-          throw new Error(`Failed to update transactions: ${updateError.message}`);
+          throw new Error(
+            `Failed to update transactions: ${updateError.message}`
+          );
         }
 
         return NextResponse.json({
@@ -317,7 +356,7 @@ export async function POST(request: NextRequest) {
 
       case 'find_potential_matches': {
         const { transactionId } = body;
-        
+
         if (!transactionId) {
           return NextResponse.json(
             { error: 'Transaction ID is required' },
@@ -326,7 +365,8 @@ export async function POST(request: NextRequest) {
         }
 
         const reconciliationManager = new EnhancedBankReconciliationService();
-        const matches = await reconciliationManager.findPotentialMatches(transactionId);
+        const matches =
+          await reconciliationManager.findPotentialMatches(transactionId);
 
         return NextResponse.json({
           success: true,
@@ -336,14 +376,11 @@ export async function POST(request: NextRequest) {
       }
 
       default:
-        return NextResponse.json(
-          { error: 'Invalid action' },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     }
   } catch (error) {
     console.error('Error in bank transactions POST:', error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -372,14 +409,14 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const supabase = createClient();
-    
+
     // Check authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
@@ -438,7 +475,7 @@ export async function PUT(request: NextRequest) {
     });
   } catch (error) {
     console.error('Error updating bank transaction:', error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -467,20 +504,20 @@ export async function PUT(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     const supabase = createClient();
-    
+
     // Check authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
     const { transactionIds, permanent = false } = body;
 
-    if (!transactionIds || !Array.isArray(transactionIds)) {
+    if (!(transactionIds && Array.isArray(transactionIds))) {
       return NextResponse.json(
         { error: 'Transaction IDs array is required' },
         { status: 400 }
@@ -496,38 +533,41 @@ export async function DELETE(request: NextRequest) {
         .eq('bank_statements.created_by', user.id);
 
       if (deleteError) {
-        throw new Error(`Failed to delete transactions: ${deleteError.message}`);
+        throw new Error(
+          `Failed to delete transactions: ${deleteError.message}`
+        );
       }
 
       return NextResponse.json({
         success: true,
         message: `Successfully deleted ${transactionIds.length} transactions`,
       });
-    } else {
-      // Soft delete by marking as ignored
-      const { data: transactions, error: updateError } = await supabase
-        .from('bank_transactions')
-        .update({ 
-          reconciliation_status: 'ignored',
-          notes: 'Marked as ignored by user'
-        })
-        .in('id', transactionIds)
-        .select(`
+    }
+    // Soft delete by marking as ignored
+    const { data: transactions, error: updateError } = await supabase
+      .from('bank_transactions')
+      .update({
+        reconciliation_status: 'ignored',
+        notes: 'Marked as ignored by user',
+      })
+      .in('id', transactionIds)
+      .select(`
           *,
           bank_statements!inner(created_by)
         `)
-        .eq('bank_statements.created_by', user.id);
+      .eq('bank_statements.created_by', user.id);
 
-      if (updateError) {
-        throw new Error(`Failed to mark transactions as ignored: ${updateError.message}`);
-      }
-
-      return NextResponse.json({
-        success: true,
-        data: transactions,
-        message: `Successfully marked ${transactions?.length || 0} transactions as ignored`,
-      });
+    if (updateError) {
+      throw new Error(
+        `Failed to mark transactions as ignored: ${updateError.message}`
+      );
     }
+
+    return NextResponse.json({
+      success: true,
+      data: transactions,
+      message: `Successfully marked ${transactions?.length || 0} transactions as ignored`,
+    });
   } catch (error) {
     console.error('Error deleting bank transactions:', error);
     return NextResponse.json(

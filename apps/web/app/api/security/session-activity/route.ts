@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { SessionTimeoutManager } from '@/lib/security/session-timeout-manager';
+import { type NextRequest, NextResponse } from 'next/server';
 import { requireAuth } from '@/lib/auth';
+import { SessionTimeoutManager } from '@/lib/security/session-timeout-manager';
 
 /**
  * Session Activity API Route
@@ -25,7 +25,11 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { sessionId, activityType = 'user_interaction', metadata = {} } = body;
+    const {
+      sessionId,
+      activityType = 'user_interaction',
+      metadata = {},
+    } = body;
 
     if (!sessionId) {
       return NextResponse.json(
@@ -36,7 +40,7 @@ export async function POST(request: NextRequest) {
 
     // Update session activity
     await timeoutManager.updateActivity(
-      authResult.user!.id,
+      authResult.user?.id,
       sessionId,
       activityType,
       metadata
@@ -46,9 +50,8 @@ export async function POST(request: NextRequest) {
       message: 'Session activity updated successfully',
       sessionId,
       activityType,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
-
   } catch (error) {
     console.error('Session activity update error:', error);
     return NextResponse.json(
@@ -85,13 +88,13 @@ export async function GET(request: NextRequest) {
 
     // Check session timeout status
     const timeoutStatus = await timeoutManager.checkSessionTimeout(
-      authResult.user!.id,
+      authResult.user?.id,
       sessionId
     );
 
     // Get timeout warning if applicable
     const warning = await timeoutManager.getTimeoutWarning(
-      authResult.user!.id,
+      authResult.user?.id,
       sessionId
     );
 
@@ -99,9 +102,8 @@ export async function GET(request: NextRequest) {
       sessionId,
       timeoutStatus,
       warning,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
-
   } catch (error) {
     console.error('Session timeout check error:', error);
     return NextResponse.json(
@@ -138,7 +140,7 @@ export async function PUT(request: NextRequest) {
 
     // Extend session timeout
     const result = await timeoutManager.extendSession(
-      authResult.user!.id,
+      authResult.user?.id,
       sessionId,
       extensionMinutes
     );
@@ -148,9 +150,8 @@ export async function PUT(request: NextRequest) {
       sessionId,
       extensionMinutes,
       newExpiresAt: result.expiresAt,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
-
   } catch (error) {
     console.error('Session extension error:', error);
     return NextResponse.json(

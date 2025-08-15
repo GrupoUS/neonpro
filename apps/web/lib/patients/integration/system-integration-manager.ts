@@ -1,8 +1,8 @@
-import { createClient } from '@/lib/supabase/client';
+import { PatientInsights } from '@/lib/ai/patient-insights';
 import { AuditLogger } from '@/lib/audit/audit-logger';
 import { LGPDManager } from '@/lib/lgpd/lgpd-manager';
-import { PatientInsights } from '@/lib/ai/patient-insights';
-import { Database } from '@/types/supabase';
+import { createClient } from '@/lib/supabase/client';
+import type { Database } from '@/types/supabase';
 
 type Patient = Database['public']['Tables']['patients']['Row'];
 type Appointment = Database['public']['Tables']['appointments']['Row'];
@@ -76,7 +76,7 @@ export class SystemIntegrationManager {
     query: string,
     filters: PatientSearchFilters = {},
     userId: string,
-    limit: number = 50
+    limit = 50
   ): Promise<{
     patients: IntegratedPatientData[];
     suggestions: SearchSuggestion[];
@@ -91,13 +91,11 @@ export class SystemIntegrationManager {
         action: 'patient_search',
         userId,
         details: { query, filters },
-        timestamp: new Date()
+        timestamp: new Date(),
       });
 
       // Build search query
-      let searchQuery = this.supabase
-        .from('patients')
-        .select(`
+      let searchQuery = this.supabase.from('patients').select(`
           *,
           appointments!inner(*),
           treatments(*),
@@ -127,12 +125,21 @@ export class SystemIntegrationManager {
 
       if (filters.lastVisit) {
         searchQuery = searchQuery
-          .gte('appointments.appointment_date', filters.lastVisit.from.toISOString())
-          .lte('appointments.appointment_date', filters.lastVisit.to.toISOString());
+          .gte(
+            'appointments.appointment_date',
+            filters.lastVisit.from.toISOString()
+          )
+          .lte(
+            'appointments.appointment_date',
+            filters.lastVisit.to.toISOString()
+          );
       }
 
       if (filters.appointmentStatus) {
-        searchQuery = searchQuery.eq('appointments.status', filters.appointmentStatus);
+        searchQuery = searchQuery.eq(
+          'appointments.status',
+          filters.appointmentStatus
+        );
       }
 
       if (filters.consentStatus !== undefined) {
@@ -140,7 +147,11 @@ export class SystemIntegrationManager {
       }
 
       // Execute search
-      const { data: patients, error, count } = await searchQuery
+      const {
+        data: patients,
+        error,
+        count,
+      } = await searchQuery
         .limit(limit)
         .order('updated_at', { ascending: false });
 
@@ -162,7 +173,7 @@ export class SystemIntegrationManager {
         patients: enrichedPatients,
         suggestions,
         totalCount: count || 0,
-        searchTime
+        searchTime,
       };
     } catch (error) {
       console.error('Error searching patients:', error);
@@ -186,7 +197,9 @@ export class SystemIntegrationManager {
       );
 
       if (!hasPermission) {
-        throw new Error('Acesso negado: sem permissão LGPD para visualizar dados do paciente');
+        throw new Error(
+          'Acesso negado: sem permissão LGPD para visualizar dados do paciente'
+        );
       }
 
       // Get patient data
@@ -219,15 +232,23 @@ export class SystemIntegrationManager {
         .eq('patient_id', patientId);
 
       // Get risk assessment
-      const riskAssessment = await this.patientInsights.assessPatientRisk(patientId);
+      const riskAssessment =
+        await this.patientInsights.assessPatientRisk(patientId);
 
       // Calculate metrics
-      const totalSpent = treatments?.reduce((sum, treatment) => {
-        return sum + (treatment.cost || 0);
-      }, 0) || 0;
+      const totalSpent =
+        treatments?.reduce((sum, treatment) => {
+          return sum + (treatment.cost || 0);
+        }, 0) || 0;
 
-      const lastActivity = this.getLastActivity(appointments || [], treatments || []);
-      const loyaltyScore = this.calculateLoyaltyScore(appointments || [], treatments || []);
+      const lastActivity = this.getLastActivity(
+        appointments || [],
+        treatments || []
+      );
+      const loyaltyScore = this.calculateLoyaltyScore(
+        appointments || [],
+        treatments || []
+      );
 
       // Get communication history (placeholder)
       const communicationHistory: any[] = [];
@@ -237,7 +258,7 @@ export class SystemIntegrationManager {
         action: 'patient_data_access',
         userId,
         details: { patientId, accessType: 'integrated_view' },
-        timestamp: new Date()
+        timestamp: new Date(),
       });
 
       return {
@@ -249,7 +270,7 @@ export class SystemIntegrationManager {
         photoCount: photoCount || 0,
         lastActivity,
         totalSpent,
-        loyaltyScore
+        loyaltyScore,
       };
     } catch (error) {
       console.error('Error getting integrated patient data:', error);
@@ -262,7 +283,7 @@ export class SystemIntegrationManager {
    */
   private async generateSearchSuggestions(
     query: string,
-    filters: PatientSearchFilters
+    _filters: PatientSearchFilters
   ): Promise<SearchSuggestion[]> {
     const suggestions: SearchSuggestion[] = [];
 
@@ -276,14 +297,14 @@ export class SystemIntegrationManager {
         .ilike('name', `%${query}%`)
         .limit(5);
 
-      patientSuggestions?.forEach(patient => {
+      patientSuggestions?.forEach((patient) => {
         suggestions.push({
           type: 'patient',
           id: patient.id,
           title: patient.name,
           subtitle: patient.email,
           relevanceScore: this.calculateRelevanceScore(query, patient.name),
-          matchedFields: ['name']
+          matchedFields: ['name'],
         });
       });
 
@@ -294,14 +315,14 @@ export class SystemIntegrationManager {
         .ilike('name', `%${query}%`)
         .limit(3);
 
-      treatmentSuggestions?.forEach(treatment => {
+      treatmentSuggestions?.forEach((treatment) => {
         suggestions.push({
           type: 'treatment',
           id: treatment.id,
           title: treatment.name,
           subtitle: `Paciente: ${(treatment as any).patients?.name}`,
           relevanceScore: this.calculateRelevanceScore(query, treatment.name),
-          matchedFields: ['treatment_name']
+          matchedFields: ['treatment_name'],
         });
       });
 
@@ -335,7 +356,7 @@ export class SystemIntegrationManager {
         criteria,
         patientCount: count,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       // Save segment (would be stored in database)
@@ -343,7 +364,7 @@ export class SystemIntegrationManager {
         action: 'patient_segment_created',
         userId,
         details: { segmentId: segment.id, name, patientCount: count },
-        timestamp: new Date()
+        timestamp: new Date(),
       });
 
       return segment;
@@ -369,22 +390,26 @@ export class SystemIntegrationManager {
           status
         `)
         .eq('staff_id', userId)
-        .gte('appointment_date', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString())
+        .gte(
+          'appointment_date',
+          new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+        )
         .order('appointment_date', { ascending: false })
         .limit(10);
 
       const quickAccess: QuickAccessItem[] = [];
       const seenPatients = new Set<string>();
 
-      recentAppointments?.forEach(appointment => {
+      recentAppointments?.forEach((appointment) => {
         if (!seenPatients.has(appointment.patient_id)) {
           seenPatients.add(appointment.patient_id);
           quickAccess.push({
             patientId: appointment.patient_id,
-            patientName: (appointment as any).patients?.name || 'Nome não disponível',
+            patientName:
+              (appointment as any).patients?.name || 'Nome não disponível',
             lastAccessed: new Date(appointment.appointment_date),
             accessCount: 1,
-            context: 'appointment'
+            context: 'appointment',
           });
         }
       });
@@ -412,7 +437,9 @@ export class SystemIntegrationManager {
       );
 
       if (!hasPermission) {
-        throw new Error('Acesso negado: sem permissão para histórico de comunicação');
+        throw new Error(
+          'Acesso negado: sem permissão para histórico de comunicação'
+        );
       }
 
       // This would integrate with communication systems
@@ -423,14 +450,15 @@ export class SystemIntegrationManager {
         .eq('patient_id', patientId)
         .order('appointment_date', { ascending: false });
 
-      const communicationHistory = appointments?.map(appointment => ({
-        id: appointment.id,
-        type: 'appointment',
-        date: appointment.appointment_date,
-        subject: `Consulta - ${appointment.service_type}`,
-        status: appointment.status,
-        notes: appointment.notes
-      })) || [];
+      const communicationHistory =
+        appointments?.map((appointment) => ({
+          id: appointment.id,
+          type: 'appointment',
+          date: appointment.appointment_date,
+          subject: `Consulta - ${appointment.service_type}`,
+          status: appointment.status,
+          notes: appointment.notes,
+        })) || [];
 
       return communicationHistory;
     } catch (error) {
@@ -442,38 +470,47 @@ export class SystemIntegrationManager {
   /**
    * Helper methods
    */
-  private getLastActivity(appointments: Appointment[], treatments: Treatment[]): Date {
+  private getLastActivity(
+    appointments: Appointment[],
+    treatments: Treatment[]
+  ): Date {
     const allDates = [
-      ...appointments.map(a => new Date(a.appointment_date)),
-      ...treatments.map(t => new Date(t.created_at))
+      ...appointments.map((a) => new Date(a.appointment_date)),
+      ...treatments.map((t) => new Date(t.created_at)),
     ];
 
-    return allDates.length > 0 
-      ? new Date(Math.max(...allDates.map(d => d.getTime())))
+    return allDates.length > 0
+      ? new Date(Math.max(...allDates.map((d) => d.getTime())))
       : new Date();
   }
 
-  private calculateLoyaltyScore(appointments: Appointment[], treatments: Treatment[]): number {
+  private calculateLoyaltyScore(
+    appointments: Appointment[],
+    treatments: Treatment[]
+  ): number {
     const appointmentCount = appointments.length;
     const treatmentCount = treatments.length;
-    const completedAppointments = appointments.filter(a => a.status === 'completed').length;
-    
+    const completedAppointments = appointments.filter(
+      (a) => a.status === 'completed'
+    ).length;
+
     // Simple loyalty calculation
     const baseScore = Math.min(appointmentCount * 10, 100);
-    const completionBonus = (completedAppointments / Math.max(appointmentCount, 1)) * 20;
+    const completionBonus =
+      (completedAppointments / Math.max(appointmentCount, 1)) * 20;
     const treatmentBonus = Math.min(treatmentCount * 5, 30);
-    
+
     return Math.round(baseScore + completionBonus + treatmentBonus);
   }
 
   private calculateRelevanceScore(query: string, text: string): number {
     const queryLower = query.toLowerCase();
     const textLower = text.toLowerCase();
-    
+
     if (textLower === queryLower) return 100;
     if (textLower.startsWith(queryLower)) return 90;
     if (textLower.includes(queryLower)) return 70;
-    
+
     // Fuzzy matching could be implemented here
     return 50;
   }

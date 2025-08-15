@@ -1,13 +1,13 @@
 // Hook for managing conflict override permissions and workflows
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { createClient } from '@/app/utils/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
-export type OverrideReason = 
+export type OverrideReason =
   | 'emergency_appointment'
-  | 'patient_preference' 
+  | 'patient_preference'
   | 'medical_priority'
   | 'schedule_optimization'
   | 'special_circumstances'
@@ -47,15 +47,21 @@ export type OverridePermission = {
 
 export function useConflictOverride() {
   const [loading, setLoading] = useState(false);
-  const [overrideRequests, setOverrideRequests] = useState<OverrideRequest[]>([]);
-  const [userPermissions, setUserPermissions] = useState<OverridePermission | null>(null);
+  const [overrideRequests, setOverrideRequests] = useState<OverrideRequest[]>(
+    []
+  );
+  const [userPermissions, setUserPermissions] =
+    useState<OverridePermission | null>(null);
   const { toast } = useToast();
   const supabase = createClient();
 
   // Check user permissions for override system
   const checkOverridePermissions = useCallback(async () => {
     try {
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
       if (userError || !user) throw userError;
 
       const { data: profile, error: profileError } = await supabase
@@ -68,255 +74,308 @@ export function useConflictOverride() {
 
       // Define permissions based on role (following RBAC patterns from research)
       const permissions: Record<string, OverridePermission> = {
-        'clinic_manager': {
+        clinic_manager: {
           can_override_conflicts: true,
           can_approve_overrides: true,
           max_override_impact_minutes: 480, // 8 hours
           requires_approval: false,
-          role: 'clinic_manager'
+          role: 'clinic_manager',
         },
-        'supervisor': {
+        supervisor: {
           can_override_conflicts: true,
           can_approve_overrides: true,
           max_override_impact_minutes: 240, // 4 hours
           requires_approval: false,
-          role: 'supervisor'
+          role: 'supervisor',
         },
-        'receptionist': {
+        receptionist: {
           can_override_conflicts: true,
           can_approve_overrides: false,
           max_override_impact_minutes: 60, // 1 hour
           requires_approval: true,
-          role: 'receptionist'
+          role: 'receptionist',
         },
-        'staff': {
+        staff: {
           can_override_conflicts: false,
           can_approve_overrides: false,
           max_override_impact_minutes: 0,
           requires_approval: true,
-          role: 'staff'
-        }
+          role: 'staff',
+        },
       };
 
-      const userPermission = permissions[profile.role] || permissions['staff'];
+      const userPermission = permissions[profile.role] || permissions.staff;
       setUserPermissions(userPermission);
-      
+
       return userPermission;
     } catch (error) {
       console.error('Error checking override permissions:', error);
       toast({
         variant: 'destructive',
         title: 'Erro de Permissões',
-        description: 'Não foi possível verificar suas permissões de override.'
+        description: 'Não foi possível verificar suas permissões de override.',
       });
       return null;
     }
   }, [supabase, toast]);
 
   // Request conflict override (following healthcare audit trail requirements)
-  const requestConflictOverride = useCallback(async (overrideData: Omit<OverrideRequest, 'id' | 'created_at' | 'status'>) => {
-    setLoading(true);
-    try {
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
-      if (userError || !user) throw userError;
+  const requestConflictOverride = useCallback(
+    async (
+      overrideData: Omit<OverrideRequest, 'id' | 'created_at' | 'status'>
+    ) => {
+      setLoading(true);
+      try {
+        const {
+          data: { user },
+          error: userError,
+        } = await supabase.auth.getUser();
+        if (userError || !user) throw userError;
 
-      const permissions = await checkOverridePermissions();
-      if (!permissions?.can_override_conflicts) {
-        throw new Error('Você não tem permissão para solicitar override de conflitos');
+        const permissions = await checkOverridePermissions();
+        if (!permissions?.can_override_conflicts) {
+          throw new Error(
+            'Você não tem permissão para solicitar override de conflitos'
+          );
+        }
+
+        // Check if override impact exceeds user limits
+        if (
+          overrideData.impact_assessment.estimated_delay_minutes >
+          permissions.max_override_impact_minutes
+        ) {
+          throw new Error(
+            `Impacto excede limite permitido: ${permissions.max_override_impact_minutes} minutos`
+          );
+        }
+
+        const overrideRequest: Omit<OverrideRequest, 'id'> = {
+          ...overrideData,
+          requested_by: user.id,
+          status: permissions.requires_approval ? 'pending' : 'approved',
+          approved_by: permissions.requires_approval ? undefined : user.id,
+          created_at: new Date().toISOString(),
+          approved_at: permissions.requires_approval
+            ? undefined
+            : new Date().toISOString(),
+        };
+
+        // Insert override request with comprehensive audit trail
+        const { data: savedRequest, error: insertError } = await supabase
+          .from('appointment_override_requests')
+          .insert([overrideRequest])
+          .select('*')
+          .single();
+
+        if (insertError) throw insertError;
+
+        // Log the override action for HIPAA compliance
+        await supabase.from('audit_logs').insert([
+          {
+            user_id: user.id,
+            action: 'REQUEST_CONFLICT_OVERRIDE',
+            resource_type: 'appointment_override',
+            resource_id: savedRequest.id,
+            details: {
+              appointment_id: overrideData.appointment_id,
+              conflict_type: overrideData.conflict_type,
+              reason: overrideData.override_reason,
+              impact_minutes:
+                overrideData.impact_assessment.estimated_delay_minutes,
+              requires_approval: permissions.requires_approval,
+            },
+            ip_address: '', // Should be captured from request in production
+            user_agent: navigator.userAgent,
+          },
+        ]);
+
+        toast({
+          title: permissions.requires_approval
+            ? 'Override Solicitado'
+            : 'Override Aprovado',
+          description: permissions.requires_approval
+            ? 'Sua solicitação foi enviada para aprovação.'
+            : 'Override foi aplicado automaticamente.',
+        });
+
+        // If auto-approved, process the override immediately
+        if (!permissions.requires_approval) {
+          await processApprovedOverride(savedRequest as OverrideRequest);
+        }
+
+        setOverrideRequests((prev) => [
+          ...prev,
+          savedRequest as OverrideRequest,
+        ]);
+        return savedRequest as OverrideRequest;
+      } catch (error: any) {
+        console.error('Error requesting conflict override:', error);
+        toast({
+          variant: 'destructive',
+          title: 'Erro no Override',
+          description:
+            error.message || 'Não foi possível solicitar o override.',
+        });
+        throw error;
+      } finally {
+        setLoading(false);
       }
-
-      // Check if override impact exceeds user limits
-      if (overrideData.impact_assessment.estimated_delay_minutes > permissions.max_override_impact_minutes) {
-        throw new Error(`Impacto excede limite permitido: ${permissions.max_override_impact_minutes} minutos`);
-      }
-
-      const overrideRequest: Omit<OverrideRequest, 'id'> = {
-        ...overrideData,
-        requested_by: user.id,
-        status: permissions.requires_approval ? 'pending' : 'approved',
-        approved_by: permissions.requires_approval ? undefined : user.id,
-        created_at: new Date().toISOString(),
-        approved_at: permissions.requires_approval ? undefined : new Date().toISOString()
-      };
-
-      // Insert override request with comprehensive audit trail
-      const { data: savedRequest, error: insertError } = await supabase
-        .from('appointment_override_requests')
-        .insert([overrideRequest])
-        .select('*')
-        .single();
-
-      if (insertError) throw insertError;
-
-      // Log the override action for HIPAA compliance
-      await supabase.from('audit_logs').insert([{
-        user_id: user.id,
-        action: 'REQUEST_CONFLICT_OVERRIDE',
-        resource_type: 'appointment_override',
-        resource_id: savedRequest.id,
-        details: {
-          appointment_id: overrideData.appointment_id,
-          conflict_type: overrideData.conflict_type,
-          reason: overrideData.override_reason,
-          impact_minutes: overrideData.impact_assessment.estimated_delay_minutes,
-          requires_approval: permissions.requires_approval
-        },
-        ip_address: '', // Should be captured from request in production
-        user_agent: navigator.userAgent
-      }]);
-
-      toast({
-        title: permissions.requires_approval ? 'Override Solicitado' : 'Override Aprovado',
-        description: permissions.requires_approval 
-          ? 'Sua solicitação foi enviada para aprovação.'
-          : 'Override foi aplicado automaticamente.',
-      });
-
-      // If auto-approved, process the override immediately
-      if (!permissions.requires_approval) {
-        await processApprovedOverride(savedRequest as OverrideRequest);
-      }
-
-      setOverrideRequests(prev => [...prev, savedRequest as OverrideRequest]);
-      return savedRequest as OverrideRequest;
-
-    } catch (error: any) {
-      console.error('Error requesting conflict override:', error);
-      toast({
-        variant: 'destructive',
-        title: 'Erro no Override',
-        description: error.message || 'Não foi possível solicitar o override.'
-      });
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  }, [supabase, toast, checkOverridePermissions]);
+    },
+    [supabase, toast, checkOverridePermissions]
+  );
 
   // Approve or reject override request (manager approval workflow)
-  const processOverrideRequest = useCallback(async (
-    requestId: string, 
-    action: 'approve' | 'reject',
-    approvalNotes?: string
-  ) => {
-    setLoading(true);
-    try {
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
-      if (userError || !user) throw userError;
+  const processOverrideRequest = useCallback(
+    async (
+      requestId: string,
+      action: 'approve' | 'reject',
+      approvalNotes?: string
+    ) => {
+      setLoading(true);
+      try {
+        const {
+          data: { user },
+          error: userError,
+        } = await supabase.auth.getUser();
+        if (userError || !user) throw userError;
 
-      const permissions = await checkOverridePermissions();
-      if (!permissions?.can_approve_overrides) {
-        throw new Error('Você não tem permissão para aprovar overrides');
+        const permissions = await checkOverridePermissions();
+        if (!permissions?.can_approve_overrides) {
+          throw new Error('Você não tem permissão para aprovar overrides');
+        }
+
+        // Update override request status
+        const { data: updatedRequest, error: updateError } = await supabase
+          .from('appointment_override_requests')
+          .update({
+            status: action === 'approve' ? 'approved' : 'rejected',
+            approved_by: user.id,
+            approved_at: new Date().toISOString(),
+            approval_notes: approvalNotes,
+          })
+          .eq('id', requestId)
+          .select('*')
+          .single();
+
+        if (updateError) throw updateError;
+
+        // Log the approval/rejection action
+        await supabase.from('audit_logs').insert([
+          {
+            user_id: user.id,
+            action:
+              action === 'approve'
+                ? 'APPROVE_CONFLICT_OVERRIDE'
+                : 'REJECT_CONFLICT_OVERRIDE',
+            resource_type: 'appointment_override',
+            resource_id: requestId,
+            details: {
+              original_requester: updatedRequest.requested_by,
+              approval_notes: approvalNotes,
+              impact_assessment: updatedRequest.impact_assessment,
+            },
+            ip_address: '',
+            user_agent: navigator.userAgent,
+          },
+        ]);
+
+        // If approved, process the override and send notifications
+        if (action === 'approve') {
+          await processApprovedOverride(updatedRequest as OverrideRequest);
+        }
+
+        // Update local state
+        setOverrideRequests((prev) =>
+          prev.map((req) =>
+            req.id === requestId ? (updatedRequest as OverrideRequest) : req
+          )
+        );
+
+        toast({
+          title:
+            action === 'approve' ? 'Override Aprovado' : 'Override Rejeitado',
+          description:
+            action === 'approve'
+              ? 'Override foi processado e notificações enviadas.'
+              : 'Override foi rejeitado conforme solicitado.',
+        });
+
+        return updatedRequest as OverrideRequest;
+      } catch (error: any) {
+        console.error('Error processing override request:', error);
+        toast({
+          variant: 'destructive',
+          title: 'Erro no Processamento',
+          description:
+            error.message || 'Não foi possível processar a solicitação.',
+        });
+        throw error;
+      } finally {
+        setLoading(false);
       }
-
-      // Update override request status
-      const { data: updatedRequest, error: updateError } = await supabase
-        .from('appointment_override_requests')
-        .update({
-          status: action === 'approve' ? 'approved' : 'rejected',
-          approved_by: user.id,
-          approved_at: new Date().toISOString(),
-          approval_notes: approvalNotes
-        })
-        .eq('id', requestId)
-        .select('*')
-        .single();
-
-      if (updateError) throw updateError;
-
-      // Log the approval/rejection action
-      await supabase.from('audit_logs').insert([{
-        user_id: user.id,
-        action: action === 'approve' ? 'APPROVE_CONFLICT_OVERRIDE' : 'REJECT_CONFLICT_OVERRIDE',
-        resource_type: 'appointment_override',
-        resource_id: requestId,
-        details: {
-          original_requester: updatedRequest.requested_by,
-          approval_notes: approvalNotes,
-          impact_assessment: updatedRequest.impact_assessment
-        },
-        ip_address: '',
-        user_agent: navigator.userAgent
-      }]);
-
-      // If approved, process the override and send notifications
-      if (action === 'approve') {
-        await processApprovedOverride(updatedRequest as OverrideRequest);
-      }
-
-      // Update local state
-      setOverrideRequests(prev => 
-        prev.map(req => req.id === requestId ? updatedRequest as OverrideRequest : req)
-      );
-
-      toast({
-        title: action === 'approve' ? 'Override Aprovado' : 'Override Rejeitado',
-        description: action === 'approve' 
-          ? 'Override foi processado e notificações enviadas.'
-          : 'Override foi rejeitado conforme solicitado.',
-      });
-
-      return updatedRequest as OverrideRequest;
-
-    } catch (error: any) {
-      console.error('Error processing override request:', error);
-      toast({
-        variant: 'destructive',
-        title: 'Erro no Processamento',
-        description: error.message || 'Não foi possível processar a solicitação.'
-      });
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  }, [supabase, toast, checkOverridePermissions]);
+    },
+    [supabase, toast, checkOverridePermissions]
+  );
 
   // Process approved override (send notifications to affected parties)
-  const processApprovedOverride = useCallback(async (overrideRequest: OverrideRequest) => {
-    try {
-      // Send notifications to affected patients/staff
-      const notificationPromises = overrideRequest.impact_assessment.affected_appointments.map(async (appointment) => {
-        // This would integrate with your notification system
-        // For now, we'll just log the notification requirement
-        await supabase.from('notification_queue').insert([{
-          recipient_type: 'patient',
-          appointment_id: appointment.id,
-          notification_type: 'schedule_change_override',
-          message: `Seu agendamento foi reagendado devido a uma situação prioritária. Detalhes serão enviados em breve.`,
-          scheduled_for: new Date().toISOString(),
-          metadata: {
-            override_request_id: overrideRequest.id,
-            original_time: appointment.original_time,
-            reason: overrideRequest.override_reason_text
-          }
-        }]);
+  const processApprovedOverride = useCallback(
+    async (overrideRequest: OverrideRequest) => {
+      try {
+        // Send notifications to affected patients/staff
+        const notificationPromises =
+          overrideRequest.impact_assessment.affected_appointments.map(
+            async (appointment) => {
+              // This would integrate with your notification system
+              // For now, we'll just log the notification requirement
+              await supabase.from('notification_queue').insert([
+                {
+                  recipient_type: 'patient',
+                  appointment_id: appointment.id,
+                  notification_type: 'schedule_change_override',
+                  message:
+                    'Seu agendamento foi reagendado devido a uma situação prioritária. Detalhes serão enviados em breve.',
+                  scheduled_for: new Date().toISOString(),
+                  metadata: {
+                    override_request_id: overrideRequest.id,
+                    original_time: appointment.original_time,
+                    reason: overrideRequest.override_reason_text,
+                  },
+                },
+              ]);
 
-        return appointment.id;
-      });
+              return appointment.id;
+            }
+          );
 
-      await Promise.all(notificationPromises);
+        await Promise.all(notificationPromises);
 
-      // Log the notification dispatch
-      const { data: { user } } = await supabase.auth.getUser();
-      await supabase.from('audit_logs').insert([{
-        user_id: user?.id || 'system',
-        action: 'DISPATCH_OVERRIDE_NOTIFICATIONS',
-        resource_type: 'appointment_override',
-        resource_id: overrideRequest.id,
-        details: {
-          affected_appointments_count: overrideRequest.impact_assessment.affected_appointments.length,
-          notification_method: 'automated_queue'
-        },
-        ip_address: '',
-        user_agent: navigator.userAgent
-      }]);
-
-    } catch (error) {
-      console.error('Error processing approved override:', error);
-      // Don't throw here - the override was already approved
-      // Just log the notification failure
-    }
-  }, [supabase]);
+        // Log the notification dispatch
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        await supabase.from('audit_logs').insert([
+          {
+            user_id: user?.id || 'system',
+            action: 'DISPATCH_OVERRIDE_NOTIFICATIONS',
+            resource_type: 'appointment_override',
+            resource_id: overrideRequest.id,
+            details: {
+              affected_appointments_count:
+                overrideRequest.impact_assessment.affected_appointments.length,
+              notification_method: 'automated_queue',
+            },
+            ip_address: '',
+            user_agent: navigator.userAgent,
+          },
+        ]);
+      } catch (error) {
+        console.error('Error processing approved override:', error);
+        // Don't throw here - the override was already approved
+        // Just log the notification failure
+      }
+    },
+    [supabase]
+  );
 
   // Load pending override requests for managers
   const loadPendingOverrides = useCallback(async () => {
@@ -338,7 +397,6 @@ export function useConflictOverride() {
 
       setOverrideRequests(requests as OverrideRequest[]);
       return requests as OverrideRequest[];
-
     } catch (error) {
       console.error('Error loading pending overrides:', error);
       return [];
@@ -355,6 +413,6 @@ export function useConflictOverride() {
     requestConflictOverride,
     processOverrideRequest,
     loadPendingOverrides,
-    checkOverridePermissions
+    checkOverridePermissions,
   };
 }

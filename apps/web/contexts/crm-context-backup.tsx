@@ -1,6 +1,7 @@
-"use client";
+'use client';
 
-import React, { createContext, ReactNode, useContext, useReducer } from "react";
+import type React from 'react';
+import { createContext, type ReactNode, useContext, useReducer } from 'react';
 
 // Types
 export interface Customer {
@@ -16,10 +17,10 @@ export interface Customer {
   last_treatment?: string;
   last_visit?: string;
   total_visits: number;
-  preferred_contact_method: "email" | "phone" | "whatsapp" | "sms";
+  preferred_contact_method: 'email' | 'phone' | 'whatsapp' | 'sms';
   notes?: string;
   tags: string[];
-  status: "active" | "inactive" | "vip" | "blocked";
+  status: 'active' | 'inactive' | 'vip' | 'blocked';
   created_at: string;
   updated_at: string;
 }
@@ -41,8 +42,8 @@ export interface MarketingCampaign {
   id: string;
   name: string;
   description?: string;
-  type: "email" | "sms" | "whatsapp" | "push";
-  status: "draft" | "scheduled" | "sending" | "sent" | "paused" | "cancelled";
+  type: 'email' | 'sms' | 'whatsapp' | 'push';
+  status: 'draft' | 'scheduled' | 'sending' | 'sent' | 'paused' | 'cancelled';
   target_segment_id?: string;
   target_all_customers: boolean;
   subject?: string;
@@ -82,30 +83,30 @@ interface CRMState {
 // Actions
 type CRMAction =
   | {
-      type: "SET_LOADING";
-      payload: { key: keyof CRMState["loading"]; value: boolean };
+      type: 'SET_LOADING';
+      payload: { key: keyof CRMState['loading']; value: boolean };
     }
   | {
-      type: "SET_ERROR";
-      payload: { key: keyof CRMState["errors"]; value?: string };
+      type: 'SET_ERROR';
+      payload: { key: keyof CRMState['errors']; value?: string };
     }
-  | { type: "SET_CUSTOMERS"; payload: Customer[] }
-  | { type: "ADD_CUSTOMER"; payload: Customer }
-  | { type: "UPDATE_CUSTOMER"; payload: Customer }
-  | { type: "DELETE_CUSTOMER"; payload: string }
-  | { type: "SET_SEGMENTS"; payload: CustomerSegment[] }
-  | { type: "ADD_SEGMENT"; payload: CustomerSegment }
-  | { type: "UPDATE_SEGMENT"; payload: CustomerSegment }
-  | { type: "DELETE_SEGMENT"; payload: string }
-  | { type: "SET_CAMPAIGNS"; payload: MarketingCampaign[] }
-  | { type: "ADD_CAMPAIGN"; payload: MarketingCampaign }
-  | { type: "UPDATE_CAMPAIGN"; payload: MarketingCampaign }
-  | { type: "DELETE_CAMPAIGN"; payload: string }
+  | { type: 'SET_CUSTOMERS'; payload: Customer[] }
+  | { type: 'ADD_CUSTOMER'; payload: Customer }
+  | { type: 'UPDATE_CUSTOMER'; payload: Customer }
+  | { type: 'DELETE_CUSTOMER'; payload: string }
+  | { type: 'SET_SEGMENTS'; payload: CustomerSegment[] }
+  | { type: 'ADD_SEGMENT'; payload: CustomerSegment }
+  | { type: 'UPDATE_SEGMENT'; payload: CustomerSegment }
+  | { type: 'DELETE_SEGMENT'; payload: string }
+  | { type: 'SET_CAMPAIGNS'; payload: MarketingCampaign[] }
+  | { type: 'ADD_CAMPAIGN'; payload: MarketingCampaign }
+  | { type: 'UPDATE_CAMPAIGN'; payload: MarketingCampaign }
+  | { type: 'DELETE_CAMPAIGN'; payload: string }
   | {
-      type: "SET_FILTER";
-      payload: { key: keyof CRMState["filters"]; value: string };
+      type: 'SET_FILTER';
+      payload: { key: keyof CRMState['filters']; value: string };
     }
-  | { type: "RESET_FILTERS" };
+  | { type: 'RESET_FILTERS' };
 
 // Initial state
 const initialState: CRMState = {
@@ -119,16 +120,16 @@ const initialState: CRMState = {
   },
   errors: {},
   filters: {
-    customer_search: "",
-    customer_status: "",
-    customer_segment: "",
+    customer_search: '',
+    customer_status: '',
+    customer_segment: '',
   },
 };
 
 // Reducer
 function crmReducer(state: CRMState, action: CRMAction): CRMState {
   switch (action.type) {
-    case "SET_LOADING":
+    case 'SET_LOADING':
       return {
         ...state,
         loading: {
@@ -137,7 +138,7 @@ function crmReducer(state: CRMState, action: CRMAction): CRMState {
         },
       };
 
-    case "SET_ERROR":
+    case 'SET_ERROR':
       return {
         ...state,
         errors: {
@@ -146,13 +147,13 @@ function crmReducer(state: CRMState, action: CRMAction): CRMState {
         },
       };
 
-    case "SET_CUSTOMERS":
+    case 'SET_CUSTOMERS':
       return { ...state, customers: action.payload };
 
-    case "ADD_CUSTOMER":
+    case 'ADD_CUSTOMER':
       return { ...state, customers: [...state.customers, action.payload] };
 
-    case "UPDATE_CUSTOMER":
+    case 'UPDATE_CUSTOMER':
       return {
         ...state,
         customers: state.customers.map((customer) =>
@@ -160,7 +161,7 @@ function crmReducer(state: CRMState, action: CRMAction): CRMState {
         ),
       };
 
-    case "DELETE_CUSTOMER":
+    case 'DELETE_CUSTOMER':
       return {
         ...state,
         customers: state.customers.filter(
@@ -168,13 +169,13 @@ function crmReducer(state: CRMState, action: CRMAction): CRMState {
         ),
       };
 
-    case "SET_SEGMENTS":
+    case 'SET_SEGMENTS':
       return { ...state, segments: action.payload };
 
-    case "ADD_SEGMENT":
+    case 'ADD_SEGMENT':
       return { ...state, segments: [...state.segments, action.payload] };
 
-    case "UPDATE_SEGMENT":
+    case 'UPDATE_SEGMENT':
       return {
         ...state,
         segments: state.segments.map((segment) =>
@@ -182,7 +183,7 @@ function crmReducer(state: CRMState, action: CRMAction): CRMState {
         ),
       };
 
-    case "DELETE_SEGMENT":
+    case 'DELETE_SEGMENT':
       return {
         ...state,
         segments: state.segments.filter(
@@ -190,13 +191,13 @@ function crmReducer(state: CRMState, action: CRMAction): CRMState {
         ),
       };
 
-    case "SET_CAMPAIGNS":
+    case 'SET_CAMPAIGNS':
       return { ...state, campaigns: action.payload };
 
-    case "ADD_CAMPAIGN":
+    case 'ADD_CAMPAIGN':
       return { ...state, campaigns: [...state.campaigns, action.payload] };
 
-    case "UPDATE_CAMPAIGN":
+    case 'UPDATE_CAMPAIGN':
       return {
         ...state,
         campaigns: state.campaigns.map((campaign) =>
@@ -204,7 +205,7 @@ function crmReducer(state: CRMState, action: CRMAction): CRMState {
         ),
       };
 
-    case "DELETE_CAMPAIGN":
+    case 'DELETE_CAMPAIGN':
       return {
         ...state,
         campaigns: state.campaigns.filter(
@@ -212,7 +213,7 @@ function crmReducer(state: CRMState, action: CRMAction): CRMState {
         ),
       };
 
-    case "SET_FILTER":
+    case 'SET_FILTER':
       return {
         ...state,
         filters: {
@@ -221,7 +222,7 @@ function crmReducer(state: CRMState, action: CRMAction): CRMState {
         },
       };
 
-    case "RESET_FILTERS":
+    case 'RESET_FILTERS':
       return {
         ...state,
         filters: initialState.filters,
@@ -237,9 +238,9 @@ interface CRMContextType {
   state: CRMState;
   dispatch: React.Dispatch<CRMAction>;
   // Helper functions
-  setLoading: (key: keyof CRMState["loading"], value: boolean) => void;
-  setError: (key: keyof CRMState["errors"], value?: string) => void;
-  setFilter: (key: keyof CRMState["filters"], value: string) => void;
+  setLoading: (key: keyof CRMState['loading'], value: boolean) => void;
+  setError: (key: keyof CRMState['errors'], value?: string) => void;
+  setFilter: (key: keyof CRMState['filters'], value: string) => void;
   resetFilters: () => void;
   // Computed values
   filteredCustomers: Customer[];
@@ -260,20 +261,20 @@ export function CRMProvider({ children }: CRMProviderProps) {
   const [state, dispatch] = useReducer(crmReducer, initialState);
 
   // Helper functions
-  const setLoading = (key: keyof CRMState["loading"], value: boolean) => {
-    dispatch({ type: "SET_LOADING", payload: { key, value } });
+  const setLoading = (key: keyof CRMState['loading'], value: boolean) => {
+    dispatch({ type: 'SET_LOADING', payload: { key, value } });
   };
 
-  const setError = (key: keyof CRMState["errors"], value?: string) => {
-    dispatch({ type: "SET_ERROR", payload: { key, value } });
+  const setError = (key: keyof CRMState['errors'], value?: string) => {
+    dispatch({ type: 'SET_ERROR', payload: { key, value } });
   };
 
-  const setFilter = (key: keyof CRMState["filters"], value: string) => {
-    dispatch({ type: "SET_FILTER", payload: { key, value } });
+  const setFilter = (key: keyof CRMState['filters'], value: string) => {
+    dispatch({ type: 'SET_FILTER', payload: { key, value } });
   };
 
   const resetFilters = () => {
-    dispatch({ type: "RESET_FILTERS" });
+    dispatch({ type: 'RESET_FILTERS' });
   };
 
   // Computed values
@@ -296,9 +297,9 @@ export function CRMProvider({ children }: CRMProviderProps) {
 
   const totalCustomers = state.customers.length;
   const activeCustomers = state.customers.filter(
-    (c) => c.status === "active"
+    (c) => c.status === 'active'
   ).length;
-  const vipCustomers = state.customers.filter((c) => c.status === "vip").length;
+  const vipCustomers = state.customers.filter((c) => c.status === 'vip').length;
 
   const contextValue: CRMContextType = {
     state,
@@ -322,7 +323,7 @@ export function CRMProvider({ children }: CRMProviderProps) {
 export function useCRM(): CRMContextType {
   const context = useContext(CRMContext);
   if (!context) {
-    throw new Error("useCRM must be used within a CRMProvider");
+    throw new Error('useCRM must be used within a CRMProvider');
   }
   return context;
 }

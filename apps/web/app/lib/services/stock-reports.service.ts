@@ -3,12 +3,12 @@
  * Serviço para gerenciamento de relatórios de estoque
  */
 
-import {
-    CreateCustomReport,
-    CustomStockReport,
-    ReportFilters,
-    ReportType,
-    StockPerformanceMetrics
+import type {
+  CreateCustomReport,
+  CustomStockReport,
+  ReportFilters,
+  ReportType,
+  StockPerformanceMetrics,
 } from '@/app/lib/types/stock-alerts';
 import { createClient } from '@/app/utils/supabase/server';
 
@@ -33,7 +33,7 @@ export class StockReportsService {
           ...data,
           user_id,
           created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .select()
         .single();
@@ -42,18 +42,24 @@ export class StockReportsService {
       return { success: true, data: report };
     } catch (error) {
       console.error('Error creating custom report:', error);
-      return { success: false, error: String((error as Error)?.message || error) };
+      return {
+        success: false,
+        error: String((error as Error)?.message || error),
+      };
     }
   }
 
   /**
    * Listar relatórios da clínica
    */
-  async getClinicReports(clinic_id: string, filters?: {
-    type?: ReportType;
-    user_id?: string;
-    active_only?: boolean;
-  }) {
+  async getClinicReports(
+    clinic_id: string,
+    filters?: {
+      type?: ReportType;
+      user_id?: string;
+      active_only?: boolean;
+    }
+  ) {
     try {
       const supabase = await this.getSupabase();
       let query = supabase
@@ -80,7 +86,10 @@ export class StockReportsService {
       return { success: true, data };
     } catch (error) {
       console.error('Error fetching clinic reports:', error);
-      return { success: false, error: String((error as Error)?.message || error) };
+      return {
+        success: false,
+        error: String((error as Error)?.message || error),
+      };
     }
   }
 
@@ -94,7 +103,7 @@ export class StockReportsService {
         .from('stock_report_configs')
         .update({
           ...updates,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', id)
         .select()
@@ -104,7 +113,10 @@ export class StockReportsService {
       return { success: true, data };
     } catch (error) {
       console.error('Error updating report config:', error);
-      return { success: false, error: String((error as Error)?.message || error) };
+      return {
+        success: false,
+        error: String((error as Error)?.message || error),
+      };
     }
   }
 
@@ -123,7 +135,10 @@ export class StockReportsService {
       return { success: true };
     } catch (error) {
       console.error('Error deleting report config:', error);
-      return { success: false, error: String((error as Error)?.message || error) };
+      return {
+        success: false,
+        error: String((error as Error)?.message || error),
+      };
     }
   }
 
@@ -137,7 +152,7 @@ export class StockReportsService {
   async generateConsumptionReport(clinic_id: string, filters: ReportFilters) {
     try {
       const supabase = await this.getSupabase();
-      
+
       // Consultar dados de consumo baseado no material_usage
       let query = supabase
         .from('material_usage')
@@ -166,59 +181,69 @@ export class StockReportsService {
       const reportData = {
         title: 'Relatório de Consumo de Materiais',
         generated_at: new Date().toISOString(),
-        period: filters.dateRange ? {
-          start: filters.dateRange.start.toISOString(),
-          end: filters.dateRange.end.toISOString()
-        } : null,
+        period: filters.dateRange
+          ? {
+              start: filters.dateRange.start.toISOString(),
+              end: filters.dateRange.end.toISOString(),
+            }
+          : null,
         total_items: usageData?.length || 0,
         total_cost: this.calculateTotalCost(usageData || []),
         by_category: this.groupByCategory(usageData || []),
         by_user: this.groupByUser(usageData || []),
         by_date: this.groupByDate(usageData || []),
         top_consumed: this.getTopConsumed(usageData || []),
-        data: usageData
+        data: usageData,
       };
 
       return { success: true, data: reportData };
     } catch (error) {
       console.error('Error generating consumption report:', error);
-      return { success: false, error: String((error as Error)?.message || error) };
+      return {
+        success: false,
+        error: String((error as Error)?.message || error),
+      };
     }
   }
 
   /**
    * Gerar relatório de valorização
    */
-  async generateValuationReport(clinic_id: string, filters: ReportFilters) {
+  async generateValuationReport(_clinic_id: string, filters: ReportFilters) {
     try {
       // Simulação de relatório de valorização
       // Em uma implementação real, isso calcularia o valor atual do estoque
-      
+
       const reportData = {
         title: 'Relatório de Valorização de Estoque',
         generated_at: new Date().toISOString(),
-        period: filters.dateRange ? {
-          start: filters.dateRange.start.toISOString(),
-          end: filters.dateRange.end.toISOString()
-        } : null,
-        total_value: 50000, // Simulação
+        period: filters.dateRange
+          ? {
+              start: filters.dateRange.start.toISOString(),
+              end: filters.dateRange.end.toISOString(),
+            }
+          : null,
+        total_value: 50_000, // Simulação
         categories: [
-          { name: 'Medicamentos', value: 25000, percentage: 50 },
-          { name: 'Materiais', value: 15000, percentage: 30 },
-          { name: 'Equipamentos', value: 10000, percentage: 20 }
+          { name: 'Medicamentos', value: 25_000, percentage: 50 },
+          { name: 'Materiais', value: 15_000, percentage: 30 },
+          { name: 'Equipamentos', value: 10_000, percentage: 20 },
         ],
         trend: {
-          current_month: 50000,
-          previous_month: 48000,
+          current_month: 50_000,
+          previous_month: 48_000,
           variation: 4.17,
-          trend: 'up'
-        }
+          trend: 'up',
+        },
       };
 
       return { success: true, data: reportData };
     } catch (error) {
       console.error('Error generating valuation report:', error);
-      return { success: false, error: String((error as Error)?.message || error) };
+      return {
+        success: false,
+        error: String((error as Error)?.message || error),
+      };
     }
   }
 
@@ -228,7 +253,7 @@ export class StockReportsService {
   async generateMovementReport(clinic_id: string, filters: ReportFilters) {
     try {
       const supabase = await this.getSupabase();
-      
+
       // Consultar movimentações
       let query = supabase
         .from('material_usage')
@@ -247,35 +272,40 @@ export class StockReportsService {
       const reportData = {
         title: 'Relatório de Movimentação de Estoque',
         generated_at: new Date().toISOString(),
-        period: filters.dateRange ? {
-          start: filters.dateRange.start.toISOString(),
-          end: filters.dateRange.end.toISOString()
-        } : null,
+        period: filters.dateRange
+          ? {
+              start: filters.dateRange.start.toISOString(),
+              end: filters.dateRange.end.toISOString(),
+            }
+          : null,
         total_movements: movements?.length || 0,
         by_type: {
           outbound: movements?.length || 0, // Todas são saídas no material_usage
-          inbound: 0 // Não temos entradas registradas ainda
+          inbound: 0, // Não temos entradas registradas ainda
         },
         by_category: this.groupByCategory(movements || []),
         daily_movement: this.groupByDate(movements || []),
-        data: movements
+        data: movements,
       };
 
       return { success: true, data: reportData };
     } catch (error) {
       console.error('Error generating movement report:', error);
-      return { success: false, error: String((error as Error)?.message || error) };
+      return {
+        success: false,
+        error: String((error as Error)?.message || error),
+      };
     }
   }
 
   /**
    * Gerar relatório de vencimentos
    */
-  async generateExpirationReport(clinic_id: string, filters: ReportFilters) {
+  async generateExpirationReport(_clinic_id: string, _filters: ReportFilters) {
     try {
       // Simulação de relatório de vencimentos
       // Em uma implementação real, isso consultaria produtos com datas de vencimento
-      
+
       const today = new Date();
       const next30Days = new Date();
       next30Days.setDate(today.getDate() + 30);
@@ -290,24 +320,49 @@ export class StockReportsService {
             count: 2,
             total_value: 500,
             items: [
-              { name: 'Medicamento A', expiry_date: '2024-12-01', quantity: 5, value: 250 },
-              { name: 'Material B', expiry_date: '2024-11-15', quantity: 3, value: 250 }
-            ]
+              {
+                name: 'Medicamento A',
+                expiry_date: '2024-12-01',
+                quantity: 5,
+                value: 250,
+              },
+              {
+                name: 'Material B',
+                expiry_date: '2024-11-15',
+                quantity: 3,
+                value: 250,
+              },
+            ],
           },
           expiring_30_days: {
             count: 5,
             total_value: 1500,
             items: [
-              { name: 'Produto C', expiry_date: next30Days.toISOString().split('T')[0], quantity: 10, value: 500 },
-              { name: 'Produto D', expiry_date: next30Days.toISOString().split('T')[0], quantity: 8, value: 400 },
-              { name: 'Produto E', expiry_date: next30Days.toISOString().split('T')[0], quantity: 12, value: 600 }
-            ]
+              {
+                name: 'Produto C',
+                expiry_date: next30Days.toISOString().split('T')[0],
+                quantity: 10,
+                value: 500,
+              },
+              {
+                name: 'Produto D',
+                expiry_date: next30Days.toISOString().split('T')[0],
+                quantity: 8,
+                value: 400,
+              },
+              {
+                name: 'Produto E',
+                expiry_date: next30Days.toISOString().split('T')[0],
+                quantity: 12,
+                value: 600,
+              },
+            ],
           },
           expiring_90_days: {
             count: 8,
             total_value: 3200,
-            items: []
-          }
+            items: [],
+          },
         },
         summary: {
           total_items_at_risk: 15,
@@ -315,15 +370,18 @@ export class StockReportsService {
           recommendations: [
             'Revisar política de compras para produtos com alta rotatividade',
             'Implementar sistema FIFO (First In, First Out)',
-            'Considerar promoções para produtos próximos ao vencimento'
-          ]
-        }
+            'Considerar promoções para produtos próximos ao vencimento',
+          ],
+        },
       };
 
       return { success: true, data: reportData };
     } catch (error) {
       console.error('Error generating expiration report:', error);
-      return { success: false, error: String((error as Error)?.message || error) };
+      return {
+        success: false,
+        error: String((error as Error)?.message || error),
+      };
     }
   }
 
@@ -334,10 +392,13 @@ export class StockReportsService {
   /**
    * Calcular métricas de performance
    */
-  async calculatePerformanceMetrics(clinic_id: string, date: Date = new Date()) {
+  async calculatePerformanceMetrics(
+    clinic_id: string,
+    date: Date = new Date()
+  ) {
     try {
       const supabase = await this.getSupabase();
-      
+
       // Período de análise (último mês)
       const startDate = new Date(date);
       startDate.setMonth(startDate.getMonth() - 1);
@@ -362,7 +423,8 @@ export class StockReportsService {
       // Calcular métricas
       const totalValue = this.calculateTotalCost(usageData || []);
       const activeAlerts = alertsData?.length || 0;
-      const criticalAlerts = alertsData?.filter(a => a.alert_severity === 'critical').length || 0;
+      const criticalAlerts =
+        alertsData?.filter((a) => a.alert_severity === 'critical').length || 0;
 
       const metrics: Omit<StockPerformanceMetrics, 'id' | 'createdAt'> = {
         clinicId: clinic_id,
@@ -377,7 +439,7 @@ export class StockReportsService {
         criticalAlertsCount: criticalAlerts,
         productsCount: this.getUniqueProductsCount(usageData || []),
         outOfStockCount: 0, // Simulação
-        lowStockCount: activeAlerts
+        lowStockCount: activeAlerts,
       };
 
       // Salvar métricas no banco
@@ -385,7 +447,7 @@ export class StockReportsService {
         .from('stock_metrics')
         .insert({
           ...metrics,
-          created_at: new Date().toISOString()
+          created_at: new Date().toISOString(),
         })
         .select()
         .single();
@@ -397,14 +459,17 @@ export class StockReportsService {
       return { success: true, data: metrics };
     } catch (error) {
       console.error('Error calculating performance metrics:', error);
-      return { success: false, error: String((error as Error)?.message || error) };
+      return {
+        success: false,
+        error: String((error as Error)?.message || error),
+      };
     }
   }
 
   /**
    * Obter histórico de métricas
    */
-  async getMetricsHistory(clinic_id: string, days: number = 30) {
+  async getMetricsHistory(clinic_id: string, days = 30) {
     try {
       const supabase = await this.getSupabase();
       const since = new Date();
@@ -421,7 +486,10 @@ export class StockReportsService {
       return { success: true, data };
     } catch (error) {
       console.error('Error fetching metrics history:', error);
-      return { success: false, error: String((error as Error)?.message || error) };
+      return {
+        success: false,
+        error: String((error as Error)?.message || error),
+      };
     }
   }
 
@@ -436,79 +504,95 @@ export class StockReportsService {
   }
 
   private groupByCategory(usageData: any[]): Record<string, any> {
-    const grouped = usageData.reduce((acc, item) => {
-      const category = item.material_category || 'Outros';
-      if (!acc[category]) {
-        acc[category] = {
-          count: 0,
-          total_cost: 0,
-          items: []
-        };
-      }
-      acc[category].count += 1;
-      acc[category].total_cost += (item.cost_per_unit || 0) * (item.quantity_used || 0);
-      acc[category].items.push(item);
-      return acc;
-    }, {} as Record<string, any>);
+    const grouped = usageData.reduce(
+      (acc, item) => {
+        const category = item.material_category || 'Outros';
+        if (!acc[category]) {
+          acc[category] = {
+            count: 0,
+            total_cost: 0,
+            items: [],
+          };
+        }
+        acc[category].count += 1;
+        acc[category].total_cost +=
+          (item.cost_per_unit || 0) * (item.quantity_used || 0);
+        acc[category].items.push(item);
+        return acc;
+      },
+      {} as Record<string, any>
+    );
 
     return grouped;
   }
 
   private groupByUser(usageData: any[]): Record<string, any> {
-    const grouped = usageData.reduce((acc, item) => {
-      const userId = item.user_id || 'Unknown';
-      if (!acc[userId]) {
-        acc[userId] = {
-          count: 0,
-          total_cost: 0,
-          items: []
-        };
-      }
-      acc[userId].count += 1;
-      acc[userId].total_cost += (item.cost_per_unit || 0) * (item.quantity_used || 0);
-      acc[userId].items.push(item);
-      return acc;
-    }, {} as Record<string, any>);
+    const grouped = usageData.reduce(
+      (acc, item) => {
+        const userId = item.user_id || 'Unknown';
+        if (!acc[userId]) {
+          acc[userId] = {
+            count: 0,
+            total_cost: 0,
+            items: [],
+          };
+        }
+        acc[userId].count += 1;
+        acc[userId].total_cost +=
+          (item.cost_per_unit || 0) * (item.quantity_used || 0);
+        acc[userId].items.push(item);
+        return acc;
+      },
+      {} as Record<string, any>
+    );
 
     return grouped;
   }
 
   private groupByDate(usageData: any[]): Record<string, any> {
-    const grouped = usageData.reduce((acc, item) => {
-      const date = item.created_at?.split('T')[0] || 'Unknown';
-      if (!acc[date]) {
-        acc[date] = {
-          count: 0,
-          total_cost: 0,
-          items: []
-        };
-      }
-      acc[date].count += 1;
-      acc[date].total_cost += (item.cost_per_unit || 0) * (item.quantity_used || 0);
-      acc[date].items.push(item);
-      return acc;
-    }, {} as Record<string, any>);
+    const grouped = usageData.reduce(
+      (acc, item) => {
+        const date = item.created_at?.split('T')[0] || 'Unknown';
+        if (!acc[date]) {
+          acc[date] = {
+            count: 0,
+            total_cost: 0,
+            items: [],
+          };
+        }
+        acc[date].count += 1;
+        acc[date].total_cost +=
+          (item.cost_per_unit || 0) * (item.quantity_used || 0);
+        acc[date].items.push(item);
+        return acc;
+      },
+      {} as Record<string, any>
+    );
 
     return grouped;
   }
 
-  private getTopConsumed(usageData: any[], limit: number = 10): any[] {
-    const grouped = usageData.reduce((acc, item) => {
-      const key = `${item.material_name}_${item.material_type}`;
-      if (!acc[key]) {
-        acc[key] = {
-          material_name: item.material_name,
-          material_type: item.material_type,
-          total_quantity: 0,
-          total_cost: 0,
-          usage_count: 0
-        };
-      }
-      acc[key].total_quantity += item.quantity_used || 0;
-      acc[key].total_cost += (item.cost_per_unit || 0) * (item.quantity_used || 0);
-      acc[key].usage_count += 1;
-      return acc;
-    }, {} as Record<string, any>);
+  private getTopConsumed(usageData: any[], limit = 10): any[] {
+    const grouped = usageData.reduce(
+      (acc, item) => {
+        const key = `${item.material_name}_${item.material_type}`;
+        if (!acc[key]) {
+          acc[key] = {
+            material_name: item.material_name,
+            material_type: item.material_type,
+            total_quantity: 0,
+            total_cost: 0,
+            usage_count: 0,
+          };
+        }
+        acc[key].total_quantity += item.quantity_used || 0;
+        acc[key].total_cost +=
+          (item.cost_per_unit || 0) * (item.quantity_used || 0);
+        acc[key].usage_count += 1;
+        return acc;
+      },
+      {} as Record<string, any>
+    );
 
     return Object.values(grouped)
       .sort((a: any, b: any) => b.total_quantity - a.total_quantity)
@@ -519,7 +603,7 @@ export class StockReportsService {
     // Simulação de cálculo de turnover rate
     // Em uma implementação real, seria: (Custo dos Produtos Vendidos / Estoque Médio)
     const totalCost = this.calculateTotalCost(usageData);
-    const estimatedStockValue = 50000; // Simulação
+    const estimatedStockValue = 50_000; // Simulação
     return totalCost / estimatedStockValue;
   }
 
@@ -533,7 +617,7 @@ export class StockReportsService {
 
   private getUniqueProductsCount(usageData: any[]): number {
     const uniqueProducts = new Set(
-      usageData.map(item => `${item.material_name}_${item.material_type}`)
+      usageData.map((item) => `${item.material_name}_${item.material_type}`)
     );
     return uniqueProducts.size;
   }

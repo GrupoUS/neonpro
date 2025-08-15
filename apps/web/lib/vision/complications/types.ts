@@ -1,10 +1,10 @@
 /**
  * Complication Detection Types
  * Epic 10 - Story 10.3: Automated Complication Detection + Alerts (≥90% Accuracy)
- * 
+ *
  * Comprehensive TypeScript type definitions for the complication detection system
  * Supports ≥90% accuracy requirements with immediate alerts and emergency protocols
- * 
+ *
  * BMAD METHOD + VOIDBEAST V6.0 ENHANCED - Quality ≥9.8/10
  */
 
@@ -12,9 +12,9 @@ import { z } from 'zod';
 import type { TreatmentType } from '../types';
 
 // Core Types
-export type ComplicationCategory = 
+export type ComplicationCategory =
   | 'infection'
-  | 'adverse_reaction' 
+  | 'adverse_reaction'
   | 'healing_issue'
   | 'procedural_complication'
   | 'allergic_reaction'
@@ -96,7 +96,7 @@ export interface EmergencyProtocol {
   contactInformation?: EmergencyContact[];
 }
 
-export type NotificationTarget = 
+export type NotificationTarget =
   | 'attending_physician'
   | 'supervising_physician'
   | 'clinic_manager'
@@ -176,7 +176,7 @@ export interface ComplicationAlert {
   status: AlertStatus;
 }
 
-export type AlertStatus = 
+export type AlertStatus =
   | 'pending'
   | 'acknowledged'
   | 'in_progress'
@@ -362,7 +362,11 @@ export interface TreatmentRecord {
 
 // Real-time Monitoring Types
 export interface RealtimeDetectionEvent {
-  type: 'detection_started' | 'detection_completed' | 'alert_triggered' | 'validation_completed';
+  type:
+    | 'detection_started'
+    | 'detection_completed'
+    | 'alert_triggered'
+    | 'validation_completed';
   timestamp: string;
   patientId: string;
   detectionId?: string;
@@ -411,7 +415,8 @@ export interface ApiResponse<T> {
   };
 }
 
-export type ComplicationDetectionResponse = ApiResponse<ComplicationDetectionResult>;
+export type ComplicationDetectionResponse =
+  ApiResponse<ComplicationDetectionResult>;
 export type ValidationResponse_API = ApiResponse<ValidationResponse>;
 export type StatisticsResponse = ApiResponse<ComplicationStatistics>;
 export type HealthResponse = ApiResponse<SystemHealthMetrics>;
@@ -424,13 +429,15 @@ export const ComplicationDetectionRequestSchema = z.object({
   previousAnalysisId: z.string().uuid().optional(),
   clinicianId: z.string().uuid('Invalid clinician ID format'),
   urgencyLevel: z.enum(['routine', 'urgent', 'emergency']).default('routine'),
-  metadata: z.object({
-    captureDate: z.string().datetime('Invalid capture date format'),
-    deviceInfo: z.string().optional(),
-    lighting: z.enum(['natural', 'artificial', 'mixed']).optional(),
-    angle: z.string().optional(),
-    distance: z.string().optional()
-  }).optional()
+  metadata: z
+    .object({
+      captureDate: z.string().datetime('Invalid capture date format'),
+      deviceInfo: z.string().optional(),
+      lighting: z.enum(['natural', 'artificial', 'mixed']).optional(),
+      angle: z.string().optional(),
+      distance: z.string().optional(),
+    })
+    .optional(),
 });
 
 export const ValidationRequestSchema = z.object({
@@ -442,8 +449,8 @@ export const ValidationRequestSchema = z.object({
     clinicalNotes: z.string().optional(),
     imageQualityAssessment: z.number().min(0).max(10).optional(),
     treatmentOutcome: z.string().optional(),
-    followUpResults: z.string().optional()
-  })
+    followUpResults: z.string().optional(),
+  }),
 });
 
 export const AlertAcknowledgmentSchema = z.object({
@@ -451,42 +458,42 @@ export const AlertAcknowledgmentSchema = z.object({
   acknowledgedBy: z.string().uuid('Invalid user ID'),
   notes: z.string().optional(),
   escalate: z.boolean().default(false),
-  escalateTo: z.string().optional()
+  escalateTo: z.string().optional(),
 });
 
 // Error Types
 export interface ComplicationDetectionError extends Error {
-  code: 'INVALID_IMAGE' | 'PROCESSING_TIMEOUT' | 'MODEL_ERROR' | 'STORAGE_ERROR' | 'VALIDATION_ERROR';
+  code:
+    | 'INVALID_IMAGE'
+    | 'PROCESSING_TIMEOUT'
+    | 'MODEL_ERROR'
+    | 'STORAGE_ERROR'
+    | 'VALIDATION_ERROR';
   patientId?: string;
   imageId?: string;
   timestamp: string;
   retryable: boolean;
 }
 
-// Export all types
-export type {
-  // ... (all types are already exported above)
-};
-
 // Constants
 export const COMPLICATION_DETECTION_CONSTANTS = {
-  MIN_ACCURACY_THRESHOLD: 0.90, // Story requirement: ≥90% accuracy
+  MIN_ACCURACY_THRESHOLD: 0.9, // Story requirement: ≥90% accuracy
   MIN_CONFIDENCE_THRESHOLD: 0.85,
-  MAX_PROCESSING_TIME_MS: 30000, // 30 seconds max
+  MAX_PROCESSING_TIME_MS: 30_000, // 30 seconds max
   QUALITY_THRESHOLD: 9.8, // VOIDBEAST V6.0 standard
-  
+
   ALERT_TIMEFRAMES: {
     critical: 'immediate', // < 5 minutes
     high: '1_hour',
-    medium: '4_hours', 
+    medium: '4_hours',
     low: '24_hours',
-    none: 'routine'
+    none: 'routine',
   },
-  
+
   DEFAULT_MODEL_TYPES: [
     'infection_detector',
     'adverse_reaction_detector',
-    'healing_issue_detector', 
-    'procedural_complication_detector'
-  ]
+    'healing_issue_detector',
+    'procedural_complication_detector',
+  ],
 } as const;

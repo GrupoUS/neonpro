@@ -1,7 +1,7 @@
 /**
  * Risk Assessment Automation Types
  * Story 9.4: Comprehensive automated risk assessment with medical validation
- * 
+ *
  * This module provides TypeScript types for the risk assessment automation system,
  * including automated risk scoring, human-in-the-loop medical validation,
  * risk mitigation strategies, and real-time alert management.
@@ -9,24 +9,58 @@
 
 // Core Risk Assessment Types
 export type RiskLevel = 'low' | 'moderate' | 'high' | 'critical';
-export type AssessmentType = 'routine' | 'consultation' | 'treatment' | 'emergency';
+export type AssessmentType =
+  | 'routine'
+  | 'consultation'
+  | 'treatment'
+  | 'emergency';
 export type AssessmentMethod = 'automated' | 'manual' | 'hybrid';
-export type ValidationStatus = 'pending' | 'validated' | 'requires_review' | 'rejected';
+export type ValidationStatus =
+  | 'pending'
+  | 'validated'
+  | 'requires_review'
+  | 'rejected';
 
 // Risk Category Types
-export type RiskCategory = 'medical' | 'procedural' | 'patient_specific' | 'environmental';
+export type RiskCategory =
+  | 'medical'
+  | 'procedural'
+  | 'patient_specific'
+  | 'environmental';
 
 // Validation Decision Types
-export type ValidationDecision = 'approved' | 'rejected' | 'modified' | 'escalated';
+export type ValidationDecision =
+  | 'approved'
+  | 'rejected'
+  | 'modified'
+  | 'escalated';
 
 // Mitigation Types
-export type MitigationType = 'preventive' | 'monitoring' | 'intervention' | 'emergency';
-export type ImplementationStatus = 'planned' | 'active' | 'completed' | 'cancelled';
-export type MonitoringFrequency = 'continuous' | 'hourly' | 'daily' | 'weekly' | 'monthly';
+export type MitigationType =
+  | 'preventive'
+  | 'monitoring'
+  | 'intervention'
+  | 'emergency';
+export type ImplementationStatus =
+  | 'planned'
+  | 'active'
+  | 'completed'
+  | 'cancelled';
+export type MonitoringFrequency =
+  | 'continuous'
+  | 'hourly'
+  | 'daily'
+  | 'weekly'
+  | 'monthly';
 
 // Alert Types
 export type AlertType = 'immediate' | 'warning' | 'monitoring' | 'predictive';
-export type SeverityLevel = 'info' | 'warning' | 'high' | 'critical' | 'emergency';
+export type SeverityLevel =
+  | 'info'
+  | 'warning'
+  | 'high'
+  | 'critical'
+  | 'emergency';
 export type AlertStatus = 'active' | 'acknowledged' | 'resolved' | 'escalated';
 
 // Threshold Types
@@ -101,30 +135,30 @@ export interface AssessmentContext {
 export interface RiskAssessment {
   id: string;
   patient_id: string;
-  
+
   // Risk Analysis Data
   risk_factors: RiskFactors;
   risk_score: number; // 0-100
   risk_level: RiskLevel;
   risk_categories: RiskCategories;
-  
+
   // Assessment Details
   assessment_type: AssessmentType;
   assessment_method: AssessmentMethod;
   assessment_context: AssessmentContext;
-  
+
   // Clinical Data
   medical_history_factors: Record<string, any>;
   current_conditions: Record<string, any>;
   contraindications: Record<string, any>;
   risk_multipliers: Record<string, any>;
-  
+
   // Timestamps and Status
   assessment_date: string;
   last_updated: string;
   validation_status: ValidationStatus;
   validation_required: boolean;
-  
+
   // Audit and Tracking
   created_by?: string;
   created_at: string;
@@ -136,22 +170,22 @@ export interface RiskValidation {
   id: string;
   assessment_id: string;
   validator_id: string;
-  
+
   // Validation Decision
   validation_decision: ValidationDecision;
   validation_notes?: string;
   override_risk_score?: number;
   override_risk_level?: RiskLevel;
-  
+
   // Medical Professional Context
   validator_credentials: Record<string, any>;
   validation_confidence?: number; // 0-100
   requires_second_opinion: boolean;
-  
+
   // Audit Trail
   validation_date: string;
   validation_duration_minutes?: number;
-  
+
   // Timestamps
   created_at: string;
   updated_at: string;
@@ -161,22 +195,22 @@ export interface RiskValidation {
 export interface RiskMitigation {
   id: string;
   risk_assessment_id: string;
-  
+
   // Mitigation Strategy
   mitigation_type: MitigationType;
   mitigation_strategy: string;
   mitigation_details: Record<string, any>;
-  
+
   // Implementation
   implementation_status: ImplementationStatus;
   implementation_date?: string;
   responsible_staff_id?: string;
-  
+
   // Effectiveness Tracking
   effectiveness_score?: number; // 0-100
   effectiveness_notes?: string;
   monitoring_frequency?: MonitoringFrequency;
-  
+
   // Timestamps
   created_at: string;
   updated_at: string;
@@ -187,34 +221,34 @@ export interface RiskAlert {
   id: string;
   patient_id: string;
   assessment_id?: string;
-  
+
   // Alert Details
   alert_type: AlertType;
   risk_category: RiskCategory;
   severity_level: SeverityLevel;
-  
+
   // Alert Content
   alert_title: string;
   alert_message: string;
   alert_details: Record<string, any>;
   recommended_actions: Record<string, any>;
-  
+
   // Status and Escalation
   alert_status: AlertStatus;
   escalation_level: number; // 0-5
   escalation_path: Record<string, any>;
-  
+
   // Response Tracking
   acknowledged_by?: string;
   acknowledged_at?: string;
   resolved_by?: string;
   resolved_at?: string;
   resolution_notes?: string;
-  
+
   // Emergency Integration
   emergency_protocol_triggered: boolean;
   emergency_response_time_minutes?: number;
-  
+
   // Timestamps
   created_at: string;
   updated_at: string;
@@ -224,26 +258,26 @@ export interface RiskAlert {
 export interface RiskThreshold {
   id: string;
   clinic_id?: string; // NULL for global thresholds
-  
+
   // Threshold Configuration
   threshold_name: string;
   risk_category: RiskCategory;
   threshold_type: ThresholdType;
-  
+
   // Threshold Values
   low_threshold: number; // 0-100
   moderate_threshold: number; // 0-100
   high_threshold: number; // 0-100
   critical_threshold: number; // 0-100
-  
+
   // Actions and Responses
   automated_actions: Record<string, any>;
   notification_settings: Record<string, any>;
   escalation_rules: Record<string, any>;
-  
+
   // Status
   is_active: boolean;
-  
+
   // Timestamps
   created_at: string;
   updated_at: string;

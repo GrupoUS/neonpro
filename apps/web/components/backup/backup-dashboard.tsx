@@ -1,53 +1,9 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Switch } from '@/components/ui/switch';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import {
   AlertTriangle,
   CheckCircle,
   Clock,
-  Database,
   Download,
   FileText,
   HardDrive,
@@ -61,8 +17,57 @@ import {
   Upload,
   XCircle,
 } from 'lucide-react';
-import { formatBytes, formatDuration, formatDate } from '@/lib/utils';
+import type React from 'react';
+import { useEffect, useState } from 'react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Progress } from '@/components/ui/progress';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Textarea } from '@/components/ui/textarea';
 import { BackupSystem } from '@/lib/backup';
+import { formatBytes, formatDate, formatDuration } from '@/lib/utils';
 
 // Types
 interface BackupConfig {
@@ -130,22 +135,23 @@ const BackupDashboard: React.FC = () => {
   // Load data
   useEffect(() => {
     loadDashboardData();
-    const interval = setInterval(loadDashboardData, 30000); // Refresh every 30s
+    const interval = setInterval(loadDashboardData, 30_000); // Refresh every 30s
     return () => clearInterval(interval);
-  }, []);
+  }, [loadDashboardData]);
 
   const loadDashboardData = async () => {
     try {
       setLoading(true);
-      
+
       // Load all data in parallel
-      const [configsData, recordsData, metricsData, alertsData] = await Promise.all([
-        loadBackupConfigs(),
-        loadBackupRecords(),
-        loadSystemMetrics(),
-        loadAlerts()
-      ]);
-      
+      const [configsData, recordsData, metricsData, alertsData] =
+        await Promise.all([
+          loadBackupConfigs(),
+          loadBackupRecords(),
+          loadSystemMetrics(),
+          loadAlerts(),
+        ]);
+
       setConfigs(configsData);
       setRecords(recordsData);
       setMetrics(metricsData);
@@ -171,7 +177,7 @@ const BackupDashboard: React.FC = () => {
         next_backup: new Date(Date.now() + 60 * 60 * 1000),
         status: 'ACTIVE',
         storage_provider: 'S3',
-        retention_daily: 7
+        retention_daily: 7,
       },
       {
         id: '2',
@@ -184,8 +190,8 @@ const BackupDashboard: React.FC = () => {
         next_backup: new Date(Date.now() + 6 * 24 * 60 * 60 * 1000),
         status: 'ACTIVE',
         storage_provider: 'LOCAL',
-        retention_daily: 30
-      }
+        retention_daily: 30,
+      },
     ];
   };
 
@@ -203,7 +209,7 @@ const BackupDashboard: React.FC = () => {
         duration: 30 * 60, // 30 minutes
         size: 1024 * 1024 * 500, // 500MB
         compressed_size: 1024 * 1024 * 150, // 150MB
-        file_count: 1
+        file_count: 1,
       },
       {
         id: '2',
@@ -212,8 +218,8 @@ const BackupDashboard: React.FC = () => {
         status: 'RUNNING',
         type: 'DATABASE',
         start_time: new Date(Date.now() - 15 * 60 * 1000),
-        progress: 65
-      }
+        progress: 65,
+      },
     ];
   };
 
@@ -227,7 +233,7 @@ const BackupDashboard: React.FC = () => {
       total_storage_used: 1024 * 1024 * 1024 * 50, // 50GB
       active_configs: 5,
       pending_recoveries: 0,
-      system_health: 'HEALTHY'
+      system_health: 'HEALTHY',
     };
   };
 
@@ -238,10 +244,11 @@ const BackupDashboard: React.FC = () => {
         id: '1',
         type: 'BACKUP_FAILURE',
         severity: 'HIGH',
-        message: 'Backup "Files Backup" failed due to insufficient storage space',
+        message:
+          'Backup "Files Backup" failed due to insufficient storage space',
         timestamp: new Date(Date.now() - 30 * 60 * 1000),
-        acknowledged: false
-      }
+        acknowledged: false,
+      },
     ];
   };
 
@@ -258,9 +265,11 @@ const BackupDashboard: React.FC = () => {
   const toggleConfig = async (configId: string, enabled: boolean) => {
     try {
       // Update config enabled status
-      setConfigs(prev => prev.map(config => 
-        config.id === configId ? { ...config, enabled } : config
-      ));
+      setConfigs((prev) =>
+        prev.map((config) =>
+          config.id === configId ? { ...config, enabled } : config
+        )
+      );
       await loadDashboardData();
     } catch (error) {
       console.error('Error toggling config:', error);
@@ -269,9 +278,11 @@ const BackupDashboard: React.FC = () => {
 
   const acknowledgeAlert = async (alertId: string) => {
     try {
-      setAlerts(prev => prev.map(alert => 
-        alert.id === alertId ? { ...alert, acknowledged: true } : alert
-      ));
+      setAlerts((prev) =>
+        prev.map((alert) =>
+          alert.id === alertId ? { ...alert, acknowledged: true } : alert
+        )
+      );
     } catch (error) {
       console.error('Error acknowledging alert:', error);
     }
@@ -283,7 +294,7 @@ const BackupDashboard: React.FC = () => {
       case 'COMPLETED':
         return <CheckCircle className="h-4 w-4 text-green-500" />;
       case 'RUNNING':
-        return <RefreshCw className="h-4 w-4 text-blue-500 animate-spin" />;
+        return <RefreshCw className="h-4 w-4 animate-spin text-blue-500" />;
       case 'FAILED':
         return <XCircle className="h-4 w-4 text-red-500" />;
       case 'PENDING':
@@ -294,27 +305,34 @@ const BackupDashboard: React.FC = () => {
   };
 
   const getStatusBadge = (status: string) => {
-    const variants: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
+    const variants: Record<
+      string,
+      'default' | 'secondary' | 'destructive' | 'outline'
+    > = {
       COMPLETED: 'default',
       RUNNING: 'secondary',
       FAILED: 'destructive',
-      PENDING: 'outline'
+      PENDING: 'outline',
     };
     return <Badge variant={variants[status] || 'outline'}>{status}</Badge>;
   };
 
   const getHealthColor = (health: string) => {
     switch (health) {
-      case 'HEALTHY': return 'text-green-500';
-      case 'DEGRADED': return 'text-yellow-500';
-      case 'UNHEALTHY': return 'text-red-500';
-      default: return 'text-gray-500';
+      case 'HEALTHY':
+        return 'text-green-500';
+      case 'DEGRADED':
+        return 'text-yellow-500';
+      case 'UNHEALTHY':
+        return 'text-red-500';
+      default:
+        return 'text-gray-500';
     }
   };
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
+      <div className="flex h-64 items-center justify-center">
         <RefreshCw className="h-8 w-8 animate-spin" />
         <span className="ml-2">Loading backup dashboard...</span>
       </div>
@@ -326,45 +344,51 @@ const BackupDashboard: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Backup & Recovery</h1>
+          <h1 className="font-bold text-3xl tracking-tight">
+            Backup & Recovery
+          </h1>
           <p className="text-muted-foreground">
             Manage your backup configurations and monitor system health
           </p>
         </div>
         <div className="flex items-center space-x-2">
           <Button onClick={() => setShowRecoveryDialog(true)} variant="outline">
-            <Download className="h-4 w-4 mr-2" />
+            <Download className="mr-2 h-4 w-4" />
             Recovery
           </Button>
           <Button onClick={() => setShowCreateDialog(true)}>
-            <Plus className="h-4 w-4 mr-2" />
+            <Plus className="mr-2 h-4 w-4" />
             New Backup
           </Button>
         </div>
       </div>
 
       {/* Alerts */}
-      {alerts.filter(alert => !alert.acknowledged).length > 0 && (
+      {alerts.filter((alert) => !alert.acknowledged).length > 0 && (
         <div className="space-y-2">
           {alerts
-            .filter(alert => !alert.acknowledged)
-            .map(alert => (
-              <Alert key={alert.id} className={alert.severity === 'CRITICAL' ? 'border-red-500' : ''}>
+            .filter((alert) => !alert.acknowledged)
+            .map((alert) => (
+              <Alert
+                className={
+                  alert.severity === 'CRITICAL' ? 'border-red-500' : ''
+                }
+                key={alert.id}
+              >
                 <AlertTriangle className="h-4 w-4" />
                 <AlertTitle>Backup Alert - {alert.severity}</AlertTitle>
                 <AlertDescription className="flex items-center justify-between">
                   <span>{alert.message}</span>
                   <Button
+                    onClick={() => acknowledgeAlert(alert.id)}
                     size="sm"
                     variant="outline"
-                    onClick={() => acknowledgeAlert(alert.id)}
                   >
                     Acknowledge
                   </Button>
                 </AlertDescription>
               </Alert>
-            ))
-          }
+            ))}
         </div>
       )}
 
@@ -373,14 +397,20 @@ const BackupDashboard: React.FC = () => {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">System Health</CardTitle>
-              <Shield className={`h-4 w-4 ${getHealthColor(metrics.system_health)}`} />
+              <CardTitle className="font-medium text-sm">
+                System Health
+              </CardTitle>
+              <Shield
+                className={`h-4 w-4 ${getHealthColor(metrics.system_health)}`}
+              />
             </CardHeader>
             <CardContent>
-              <div className={`text-2xl font-bold ${getHealthColor(metrics.system_health)}`}>
+              <div
+                className={`font-bold text-2xl ${getHealthColor(metrics.system_health)}`}
+              >
                 {metrics.system_health}
               </div>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-muted-foreground text-xs">
                 {metrics.active_configs} active configurations
               </p>
             </CardContent>
@@ -388,25 +418,34 @@ const BackupDashboard: React.FC = () => {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Success Rate</CardTitle>
+              <CardTitle className="font-medium text-sm">
+                Success Rate
+              </CardTitle>
               <CheckCircle className="h-4 w-4 text-green-500" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{metrics.success_rate.toFixed(1)}%</div>
-              <p className="text-xs text-muted-foreground">
-                {metrics.successful_backups_today}/{metrics.total_backups_today} successful today
+              <div className="font-bold text-2xl">
+                {metrics.success_rate.toFixed(1)}%
+              </div>
+              <p className="text-muted-foreground text-xs">
+                {metrics.successful_backups_today}/{metrics.total_backups_today}{' '}
+                successful today
               </p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Storage Used</CardTitle>
+              <CardTitle className="font-medium text-sm">
+                Storage Used
+              </CardTitle>
               <HardDrive className="h-4 w-4 text-blue-500" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{formatBytes(metrics.total_storage_used)}</div>
-              <p className="text-xs text-muted-foreground">
+              <div className="font-bold text-2xl">
+                {formatBytes(metrics.total_storage_used)}
+              </div>
+              <p className="text-muted-foreground text-xs">
                 Across all backup destinations
               </p>
             </CardContent>
@@ -414,12 +453,16 @@ const BackupDashboard: React.FC = () => {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Pending Recoveries</CardTitle>
+              <CardTitle className="font-medium text-sm">
+                Pending Recoveries
+              </CardTitle>
               <Download className="h-4 w-4 text-orange-500" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{metrics.pending_recoveries}</div>
-              <p className="text-xs text-muted-foreground">
+              <div className="font-bold text-2xl">
+                {metrics.pending_recoveries}
+              </div>
+              <p className="text-muted-foreground text-xs">
                 Recovery requests in queue
               </p>
             </CardContent>
@@ -428,7 +471,11 @@ const BackupDashboard: React.FC = () => {
       )}
 
       {/* Main Content */}
-      <Tabs value={selectedTab} onValueChange={setSelectedTab} className="space-y-4">
+      <Tabs
+        className="space-y-4"
+        onValueChange={setSelectedTab}
+        value={selectedTab}
+      >
         <TabsList>
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="configurations">Configurations</TabsTrigger>
@@ -436,7 +483,7 @@ const BackupDashboard: React.FC = () => {
           <TabsTrigger value="monitoring">Monitoring</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="overview" className="space-y-4">
+        <TabsContent className="space-y-4" value="overview">
           {/* Recent Backups */}
           <Card>
             <CardHeader>
@@ -473,12 +520,17 @@ const BackupDashboard: React.FC = () => {
                           {getStatusBadge(record.status)}
                         </div>
                         {record.status === 'RUNNING' && record.progress && (
-                          <Progress value={record.progress} className="w-20 mt-1" />
+                          <Progress
+                            className="mt-1 w-20"
+                            value={record.progress}
+                          />
                         )}
                       </TableCell>
                       <TableCell>{formatDate(record.start_time)}</TableCell>
                       <TableCell>
-                        {record.duration ? formatDuration(record.duration) : '-'}
+                        {record.duration
+                          ? formatDuration(record.duration)
+                          : '-'}
                       </TableCell>
                       <TableCell>
                         {record.size ? formatBytes(record.size) : '-'}
@@ -486,23 +538,23 @@ const BackupDashboard: React.FC = () => {
                       <TableCell>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
+                            <Button className="h-8 w-8 p-0" variant="ghost">
                               <MoreHorizontal className="h-4 w-4" />
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
                             <DropdownMenuItem>
-                              <FileText className="h-4 w-4 mr-2" />
+                              <FileText className="mr-2 h-4 w-4" />
                               View Details
                             </DropdownMenuItem>
                             <DropdownMenuItem>
-                              <Download className="h-4 w-4 mr-2" />
+                              <Download className="mr-2 h-4 w-4" />
                               Download
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem className="text-red-600">
-                              <Trash2 className="h-4 w-4 mr-2" />
+                              <Trash2 className="mr-2 h-4 w-4" />
                               Delete
                             </DropdownMenuItem>
                           </DropdownMenuContent>
@@ -516,7 +568,7 @@ const BackupDashboard: React.FC = () => {
           </Card>
         </TabsContent>
 
-        <TabsContent value="configurations" className="space-y-4">
+        <TabsContent className="space-y-4" value="configurations">
           {/* Backup Configurations */}
           <Card>
             <CardHeader>
@@ -545,7 +597,7 @@ const BackupDashboard: React.FC = () => {
                         <div>
                           <div className="font-medium">{config.name}</div>
                           {config.description && (
-                            <div className="text-sm text-muted-foreground">
+                            <div className="text-muted-foreground text-sm">
                               {config.description}
                             </div>
                           )}
@@ -556,19 +608,29 @@ const BackupDashboard: React.FC = () => {
                       </TableCell>
                       <TableCell>{config.schedule_frequency}</TableCell>
                       <TableCell>
-                        {config.last_backup ? formatDate(config.last_backup) : 'Never'}
+                        {config.last_backup
+                          ? formatDate(config.last_backup)
+                          : 'Never'}
                       </TableCell>
                       <TableCell>
-                        {config.next_backup ? formatDate(config.next_backup) : '-'}
+                        {config.next_backup
+                          ? formatDate(config.next_backup)
+                          : '-'}
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center space-x-2">
                           <Switch
                             checked={config.enabled}
-                            onCheckedChange={(enabled) => toggleConfig(config.id, enabled)}
+                            onCheckedChange={(enabled) =>
+                              toggleConfig(config.id, enabled)
+                            }
                           />
                           <Badge
-                            variant={config.status === 'ACTIVE' ? 'default' : 'secondary'}
+                            variant={
+                              config.status === 'ACTIVE'
+                                ? 'default'
+                                : 'secondary'
+                            }
                           >
                             {config.status}
                           </Badge>
@@ -577,31 +639,31 @@ const BackupDashboard: React.FC = () => {
                       <TableCell>
                         <div className="flex items-center space-x-2">
                           <Button
+                            onClick={() => runBackup(config.id)}
                             size="sm"
                             variant="outline"
-                            onClick={() => runBackup(config.id)}
                           >
                             <Play className="h-4 w-4" />
                           </Button>
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" className="h-8 w-8 p-0">
+                              <Button className="h-8 w-8 p-0" variant="ghost">
                                 <MoreHorizontal className="h-4 w-4" />
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
                               <DropdownMenuLabel>Actions</DropdownMenuLabel>
                               <DropdownMenuItem>
-                                <Settings className="h-4 w-4 mr-2" />
+                                <Settings className="mr-2 h-4 w-4" />
                                 Edit Configuration
                               </DropdownMenuItem>
                               <DropdownMenuItem>
-                                <FileText className="h-4 w-4 mr-2" />
+                                <FileText className="mr-2 h-4 w-4" />
                                 View History
                               </DropdownMenuItem>
                               <DropdownMenuSeparator />
                               <DropdownMenuItem className="text-red-600">
-                                <Trash2 className="h-4 w-4 mr-2" />
+                                <Trash2 className="mr-2 h-4 w-4" />
                                 Delete
                               </DropdownMenuItem>
                             </DropdownMenuContent>
@@ -616,7 +678,7 @@ const BackupDashboard: React.FC = () => {
           </Card>
         </TabsContent>
 
-        <TabsContent value="history" className="space-y-4">
+        <TabsContent className="space-y-4" value="history">
           {/* Backup History */}
           <Card>
             <CardHeader>
@@ -660,7 +722,9 @@ const BackupDashboard: React.FC = () => {
                         {record.end_time ? formatDate(record.end_time) : '-'}
                       </TableCell>
                       <TableCell>
-                        {record.duration ? formatDuration(record.duration) : '-'}
+                        {record.duration
+                          ? formatDuration(record.duration)
+                          : '-'}
                       </TableCell>
                       <TableCell>
                         {record.size ? formatBytes(record.size) : '-'}
@@ -668,33 +732,32 @@ const BackupDashboard: React.FC = () => {
                       <TableCell>
                         {record.size && record.compressed_size
                           ? `${((1 - record.compressed_size / record.size) * 100).toFixed(1)}%`
-                          : '-'
-                        }
+                          : '-'}
                       </TableCell>
                       <TableCell>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
+                            <Button className="h-8 w-8 p-0" variant="ghost">
                               <MoreHorizontal className="h-4 w-4" />
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
                             <DropdownMenuItem>
-                              <FileText className="h-4 w-4 mr-2" />
+                              <FileText className="mr-2 h-4 w-4" />
                               View Details
                             </DropdownMenuItem>
                             <DropdownMenuItem>
-                              <Download className="h-4 w-4 mr-2" />
+                              <Download className="mr-2 h-4 w-4" />
                               Download
                             </DropdownMenuItem>
                             <DropdownMenuItem>
-                              <Upload className="h-4 w-4 mr-2" />
+                              <Upload className="mr-2 h-4 w-4" />
                               Restore
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem className="text-red-600">
-                              <Trash2 className="h-4 w-4 mr-2" />
+                              <Trash2 className="mr-2 h-4 w-4" />
                               Delete
                             </DropdownMenuItem>
                           </DropdownMenuContent>
@@ -708,7 +771,7 @@ const BackupDashboard: React.FC = () => {
           </Card>
         </TabsContent>
 
-        <TabsContent value="monitoring" className="space-y-4">
+        <TabsContent className="space-y-4" value="monitoring">
           {/* System Monitoring */}
           <div className="grid gap-4 md:grid-cols-2">
             <Card>
@@ -721,20 +784,26 @@ const BackupDashboard: React.FC = () => {
               <CardContent>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Local Storage</span>
-                    <span className="text-sm text-muted-foreground">15.2 GB</span>
+                    <span className="font-medium text-sm">Local Storage</span>
+                    <span className="text-muted-foreground text-sm">
+                      15.2 GB
+                    </span>
                   </div>
                   <Progress value={45} />
-                  
+
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">AWS S3</span>
-                    <span className="text-sm text-muted-foreground">32.8 GB</span>
+                    <span className="font-medium text-sm">AWS S3</span>
+                    <span className="text-muted-foreground text-sm">
+                      32.8 GB
+                    </span>
                   </div>
                   <Progress value={78} />
-                  
+
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Google Cloud</span>
-                    <span className="text-sm text-muted-foreground">8.1 GB</span>
+                    <span className="font-medium text-sm">Google Cloud</span>
+                    <span className="text-muted-foreground text-sm">
+                      8.1 GB
+                    </span>
                   </div>
                   <Progress value={23} />
                 </div>
@@ -751,23 +820,33 @@ const BackupDashboard: React.FC = () => {
               <CardContent>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Average Backup Time</span>
-                    <span className="text-sm text-muted-foreground">12m 34s</span>
+                    <span className="font-medium text-sm">
+                      Average Backup Time
+                    </span>
+                    <span className="text-muted-foreground text-sm">
+                      12m 34s
+                    </span>
                   </div>
-                  
+
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Compression Ratio</span>
-                    <span className="text-sm text-muted-foreground">68.5%</span>
+                    <span className="font-medium text-sm">
+                      Compression Ratio
+                    </span>
+                    <span className="text-muted-foreground text-sm">68.5%</span>
                   </div>
-                  
+
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Network Throughput</span>
-                    <span className="text-sm text-muted-foreground">45.2 MB/s</span>
+                    <span className="font-medium text-sm">
+                      Network Throughput
+                    </span>
+                    <span className="text-muted-foreground text-sm">
+                      45.2 MB/s
+                    </span>
                   </div>
-                  
+
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">CPU Usage</span>
-                    <span className="text-sm text-muted-foreground">23%</span>
+                    <span className="font-medium text-sm">CPU Usage</span>
+                    <span className="text-muted-foreground text-sm">23%</span>
                   </div>
                 </div>
               </CardContent>
@@ -777,7 +856,7 @@ const BackupDashboard: React.FC = () => {
       </Tabs>
 
       {/* Create Backup Dialog */}
-      <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
+      <Dialog onOpenChange={setShowCreateDialog} open={showCreateDialog}>
         <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
             <DialogTitle>Create New Backup Configuration</DialogTitle>
@@ -787,19 +866,23 @@ const BackupDashboard: React.FC = () => {
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="name" className="text-right">
+              <Label className="text-right" htmlFor="name">
                 Name
               </Label>
-              <Input id="name" className="col-span-3" placeholder="My Backup" />
+              <Input className="col-span-3" id="name" placeholder="My Backup" />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="description" className="text-right">
+              <Label className="text-right" htmlFor="description">
                 Description
               </Label>
-              <Textarea id="description" className="col-span-3" placeholder="Backup description..." />
+              <Textarea
+                className="col-span-3"
+                id="description"
+                placeholder="Backup description..."
+              />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="type" className="text-right">
+              <Label className="text-right" htmlFor="type">
                 Type
               </Label>
               <Select>
@@ -815,7 +898,7 @@ const BackupDashboard: React.FC = () => {
               </Select>
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="frequency" className="text-right">
+              <Label className="text-right" htmlFor="frequency">
                 Frequency
               </Label>
               <Select>
@@ -838,7 +921,7 @@ const BackupDashboard: React.FC = () => {
       </Dialog>
 
       {/* Recovery Dialog */}
-      <Dialog open={showRecoveryDialog} onOpenChange={setShowRecoveryDialog}>
+      <Dialog onOpenChange={setShowRecoveryDialog} open={showRecoveryDialog}>
         <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
             <DialogTitle>Data Recovery</DialogTitle>
@@ -848,7 +931,7 @@ const BackupDashboard: React.FC = () => {
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="backup" className="text-right">
+              <Label className="text-right" htmlFor="backup">
                 Backup
               </Label>
               <Select>
@@ -857,29 +940,35 @@ const BackupDashboard: React.FC = () => {
                 </SelectTrigger>
                 <SelectContent>
                   {records
-                    .filter(record => record.status === 'COMPLETED')
-                    .map(record => (
+                    .filter((record) => record.status === 'COMPLETED')
+                    .map((record) => (
                       <SelectItem key={record.id} value={record.id}>
                         {record.config_name} - {formatDate(record.start_time)}
                       </SelectItem>
-                    ))
-                  }
+                    ))}
                 </SelectContent>
               </Select>
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="target" className="text-right">
+              <Label className="text-right" htmlFor="target">
                 Target Path
               </Label>
-              <Input id="target" className="col-span-3" placeholder="/path/to/restore" />
+              <Input
+                className="col-span-3"
+                id="target"
+                placeholder="/path/to/restore"
+              />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="overwrite" className="text-right">
+              <Label className="text-right" htmlFor="overwrite">
                 Overwrite
               </Label>
               <div className="col-span-3">
                 <Switch id="overwrite" />
-                <Label htmlFor="overwrite" className="ml-2 text-sm text-muted-foreground">
+                <Label
+                  className="ml-2 text-muted-foreground text-sm"
+                  htmlFor="overwrite"
+                >
                   Overwrite existing files
                 </Label>
               </div>

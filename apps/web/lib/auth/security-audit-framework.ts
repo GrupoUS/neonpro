@@ -1,11 +1,15 @@
 import { createClient } from '@/app/utils/supabase/client';
-import { createClient as createBrowserClient } from '@/app/utils/supabase/client';
 import { createClient as createServerClient } from '@/app/utils/supabase/server';
 import { performanceTracker } from './performance-tracker';
 
 export interface SecurityEvent {
   id: string;
-  eventType: 'authentication' | 'authorization' | 'data_access' | 'configuration' | 'security_violation';
+  eventType:
+    | 'authentication'
+    | 'authorization'
+    | 'data_access'
+    | 'configuration'
+    | 'security_violation';
   severity: 'low' | 'medium' | 'high' | 'critical';
   userId?: string;
   sessionId?: string;
@@ -80,12 +84,14 @@ class SecurityAuditFramework {
   /**
    * Log security event with automatic threat detection
    */
-  async logSecurityEvent(event: Omit<SecurityEvent, 'id' | 'timestamp'>): Promise<void> {
+  async logSecurityEvent(
+    event: Omit<SecurityEvent, 'id' | 'timestamp'>
+  ): Promise<void> {
     const startTime = Date.now();
-    
+
     try {
       const supabase = await createClient();
-      
+
       const securityEvent: SecurityEvent = {
         ...event,
         id: crypto.randomUUID(),
@@ -93,22 +99,20 @@ class SecurityAuditFramework {
       };
 
       // Store the event
-      const { error } = await supabase
-        .from('security_audit_log')
-        .insert({
-          event_id: securityEvent.id,
-          event_type: securityEvent.eventType,
-          severity: securityEvent.severity,
-          user_id: securityEvent.userId,
-          session_id: securityEvent.sessionId,
-          resource: securityEvent.resource,
-          action: securityEvent.action,
-          outcome: securityEvent.outcome,
-          metadata: securityEvent.metadata,
-          timestamp: securityEvent.timestamp.toISOString(),
-          ip_address: securityEvent.ipAddress,
-          user_agent: securityEvent.userAgent,
-        });
+      const { error } = await supabase.from('security_audit_log').insert({
+        event_id: securityEvent.id,
+        event_type: securityEvent.eventType,
+        severity: securityEvent.severity,
+        user_id: securityEvent.userId,
+        session_id: securityEvent.sessionId,
+        resource: securityEvent.resource,
+        action: securityEvent.action,
+        outcome: securityEvent.outcome,
+        metadata: securityEvent.metadata,
+        timestamp: securityEvent.timestamp.toISOString(),
+        ip_address: securityEvent.ipAddress,
+        user_agent: securityEvent.userAgent,
+      });
 
       if (error) {
         console.error('Security event logging error:', error);
@@ -123,7 +127,10 @@ class SecurityAuditFramework {
         await this.checkComplianceViolations(securityEvent);
       }
 
-      performanceTracker.recordMetric('security_event_logging', Date.now() - startTime);
+      performanceTracker.recordMetric(
+        'security_event_logging',
+        Date.now() - startTime
+      );
     } catch (error) {
       console.error('Security audit framework error:', error);
     }
@@ -163,13 +170,16 @@ class SecurityAuditFramework {
   /**
    * Check failed login attempts threshold
    */
-  private async checkFailedLoginThreshold(ipAddress: string, userId?: string): Promise<void> {
+  private async checkFailedLoginThreshold(
+    ipAddress: string,
+    userId?: string
+  ): Promise<void> {
     try {
       const supabase = await createClient();
-      
+
       // Count failed attempts in last hour
       const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
-      
+
       const { data, error } = await supabase
         .from('security_audit_log')
         .select('count', { count: 'exact' })
@@ -181,7 +191,7 @@ class SecurityAuditFramework {
       if (error) throw error;
 
       const failedAttempts = data?.length || 0;
-      
+
       if (failedAttempts >= this.config.alertThresholds.failedLoginAttempts) {
         await this.triggerSecurityAlert({
           type: 'failed_login_threshold',
@@ -201,10 +211,10 @@ class SecurityAuditFramework {
   private async checkSuspiciousIPActivity(ipAddress: string): Promise<void> {
     try {
       const supabase = await createServerClient();
-      
+
       // Count high-severity events from this IP in last 24 hours
       const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-      
+
       const { data, error } = await supabase
         .from('security_audit_log')
         .select('count', { count: 'exact' })
@@ -215,8 +225,10 @@ class SecurityAuditFramework {
       if (error) throw error;
 
       const suspiciousEvents = data?.length || 0;
-      
-      if (suspiciousEvents >= this.config.alertThresholds.suspiciousIPActivity) {
+
+      if (
+        suspiciousEvents >= this.config.alertThresholds.suspiciousIPActivity
+      ) {
         await this.triggerSecurityAlert({
           type: 'suspicious_ip_activity',
           severity: 'critical',
@@ -232,15 +244,18 @@ class SecurityAuditFramework {
   /**
    * Check data access patterns for anomalies
    */
-  private async checkDataAccessPatterns(userId?: string, ipAddress?: string): Promise<void> {
+  private async checkDataAccessPatterns(
+    userId?: string,
+    ipAddress?: string
+  ): Promise<void> {
     if (!userId) return;
 
     try {
       const supabase = await createServerClient();
-      
+
       // Count data access events in last hour
       const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
-      
+
       const { data, error } = await supabase
         .from('security_audit_log')
         .select('count', { count: 'exact' })
@@ -251,7 +266,7 @@ class SecurityAuditFramework {
       if (error) throw error;
 
       const dataAccessCount = data?.length || 0;
-      
+
       if (dataAccessCount >= this.config.alertThresholds.dataAccessVolume) {
         await this.triggerSecurityAlert({
           type: 'unusual_data_access',
@@ -293,23 +308,22 @@ class SecurityAuditFramework {
   }): Promise<void> {
     try {
       const supabase = await createServerClient();
-      
+
       // Store alert
-      await supabase
-        .from('security_alerts')
-        .insert({
-          alert_id: crypto.randomUUID(),
-          alert_type: alert.type,
-          severity: alert.severity,
-          message: alert.message,
-          metadata: alert.metadata,
-          timestamp: new Date().toISOString(),
-          status: 'open',
-        });
+      await supabase.from('security_alerts').insert({
+        alert_id: crypto.randomUUID(),
+        alert_type: alert.type,
+        severity: alert.severity,
+        message: alert.message,
+        metadata: alert.metadata,
+        timestamp: new Date().toISOString(),
+        status: 'open',
+      });
 
       // Send real-time notification (placeholder for integration with notification system)
-      console.warn(`SECURITY ALERT [${alert.severity.toUpperCase()}]: ${alert.message}`);
-      
+      console.warn(
+        `SECURITY ALERT [${alert.severity.toUpperCase()}]: ${alert.message}`
+      );
     } catch (error) {
       console.error('Security alert trigger error:', error);
     }
@@ -321,14 +335,17 @@ class SecurityAuditFramework {
   private async checkComplianceViolations(event: SecurityEvent): Promise<void> {
     try {
       // Check for unauthorized personal data access
-      if (event.eventType === 'data_access' && event.outcome === 'failure') {
-        if (event.resource.includes('patient') || event.resource.includes('personal')) {
-          await this.logComplianceViolation({
-            type: 'unauthorized_personal_data_access',
-            event,
-            description: 'Attempted unauthorized access to personal data',
-          });
-        }
+      if (
+        event.eventType === 'data_access' &&
+        event.outcome === 'failure' &&
+        (event.resource.includes('patient') ||
+          event.resource.includes('personal'))
+      ) {
+        await this.logComplianceViolation({
+          type: 'unauthorized_personal_data_access',
+          event,
+          description: 'Attempted unauthorized access to personal data',
+        });
       }
 
       // Check for data export without proper consent
@@ -341,7 +358,10 @@ class SecurityAuditFramework {
       }
 
       // Check for data retention policy violations
-      if (event.action === 'access' && event.metadata.dataAge > this.config.retentionPeriodDays) {
+      if (
+        event.action === 'access' &&
+        event.metadata.dataAge > this.config.retentionPeriodDays
+      ) {
         await this.logComplianceViolation({
           type: 'data_retention_violation',
           event,
@@ -363,19 +383,17 @@ class SecurityAuditFramework {
   }): Promise<void> {
     try {
       const supabase = await createServerClient();
-      
-      await supabase
-        .from('compliance_violations')
-        .insert({
-          violation_id: crypto.randomUUID(),
-          violation_type: violation.type,
-          description: violation.description,
-          related_event_id: violation.event.id,
-          user_id: violation.event.userId,
-          timestamp: new Date().toISOString(),
-          status: 'reported',
-          severity: 'high',
-        });
+
+      await supabase.from('compliance_violations').insert({
+        violation_id: crypto.randomUUID(),
+        violation_type: violation.type,
+        description: violation.description,
+        related_event_id: violation.event.id,
+        user_id: violation.event.userId,
+        timestamp: new Date().toISOString(),
+        status: 'reported',
+        severity: 'high',
+      });
 
       // Trigger immediate alert for compliance violations
       await this.triggerSecurityAlert({
@@ -396,16 +414,19 @@ class SecurityAuditFramework {
   /**
    * Generate compliance report
    */
-  async generateComplianceReport(period: { start: Date; end: Date }): Promise<ComplianceReport> {
+  async generateComplianceReport(period: {
+    start: Date;
+    end: Date;
+  }): Promise<ComplianceReport> {
     try {
       const supabase = await createServerClient();
-      
+
       // Get LGPD-related metrics
       const lgpdMetrics = await this.getLGPDMetrics(period);
-      
+
       // Get security metrics
       const securityMetrics = await this.getSecurityMetrics(period);
-      
+
       // Get high-risk events
       const { data: highRiskEvents, error } = await supabase
         .from('security_audit_log')
@@ -418,10 +439,16 @@ class SecurityAuditFramework {
       if (error) throw error;
 
       // Calculate overall risk score
-      const overallRiskScore = this.calculateRiskScore(securityMetrics, highRiskEvents || []);
-      
+      const overallRiskScore = this.calculateRiskScore(
+        securityMetrics,
+        highRiskEvents || []
+      );
+
       // Generate recommendations
-      const recommendations = this.generateRecommendations(securityMetrics, highRiskEvents || []);
+      const recommendations = this.generateRecommendations(
+        securityMetrics,
+        highRiskEvents || []
+      );
 
       return {
         period,
@@ -429,7 +456,9 @@ class SecurityAuditFramework {
         securityMetrics,
         riskAssessment: {
           overallRiskScore,
-          highRiskEvents: (highRiskEvents || []).map(this.mapDatabaseEventToSecurityEvent),
+          highRiskEvents: (highRiskEvents || []).map(
+            this.mapDatabaseEventToSecurityEvent
+          ),
           recommendations,
         },
       };
@@ -445,7 +474,7 @@ class SecurityAuditFramework {
   private async getLGPDMetrics(period: { start: Date; end: Date }) {
     try {
       const supabase = await createServerClient();
-      
+
       const { data, error } = await supabase
         .from('security_audit_log')
         .select('action, metadata')
@@ -455,13 +484,20 @@ class SecurityAuditFramework {
       if (error) throw error;
 
       const events = data || [];
-      
+
       return {
-        dataAccessRequests: events.filter(e => e.action === 'data_access_request').length,
-        dataExportRequests: events.filter(e => e.action === 'data_export').length,
-        dataDeletionRequests: events.filter(e => e.action === 'data_deletion').length,
-        consentUpdates: events.filter(e => e.action === 'consent_update').length,
-        breachNotifications: events.filter(e => e.action === 'breach_notification').length,
+        dataAccessRequests: events.filter(
+          (e) => e.action === 'data_access_request'
+        ).length,
+        dataExportRequests: events.filter((e) => e.action === 'data_export')
+          .length,
+        dataDeletionRequests: events.filter((e) => e.action === 'data_deletion')
+          .length,
+        consentUpdates: events.filter((e) => e.action === 'consent_update')
+          .length,
+        breachNotifications: events.filter(
+          (e) => e.action === 'breach_notification'
+        ).length,
       };
     } catch (error) {
       console.error('LGPD metrics error:', error);
@@ -481,7 +517,7 @@ class SecurityAuditFramework {
   private async getSecurityMetrics(period: { start: Date; end: Date }) {
     try {
       const supabase = await createServerClient();
-      
+
       const { data, error } = await supabase
         .from('security_audit_log')
         .select('event_type, outcome, severity')
@@ -491,16 +527,18 @@ class SecurityAuditFramework {
       if (error) throw error;
 
       const events = data || [];
-      
+
       return {
-        failedLoginAttempts: events.filter(e => 
-          e.event_type === 'authentication' && e.outcome === 'failure'
+        failedLoginAttempts: events.filter(
+          (e) => e.event_type === 'authentication' && e.outcome === 'failure'
         ).length,
-        suspiciousActivities: events.filter(e => 
-          e.severity === 'high' || e.severity === 'critical'
+        suspiciousActivities: events.filter(
+          (e) => e.severity === 'high' || e.severity === 'critical'
         ).length,
-        blockedRequests: events.filter(e => e.outcome === 'blocked').length,
-        vulnerabilityScans: events.filter(e => e.event_type === 'security_scan').length,
+        blockedRequests: events.filter((e) => e.outcome === 'blocked').length,
+        vulnerabilityScans: events.filter(
+          (e) => e.event_type === 'security_scan'
+        ).length,
       };
     } catch (error) {
       console.error('Security metrics error:', error);
@@ -516,15 +554,18 @@ class SecurityAuditFramework {
   /**
    * Calculate overall risk score
    */
-  private calculateRiskScore(securityMetrics: any, highRiskEvents: any[]): number {
+  private calculateRiskScore(
+    securityMetrics: any,
+    highRiskEvents: any[]
+  ): number {
     let score = 0;
-    
+
     // Weight different factors
     score += securityMetrics.failedLoginAttempts * 0.1;
     score += securityMetrics.suspiciousActivities * 0.3;
     score += securityMetrics.blockedRequests * 0.05;
     score += highRiskEvents.length * 0.5;
-    
+
     // Normalize to 0-100 scale
     return Math.min(100, Math.round(score));
   }
@@ -532,25 +573,30 @@ class SecurityAuditFramework {
   /**
    * Generate security recommendations
    */
-  private generateRecommendations(securityMetrics: any, highRiskEvents: any[]): string[] {
+  private generateRecommendations(
+    securityMetrics: any,
+    highRiskEvents: any[]
+  ): string[] {
     const recommendations: string[] = [];
-    
+
     if (securityMetrics.failedLoginAttempts > 50) {
-      recommendations.push('Consider implementing stronger brute force protection');
+      recommendations.push(
+        'Consider implementing stronger brute force protection'
+      );
     }
-    
+
     if (securityMetrics.suspiciousActivities > 20) {
       recommendations.push('Review and strengthen access controls');
     }
-    
+
     if (highRiskEvents.length > 10) {
       recommendations.push('Conduct security audit and penetration testing');
     }
-    
+
     if (securityMetrics.vulnerabilityScans === 0) {
       recommendations.push('Implement regular vulnerability scanning');
     }
-    
+
     return recommendations;
   }
 

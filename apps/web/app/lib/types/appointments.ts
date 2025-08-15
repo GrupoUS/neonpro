@@ -39,9 +39,9 @@ export interface BusinessHours {
 
 export interface DaySchedule {
   start: string; // "HH:MM" format
-  end: string;   // "HH:MM" format  
+  end: string; // "HH:MM" format
   enabled: boolean;
-}// Patient Types
+} // Patient Types
 export interface Patient extends SoftDeletableEntity {
   clinic_id: string;
   full_name: string;
@@ -82,12 +82,12 @@ export interface ServiceType extends SoftDeletableEntity {
 }
 
 // Appointment Types
-export type AppointmentStatus = 
-  | 'scheduled' 
-  | 'confirmed' 
-  | 'in_progress' 
-  | 'completed' 
-  | 'cancelled' 
+export type AppointmentStatus =
+  | 'scheduled'
+  | 'confirmed'
+  | 'in_progress'
+  | 'completed'
+  | 'cancelled'
   | 'no_show';
 
 // Appointment History for Audit Trail
@@ -100,7 +100,8 @@ export interface AppointmentHistoryEntry extends DatabaseEntity {
   change_reason?: string | null;
   changed_by: string;
   changed_by_name: string;
-}export interface Appointment extends AuditableEntity {
+}
+export interface Appointment extends AuditableEntity {
   clinic_id: string;
   patient_id: string;
   professional_id: string;
@@ -145,7 +146,8 @@ export interface CreateAppointmentFormData {
   internal_notes?: string;
 }
 
-export interface UpdateAppointmentFormData extends Partial<CreateAppointmentFormData> {
+export interface UpdateAppointmentFormData
+  extends Partial<CreateAppointmentFormData> {
   status?: AppointmentStatus;
   change_reason?: string;
 }
@@ -187,7 +189,7 @@ export interface AppointmentFilterParams {
   service?: string;
   status?: string; // comma-separated for multiple values
   date_from?: string; // ISO date string
-  date_to?: string; // ISO date string  
+  date_to?: string; // ISO date string
   search?: string;
   view?: 'day' | 'week' | 'month';
 }

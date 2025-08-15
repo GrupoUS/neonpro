@@ -4,16 +4,15 @@
  */
 
 export class WaitlistManager {
-  constructor() {
-    // Mock implementation
-  }
-
-  async addToWaitlist(appointmentSlot: {
-    date: Date;
-    time: string;
-    serviceId: string;
-    professionalId: string;
-  }, patientId: string): Promise<{
+  async addToWaitlist(
+    _appointmentSlot: {
+      date: Date;
+      time: string;
+      serviceId: string;
+      professionalId: string;
+    },
+    _patientId: string
+  ): Promise<{
     success: boolean;
     waitlistPosition?: number;
     estimatedWaitTime?: string;
@@ -22,11 +21,11 @@ export class WaitlistManager {
     return {
       success: true,
       waitlistPosition: 3,
-      estimatedWaitTime: '2-3 days'
-    }
+      estimatedWaitTime: '2-3 days',
+    };
   }
 
-  async notifyWaitlistAvailability(slotId: string): Promise<void> {
+  async notifyWaitlistAvailability(_slotId: string): Promise<void> {
     // Mock implementation
   }
 }

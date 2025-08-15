@@ -6,12 +6,24 @@ export interface ConsentForm {
   clinic_id: string;
   form_name: string;
   form_version: string;
-  consent_type: 'data_processing' | 'medical_treatment' | 'marketing' | 'research' | 
-                'data_sharing' | 'telehealth' | 'photography' | 'communication';
+  consent_type:
+    | 'data_processing'
+    | 'medical_treatment'
+    | 'marketing'
+    | 'research'
+    | 'data_sharing'
+    | 'telehealth'
+    | 'photography'
+    | 'communication';
   form_template: string;
   html_template?: string;
-  legal_basis?: 'consent' | 'legitimate_interest' | 'vital_interests' | 
-               'legal_obligation' | 'public_task' | 'contract';
+  legal_basis?:
+    | 'consent'
+    | 'legitimate_interest'
+    | 'vital_interests'
+    | 'legal_obligation'
+    | 'public_task'
+    | 'contract';
   required_fields: string[];
   optional_fields: string[];
   retention_period_days?: number;
@@ -54,9 +66,15 @@ export interface PatientConsent {
 export interface LegalDocument {
   id: string;
   clinic_id: string;
-  document_type: 'privacy_policy' | 'terms_of_service' | 'consent_template' | 
-                 'data_processing_agreement' | 'regulatory_compliance' | 
-                 'patient_rights' | 'incident_response_plan' | 'audit_report';
+  document_type:
+    | 'privacy_policy'
+    | 'terms_of_service'
+    | 'consent_template'
+    | 'data_processing_agreement'
+    | 'regulatory_compliance'
+    | 'patient_rights'
+    | 'incident_response_plan'
+    | 'audit_report';
   title: string;
   version: string;
   document_content: string;
@@ -64,7 +82,13 @@ export interface LegalDocument {
   file_url?: string;
   effective_date: string;
   expiry_date?: string;
-  approval_status: 'draft' | 'under_review' | 'approved' | 'published' | 'archived' | 'expired';
+  approval_status:
+    | 'draft'
+    | 'under_review'
+    | 'approved'
+    | 'published'
+    | 'archived'
+    | 'expired';
   approved_by?: string;
   approved_at?: string;
   regulatory_body?: string;
@@ -84,9 +108,15 @@ export interface ComplianceMetric {
   id: string;
   clinic_id: string;
   metric_name: string;
-  metric_type: 'consent_rate' | 'data_retention_compliance' | 'breach_incidents' | 
-               'audit_score' | 'training_completion' | 'policy_adherence' |
-               'data_subject_requests' | 'incident_response_time';
+  metric_type:
+    | 'consent_rate'
+    | 'data_retention_compliance'
+    | 'breach_incidents'
+    | 'audit_score'
+    | 'training_completion'
+    | 'policy_adherence'
+    | 'data_subject_requests'
+    | 'incident_response_time';
   metric_value: number;
   metric_unit?: string;
   target_value?: number;
@@ -108,9 +138,16 @@ export interface ComplianceTraining {
   id: string;
   clinic_id: string;
   training_name: string;
-  training_type: 'data_protection' | 'patient_privacy' | 'security_awareness' | 
-                 'lgpd_compliance' | 'hipaa_compliance' | 'clinical_documentation' |
-                 'incident_response' | 'ethics' | 'regulatory_updates';
+  training_type:
+    | 'data_protection'
+    | 'patient_privacy'
+    | 'security_awareness'
+    | 'lgpd_compliance'
+    | 'hipaa_compliance'
+    | 'clinical_documentation'
+    | 'incident_response'
+    | 'ethics'
+    | 'regulatory_updates';
   description?: string;
   content_url?: string;
   training_material: Record<string, any>;

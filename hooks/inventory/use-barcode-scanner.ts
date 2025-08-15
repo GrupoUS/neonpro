@@ -1,45 +1,49 @@
 /**
  * Barcode Scanner Hook for NeonPro Inventory Management
- * 
+ *
  * Provides barcode/QR code scanning functionality with healthcare compliance.
  * Supports multiple scanning methods and automatic validation.
- * 
+ *
  * @author VoidBeast V4.0 + neonpro-code-guardian
  * @version 1.0.0
  * @compliance ANVISA, CFM, LGPD
  */
 
-import { useState, useEffect, useRef, useCallback } from 'react'
-import { BarcodeData, BarcodeScanResult, BarcodeFormat } from '@/types/inventory'
+import { useCallback, useEffect, useRef, useState } from 'react';
+import type {
+  BarcodeData,
+  BarcodeFormat,
+  BarcodeScanResult,
+} from '@/types/inventory';
 
 interface BarcodeScannerConfig {
-  enableCamera: boolean
-  enableKeyboard: boolean
-  enableMobile: boolean
-  validationEndpoint?: string
-  soundEnabled: boolean
-  vibrationEnabled: boolean
-  continuousScanning: boolean
+  enableCamera: boolean;
+  enableKeyboard: boolean;
+  enableMobile: boolean;
+  validationEndpoint?: string;
+  soundEnabled: boolean;
+  vibrationEnabled: boolean;
+  continuousScanning: boolean;
 }
 
 interface BarcodeScannerState {
-  isScanning: boolean
-  isInitialized: boolean
-  error: string | null
-  lastScanResult: BarcodeScanResult | null
-  scanHistory: BarcodeScanResult[]
-  cameraPermission: 'granted' | 'denied' | 'prompt' | null
+  isScanning: boolean;
+  isInitialized: boolean;
+  error: string | null;
+  lastScanResult: BarcodeScanResult | null;
+  scanHistory: BarcodeScanResult[];
+  cameraPermission: 'granted' | 'denied' | 'prompt' | null;
 }
 
 interface BarcodeScannerCallbacks {
-  onScanSuccess: (result: BarcodeScanResult) => void
-  onScanError: (error: string) => void
-  onValidationComplete: (result: BarcodeScanResult) => void
+  onScanSuccess: (result: BarcodeScanResult) => void;
+  onScanError: (error: string) => void;
+  onValidationComplete: (result: BarcodeScanResult) => void;
 }
 
 /**
  * Custom hook for barcode scanning with healthcare compliance
- * 
+ *
  * Features:
  * - Multiple input methods (camera, keyboard, mobile scanner)
  * - Real-time barcode validation against inventory database
@@ -49,7 +53,7 @@ interface BarcodeScannerCallbacks {
  * - Product existence verification
  * - Scan history tracking
  * - Audio/haptic feedback
- * 
+ *
  * @param config Scanner configuration options
  * @param callbacks Event callbacks for scan results
  * @returns Scanner state and control functions
@@ -65,8 +69,8 @@ export function useBarcodeScanner(
     soundEnabled: true,
     vibrationEnabled: true,
     continuousScanning: false,
-    ...config
-  }
+    ...config,
+  };
 
   const [state, setState] = useState<BarcodeScannerState>({
     isScanning: false,
@@ -74,34 +78,39 @@ export function useBarcodeScanner(
     error: null,
     lastScanResult: null,
     scanHistory: [],
-    cameraPermission: null
-  })
+    cameraPermission: null,
+  });
 
-  const videoRef = useRef<HTMLVideoElement>(null)
-  const streamRef = useRef<MediaStream | null>(null)
-  const scannerWorkerRef = useRef<Worker | null>(null)
-  const keyboardBufferRef = useRef<string>('')
-  const keyboardTimeoutRef = useRef<NodeJS.Timeout>()
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const scannerWorkerRef = useRef<Worker | null>(null);
+  const keyboardBufferRef = useRef<string>('');
+  const keyboardTimeoutRef = useRef<NodeJS.Timeout>();
 
   // Initialize scanner on mount
   useEffect(() => {
-    initializeScanner()
-    return () => cleanup()
-  }, [])
+    initializeScanner();
+    return () => cleanup();
+  }, []);
 
   // Keyboard input handler
   useEffect(() => {
-    if (!defaultConfig.enableKeyboard) return
+    if (!defaultConfig.enableKeyboard) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (state.isScanning && !event.ctrlKey && !event.altKey && !event.metaKey) {
-        handleKeyboardInput(event)
+      if (
+        state.isScanning &&
+        !event.ctrlKey &&
+        !event.altKey &&
+        !event.metaKey
+      ) {
+        handleKeyboardInput(event);
       }
-    }
+    };
 
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [state.isScanning, defaultConfig.enableKeyboard])
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [state.isScanning, defaultConfig.enableKeyboard]);
 
   /**
    * Initialize the barcode scanner
@@ -110,8 +119,8 @@ export function useBarcodeScanner(
     try {
       // Check camera permissions if camera scanning is enabled
       if (defaultConfig.enableCamera) {
-        const permissionStatus = await checkCameraPermission()
-        setState(prev => ({ ...prev, cameraPermission: permissionStatus }))
+        const permissionStatus = await checkCameraPermission();
+        setState((prev) => ({ ...prev, cameraPermission: permissionStatus }));
       }
 
       // Initialize barcode scanning worker
@@ -119,245 +128,260 @@ export function useBarcodeScanner(
         try {
           // In a real implementation, this would use a barcode scanning library like QuaggaJS or ZXing
           // For now, we'll simulate the worker initialization
-          scannerWorkerRef.current = new Worker('/workers/barcode-scanner.js')
-          scannerWorkerRef.current.onmessage = handleWorkerMessage
+          scannerWorkerRef.current = new Worker('/workers/barcode-scanner.js');
+          scannerWorkerRef.current.onmessage = handleWorkerMessage;
         } catch (error) {
-          console.warn('Barcode scanner worker not available:', error)
+          console.warn('Barcode scanner worker not available:', error);
         }
       }
 
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
         isInitialized: true,
-        error: null
-      }))
+        error: null,
+      }));
     } catch (error) {
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
         error: `Scanner initialization failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        isInitialized: false
-      }))
+        isInitialized: false,
+      }));
     }
-  }, [defaultConfig.enableCamera])
+  }, [defaultConfig.enableCamera]);
 
   /**
    * Check camera permission status
    */
-  const checkCameraPermission = async (): Promise<'granted' | 'denied' | 'prompt'> => {
+  const checkCameraPermission = async (): Promise<
+    'granted' | 'denied' | 'prompt'
+  > => {
     try {
       if ('permissions' in navigator) {
-        const permission = await navigator.permissions.query({ name: 'camera' as PermissionName })
-        return permission.state as 'granted' | 'denied' | 'prompt'
+        const permission = await navigator.permissions.query({
+          name: 'camera' as PermissionName,
+        });
+        return permission.state as 'granted' | 'denied' | 'prompt';
       }
-      return 'prompt'
+      return 'prompt';
     } catch {
-      return 'prompt'
+      return 'prompt';
     }
-  }
+  };
 
   /**
    * Start camera scanning
    */
   const startCameraScanning = useCallback(async () => {
-    if (!defaultConfig.enableCamera || !videoRef.current) return
+    if (!(defaultConfig.enableCamera && videoRef.current)) return;
 
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
           facingMode: 'environment', // Use back camera on mobile
           width: { ideal: 1280 },
-          height: { ideal: 720 }
-        }
-      })
+          height: { ideal: 720 },
+        },
+      });
 
-      streamRef.current = stream
-      videoRef.current.srcObject = stream
+      streamRef.current = stream;
+      videoRef.current.srcObject = stream;
 
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
         isScanning: true,
         error: null,
-        cameraPermission: 'granted'
-      }))
+        cameraPermission: 'granted',
+      }));
 
       // Start the scanning process
       if (scannerWorkerRef.current) {
-        scannerWorkerRef.current.postMessage({ command: 'start', stream })
+        scannerWorkerRef.current.postMessage({ command: 'start', stream });
       }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Camera access failed'
-      setState(prev => ({
+      const errorMessage =
+        error instanceof Error ? error.message : 'Camera access failed';
+      setState((prev) => ({
         ...prev,
         error: errorMessage,
-        cameraPermission: 'denied'
-      }))
-      callbacks?.onScanError?.(errorMessage)
+        cameraPermission: 'denied',
+      }));
+      callbacks?.onScanError?.(errorMessage);
     }
-  }, [defaultConfig.enableCamera, callbacks])
+  }, [defaultConfig.enableCamera, callbacks]);
 
   /**
    * Stop camera scanning
    */
   const stopCameraScanning = useCallback(() => {
     if (streamRef.current) {
-      streamRef.current.getTracks().forEach(track => track.stop())
-      streamRef.current = null
+      streamRef.current.getTracks().forEach((track) => track.stop());
+      streamRef.current = null;
     }
 
     if (videoRef.current) {
-      videoRef.current.srcObject = null
+      videoRef.current.srcObject = null;
     }
 
     if (scannerWorkerRef.current) {
-      scannerWorkerRef.current.postMessage({ command: 'stop' })
+      scannerWorkerRef.current.postMessage({ command: 'stop' });
     }
 
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
-      isScanning: false
-    }))
-  }, [])
+      isScanning: false,
+    }));
+  }, []);
 
   /**
    * Handle keyboard input for barcode scanning
    */
   const handleKeyboardInput = useCallback((event: KeyboardEvent) => {
-    const { key } = event
+    const { key } = event;
 
     // Clear timeout on new input
     if (keyboardTimeoutRef.current) {
-      clearTimeout(keyboardTimeoutRef.current)
+      clearTimeout(keyboardTimeoutRef.current);
     }
 
     if (key === 'Enter') {
       // Process the accumulated barcode
-      const barcode = keyboardBufferRef.current.trim()
+      const barcode = keyboardBufferRef.current.trim();
       if (barcode.length > 0) {
-        processBarcodeInput(barcode, 'keyboard')
-        keyboardBufferRef.current = ''
+        processBarcodeInput(barcode, 'keyboard');
+        keyboardBufferRef.current = '';
       }
     } else if (key.length === 1 && /[0-9A-Za-z]/.test(key)) {
       // Accumulate barcode characters
-      keyboardBufferRef.current += key
-      
+      keyboardBufferRef.current += key;
+
       // Set timeout to auto-process if no Enter key
       keyboardTimeoutRef.current = setTimeout(() => {
-        const barcode = keyboardBufferRef.current.trim()
-        if (barcode.length >= 8) { // Minimum barcode length
-          processBarcodeInput(barcode, 'keyboard')
-          keyboardBufferRef.current = ''
+        const barcode = keyboardBufferRef.current.trim();
+        if (barcode.length >= 8) {
+          // Minimum barcode length
+          processBarcodeInput(barcode, 'keyboard');
+          keyboardBufferRef.current = '';
         }
-      }, 100) // 100ms timeout for barcode scanners
+      }, 100); // 100ms timeout for barcode scanners
     }
-  }, [])
+  }, []);
 
   /**
    * Process barcode input from any source
    */
-  const processBarcodeInput = useCallback(async (
-    rawData: string, 
-    source: 'camera' | 'keyboard' | 'mobile' = 'keyboard'
-  ) => {
-    try {
-      // Parse barcode data
-      const parsedData = parseBarcodeData(rawData)
-      
-      // Create scan result
-      const scanResult: BarcodeScanResult = {
-        success: true,
-        format: detectBarcodeFormat(rawData),
-        rawData,
-        parsedData,
-        confidence: source === 'camera' ? 0.95 : 1.0, // Camera scanning might have confidence < 1
-        timestamp: new Date().toISOString(),
-        deviceId: getDeviceId(),
-        userId: getCurrentUserId(),
-        validation: {
-          productExists: false,
-          batchValid: false,
-          notExpired: false,
-          anvisaValid: false,
-          errors: [],
-          warnings: []
+  const processBarcodeInput = useCallback(
+    async (
+      rawData: string,
+      source: 'camera' | 'keyboard' | 'mobile' = 'keyboard'
+    ) => {
+      try {
+        // Parse barcode data
+        const parsedData = parseBarcodeData(rawData);
+
+        // Create scan result
+        const scanResult: BarcodeScanResult = {
+          success: true,
+          format: detectBarcodeFormat(rawData),
+          rawData,
+          parsedData,
+          confidence: source === 'camera' ? 0.95 : 1.0, // Camera scanning might have confidence < 1
+          timestamp: new Date().toISOString(),
+          deviceId: getDeviceId(),
+          userId: getCurrentUserId(),
+          validation: {
+            productExists: false,
+            batchValid: false,
+            notExpired: false,
+            anvisaValid: false,
+            errors: [],
+            warnings: [],
+          },
+        };
+
+        // Validate barcode data
+        if (defaultConfig.validationEndpoint && parsedData) {
+          await validateBarcodeData(scanResult);
         }
+
+        // Update state
+        setState((prev) => ({
+          ...prev,
+          lastScanResult: scanResult,
+          scanHistory: [...prev.scanHistory.slice(-49), scanResult], // Keep last 50 scans
+        }));
+
+        // Provide feedback
+        if (scanResult.success) {
+          playSuccessSound();
+          triggerHapticFeedback();
+          callbacks?.onScanSuccess?.(scanResult);
+        }
+
+        // Continue scanning if enabled
+        if (!defaultConfig.continuousScanning && source === 'camera') {
+          stopCameraScanning();
+        }
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : 'Scan processing failed';
+        setState((prev) => ({ ...prev, error: errorMessage }));
+        callbacks?.onScanError?.(errorMessage);
       }
-
-      // Validate barcode data
-      if (defaultConfig.validationEndpoint && parsedData) {
-        await validateBarcodeData(scanResult)
-      }
-
-      // Update state
-      setState(prev => ({
-        ...prev,
-        lastScanResult: scanResult,
-        scanHistory: [...prev.scanHistory.slice(-49), scanResult] // Keep last 50 scans
-      }))
-
-      // Provide feedback
-      if (scanResult.success) {
-        playSuccessSound()
-        triggerHapticFeedback()
-        callbacks?.onScanSuccess?.(scanResult)
-      }
-
-      // Continue scanning if enabled
-      if (!defaultConfig.continuousScanning && source === 'camera') {
-        stopCameraScanning()
-      }
-
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Scan processing failed'
-      setState(prev => ({ ...prev, error: errorMessage }))
-      callbacks?.onScanError?.(errorMessage)
-    }
-  }, [defaultConfig.validationEndpoint, defaultConfig.continuousScanning, callbacks])
+    },
+    [
+      defaultConfig.validationEndpoint,
+      defaultConfig.continuousScanning,
+      callbacks,
+    ]
+  );
 
   /**
    * Parse barcode data into structured format
    */
   const parseBarcodeData = (rawData: string): BarcodeData | undefined => {
     // This is a simplified parser - in a real implementation, you'd handle multiple formats
-    
+
     // Try to parse as product barcode with batch info
-    const productMatch = rawData.match(/^(\w+)(?:-(\w+))?(?:-(\d{6}))?/)
+    const productMatch = rawData.match(/^(\w+)(?:-(\w+))?(?:-(\d{6}))?/);
     if (productMatch) {
       return {
         productId: productMatch[1],
         batchNumber: productMatch[2],
-        expirationDate: productMatch[3] ? `20${productMatch[3].slice(0, 2)}-${productMatch[3].slice(2, 4)}-${productMatch[3].slice(4, 6)}` : undefined
-      }
+        expirationDate: productMatch[3]
+          ? `20${productMatch[3].slice(0, 2)}-${productMatch[3].slice(2, 4)}-${productMatch[3].slice(4, 6)}`
+          : undefined,
+      };
     }
 
     // Try to parse as GTIN
     if (/^\d{13,14}$/.test(rawData)) {
       return {
         gtin: rawData,
-        productId: rawData // Would be resolved via API
-      }
+        productId: rawData, // Would be resolved via API
+      };
     }
 
     // Return raw data if no specific format detected
     return {
-      productId: rawData
-    }
-  }
+      productId: rawData,
+    };
+  };
 
   /**
    * Detect barcode format from raw data
    */
   const detectBarcodeFormat = (rawData: string): BarcodeFormat => {
-    if (/^\d{13}$/.test(rawData)) return 'EAN13'
-    if (/^[\w\s\-\.\$\/\+\%]+$/.test(rawData)) return 'CODE128'
-    if (rawData.includes('{') || rawData.includes('http')) return 'QR_CODE'
-    return 'CODE128' // Default
-  }
+    if (/^\d{13}$/.test(rawData)) return 'EAN13';
+    if (/^[\w\s\-.$/+%]+$/.test(rawData)) return 'CODE128';
+    if (rawData.includes('{') || rawData.includes('http')) return 'QR_CODE';
+    return 'CODE128'; // Default
+  };
 
   /**
    * Validate barcode data against inventory database
    */
   const validateBarcodeData = async (scanResult: BarcodeScanResult) => {
-    if (!defaultConfig.validationEndpoint || !scanResult.parsedData) return
+    if (!(defaultConfig.validationEndpoint && scanResult.parsedData)) return;
 
     try {
       const response = await fetch(defaultConfig.validationEndpoint, {
@@ -367,145 +391,151 @@ export function useBarcodeScanner(
         },
         body: JSON.stringify({
           barcodeData: scanResult.parsedData,
-          timestamp: scanResult.timestamp
-        })
-      })
+          timestamp: scanResult.timestamp,
+        }),
+      });
 
-      const validation = await response.json()
-      
+      const validation = await response.json();
+
       // Update scan result with validation
       scanResult.validation = {
-        productExists: validation.productExists || false,
-        batchValid: validation.batchValid || false,
-        notExpired: validation.notExpired || false,
-        anvisaValid: validation.anvisaValid || false,
+        productExists: validation.productExists,
+        batchValid: validation.batchValid,
+        notExpired: validation.notExpired,
+        anvisaValid: validation.anvisaValid,
         errors: validation.errors || [],
-        warnings: validation.warnings || []
-      }
+        warnings: validation.warnings || [],
+      };
 
-      callbacks?.onValidationComplete?.(scanResult)
-    } catch (error) {
-      scanResult.validation.errors.push('Validation service unavailable')
+      callbacks?.onValidationComplete?.(scanResult);
+    } catch (_error) {
+      scanResult.validation.errors.push('Validation service unavailable');
     }
-  }
+  };
 
   /**
    * Handle messages from barcode scanner worker
    */
-  const handleWorkerMessage = useCallback((event: MessageEvent) => {
-    const { type, data } = event.data
+  const handleWorkerMessage = useCallback(
+    (event: MessageEvent) => {
+      const { type, data } = event.data;
 
-    switch (type) {
-      case 'barcode_detected':
-        processBarcodeInput(data.code, 'camera')
-        break
-      case 'error':
-        setState(prev => ({ ...prev, error: data.message }))
-        callbacks?.onScanError?.(data.message)
-        break
-    }
-  }, [processBarcodeInput, callbacks])
+      switch (type) {
+        case 'barcode_detected':
+          processBarcodeInput(data.code, 'camera');
+          break;
+        case 'error':
+          setState((prev) => ({ ...prev, error: data.message }));
+          callbacks?.onScanError?.(data.message);
+          break;
+      }
+    },
+    [processBarcodeInput, callbacks]
+  );
 
   /**
    * Play success sound
    */
   const playSuccessSound = () => {
-    if (!defaultConfig.soundEnabled) return
-    
+    if (!defaultConfig.soundEnabled) return;
+
     try {
-      const audio = new Audio('/sounds/barcode-scan-success.mp3')
-      audio.volume = 0.3
+      const audio = new Audio('/sounds/barcode-scan-success.mp3');
+      audio.volume = 0.3;
       audio.play().catch(() => {
         // Audio play failed - likely due to browser restrictions
-      })
+      });
     } catch {
       // Audio not supported
     }
-  }
+  };
 
   /**
    * Trigger haptic feedback on mobile devices
    */
   const triggerHapticFeedback = () => {
-    if (!defaultConfig.vibrationEnabled) return
+    if (!defaultConfig.vibrationEnabled) return;
 
     try {
       if ('vibrate' in navigator) {
-        navigator.vibrate(100) // 100ms vibration
+        navigator.vibrate(100); // 100ms vibration
       }
     } catch {
       // Vibration not supported
     }
-  }
+  };
 
   /**
    * Get device ID for audit trail
    */
   const getDeviceId = (): string => {
     // In a real implementation, this would generate or retrieve a persistent device ID
-    return localStorage.getItem('neonpro-device-id') || 'unknown-device'
-  }
+    return localStorage.getItem('neonpro-device-id') || 'unknown-device';
+  };
 
   /**
    * Get current user ID
    */
   const getCurrentUserId = (): string => {
     // In a real implementation, this would get the current authenticated user
-    return localStorage.getItem('neonpro-user-id') || 'anonymous'
-  }
+    return localStorage.getItem('neonpro-user-id') || 'anonymous';
+  };
 
   /**
    * Manual barcode input for testing or manual entry
    */
-  const manualScan = useCallback((barcode: string) => {
-    processBarcodeInput(barcode, 'keyboard')
-  }, [processBarcodeInput])
+  const manualScan = useCallback(
+    (barcode: string) => {
+      processBarcodeInput(barcode, 'keyboard');
+    },
+    [processBarcodeInput]
+  );
 
   /**
    * Clear scan history
    */
   const clearHistory = useCallback(() => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       scanHistory: [],
-      lastScanResult: null
-    }))
-  }, [])
+      lastScanResult: null,
+    }));
+  }, []);
 
   /**
    * Cleanup function
    */
   const cleanup = useCallback(() => {
-    stopCameraScanning()
-    
+    stopCameraScanning();
+
     if (scannerWorkerRef.current) {
-      scannerWorkerRef.current.terminate()
-      scannerWorkerRef.current = null
+      scannerWorkerRef.current.terminate();
+      scannerWorkerRef.current = null;
     }
 
     if (keyboardTimeoutRef.current) {
-      clearTimeout(keyboardTimeoutRef.current)
+      clearTimeout(keyboardTimeoutRef.current);
     }
-  }, [stopCameraScanning])
+  }, [stopCameraScanning]);
 
   return {
     // State
     ...state,
-    
+
     // Configuration
     config: defaultConfig,
-    
+
     // Camera controls
     startCameraScanning,
     stopCameraScanning,
     videoRef,
-    
+
     // Manual controls
     manualScan,
     clearHistory,
-    
+
     // Utilities
     cleanup,
-    reinitialize: initializeScanner
-  }
+    reinitialize: initializeScanner,
+  };
 }

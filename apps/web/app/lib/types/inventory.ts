@@ -43,7 +43,7 @@ export interface InventoryStock {
   last_counted_by?: string;
   created_at: string;
   updated_at: string;
-  
+
   // Joined data
   inventory_item?: InventoryItem;
   clinic?: {
@@ -82,14 +82,14 @@ export interface StockTransfer {
   received_at?: string;
   created_at: string;
   updated_at: string;
-  
+
   // Joined data
   inventory_item?: InventoryItem;
-  from_clinic?: { id: string; clinic_name: string; clinic_code: string; };
-  from_room?: { id: string; name: string; };
-  to_clinic?: { id: string; clinic_name: string; clinic_code: string; };
-  to_room?: { id: string; name: string; };
-  requester?: { id: string; full_name: string; };
+  from_clinic?: { id: string; clinic_name: string; clinic_code: string };
+  from_room?: { id: string; name: string };
+  to_clinic?: { id: string; clinic_name: string; clinic_code: string };
+  to_room?: { id: string; name: string };
+  requester?: { id: string; full_name: string };
 }
 
 export interface StockTransaction {
@@ -97,7 +97,14 @@ export interface StockTransaction {
   inventory_item_id: string;
   clinic_id: string;
   room_id?: string;
-  transaction_type: 'adjustment' | 'purchase' | 'sale' | 'transfer_in' | 'transfer_out' | 'disposal' | 'consumption';
+  transaction_type:
+    | 'adjustment'
+    | 'purchase'
+    | 'sale'
+    | 'transfer_in'
+    | 'transfer_out'
+    | 'disposal'
+    | 'consumption';
   quantity_change: number;
   quantity_before: number;
   quantity_after: number;
@@ -110,25 +117,46 @@ export interface StockTransaction {
   notes?: string;
   performed_by: string;
   created_at: string;
-  
+
   // Joined data
   inventory_item?: InventoryItem;
-  clinic?: { id: string; clinic_name: string; clinic_code: string; };
-  room?: { id: string; name: string; };
-  performer?: { id: string; full_name: string; };
+  clinic?: { id: string; clinic_name: string; clinic_code: string };
+  room?: { id: string; name: string };
+  performer?: { id: string; full_name: string };
 }
 
 // Create/Update types
-export type CreateInventoryItem = Omit<InventoryItem, 'id' | 'created_at' | 'updated_at'>;
+export type CreateInventoryItem = Omit<
+  InventoryItem,
+  'id' | 'created_at' | 'updated_at'
+>;
 export type UpdateInventoryItem = Partial<CreateInventoryItem> & { id: string };
 
-export type CreateInventoryStock = Omit<InventoryStock, 'id' | 'available_quantity' | 'created_at' | 'updated_at'>;
-export type UpdateInventoryStock = Partial<CreateInventoryStock> & { id: string };
+export type CreateInventoryStock = Omit<
+  InventoryStock,
+  'id' | 'available_quantity' | 'created_at' | 'updated_at'
+>;
+export type UpdateInventoryStock = Partial<CreateInventoryStock> & {
+  id: string;
+};
 
-export type CreateStockTransfer = Omit<StockTransfer, 'id' | 'transfer_number' | 'status' | 'created_at' | 'updated_at' | 'requested_at'>;
-export type UpdateStockTransfer = Partial<Omit<StockTransfer, 'id' | 'transfer_number' | 'created_at' | 'updated_at'>> & { id: string };
+export type CreateStockTransfer = Omit<
+  StockTransfer,
+  | 'id'
+  | 'transfer_number'
+  | 'status'
+  | 'created_at'
+  | 'updated_at'
+  | 'requested_at'
+>;
+export type UpdateStockTransfer = Partial<
+  Omit<StockTransfer, 'id' | 'transfer_number' | 'created_at' | 'updated_at'>
+> & { id: string };
 
-export type CreateStockTransaction = Omit<StockTransaction, 'id' | 'created_at'>;
+export type CreateStockTransaction = Omit<
+  StockTransaction,
+  'id' | 'created_at'
+>;
 
 // Query filters
 export interface InventoryFilters {

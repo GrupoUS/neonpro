@@ -4,8 +4,11 @@
  */
 
 import { supabase } from '@/app/utils/supabase/client';
-import { NotificationType, NotificationChannel, NotificationPreferences } from './config';
-import { z } from 'zod';
+import type {
+  NotificationChannel,
+  NotificationPreferences,
+  NotificationType,
+} from './config';
 
 interface ScheduleNotificationPayload {
   recipientId: string;
@@ -39,7 +42,9 @@ export class SchedulingService {
   /**
    * Schedule a notification for future delivery
    */
-  async scheduleNotification(payload: ScheduleNotificationPayload): Promise<string> {
+  async scheduleNotification(
+    payload: ScheduleNotificationPayload
+  ): Promise<string> {
     try {
       const { data, error } = await supabase
         .from('scheduled_notifications')
@@ -54,10 +59,10 @@ export class SchedulingService {
           max_retries: this.maxRetries,
           metadata: {
             preferences: payload.preferences,
-            ...payload.metadata
+            ...payload.metadata,
           },
           created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .select('id')
         .single();
@@ -67,7 +72,6 @@ export class SchedulingService {
       }
 
       return data.id;
-
     } catch (error) {
       console.error('Error scheduling notification:', error);
       throw error;
@@ -94,7 +98,6 @@ export class SchedulingService {
       }
 
       return data.map(this.mapDatabaseToModel);
-
     } catch (error) {
       console.error('Error getting due notifications:', error);
       return [];
@@ -104,7 +107,10 @@ export class SchedulingService {
   /**
    * Mark notification as sent successfully
    */
-  async markNotificationSent(notificationId: string, deliveryDetails?: any): Promise<boolean> {
+  async markNotificationSent(
+    notificationId: string,
+    deliveryDetails?: any
+  ): Promise<boolean> {
     try {
       const { error } = await supabase
         .from('scheduled_notifications')
@@ -112,7 +118,7 @@ export class SchedulingService {
           status: 'sent',
           sent_at: new Date().toISOString(),
           delivery_details: deliveryDetails,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', notificationId);
 
@@ -122,7 +128,6 @@ export class SchedulingService {
       }
 
       return true;
-
     } catch (error) {
       console.error('Error marking notification as sent:', error);
       return false;
@@ -132,7 +137,10 @@ export class SchedulingService {
   /**
    * Mark notification as failed and handle retry logic
    */
-  async markNotificationFailed(notificationId: string, errorMessage: string): Promise<boolean> {
+  async markNotificationFailed(
+    notificationId: string,
+    errorMessage: string
+  ): Promise<boolean> {
     try {
       // Get current notification state
       const { data: current, error: fetchError } = await supabase
@@ -142,24 +150,30 @@ export class SchedulingService {
         .single();
 
       if (fetchError) {
-        console.error(`Failed to fetch notification for retry: ${fetchError.message}`);
+        console.error(
+          `Failed to fetch notification for retry: ${fetchError.message}`
+        );
         return false;
       }
 
       const newRetryCount = (current.retry_count || 0) + 1;
-      const shouldRetry = newRetryCount <= (current.max_retries || this.maxRetries);
+      const shouldRetry =
+        newRetryCount <= (current.max_retries || this.maxRetries);
 
       const updateData: any = {
         last_error: errorMessage,
         retry_count: newRetryCount,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       };
 
       if (shouldRetry) {
         // Schedule retry with exponential backoff
-        const retryDelay = this.retryIntervals[Math.min(newRetryCount - 1, this.retryIntervals.length - 1)];
+        const retryDelay =
+          this.retryIntervals[
+            Math.min(newRetryCount - 1, this.retryIntervals.length - 1)
+          ];
         const nextRetry = new Date(Date.now() + retryDelay);
-        
+
         updateData.scheduled_for = nextRetry.toISOString();
         updateData.status = 'pending';
       } else {
@@ -174,17 +188,18 @@ export class SchedulingService {
         .eq('id', notificationId);
 
       if (error) {
-        console.error(`Failed to mark notification as failed: ${error.message}`);
+        console.error(
+          `Failed to mark notification as failed: ${error.message}`
+        );
         return false;
       }
 
       return true;
-
     } catch (error) {
       console.error('Error marking notification as failed:', error);
       return false;
     }
-  }  /**
+  } /**
    * Cancel a scheduled notification
    */
   async cancelNotification(notificationId: string): Promise<boolean> {
@@ -194,7 +209,7 @@ export class SchedulingService {
         .update({
           status: 'cancelled',
           cancelled_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', notificationId)
         .eq('status', 'pending'); // Only allow cancelling pending notifications
@@ -205,7 +220,6 @@ export class SchedulingService {
       }
 
       return true;
-
     } catch (error) {
       console.error('Error cancelling notification:', error);
       return false;
@@ -232,23 +246,29 @@ export class SchedulingService {
         return null;
       }
 
-      const statusMap: Record<string, 'pending' | 'sent' | 'delivered' | 'failed' | 'cancelled'> = {
-        'pending': 'pending',
-        'sent': 'delivered', // Assume sent means delivered for scheduled notifications
-        'failed': 'failed',
-        'cancelled': 'cancelled'
+      const statusMap: Record<
+        string,
+        'pending' | 'sent' | 'delivered' | 'failed' | 'cancelled'
+      > = {
+        pending: 'pending',
+        sent: 'delivered', // Assume sent means delivered for scheduled notifications
+        failed: 'failed',
+        cancelled: 'cancelled',
       };
 
-      const deliveredAt = data.sent_at ? new Date(data.sent_at) : 
-                          data.failed_at ? new Date(data.failed_at) :
-                          data.cancelled_at ? new Date(data.cancelled_at) : undefined;
+      const deliveredAt = data.sent_at
+        ? new Date(data.sent_at)
+        : data.failed_at
+          ? new Date(data.failed_at)
+          : data.cancelled_at
+            ? new Date(data.cancelled_at)
+            : undefined;
 
       return {
         status: statusMap[data.status] || 'failed',
         deliveredAt,
-        error: data.last_error || undefined
+        error: data.last_error || undefined,
       };
-
     } catch (error) {
       console.error('Error getting notification status:', error);
       return null;
@@ -258,13 +278,16 @@ export class SchedulingService {
   /**
    * Reschedule a pending notification
    */
-  async rescheduleNotification(notificationId: string, newScheduledTime: Date): Promise<boolean> {
+  async rescheduleNotification(
+    notificationId: string,
+    newScheduledTime: Date
+  ): Promise<boolean> {
     try {
       const { error } = await supabase
         .from('scheduled_notifications')
         .update({
           scheduled_for: newScheduledTime.toISOString(),
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', notificationId)
         .eq('status', 'pending'); // Only allow rescheduling pending notifications
@@ -275,7 +298,6 @@ export class SchedulingService {
       }
 
       return true;
-
     } catch (error) {
       console.error('Error rescheduling notification:', error);
       return false;
@@ -286,8 +308,8 @@ export class SchedulingService {
    * Schedule appointment reminder notifications based on user preferences
    */
   async scheduleAppointmentReminders(
-    appointmentId: string, 
-    appointmentDate: Date, 
+    appointmentId: string,
+    appointmentDate: Date,
     patientId: string
   ): Promise<string[]> {
     try {
@@ -306,14 +328,22 @@ export class SchedulingService {
       const scheduledIds: string[] = [];
 
       // Schedule reminders based on user preferences
-      for (const interval of preferences.reminderIntervals || [24, 2]) { // Default: 24h and 2h before
-        const reminderTime = new Date(appointmentDate.getTime() - (interval * 60 * 60 * 1000));
-        
+      for (const interval of preferences.reminderIntervals || [24, 2]) {
+        // Default: 24h and 2h before
+        const reminderTime = new Date(
+          appointmentDate.getTime() - interval * 60 * 60 * 1000
+        );
+
         // Only schedule if reminder time is in the future
         if (reminderTime > new Date()) {
           // Schedule for enabled channels
-          for (const [channel, channelPrefs] of Object.entries(preferences.channels)) {
-            if (channelPrefs.enabled && channelPrefs.enabledTypes.includes('appointment_reminder')) {
+          for (const [channel, channelPrefs] of Object.entries(
+            preferences.channels
+          )) {
+            if (
+              channelPrefs.enabled &&
+              channelPrefs.enabledTypes.includes('appointment_reminder')
+            ) {
               try {
                 const scheduledId = await this.scheduleNotification({
                   recipientId: patientId,
@@ -322,16 +352,16 @@ export class SchedulingService {
                   payload: {
                     appointmentId,
                     appointmentDate: appointmentDate.toISOString(),
-                    interval: `${interval}h`
+                    interval: `${interval}h`,
                   },
                   scheduledFor: reminderTime,
                   preferences,
                   metadata: {
                     appointmentId,
-                    reminderInterval: interval
-                  }
+                    reminderInterval: interval,
+                  },
                 });
-                
+
                 scheduledIds.push(scheduledId);
               } catch (error) {
                 console.error(`Failed to schedule ${channel} reminder:`, error);
@@ -342,7 +372,6 @@ export class SchedulingService {
       }
 
       return scheduledIds;
-
     } catch (error) {
       console.error('Error scheduling appointment reminders:', error);
       return [];
@@ -352,25 +381,28 @@ export class SchedulingService {
   /**
    * Cancel all scheduled notifications for an appointment
    */
-  async cancelAppointmentNotifications(appointmentId: string): Promise<boolean> {
+  async cancelAppointmentNotifications(
+    appointmentId: string
+  ): Promise<boolean> {
     try {
       const { error } = await supabase
         .from('scheduled_notifications')
         .update({
           status: 'cancelled',
           cancelled_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('status', 'pending')
         .contains('metadata', { appointmentId });
 
       if (error) {
-        console.error(`Failed to cancel appointment notifications: ${error.message}`);
+        console.error(
+          `Failed to cancel appointment notifications: ${error.message}`
+        );
         return false;
       }
 
       return true;
-
     } catch (error) {
       console.error('Error cancelling appointment notifications:', error);
       return false;
@@ -393,14 +425,14 @@ export class SchedulingService {
       maxRetries: dbRecord.max_retries || this.maxRetries,
       lastError: dbRecord.last_error,
       createdAt: new Date(dbRecord.created_at),
-      updatedAt: new Date(dbRecord.updated_at)
+      updatedAt: new Date(dbRecord.updated_at),
     };
   }
 
   /**
    * Clean up old completed/failed notifications (maintenance task)
    */
-  async cleanupOldNotifications(olderThanDays: number = 90): Promise<number> {
+  async cleanupOldNotifications(olderThanDays = 90): Promise<number> {
     try {
       const cutoffDate = new Date();
       cutoffDate.setDate(cutoffDate.getDate() - olderThanDays);
@@ -418,7 +450,6 @@ export class SchedulingService {
       }
 
       return data?.length || 0;
-
     } catch (error) {
       console.error('Error cleaning up old notifications:', error);
       return 0;

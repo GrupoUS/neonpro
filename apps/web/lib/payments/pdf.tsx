@@ -1,14 +1,12 @@
-import { 
-  Document, 
-  Page, 
-  Text, 
-  View, 
+import {
+  Document,
+  Page,
+  pdf,
   StyleSheet,
-  Image,
-  Font,
-  pdf
-} from '@react-pdf/renderer'
-import React from 'react'
+  Text,
+  View,
+} from '@react-pdf/renderer';
+import type React from 'react';
 
 // Register fonts (optional)
 // Font.register({
@@ -162,52 +160,54 @@ const styles = StyleSheet.create({
     color: '#9ca3af',
     fontSize: 10,
   },
-})
+});
 
 // Invoice data interface
 export interface InvoicePDFData {
-  invoiceNumber: string
-  invoiceDate: string
-  dueDate: string
-  status: 'draft' | 'pending' | 'paid' | 'overdue'
-  
+  invoiceNumber: string;
+  invoiceDate: string;
+  dueDate: string;
+  status: 'draft' | 'pending' | 'paid' | 'overdue';
+
   // Company info
   company: {
-    name: string
-    email: string
-    phone?: string
-    address?: string
-    website?: string
-  }
-  
+    name: string;
+    email: string;
+    phone?: string;
+    address?: string;
+    website?: string;
+  };
+
   // Client info
   client: {
-    name: string
-    email: string
-    phone?: string
-    address?: string
-  }
-  
+    name: string;
+    email: string;
+    phone?: string;
+    address?: string;
+  };
+
   // Items
   items: Array<{
-    description: string
-    quantity: number
-    rate: number
-    amount: number
-  }>
-  
+    description: string;
+    quantity: number;
+    rate: number;
+    amount: number;
+  }>;
+
   // Totals
-  subtotal: number
-  tax: number
-  taxRate: number
-  total: number
-  
+  subtotal: number;
+  tax: number;
+  taxRate: number;
+  total: number;
+
   // Payment info
-  paymentMethod?: string
-  paymentTerms?: string
-  notes?: string
-}// Invoice PDF Document Component
-export const InvoicePDFDocument: React.FC<{ data: InvoicePDFData }> = ({ data }) => (
+  paymentMethod?: string;
+  paymentTerms?: string;
+  notes?: string;
+} // Invoice PDF Document Component
+export const InvoicePDFDocument: React.FC<{ data: InvoicePDFData }> = ({
+  data,
+}) => (
   <Document>
     <Page size="A4" style={styles.page}>
       {/* Header */}
@@ -219,8 +219,12 @@ export const InvoicePDFDocument: React.FC<{ data: InvoicePDFData }> = ({ data })
         <View style={styles.company}>
           <Text style={styles.text}>{data.company.name}</Text>
           <Text style={styles.text}>{data.company.email}</Text>
-          {data.company.phone && <Text style={styles.text}>{data.company.phone}</Text>}
-          {data.company.address && <Text style={styles.text}>{data.company.address}</Text>}
+          {data.company.phone && (
+            <Text style={styles.text}>{data.company.phone}</Text>
+          )}
+          {data.company.address && (
+            <Text style={styles.text}>{data.company.address}</Text>
+          )}
         </View>
       </View>
 
@@ -234,15 +238,21 @@ export const InvoicePDFDocument: React.FC<{ data: InvoicePDFData }> = ({ data })
           <Text style={styles.text}>Date: {data.invoiceDate}</Text>
           <Text style={styles.text}>Due Date: {data.dueDate}</Text>
           <Text style={styles.text}>Status: {data.status.toUpperCase()}</Text>
-          {data.paymentTerms && <Text style={styles.text}>Terms: {data.paymentTerms}</Text>}
+          {data.paymentTerms && (
+            <Text style={styles.text}>Terms: {data.paymentTerms}</Text>
+          )}
         </View>
-        
+
         <View style={styles.billToBox}>
           <Text style={styles.label}>Bill To</Text>
           <Text style={styles.text}>{data.client.name}</Text>
           <Text style={styles.text}>{data.client.email}</Text>
-          {data.client.phone && <Text style={styles.text}>{data.client.phone}</Text>}
-          {data.client.address && <Text style={styles.text}>{data.client.address}</Text>}
+          {data.client.phone && (
+            <Text style={styles.text}>{data.client.phone}</Text>
+          )}
+          {data.client.address && (
+            <Text style={styles.text}>{data.client.address}</Text>
+          )}
         </View>
       </View>
 
@@ -266,7 +276,7 @@ export const InvoicePDFDocument: React.FC<{ data: InvoicePDFData }> = ({ data })
 
         {/* Table Rows */}
         {data.items.map((item, index) => (
-          <View style={styles.tableRow} key={index}>
+          <View key={index} style={styles.tableRow}>
             <View style={styles.tableCol}>
               <Text style={styles.tableCell}>{item.description}</Text>
             </View>
@@ -289,14 +299,14 @@ export const InvoicePDFDocument: React.FC<{ data: InvoicePDFData }> = ({ data })
           <Text style={styles.totalLabel}>Subtotal:</Text>
           <Text style={styles.totalValue}>${data.subtotal.toFixed(2)}</Text>
         </View>
-        
+
         {data.tax > 0 && (
           <View style={styles.totalRow}>
             <Text style={styles.totalLabel}>Tax ({data.taxRate}%):</Text>
             <Text style={styles.totalValue}>${data.tax.toFixed(2)}</Text>
           </View>
         )}
-        
+
         <View style={styles.finalTotal}>
           <Text style={styles.finalTotalLabel}>Total:</Text>
           <Text style={styles.finalTotalValue}>${data.total.toFixed(2)}</Text>
@@ -317,18 +327,22 @@ export const InvoicePDFDocument: React.FC<{ data: InvoicePDFData }> = ({ data })
       </Text>
     </Page>
   </Document>
-)
+);
 
 // Generate PDF Buffer
-export const generateInvoicePDF = async (data: InvoicePDFData): Promise<Buffer> => {
-  const document = <InvoicePDFDocument data={data} />
-  const pdfBuffer = await pdf(document).toBuffer()
-  return pdfBuffer
-}
+export const generateInvoicePDF = async (
+  data: InvoicePDFData
+): Promise<Buffer> => {
+  const document = <InvoicePDFDocument data={data} />;
+  const pdfBuffer = await pdf(document).toBuffer();
+  return pdfBuffer;
+};
 
 // Generate PDF Blob (for download)
-export const generateInvoicePDFBlob = async (data: InvoicePDFData): Promise<Blob> => {
-  const document = <InvoicePDFDocument data={data} />
-  const pdfBlob = await pdf(document).toBlob()
-  return pdfBlob
-}
+export const generateInvoicePDFBlob = async (
+  data: InvoicePDFData
+): Promise<Blob> => {
+  const document = <InvoicePDFDocument data={data} />;
+  const pdfBlob = await pdf(document).toBlob();
+  return pdfBlob;
+};

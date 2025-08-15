@@ -1,7 +1,7 @@
 /**
  * Financial Analytics Calculator - Advanced Analytics and Calculations
  * NeonPro Healthcare System - Story 4.3 Architecture Alignment
- * 
+ *
  * This module provides advanced financial analytics and calculation capabilities
  * for treatment profitability, revenue analysis, and business intelligence.
  */
@@ -24,7 +24,9 @@ export const TreatmentProfitabilitySchema = z.object({
   patientId: z.string().optional(),
 });
 
-export type TreatmentProfitability = z.infer<typeof TreatmentProfitabilitySchema>;
+export type TreatmentProfitability = z.infer<
+  typeof TreatmentProfitabilitySchema
+>;
 
 export const RevenueAnalyticsSchema = z.object({
   period: z.enum(['daily', 'weekly', 'monthly', 'quarterly', 'yearly']),
@@ -66,7 +68,7 @@ export interface ProfitabilityAnalysis {
 // =================== ANALYTICS CALCULATOR CLASS ===================
 
 export class FinancialAnalyticsCalculator {
-  private readonly PROFIT_MARGIN_TARGET = 0.30; // 30% target profit margin
+  private readonly PROFIT_MARGIN_TARGET = 0.3; // 30% target profit margin
   private readonly ROI_TARGET = 0.25; // 25% target ROI
 
   /**
@@ -77,17 +79,20 @@ export class FinancialAnalyticsCalculator {
   ): Promise<ProfitabilityAnalysis[]> {
     try {
       // Validate input data
-      treatments.forEach(treatment => {
+      treatments.forEach((treatment) => {
         TreatmentProfitabilitySchema.parse(treatment);
       });
 
       // Group by treatment type
       const treatmentGroups = this.groupTreatmentsByType(treatments);
-      
+
       const analyses: ProfitabilityAnalysis[] = [];
 
       for (const [treatmentType, treatmentList] of treatmentGroups.entries()) {
-        const analysis = this.analyzeTreatmentGroup(treatmentType, treatmentList);
+        const analysis = this.analyzeTreatmentGroup(
+          treatmentType,
+          treatmentList
+        );
         analyses.push(analysis);
       }
 
@@ -117,7 +122,11 @@ export class FinancialAnalyticsCalculator {
           value: data.totalRevenue,
           target: this.calculateRevenueTarget(data),
           trend: this.calculateTrend(data, previousPeriodData, 'totalRevenue'),
-          changePercentage: this.calculateChangePercentage(data, previousPeriodData, 'totalRevenue'),
+          changePercentage: this.calculateChangePercentage(
+            data,
+            previousPeriodData,
+            'totalRevenue'
+          ),
           period: data.period,
           category: 'revenue',
         });
@@ -126,8 +135,16 @@ export class FinancialAnalyticsCalculator {
           name: 'Average Transaction Value',
           value: data.averageTransactionValue,
           target: this.calculateAverageTransactionTarget(data),
-          trend: this.calculateTrend(data, previousPeriodData, 'averageTransactionValue'),
-          changePercentage: this.calculateChangePercentage(data, previousPeriodData, 'averageTransactionValue'),
+          trend: this.calculateTrend(
+            data,
+            previousPeriodData,
+            'averageTransactionValue'
+          ),
+          changePercentage: this.calculateChangePercentage(
+            data,
+            previousPeriodData,
+            'averageTransactionValue'
+          ),
           period: data.period,
           category: 'revenue',
         });
@@ -137,8 +154,16 @@ export class FinancialAnalyticsCalculator {
           name: 'Transaction Count',
           value: data.transactionCount,
           target: this.calculateTransactionCountTarget(data),
-          trend: this.calculateTrend(data, previousPeriodData, 'transactionCount'),
-          changePercentage: this.calculateChangePercentage(data, previousPeriodData, 'transactionCount'),
+          trend: this.calculateTrend(
+            data,
+            previousPeriodData,
+            'transactionCount'
+          ),
+          changePercentage: this.calculateChangePercentage(
+            data,
+            previousPeriodData,
+            'transactionCount'
+          ),
           period: data.period,
           category: 'efficiency',
         });
@@ -156,7 +181,7 @@ export class FinancialAnalyticsCalculator {
    */
   async calculateRevenueForecasting(
     historicalData: RevenueAnalytics[],
-    forecastPeriods: number = 12
+    forecastPeriods = 12
   ): Promise<{
     forecast: Array<{
       period: string;
@@ -172,12 +197,14 @@ export class FinancialAnalyticsCalculator {
   }> {
     try {
       // Validate historical data
-      historicalData.forEach(data => {
+      historicalData.forEach((data) => {
         RevenueAnalyticsSchema.parse(data);
       });
 
       if (historicalData.length < 3) {
-        throw new Error('Insufficient historical data for forecasting (minimum 3 periods required)');
+        throw new Error(
+          'Insufficient historical data for forecasting (minimum 3 periods required)'
+        );
       }
 
       // Calculate trend and seasonality
@@ -219,22 +246,29 @@ export class FinancialAnalyticsCalculator {
       recommendation: string;
       priority: 'high' | 'medium' | 'low';
     }>;
-    benchmarkComparison: Record<string, { current: number; benchmark: number; variance: number }>;
+    benchmarkComparison: Record<
+      string,
+      { current: number; benchmark: number; variance: number }
+    >;
   }> {
     try {
       // Validate input data
-      treatments.forEach(treatment => {
+      treatments.forEach((treatment) => {
         TreatmentProfitabilitySchema.parse(treatment);
       });
 
       // Calculate cost breakdown
       const costBreakdown = this.calculateCostBreakdown(treatments);
-      
+
       // Identify optimization opportunities
-      const optimizationOpportunities = this.identifyOptimizationOpportunities(treatments, costBreakdown);
-      
+      const optimizationOpportunities = this.identifyOptimizationOpportunities(
+        treatments,
+        costBreakdown
+      );
+
       // Benchmark comparison
-      const benchmarkComparison = this.calculateBenchmarkComparison(costBreakdown);
+      const benchmarkComparison =
+        this.calculateBenchmarkComparison(costBreakdown);
 
       return {
         costBreakdown,
@@ -249,24 +283,36 @@ export class FinancialAnalyticsCalculator {
 
   // =================== PRIVATE HELPER METHODS ===================
 
-  private groupTreatmentsByType(treatments: TreatmentProfitability[]): Map<string, TreatmentProfitability[]> {
+  private groupTreatmentsByType(
+    treatments: TreatmentProfitability[]
+  ): Map<string, TreatmentProfitability[]> {
     const groups = new Map<string, TreatmentProfitability[]>();
 
-    treatments.forEach(treatment => {
+    treatments.forEach((treatment) => {
       const type = treatment.treatmentType;
       if (!groups.has(type)) {
         groups.set(type, []);
       }
-      groups.get(type)!.push(treatment);
+      groups.get(type)?.push(treatment);
     });
 
     return groups;
   }
 
-  private analyzeTreatmentGroup(treatmentType: string, treatments: TreatmentProfitability[]): ProfitabilityAnalysis {
+  private analyzeTreatmentGroup(
+    treatmentType: string,
+    treatments: TreatmentProfitability[]
+  ): ProfitabilityAnalysis {
     const totalRevenue = treatments.reduce((sum, t) => sum + t.revenue, 0);
-    const totalCosts = treatments.reduce((sum, t) => 
-      sum + t.directCosts + t.indirectCosts + t.laborCosts + t.materialCosts + t.overheadCosts, 0
+    const totalCosts = treatments.reduce(
+      (sum, t) =>
+        sum +
+        t.directCosts +
+        t.indirectCosts +
+        t.laborCosts +
+        t.materialCosts +
+        t.overheadCosts,
+      0
     );
     const grossProfit = totalRevenue - totalCosts;
     const profitMargin = totalRevenue > 0 ? grossProfit / totalRevenue : 0;
@@ -275,7 +321,11 @@ export class FinancialAnalyticsCalculator {
     const averageRevenuePerTreatment = totalRevenue / treatments.length;
     const averageCostPerTreatment = totalCosts / treatments.length;
 
-    const recommendations = this.generateRecommendations(profitMargin, roi, treatmentType);
+    const recommendations = this.generateRecommendations(
+      profitMargin,
+      roi,
+      treatmentType
+    );
 
     return {
       treatmentType,
@@ -291,18 +341,22 @@ export class FinancialAnalyticsCalculator {
     };
   }
 
-  private generateRecommendations(profitMargin: number, roi: number, treatmentType: string): string[] {
+  private generateRecommendations(
+    profitMargin: number,
+    roi: number,
+    treatmentType: string
+  ): string[] {
     const recommendations: string[] = [];
 
     if (profitMargin < this.PROFIT_MARGIN_TARGET) {
       recommendations.push(
-        `Profit margin for ${treatmentType} is ${(profitMargin * 100).toFixed(1)}%, below target of ${(this.PROFIT_MARGIN_TARGET * 100)}%. Consider pricing optimization.`
+        `Profit margin for ${treatmentType} is ${(profitMargin * 100).toFixed(1)}%, below target of ${this.PROFIT_MARGIN_TARGET * 100}%. Consider pricing optimization.`
       );
     }
 
     if (roi < this.ROI_TARGET) {
       recommendations.push(
-        `ROI for ${treatmentType} is ${(roi * 100).toFixed(1)}%, below target of ${(this.ROI_TARGET * 100)}%. Review cost structure.`
+        `ROI for ${treatmentType} is ${(roi * 100).toFixed(1)}%, below target of ${this.ROI_TARGET * 100}%. Review cost structure.`
       );
     }
 
@@ -361,24 +415,27 @@ export class FinancialAnalyticsCalculator {
     trend: 'growing' | 'declining' | 'stable';
     growthRate: number;
   } {
-    const revenues = historicalData.map(d => d.totalRevenue);
+    const revenues = historicalData.map((d) => d.totalRevenue);
     const periods = revenues.length;
 
     if (periods < 2) return { trend: 'stable', growthRate: 0 };
 
     // Simple linear regression for trend
-    const growthRate = (revenues[periods - 1] - revenues[0]) / (revenues[0] * (periods - 1));
-    
+    const growthRate =
+      (revenues[periods - 1] - revenues[0]) / (revenues[0] * (periods - 1));
+
     if (growthRate > 0.02) return { trend: 'growing', growthRate };
     if (growthRate < -0.02) return { trend: 'declining', growthRate };
     return { trend: 'stable', growthRate };
   }
 
-  private calculateSeasonalFactors(historicalData: RevenueAnalytics[]): Record<string, number> {
+  private calculateSeasonalFactors(
+    historicalData: RevenueAnalytics[]
+  ): Record<string, number> {
     // Simplified seasonal analysis - would need more sophisticated analysis in production
     const factors: Record<string, number> = {};
-    
-    historicalData.forEach((data, index) => {
+
+    historicalData.forEach((_data, index) => {
       const month = (index % 12) + 1;
       factors[`month_${month}`] = 1.0; // Placeholder - would calculate actual seasonal factors
     });
@@ -389,7 +446,7 @@ export class FinancialAnalyticsCalculator {
   private generateRevenueForecast(
     historicalData: RevenueAnalytics[],
     trendAnalysis: { trend: string; growthRate: number },
-    seasonalFactors: Record<string, number>,
+    _seasonalFactors: Record<string, number>,
     forecastPeriods: number
   ): Array<{
     period: string;
@@ -405,7 +462,7 @@ export class FinancialAnalyticsCalculator {
       const periodRevenue = lastRevenue * (1 + baseGrowth * i);
       const seasonalFactor = 1.0; // Simplified - would use actual seasonal calculation
       const predictedRevenue = periodRevenue * seasonalFactor;
-      
+
       forecast.push({
         period: `Period ${i}`,
         predictedRevenue,
@@ -420,26 +477,63 @@ export class FinancialAnalyticsCalculator {
     return forecast;
   }
 
-  private calculateCostBreakdown(treatments: TreatmentProfitability[]): Record<string, { amount: number; percentage: number }> {
-    const totalDirectCosts = treatments.reduce((sum, t) => sum + t.directCosts, 0);
-    const totalIndirectCosts = treatments.reduce((sum, t) => sum + t.indirectCosts, 0);
-    const totalLaborCosts = treatments.reduce((sum, t) => sum + t.laborCosts, 0);
-    const totalMaterialCosts = treatments.reduce((sum, t) => sum + t.materialCosts, 0);
-    const totalOverheadCosts = treatments.reduce((sum, t) => sum + t.overheadCosts, 0);
-    
-    const totalCosts = totalDirectCosts + totalIndirectCosts + totalLaborCosts + totalMaterialCosts + totalOverheadCosts;
+  private calculateCostBreakdown(
+    treatments: TreatmentProfitability[]
+  ): Record<string, { amount: number; percentage: number }> {
+    const totalDirectCosts = treatments.reduce(
+      (sum, t) => sum + t.directCosts,
+      0
+    );
+    const totalIndirectCosts = treatments.reduce(
+      (sum, t) => sum + t.indirectCosts,
+      0
+    );
+    const totalLaborCosts = treatments.reduce(
+      (sum, t) => sum + t.laborCosts,
+      0
+    );
+    const totalMaterialCosts = treatments.reduce(
+      (sum, t) => sum + t.materialCosts,
+      0
+    );
+    const totalOverheadCosts = treatments.reduce(
+      (sum, t) => sum + t.overheadCosts,
+      0
+    );
+
+    const totalCosts =
+      totalDirectCosts +
+      totalIndirectCosts +
+      totalLaborCosts +
+      totalMaterialCosts +
+      totalOverheadCosts;
 
     return {
-      direct: { amount: totalDirectCosts, percentage: (totalDirectCosts / totalCosts) * 100 },
-      indirect: { amount: totalIndirectCosts, percentage: (totalIndirectCosts / totalCosts) * 100 },
-      labor: { amount: totalLaborCosts, percentage: (totalLaborCosts / totalCosts) * 100 },
-      materials: { amount: totalMaterialCosts, percentage: (totalMaterialCosts / totalCosts) * 100 },
-      overhead: { amount: totalOverheadCosts, percentage: (totalOverheadCosts / totalCosts) * 100 },
+      direct: {
+        amount: totalDirectCosts,
+        percentage: (totalDirectCosts / totalCosts) * 100,
+      },
+      indirect: {
+        amount: totalIndirectCosts,
+        percentage: (totalIndirectCosts / totalCosts) * 100,
+      },
+      labor: {
+        amount: totalLaborCosts,
+        percentage: (totalLaborCosts / totalCosts) * 100,
+      },
+      materials: {
+        amount: totalMaterialCosts,
+        percentage: (totalMaterialCosts / totalCosts) * 100,
+      },
+      overhead: {
+        amount: totalOverheadCosts,
+        percentage: (totalOverheadCosts / totalCosts) * 100,
+      },
     };
   }
 
   private identifyOptimizationOpportunities(
-    treatments: TreatmentProfitability[],
+    _treatments: TreatmentProfitability[],
     costBreakdown: Record<string, { amount: number; percentage: number }>
   ): Array<{
     category: string;
@@ -454,7 +548,8 @@ export class FinancialAnalyticsCalculator {
       opportunities.push({
         category: 'Labor Optimization',
         potentialSavings: costBreakdown.labor.amount * 0.1,
-        recommendation: 'Consider workflow optimization and staff productivity improvements',
+        recommendation:
+          'Consider workflow optimization and staff productivity improvements',
         priority: 'high' as const,
       });
     }
@@ -464,7 +559,8 @@ export class FinancialAnalyticsCalculator {
       opportunities.push({
         category: 'Material Cost Reduction',
         potentialSavings: costBreakdown.materials.amount * 0.08,
-        recommendation: 'Negotiate better supplier rates and reduce material waste',
+        recommendation:
+          'Negotiate better supplier rates and reduce material waste',
         priority: 'medium' as const,
       });
     }
@@ -482,7 +578,9 @@ export class FinancialAnalyticsCalculator {
     return opportunities;
   }
 
-  private calculateBenchmarkComparison(costBreakdown: Record<string, { amount: number; percentage: number }>): Record<string, { current: number; benchmark: number; variance: number }> {
+  private calculateBenchmarkComparison(
+    costBreakdown: Record<string, { amount: number; percentage: number }>
+  ): Record<string, { current: number; benchmark: number; variance: number }> {
     const benchmarks = {
       labor: 35, // Industry benchmark 35%
       materials: 25, // Industry benchmark 25%
@@ -491,9 +589,12 @@ export class FinancialAnalyticsCalculator {
       indirect: 5, // Industry benchmark 5%
     };
 
-    const comparison: Record<string, { current: number; benchmark: number; variance: number }> = {};
+    const comparison: Record<
+      string,
+      { current: number; benchmark: number; variance: number }
+    > = {};
 
-    Object.keys(benchmarks).forEach(key => {
+    Object.keys(benchmarks).forEach((key) => {
       const current = costBreakdown[key]?.percentage || 0;
       const benchmark = benchmarks[key as keyof typeof benchmarks];
       comparison[key] = {
@@ -512,9 +613,10 @@ export class FinancialAnalyticsCalculator {
 /**
  * Factory function to create FinancialAnalyticsCalculator instance
  */
-export const createFinancialAnalyticsCalculator = (): FinancialAnalyticsCalculator => {
-  return new FinancialAnalyticsCalculator();
-};
+export const createFinancialAnalyticsCalculator =
+  (): FinancialAnalyticsCalculator => {
+    return new FinancialAnalyticsCalculator();
+  };
 
 /**
  * Default export for convenience
@@ -537,6 +639,6 @@ export const FinancialUtils = {
   },
 
   roundToDecimal: (value: number, decimals = 2): number => {
-    return Math.round(value * Math.pow(10, decimals)) / Math.pow(10, decimals);
+    return Math.round(value * 10 ** decimals) / 10 ** decimals;
   },
 };

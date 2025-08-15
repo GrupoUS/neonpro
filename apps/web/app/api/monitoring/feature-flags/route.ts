@@ -1,19 +1,21 @@
 /**
  * TASK-001: Foundation Setup & Baseline
  * Feature Flags Management API
- * 
+ *
  * Provides comprehensive feature flag management with gradual rollout
  * capability for safe enhancement implementation.
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
 
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -45,7 +47,6 @@ export async function GET(request: NextRequest) {
       success: true,
       data: { flags: flags || [] },
     });
-
   } catch (error) {
     console.error('Error fetching feature flags:', error);
     return NextResponse.json(
@@ -58,8 +59,10 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -75,7 +78,7 @@ export async function POST(request: NextRequest) {
     } = body;
 
     // Validate required fields
-    if (!name || !description) {
+    if (!(name && description)) {
       return NextResponse.json(
         { error: 'Missing required fields: name, description' },
         { status: 400 }
@@ -92,7 +95,10 @@ export async function POST(request: NextRequest) {
 
     if (existingFlag) {
       return NextResponse.json(
-        { error: 'Feature flag with this name already exists in this environment' },
+        {
+          error:
+            'Feature flag with this name already exists in this environment',
+        },
         { status: 409 }
       );
     }
@@ -121,7 +127,6 @@ export async function POST(request: NextRequest) {
       data: { flag },
       message: 'Feature flag created successfully',
     });
-
   } catch (error) {
     console.error('Error creating feature flag:', error);
     return NextResponse.json(

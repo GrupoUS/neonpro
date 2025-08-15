@@ -1,12 +1,12 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
 import { FacebookOAuthHandler } from '@/lib/oauth/platforms/facebook-handler';
-import { OAuthState } from '@/lib/oauth/types';
+import type { OAuthState } from '@/lib/oauth/types';
 
 /**
  * Facebook OAuth Authorization Endpoint
  * Initiates the OAuth 2.0 authorization code flow for Facebook
- * 
+ *
  * Features:
  * - CSRF protection with state parameter
  * - Secure state storage in database
@@ -17,9 +17,11 @@ import { OAuthState } from '@/lib/oauth/types';
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Verify user is authenticated
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session?.user) {
       return NextResponse.json(
         { error: 'Unauthorized - Please log in to connect Facebook account' },
@@ -36,7 +38,10 @@ export async function GET(request: NextRequest) {
 
     if (!profile?.clinic_id) {
       return NextResponse.json(
-        { error: 'Clinic not found - Please ensure your profile is properly configured' },
+        {
+          error:
+            'Clinic not found - Please ensure your profile is properly configured',
+        },
         { status: 400 }
       );
     }
@@ -48,7 +53,9 @@ export async function GET(request: NextRequest) {
       platform: 'facebook',
       nonce: crypto.randomUUID(),
       createdAt: new Date(),
-      redirectTo: request.nextUrl.searchParams.get('redirect') || '/dashboard/social-media'
+      redirectTo:
+        request.nextUrl.searchParams.get('redirect') ||
+        '/dashboard/social-media',
     };
 
     // Initialize Facebook OAuth handler
@@ -56,22 +63,23 @@ export async function GET(request: NextRequest) {
     const authUrl = facebookHandler.getAuthorizationUrl(state);
 
     // Log OAuth initiation for audit trail
-    console.log(`Facebook OAuth initiated for user ${session.user.id}, clinic ${profile.clinic_id}`);
+    console.log(
+      `Facebook OAuth initiated for user ${session.user.id}, clinic ${profile.clinic_id}`
+    );
 
     return NextResponse.json({
       success: true,
       authUrl,
       state: state.nonce,
-      platform: 'facebook'
+      platform: 'facebook',
     });
-
   } catch (error) {
     console.error('Facebook OAuth authorization error:', error);
-    
+
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to initiate Facebook authorization',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );

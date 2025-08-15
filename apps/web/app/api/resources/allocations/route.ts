@@ -3,10 +3,9 @@
 // Story 2.4: Smart Resource Management - Allocations
 // =====================================================
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
 import { ResourceManager } from '@/lib/resources/resource-manager';
-import { AllocationEngine } from '@/lib/resources/allocation-engine';
 
 // =====================================================
 // GET /api/resources/allocations - List allocations
@@ -28,8 +27,11 @@ export async function GET(request: NextRequest) {
 
     // Create Supabase client and verify authentication
     const supabase = await createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Authentication required' },
@@ -48,15 +50,14 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: allocations,
-      count: allocations.length
+      count: allocations.length,
     });
-
   } catch (error) {
     console.error('Error fetching allocations:', error);
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to fetch allocations',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );
@@ -69,20 +70,26 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    
+
     // Validate required fields
     const { resource_id, start_time, end_time, allocation_type } = body;
-    if (!resource_id || !start_time || !end_time || !allocation_type) {
+    if (!(resource_id && start_time && end_time && allocation_type)) {
       return NextResponse.json(
-        { error: 'resource_id, start_time, end_time, and allocation_type are required' },
+        {
+          error:
+            'resource_id, start_time, end_time, and allocation_type are required',
+        },
         { status: 400 }
       );
     }
 
     // Create Supabase client and verify authentication
     const supabase = await createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Authentication required' },
@@ -94,31 +101,33 @@ export async function POST(request: NextRequest) {
     const resourceManager = new ResourceManager();
     const newAllocation = await resourceManager.createAllocation(body, user.id);
 
-    return NextResponse.json({
-      success: true,
-      data: newAllocation,
-      message: 'Allocation created successfully'
-    }, { status: 201 });
-
+    return NextResponse.json(
+      {
+        success: true,
+        data: newAllocation,
+        message: 'Allocation created successfully',
+      },
+      { status: 201 }
+    );
   } catch (error) {
     console.error('Error creating allocation:', error);
-    
+
     // Handle specific conflict errors
     if (error instanceof Error && error.message.includes('conflict')) {
       return NextResponse.json(
-        { 
+        {
           error: 'Resource conflict detected',
           details: error.message,
-          code: 'RESOURCE_CONFLICT'
+          code: 'RESOURCE_CONFLICT',
         },
         { status: 409 }
       );
     }
 
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to create allocation',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );
@@ -132,9 +141,9 @@ export async function PUT(request: NextRequest) {
   try {
     const body = await request.json();
     const { id, status } = body;
-    
+
     // Validate required fields
-    if (!id || !status) {
+    if (!(id && status)) {
       return NextResponse.json(
         { error: 'Allocation id and status are required' },
         { status: 400 }
@@ -143,8 +152,11 @@ export async function PUT(request: NextRequest) {
 
     // Create Supabase client and verify authentication
     const supabase = await createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Authentication required' },
@@ -158,15 +170,14 @@ export async function PUT(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: 'Allocation status updated successfully'
+      message: 'Allocation status updated successfully',
     });
-
   } catch (error) {
     console.error('Error updating allocation:', error);
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to update allocation',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );
@@ -180,7 +191,7 @@ export async function DELETE(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const allocationId = searchParams.get('id');
-    
+
     // Validate required parameters
     if (!allocationId) {
       return NextResponse.json(
@@ -191,8 +202,11 @@ export async function DELETE(request: NextRequest) {
 
     // Create Supabase client and verify authentication
     const supabase = await createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Authentication required' },
@@ -206,15 +220,14 @@ export async function DELETE(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: 'Allocation cancelled successfully'
+      message: 'Allocation cancelled successfully',
     });
-
   } catch (error) {
     console.error('Error cancelling allocation:', error);
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to cancel allocation',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );

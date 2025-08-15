@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { IntegratedSessionSecurity } from '@/lib/security/integrated-session-security';
+import { type NextRequest, NextResponse } from 'next/server';
 import { requireAuth } from '@/lib/auth';
+import { IntegratedSessionSecurity } from '@/lib/security/integrated-session-security';
 
 /**
  * Session Security API Route
@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
 
     // Initialize session security
     const result = await sessionSecurity.initializeSessionSecurity(
-      authResult.user!.id,
+      authResult.user?.id,
       sessionId,
       request,
       { maxConcurrentSessions }
@@ -47,9 +47,8 @@ export async function POST(request: NextRequest) {
       sessionId,
       csrfToken: result.csrfToken,
       fingerprint: result.fingerprint,
-      timeoutConfig: result.timeoutConfig
+      timeoutConfig: result.timeoutConfig,
     });
-
   } catch (error) {
     console.error('Session initialization error:', error);
     return NextResponse.json(
@@ -68,7 +67,7 @@ export async function PUT(request: NextRequest) {
     const body = await request.json();
     const { sessionId, userId, activityType = 'api_call' } = body;
 
-    if (!sessionId || !userId) {
+    if (!(sessionId && userId)) {
       return NextResponse.json(
         { error: 'Session ID and User ID are required' },
         { status: 400 }
@@ -84,10 +83,10 @@ export async function PUT(request: NextRequest) {
 
     if (!securityCheck.allowed) {
       return NextResponse.json(
-        { 
+        {
           error: 'Session security validation failed',
           reason: securityCheck.reason,
-          action: securityCheck.action
+          action: securityCheck.action,
         },
         { status: 403 }
       );
@@ -96,9 +95,8 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({
       valid: true,
       message: 'Session security validated successfully',
-      securityStatus: securityCheck
+      securityStatus: securityCheck,
     });
-
   } catch (error) {
     console.error('Session validation error:', error);
     return NextResponse.json(
@@ -135,16 +133,15 @@ export async function GET(request: NextRequest) {
 
     // Get session security status
     const status = await sessionSecurity.getSessionSecurityStatus(
-      authResult.user!.id,
+      authResult.user?.id,
       sessionId
     );
 
     return NextResponse.json({
       sessionId,
-      userId: authResult.user!.id,
-      securityStatus: status
+      userId: authResult.user?.id,
+      securityStatus: status,
     });
-
   } catch (error) {
     console.error('Session status error:', error);
     return NextResponse.json(
@@ -173,7 +170,7 @@ export async function DELETE(request: NextRequest) {
     const sessionId = searchParams.get('sessionId');
     const terminateAll = searchParams.get('terminateAll') === 'true';
 
-    if (!sessionId && !terminateAll) {
+    if (!(sessionId || terminateAll)) {
       return NextResponse.json(
         { error: 'Session ID is required or set terminateAll=true' },
         { status: 400 }
@@ -182,19 +179,17 @@ export async function DELETE(request: NextRequest) {
 
     if (terminateAll) {
       // Terminate all sessions for the user
-      await sessionSecurity.terminateAllUserSessions(authResult.user!.id);
+      await sessionSecurity.terminateAllUserSessions(authResult.user?.id);
       return NextResponse.json({
-        message: 'All user sessions terminated successfully'
-      });
-    } else {
-      // Terminate specific session
-      await sessionSecurity.terminateSession(authResult.user!.id, sessionId!);
-      return NextResponse.json({
-        message: 'Session terminated successfully',
-        sessionId
+        message: 'All user sessions terminated successfully',
       });
     }
-
+    // Terminate specific session
+    await sessionSecurity.terminateSession(authResult.user?.id, sessionId!);
+    return NextResponse.json({
+      message: 'Session terminated successfully',
+      sessionId,
+    });
   } catch (error) {
     console.error('Session termination error:', error);
     return NextResponse.json(

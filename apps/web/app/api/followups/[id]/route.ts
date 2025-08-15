@@ -6,20 +6,23 @@
 // DELETE /api/followups/[id] - Delete follow-up
 // =====================================================================================
 
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { treatmentFollowupService } from '@/app/lib/services/treatment-followup-service';
+import { createClient } from '@/app/utils/supabase/server';
 
 interface RouteParams {
   params: { id: string };
 }
 
-export async function GET(request: NextRequest, { params }: RouteParams) {
+export async function GET(_request: NextRequest, { params }: RouteParams) {
   try {
     // Verify authentication
     const supabase = await createClient();
-    const { data: { session }, error: authError } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+      error: authError,
+    } = await supabase.auth.getSession();
+
     if (authError || !session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -27,22 +30,30 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     const { id } = params;
 
     if (!id) {
-      return NextResponse.json({ error: 'Follow-up ID is required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Follow-up ID is required' },
+        { status: 400 }
+      );
     }
 
     // Fetch follow-up
     const followup = await treatmentFollowupService.getFollowupById(id);
 
     if (!followup) {
-      return NextResponse.json({ error: 'Follow-up not found' }, { status: 404 });
+      return NextResponse.json(
+        { error: 'Follow-up not found' },
+        { status: 404 }
+      );
     }
 
     return NextResponse.json({ data: followup });
-
   } catch (error) {
     console.error('API error in GET /api/followups/[id]:', error);
     return NextResponse.json(
-      { error: 'Internal server error', message: error instanceof Error ? error.message : 'Unknown error' },
+      {
+        error: 'Internal server error',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
       { status: 500 }
     );
   }
@@ -52,8 +63,11 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
   try {
     // Verify authentication
     const supabase = await createClient();
-    const { data: { session }, error: authError } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+      error: authError,
+    } = await supabase.auth.getSession();
+
     if (authError || !session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -61,7 +75,10 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     const { id } = params;
 
     if (!id) {
-      return NextResponse.json({ error: 'Follow-up ID is required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Follow-up ID is required' },
+        { status: 400 }
+      );
     }
 
     // Parse request body
@@ -76,28 +93,36 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     }
 
     // Update follow-up
-    const updatedFollowup = await treatmentFollowupService.updateFollowup(id, updates);
+    const updatedFollowup = await treatmentFollowupService.updateFollowup(
+      id,
+      updates
+    );
 
     return NextResponse.json({
       data: updatedFollowup,
-      message: 'Follow-up updated successfully'
+      message: 'Follow-up updated successfully',
     });
-
   } catch (error) {
     console.error('API error in PATCH /api/followups/[id]:', error);
     return NextResponse.json(
-      { error: 'Internal server error', message: error instanceof Error ? error.message : 'Unknown error' },
+      {
+        error: 'Internal server error',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
       { status: 500 }
     );
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: RouteParams) {
+export async function DELETE(_request: NextRequest, { params }: RouteParams) {
   try {
     // Verify authentication
     const supabase = await createClient();
-    const { data: { session }, error: authError } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+      error: authError,
+    } = await supabase.auth.getSession();
+
     if (authError || !session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -105,20 +130,25 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     const { id } = params;
 
     if (!id) {
-      return NextResponse.json({ error: 'Follow-up ID is required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Follow-up ID is required' },
+        { status: 400 }
+      );
     }
 
     // Delete follow-up
     await treatmentFollowupService.deleteFollowup(id);
 
     return NextResponse.json({
-      message: 'Follow-up deleted successfully'
+      message: 'Follow-up deleted successfully',
     });
-
   } catch (error) {
     console.error('API error in DELETE /api/followups/[id]:', error);
     return NextResponse.json(
-      { error: 'Internal server error', message: error instanceof Error ? error.message : 'Unknown error' },
+      {
+        error: 'Internal server error',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
       { status: 500 }
     );
   }

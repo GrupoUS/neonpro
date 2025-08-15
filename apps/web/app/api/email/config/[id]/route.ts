@@ -1,21 +1,21 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
-import { EmailProviderConfigSchema } from '@/app/types/email';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { EmailProviderConfigSchema } from '@/app/types/email';
+import { createClient } from '@/app/utils/supabase/server';
 
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
     const supabase = await createClient();
-    const { data: { session }, error: authError } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+      error: authError,
+    } = await supabase.auth.getSession();
+
     if (authError || !session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { data: profile } = await supabase
@@ -25,10 +25,7 @@ export async function GET(
       .single();
 
     if (!profile?.clinic_id) {
-      return NextResponse.json(
-        { error: 'Clinic not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Clinic not found' }, { status: 404 });
     }
 
     // Buscar configuração específica
@@ -47,7 +44,6 @@ export async function GET(
     }
 
     return NextResponse.json(config);
-
   } catch (error) {
     console.error('Get email config error:', error);
     return NextResponse.json(
@@ -63,13 +59,13 @@ export async function PATCH(
 ) {
   try {
     const supabase = await createClient();
-    const { data: { session }, error: authError } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+      error: authError,
+    } = await supabase.auth.getSession();
+
     if (authError || !session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { data: profile } = await supabase
@@ -79,14 +75,11 @@ export async function PATCH(
       .single();
 
     if (!profile?.clinic_id) {
-      return NextResponse.json(
-        { error: 'Clinic not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Clinic not found' }, { status: 404 });
     }
 
     const body = await request.json();
-    
+
     // Validar dados de configuração (parcial)
     const partialSchema = EmailProviderConfigSchema.partial();
     const validatedConfig = partialSchema.parse(body);
@@ -96,7 +89,7 @@ export async function PATCH(
       .from('email_provider_configs')
       .update({
         ...validatedConfig,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', params.id)
       .eq('clinic_id', profile.clinic_id)
@@ -115,17 +108,16 @@ export async function PATCH(
     }
 
     return NextResponse.json(config);
-
   } catch (error) {
     console.error('Update email config error:', error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid configuration data', details: error.errors },
         { status: 400 }
       );
     }
-    
+
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -134,18 +126,18 @@ export async function PATCH(
 }
 
 export async function DELETE(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
     const supabase = await createClient();
-    const { data: { session }, error: authError } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+      error: authError,
+    } = await supabase.auth.getSession();
+
     if (authError || !session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { data: profile } = await supabase
@@ -155,10 +147,7 @@ export async function DELETE(
       .single();
 
     if (!profile?.clinic_id) {
-      return NextResponse.json(
-        { error: 'Clinic not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Clinic not found' }, { status: 404 });
     }
 
     // Deletar configuração
@@ -173,7 +162,6 @@ export async function DELETE(
     }
 
     return NextResponse.json({ success: true });
-
   } catch (error) {
     console.error('Delete email config error:', error);
     return NextResponse.json(

@@ -1,7 +1,7 @@
+import { type NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
 import { PatientInsights } from '@/lib/ai/patient-insights';
 import { ProfileManager } from '@/lib/patients/profile-manager';
-import { NextRequest, NextResponse } from 'next/server';
 
 // Initialize services
 const profileManager = new ProfileManager();
@@ -16,14 +16,14 @@ export async function GET(
 ) {
   try {
     const supabase = createClient();
-    
+
     // Verify authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { id } = await params;
@@ -49,7 +49,8 @@ export async function GET(
         insights = await patientInsights.generateClinicalInsights(profile);
         break;
       case 'personalization':
-        insights = await patientInsights.generatePersonalizationInsights(profile);
+        insights =
+          await patientInsights.generatePersonalizationInsights(profile);
         break;
       case 'risk':
         insights = await patientInsights.generateRiskAssessment(profile);
@@ -69,9 +70,8 @@ export async function GET(
       patient_id: id,
       type: insightType || 'comprehensive',
       generated_at: new Date().toISOString(),
-      message: 'Patient insights retrieved successfully'
+      message: 'Patient insights retrieved successfully',
     });
-
   } catch (error) {
     console.error('Error retrieving patient insights:', error);
     return NextResponse.json(
@@ -85,19 +85,19 @@ export async function GET(
  * POST /api/patients/profile/[id]/insights - Regenerate insights
  */
 export async function POST(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const supabase = createClient();
-    
+
     // Verify authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { id } = await params;
@@ -113,7 +113,8 @@ export async function POST(
     }
 
     // Regenerate comprehensive insights
-    const insights = await patientInsights.generateComprehensiveInsights(profile);
+    const insights =
+      await patientInsights.generateComprehensiveInsights(profile);
 
     // Update insights in the system
     const updated = await patientInsights.updateInsights(id, insights);
@@ -122,9 +123,8 @@ export async function POST(
       insights: updated,
       patient_id: id,
       regenerated_at: new Date().toISOString(),
-      message: 'Patient insights regenerated successfully'
+      message: 'Patient insights regenerated successfully',
     });
-
   } catch (error) {
     console.error('Error regenerating patient insights:', error);
     return NextResponse.json(

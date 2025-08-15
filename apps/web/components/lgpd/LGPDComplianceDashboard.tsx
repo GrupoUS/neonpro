@@ -1,14 +1,44 @@
 /**
  * LGPD Compliance Dashboard Component
  * Story 1.5: LGPD Compliance Automation
- * 
+ *
  * This component provides a comprehensive dashboard for LGPD compliance monitoring
  * and management with real-time analytics, consent management, and audit trail.
  */
 
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import {
+  AlertCircle,
+  AlertTriangle,
+  Clock,
+  Download,
+  Eye,
+  FileText,
+  Filter,
+  RefreshCw,
+  Settings,
+  Shield,
+  Trash2,
+  TrendingUp,
+  UserCheck,
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -17,19 +47,16 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@/components/ui/tabs';
-import {
-  Alert,
-  AlertDescription,
-  AlertTitle,
-} from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Progress } from '@/components/ui/progress';
 import {
   Select,
   SelectContent,
@@ -45,73 +72,25 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
-import { Switch } from '@/components/ui/switch';
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  LineChart,
-  Line
-} from 'recharts';
-import {
-  Shield,
-  AlertTriangle,
-  CheckCircle,
-  Clock,
-  FileText,
-  Users,
-  Database,
-  Settings,
-  Download,
-  RefreshCw,
-  Eye,
-  Trash2,
-  UserCheck,
-  AlertCircle,
-  TrendingUp,
-  Calendar,
-  Filter
-} from 'lucide-react';
-
+  type AuditTrailAnalytics,
+  auditTrailManager,
+  type DataSubjectRequest,
+  LGPDAuditEventType,
+  type LGPDAuditRecord,
+  LGPDAuditSeverity,
+} from '@/lib/lgpd/audit-trail-manager';
 // Import LGPD managers
 import {
+  type ConsentAnalytics,
   consentAutomationManager,
   LGPDDataType,
-  LGPDPurpose,
-  ConsentRecord,
-  ConsentAnalytics
 } from '@/lib/lgpd/consent-automation-manager';
 import {
-  auditTrailManager,
-  LGPDAuditEventType,
-  LGPDAuditSeverity,
-  LGPDAuditRecord,
-  AuditTrailAnalytics,
-  DataSubjectRequest
-} from '@/lib/lgpd/audit-trail-manager';
-import {
   dataRetentionManager,
-  DataRetentionPolicy,
-  RetentionAnalytics
+  type RetentionAnalytics,
 } from '@/lib/lgpd/data-retention-manager';
 
 interface LGPDComplianceDashboardProps {
@@ -131,33 +110,43 @@ interface ComplianceOverview {
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
 
-export default function LGPDComplianceDashboard({ clinicId, userRole }: LGPDComplianceDashboardProps) {
+export default function LGPDComplianceDashboard({
+  clinicId,
+  userRole,
+}: LGPDComplianceDashboardProps) {
   // State management
   const [activeTab, setActiveTab] = useState('overview');
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   // Data states
-  const [complianceOverview, setComplianceOverview] = useState<ComplianceOverview | null>(null);
-  const [consentAnalytics, setConsentAnalytics] = useState<ConsentAnalytics | null>(null);
-  const [auditAnalytics, setAuditAnalytics] = useState<AuditTrailAnalytics | null>(null);
-  const [retentionAnalytics, setRetentionAnalytics] = useState<RetentionAnalytics | null>(null);
+  const [complianceOverview, setComplianceOverview] =
+    useState<ComplianceOverview | null>(null);
+  const [consentAnalytics, setConsentAnalytics] =
+    useState<ConsentAnalytics | null>(null);
+  const [auditAnalytics, setAuditAnalytics] =
+    useState<AuditTrailAnalytics | null>(null);
+  const [retentionAnalytics, setRetentionAnalytics] =
+    useState<RetentionAnalytics | null>(null);
   const [auditTrail, setAuditTrail] = useState<LGPDAuditRecord[]>([]);
-  const [dataSubjectRequests, setDataSubjectRequests] = useState<DataSubjectRequest[]>([]);
-  
+  const [_dataSubjectRequests, _setDataSubjectRequests] = useState<
+    DataSubjectRequest[]
+  >([]);
+
   // Filter states
   const [dateRange, setDateRange] = useState({ start: '', end: '' });
   const [auditFilters, setAuditFilters] = useState({
     eventType: '',
     severity: '',
-    dataType: ''
+    dataType: '',
   });
-  
+
   // Dialog states
   const [showConsentDialog, setShowConsentDialog] = useState(false);
   const [showRequestDialog, setShowRequestDialog] = useState(false);
-  const [selectedRequest, setSelectedRequest] = useState<DataSubjectRequest | null>(null);
+  const [_selectedRequest, _setSelectedRequest] =
+    useState<DataSubjectRequest | null>(null);
 
   /**
    * Load dashboard data
@@ -172,9 +161,17 @@ export default function LGPDComplianceDashboard({ clinicId, userRole }: LGPDComp
 
       // Load all analytics in parallel
       const [consentData, auditData, retentionData] = await Promise.all([
-        consentAutomationManager.getConsentAnalytics(clinicId, startDate, endDate),
+        consentAutomationManager.getConsentAnalytics(
+          clinicId,
+          startDate,
+          endDate
+        ),
         auditTrailManager.getAuditAnalytics(clinicId, startDate, endDate),
-        dataRetentionManager.getRetentionAnalytics(clinicId, startDate, endDate)
+        dataRetentionManager.getRetentionAnalytics(
+          clinicId,
+          startDate,
+          endDate
+        ),
       ]);
 
       setConsentAnalytics(consentData);
@@ -183,13 +180,15 @@ export default function LGPDComplianceDashboard({ clinicId, userRole }: LGPDComp
 
       // Calculate compliance overview
       const overview: ComplianceOverview = {
-        complianceScore: Math.round((auditData.complianceRate + retentionData.retentionCompliance) / 2),
+        complianceScore: Math.round(
+          (auditData.complianceRate + retentionData.retentionCompliance) / 2
+        ),
         totalConsents: consentData.totalConsents,
         activeConsents: consentData.activeConsents,
         pendingRequests: auditData.dataSubjectRequests.pending,
         recentViolations: auditData.recentViolations.length,
         dataRetentionCompliance: Math.round(retentionData.retentionCompliance),
-        riskScore: auditData.riskScore
+        riskScore: auditData.riskScore,
       };
       setComplianceOverview(overview);
 
@@ -197,16 +196,16 @@ export default function LGPDComplianceDashboard({ clinicId, userRole }: LGPDComp
       const auditRecords = await auditTrailManager.getAuditTrail(
         clinicId,
         {
-          eventType: auditFilters.eventType as LGPDAuditEventType || undefined,
-          severity: auditFilters.severity as LGPDAuditSeverity || undefined,
-          dataType: auditFilters.dataType as LGPDDataType || undefined,
+          eventType:
+            (auditFilters.eventType as LGPDAuditEventType) || undefined,
+          severity: (auditFilters.severity as LGPDAuditSeverity) || undefined,
+          dataType: (auditFilters.dataType as LGPDDataType) || undefined,
           startDate,
-          endDate
+          endDate,
         },
         50
       );
       setAuditTrail(auditRecords);
-
     } catch (err) {
       console.error('Error loading dashboard data:', err);
       setError('Erro ao carregar dados do dashboard');
@@ -228,7 +227,7 @@ export default function LGPDComplianceDashboard({ clinicId, userRole }: LGPDComp
    * Handle date range change
    */
   const handleDateRangeChange = (field: 'start' | 'end', value: string) => {
-    setDateRange(prev => ({ ...prev, [field]: value }));
+    setDateRange((prev) => ({ ...prev, [field]: value }));
   };
 
   /**
@@ -266,7 +265,7 @@ export default function LGPDComplianceDashboard({ clinicId, userRole }: LGPDComp
       month: '2-digit',
       year: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     });
   };
 
@@ -279,9 +278,13 @@ export default function LGPDComplianceDashboard({ clinicId, userRole }: LGPDComp
       [LGPDAuditEventType.DATA_MODIFICATION]: <Settings className="h-4 w-4" />,
       [LGPDAuditEventType.DATA_DELETION]: <Trash2 className="h-4 w-4" />,
       [LGPDAuditEventType.CONSENT_COLLECTED]: <UserCheck className="h-4 w-4" />,
-      [LGPDAuditEventType.CONSENT_WITHDRAWN]: <AlertCircle className="h-4 w-4" />,
+      [LGPDAuditEventType.CONSENT_WITHDRAWN]: (
+        <AlertCircle className="h-4 w-4" />
+      ),
       [LGPDAuditEventType.DATA_BREACH]: <AlertTriangle className="h-4 w-4" />,
-      [LGPDAuditEventType.DATA_SUBJECT_REQUEST]: <FileText className="h-4 w-4" />
+      [LGPDAuditEventType.DATA_SUBJECT_REQUEST]: (
+        <FileText className="h-4 w-4" />
+      ),
     };
     return iconMap[eventType] || <FileText className="h-4 w-4" />;
   };
@@ -294,19 +297,23 @@ export default function LGPDComplianceDashboard({ clinicId, userRole }: LGPDComp
       [LGPDAuditSeverity.INFO]: 'default',
       [LGPDAuditSeverity.WARNING]: 'secondary',
       [LGPDAuditSeverity.ERROR]: 'destructive',
-      [LGPDAuditSeverity.CRITICAL]: 'destructive'
+      [LGPDAuditSeverity.CRITICAL]: 'destructive',
     };
-    return <Badge variant={variants[severity] as any}>{severity.toUpperCase()}</Badge>;
+    return (
+      <Badge variant={variants[severity] as any}>
+        {severity.toUpperCase()}
+      </Badge>
+    );
   };
 
   // Load data on component mount and when filters change
   useEffect(() => {
     loadDashboardData();
-  }, [clinicId]);
+  }, [loadDashboardData]);
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
+      <div className="flex h-64 items-center justify-center">
         <RefreshCw className="h-8 w-8 animate-spin" />
         <span className="ml-2">Carregando dados de conformidade...</span>
       </div>
@@ -328,23 +335,25 @@ export default function LGPDComplianceDashboard({ clinicId, userRole }: LGPDComp
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Dashboard LGPD</h1>
+          <h1 className="font-bold text-3xl tracking-tight">Dashboard LGPD</h1>
           <p className="text-muted-foreground">
             Monitoramento e gestão de conformidade com a LGPD
           </p>
         </div>
         <div className="flex items-center space-x-2">
           <Button
-            variant="outline"
-            size="sm"
-            onClick={refreshData}
             disabled={refreshing}
+            onClick={refreshData}
+            size="sm"
+            variant="outline"
           >
-            <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
+            <RefreshCw
+              className={`mr-2 h-4 w-4 ${refreshing ? 'animate-spin' : ''}`}
+            />
             Atualizar
           </Button>
-          <Button variant="outline" size="sm">
-            <Download className="h-4 w-4 mr-2" />
+          <Button size="sm" variant="outline">
+            <Download className="mr-2 h-4 w-4" />
             Exportar Relatório
           </Button>
         </div>
@@ -354,49 +363,53 @@ export default function LGPDComplianceDashboard({ clinicId, userRole }: LGPDComp
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center">
-            <Filter className="h-5 w-5 mr-2" />
+            <Filter className="mr-2 h-5 w-5" />
             Filtros
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
             <div>
               <Label htmlFor="start-date">Data Início</Label>
               <Input
                 id="start-date"
+                onChange={(e) => handleDateRangeChange('start', e.target.value)}
                 type="date"
                 value={dateRange.start}
-                onChange={(e) => handleDateRangeChange('start', e.target.value)}
               />
             </div>
             <div>
               <Label htmlFor="end-date">Data Fim</Label>
               <Input
                 id="end-date"
+                onChange={(e) => handleDateRangeChange('end', e.target.value)}
                 type="date"
                 value={dateRange.end}
-                onChange={(e) => handleDateRangeChange('end', e.target.value)}
               />
             </div>
             <div>
               <Label>Tipo de Evento</Label>
               <Select
+                onValueChange={(value) =>
+                  setAuditFilters((prev) => ({ ...prev, eventType: value }))
+                }
                 value={auditFilters.eventType}
-                onValueChange={(value) => setAuditFilters(prev => ({ ...prev, eventType: value }))}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Todos" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="">Todos</SelectItem>
-                  {Object.values(LGPDAuditEventType).map(type => (
-                    <SelectItem key={type} value={type}>{type}</SelectItem>
+                  {Object.values(LGPDAuditEventType).map((type) => (
+                    <SelectItem key={type} value={type}>
+                      {type}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
             <div className="flex items-end">
-              <Button onClick={applyFilters} className="w-full">
+              <Button className="w-full" onClick={applyFilters}>
                 Aplicar Filtros
               </Button>
             </div>
@@ -406,28 +419,39 @@ export default function LGPDComplianceDashboard({ clinicId, userRole }: LGPDComp
 
       {/* Compliance Overview */}
       {complianceOverview && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Score de Conformidade</CardTitle>
+              <CardTitle className="font-medium text-sm">
+                Score de Conformidade
+              </CardTitle>
               <Shield className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className={`text-2xl font-bold ${getComplianceColor(complianceOverview.complianceScore)}`}>
+              <div
+                className={`font-bold text-2xl ${getComplianceColor(complianceOverview.complianceScore)}`}
+              >
                 {complianceOverview.complianceScore}%
               </div>
-              <Progress value={complianceOverview.complianceScore} className="mt-2" />
+              <Progress
+                className="mt-2"
+                value={complianceOverview.complianceScore}
+              />
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Consentimentos Ativos</CardTitle>
+              <CardTitle className="font-medium text-sm">
+                Consentimentos Ativos
+              </CardTitle>
               <UserCheck className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{complianceOverview.activeConsents}</div>
-              <p className="text-xs text-muted-foreground">
+              <div className="font-bold text-2xl">
+                {complianceOverview.activeConsents}
+              </div>
+              <p className="text-muted-foreground text-xs">
                 de {complianceOverview.totalConsents} total
               </p>
             </CardContent>
@@ -435,25 +459,31 @@ export default function LGPDComplianceDashboard({ clinicId, userRole }: LGPDComp
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Solicitações Pendentes</CardTitle>
+              <CardTitle className="font-medium text-sm">
+                Solicitações Pendentes
+              </CardTitle>
               <Clock className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{complianceOverview.pendingRequests}</div>
-              <p className="text-xs text-muted-foreground">
-                Requer atenção
-              </p>
+              <div className="font-bold text-2xl">
+                {complianceOverview.pendingRequests}
+              </div>
+              <p className="text-muted-foreground text-xs">Requer atenção</p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Nível de Risco</CardTitle>
+              <CardTitle className="font-medium text-sm">
+                Nível de Risco
+              </CardTitle>
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="flex items-center space-x-2">
-                <div className="text-2xl font-bold">{complianceOverview.riskScore}</div>
+                <div className="font-bold text-2xl">
+                  {complianceOverview.riskScore}
+                </div>
                 {getRiskBadge(complianceOverview.riskScore)}
               </div>
             </CardContent>
@@ -462,7 +492,11 @@ export default function LGPDComplianceDashboard({ clinicId, userRole }: LGPDComp
       )}
 
       {/* Main Content Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+      <Tabs
+        className="space-y-4"
+        onValueChange={setActiveTab}
+        value={activeTab}
+      >
         <TabsList>
           <TabsTrigger value="overview">Visão Geral</TabsTrigger>
           <TabsTrigger value="consents">Consentimentos</TabsTrigger>
@@ -472,8 +506,8 @@ export default function LGPDComplianceDashboard({ clinicId, userRole }: LGPDComp
         </TabsList>
 
         {/* Overview Tab */}
-        <TabsContent value="overview" className="space-y-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <TabsContent className="space-y-4" value="overview">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             {/* Consent Analytics Chart */}
             {consentAnalytics && (
               <Card>
@@ -481,13 +515,22 @@ export default function LGPDComplianceDashboard({ clinicId, userRole }: LGPDComp
                   <CardTitle>Consentimentos por Tipo de Dados</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <BarChart data={Object.entries(consentAnalytics.consentsByDataType).map(([type, count]) => ({
-                      type: type.replace('_', ' '),
-                      count
-                    }))}>
+                  <ResponsiveContainer height={300} width="100%">
+                    <BarChart
+                      data={Object.entries(
+                        consentAnalytics.consentsByDataType
+                      ).map(([type, count]) => ({
+                        type: type.replace('_', ' '),
+                        count,
+                      }))}
+                    >
                       <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="type" angle={-45} textAnchor="end" height={80} />
+                      <XAxis
+                        angle={-45}
+                        dataKey="type"
+                        height={80}
+                        textAnchor="end"
+                      />
                       <YAxis />
                       <Tooltip />
                       <Bar dataKey="count" fill="#8884d8" />
@@ -504,24 +547,33 @@ export default function LGPDComplianceDashboard({ clinicId, userRole }: LGPDComp
                   <CardTitle>Eventos de Auditoria por Severidade</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <ResponsiveContainer width="100%" height={300}>
+                  <ResponsiveContainer height={300} width="100%">
                     <PieChart>
                       <Pie
-                        data={Object.entries(auditAnalytics.eventsBySeverity).map(([severity, count]) => ({
-                          name: severity,
-                          value: count
-                        }))}
                         cx="50%"
                         cy="50%"
-                        labelLine={false}
-                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                        outerRadius={80}
-                        fill="#8884d8"
+                        data={Object.entries(
+                          auditAnalytics.eventsBySeverity
+                        ).map(([severity, count]) => ({
+                          name: severity,
+                          value: count,
+                        }))}
                         dataKey="value"
+                        fill="#8884d8"
+                        label={({ name, percent }) =>
+                          `${name} ${(percent * 100).toFixed(0)}%`
+                        }
+                        labelLine={false}
+                        outerRadius={80}
                       >
-                        {Object.entries(auditAnalytics.eventsBySeverity).map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                        ))}
+                        {Object.entries(auditAnalytics.eventsBySeverity).map(
+                          (_entry, index) => (
+                            <Cell
+                              fill={COLORS[index % COLORS.length]}
+                              key={`cell-${index}`}
+                            />
+                          )
+                        )}
                       </Pie>
                       <Tooltip />
                     </PieChart>
@@ -537,15 +589,16 @@ export default function LGPDComplianceDashboard({ clinicId, userRole }: LGPDComp
               <AlertTriangle className="h-4 w-4" />
               <AlertTitle>Violações Recentes Detectadas</AlertTitle>
               <AlertDescription>
-                {auditAnalytics.recentViolations.length} violação(ões) de conformidade detectada(s) recentemente.
-                Revise a trilha de auditoria para mais detalhes.
+                {auditAnalytics.recentViolations.length} violação(ões) de
+                conformidade detectada(s) recentemente. Revise a trilha de
+                auditoria para mais detalhes.
               </AlertDescription>
             </Alert>
           )}
         </TabsContent>
 
         {/* Consents Tab */}
-        <TabsContent value="consents" className="space-y-4">
+        <TabsContent className="space-y-4" value="consents">
           <Card>
             <CardHeader>
               <CardTitle>Gestão de Consentimentos</CardTitle>
@@ -555,30 +608,34 @@ export default function LGPDComplianceDashboard({ clinicId, userRole }: LGPDComp
             </CardHeader>
             <CardContent>
               {consentAnalytics && (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-green-600">
+                    <div className="font-bold text-2xl text-green-600">
                       {consentAnalytics.activeConsents}
                     </div>
-                    <div className="text-sm text-muted-foreground">Ativos</div>
+                    <div className="text-muted-foreground text-sm">Ativos</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-yellow-600">
+                    <div className="font-bold text-2xl text-yellow-600">
                       {consentAnalytics.expiredConsents}
                     </div>
-                    <div className="text-sm text-muted-foreground">Expirados</div>
+                    <div className="text-muted-foreground text-sm">
+                      Expirados
+                    </div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-red-600">
+                    <div className="font-bold text-2xl text-red-600">
                       {consentAnalytics.withdrawnConsents}
                     </div>
-                    <div className="text-sm text-muted-foreground">Retirados</div>
+                    <div className="text-muted-foreground text-sm">
+                      Retirados
+                    </div>
                   </div>
                 </div>
               )}
-              
+
               <Button onClick={() => setShowConsentDialog(true)}>
-                <UserCheck className="h-4 w-4 mr-2" />
+                <UserCheck className="mr-2 h-4 w-4" />
                 Coletar Novo Consentimento
               </Button>
             </CardContent>
@@ -586,7 +643,7 @@ export default function LGPDComplianceDashboard({ clinicId, userRole }: LGPDComp
         </TabsContent>
 
         {/* Audit Tab */}
-        <TabsContent value="audit" className="space-y-4">
+        <TabsContent className="space-y-4" value="audit">
           <Card>
             <CardHeader>
               <CardTitle>Trilha de Auditoria LGPD</CardTitle>
@@ -618,9 +675,7 @@ export default function LGPDComplianceDashboard({ clinicId, userRole }: LGPDComp
                           <span className="text-sm">{record.eventType}</span>
                         </div>
                       </TableCell>
-                      <TableCell>
-                        {getSeverityBadge(record.severity)}
-                      </TableCell>
+                      <TableCell>{getSeverityBadge(record.severity)}</TableCell>
                       <TableCell>
                         <Badge variant="outline">{record.dataType}</Badge>
                       </TableCell>
@@ -628,8 +683,12 @@ export default function LGPDComplianceDashboard({ clinicId, userRole }: LGPDComp
                         {record.description}
                       </TableCell>
                       <TableCell>
-                        <Badge 
-                          variant={record.complianceStatus === 'compliant' ? 'default' : 'destructive'}
+                        <Badge
+                          variant={
+                            record.complianceStatus === 'compliant'
+                              ? 'default'
+                              : 'destructive'
+                          }
                         >
                           {record.complianceStatus}
                         </Badge>
@@ -643,7 +702,7 @@ export default function LGPDComplianceDashboard({ clinicId, userRole }: LGPDComp
         </TabsContent>
 
         {/* Retention Tab */}
-        <TabsContent value="retention" className="space-y-4">
+        <TabsContent className="space-y-4" value="retention">
           <Card>
             <CardHeader>
               <CardTitle>Gestão de Retenção de Dados</CardTitle>
@@ -654,46 +713,66 @@ export default function LGPDComplianceDashboard({ clinicId, userRole }: LGPDComp
             <CardContent>
               {retentionAnalytics && (
                 <div className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
                     <div className="text-center">
-                      <div className="text-2xl font-bold">{retentionAnalytics.activeRecords}</div>
-                      <div className="text-sm text-muted-foreground">Registros Ativos</div>
+                      <div className="font-bold text-2xl">
+                        {retentionAnalytics.activeRecords}
+                      </div>
+                      <div className="text-muted-foreground text-sm">
+                        Registros Ativos
+                      </div>
                     </div>
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-yellow-600">
+                      <div className="font-bold text-2xl text-yellow-600">
                         {retentionAnalytics.expiringSoonRecords}
                       </div>
-                      <div className="text-sm text-muted-foreground">Expirando em Breve</div>
+                      <div className="text-muted-foreground text-sm">
+                        Expirando em Breve
+                      </div>
                     </div>
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-red-600">
+                      <div className="font-bold text-2xl text-red-600">
                         {retentionAnalytics.expiredRecords}
                       </div>
-                      <div className="text-sm text-muted-foreground">Expirados</div>
+                      <div className="text-muted-foreground text-sm">
+                        Expirados
+                      </div>
                     </div>
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-green-600">
+                      <div className="font-bold text-2xl text-green-600">
                         {Math.round(retentionAnalytics.retentionCompliance)}%
                       </div>
-                      <div className="text-sm text-muted-foreground">Conformidade</div>
+                      <div className="text-muted-foreground text-sm">
+                        Conformidade
+                      </div>
                     </div>
                   </div>
 
                   {retentionAnalytics.upcomingExpirations.length > 0 && (
                     <div>
-                      <h4 className="font-semibold mb-2">Próximas Expirações</h4>
+                      <h4 className="mb-2 font-semibold">
+                        Próximas Expirações
+                      </h4>
                       <div className="space-y-2">
-                        {retentionAnalytics.upcomingExpirations.slice(0, 5).map((record) => (
-                          <div key={record.id} className="flex items-center justify-between p-2 border rounded">
-                            <div>
-                              <div className="font-medium">{record.dataType}</div>
-                              <div className="text-sm text-muted-foreground">
-                                Expira em: {formatDate(record.retentionExpiresAt)}
+                        {retentionAnalytics.upcomingExpirations
+                          .slice(0, 5)
+                          .map((record) => (
+                            <div
+                              className="flex items-center justify-between rounded border p-2"
+                              key={record.id}
+                            >
+                              <div>
+                                <div className="font-medium">
+                                  {record.dataType}
+                                </div>
+                                <div className="text-muted-foreground text-sm">
+                                  Expira em:{' '}
+                                  {formatDate(record.retentionExpiresAt)}
+                                </div>
                               </div>
+                              <Badge variant="secondary">{record.status}</Badge>
                             </div>
-                            <Badge variant="secondary">{record.status}</Badge>
-                          </div>
-                        ))}
+                          ))}
                       </div>
                     </div>
                   )}
@@ -704,7 +783,7 @@ export default function LGPDComplianceDashboard({ clinicId, userRole }: LGPDComp
         </TabsContent>
 
         {/* Requests Tab */}
-        <TabsContent value="requests" className="space-y-4">
+        <TabsContent className="space-y-4" value="requests">
           <Card>
             <CardHeader>
               <CardTitle>Solicitações de Titulares de Dados</CardTitle>
@@ -714,30 +793,36 @@ export default function LGPDComplianceDashboard({ clinicId, userRole }: LGPDComp
             </CardHeader>
             <CardContent>
               {auditAnalytics && (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
                   <div className="text-center">
-                    <div className="text-2xl font-bold">
+                    <div className="font-bold text-2xl">
                       {auditAnalytics.dataSubjectRequests.total}
                     </div>
-                    <div className="text-sm text-muted-foreground">Total</div>
+                    <div className="text-muted-foreground text-sm">Total</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-yellow-600">
+                    <div className="font-bold text-2xl text-yellow-600">
                       {auditAnalytics.dataSubjectRequests.pending}
                     </div>
-                    <div className="text-sm text-muted-foreground">Pendentes</div>
+                    <div className="text-muted-foreground text-sm">
+                      Pendentes
+                    </div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-green-600">
-                      {Math.round(auditAnalytics.dataSubjectRequests.averageResponseTime)}
+                    <div className="font-bold text-2xl text-green-600">
+                      {Math.round(
+                        auditAnalytics.dataSubjectRequests.averageResponseTime
+                      )}
                     </div>
-                    <div className="text-sm text-muted-foreground">Dias (Tempo Médio)</div>
+                    <div className="text-muted-foreground text-sm">
+                      Dias (Tempo Médio)
+                    </div>
                   </div>
                 </div>
               )}
-              
+
               <Button onClick={() => setShowRequestDialog(true)}>
-                <FileText className="h-4 w-4 mr-2" />
+                <FileText className="mr-2 h-4 w-4" />
                 Nova Solicitação
               </Button>
             </CardContent>
@@ -746,12 +831,13 @@ export default function LGPDComplianceDashboard({ clinicId, userRole }: LGPDComp
       </Tabs>
 
       {/* Consent Collection Dialog */}
-      <Dialog open={showConsentDialog} onOpenChange={setShowConsentDialog}>
+      <Dialog onOpenChange={setShowConsentDialog} open={showConsentDialog}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>Coletar Consentimento LGPD</DialogTitle>
             <DialogDescription>
-              Configure e colete consentimento para processamento de dados pessoais
+              Configure e colete consentimento para processamento de dados
+              pessoais
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
@@ -766,8 +852,10 @@ export default function LGPDComplianceDashboard({ clinicId, userRole }: LGPDComp
                   <SelectValue placeholder="Selecione os tipos de dados" />
                 </SelectTrigger>
                 <SelectContent>
-                  {Object.values(LGPDDataType).map(type => (
-                    <SelectItem key={type} value={type}>{type}</SelectItem>
+                  {Object.values(LGPDDataType).map((type) => (
+                    <SelectItem key={type} value={type}>
+                      {type}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -782,7 +870,10 @@ export default function LGPDComplianceDashboard({ clinicId, userRole }: LGPDComp
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowConsentDialog(false)}>
+            <Button
+              onClick={() => setShowConsentDialog(false)}
+              variant="outline"
+            >
               Cancelar
             </Button>
             <Button onClick={() => setShowConsentDialog(false)}>
@@ -793,7 +884,7 @@ export default function LGPDComplianceDashboard({ clinicId, userRole }: LGPDComp
       </Dialog>
 
       {/* Data Subject Request Dialog */}
-      <Dialog open={showRequestDialog} onOpenChange={setShowRequestDialog}>
+      <Dialog onOpenChange={setShowRequestDialog} open={showRequestDialog}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>Nova Solicitação de Titular</DialogTitle>
@@ -820,7 +911,10 @@ export default function LGPDComplianceDashboard({ clinicId, userRole }: LGPDComp
             </div>
             <div>
               <Label htmlFor="request-subject">ID do Titular</Label>
-              <Input id="request-subject" placeholder="Digite o ID do titular" />
+              <Input
+                id="request-subject"
+                placeholder="Digite o ID do titular"
+              />
             </div>
             <div>
               <Label htmlFor="request-details">Detalhes da Solicitação</Label>
@@ -832,7 +926,10 @@ export default function LGPDComplianceDashboard({ clinicId, userRole }: LGPDComp
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowRequestDialog(false)}>
+            <Button
+              onClick={() => setShowRequestDialog(false)}
+              variant="outline"
+            >
               Cancelar
             </Button>
             <Button onClick={() => setShowRequestDialog(false)}>

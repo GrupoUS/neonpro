@@ -1,17 +1,17 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useToast } from '@/components/ui/use-toast';
-import {
-  EmailTemplate,
-  EmailMessage,
-  EmailServiceResponse,
+import type {
   BulkEmailResponse,
   EmailAnalytics,
-  EmailPreview,
   EmailDeliveryReport,
-  EmailSettings,
+  EmailMessage,
+  EmailPreview,
   EmailProviderConfig,
+  EmailServiceResponse,
+  EmailSettings,
+  EmailTemplate,
   EmailValidationResult,
 } from '@/app/types/email';
+import { useToast } from '@/components/ui/use-toast';
 
 // =======================================
 // EMAIL TEMPLATE HOOKS
@@ -27,7 +27,8 @@ export function useEmailTemplates(filters?: {
     queryFn: async () => {
       const params = new URLSearchParams();
       if (filters?.category) params.append('category', filters.category);
-      if (filters?.isActive !== undefined) params.append('isActive', filters.isActive.toString());
+      if (filters?.isActive !== undefined)
+        params.append('isActive', filters.isActive.toString());
       if (filters?.search) params.append('search', filters.search);
 
       const response = await fetch(`/api/email/templates?${params}`);
@@ -59,7 +60,9 @@ export function useCreateEmailTemplate() {
   const { toast } = useToast();
 
   return useMutation({
-    mutationFn: async (template: Omit<EmailTemplate, 'id' | 'createdAt' | 'updatedAt'>) => {
+    mutationFn: async (
+      template: Omit<EmailTemplate, 'id' | 'createdAt' | 'updatedAt'>
+    ) => {
       const response = await fetch('/api/email/templates', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -82,7 +85,8 @@ export function useCreateEmailTemplate() {
     onError: (error) => {
       toast({
         title: 'Erro ao criar template',
-        description: error instanceof Error ? error.message : 'Erro desconhecido',
+        description:
+          error instanceof Error ? error.message : 'Erro desconhecido',
         variant: 'destructive',
       });
     },
@@ -94,7 +98,13 @@ export function useUpdateEmailTemplate() {
   const { toast } = useToast();
 
   return useMutation({
-    mutationFn: async ({ id, updates }: { id: string; updates: Partial<EmailTemplate> }) => {
+    mutationFn: async ({
+      id,
+      updates,
+    }: {
+      id: string;
+      updates: Partial<EmailTemplate>;
+    }) => {
       const response = await fetch(`/api/email/templates/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -109,7 +119,9 @@ export function useUpdateEmailTemplate() {
     },
     onSuccess: (template) => {
       queryClient.invalidateQueries({ queryKey: ['email-templates'] });
-      queryClient.invalidateQueries({ queryKey: ['email-template', template.id] });
+      queryClient.invalidateQueries({
+        queryKey: ['email-template', template.id],
+      });
       toast({
         title: 'Template atualizado',
         description: `Template "${template.name}" foi atualizado com sucesso.`,
@@ -118,7 +130,8 @@ export function useUpdateEmailTemplate() {
     onError: (error) => {
       toast({
         title: 'Erro ao atualizar template',
-        description: error instanceof Error ? error.message : 'Erro desconhecido',
+        description:
+          error instanceof Error ? error.message : 'Erro desconhecido',
         variant: 'destructive',
       });
     },
@@ -149,7 +162,8 @@ export function useDeleteEmailTemplate() {
     onError: (error) => {
       toast({
         title: 'Erro ao excluir template',
-        description: error instanceof Error ? error.message : 'Erro desconhecido',
+        description:
+          error instanceof Error ? error.message : 'Erro desconhecido',
         variant: 'destructive',
       });
     },
@@ -194,7 +208,8 @@ export function useSendEmail() {
     onError: (error) => {
       toast({
         title: 'Erro ao enviar email',
-        description: error instanceof Error ? error.message : 'Erro desconhecido',
+        description:
+          error instanceof Error ? error.message : 'Erro desconhecido',
         variant: 'destructive',
       });
     },
@@ -205,11 +220,11 @@ export function useSendBulkEmail() {
   const { toast } = useToast();
 
   return useMutation({
-    mutationFn: async ({ 
-      messages, 
-      batchSize = 10 
-    }: { 
-      messages: EmailMessage[]; 
+    mutationFn: async ({
+      messages,
+      batchSize = 10,
+    }: {
+      messages: EmailMessage[];
       batchSize?: number;
     }) => {
       const response = await fetch('/api/email/bulk', {
@@ -241,7 +256,8 @@ export function useSendBulkEmail() {
     onError: (error) => {
       toast({
         title: 'Erro ao enviar emails em lote',
-        description: error instanceof Error ? error.message : 'Erro desconhecido',
+        description:
+          error instanceof Error ? error.message : 'Erro desconhecido',
         variant: 'destructive',
       });
     },
@@ -254,11 +270,11 @@ export function useSendBulkEmail() {
 
 export function useEmailPreview() {
   return useMutation({
-    mutationFn: async ({ 
-      templateId, 
-      variables 
-    }: { 
-      templateId: string; 
+    mutationFn: async ({
+      templateId,
+      variables,
+    }: {
+      templateId: string;
       variables: Record<string, any>;
     }) => {
       const response = await fetch('/api/email/preview', {
@@ -308,8 +324,10 @@ export function useEmailAnalytics(filters?: {
     queryKey: ['email-analytics', filters],
     queryFn: async () => {
       const params = new URLSearchParams();
-      if (filters?.startDate) params.append('startDate', filters.startDate.toISOString());
-      if (filters?.endDate) params.append('endDate', filters.endDate.toISOString());
+      if (filters?.startDate)
+        params.append('startDate', filters.startDate.toISOString());
+      if (filters?.endDate)
+        params.append('endDate', filters.endDate.toISOString());
       if (filters?.templateId) params.append('templateId', filters.templateId);
       if (filters?.campaignId) params.append('campaignId', filters.campaignId);
 
@@ -347,8 +365,10 @@ export function useEmailEvents(filters?: {
     queryKey: ['email-events', filters],
     queryFn: async () => {
       const params = new URLSearchParams();
-      if (filters?.startDate) params.append('startDate', filters.startDate.toISOString());
-      if (filters?.endDate) params.append('endDate', filters.endDate.toISOString());
+      if (filters?.startDate)
+        params.append('startDate', filters.startDate.toISOString());
+      if (filters?.endDate)
+        params.append('endDate', filters.endDate.toISOString());
       if (filters?.messageId) params.append('messageId', filters.messageId);
       if (filters?.event) params.append('event', filters.event);
 
@@ -407,7 +427,8 @@ export function useUpdateEmailSettings() {
     onError: (error) => {
       toast({
         title: 'Erro ao atualizar configurações',
-        description: error instanceof Error ? error.message : 'Erro desconhecido',
+        description:
+          error instanceof Error ? error.message : 'Erro desconhecido',
         variant: 'destructive',
       });
     },
@@ -459,7 +480,8 @@ export function useCreateEmailProvider() {
     onError: (error) => {
       toast({
         title: 'Erro ao criar provedor',
-        description: error instanceof Error ? error.message : 'Erro desconhecido',
+        description:
+          error instanceof Error ? error.message : 'Erro desconhecido',
         variant: 'destructive',
       });
     },
@@ -471,11 +493,11 @@ export function useUpdateEmailProvider() {
   const { toast } = useToast();
 
   return useMutation({
-    mutationFn: async ({ 
-      id, 
-      updates 
-    }: { 
-      id: string; 
+    mutationFn: async ({
+      id,
+      updates,
+    }: {
+      id: string;
       updates: Partial<EmailProviderConfig>;
     }) => {
       const response = await fetch(`/api/email/providers/${id}`, {
@@ -500,7 +522,8 @@ export function useUpdateEmailProvider() {
     onError: (error) => {
       toast({
         title: 'Erro ao atualizar provedor',
-        description: error instanceof Error ? error.message : 'Erro desconhecido',
+        description:
+          error instanceof Error ? error.message : 'Erro desconhecido',
         variant: 'destructive',
       });
     },
@@ -531,7 +554,8 @@ export function useDeleteEmailProvider() {
     onError: (error) => {
       toast({
         title: 'Erro ao excluir provedor',
-        description: error instanceof Error ? error.message : 'Erro desconhecido',
+        description:
+          error instanceof Error ? error.message : 'Erro desconhecido',
         variant: 'destructive',
       });
     },
@@ -570,7 +594,8 @@ export function useTestEmailProvider() {
     onError: (error) => {
       toast({
         title: 'Erro ao testar provedor',
-        description: error instanceof Error ? error.message : 'Erro desconhecido',
+        description:
+          error instanceof Error ? error.message : 'Erro desconhecido',
         variant: 'destructive',
       });
     },
@@ -599,11 +624,11 @@ export function useAddEmailSuppression() {
   const { toast } = useToast();
 
   return useMutation({
-    mutationFn: async ({ 
-      email, 
-      reason 
-    }: { 
-      email: string; 
+    mutationFn: async ({
+      email,
+      reason,
+    }: {
+      email: string;
       reason: string;
     }) => {
       const response = await fetch('/api/email/suppressions', {
@@ -628,7 +653,8 @@ export function useAddEmailSuppression() {
     onError: (error) => {
       toast({
         title: 'Erro ao suprimir email',
-        description: error instanceof Error ? error.message : 'Erro desconhecido',
+        description:
+          error instanceof Error ? error.message : 'Erro desconhecido',
         variant: 'destructive',
       });
     },
@@ -641,9 +667,12 @@ export function useRemoveEmailSuppression() {
 
   return useMutation({
     mutationFn: async (email: string) => {
-      const response = await fetch(`/api/email/suppressions/${encodeURIComponent(email)}`, {
-        method: 'DELETE',
-      });
+      const response = await fetch(
+        `/api/email/suppressions/${encodeURIComponent(email)}`,
+        {
+          method: 'DELETE',
+        }
+      );
 
       if (!response.ok) {
         throw new Error('Failed to remove email suppression');
@@ -659,7 +688,8 @@ export function useRemoveEmailSuppression() {
     onError: (error) => {
       toast({
         title: 'Erro ao remover supressão',
-        description: error instanceof Error ? error.message : 'Erro desconhecido',
+        description:
+          error instanceof Error ? error.message : 'Erro desconhecido',
         variant: 'destructive',
       });
     },
@@ -723,36 +753,29 @@ export {
   useCreateEmailTemplate,
   useUpdateEmailTemplate,
   useDeleteEmailTemplate,
-  
   // Sending hooks
   useSendEmail,
   useSendBulkEmail,
-  
   // Preview & validation hooks
   useEmailPreview,
   useValidateEmail,
-  
   // Analytics hooks
   useEmailAnalytics,
   useEmailDeliveryReport,
   useEmailEvents,
-  
   // Settings hooks
   useEmailSettings,
   useUpdateEmailSettings,
-  
   // Provider hooks
   useEmailProviders,
   useCreateEmailProvider,
   useUpdateEmailProvider,
   useDeleteEmailProvider,
   useTestEmailProvider,
-  
   // Suppression hooks
   useEmailSuppressions,
   useAddEmailSuppression,
   useRemoveEmailSuppression,
-  
   // Utility hooks
   useEmailQuota,
   useEmailHealth,

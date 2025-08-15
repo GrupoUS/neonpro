@@ -1,11 +1,11 @@
-// Brazilian Tax Declarations API  
+// Brazilian Tax Declarations API
 // Story 5.5: API for DEFIS, ECF, DMED and other fiscal declarations
 // Author: VoidBeast V6.0 Master Orchestrator
 // Date: 2025-01-30
 
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { createClient } from '@/app/utils/supabase/server';
 
 // Validation schemas
 const declarationGenerationSchema = z.object({
@@ -45,19 +45,19 @@ export async function GET(request: NextRequest) {
     switch (action) {
       case 'list':
         return await listDeclarations(supabase, clinicId, searchParams);
-      
+
       case 'status':
         return await getDeclarationStatus(supabase, searchParams);
-      
+
       case 'download':
         return await downloadDeclaration(supabase, searchParams);
-      
+
       case 'calendar':
         return await getDeclarationCalendar(supabase, clinicId);
-      
+
       case 'compliance':
         return await getComplianceStatus(supabase, clinicId);
-      
+
       default:
         return await getDeclarationsOverview(supabase, clinicId);
     }
@@ -82,16 +82,16 @@ export async function POST(request: NextRequest) {
     switch (action) {
       case 'generate':
         return await generateDeclaration(supabase, body);
-      
+
       case 'validate':
         return await validateDeclaration(supabase, body);
-      
+
       case 'submit':
         return await submitDeclaration(supabase, body);
-      
+
       case 'schedule':
         return await scheduleDeclaration(supabase, body);
-      
+
       default:
         return NextResponse.json(
           { error: 'Invalid action specified' },
@@ -108,7 +108,11 @@ export async function POST(request: NextRequest) {
 }
 
 // Helper functions
-async function listDeclarations(supabase: any, clinicId: string, searchParams: URLSearchParams) {
+async function listDeclarations(
+  supabase: any,
+  clinicId: string,
+  searchParams: URLSearchParams
+) {
   let query = supabase
     .from('tax_declarations')
     .select('*')
@@ -122,7 +126,7 @@ async function listDeclarations(supabase: any, clinicId: string, searchParams: U
 
   const year = searchParams.get('year');
   if (year) {
-    query = query.eq('period_year', parseInt(year));
+    query = query.eq('period_year', Number.parseInt(year, 10));
   }
 
   const status = searchParams.get('status');
@@ -130,9 +134,9 @@ async function listDeclarations(supabase: any, clinicId: string, searchParams: U
     query = query.eq('status', status);
   }
 
-  const limit = parseInt(searchParams.get('limit') || '50');
-  const offset = parseInt(searchParams.get('offset') || '0');
-  
+  const limit = Number.parseInt(searchParams.get('limit') || '50', 10);
+  const offset = Number.parseInt(searchParams.get('offset') || '0', 10);
+
   query = query
     .order('created_at', { ascending: false })
     .range(offset, offset + limit - 1);
@@ -152,12 +156,15 @@ async function listDeclarations(supabase: any, clinicId: string, searchParams: U
       total: count,
       limit,
       offset,
-      has_more: count > offset + limit
-    }
+      has_more: count > offset + limit,
+    },
   });
 }
 
-async function getDeclarationStatus(supabase: any, searchParams: URLSearchParams) {
+async function getDeclarationStatus(
+  supabase: any,
+  searchParams: URLSearchParams
+) {
   const declarationId = searchParams.get('declaration_id');
 
   if (!declarationId) {
@@ -183,9 +190,11 @@ async function getDeclarationStatus(supabase: any, searchParams: URLSearchParams
   // Get submission status from tax authority if submitted
   if (data.status === 'submitted' && data.protocol_number) {
     try {
-      const { TaxDeclarationService } = await import('@/lib/services/tax/tax-declarations');
+      const { TaxDeclarationService } = await import(
+        '@/lib/services/tax/tax-declarations'
+      );
       const declarationService = new TaxDeclarationService();
-      
+
       const updatedStatus = await declarationService.checkSubmissionStatus(
         data.declaration_type,
         data.protocol_number
@@ -198,7 +207,7 @@ async function getDeclarationStatus(supabase: any, searchParams: URLSearchParams
           .update({
             status: updatedStatus.status,
             processing_result: updatedStatus.result,
-            updated_at: new Date().toISOString()
+            updated_at: new Date().toISOString(),
           })
           .eq('id', declarationId);
 
@@ -213,12 +222,15 @@ async function getDeclarationStatus(supabase: any, searchParams: URLSearchParams
   return NextResponse.json({
     data: {
       ...data,
-      last_checked: new Date().toISOString()
-    }
+      last_checked: new Date().toISOString(),
+    },
   });
 }
 
-async function downloadDeclaration(supabase: any, searchParams: URLSearchParams) {
+async function downloadDeclaration(
+  supabase: any,
+  searchParams: URLSearchParams
+) {
   const declarationId = searchParams.get('declaration_id');
   const format = searchParams.get('format') || 'pdf';
 
@@ -243,21 +255,27 @@ async function downloadDeclaration(supabase: any, searchParams: URLSearchParams)
   }
 
   try {
-    const { TaxDeclarationService } = await import('@/lib/services/tax/tax-declarations');
+    const { TaxDeclarationService } = await import(
+      '@/lib/services/tax/tax-declarations'
+    );
     const declarationService = new TaxDeclarationService();
-    
+
     const fileData = await declarationService.exportDeclaration(
       declarationId,
       format
     );
 
     const headers = new Headers();
-    headers.set('Content-Type', format === 'pdf' ? 'application/pdf' : 'application/xml');
-    headers.set('Content-Disposition', 
-      `attachment; filename="${declaration.declaration_type}_${declaration.period_year}.${format}"`);
+    headers.set(
+      'Content-Type',
+      format === 'pdf' ? 'application/pdf' : 'application/xml'
+    );
+    headers.set(
+      'Content-Disposition',
+      `attachment; filename="${declaration.declaration_type}_${declaration.period_year}.${format}"`
+    );
 
     return new NextResponse(fileData, { headers });
-
   } catch (error) {
     console.error('Declaration download error:', error);
     return NextResponse.json(
@@ -269,7 +287,7 @@ async function downloadDeclaration(supabase: any, searchParams: URLSearchParams)
 
 async function getDeclarationCalendar(supabase: any, clinicId: string) {
   const currentYear = new Date().getFullYear();
-  
+
   // Get clinic tax configuration
   const { data: config } = await supabase
     .from('tax_configuration')
@@ -286,7 +304,9 @@ async function getDeclarationCalendar(supabase: any, clinicId: string) {
   }
 
   // Generate declaration calendar based on tax regime
-  const { TaxDeclarationService } = await import('@/lib/services/tax/tax-declarations');
+  const { TaxDeclarationService } = await import(
+    '@/lib/services/tax/tax-declarations'
+  );
   const declarationService = new TaxDeclarationService();
 
   try {
@@ -300,10 +320,9 @@ async function getDeclarationCalendar(supabase: any, clinicId: string) {
         year: currentYear,
         tax_regime: config.tax_regime,
         calendar,
-        generated_at: new Date().toISOString()
-      }
+        generated_at: new Date().toISOString(),
+      },
     });
-
   } catch (error) {
     console.error('Declaration calendar error:', error);
     return NextResponse.json(
@@ -315,7 +334,7 @@ async function getDeclarationCalendar(supabase: any, clinicId: string) {
 
 async function getComplianceStatus(supabase: any, clinicId: string) {
   const currentYear = new Date().getFullYear();
-  
+
   // Get all declarations for current year
   const { data: declarations } = await supabase
     .from('tax_declarations')
@@ -339,9 +358,11 @@ async function getComplianceStatus(supabase: any, clinicId: string) {
   }
 
   try {
-    const { TaxDeclarationService } = await import('@/lib/services/tax/tax-declarations');
+    const { TaxDeclarationService } = await import(
+      '@/lib/services/tax/tax-declarations'
+    );
     const declarationService = new TaxDeclarationService();
-    
+
     const compliance = await declarationService.assessCompliance(
       clinicId,
       config.tax_regime,
@@ -360,10 +381,9 @@ async function getComplianceStatus(supabase: any, clinicId: string) {
         pending_declarations: compliance.pending,
         overdue_declarations: compliance.overdue,
         recommendations: compliance.recommendations,
-        assessed_at: new Date().toISOString()
-      }
+        assessed_at: new Date().toISOString(),
+      },
     });
-
   } catch (error) {
     console.error('Compliance assessment error:', error);
     return NextResponse.json(
@@ -375,7 +395,7 @@ async function getComplianceStatus(supabase: any, clinicId: string) {
 
 async function getDeclarationsOverview(supabase: any, clinicId: string) {
   const currentYear = new Date().getFullYear();
-  
+
   // Get statistics
   const { data: stats } = await supabase
     .from('tax_declarations')
@@ -385,38 +405,48 @@ async function getDeclarationsOverview(supabase: any, clinicId: string) {
 
   const summary = {
     total_declarations: stats?.length || 0,
-    by_type: stats?.reduce((acc, decl) => {
-      acc[decl.declaration_type] = (acc[decl.declaration_type] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>) || {},
-    by_status: stats?.reduce((acc, decl) => {
-      acc[decl.status] = (acc[decl.status] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>) || {},
-    year: currentYear
+    by_type:
+      stats?.reduce(
+        (acc, decl) => {
+          acc[decl.declaration_type] = (acc[decl.declaration_type] || 0) + 1;
+          return acc;
+        },
+        {} as Record<string, number>
+      ) || {},
+    by_status:
+      stats?.reduce(
+        (acc, decl) => {
+          acc[decl.status] = (acc[decl.status] || 0) + 1;
+          return acc;
+        },
+        {} as Record<string, number>
+      ) || {},
+    year: currentYear,
   };
 
   return NextResponse.json({
     data: {
       summary,
-      recent_declarations: stats?.slice(0, 10) || []
-    }
+      recent_declarations: stats?.slice(0, 10) || [],
+    },
   });
 }
 
 async function generateDeclaration(supabase: any, body: any) {
   const validatedData = declarationGenerationSchema.parse(body);
-  
+
   try {
-    const { TaxDeclarationService } = await import('@/lib/services/tax/tax-declarations');
+    const { TaxDeclarationService } = await import(
+      '@/lib/services/tax/tax-declarations'
+    );
     const declarationService = new TaxDeclarationService();
-    
+
     // Generate declaration
     const declaration = await declarationService.generateDeclaration({
       clinic_id: validatedData.clinic_id,
       declaration_type: validatedData.declaration_type,
       period: validatedData.period,
-      test_mode: validatedData.test_mode
+      test_mode: validatedData.test_mode,
     });
 
     // Store in database
@@ -431,7 +461,7 @@ async function generateDeclaration(supabase: any, body: any) {
         declaration_data: declaration.data,
         file_path: declaration.file_path,
         test_mode: validatedData.test_mode,
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
       })
       .select()
       .single();
@@ -447,13 +477,13 @@ async function generateDeclaration(supabase: any, body: any) {
     if (validatedData.auto_submit && !validatedData.test_mode) {
       try {
         const submission = await declarationService.submitDeclaration(data.id);
-        
+
         await supabase
           .from('tax_declarations')
           .update({
             status: 'submitted',
             protocol_number: submission.protocol,
-            submitted_at: new Date().toISOString()
+            submitted_at: new Date().toISOString(),
           })
           .eq('id', data.id);
 
@@ -471,15 +501,14 @@ async function generateDeclaration(supabase: any, body: any) {
         declaration_type: data.declaration_type,
         period: {
           year: data.period_year,
-          month: data.period_month
+          month: data.period_month,
         },
         status: data.status,
         file_path: data.file_path,
         protocol_number: data.protocol_number,
-        generated_at: data.created_at
-      }
+        generated_at: data.created_at,
+      },
     });
-
   } catch (error) {
     console.error('Declaration generation error:', error);
     return NextResponse.json(
@@ -491,7 +520,7 @@ async function generateDeclaration(supabase: any, body: any) {
 
 async function validateDeclaration(supabase: any, body: any) {
   const validatedData = declarationValidationSchema.parse(body);
-  
+
   // Get declaration
   const { data: declaration, error } = await supabase
     .from('tax_declarations')
@@ -507,14 +536,16 @@ async function validateDeclaration(supabase: any, body: any) {
   }
 
   try {
-    const { TaxDeclarationService } = await import('@/lib/services/tax/tax-declarations');
+    const { TaxDeclarationService } = await import(
+      '@/lib/services/tax/tax-declarations'
+    );
     const declarationService = new TaxDeclarationService();
-    
+
     const validation = await declarationService.validateDeclaration(
       validatedData.declaration_id,
       {
         validate_data: validatedData.validate_data,
-        check_compliance: validatedData.check_compliance
+        check_compliance: validatedData.check_compliance,
       }
     );
 
@@ -525,7 +556,7 @@ async function validateDeclaration(supabase: any, body: any) {
         validation_status: validation.valid ? 'valid' : 'invalid',
         validation_errors: validation.errors,
         validation_warnings: validation.warnings,
-        validated_at: new Date().toISOString()
+        validated_at: new Date().toISOString(),
       })
       .eq('id', validatedData.declaration_id);
 
@@ -536,10 +567,9 @@ async function validateDeclaration(supabase: any, body: any) {
         errors: validation.errors || [],
         warnings: validation.warnings || [],
         compliance_score: validation.compliance_score,
-        validated_at: new Date().toISOString()
-      }
+        validated_at: new Date().toISOString(),
+      },
     });
-
   } catch (error) {
     console.error('Declaration validation error:', error);
     return NextResponse.json(
@@ -581,11 +611,14 @@ async function submitDeclaration(supabase: any, body: any) {
   }
 
   try {
-    const { TaxDeclarationService } = await import('@/lib/services/tax/tax-declarations');
+    const { TaxDeclarationService } = await import(
+      '@/lib/services/tax/tax-declarations'
+    );
     const declarationService = new TaxDeclarationService();
-    
-    const submission = await declarationService.submitDeclaration(declaration_id);
-    
+
+    const submission =
+      await declarationService.submitDeclaration(declaration_id);
+
     // Update declaration status
     await supabase
       .from('tax_declarations')
@@ -593,7 +626,7 @@ async function submitDeclaration(supabase: any, body: any) {
         status: 'submitted',
         protocol_number: submission.protocol,
         submitted_at: new Date().toISOString(),
-        submission_result: submission.result
+        submission_result: submission.result,
       })
       .eq('id', declaration_id);
 
@@ -603,20 +636,19 @@ async function submitDeclaration(supabase: any, body: any) {
         status: 'submitted',
         protocol_number: submission.protocol,
         submission_result: submission.result,
-        submitted_at: new Date().toISOString()
-      }
+        submitted_at: new Date().toISOString(),
+      },
     });
-
   } catch (error) {
     console.error('Declaration submission error:', error);
-    
+
     // Update status to error
     await supabase
       .from('tax_declarations')
       .update({
         status: 'error',
         error_message: error.message,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', declaration_id);
 
@@ -630,9 +662,12 @@ async function submitDeclaration(supabase: any, body: any) {
 async function scheduleDeclaration(supabase: any, body: any) {
   const { clinic_id, declaration_type, period, schedule_date } = body;
 
-  if (!clinic_id || !declaration_type || !period || !schedule_date) {
+  if (!(clinic_id && declaration_type && period && schedule_date)) {
     return NextResponse.json(
-      { error: 'clinic_id, declaration_type, period, and schedule_date are required' },
+      {
+        error:
+          'clinic_id, declaration_type, period, and schedule_date are required',
+      },
       { status: 400 }
     );
   }
@@ -648,7 +683,7 @@ async function scheduleDeclaration(supabase: any, body: any) {
         period_month: period.month,
         scheduled_date: schedule_date,
         status: 'scheduled',
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
       })
       .select()
       .single();
@@ -668,10 +703,9 @@ async function scheduleDeclaration(supabase: any, body: any) {
         period,
         scheduled_date: schedule_date,
         status: 'scheduled',
-        created_at: data.created_at
-      }
+        created_at: data.created_at,
+      },
     });
-
   } catch (error) {
     console.error('Declaration scheduling error:', error);
     return NextResponse.json(

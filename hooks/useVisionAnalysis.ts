@@ -1,11 +1,10 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { 
-  visionAnalysisEngine, 
-  AnalysisResult, 
-  ChangeMetrics 
+import {
+  type AnalysisResult,
+  visionAnalysisEngine,
 } from '@/lib/vision/analysis-engine';
 
 export interface VisionAnalysisState {
@@ -30,7 +29,9 @@ export interface VisionAnalysisActions {
   shareAnalysis: (analysisId: string) => Promise<string>;
 }
 
-export interface UseVisionAnalysisReturn extends VisionAnalysisState, VisionAnalysisActions {}
+export interface UseVisionAnalysisReturn
+  extends VisionAnalysisState,
+    VisionAnalysisActions {}
 
 /**
  * Custom hook for managing computer vision analysis operations
@@ -42,142 +43,151 @@ export function useVisionAnalysis(): UseVisionAnalysisReturn {
     currentAnalysis: null,
     analysisHistory: [],
     error: null,
-    progress: 0
+    progress: 0,
   });
 
   /**
    * Start computer vision analysis for before/after images
    * Target: ≥95% accuracy, <30s processing time
    */
-  const startAnalysis = useCallback(async (
-    beforeImageUrl: string,
-    afterImageUrl: string,
-    patientId: string,
-    treatmentType: string
-  ): Promise<AnalysisResult | null> => {
-    setState(prev => ({
-      ...prev,
-      isAnalyzing: true,
-      error: null,
-      progress: 0
-    }));
+  const startAnalysis = useCallback(
+    async (
+      beforeImageUrl: string,
+      afterImageUrl: string,
+      patientId: string,
+      treatmentType: string
+    ): Promise<AnalysisResult | null> => {
+      setState((prev) => ({
+        ...prev,
+        isAnalyzing: true,
+        error: null,
+        progress: 0,
+      }));
 
-    try {
-      // Simulate progress updates
-      const progressInterval = setInterval(() => {
-        setState(prev => ({
+      try {
+        // Simulate progress updates
+        const progressInterval = setInterval(() => {
+          setState((prev) => ({
+            ...prev,
+            progress: Math.min(prev.progress + Math.random() * 15, 90),
+          }));
+        }, 1000);
+
+        // Validate inputs
+        if (!(beforeImageUrl && afterImageUrl)) {
+          throw new Error('URLs das imagens são obrigatórias');
+        }
+
+        if (!patientId) {
+          throw new Error('ID do paciente é obrigatório');
+        }
+
+        if (!treatmentType) {
+          throw new Error('Tipo de tratamento é obrigatório');
+        }
+
+        // Start analysis
+        toast.info('Iniciando análise de visão computacional...');
+
+        const _startTime = Date.now();
+        const result = await visionAnalysisEngine.analyzeBeforeAfter(
+          beforeImageUrl,
+          afterImageUrl,
+          patientId,
+          treatmentType
+        );
+
+        clearInterval(progressInterval);
+
+        // Validate results meet requirements
+        if (result.accuracyScore < 0.95) {
+          toast.warning(
+            `Precisão abaixo do esperado: ${(result.accuracyScore * 100).toFixed(1)}%`
+          );
+        }
+
+        if (result.processingTime > 30_000) {
+          toast.warning(
+            `Tempo de processamento excedeu 30s: ${(result.processingTime / 1000).toFixed(1)}s`
+          );
+        }
+
+        setState((prev) => ({
           ...prev,
-          progress: Math.min(prev.progress + Math.random() * 15, 90)
+          isAnalyzing: false,
+          currentAnalysis: result,
+          progress: 100,
+          analysisHistory: [result, ...prev.analysisHistory],
         }));
-      }, 1000);
 
-      // Validate inputs
-      if (!beforeImageUrl || !afterImageUrl) {
-        throw new Error('URLs das imagens são obrigatórias');
-      }
-
-      if (!patientId) {
-        throw new Error('ID do paciente é obrigatório');
-      }
-
-      if (!treatmentType) {
-        throw new Error('Tipo de tratamento é obrigatório');
-      }
-
-      // Start analysis
-      toast.info('Iniciando análise de visão computacional...');
-      
-      const startTime = Date.now();
-      const result = await visionAnalysisEngine.analyzeBeforeAfter(
-        beforeImageUrl,
-        afterImageUrl,
-        patientId,
-        treatmentType
-      );
-      
-      clearInterval(progressInterval);
-      
-      // Validate results meet requirements
-      if (result.accuracyScore < 0.95) {
-        toast.warning(
-          `Precisão abaixo do esperado: ${(result.accuracyScore * 100).toFixed(1)}%`
+        toast.success(
+          `Análise concluída com ${(result.accuracyScore * 100).toFixed(1)}% de precisão em ${(result.processingTime / 1000).toFixed(1)}s`
         );
+
+        return result;
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : 'Erro desconhecido na análise';
+
+        setState((prev) => ({
+          ...prev,
+          isAnalyzing: false,
+          error: errorMessage,
+          progress: 0,
+        }));
+
+        toast.error(`Falha na análise: ${errorMessage}`);
+        console.error('Vision analysis failed:', error);
+
+        return null;
       }
-      
-      if (result.processingTime > 30000) {
-        toast.warning(
-          `Tempo de processamento excedeu 30s: ${(result.processingTime / 1000).toFixed(1)}s`
-        );
-      }
-
-      setState(prev => ({
-        ...prev,
-        isAnalyzing: false,
-        currentAnalysis: result,
-        progress: 100,
-        analysisHistory: [result, ...prev.analysisHistory]
-      }));
-
-      toast.success(
-        `Análise concluída com ${(result.accuracyScore * 100).toFixed(1)}% de precisão em ${(result.processingTime / 1000).toFixed(1)}s`
-      );
-
-      return result;
-
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido na análise';
-      
-      setState(prev => ({
-        ...prev,
-        isAnalyzing: false,
-        error: errorMessage,
-        progress: 0
-      }));
-
-      toast.error(`Falha na análise: ${errorMessage}`);
-      console.error('Vision analysis failed:', error);
-      
-      return null;
-    }
-  }, []);
+    },
+    []
+  );
 
   /**
    * Load analysis history for a patient
    */
-  const loadAnalysisHistory = useCallback(async (patientId: string): Promise<void> => {
-    try {
-      setState(prev => ({ ...prev, error: null }));
-      
-      const history = await visionAnalysisEngine.getPatientAnalysisHistory(patientId);
-      
-      setState(prev => ({
-        ...prev,
-        analysisHistory: history
-      }));
+  const loadAnalysisHistory = useCallback(
+    async (patientId: string): Promise<void> => {
+      try {
+        setState((prev) => ({ ...prev, error: null }));
 
-      toast.success(`${history.length} análises carregadas`);
+        const history =
+          await visionAnalysisEngine.getPatientAnalysisHistory(patientId);
 
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro ao carregar histórico';
-      
-      setState(prev => ({
-        ...prev,
-        error: errorMessage
-      }));
+        setState((prev) => ({
+          ...prev,
+          analysisHistory: history,
+        }));
 
-      toast.error(`Falha ao carregar histórico: ${errorMessage}`);
-      console.error('Failed to load analysis history:', error);
-    }
-  }, []);
+        toast.success(`${history.length} análises carregadas`);
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : 'Erro ao carregar histórico';
+
+        setState((prev) => ({
+          ...prev,
+          error: errorMessage,
+        }));
+
+        toast.error(`Falha ao carregar histórico: ${errorMessage}`);
+        console.error('Failed to load analysis history:', error);
+      }
+    },
+    []
+  );
 
   /**
    * Clear current analysis
    */
   const clearCurrentAnalysis = useCallback(() => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       currentAnalysis: null,
-      progress: 0
+      progress: 0,
     }));
   }, []);
 
@@ -185,121 +195,128 @@ export function useVisionAnalysis(): UseVisionAnalysisReturn {
    * Clear error state
    */
   const clearError = useCallback(() => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
-      error: null
+      error: null,
     }));
   }, []);
 
   /**
    * Export analysis results to PDF/Excel
    */
-  const exportAnalysis = useCallback(async (
-    analysisId: string,
-    format: 'json' | 'csv' | 'pdf' | 'excel' = 'json',
-    options?: {
-      includeImages?: boolean;
-      includeAnnotations?: boolean;
-      includeMetrics?: boolean;
-    }
-  ): Promise<void> => {
-    try {
-      const response = await fetch('/api/vision/export', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          analysisId,
-          format,
-          options: {
-            includeImages: options?.includeImages ?? true,
-            includeAnnotations: options?.includeAnnotations ?? true,
-            includeMetrics: options?.includeMetrics ?? true,
-            ...options
-          }
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error('Export failed');
+  const exportAnalysis = useCallback(
+    async (
+      analysisId: string,
+      format: 'json' | 'csv' | 'pdf' | 'excel' = 'json',
+      options?: {
+        includeImages?: boolean;
+        includeAnnotations?: boolean;
+        includeMetrics?: boolean;
       }
+    ): Promise<void> => {
+      try {
+        const response = await fetch('/api/vision/export', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            analysisId,
+            format,
+            options: {
+              includeImages: options?.includeImages ?? true,
+              includeAnnotations: options?.includeAnnotations ?? true,
+              includeMetrics: options?.includeMetrics ?? true,
+              ...options,
+            },
+          }),
+        });
 
-      const result = await response.json();
-      
-      // Download the file
-      if (result.downloadUrl) {
-        const link = document.createElement('a');
-        link.href = result.downloadUrl;
-        link.download = result.filename;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        if (!response.ok) {
+          throw new Error('Export failed');
+        }
+
+        const result = await response.json();
+
+        // Download the file
+        if (result.downloadUrl) {
+          const link = document.createElement('a');
+          link.href = result.downloadUrl;
+          link.download = result.filename;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }
+
+        toast.success(`Analysis exported as ${format.toUpperCase()}`);
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : 'Erro na exportação';
+        toast.error(`Falha na exportação: ${errorMessage}`);
+        console.error('Export failed:', error);
       }
-
-      toast.success(`Analysis exported as ${format.toUpperCase()}`);
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro na exportação';
-      toast.error(`Falha na exportação: ${errorMessage}`);
-      console.error('Export failed:', error);
-    }
-  }, []);
+    },
+    []
+  );
 
   /**
    * Share analysis results (generate shareable link)
    */
-  const shareAnalysis = useCallback(async (
-    analysisId: string,
-    options?: {
-      shareType?: 'public' | 'private' | 'professional';
-      expiresAt?: Date;
-      password?: string;
-      allowedEmails?: string[];
-      includeImages?: boolean;
-      includeAnnotations?: boolean;
-      includeMetrics?: boolean;
-    }
-  ): Promise<string> => {
-    try {
-      const response = await fetch('/api/vision/share', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          analysisId,
-          shareType: options?.shareType ?? 'private',
-          expiresAt: options?.expiresAt?.toISOString(),
-          password: options?.password,
-          allowedEmails: options?.allowedEmails,
-          includeImages: options?.includeImages ?? true,
-          includeAnnotations: options?.includeAnnotations ?? true,
-          includeMetrics: options?.includeMetrics ?? true
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error('Share failed');
+  const shareAnalysis = useCallback(
+    async (
+      analysisId: string,
+      options?: {
+        shareType?: 'public' | 'private' | 'professional';
+        expiresAt?: Date;
+        password?: string;
+        allowedEmails?: string[];
+        includeImages?: boolean;
+        includeAnnotations?: boolean;
+        includeMetrics?: boolean;
       }
+    ): Promise<string> => {
+      try {
+        const response = await fetch('/api/vision/share', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            analysisId,
+            shareType: options?.shareType ?? 'private',
+            expiresAt: options?.expiresAt?.toISOString(),
+            password: options?.password,
+            allowedEmails: options?.allowedEmails,
+            includeImages: options?.includeImages ?? true,
+            includeAnnotations: options?.includeAnnotations ?? true,
+            includeMetrics: options?.includeMetrics ?? true,
+          }),
+        });
 
-      const result = await response.json();
-      
-      // Copy share URL to clipboard
-      if (result.shareUrl && navigator.clipboard) {
-        await navigator.clipboard.writeText(result.shareUrl);
-        toast.success('Share URL copied to clipboard');
+        if (!response.ok) {
+          throw new Error('Share failed');
+        }
+
+        const result = await response.json();
+
+        // Copy share URL to clipboard
+        if (result.shareUrl && navigator.clipboard) {
+          await navigator.clipboard.writeText(result.shareUrl);
+          toast.success('Share URL copied to clipboard');
+        }
+
+        toast.success('Analysis shared successfully');
+        return result.shareUrl;
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : 'Erro no compartilhamento';
+        toast.error(`Falha no compartilhamento: ${errorMessage}`);
+        console.error('Share failed:', error);
+        throw error;
       }
-      
-      toast.success('Analysis shared successfully');
-      return result.shareUrl;
-
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro no compartilhamento';
-      toast.error(`Falha no compartilhamento: ${errorMessage}`);
-      console.error('Share failed:', error);
-      throw error;
-    }
-  }, []);
+    },
+    []
+  );
 
   return {
     // State
@@ -308,14 +325,14 @@ export function useVisionAnalysis(): UseVisionAnalysisReturn {
     analysisHistory: state.analysisHistory,
     error: state.error,
     progress: state.progress,
-    
+
     // Actions
     startAnalysis,
     loadAnalysisHistory,
     clearCurrentAnalysis,
     clearError,
     exportAnalysis,
-    shareAnalysis
+    shareAnalysis,
   };
 }
 
@@ -338,9 +355,9 @@ export function useAnalysisMonitoring(analysisId?: string) {
     const interval = setInterval(() => {
       setMetrics({
         processingStage: 'Análise de textura',
-        estimatedTimeRemaining: Math.max(0, Math.random() * 25000),
+        estimatedTimeRemaining: Math.max(0, Math.random() * 25_000),
         currentAccuracy: 0.95 + Math.random() * 0.04,
-        memoryUsage: 0.3 + Math.random() * 0.2
+        memoryUsage: 0.3 + Math.random() * 0.2,
       });
     }, 2000);
 
@@ -360,34 +377,44 @@ export function useAnalysisPerformance() {
     averageAccuracy: number;
     successRate: number;
     totalAnalyses: number;
-  }>({ 
-    averageProcessingTime: 0, 
-    averageAccuracy: 0, 
-    successRate: 0, 
-    totalAnalyses: 0 
+  }>({
+    averageProcessingTime: 0,
+    averageAccuracy: 0,
+    successRate: 0,
+    totalAnalyses: 0,
   });
 
-  const updatePerformanceMetrics = useCallback((newAnalysis: AnalysisResult) => {
-    setPerformanceData(prev => {
-      const newTotal = prev.totalAnalyses + 1;
-      const newAvgTime = ((prev.averageProcessingTime * prev.totalAnalyses) + newAnalysis.processingTime) / newTotal;
-      const newAvgAccuracy = ((prev.averageAccuracy * prev.totalAnalyses) + newAnalysis.accuracyScore) / newTotal;
-      const newSuccessRate = newAnalysis.accuracyScore >= 0.95 ? 
-        ((prev.successRate * prev.totalAnalyses) + 1) / newTotal :
-        (prev.successRate * prev.totalAnalyses) / newTotal;
+  const updatePerformanceMetrics = useCallback(
+    (newAnalysis: AnalysisResult) => {
+      setPerformanceData((prev) => {
+        const newTotal = prev.totalAnalyses + 1;
+        const newAvgTime =
+          (prev.averageProcessingTime * prev.totalAnalyses +
+            newAnalysis.processingTime) /
+          newTotal;
+        const newAvgAccuracy =
+          (prev.averageAccuracy * prev.totalAnalyses +
+            newAnalysis.accuracyScore) /
+          newTotal;
+        const newSuccessRate =
+          newAnalysis.accuracyScore >= 0.95
+            ? (prev.successRate * prev.totalAnalyses + 1) / newTotal
+            : (prev.successRate * prev.totalAnalyses) / newTotal;
 
-      return {
-        averageProcessingTime: newAvgTime,
-        averageAccuracy: newAvgAccuracy,
-        successRate: newSuccessRate,
-        totalAnalyses: newTotal
-      };
-    });
-  }, []);
+        return {
+          averageProcessingTime: newAvgTime,
+          averageAccuracy: newAvgAccuracy,
+          successRate: newSuccessRate,
+          totalAnalyses: newTotal,
+        };
+      });
+    },
+    []
+  );
 
   return {
     performanceData,
-    updatePerformanceMetrics
+    updatePerformanceMetrics,
   };
 }
 

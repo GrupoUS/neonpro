@@ -1,16 +1,19 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
 import { withRoleValidation } from '@/lib/middleware/role-validation';
 
 export const GET = withRoleValidation(
-  async (request: NextRequest, validation) => {
+  async (request: NextRequest, _validation) => {
     try {
       const supabase = await createClient();
       const { searchParams } = new URL(request.url);
 
       // Parâmetros de filtro e paginação
-      const page = parseInt(searchParams.get('page') || '1');
-      const limit = Math.min(parseInt(searchParams.get('limit') || '50'), 100);
+      const page = Number.parseInt(searchParams.get('page') || '1', 10);
+      const limit = Math.min(
+        Number.parseInt(searchParams.get('limit') || '50', 10),
+        100
+      );
       const action_type = searchParams.get('action_type');
       const target_user_id = searchParams.get('target_user_id');
       const start_date = searchParams.get('start_date');
@@ -19,13 +22,14 @@ export const GET = withRoleValidation(
       const offset = (page - 1) * limit;
 
       // Construir query base
-      let query = supabase
-        .from('role_audit_log')
-        .select(`
+      let query = supabase.from('role_audit_log').select(
+        `
           *,
           user:profiles!role_audit_log_user_id_fkey(id, email, full_name),
           target_user:profiles!role_audit_log_target_user_id_fkey(id, email, full_name)
-        `, { count: 'exact' });
+        `,
+        { count: 'exact' }
+      );
 
       // Aplicar filtros
       if (action_type) {
@@ -45,7 +49,11 @@ export const GET = withRoleValidation(
       }
 
       // Aplicar paginação e ordenação
-      const { data: auditLogs, error: logsError, count } = await query
+      const {
+        data: auditLogs,
+        error: logsError,
+        count,
+      } = await query
         .order('created_at', { ascending: false })
         .range(offset, offset + limit - 1);
 
@@ -61,12 +69,16 @@ export const GET = withRoleValidation(
       const { data: actionStats, error: statsError } = await supabase
         .from('role_audit_log')
         .select('action_type')
-        .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()); // Últimos 30 dias
+        .gte(
+          'created_at',
+          new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+        ); // Últimos 30 dias
 
-      const stats = actionStats?.reduce((acc: Record<string, number>, log) => {
-        acc[log.action_type] = (acc[log.action_type] || 0) + 1;
-        return acc;
-      }, {}) || {};
+      const stats =
+        actionStats?.reduce((acc: Record<string, number>, log) => {
+          acc[log.action_type] = (acc[log.action_type] || 0) + 1;
+          return acc;
+        }, {}) || {};
 
       return NextResponse.json({
         success: true,
@@ -75,7 +87,7 @@ export const GET = withRoleValidation(
           current_page: page,
           total_pages: Math.ceil((count || 0) / limit),
           total_items: count || 0,
-          items_per_page: limit
+          items_per_page: limit,
         },
         statistics: {
           total_logs: count || 0,
@@ -88,11 +100,10 @@ export const GET = withRoleValidation(
             'access_validation',
             'role_hierarchy_check',
             'permission_check',
-            'conflict_resolution'
-          ]
-        }
+            'conflict_resolution',
+          ],
+        },
       });
-
     } catch (error) {
       console.error('Erro no endpoint de logs de auditoria:', error);
       return NextResponse.json(
@@ -103,7 +114,7 @@ export const GET = withRoleValidation(
   },
   {
     requiredRole: ['admin'],
-    requiredPermission: ['view_analytics', 'manage_system']
+    requiredPermission: ['view_analytics', 'manage_system'],
   }
 );
 
@@ -120,7 +131,7 @@ export const POST = withRoleValidation(
         new_role,
         target_domain,
         reason,
-        metadata = {}
+        metadata = {},
       } = body;
 
       // Validar dados obrigatórios
@@ -144,8 +155,8 @@ export const POST = withRoleValidation(
           ...metadata,
           manual_entry: true,
           created_by_admin: validation.profile.role === 'admin',
-          timestamp: new Date().toISOString()
-        }
+          timestamp: new Date().toISOString(),
+        },
       };
 
       const { data: createdLog, error: logError } = await supabase
@@ -169,9 +180,8 @@ export const POST = withRoleValidation(
       return NextResponse.json({
         success: true,
         audit_log: createdLog,
-        message: 'Log de auditoria criado com sucesso'
+        message: 'Log de auditoria criado com sucesso',
       });
-
     } catch (error) {
       console.error('Erro no endpoint de criação de log:', error);
       return NextResponse.json(
@@ -181,6 +191,6 @@ export const POST = withRoleValidation(
     }
   },
   {
-    requiredRole: ['admin']
+    requiredRole: ['admin'],
   }
 );

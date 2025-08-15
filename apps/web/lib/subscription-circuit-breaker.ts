@@ -1,130 +1,136 @@
 /**
  * Subscription Circuit Breaker System
- * 
+ *
  * Advanced circuit breaker implementation for subscription services:
  * - Multiple circuit breaker states (Closed, Open, Half-Open)
  * - Configurable failure thresholds and recovery timeouts
  * - Health monitoring and automatic recovery
  * - Integration with performance monitoring
  * - Graceful degradation strategies
- * 
+ *
  * @author NeonPro Development Team
  * @version 2.0.0 - Error Handling Enhanced
  */
 
-import type { ErrorContext, SubscriptionError } from '../types/subscription-errors'
-import { SubscriptionErrorFactory } from '../types/subscription-errors'
+import type {
+  ErrorContext,
+  SubscriptionError,
+} from '../types/subscription-errors';
+import { SubscriptionErrorFactory } from '../types/subscription-errors';
 
 // Circuit breaker states
 export enum CircuitBreakerState {
-  CLOSED = 'closed',     // Normal operation
-  OPEN = 'open',         // Circuit is open, requests are blocked
-  HALF_OPEN = 'half_open' // Testing if service has recovered
+  CLOSED = 'closed', // Normal operation
+  OPEN = 'open', // Circuit is open, requests are blocked
+  HALF_OPEN = 'half_open', // Testing if service has recovered
 }
 
 // Circuit breaker configuration
 export interface CircuitBreakerConfig {
   // Failure threshold to open circuit
-  failureThreshold: number
+  failureThreshold: number;
   // Success threshold to close circuit from half-open
-  successThreshold: number
+  successThreshold: number;
   // Time to wait before trying half-open (milliseconds)
-  timeout: number
+  timeout: number;
   // Time window for failure tracking (milliseconds)
-  timeWindow: number
+  timeWindow: number;
   // Maximum concurrent requests in half-open state
-  halfOpenMaxConcurrentRequests: number
+  halfOpenMaxConcurrentRequests: number;
   // Health check configuration
   healthCheck: {
-    enabled: boolean
-    interval: number // milliseconds
-    timeout: number // milliseconds
-  }
+    enabled: boolean;
+    interval: number; // milliseconds
+    timeout: number; // milliseconds
+  };
   // Monitoring configuration
   monitoring: {
-    enabled: boolean
-    logStateChanges: boolean
-    logFailures: boolean
-    alertOnOpen: boolean
-  }
+    enabled: boolean;
+    logStateChanges: boolean;
+    logFailures: boolean;
+    alertOnOpen: boolean;
+  };
 }
 
 const defaultConfig: CircuitBreakerConfig = {
   failureThreshold: 5,
   successThreshold: 3,
-  timeout: 60000, // 1 minute
-  timeWindow: 60000, // 1 minute
+  timeout: 60_000, // 1 minute
+  timeWindow: 60_000, // 1 minute
   halfOpenMaxConcurrentRequests: 3,
   healthCheck: {
     enabled: true,
-    interval: 30000, // 30 seconds
-    timeout: 5000 // 5 seconds
+    interval: 30_000, // 30 seconds
+    timeout: 5000, // 5 seconds
   },
   monitoring: {
     enabled: true,
     logStateChanges: true,
     logFailures: true,
-    alertOnOpen: true
-  }
-}
+    alertOnOpen: true,
+  },
+};
 
 // Circuit breaker statistics
 interface CircuitBreakerStats {
-  state: CircuitBreakerState
-  failureCount: number
-  successCount: number
-  lastFailureTime?: Date
-  lastSuccessTime?: Date
-  stateChangedAt: Date
-  totalRequests: number
-  failedRequests: number
-  successfulRequests: number
-  rejectedRequests: number
-  averageResponseTime: number
-  uptime: number // percentage
+  state: CircuitBreakerState;
+  failureCount: number;
+  successCount: number;
+  lastFailureTime?: Date;
+  lastSuccessTime?: Date;
+  stateChangedAt: Date;
+  totalRequests: number;
+  failedRequests: number;
+  successfulRequests: number;
+  rejectedRequests: number;
+  averageResponseTime: number;
+  uptime: number; // percentage
 }
 
 // Result types for circuit breaker operations
 interface CircuitBreakerResult<T> {
-  success: boolean
-  data?: T
-  error?: SubscriptionError
-  fromCircuitBreaker: boolean
-  state: CircuitBreakerState
-  executionTime: number
+  success: boolean;
+  data?: T;
+  error?: SubscriptionError;
+  fromCircuitBreaker: boolean;
+  state: CircuitBreakerState;
+  executionTime: number;
 }
 
 export class SubscriptionCircuitBreaker {
-  private state: CircuitBreakerState = CircuitBreakerState.CLOSED
-  private failureCount = 0
-  private successCount = 0
-  private lastFailureTime?: Date
-  private lastSuccessTime?: Date
-  private stateChangedAt = new Date()
-  private totalRequests = 0
-  private failedRequests = 0
-  private successfulRequests = 0
-  private rejectedRequests = 0
-  private responseTimeSum = 0
-  private halfOpenRequestsInProgress = 0
-  private healthCheckTimer?: NodeJS.Timeout
-  protected config: CircuitBreakerConfig
+  private state: CircuitBreakerState = CircuitBreakerState.CLOSED;
+  private failureCount = 0;
+  private successCount = 0;
+  private lastFailureTime?: Date;
+  private lastSuccessTime?: Date;
+  private stateChangedAt = new Date();
+  private totalRequests = 0;
+  private failedRequests = 0;
+  private successfulRequests = 0;
+  private rejectedRequests = 0;
+  private responseTimeSum = 0;
+  private halfOpenRequestsInProgress = 0;
+  private healthCheckTimer?: NodeJS.Timeout;
+  protected config: CircuitBreakerConfig;
 
   // Service name for monitoring and logging
-  private serviceName: string
+  private serviceName: string;
 
   constructor(serviceName: string, config?: Partial<CircuitBreakerConfig>) {
-    this.serviceName = serviceName
-    this.config = { ...defaultConfig, ...config }
+    this.serviceName = serviceName;
+    this.config = { ...defaultConfig, ...config };
 
     // Start health check if enabled
     if (this.config.healthCheck.enabled) {
-      this.startHealthCheck()
+      this.startHealthCheck();
     }
 
     // Log initial state
     if (this.config.monitoring.enabled) {
-      this.logStateChange(CircuitBreakerState.CLOSED, 'Circuit breaker initialized')
+      this.logStateChange(
+        CircuitBreakerState.CLOSED,
+        'Circuit breaker initialized'
+      );
     }
   }
 
@@ -135,95 +141,99 @@ export class SubscriptionCircuitBreaker {
     operation: () => Promise<T>,
     context?: ErrorContext
   ): Promise<CircuitBreakerResult<T>> {
-    const startTime = Date.now()
-    this.totalRequests++
+    const startTime = Date.now();
+    this.totalRequests++;
 
     // Check if circuit is open
     if (this.state === CircuitBreakerState.OPEN) {
       if (this.shouldAttemptReset()) {
-        this.state = CircuitBreakerState.HALF_OPEN
-        this.stateChangedAt = new Date()
-        this.logStateChange(CircuitBreakerState.HALF_OPEN, 'Attempting reset')
+        this.state = CircuitBreakerState.HALF_OPEN;
+        this.stateChangedAt = new Date();
+        this.logStateChange(CircuitBreakerState.HALF_OPEN, 'Attempting reset');
       } else {
         // Circuit is open, reject request immediately
-        this.rejectedRequests++
+        this.rejectedRequests++;
         const error = SubscriptionErrorFactory.createError(
           'external_service',
           `Circuit breaker is OPEN for ${this.serviceName}`,
           context
-        )
-        
+        );
+
         return {
           success: false,
           error,
           fromCircuitBreaker: true,
           state: this.state,
-          executionTime: Date.now() - startTime
-        }
+          executionTime: Date.now() - startTime,
+        };
       }
     }
 
     // Check half-open concurrent request limit
     if (this.state === CircuitBreakerState.HALF_OPEN) {
-      if (this.halfOpenRequestsInProgress >= this.config.halfOpenMaxConcurrentRequests) {
-        this.rejectedRequests++
+      if (
+        this.halfOpenRequestsInProgress >=
+        this.config.halfOpenMaxConcurrentRequests
+      ) {
+        this.rejectedRequests++;
         const error = SubscriptionErrorFactory.createError(
           'rate_limit',
           `Circuit breaker is HALF_OPEN with maximum concurrent requests for ${this.serviceName}`,
           context
-        )
+        );
 
         return {
           success: false,
           error,
           fromCircuitBreaker: true,
           state: this.state,
-          executionTime: Date.now() - startTime
-        }
+          executionTime: Date.now() - startTime,
+        };
       }
-      this.halfOpenRequestsInProgress++
+      this.halfOpenRequestsInProgress++;
     }
 
     try {
       // Execute the operation
-      const result = await operation()
-      const executionTime = Date.now() - startTime
-      
+      const result = await operation();
+      const executionTime = Date.now() - startTime;
+
       // Record success
-      this.onSuccess(executionTime)
-      
+      this.onSuccess(executionTime);
+
       return {
         success: true,
         data: result,
         fromCircuitBreaker: false,
         state: this.state,
-        executionTime
-      }
+        executionTime,
+      };
     } catch (error) {
-      const executionTime = Date.now() - startTime
-      
+      const executionTime = Date.now() - startTime;
+
       // Convert to SubscriptionError if needed
-      const subscriptionError = error instanceof Error && 'code' in error
-        ? error as SubscriptionError
-        : SubscriptionErrorFactory.createError(
-            'external_service',
-            error instanceof Error ? error.message : 'Unknown error',
-            context
-          )
+      const subscriptionError =
+        error instanceof Error && 'code' in error
+          ? (error as SubscriptionError)
+          : SubscriptionErrorFactory.createError(
+              'external_service',
+              error instanceof Error ? error.message : 'Unknown error',
+              context
+            );
 
       // Record failure
-      this.onFailure(subscriptionError)
-      
+      this.onFailure(subscriptionError);
+
       return {
         success: false,
         error: subscriptionError,
         fromCircuitBreaker: false,
         state: this.state,
-        executionTime
-      }
+        executionTime,
+      };
     } finally {
       if (this.state === CircuitBreakerState.HALF_OPEN) {
-        this.halfOpenRequestsInProgress--
+        this.halfOpenRequestsInProgress--;
       }
     }
   }
@@ -232,30 +242,32 @@ export class SubscriptionCircuitBreaker {
    * Handle successful operation
    */
   private onSuccess(responseTime: number): void {
-    this.successfulRequests++
-    this.successCount++
-    this.lastSuccessTime = new Date()
-    this.responseTimeSum += responseTime
+    this.successfulRequests++;
+    this.successCount++;
+    this.lastSuccessTime = new Date();
+    this.responseTimeSum += responseTime;
 
     // Log success in monitoring
     if (this.config.monitoring.enabled) {
-      console.log(`Circuit breaker success: ${this.serviceName} - ${responseTime}ms`)
+      console.log(
+        `Circuit breaker success: ${this.serviceName} - ${responseTime}ms`
+      );
     }
 
     // Reset failure count on success in half-open state
     if (this.state === CircuitBreakerState.HALF_OPEN) {
-      this.failureCount = 0
-      
+      this.failureCount = 0;
+
       // Check if we should close the circuit
       if (this.successCount >= this.config.successThreshold) {
-        this.state = CircuitBreakerState.CLOSED
-        this.successCount = 0
-        this.stateChangedAt = new Date()
-        this.logStateChange(CircuitBreakerState.CLOSED, 'Circuit recovered')
+        this.state = CircuitBreakerState.CLOSED;
+        this.successCount = 0;
+        this.stateChangedAt = new Date();
+        this.logStateChange(CircuitBreakerState.CLOSED, 'Circuit recovered');
       }
     } else if (this.state === CircuitBreakerState.CLOSED) {
       // Reset failure count on successful closed state operation
-      this.failureCount = 0
+      this.failureCount = 0;
     }
   }
 
@@ -263,34 +275,48 @@ export class SubscriptionCircuitBreaker {
    * Handle failed operation
    */
   private onFailure(error: SubscriptionError): void {
-    this.failedRequests++
-    this.failureCount++
-    this.lastFailureTime = new Date()
+    this.failedRequests++;
+    this.failureCount++;
+    this.lastFailureTime = new Date();
 
     // Log failure in monitoring
     if (this.config.monitoring.enabled) {
-      console.error(`Circuit breaker failure: ${this.serviceName}`, error)
+      console.error(`Circuit breaker failure: ${this.serviceName}`, error);
       if (this.config.monitoring.logFailures) {
-        console.error(`Circuit breaker failure for ${this.serviceName}:`, error)
+        console.error(
+          `Circuit breaker failure for ${this.serviceName}:`,
+          error
+        );
       }
     }
 
     // Check if we should open the circuit
-    if (this.state === CircuitBreakerState.CLOSED && this.failureCount >= this.config.failureThreshold) {
-      this.state = CircuitBreakerState.OPEN
-      this.stateChangedAt = new Date()
-      this.logStateChange(CircuitBreakerState.OPEN, 'Circuit opened due to failures')
+    if (
+      this.state === CircuitBreakerState.CLOSED &&
+      this.failureCount >= this.config.failureThreshold
+    ) {
+      this.state = CircuitBreakerState.OPEN;
+      this.stateChangedAt = new Date();
+      this.logStateChange(
+        CircuitBreakerState.OPEN,
+        'Circuit opened due to failures'
+      );
 
       // Alert if configured
       if (this.config.monitoring.alertOnOpen) {
-        this.sendAlert(`Circuit breaker opened for ${this.serviceName} after ${this.failureCount} failures`)
+        this.sendAlert(
+          `Circuit breaker opened for ${this.serviceName} after ${this.failureCount} failures`
+        );
       }
     } else if (this.state === CircuitBreakerState.HALF_OPEN) {
       // Return to open state on any failure in half-open
-      this.state = CircuitBreakerState.OPEN
-      this.successCount = 0
-      this.stateChangedAt = new Date()
-      this.logStateChange(CircuitBreakerState.OPEN, 'Circuit opened from half-open due to failure')
+      this.state = CircuitBreakerState.OPEN;
+      this.successCount = 0;
+      this.stateChangedAt = new Date();
+      this.logStateChange(
+        CircuitBreakerState.OPEN,
+        'Circuit opened from half-open due to failure'
+      );
     }
   }
 
@@ -298,23 +324,25 @@ export class SubscriptionCircuitBreaker {
    * Check if we should attempt to reset from open to half-open
    */
   private shouldAttemptReset(): boolean {
-    if (this.state !== CircuitBreakerState.OPEN) return false
-    
-    const timeSinceOpened = Date.now() - this.stateChangedAt.getTime()
-    return timeSinceOpened >= this.config.timeout
+    if (this.state !== CircuitBreakerState.OPEN) return false;
+
+    const timeSinceOpened = Date.now() - this.stateChangedAt.getTime();
+    return timeSinceOpened >= this.config.timeout;
   }
 
   /**
    * Get current circuit breaker statistics
    */
   getStats(): CircuitBreakerStats {
-    const averageResponseTime = this.successfulRequests > 0 
-      ? this.responseTimeSum / this.successfulRequests 
-      : 0
+    const averageResponseTime =
+      this.successfulRequests > 0
+        ? this.responseTimeSum / this.successfulRequests
+        : 0;
 
-    const uptime = this.totalRequests > 0 
-      ? (this.successfulRequests / this.totalRequests) * 100 
-      : 100
+    const uptime =
+      this.totalRequests > 0
+        ? (this.successfulRequests / this.totalRequests) * 100
+        : 100;
 
     return {
       state: this.state,
@@ -328,29 +356,29 @@ export class SubscriptionCircuitBreaker {
       successfulRequests: this.successfulRequests,
       rejectedRequests: this.rejectedRequests,
       averageResponseTime,
-      uptime
-    }
+      uptime,
+    };
   }
 
   /**
    * Manually reset the circuit breaker
    */
   reset(): void {
-    this.state = CircuitBreakerState.CLOSED
-    this.failureCount = 0
-    this.successCount = 0
-    this.stateChangedAt = new Date()
-    this.halfOpenRequestsInProgress = 0
-    this.logStateChange(CircuitBreakerState.CLOSED, 'Circuit manually reset')
+    this.state = CircuitBreakerState.CLOSED;
+    this.failureCount = 0;
+    this.successCount = 0;
+    this.stateChangedAt = new Date();
+    this.halfOpenRequestsInProgress = 0;
+    this.logStateChange(CircuitBreakerState.CLOSED, 'Circuit manually reset');
   }
 
   /**
    * Force open the circuit breaker
    */
   forceOpen(): void {
-    this.state = CircuitBreakerState.OPEN
-    this.stateChangedAt = new Date()
-    this.logStateChange(CircuitBreakerState.OPEN, 'Circuit manually opened')
+    this.state = CircuitBreakerState.OPEN;
+    this.stateChangedAt = new Date();
+    this.logStateChange(CircuitBreakerState.OPEN, 'Circuit manually opened');
   }
 
   /**
@@ -361,22 +389,25 @@ export class SubscriptionCircuitBreaker {
       if (this.state === CircuitBreakerState.OPEN) {
         try {
           // Perform a lightweight health check
-          await this.performHealthCheck()
-          
+          await this.performHealthCheck();
+
           // If health check passes and timeout has elapsed, try half-open
           if (this.shouldAttemptReset()) {
-            this.state = CircuitBreakerState.HALF_OPEN
-            this.stateChangedAt = new Date()
-            this.logStateChange(CircuitBreakerState.HALF_OPEN, 'Health check passed, attempting reset')
+            this.state = CircuitBreakerState.HALF_OPEN;
+            this.stateChangedAt = new Date();
+            this.logStateChange(
+              CircuitBreakerState.HALF_OPEN,
+              'Health check passed, attempting reset'
+            );
           }
         } catch (error) {
           // Health check failed, stay in open state
           if (this.config.monitoring.logFailures) {
-            console.warn(`Health check failed for ${this.serviceName}:`, error)
+            console.warn(`Health check failed for ${this.serviceName}:`, error);
           }
         }
       }
-    }, this.config.healthCheck.interval)
+    }, this.config.healthCheck.interval);
   }
 
   /**
@@ -385,15 +416,20 @@ export class SubscriptionCircuitBreaker {
   protected async performHealthCheck(): Promise<void> {
     // Default implementation - just a promise that resolves
     // Override this method in subclasses for specific health checks
-    return Promise.resolve()
+    return Promise.resolve();
   }
 
   /**
    * Log state changes
    */
   private logStateChange(newState: CircuitBreakerState, reason: string): void {
-    if (this.config.monitoring.enabled && this.config.monitoring.logStateChanges) {
-      console.log(`Circuit breaker ${this.serviceName} changed to ${newState}: ${reason}`)
+    if (
+      this.config.monitoring.enabled &&
+      this.config.monitoring.logStateChanges
+    ) {
+      console.log(
+        `Circuit breaker ${this.serviceName} changed to ${newState}: ${reason}`
+      );
     }
   }
 
@@ -402,7 +438,7 @@ export class SubscriptionCircuitBreaker {
    */
   protected sendAlert(message: string): void {
     // Default implementation - just log
-    console.error(`ALERT: ${message}`)
+    console.error(`ALERT: ${message}`);
   }
 
   /**
@@ -410,8 +446,8 @@ export class SubscriptionCircuitBreaker {
    */
   destroy(): void {
     if (this.healthCheckTimer) {
-      clearInterval(this.healthCheckTimer)
-      this.healthCheckTimer = undefined
+      clearInterval(this.healthCheckTimer);
+      this.healthCheckTimer = undefined;
     }
   }
 }
@@ -421,26 +457,26 @@ export class SubscriptionDatabaseCircuitBreaker extends SubscriptionCircuitBreak
   constructor(config?: Partial<CircuitBreakerConfig>) {
     super('subscription_database', {
       failureThreshold: 3,
-      timeout: 30000, // 30 seconds
-      ...config
-    })
+      timeout: 30_000, // 30 seconds
+      ...config,
+    });
   }
 
   protected async performHealthCheck(): Promise<void> {
     // Perform a simple database ping or lightweight query
     // This is a placeholder - implement actual database health check
-    const startTime = Date.now()
-    const timeout = this.config.healthCheck.timeout
+    const _startTime = Date.now();
+    const timeout = this.config.healthCheck.timeout;
 
     return Promise.race([
       // Simulate database health check
       new Promise<void>((resolve) => {
-        setTimeout(() => resolve(), 100)
+        setTimeout(() => resolve(), 100);
       }),
       new Promise<void>((_, reject) => {
-        setTimeout(() => reject(new Error('Health check timeout')), timeout)
-      })
-    ])
+        setTimeout(() => reject(new Error('Health check timeout')), timeout);
+      }),
+    ]);
   }
 }
 
@@ -448,25 +484,28 @@ export class SubscriptionCacheCircuitBreaker extends SubscriptionCircuitBreaker 
   constructor(config?: Partial<CircuitBreakerConfig>) {
     super('subscription_cache', {
       failureThreshold: 5,
-      timeout: 10000, // 10 seconds
-      ...config
-    })
+      timeout: 10_000, // 10 seconds
+      ...config,
+    });
   }
 
   protected async performHealthCheck(): Promise<void> {
     // Perform cache connectivity check
-    const startTime = Date.now()
-    const timeout = this.config.healthCheck.timeout
+    const _startTime = Date.now();
+    const timeout = this.config.healthCheck.timeout;
 
     return Promise.race([
       // Simulate cache health check
       new Promise<void>((resolve) => {
-        setTimeout(() => resolve(), 50)
+        setTimeout(() => resolve(), 50);
       }),
       new Promise<void>((_, reject) => {
-        setTimeout(() => reject(new Error('Cache health check timeout')), timeout)
-      })
-    ])
+        setTimeout(
+          () => reject(new Error('Cache health check timeout')),
+          timeout
+        );
+      }),
+    ]);
   }
 }
 
@@ -474,72 +513,75 @@ export class SubscriptionExternalAPICircuitBreaker extends SubscriptionCircuitBr
   constructor(apiName: string, config?: Partial<CircuitBreakerConfig>) {
     super(`subscription_external_api_${apiName}`, {
       failureThreshold: 3,
-      timeout: 60000, // 1 minute
-      ...config
-    })
+      timeout: 60_000, // 1 minute
+      ...config,
+    });
   }
 
   protected async performHealthCheck(): Promise<void> {
     // Perform external API health check
-    const startTime = Date.now()
-    const timeout = this.config.healthCheck.timeout
+    const _startTime = Date.now();
+    const timeout = this.config.healthCheck.timeout;
 
     return Promise.race([
       // Simulate API health check
       new Promise<void>((resolve) => {
-        setTimeout(() => resolve(), 200)
+        setTimeout(() => resolve(), 200);
       }),
       new Promise<void>((_, reject) => {
-        setTimeout(() => reject(new Error('API health check timeout')), timeout)
-      })
-    ])
+        setTimeout(
+          () => reject(new Error('API health check timeout')),
+          timeout
+        );
+      }),
+    ]);
   }
 }
 
 // Global circuit breaker registry
 class CircuitBreakerRegistry {
-  private breakers = new Map<string, SubscriptionCircuitBreaker>()
+  private breakers = new Map<string, SubscriptionCircuitBreaker>();
 
   register(name: string, breaker: SubscriptionCircuitBreaker): void {
-    this.breakers.set(name, breaker)
+    this.breakers.set(name, breaker);
   }
 
   get(name: string): SubscriptionCircuitBreaker | undefined {
-    return this.breakers.get(name)
+    return this.breakers.get(name);
   }
 
   getAll(): Map<string, SubscriptionCircuitBreaker> {
-    return new Map(this.breakers)
+    return new Map(this.breakers);
   }
 
   getStats(): Record<string, CircuitBreakerStats> {
-    const stats: Record<string, CircuitBreakerStats> = {}
+    const stats: Record<string, CircuitBreakerStats> = {};
     for (const [name, breaker] of this.breakers) {
-      stats[name] = breaker.getStats()
+      stats[name] = breaker.getStats();
     }
-    return stats
+    return stats;
   }
 
   resetAll(): void {
     for (const breaker of this.breakers.values()) {
-      breaker.reset()
+      breaker.reset();
     }
   }
 
   destroy(): void {
     for (const breaker of this.breakers.values()) {
-      breaker.destroy()
+      breaker.destroy();
     }
-    this.breakers.clear()
+    this.breakers.clear();
   }
 }
 
 // Global registry instance with default circuit breakers
-export const circuitBreakerRegistry = new CircuitBreakerRegistry()
+export const circuitBreakerRegistry = new CircuitBreakerRegistry();
 
 // Initialize default circuit breakers
-const databaseBreaker = new SubscriptionDatabaseCircuitBreaker()
-const cacheBreaker = new SubscriptionCacheCircuitBreaker()
+const databaseBreaker = new SubscriptionDatabaseCircuitBreaker();
+const cacheBreaker = new SubscriptionCacheCircuitBreaker();
 
-circuitBreakerRegistry.register('database', databaseBreaker)
-circuitBreakerRegistry.register('cache', cacheBreaker)
+circuitBreakerRegistry.register('database', databaseBreaker);
+circuitBreakerRegistry.register('cache', cacheBreaker);

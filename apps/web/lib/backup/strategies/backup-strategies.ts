@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { AuditLogger } from '../../audit/audit-logger';
-import { EncryptionService } from '../../security/encryption-service';
 import { LGPDManager } from '../../lgpd/lgpd-manager';
+import { EncryptionService } from '../../security/encryption-service';
 
 export interface BackupStrategy {
   name: string;
@@ -91,7 +91,7 @@ export class DatabaseBackupStrategy implements DataSourceHandler {
         action: 'database_backup_started',
         resource_type: 'backup_strategy',
         resource_id: context.job_id,
-        details: { strategy: context.strategy.name }
+        details: { strategy: context.strategy.name },
       });
 
       // 1. Verificar conexão com banco
@@ -151,8 +151,8 @@ export class DatabaseBackupStrategy implements DataSourceHandler {
         details: {
           tables_backed_up: filesProcessed,
           total_size_bytes: totalSize,
-          execution_time_seconds: executionTime
-        }
+          execution_time_seconds: executionTime,
+        },
       });
 
       return {
@@ -170,12 +170,12 @@ export class DatabaseBackupStrategy implements DataSourceHandler {
         metadata: {
           tables_count: tables.length,
           schema_included: true,
-          lgpd_compliant: true
-        }
+          lgpd_compliant: true,
+        },
       };
     } catch (error) {
       errors.push(`Erro crítico no backup: ${error}`);
-      
+
       return {
         success: false,
         strategy_name: this.name,
@@ -188,7 +188,7 @@ export class DatabaseBackupStrategy implements DataSourceHandler {
         warnings,
         checksum: '',
         storage_location: '',
-        metadata: {}
+        metadata: {},
       };
     }
   }
@@ -198,7 +198,7 @@ export class DatabaseBackupStrategy implements DataSourceHandler {
       await this.auditLogger.log({
         action: 'database_restore_started',
         resource_type: 'backup_strategy',
-        details: { backup_location: backupLocation, target: targetLocation }
+        details: { backup_location: backupLocation, target: targetLocation },
       });
 
       // 1. Validar backup
@@ -211,7 +211,8 @@ export class DatabaseBackupStrategy implements DataSourceHandler {
       const decryptedLocation = await this.decryptBackup(backupLocation);
 
       // 3. Descomprimir se necessário
-      const decompressedLocation = await this.decompressBackup(decryptedLocation);
+      const decompressedLocation =
+        await this.decompressBackup(decryptedLocation);
 
       // 4. Restaurar esquema primeiro
       await this.restoreDatabaseSchema(decompressedLocation);
@@ -228,7 +229,7 @@ export class DatabaseBackupStrategy implements DataSourceHandler {
       await this.auditLogger.log({
         action: 'database_restore_completed',
         resource_type: 'backup_strategy',
-        details: { tables_restored: tables.length }
+        details: { tables_restored: tables.length },
       });
     } catch (error) {
       throw new Error(`Erro na restauração: ${error}`);
@@ -248,7 +249,7 @@ export class DatabaseBackupStrategy implements DataSourceHandler {
       // Verificar estrutura do backup
       const structureValid = await this.verifyBackupStructure(backupLocation);
       return structureValid;
-    } catch (error) {
+    } catch (_error) {
       return false;
     }
   }
@@ -258,7 +259,7 @@ export class DatabaseBackupStrategy implements DataSourceHandler {
       const { data, error } = await this.supabase.rpc('get_database_size');
       if (error) throw error;
       return data || 0;
-    } catch (error) {
+    } catch (_error) {
       // Fallback: estimar baseado no número de registros
       return await this.estimateDatabaseSize();
     }
@@ -266,18 +267,26 @@ export class DatabaseBackupStrategy implements DataSourceHandler {
 
   async getLastModified(): Promise<Date> {
     try {
-      const { data, error } = await this.supabase.rpc('get_last_modification_time');
+      const { data, error } = await this.supabase.rpc(
+        'get_last_modification_time'
+      );
       if (error) throw error;
       return new Date(data);
-    } catch (error) {
+    } catch (_error) {
       return new Date(); // Fallback para agora
     }
   }
 
   // Métodos privados
-  private async testDatabaseConnection(): Promise<{ success: boolean; error?: string }> {
+  private async testDatabaseConnection(): Promise<{
+    success: boolean;
+    error?: string;
+  }> {
     try {
-      const { error } = await this.supabase.from('backup_jobs').select('id').limit(1);
+      const { error } = await this.supabase
+        .from('backup_jobs')
+        .select('id')
+        .limit(1);
       return { success: !error };
     } catch (error) {
       return { success: false, error: error.toString() };
@@ -289,22 +298,30 @@ export class DatabaseBackupStrategy implements DataSourceHandler {
       const { data, error } = await this.supabase.rpc('get_user_tables');
       if (error) throw error;
       return data || [];
-    } catch (error) {
+    } catch (_error) {
       // Fallback: lista padrão de tabelas conhecidas
       return [
-        'users', 'audit_logs', 'backup_jobs', 'recovery_points',
-        'notifications', 'templates', 'security_logs'
+        'users',
+        'audit_logs',
+        'backup_jobs',
+        'recovery_points',
+        'notifications',
+        'templates',
+        'security_logs',
       ];
     }
   }
 
-  private async backupTable(tableName: string, context: BackupExecutionContext): Promise<{ size: number; location: string }> {
+  private async backupTable(
+    tableName: string,
+    context: BackupExecutionContext
+  ): Promise<{ size: number; location: string }> {
     try {
       // Determinar tipo de backup
       const backupType = context.force_full ? 'full' : context.strategy.type;
-      
+
       let query = this.supabase.from(tableName).select('*');
-      
+
       // Para backup incremental, filtrar por data
       if (backupType === 'incremental') {
         const lastBackup = await this.getLastBackupDate(tableName);
@@ -312,47 +329,51 @@ export class DatabaseBackupStrategy implements DataSourceHandler {
           query = query.gte('updated_at', lastBackup.toISOString());
         }
       }
-      
+
       const { data, error } = await query;
       if (error) throw error;
-      
+
       // Salvar dados em arquivo
       const backupData = JSON.stringify(data, null, 2);
       const location = `${context.job_id}/${tableName}.json`;
-      
+
       // Simular salvamento (implementar storage real)
       await this.saveToStorage(location, backupData);
-      
+
       return {
         size: Buffer.byteLength(backupData, 'utf8'),
-        location
+        location,
       };
     } catch (error) {
       throw new Error(`Erro no backup da tabela ${tableName}: ${error}`);
     }
   }
 
-  private async backupDatabaseSchema(context: BackupExecutionContext): Promise<{ size: number; location: string }> {
+  private async backupDatabaseSchema(
+    context: BackupExecutionContext
+  ): Promise<{ size: number; location: string }> {
     try {
       // Obter esquema do banco
-      const { data: schema, error } = await this.supabase.rpc('get_database_schema');
+      const { data: schema, error } = await this.supabase.rpc(
+        'get_database_schema'
+      );
       if (error) throw error;
-      
+
       const schemaData = JSON.stringify(schema, null, 2);
       const location = `${context.job_id}/schema.json`;
-      
+
       await this.saveToStorage(location, schemaData);
-      
+
       return {
         size: Buffer.byteLength(schemaData, 'utf8'),
-        location
+        location,
       };
     } catch (error) {
       throw new Error(`Erro no backup do esquema: ${error}`);
     }
   }
 
-  private async generateDatabaseChecksum(jobId: string): Promise<string> {
+  private async generateDatabaseChecksum(_jobId: string): Promise<string> {
     // Implementar geração de checksum baseado nos dados
     const timestamp = Date.now();
     const random = Math.random().toString(36).substr(2, 9);
@@ -388,20 +409,20 @@ export class DatabaseBackupStrategy implements DataSourceHandler {
         .order('completed_at', { ascending: false })
         .limit(1)
         .single();
-      
+
       if (error || !data) return null;
       return new Date(data.completed_at);
-    } catch (error) {
+    } catch (_error) {
       return null;
     }
   }
 
-  private async saveToStorage(location: string, data: string): Promise<void> {
+  private async saveToStorage(location: string, _data: string): Promise<void> {
     // Implementar salvamento real no storage
     console.log(`Salvando backup em: ${location}`);
   }
 
-  private async getBackupSize(jobId: string): Promise<number> {
+  private async getBackupSize(_jobId: string): Promise<number> {
     // Implementar cálculo real do tamanho
     return 1024 * 1024 * 50; // 50MB simulado
   }
@@ -411,22 +432,25 @@ export class DatabaseBackupStrategy implements DataSourceHandler {
     return `backup_data_${jobId}`;
   }
 
-  private async saveEncryptedBackup(jobId: string, encryptedData: string): Promise<void> {
+  private async saveEncryptedBackup(
+    jobId: string,
+    _encryptedData: string
+  ): Promise<void> {
     // Implementar salvamento dos dados criptografados
     console.log(`Backup criptografado salvo: ${jobId}`);
   }
 
-  private async checkBackupExists(location: string): Promise<boolean> {
+  private async checkBackupExists(_location: string): Promise<boolean> {
     // Implementar verificação de existência
     return true; // Simulado
   }
 
-  private async verifyBackupChecksum(location: string): Promise<boolean> {
+  private async verifyBackupChecksum(_location: string): Promise<boolean> {
     // Implementar verificação de checksum
     return true; // Simulado
   }
 
-  private async verifyBackupStructure(location: string): Promise<boolean> {
+  private async verifyBackupStructure(_location: string): Promise<boolean> {
     // Implementar verificação de estrutura
     return true; // Simulado
   }
@@ -451,12 +475,15 @@ export class DatabaseBackupStrategy implements DataSourceHandler {
     console.log(`Restaurando esquema de: ${location}`);
   }
 
-  private async getBackupTables(location: string): Promise<string[]> {
+  private async getBackupTables(_location: string): Promise<string[]> {
     // Implementar listagem de tabelas no backup
     return ['users', 'audit_logs']; // Simulado
   }
 
-  private async restoreTable(tableName: string, location: string): Promise<void> {
+  private async restoreTable(
+    tableName: string,
+    location: string
+  ): Promise<void> {
     // Implementar restauração de tabela
     console.log(`Restaurando tabela ${tableName} de: ${location}`);
   }
@@ -470,8 +497,6 @@ export class DatabaseBackupStrategy implements DataSourceHandler {
 export class FileSystemBackupStrategy implements DataSourceHandler {
   name = 'filesystem';
   private auditLogger: AuditLogger;
-  private encryptionService: EncryptionService;
-  private lgpdManager: LGPDManager;
 
   constructor() {
     this.auditLogger = new AuditLogger();
@@ -492,12 +517,12 @@ export class FileSystemBackupStrategy implements DataSourceHandler {
         action: 'filesystem_backup_started',
         resource_type: 'backup_strategy',
         resource_id: context.job_id,
-        details: { strategy: context.strategy.name }
+        details: { strategy: context.strategy.name },
       });
 
       // Diretórios para backup
       const backupPaths = this.getBackupPaths(context);
-      
+
       for (const path of backupPaths) {
         try {
           const pathResult = await this.backupPath(path, context);
@@ -534,8 +559,8 @@ export class FileSystemBackupStrategy implements DataSourceHandler {
           files_processed: filesProcessed,
           files_skipped: filesSkipped,
           total_size_bytes: totalSize,
-          execution_time_seconds: executionTime
-        }
+          execution_time_seconds: executionTime,
+        },
       });
 
       return {
@@ -553,12 +578,12 @@ export class FileSystemBackupStrategy implements DataSourceHandler {
         metadata: {
           paths_backed_up: backupPaths.length,
           compression_ratio: compressedSize / totalSize,
-          lgpd_compliant: true
-        }
+          lgpd_compliant: true,
+        },
       };
     } catch (error) {
       errors.push(`Erro crítico no backup: ${error}`);
-      
+
       return {
         success: false,
         strategy_name: this.name,
@@ -571,7 +596,7 @@ export class FileSystemBackupStrategy implements DataSourceHandler {
         warnings,
         checksum: '',
         storage_location: '',
-        metadata: {}
+        metadata: {},
       };
     }
   }
@@ -581,7 +606,7 @@ export class FileSystemBackupStrategy implements DataSourceHandler {
       await this.auditLogger.log({
         action: 'filesystem_restore_started',
         resource_type: 'backup_strategy',
-        details: { backup_location: backupLocation, target: targetLocation }
+        details: { backup_location: backupLocation, target: targetLocation },
       });
 
       // Validar backup
@@ -591,7 +616,8 @@ export class FileSystemBackupStrategy implements DataSourceHandler {
       }
 
       // Descriptografar e descomprimir
-      const processedLocation = await this.prepareBackupForRestore(backupLocation);
+      const processedLocation =
+        await this.prepareBackupForRestore(backupLocation);
 
       // Restaurar arquivos
       await this.restoreFiles(processedLocation, targetLocation);
@@ -602,7 +628,7 @@ export class FileSystemBackupStrategy implements DataSourceHandler {
       await this.auditLogger.log({
         action: 'filesystem_restore_completed',
         resource_type: 'backup_strategy',
-        details: { target_location: targetLocation }
+        details: { target_location: targetLocation },
       });
     } catch (error) {
       throw new Error(`Erro na restauração: ${error}`);
@@ -617,7 +643,7 @@ export class FileSystemBackupStrategy implements DataSourceHandler {
 
       const checksumValid = await this.verifyFileSystemChecksum(backupLocation);
       return checksumValid;
-    } catch (error) {
+    } catch (_error) {
       return false;
     }
   }
@@ -639,26 +665,30 @@ export class FileSystemBackupStrategy implements DataSourceHandler {
       '/app/uploads',
       '/app/logs',
       '/app/config',
-      '/app/public/assets'
+      '/app/public/assets',
     ];
-    
-    return paths.filter(path => 
-      context.strategy.data_sources.includes('files') ||
-      context.strategy.data_sources.includes('logs') ||
-      context.strategy.data_sources.includes('configurations')
+
+    return paths.filter(
+      (_path) =>
+        context.strategy.data_sources.includes('files') ||
+        context.strategy.data_sources.includes('logs') ||
+        context.strategy.data_sources.includes('configurations')
     );
   }
 
-  private async backupPath(path: string, context: BackupExecutionContext): Promise<{ size: number; files: number; skipped: number }> {
+  private async backupPath(
+    _path: string,
+    _context: BackupExecutionContext
+  ): Promise<{ size: number; files: number; skipped: number }> {
     // Implementar backup de diretório específico
     return {
       size: 1024 * 1024 * 50, // 50MB simulado
       files: 100,
-      skipped: 5
+      skipped: 5,
     };
   }
 
-  private async generateFileSystemChecksum(jobId: string): Promise<string> {
+  private async generateFileSystemChecksum(_jobId: string): Promise<string> {
     return `fs_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 
@@ -673,20 +703,24 @@ export class FileSystemBackupStrategy implements DataSourceHandler {
     console.log(`Criptografando backup filesystem: ${jobId}`);
   }
 
-  private generateFileSystemStorageLocation(context: BackupExecutionContext): string {
+  private generateFileSystemStorageLocation(
+    context: BackupExecutionContext
+  ): string {
     const date = new Date().toISOString().split('T')[0];
     return `filesystem/${date}/${context.job_id}`;
   }
 
-  private async getFileSystemBackupSize(jobId: string): Promise<number> {
+  private async getFileSystemBackupSize(_jobId: string): Promise<number> {
     return 1024 * 1024 * 200; // 200MB simulado
   }
 
-  private async checkFileSystemBackupExists(location: string): Promise<boolean> {
+  private async checkFileSystemBackupExists(
+    _location: string
+  ): Promise<boolean> {
     return true; // Simulado
   }
 
-  private async verifyFileSystemChecksum(location: string): Promise<boolean> {
+  private async verifyFileSystemChecksum(_location: string): Promise<boolean> {
     return true; // Simulado
   }
 
@@ -694,8 +728,13 @@ export class FileSystemBackupStrategy implements DataSourceHandler {
     return location; // Simulado
   }
 
-  private async restoreFiles(backupLocation: string, targetLocation: string): Promise<void> {
-    console.log(`Restaurando arquivos de ${backupLocation} para ${targetLocation}`);
+  private async restoreFiles(
+    backupLocation: string,
+    targetLocation: string
+  ): Promise<void> {
+    console.log(
+      `Restaurando arquivos de ${backupLocation} para ${targetLocation}`
+    );
   }
 
   private async verifyFileSystemRestore(targetLocation: string): Promise<void> {
@@ -709,7 +748,7 @@ export class BackupStrategyManager {
 
   constructor() {
     this.auditLogger = new AuditLogger();
-    
+
     // Registrar estratégias padrão
     this.registerStrategy(new DatabaseBackupStrategy());
     this.registerStrategy(new FileSystemBackupStrategy());
@@ -739,10 +778,10 @@ export class BackupStrategyManager {
     try {
       // Validar contexto
       await this.validateExecutionContext(context);
-      
+
       // Executar backup
       const result = await strategy.backup(context);
-      
+
       // Log do resultado
       await this.auditLogger.log({
         action: 'backup_strategy_executed',
@@ -752,10 +791,10 @@ export class BackupStrategyManager {
           strategy: strategyName,
           success: result.success,
           execution_time: result.execution_time_seconds,
-          size_bytes: result.total_size_bytes
-        }
+          size_bytes: result.total_size_bytes,
+        },
       });
-      
+
       return result;
     } catch (error) {
       await this.auditLogger.log({
@@ -764,15 +803,17 @@ export class BackupStrategyManager {
         resource_id: context.job_id,
         details: {
           strategy: strategyName,
-          error: error.toString()
-        }
+          error: error.toString(),
+        },
       });
-      
+
       throw error;
     }
   }
 
-  async validateStrategy(strategy: BackupStrategy): Promise<{ valid: boolean; errors: string[] }> {
+  async validateStrategy(
+    strategy: BackupStrategy
+  ): Promise<{ valid: boolean; errors: string[] }> {
     const errors: string[] = [];
 
     // Validar campos obrigatórios
@@ -803,23 +844,25 @@ export class BackupStrategyManager {
 
     return {
       valid: errors.length === 0,
-      errors
+      errors,
     };
   }
 
-  private async validateExecutionContext(context: BackupExecutionContext): Promise<void> {
+  private async validateExecutionContext(
+    context: BackupExecutionContext
+  ): Promise<void> {
     if (!context.job_id) {
       throw new Error('Job ID é obrigatório');
     }
-    
+
     if (!context.user_id) {
       throw new Error('User ID é obrigatório');
     }
-    
+
     if (!context.strategy) {
       throw new Error('Estratégia é obrigatória');
     }
-    
+
     // Validar estratégia
     const validation = await this.validateStrategy(context.strategy);
     if (!validation.valid) {
@@ -833,9 +876,15 @@ export class BackupStrategyManager {
   }
 
   private isValidValidationRule(rule: ValidationRule): boolean {
-    const validTypes = ['size_limit', 'file_count', 'duration_limit', 'checksum', 'custom'];
+    const validTypes = [
+      'size_limit',
+      'file_count',
+      'duration_limit',
+      'checksum',
+      'custom',
+    ];
     const validActions = ['warn', 'fail', 'retry'];
-    
+
     return validTypes.includes(rule.type) && validActions.includes(rule.action);
   }
 }

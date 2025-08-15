@@ -1,38 +1,41 @@
 /**
  * NFSe Dashboard - Tax Management & Brazilian Compliance
  * NeonPro Healthcare System - Story 4.4 Architecture Alignment
- * 
+ *
  * Comprehensive NFSe generation and tax management dashboard for Brazilian
  * aesthetic clinics with municipal integration and automated compliance.
  */
 
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  AlertTriangle,
+  Building2,
+  Calculator,
+  CheckCircle2,
+  Clock,
+  CreditCard,
+  Download,
+  Eye,
+  FileText,
+  RefreshCw,
+  TrendingUp,
+  XCircle,
+} from 'lucide-react';
+import type React from 'react';
+import { useEffect, useState } from 'react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { 
-  FileText, 
-  CheckCircle2, 
-  AlertTriangle, 
-  XCircle, 
-  Download, 
-  Send,
-  RefreshCw, 
-  Calculator, 
-  Building2, 
-  Calendar,
-  CreditCard,
-  TrendingUp,
-  Clock,
-  Archive,
-  Eye,
-  Printer
-} from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 // =================== TYPES ===================
 
@@ -104,11 +107,14 @@ interface TaxSummary {
     ir: number;
     csll: number;
   };
-  por_municipio: Record<string, {
-    valor: number;
-    quantidade: number;
-    aliquota: number;
-  }>;
+  por_municipio: Record<
+    string,
+    {
+      valor: number;
+      quantidade: number;
+      aliquota: number;
+    }
+  >;
 }
 
 interface MunicipalConfig {
@@ -159,13 +165,13 @@ const useNFSeData = (dateRange: { start: Date; end: Date }) => {
   });
 
   const fetchNFSeData = async () => {
-    setData(prev => ({ ...prev, isLoading: true }));
-    
+    setData((prev) => ({ ...prev, isLoading: true }));
+
     try {
       const response = await fetch('/api/tax/nfse/dashboard', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           startDate: dateRange.start.toISOString(),
           endDate: dateRange.end.toISOString(),
         }),
@@ -176,7 +182,7 @@ const useNFSeData = (dateRange: { start: Date; end: Date }) => {
       }
 
       const nfseData = await response.json();
-      
+
       setData({
         nfseDocuments: nfseData.documents || [],
         taxSummary: nfseData.summary || data.taxSummary,
@@ -186,7 +192,7 @@ const useNFSeData = (dateRange: { start: Date; end: Date }) => {
       });
     } catch (error) {
       console.error('Error fetching NFSe data:', error);
-      setData(prev => ({ ...prev, isLoading: false }));
+      setData((prev) => ({ ...prev, isLoading: false }));
     }
   };
 
@@ -212,46 +218,66 @@ const useNFSeData = (dateRange: { start: Date; end: Date }) => {
 
   useEffect(() => {
     fetchNFSeData();
-  }, [dateRange]);
+  }, [fetchNFSeData]);
 
   return { data, refreshData: fetchNFSeData, generateNFSe };
 };
 
 // =================== COMPONENTS ===================
 
-const NFSeCard: React.FC<{ nfse: NFSeDocument; onView: (id: string) => void; onCancel: (id: string) => void }> = ({ 
-  nfse, onView, onCancel 
-}) => {
+const NFSeCard: React.FC<{
+  nfse: NFSeDocument;
+  onView: (id: string) => void;
+  onCancel: (id: string) => void;
+}> = ({ nfse, onView, onCancel }) => {
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'issued': return 'text-green-600 bg-green-50 border-green-200';
-      case 'pending': return 'text-yellow-600 bg-yellow-50 border-yellow-200';
-      case 'cancelled': return 'text-red-600 bg-red-50 border-red-200';
-      case 'error': return 'text-red-600 bg-red-50 border-red-200';
-      case 'draft': return 'text-gray-600 bg-gray-50 border-gray-200';
-      default: return 'text-gray-600 bg-gray-50 border-gray-200';
+      case 'issued':
+        return 'text-green-600 bg-green-50 border-green-200';
+      case 'pending':
+        return 'text-yellow-600 bg-yellow-50 border-yellow-200';
+      case 'cancelled':
+        return 'text-red-600 bg-red-50 border-red-200';
+      case 'error':
+        return 'text-red-600 bg-red-50 border-red-200';
+      case 'draft':
+        return 'text-gray-600 bg-gray-50 border-gray-200';
+      default:
+        return 'text-gray-600 bg-gray-50 border-gray-200';
     }
   };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'issued': return <CheckCircle2 className="h-4 w-4" />;
-      case 'pending': return <Clock className="h-4 w-4" />;
-      case 'cancelled': return <XCircle className="h-4 w-4" />;
-      case 'error': return <AlertTriangle className="h-4 w-4" />;
-      case 'draft': return <FileText className="h-4 w-4" />;
-      default: return <FileText className="h-4 w-4" />;
+      case 'issued':
+        return <CheckCircle2 className="h-4 w-4" />;
+      case 'pending':
+        return <Clock className="h-4 w-4" />;
+      case 'cancelled':
+        return <XCircle className="h-4 w-4" />;
+      case 'error':
+        return <AlertTriangle className="h-4 w-4" />;
+      case 'draft':
+        return <FileText className="h-4 w-4" />;
+      default:
+        return <FileText className="h-4 w-4" />;
     }
   };
 
   const getStatusText = (status: string) => {
     switch (status) {
-      case 'issued': return 'Emitida';
-      case 'pending': return 'Pendente';
-      case 'cancelled': return 'Cancelada';
-      case 'error': return 'Erro';
-      case 'draft': return 'Rascunho';
-      default: return 'Desconhecido';
+      case 'issued':
+        return 'Emitida';
+      case 'pending':
+        return 'Pendente';
+      case 'cancelled':
+        return 'Cancelada';
+      case 'error':
+        return 'Erro';
+      case 'draft':
+        return 'Rascunho';
+      default:
+        return 'Desconhecido';
     }
   };
 
@@ -265,9 +291,7 @@ const NFSeCard: React.FC<{ nfse: NFSeDocument; onView: (id: string) => void; onC
             {getStatusIcon(nfse.status)}
             <span>NFSe {nfse.numeroNFSe || nfse.numeroRPS}</span>
           </div>
-          <Badge variant="outline">
-            {getStatusText(nfse.status)}
-          </Badge>
+          <Badge variant="outline">{getStatusText(nfse.status)}</Badge>
         </CardTitle>
         <CardDescription>
           {nfse.tomador.razaoSocial} - {nfse.municipioPrestacao}
@@ -278,20 +302,31 @@ const NFSeCard: React.FC<{ nfse: NFSeDocument; onView: (id: string) => void; onC
           <div>
             <span className="text-muted-foreground">Valor dos Serviços:</span>
             <div className="font-medium">
-              {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(nfse.valorServicos)}
+              {new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+              }).format(nfse.valorServicos)}
             </div>
           </div>
           <div>
             <span className="text-muted-foreground">Valor Líquido:</span>
             <div className="font-medium">
-              {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(nfse.valorLiquido)}
+              {new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+              }).format(nfse.valorLiquido)}
             </div>
           </div>
           <div>
             <span className="text-muted-foreground">ISSQN:</span>
             <div className="font-medium">
-              {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(nfse.valorISSQN)}
-              <span className="text-xs ml-1">({(nfse.aliquotaISSQN * 100).toFixed(2)}%)</span>
+              {new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+              }).format(nfse.valorISSQN)}
+              <span className="ml-1 text-xs">
+                ({(nfse.aliquotaISSQN * 100).toFixed(2)}%)
+              </span>
             </div>
           </div>
           <div>
@@ -303,16 +338,21 @@ const NFSeCard: React.FC<{ nfse: NFSeDocument; onView: (id: string) => void; onC
         </div>
 
         <div className="space-y-2">
-          <span className="text-sm text-muted-foreground">Tratamentos:</span>
+          <span className="text-muted-foreground text-sm">Tratamentos:</span>
           <div className="text-sm">
             {nfse.tratamentos.slice(0, 2).map((tratamento, index) => (
-              <div key={index} className="flex justify-between">
+              <div className="flex justify-between" key={index}>
                 <span>{tratamento.nome}</span>
-                <span>{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(tratamento.valor)}</span>
+                <span>
+                  {new Intl.NumberFormat('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL',
+                  }).format(tratamento.valor)}
+                </span>
               </div>
             ))}
             {nfse.tratamentos.length > 2 && (
-              <div className="text-xs text-muted-foreground">
+              <div className="text-muted-foreground text-xs">
                 +{nfse.tratamentos.length - 2} tratamentos
               </div>
             )}
@@ -320,28 +360,32 @@ const NFSeCard: React.FC<{ nfse: NFSeDocument; onView: (id: string) => void; onC
         </div>
 
         <div className="flex space-x-2">
-          <Button size="sm" variant="outline" onClick={() => onView(nfse.id)}>
-            <Eye className="h-4 w-4 mr-2" />
+          <Button onClick={() => onView(nfse.id)} size="sm" variant="outline">
+            <Eye className="mr-2 h-4 w-4" />
             Visualizar
           </Button>
           {nfse.linkNFSe && (
-            <Button size="sm" variant="outline" asChild>
-              <a href={nfse.linkNFSe} target="_blank" rel="noopener noreferrer">
-                <Download className="h-4 w-4 mr-2" />
+            <Button asChild size="sm" variant="outline">
+              <a href={nfse.linkNFSe} rel="noopener noreferrer" target="_blank">
+                <Download className="mr-2 h-4 w-4" />
                 Download
               </a>
             </Button>
           )}
           {canCancel && (
-            <Button size="sm" variant="destructive" onClick={() => onCancel(nfse.id)}>
-              <XCircle className="h-4 w-4 mr-2" />
+            <Button
+              onClick={() => onCancel(nfse.id)}
+              size="sm"
+              variant="destructive"
+            >
+              <XCircle className="mr-2 h-4 w-4" />
               Cancelar
             </Button>
           )}
         </div>
 
         {nfse.protocoloEnvio && (
-          <div className="text-xs text-muted-foreground border-t pt-2">
+          <div className="border-t pt-2 text-muted-foreground text-xs">
             <strong>Protocolo:</strong> {nfse.protocoloEnvio}
           </div>
         )}
@@ -350,24 +394,33 @@ const NFSeCard: React.FC<{ nfse: NFSeDocument; onView: (id: string) => void; onC
   );
 };
 
-const MunicipalConfigCard: React.FC<{ config: MunicipalConfig; onTest: (codigo: string) => void }> = ({ 
-  config, onTest 
-}) => {
+const MunicipalConfigCard: React.FC<{
+  config: MunicipalConfig;
+  onTest: (codigo: string) => void;
+}> = ({ config, onTest }) => {
   const getConnectionColor = (status: string) => {
     switch (status) {
-      case 'connected': return 'border-l-green-500 bg-green-50';
-      case 'disconnected': return 'border-l-gray-500 bg-gray-50';
-      case 'error': return 'border-l-red-500 bg-red-50';
-      default: return 'border-l-gray-500 bg-gray-50';
+      case 'connected':
+        return 'border-l-green-500 bg-green-50';
+      case 'disconnected':
+        return 'border-l-gray-500 bg-gray-50';
+      case 'error':
+        return 'border-l-red-500 bg-red-50';
+      default:
+        return 'border-l-gray-500 bg-gray-50';
     }
   };
 
   const getConnectionIcon = (status: string) => {
     switch (status) {
-      case 'connected': return <CheckCircle2 className="h-4 w-4 text-green-600" />;
-      case 'disconnected': return <XCircle className="h-4 w-4 text-gray-500" />;
-      case 'error': return <AlertTriangle className="h-4 w-4 text-red-600" />;
-      default: return <XCircle className="h-4 w-4 text-gray-500" />;
+      case 'connected':
+        return <CheckCircle2 className="h-4 w-4 text-green-600" />;
+      case 'disconnected':
+        return <XCircle className="h-4 w-4 text-gray-500" />;
+      case 'error':
+        return <AlertTriangle className="h-4 w-4 text-red-600" />;
+      default:
+        return <XCircle className="h-4 w-4 text-gray-500" />;
     }
   };
 
@@ -377,7 +430,9 @@ const MunicipalConfigCard: React.FC<{ config: MunicipalConfig; onTest: (codigo: 
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <Building2 className="h-5 w-5" />
-            <span>{config.nome}/{config.uf}</span>
+            <span>
+              {config.nome}/{config.uf}
+            </span>
           </div>
           <div className="flex items-center space-x-2">
             {getConnectionIcon(config.status_conexao)}
@@ -387,11 +442,12 @@ const MunicipalConfigCard: React.FC<{ config: MunicipalConfig; onTest: (codigo: 
           </div>
         </CardTitle>
         <CardDescription>
-          Código: {config.codigo} | Alíquota: {(config.aliquota_padrao * 100).toFixed(2)}%
+          Código: {config.codigo} | Alíquota:{' '}
+          {(config.aliquota_padrao * 100).toFixed(2)}%
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="text-sm space-y-2">
+        <div className="space-y-2 text-sm">
           <div className="flex justify-between">
             <span className="text-muted-foreground">Versão do Schema:</span>
             <span>{config.versao_schema}</span>
@@ -408,13 +464,13 @@ const MunicipalConfigCard: React.FC<{ config: MunicipalConfig; onTest: (codigo: 
           </div>
         </div>
 
-        <Button 
-          variant="outline" 
-          size="sm" 
-          onClick={() => onTest(config.codigo)}
+        <Button
           className="w-full"
+          onClick={() => onTest(config.codigo)}
+          size="sm"
+          variant="outline"
         >
-          <RefreshCw className="h-4 w-4 mr-2" />
+          <RefreshCw className="mr-2 h-4 w-4" />
           Testar Conexão
         </Button>
       </CardContent>
@@ -432,52 +488,73 @@ const TaxBreakdown: React.FC<{ summary: TaxSummary }> = ({ summary }) => {
     { name: 'CSLL', value: summary.impostos.csll, color: 'bg-orange-500' },
   ];
 
-  const totalTaxes = Object.values(summary.impostos).reduce((sum, tax) => sum + tax, 0);
+  const totalTaxes = Object.values(summary.impostos).reduce(
+    (sum, tax) => sum + tax,
+    0
+  );
 
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <h4 className="text-sm font-medium mb-3">Resumo Fiscal</h4>
+          <h4 className="mb-3 font-medium text-sm">Resumo Fiscal</h4>
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
               <span>Total de Serviços:</span>
               <span className="font-medium">
-                {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(summary.totalServicos)}
+                {new Intl.NumberFormat('pt-BR', {
+                  style: 'currency',
+                  currency: 'BRL',
+                }).format(summary.totalServicos)}
               </span>
             </div>
             <div className="flex justify-between">
               <span>Total de Impostos:</span>
               <span className="font-medium text-red-600">
-                {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(summary.totalImpostos)}
+                {new Intl.NumberFormat('pt-BR', {
+                  style: 'currency',
+                  currency: 'BRL',
+                }).format(summary.totalImpostos)}
               </span>
             </div>
             <div className="flex justify-between border-t pt-2">
               <span>Valor Líquido:</span>
               <span className="font-medium text-green-600">
-                {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(summary.totalLiquido)}
+                {new Intl.NumberFormat('pt-BR', {
+                  style: 'currency',
+                  currency: 'BRL',
+                }).format(summary.totalLiquido)}
               </span>
             </div>
           </div>
         </div>
 
         <div>
-          <h4 className="text-sm font-medium mb-3">NFSe Emitidas</h4>
+          <h4 className="mb-3 font-medium text-sm">NFSe Emitidas</h4>
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
               <span>Total Emitidas:</span>
-              <span className="font-medium text-green-600">{summary.totalNFSeEmitidas}</span>
+              <span className="font-medium text-green-600">
+                {summary.totalNFSeEmitidas}
+              </span>
             </div>
             <div className="flex justify-between">
               <span>Canceladas:</span>
-              <span className="font-medium text-red-600">{summary.totalCanceladas}</span>
+              <span className="font-medium text-red-600">
+                {summary.totalCanceladas}
+              </span>
             </div>
             <div className="flex justify-between border-t pt-2">
               <span>Taxa de Sucesso:</span>
               <span className="font-medium">
-                {summary.totalNFSeEmitidas > 0 
-                  ? ((summary.totalNFSeEmitidas - summary.totalCanceladas) / summary.totalNFSeEmitidas * 100).toFixed(1)
-                  : 0}%
+                {summary.totalNFSeEmitidas > 0
+                  ? (
+                      ((summary.totalNFSeEmitidas - summary.totalCanceladas) /
+                        summary.totalNFSeEmitidas) *
+                      100
+                    ).toFixed(1)
+                  : 0}
+                %
               </span>
             </div>
           </div>
@@ -485,23 +562,27 @@ const TaxBreakdown: React.FC<{ summary: TaxSummary }> = ({ summary }) => {
       </div>
 
       <div>
-        <h4 className="text-sm font-medium mb-3">Detalhamento dos Impostos</h4>
+        <h4 className="mb-3 font-medium text-sm">Detalhamento dos Impostos</h4>
         <div className="space-y-3">
           {taxItems
-            .filter(item => item.value > 0)
+            .filter((item) => item.value > 0)
             .sort((a, b) => b.value - a.value)
             .map((tax) => {
-              const percentage = totalTaxes > 0 ? (tax.value / totalTaxes) * 100 : 0;
+              const percentage =
+                totalTaxes > 0 ? (tax.value / totalTaxes) * 100 : 0;
               return (
-                <div key={tax.name} className="space-y-1">
+                <div className="space-y-1" key={tax.name}>
                   <div className="flex justify-between text-sm">
                     <span>{tax.name}</span>
                     <span className="font-medium">
-                      {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(tax.value)}
+                      {new Intl.NumberFormat('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL',
+                      }).format(tax.value)}
                     </span>
                   </div>
-                  <Progress value={percentage} className={`h-2 ${tax.color}`} />
-                  <div className="text-xs text-muted-foreground text-right">
+                  <Progress className={`h-2 ${tax.color}`} value={percentage} />
+                  <div className="text-right text-muted-foreground text-xs">
                     {percentage.toFixed(1)}% do total de impostos
                   </div>
                 </div>
@@ -512,22 +593,31 @@ const TaxBreakdown: React.FC<{ summary: TaxSummary }> = ({ summary }) => {
 
       {Object.keys(summary.por_municipio).length > 0 && (
         <div>
-          <h4 className="text-sm font-medium mb-3">Distribuição por Município</h4>
+          <h4 className="mb-3 font-medium text-sm">
+            Distribuição por Município
+          </h4>
           <div className="space-y-2">
             {Object.entries(summary.por_municipio)
-              .sort(([,a], [,b]) => b.valor - a.valor)
+              .sort(([, a], [, b]) => b.valor - a.valor)
               .slice(0, 5)
               .map(([municipio, data]) => (
-                <div key={municipio} className="flex justify-between items-center text-sm">
+                <div
+                  className="flex items-center justify-between text-sm"
+                  key={municipio}
+                >
                   <div>
                     <div className="font-medium">{municipio}</div>
-                    <div className="text-xs text-muted-foreground">
-                      {data.quantidade} NFSe • {(data.aliquota * 100).toFixed(2)}%
+                    <div className="text-muted-foreground text-xs">
+                      {data.quantidade} NFSe •{' '}
+                      {(data.aliquota * 100).toFixed(2)}%
                     </div>
                   </div>
                   <div className="text-right">
                     <div className="font-medium">
-                      {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(data.valor)}
+                      {new Intl.NumberFormat('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL',
+                      }).format(data.valor)}
                     </div>
                   </div>
                 </div>
@@ -546,7 +636,7 @@ export const NFSeDashboard: React.FC = () => {
     start: new Date(new Date().getFullYear(), new Date().getMonth(), 1), // First day of current month
     end: new Date(),
   });
-  
+
   const [activeTab, setActiveTab] = useState('overview');
   const { data, refreshData, generateNFSe } = useNFSeData(dateRange);
 
@@ -560,7 +650,9 @@ export const NFSeDashboard: React.FC = () => {
       await fetch(`/api/tax/nfse/cancel/${id}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ motivo: 'Cancelamento solicitado pelo usuário' }),
+        body: JSON.stringify({
+          motivo: 'Cancelamento solicitado pelo usuário',
+        }),
       });
       await refreshData();
     } catch (error) {
@@ -584,7 +676,7 @@ export const NFSeDashboard: React.FC = () => {
       const response = await fetch('/api/tax/nfse/reports/fiscal', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           startDate: dateRange.start.toISOString(),
           endDate: dateRange.end.toISOString(),
           format: 'pdf',
@@ -607,28 +699,44 @@ export const NFSeDashboard: React.FC = () => {
     }
   };
 
-  const criticalIssues = data.pendingIssues.filter(issue => issue.severity === 'critical');
-  const draftDocuments = data.nfseDocuments.filter(doc => doc.status === 'draft');
-  const pendingDocuments = data.nfseDocuments.filter(doc => doc.status === 'pending');
-  const errorDocuments = data.nfseDocuments.filter(doc => doc.status === 'error');
+  const criticalIssues = data.pendingIssues.filter(
+    (issue) => issue.severity === 'critical'
+  );
+  const draftDocuments = data.nfseDocuments.filter(
+    (doc) => doc.status === 'draft'
+  );
+  const pendingDocuments = data.nfseDocuments.filter(
+    (doc) => doc.status === 'pending'
+  );
+  const errorDocuments = data.nfseDocuments.filter(
+    (doc) => doc.status === 'error'
+  );
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">NFSe - Gestão Fiscal</h1>
+          <h1 className="font-bold text-3xl tracking-tight">
+            NFSe - Gestão Fiscal
+          </h1>
           <p className="text-muted-foreground">
             Emissão e gerenciamento de Notas Fiscais de Serviços Eletrônicas
           </p>
         </div>
         <div className="flex items-center space-x-2">
-          <Button variant="outline" onClick={refreshData} disabled={data.isLoading}>
-            <RefreshCw className={`h-4 w-4 mr-2 ${data.isLoading ? 'animate-spin' : ''}`} />
+          <Button
+            disabled={data.isLoading}
+            onClick={refreshData}
+            variant="outline"
+          >
+            <RefreshCw
+              className={`mr-2 h-4 w-4 ${data.isLoading ? 'animate-spin' : ''}`}
+            />
             Atualizar
           </Button>
-          <Button variant="outline" onClick={handleGenerateReport}>
-            <Download className="h-4 w-4 mr-2" />
+          <Button onClick={handleGenerateReport} variant="outline">
+            <Download className="mr-2 h-4 w-4" />
             Relatório Fiscal
           </Button>
         </div>
@@ -639,8 +747,10 @@ export const NFSeDashboard: React.FC = () => {
         <Alert className="border-red-200 bg-red-50">
           <AlertTriangle className="h-4 w-4 text-red-600" />
           <AlertDescription className="text-red-800">
-            <strong>{criticalIssues.length} problema(s) crítico(s) detectado(s):</strong>
-            <ul className="mt-1 list-disc list-inside">
+            <strong>
+              {criticalIssues.length} problema(s) crítico(s) detectado(s):
+            </strong>
+            <ul className="mt-1 list-inside list-disc">
               {criticalIssues.slice(0, 2).map((issue) => (
                 <li key={issue.id}>{issue.description}</li>
               ))}
@@ -653,12 +763,14 @@ export const NFSeDashboard: React.FC = () => {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">NFSe Emitidas</CardTitle>
+            <CardTitle className="font-medium text-sm">NFSe Emitidas</CardTitle>
             <FileText className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{data.taxSummary.totalNFSeEmitidas}</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="font-bold text-2xl">
+              {data.taxSummary.totalNFSeEmitidas}
+            </div>
+            <p className="text-muted-foreground text-xs">
               {data.taxSummary.totalCanceladas} canceladas
             </p>
           </CardContent>
@@ -666,18 +778,20 @@ export const NFSeDashboard: React.FC = () => {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Valor dos Serviços</CardTitle>
+            <CardTitle className="font-medium text-sm">
+              Valor dos Serviços
+            </CardTitle>
             <CreditCard className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {new Intl.NumberFormat('pt-BR', { 
-                style: 'currency', 
+            <div className="font-bold text-2xl">
+              {new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
                 currency: 'BRL',
-                notation: 'compact'
+                notation: 'compact',
               }).format(data.taxSummary.totalServicos)}
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-muted-foreground text-xs">
               Total faturado no período
             </p>
           </CardContent>
@@ -685,54 +799,64 @@ export const NFSeDashboard: React.FC = () => {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total de Impostos</CardTitle>
+            <CardTitle className="font-medium text-sm">
+              Total de Impostos
+            </CardTitle>
             <Calculator className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-600">
-              {new Intl.NumberFormat('pt-BR', { 
-                style: 'currency', 
+            <div className="font-bold text-2xl text-red-600">
+              {new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
                 currency: 'BRL',
-                notation: 'compact'
+                notation: 'compact',
               }).format(data.taxSummary.totalImpostos)}
             </div>
-            <p className="text-xs text-muted-foreground">
-              {data.taxSummary.totalServicos > 0 
-                ? ((data.taxSummary.totalImpostos / data.taxSummary.totalServicos) * 100).toFixed(1)
-                : 0}% da receita
+            <p className="text-muted-foreground text-xs">
+              {data.taxSummary.totalServicos > 0
+                ? (
+                    (data.taxSummary.totalImpostos /
+                      data.taxSummary.totalServicos) *
+                    100
+                  ).toFixed(1)
+                : 0}
+              % da receita
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Valor Líquido</CardTitle>
+            <CardTitle className="font-medium text-sm">Valor Líquido</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">
-              {new Intl.NumberFormat('pt-BR', { 
-                style: 'currency', 
+            <div className="font-bold text-2xl text-green-600">
+              {new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
                 currency: 'BRL',
-                notation: 'compact'
+                notation: 'compact',
               }).format(data.taxSummary.totalLiquido)}
             </div>
-            <p className="text-xs text-muted-foreground">
-              Após impostos
-            </p>
+            <p className="text-muted-foreground text-xs">Após impostos</p>
           </CardContent>
         </Card>
       </div>
 
       {/* Main Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
+      <Tabs onValueChange={setActiveTab} value={activeTab}>
         <TabsList>
           <TabsTrigger value="overview">Visão Geral</TabsTrigger>
           <TabsTrigger value="documents">
             Documentos
-            {(draftDocuments.length + pendingDocuments.length + errorDocuments.length) > 0 && (
-              <Badge variant="secondary" className="ml-2">
-                {draftDocuments.length + pendingDocuments.length + errorDocuments.length}
+            {draftDocuments.length +
+              pendingDocuments.length +
+              errorDocuments.length >
+              0 && (
+              <Badge className="ml-2" variant="secondary">
+                {draftDocuments.length +
+                  pendingDocuments.length +
+                  errorDocuments.length}
               </Badge>
             )}
           </TabsTrigger>
@@ -740,7 +864,7 @@ export const NFSeDashboard: React.FC = () => {
           <TabsTrigger value="reports">Relatórios</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="overview" className="space-y-6">
+        <TabsContent className="space-y-6" value="overview">
           <div className="grid gap-6 md:grid-cols-2">
             <Card>
               <CardHeader>
@@ -757,24 +881,41 @@ export const NFSeDashboard: React.FC = () => {
             <Card>
               <CardHeader>
                 <CardTitle>Status dos Municípios</CardTitle>
-                <CardDescription>
-                  Conexão com prefeituras
-                </CardDescription>
+                <CardDescription>Conexão com prefeituras</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
                   {data.municipalConfigs.slice(0, 5).map((config) => (
-                    <div key={config.codigo} className="flex justify-between items-center">
+                    <div
+                      className="flex items-center justify-between"
+                      key={config.codigo}
+                    >
                       <div className="flex items-center space-x-2">
-                        <div className={`w-2 h-2 rounded-full ${
-                          config.status_conexao === 'connected' ? 'bg-green-500' : 
-                          config.status_conexao === 'error' ? 'bg-red-500' : 'bg-gray-500'
-                        }`} />
-                        <span className="text-sm">{config.nome}/{config.uf}</span>
+                        <div
+                          className={`h-2 w-2 rounded-full ${
+                            config.status_conexao === 'connected'
+                              ? 'bg-green-500'
+                              : config.status_conexao === 'error'
+                                ? 'bg-red-500'
+                                : 'bg-gray-500'
+                          }`}
+                        />
+                        <span className="text-sm">
+                          {config.nome}/{config.uf}
+                        </span>
                       </div>
-                      <Badge variant={config.status_conexao === 'connected' ? 'default' : 'secondary'}>
-                        {config.status_conexao === 'connected' ? 'OK' : 
-                         config.status_conexao === 'error' ? 'Erro' : 'Offline'}
+                      <Badge
+                        variant={
+                          config.status_conexao === 'connected'
+                            ? 'default'
+                            : 'secondary'
+                        }
+                      >
+                        {config.status_conexao === 'connected'
+                          ? 'OK'
+                          : config.status_conexao === 'error'
+                            ? 'Erro'
+                            : 'Offline'}
                       </Badge>
                     </div>
                   ))}
@@ -784,7 +925,7 @@ export const NFSeDashboard: React.FC = () => {
           </div>
         </TabsContent>
 
-        <TabsContent value="documents" className="space-y-6">
+        <TabsContent className="space-y-6" value="documents">
           <Tabs defaultValue="all">
             <TabsList>
               <TabsTrigger value="all">
@@ -801,53 +942,53 @@ export const NFSeDashboard: React.FC = () => {
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="all" className="space-y-4">
+            <TabsContent className="space-y-4" value="all">
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {data.nfseDocuments.map((nfse) => (
                   <NFSeCard
                     key={nfse.id}
                     nfse={nfse}
-                    onView={handleViewNFSe}
                     onCancel={handleCancelNFSe}
+                    onView={handleViewNFSe}
                   />
                 ))}
               </div>
             </TabsContent>
 
-            <TabsContent value="draft" className="space-y-4">
+            <TabsContent className="space-y-4" value="draft">
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {draftDocuments.map((nfse) => (
                   <NFSeCard
                     key={nfse.id}
                     nfse={nfse}
-                    onView={handleViewNFSe}
                     onCancel={handleCancelNFSe}
+                    onView={handleViewNFSe}
                   />
                 ))}
               </div>
             </TabsContent>
 
-            <TabsContent value="pending" className="space-y-4">
+            <TabsContent className="space-y-4" value="pending">
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {pendingDocuments.map((nfse) => (
                   <NFSeCard
                     key={nfse.id}
                     nfse={nfse}
-                    onView={handleViewNFSe}
                     onCancel={handleCancelNFSe}
+                    onView={handleViewNFSe}
                   />
                 ))}
               </div>
             </TabsContent>
 
-            <TabsContent value="error" className="space-y-4">
+            <TabsContent className="space-y-4" value="error">
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {errorDocuments.map((nfse) => (
                   <NFSeCard
                     key={nfse.id}
                     nfse={nfse}
-                    onView={handleViewNFSe}
                     onCancel={handleCancelNFSe}
+                    onView={handleViewNFSe}
                   />
                 ))}
               </div>
@@ -855,19 +996,19 @@ export const NFSeDashboard: React.FC = () => {
           </Tabs>
         </TabsContent>
 
-        <TabsContent value="config" className="space-y-6">
+        <TabsContent className="space-y-6" value="config">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {data.municipalConfigs.map((config) => (
               <MunicipalConfigCard
-                key={config.codigo}
                 config={config}
+                key={config.codigo}
                 onTest={handleTestConnection}
               />
             ))}
           </div>
         </TabsContent>
 
-        <TabsContent value="reports" className="space-y-6">
+        <TabsContent className="space-y-6" value="reports">
           <Card>
             <CardHeader>
               <CardTitle>Relatórios Fiscais</CardTitle>
@@ -877,12 +1018,13 @@ export const NFSeDashboard: React.FC = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <Button onClick={handleGenerateReport} className="w-full">
-                  <Download className="h-4 w-4 mr-2" />
+                <Button className="w-full" onClick={handleGenerateReport}>
+                  <Download className="mr-2 h-4 w-4" />
                   Gerar Relatório Fiscal Completo (PDF)
                 </Button>
-                <p className="text-sm text-muted-foreground">
-                  O relatório incluirá todas as NFSe emitidas, impostos coletados e análise por município para o período selecionado.
+                <p className="text-muted-foreground text-sm">
+                  O relatório incluirá todas as NFSe emitidas, impostos
+                  coletados e análise por município para o período selecionado.
                 </p>
               </div>
             </CardContent>

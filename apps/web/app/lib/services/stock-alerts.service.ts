@@ -3,14 +3,14 @@
  * Serviço para gerenciamento de alertas de estoque
  */
 
-import {
-    AcknowledgeAlert,
-    AlertStatus,
-    AlertType,
-    CreateStockAlertConfig,
-    ResolveAlert,
-    SeverityLevel,
-    StockAlertConfig
+import type {
+  AcknowledgeAlert,
+  AlertStatus,
+  AlertType,
+  CreateStockAlertConfig,
+  ResolveAlert,
+  SeverityLevel,
+  StockAlertConfig,
 } from '@/app/lib/types/stock-alerts';
 import { createClient } from '@/app/utils/supabase/server';
 
@@ -26,7 +26,11 @@ export class StockAlertsService {
   /**
    * Criar nova configuração de alerta
    */
-  async createAlertConfig(data: CreateStockAlertConfig, clinic_id: string, user_id: string) {
+  async createAlertConfig(
+    data: CreateStockAlertConfig,
+    clinic_id: string,
+    user_id: string
+  ) {
     try {
       const supabase = await this.getSupabase();
       const { data: config, error } = await supabase
@@ -35,7 +39,7 @@ export class StockAlertsService {
           ...data,
           clinic_id,
           created_by: user_id,
-          updated_by: user_id
+          updated_by: user_id,
         })
         .select()
         .single();
@@ -44,17 +48,23 @@ export class StockAlertsService {
       return { success: true, data: config };
     } catch (error) {
       console.error('Error creating alert config:', error);
-      return { success: false, error: String((error as Error)?.message || error) };
+      return {
+        success: false,
+        error: String((error as Error)?.message || error),
+      };
     }
   }
 
   /**
    * Listar configurações de alertas
    */
-  async getAlertConfigs(clinic_id: string, filters?: {
-    type?: AlertType;
-    active_only?: boolean;
-  }) {
+  async getAlertConfigs(
+    clinic_id: string,
+    filters?: {
+      type?: AlertType;
+      active_only?: boolean;
+    }
+  ) {
     try {
       const supabase = await this.getSupabase();
       let query = supabase
@@ -77,14 +87,21 @@ export class StockAlertsService {
       return { success: true, data };
     } catch (error) {
       console.error('Error fetching alert configs:', error);
-      return { success: false, error: String((error as Error)?.message || error) };
+      return {
+        success: false,
+        error: String((error as Error)?.message || error),
+      };
     }
   }
 
   /**
    * Atualizar configuração de alerta
    */
-  async updateAlertConfig(id: string, updates: Partial<StockAlertConfig>, user_id: string) {
+  async updateAlertConfig(
+    id: string,
+    updates: Partial<StockAlertConfig>,
+    user_id: string
+  ) {
     try {
       const supabase = await this.getSupabase();
       const { data, error } = await supabase
@@ -92,7 +109,7 @@ export class StockAlertsService {
         .update({
           ...updates,
           updated_by: user_id,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', id)
         .select()
@@ -102,7 +119,10 @@ export class StockAlertsService {
       return { success: true, data };
     } catch (error) {
       console.error('Error updating alert config:', error);
-      return { success: false, error: String((error as Error)?.message || error) };
+      return {
+        success: false,
+        error: String((error as Error)?.message || error),
+      };
     }
   }
 
@@ -121,7 +141,10 @@ export class StockAlertsService {
       return { success: true };
     } catch (error) {
       console.error('Error deleting alert config:', error);
-      return { success: false, error: String((error as Error)?.message || error) };
+      return {
+        success: false,
+        error: String((error as Error)?.message || error),
+      };
     }
   }
 
@@ -132,12 +155,15 @@ export class StockAlertsService {
   /**
    * Listar alertas ativos
    */
-  async getActiveAlerts(clinic_id: string, filters?: {
-    severity?: SeverityLevel[];
-    type?: AlertType[];
-    status?: AlertStatus[];
-    limit?: number;
-  }) {
+  async getActiveAlerts(
+    clinic_id: string,
+    filters?: {
+      severity?: SeverityLevel[];
+      type?: AlertType[];
+      status?: AlertStatus[];
+      limit?: number;
+    }
+  ) {
     try {
       const supabase = await this.getSupabase();
       let query = supabase
@@ -171,7 +197,10 @@ export class StockAlertsService {
       return { success: true, data };
     } catch (error) {
       console.error('Error fetching alerts:', error);
-      return { success: false, error: String((error as Error)?.message || error) };
+      return {
+        success: false,
+        error: String((error as Error)?.message || error),
+      };
     }
   }
 
@@ -191,7 +220,10 @@ export class StockAlertsService {
       return { success: true, data };
     } catch (error) {
       console.error('Error fetching alert:', error);
-      return { success: false, error: String((error as Error)?.message || error) };
+      return {
+        success: false,
+        error: String((error as Error)?.message || error),
+      };
     }
   }
 
@@ -208,7 +240,7 @@ export class StockAlertsService {
           acknowledged_at: new Date().toISOString(),
           acknowledged_by: user_id,
           resolution_notes: data.note || null,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', data.alertId)
         .select()
@@ -218,7 +250,10 @@ export class StockAlertsService {
       return { success: true, data: alert };
     } catch (error) {
       console.error('Error acknowledging alert:', error);
-      return { success: false, error: String((error as Error)?.message || error) };
+      return {
+        success: false,
+        error: String((error as Error)?.message || error),
+      };
     }
   }
 
@@ -235,7 +270,7 @@ export class StockAlertsService {
           resolved_at: new Date().toISOString(),
           resolved_by: user_id,
           resolution_notes: data.resolution,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', data.alertId)
         .select()
@@ -245,7 +280,10 @@ export class StockAlertsService {
       return { success: true, data: alert };
     } catch (error) {
       console.error('Error resolving alert:', error);
-      return { success: false, error: String((error as Error)?.message || error) };
+      return {
+        success: false,
+        error: String((error as Error)?.message || error),
+      };
     }
   }
 
@@ -262,7 +300,7 @@ export class StockAlertsService {
           resolved_at: new Date().toISOString(),
           resolved_by: user_id,
           resolution_notes: reason || 'Alert dismissed',
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', alert_id)
         .select()
@@ -272,7 +310,10 @@ export class StockAlertsService {
       return { success: true, data: alert };
     } catch (error) {
       console.error('Error dismissing alert:', error);
-      return { success: false, error: String((error as Error)?.message || error) };
+      return {
+        success: false,
+        error: String((error as Error)?.message || error),
+      };
     }
   }
 
@@ -299,32 +340,41 @@ export class StockAlertsService {
 
       for (const config of configs || []) {
         switch (config.config_type) {
-          case 'low_stock':
+          case 'low_stock': {
             const lowStockResult = await this.generateLowStockAlerts(config);
             results.push(lowStockResult);
             break;
-          
-          case 'expiry_warning':
+          }
+
+          case 'expiry_warning': {
             const expiryResult = await this.generateExpiryWarningAlerts(config);
             results.push(expiryResult);
             break;
-          
-          case 'shortage_prediction':
-            const shortageResult = await this.generateShortagePredictionAlerts(config);
+          }
+
+          case 'shortage_prediction': {
+            const shortageResult =
+              await this.generateShortagePredictionAlerts(config);
             results.push(shortageResult);
             break;
-          
-          case 'overstock_warning':
-            const overstockResult = await this.generateOverstockWarningAlerts(config);
+          }
+
+          case 'overstock_warning': {
+            const overstockResult =
+              await this.generateOverstockWarningAlerts(config);
             results.push(overstockResult);
             break;
+          }
         }
       }
 
       return { success: true, data: results };
     } catch (error) {
       console.error('Error generating alerts:', error);
-      return { success: false, error: String((error as Error)?.message || error) };
+      return {
+        success: false,
+        error: String((error as Error)?.message || error),
+      };
     }
   }
 
@@ -334,31 +384,35 @@ export class StockAlertsService {
   private async generateLowStockAlerts(config: any) {
     try {
       const supabase = await this.getSupabase();
-      
+
       const alertsToCreate = [];
-      
+
       // Lógica simplificada para demonstração
-      if (config.stock_threshold_quantity && config.stock_threshold_quantity > 0) {
+      if (
+        config.stock_threshold_quantity &&
+        config.stock_threshold_quantity > 0
+      ) {
         const sampleAlert = {
           clinic_id: config.clinic_id,
           config_id: config.id,
           alert_type: 'low_stock' as const,
           alert_severity: 'medium' as const,
-          alert_title: `Estoque baixo detectado`,
+          alert_title: 'Estoque baixo detectado',
           alert_message: `Produto com estoque abaixo do limite configurado (${config.stock_threshold_quantity} unidades)`,
           product_name: 'Produto Exemplo',
           product_category: 'Materiais',
           current_stock_quantity: config.stock_threshold_quantity - 1,
           minimum_stock_quantity: config.stock_threshold_quantity,
-          suggested_order_quantity: config.reorder_point || config.stock_threshold_quantity * 2,
+          suggested_order_quantity:
+            config.reorder_point || config.stock_threshold_quantity * 2,
           status: 'active' as const,
           business_impact_level: 'medium' as const,
           patient_impact_potential: false,
           auto_generated: true,
           alert_data: {
             threshold_config: config,
-            detection_method: 'automated_check'
-          }
+            detection_method: 'automated_check',
+          },
         };
 
         alertsToCreate.push(sampleAlert);
@@ -378,7 +432,10 @@ export class StockAlertsService {
       return { config_id: config.id, alerts_created: 0 };
     } catch (error) {
       console.error('Error generating low stock alerts:', error);
-      return { config_id: config.id, error: String((error as Error)?.message || error) };
+      return {
+        config_id: config.id,
+        error: String((error as Error)?.message || error),
+      };
     }
   }
 
@@ -399,7 +456,7 @@ export class StockAlertsService {
           config_id: config.id,
           alert_type: 'expiry_warning' as const,
           alert_severity: 'high' as const,
-          alert_title: `Produtos próximos ao vencimento`,
+          alert_title: 'Produtos próximos ao vencimento',
           alert_message: `Produtos vencem em ${config.expiry_warning_days} dias`,
           product_name: 'Produto com Vencimento Próximo',
           product_category: 'Medicamentos',
@@ -413,8 +470,8 @@ export class StockAlertsService {
           auto_generated: true,
           alert_data: {
             threshold_config: config,
-            detection_method: 'expiry_check'
-          }
+            detection_method: 'expiry_check',
+          },
         };
 
         alertsToCreate.push(sampleAlert);
@@ -434,7 +491,10 @@ export class StockAlertsService {
       return { config_id: config.id, alerts_created: 0 };
     } catch (error) {
       console.error('Error generating expiry alerts:', error);
-      return { config_id: config.id, error: String((error as Error)?.message || error) };
+      return {
+        config_id: config.id,
+        error: String((error as Error)?.message || error),
+      };
     }
   }
 
@@ -461,7 +521,7 @@ export class StockAlertsService {
   /**
    * Obter resumo de alertas para dashboard
    */
-  async getAlertsSummary(clinic_id: string, days: number = 30) {
+  async getAlertsSummary(clinic_id: string, days = 30) {
     try {
       const supabase = await this.getSupabase();
       const since = new Date();
@@ -478,23 +538,29 @@ export class StockAlertsService {
       // Processar dados para dashboard
       const summary = {
         total_alerts: data?.length || 0,
-        active_alerts: data?.filter(a => a.status === 'active').length || 0,
-        critical_alerts: data?.filter(a => a.alert_severity === 'critical').length || 0,
+        active_alerts: data?.filter((a) => a.status === 'active').length || 0,
+        critical_alerts:
+          data?.filter((a) => a.alert_severity === 'critical').length || 0,
         by_type: {} as Record<string, number>,
         by_severity: {} as Record<string, number>,
-        trend: [] as Array<{date: string; count: number}>
+        trend: [] as Array<{ date: string; count: number }>,
       };
 
       // Agrupar por tipo e severidade
-      data?.forEach(alert => {
-        summary.by_type[alert.alert_type] = (summary.by_type[alert.alert_type] || 0) + 1;
-        summary.by_severity[alert.alert_severity] = (summary.by_severity[alert.alert_severity] || 0) + 1;
+      data?.forEach((alert) => {
+        summary.by_type[alert.alert_type] =
+          (summary.by_type[alert.alert_type] || 0) + 1;
+        summary.by_severity[alert.alert_severity] =
+          (summary.by_severity[alert.alert_severity] || 0) + 1;
       });
 
       return { success: true, data: summary };
     } catch (error) {
       console.error('Error fetching alerts summary:', error);
-      return { success: false, error: String((error as Error)?.message || error) };
+      return {
+        success: false,
+        error: String((error as Error)?.message || error),
+      };
     }
   }
 
@@ -517,7 +583,10 @@ export class StockAlertsService {
       return { success: true, data };
     } catch (error) {
       console.error('Error fetching critical alerts:', error);
-      return { success: false, error: String((error as Error)?.message || error) };
+      return {
+        success: false,
+        error: String((error as Error)?.message || error),
+      };
     }
   }
 }

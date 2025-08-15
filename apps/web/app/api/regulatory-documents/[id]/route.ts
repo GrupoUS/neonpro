@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/app/utils/supabase/server'
-import { z } from 'zod'
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
+import { createClient } from '@/app/utils/supabase/server';
 
 // Request validation schemas
 const UpdateDocumentSchema = z.object({
@@ -17,20 +17,23 @@ const UpdateDocumentSchema = z.object({
   version: z.string().optional(),
   associated_professional_id: z.string().uuid().optional(),
   associated_equipment_id: z.string().uuid().optional(),
-})
+});
 
 // GET /api/regulatory-documents/[id] - Get single document by ID
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const supabase = await createClient()
-    
+    const supabase = await createClient();
+
     // Check authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { id } = await params;
@@ -61,21 +64,29 @@ export async function GET(
         profiles!regulatory_documents_updated_by_fkey(full_name)
       `)
       .eq('id', id)
-      .single()
+      .single();
 
     if (error) {
-      console.error('Error fetching regulatory document:', error)
+      console.error('Error fetching regulatory document:', error);
       if (error.code === 'PGRST116') {
-        return NextResponse.json({ error: 'Document not found' }, { status: 404 })
+        return NextResponse.json(
+          { error: 'Document not found' },
+          { status: 404 }
+        );
       }
-      return NextResponse.json({ error: 'Failed to fetch document' }, { status: 500 })
+      return NextResponse.json(
+        { error: 'Failed to fetch document' },
+        { status: 500 }
+      );
     }
 
-    return NextResponse.json({ document })
-
+    return NextResponse.json({ document });
   } catch (error) {
-    console.error('API Error:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    console.error('API Error:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
 
@@ -85,32 +96,41 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const supabase = await createClient()
-    
+    const supabase = await createClient();
+
     // Check authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { id } = await params;
 
     // Parse and validate request body
-    const requestBody = await request.json()
-    const validatedData = UpdateDocumentSchema.parse(requestBody)
+    const requestBody = await request.json();
+    const validatedData = UpdateDocumentSchema.parse(requestBody);
 
     // Check if document exists and user has permission
     const { data: existingDoc, error: fetchError } = await supabase
       .from('regulatory_documents')
       .select('id, version, file_url')
       .eq('id', id)
-      .single()
+      .single();
 
     if (fetchError) {
       if (fetchError.code === 'PGRST116') {
-        return NextResponse.json({ error: 'Document not found' }, { status: 404 })
+        return NextResponse.json(
+          { error: 'Document not found' },
+          { status: 404 }
+        );
       }
-      return NextResponse.json({ error: 'Failed to fetch document' }, { status: 500 })
+      return NextResponse.json(
+        { error: 'Failed to fetch document' },
+        { status: 500 }
+      );
     }
 
     // Update document
@@ -119,56 +139,68 @@ export async function PUT(
       .update({
         ...validatedData,
         updated_by: user.id,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', id)
       .select(`
         *,
         regulation_categories!inner(name, authority_name)
       `)
-      .single()
+      .single();
 
     if (error) {
-      console.error('Error updating regulatory document:', error)
-      return NextResponse.json({ error: 'Failed to update document' }, { status: 500 })
+      console.error('Error updating regulatory document:', error);
+      return NextResponse.json(
+        { error: 'Failed to update document' },
+        { status: 500 }
+      );
     }
 
     // Create new version if file was updated
-    if (validatedData.file_url && validatedData.file_url !== existingDoc.file_url) {
-      await supabase
-        .from('document_versions')
-        .insert({
-          document_id: id,
-          version: validatedData.version || `v${Date.now()}`,
-          file_url: validatedData.file_url,
-          change_reason: requestBody.change_reason || 'Document updated',
-          created_by: user.id
-        })
+    if (
+      validatedData.file_url &&
+      validatedData.file_url !== existingDoc.file_url
+    ) {
+      await supabase.from('document_versions').insert({
+        document_id: id,
+        version: validatedData.version || `v${Date.now()}`,
+        file_url: validatedData.file_url,
+        change_reason: requestBody.change_reason || 'Document updated',
+        created_by: user.id,
+      });
     }
 
-    return NextResponse.json({ document })
-
+    return NextResponse.json({ document });
   } catch (error) {
-    console.error('API Error:', error)
+    console.error('API Error:', error);
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Invalid document data', details: error.errors }, { status: 400 })
+      return NextResponse.json(
+        { error: 'Invalid document data', details: error.errors },
+        { status: 400 }
+      );
     }
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
 
 // DELETE /api/regulatory-documents/[id] - Delete document
 export async function DELETE(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const supabase = await createClient()
-    
+    const supabase = await createClient();
+
     // Check authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { id } = await params;
@@ -178,30 +210,41 @@ export async function DELETE(
       .from('regulatory_documents')
       .select('id')
       .eq('id', id)
-      .single()
+      .single();
 
     if (fetchError) {
       if (fetchError.code === 'PGRST116') {
-        return NextResponse.json({ error: 'Document not found' }, { status: 404 })
+        return NextResponse.json(
+          { error: 'Document not found' },
+          { status: 404 }
+        );
       }
-      return NextResponse.json({ error: 'Failed to fetch document' }, { status: 500 })
+      return NextResponse.json(
+        { error: 'Failed to fetch document' },
+        { status: 500 }
+      );
     }
 
     // Delete document (cascade will handle related records)
     const { error } = await supabase
       .from('regulatory_documents')
       .delete()
-      .eq('id', id)
+      .eq('id', id);
 
     if (error) {
-      console.error('Error deleting regulatory document:', error)
-      return NextResponse.json({ error: 'Failed to delete document' }, { status: 500 })
+      console.error('Error deleting regulatory document:', error);
+      return NextResponse.json(
+        { error: 'Failed to delete document' },
+        { status: 500 }
+      );
     }
 
-    return NextResponse.json({ message: 'Document deleted successfully' })
-
+    return NextResponse.json({ message: 'Document deleted successfully' });
   } catch (error) {
-    console.error('API Error:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    console.error('API Error:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }

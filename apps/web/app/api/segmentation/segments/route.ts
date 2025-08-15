@@ -1,12 +1,12 @@
+import { type NextRequest, NextResponse } from 'next/server';
 import { patientSegmentationService } from '@/app/lib/services/patient-segmentation-service';
 import { CreateSegmentSchema } from '@/app/lib/validations/segmentation';
 import { createClient } from '@/app/utils/supabase/server';
-import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // For development: Skip auth check or use service role
     // const { data: { user } } = await supabase.auth.getUser();
     // if (!user) {
@@ -18,9 +18,7 @@ export async function GET(request: NextRequest) {
     const segmentType = searchParams.get('segment_type');
 
     // Simple query to match our database structure
-    let query = supabase
-      .from('patient_segments')
-      .select(`
+    let query = supabase.from('patient_segments').select(`
         id,
         name,
         description,
@@ -36,7 +34,7 @@ export async function GET(request: NextRequest) {
     if (isActive !== null) {
       query = query.eq('is_active', isActive === 'true');
     }
-    
+
     if (segmentType) {
       query = query.eq('segment_type', segmentType);
     }
@@ -50,15 +48,14 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: segments || [],
-      total: segments?.length || 0
+      total: segments?.length || 0,
     });
-
   } catch (error) {
     console.error('Error fetching patient segments:', error);
     return NextResponse.json(
-      { 
-        error: 'Failed to fetch patient segments', 
-        details: error instanceof Error ? error.message : 'Unknown error'
+      {
+        error: 'Failed to fetch patient segments',
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );
@@ -68,8 +65,10 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -91,17 +90,20 @@ export async function POST(request: NextRequest) {
       criteria: validationResult.data.criteria as any, // Type casting for compatibility
       segment_type: validationResult.data.segment_type,
       ai_model: undefined,
-      expected_accuracy: undefined
+      expected_accuracy: undefined,
     };
 
-    const segment = await patientSegmentationService.createAISegment(segmentData);
+    const segment =
+      await patientSegmentationService.createAISegment(segmentData);
 
-    return NextResponse.json({
-      success: true,
-      data: segment,
-      message: 'AI-powered segment created successfully'
-    }, { status: 201 });
-
+    return NextResponse.json(
+      {
+        success: true,
+        data: segment,
+        message: 'AI-powered segment created successfully',
+      },
+      { status: 201 }
+    );
   } catch (error) {
     console.error('Error creating patient segment:', error);
     return NextResponse.json(

@@ -1,18 +1,18 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
-import { EmailProviderConfigSchema } from '@/app/types/email';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { EmailProviderConfigSchema } from '@/app/types/email';
+import { createClient } from '@/app/utils/supabase/server';
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { session }, error: authError } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+      error: authError,
+    } = await supabase.auth.getSession();
+
     if (authError || !session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { data: profile } = await supabase
@@ -22,10 +22,7 @@ export async function GET(request: NextRequest) {
       .single();
 
     if (!profile?.clinic_id) {
-      return NextResponse.json(
-        { error: 'Clinic not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Clinic not found' }, { status: 404 });
     }
 
     // Buscar configurações de email
@@ -36,7 +33,6 @@ export async function GET(request: NextRequest) {
       .order('created_at', { ascending: false });
 
     return NextResponse.json(configs || []);
-
   } catch (error) {
     console.error('Get email config error:', error);
     return NextResponse.json(
@@ -49,13 +45,13 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { session }, error: authError } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+      error: authError,
+    } = await supabase.auth.getSession();
+
     if (authError || !session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { data: profile } = await supabase
@@ -65,14 +61,11 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (!profile?.clinic_id) {
-      return NextResponse.json(
-        { error: 'Clinic not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Clinic not found' }, { status: 404 });
     }
 
     const body = await request.json();
-    
+
     // Validar dados de configuração
     const validatedConfig = EmailProviderConfigSchema.parse(body);
 
@@ -84,7 +77,7 @@ export async function POST(request: NextRequest) {
         provider: validatedConfig.provider,
         config: validatedConfig.config,
         is_active: validatedConfig.is_active,
-        priority: validatedConfig.priority
+        priority: validatedConfig.priority,
       })
       .select()
       .single();
@@ -94,17 +87,16 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json(config);
-
   } catch (error) {
     console.error('Create email config error:', error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid configuration data', details: error.errors },
         { status: 400 }
       );
     }
-    
+
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

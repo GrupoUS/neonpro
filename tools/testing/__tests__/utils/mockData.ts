@@ -1,9 +1,9 @@
-import { AnalyticsData, CohortData, ExportData } from '@/types/analytics'
+import type { AnalyticsData, CohortData, ExportData } from '@/types/analytics';
 
 // Mock Analytics Data
 export const mockAnalyticsData: AnalyticsData = {
   totalPatients: 1250,
-  totalRevenue: 125000,
+  totalRevenue: 125_000,
   averageTicket: 100,
   conversionRate: 0.25,
   monthlyGrowth: 0.15,
@@ -14,12 +14,12 @@ export const mockAnalyticsData: AnalyticsData = {
       { date: '2024-03-01', value: 150 },
     ],
     revenue: [
-      { date: '2024-01-01', value: 10000 },
-      { date: '2024-02-01', value: 12000 },
-      { date: '2024-03-01', value: 15000 },
+      { date: '2024-01-01', value: 10_000 },
+      { date: '2024-02-01', value: 12_000 },
+      { date: '2024-03-01', value: 15_000 },
     ],
   },
-}
+};
 
 // Mock Cohort Data
 export const mockCohortData: CohortData[] = [
@@ -35,7 +35,7 @@ export const mockCohortData: CohortData[] = [
     retentionRates: [1.0, 0.85, 0.65, 0.55, 0.45],
     monthlyRevenue: [6000, 5100, 3900, 3300, 2700],
   },
-]
+];
 
 // Mock Export Data
 export const mockExportData: ExportData = {
@@ -53,7 +53,7 @@ export const mockExportData: ExportData = {
     treatments: ['facial', 'botox'],
     status: 'active',
   },
-}
+};
 
 // Mock Supabase Response
 export const mockSupabaseResponse = {
@@ -62,7 +62,7 @@ export const mockSupabaseResponse = {
   count: null,
   status: 200,
   statusText: 'OK',
-}
+};
 
 // Mock Error Response
 export const mockErrorResponse = {
@@ -76,7 +76,7 @@ export const mockErrorResponse = {
   count: null,
   status: 500,
   statusText: 'Internal Server Error',
-}
+};
 
 // Mock User for Testing
 export const mockUser = {
@@ -86,14 +86,14 @@ export const mockUser = {
   clinic_id: 'clinic-456',
   created_at: '2024-01-01T00:00:00Z',
   updated_at: '2024-01-01T00:00:00Z',
-}
+};
 
 // Mock Session
 export const mockSession = {
   access_token: 'mock-access-token',
   refresh_token: 'mock-refresh-token',
   expires_in: 3600,
-  expires_at: Date.now() + 3600000,
+  expires_at: Date.now() + 3_600_000,
   token_type: 'bearer',
   user: mockUser,
-}
+};

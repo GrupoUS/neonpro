@@ -1,31 +1,29 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import { jest } from '@jest/globals'
-import { toast } from 'sonner'
-import ProfessionalManagement from '@/components/dashboard/ProfessionalManagement'
-import { 
-  getProfessionals, 
-  createProfessional, 
-  updateProfessional, 
+import { jest } from '@jest/globals';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { toast } from 'sonner';
+import ProfessionalManagement from '@/components/dashboard/ProfessionalManagement';
+import {
   deleteProfessional,
   getProfessionalCredentials,
   getProfessionalServices,
-  verifyCredential
-} from '@/lib/supabase/professionals'
+  getProfessionals,
+  verifyCredential,
+} from '@/lib/supabase/professionals';
 
 // Mock the dependencies
 jest.mock('next/navigation', () => ({
   useRouter: () => ({
     push: jest.fn(),
-    back: jest.fn()
-  })
-}))
+    back: jest.fn(),
+  }),
+}));
 
 jest.mock('sonner', () => ({
   toast: {
     success: jest.fn(),
-    error: jest.fn()
-  }
-}))
+    error: jest.fn(),
+  },
+}));
 
 jest.mock('@/lib/supabase/professionals', () => ({
   getProfessionals: jest.fn(),
@@ -34,8 +32,8 @@ jest.mock('@/lib/supabase/professionals', () => ({
   deleteProfessional: jest.fn(),
   getProfessionalCredentials: jest.fn(),
   getProfessionalServices: jest.fn(),
-  verifyCredential: jest.fn()
-}))
+  verifyCredential: jest.fn(),
+}));
 
 // Mock data
 const mockProfessionals = [
@@ -56,10 +54,10 @@ const mockProfessionals = [
       city: 'São Paulo',
       state: 'SP',
       postal_code: '01234-567',
-      country: 'BR'
+      country: 'BR',
     },
     created_at: '2024-01-01T00:00:00Z',
-    updated_at: '2024-01-15T00:00:00Z'
+    updated_at: '2024-01-15T00:00:00Z',
   },
   {
     id: '2',
@@ -78,12 +76,12 @@ const mockProfessionals = [
       city: 'São Paulo',
       state: 'SP',
       postal_code: '01310-100',
-      country: 'BR'
+      country: 'BR',
     },
     created_at: '2024-01-10T00:00:00Z',
-    updated_at: '2024-01-20T00:00:00Z'
-  }
-]
+    updated_at: '2024-01-20T00:00:00Z',
+  },
+];
 
 const mockCredentials = [
   {
@@ -97,9 +95,9 @@ const mockCredentials = [
     verification_status: 'verified',
     description: 'Licença para prática médica',
     created_at: '2024-01-01T00:00:00Z',
-    updated_at: '2024-01-01T00:00:00Z'
-  }
-]
+    updated_at: '2024-01-01T00:00:00Z',
+  },
+];
 
 const mockServices = [
   {
@@ -109,424 +107,464 @@ const mockServices = [
     service_type: 'consultation',
     description: 'Consulta completa de dermatologia',
     duration_minutes: 60,
-    base_price: 200.00,
+    base_price: 200.0,
     requires_certification: true,
     created_at: '2024-01-01T00:00:00Z',
-    updated_at: '2024-01-01T00:00:00Z'
-  }
-]
+    updated_at: '2024-01-01T00:00:00Z',
+  },
+];
 
 describe('ProfessionalManagement', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
-    ;(getProfessionals as jest.Mock).mockResolvedValue(mockProfessionals)
-    ;(getProfessionalCredentials as jest.Mock).mockResolvedValue(mockCredentials)
-    ;(getProfessionalServices as jest.Mock).mockResolvedValue(mockServices)
-  })
+    jest.clearAllMocks();
+    (getProfessionals as jest.Mock).mockResolvedValue(mockProfessionals);
+    (getProfessionalCredentials as jest.Mock).mockResolvedValue(
+      mockCredentials
+    );
+    (getProfessionalServices as jest.Mock).mockResolvedValue(mockServices);
+  });
 
   describe('Component Rendering', () => {
     it('should render professional management header', async () => {
-      render(<ProfessionalManagement />)
-      
-      expect(screen.getByText('Gestão de Profissionais')).toBeInTheDocument()
-      expect(screen.getByText('Gerencie perfis profissionais, credenciais e especialidades')).toBeInTheDocument()
-    })
+      render(<ProfessionalManagement />);
+
+      expect(screen.getByText('Gestão de Profissionais')).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          'Gerencie perfis profissionais, credenciais e especialidades'
+        )
+      ).toBeInTheDocument();
+    });
 
     it('should render stats cards', async () => {
-      render(<ProfessionalManagement />)
-      
+      render(<ProfessionalManagement />);
+
       await waitFor(() => {
-        expect(screen.getByText('Total de Profissionais')).toBeInTheDocument()
-        expect(screen.getByText('Profissionais Ativos')).toBeInTheDocument()
-        expect(screen.getByText('Pendente Verificação')).toBeInTheDocument()
-        expect(screen.getByText('Credenciais Expirando')).toBeInTheDocument()
-      })
-    })
+        expect(screen.getByText('Total de Profissionais')).toBeInTheDocument();
+        expect(screen.getByText('Profissionais Ativos')).toBeInTheDocument();
+        expect(screen.getByText('Pendente Verificação')).toBeInTheDocument();
+        expect(screen.getByText('Credenciais Expirando')).toBeInTheDocument();
+      });
+    });
 
     it('should render search and filter controls', () => {
-      render(<ProfessionalManagement />)
-      
-      expect(screen.getByPlaceholderText('Buscar profissionais...')).toBeInTheDocument()
-      expect(screen.getByRole('combobox', { name: /status/i })).toBeInTheDocument()
-    })
+      render(<ProfessionalManagement />);
+
+      expect(
+        screen.getByPlaceholderText('Buscar profissionais...')
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('combobox', { name: /status/i })
+      ).toBeInTheDocument();
+    });
 
     it('should render professionals table', async () => {
-      render(<ProfessionalManagement />)
-      
+      render(<ProfessionalManagement />);
+
       await waitFor(() => {
-        expect(screen.getByText('Dr. Ana Silva')).toBeInTheDocument()
-        expect(screen.getByText('Dr. Carlos Oliveira')).toBeInTheDocument()
-        expect(screen.getByText('ana.silva@email.com')).toBeInTheDocument()
-        expect(screen.getByText('carlos.oliveira@email.com')).toBeInTheDocument()
-      })
-    })
-  })
+        expect(screen.getByText('Dr. Ana Silva')).toBeInTheDocument();
+        expect(screen.getByText('Dr. Carlos Oliveira')).toBeInTheDocument();
+        expect(screen.getByText('ana.silva@email.com')).toBeInTheDocument();
+        expect(
+          screen.getByText('carlos.oliveira@email.com')
+        ).toBeInTheDocument();
+      });
+    });
+  });
 
   describe('Data Loading', () => {
     it('should load professionals on mount', async () => {
-      render(<ProfessionalManagement />)
-      
+      render(<ProfessionalManagement />);
+
       await waitFor(() => {
-        expect(getProfessionals).toHaveBeenCalledTimes(1)
-      })
-    })
+        expect(getProfessionals).toHaveBeenCalledTimes(1);
+      });
+    });
 
     it('should handle loading error', async () => {
-      ;(getProfessionals as jest.Mock).mockRejectedValue(new Error('Failed to load'))
-      
-      render(<ProfessionalManagement />)
-      
+      (getProfessionals as jest.Mock).mockRejectedValue(
+        new Error('Failed to load')
+      );
+
+      render(<ProfessionalManagement />);
+
       await waitFor(() => {
-        expect(toast.error).toHaveBeenCalledWith('Erro ao carregar profissionais')
-      })
-    })
+        expect(toast.error).toHaveBeenCalledWith(
+          'Erro ao carregar profissionais'
+        );
+      });
+    });
 
     it('should display correct stats after loading', async () => {
-      render(<ProfessionalManagement />)
-      
+      render(<ProfessionalManagement />);
+
       await waitFor(() => {
         // Should calculate stats based on mock data
-        expect(screen.getByText('2')).toBeInTheDocument() // Total professionals
-      })
-    })
-  })
+        expect(screen.getByText('2')).toBeInTheDocument(); // Total professionals
+      });
+    });
+  });
 
   describe('Search and Filtering', () => {
     it('should filter professionals by search term', async () => {
-      render(<ProfessionalManagement />)
-      
+      render(<ProfessionalManagement />);
+
       await waitFor(() => {
-        expect(screen.getByText('Dr. Ana Silva')).toBeInTheDocument()
-        expect(screen.getByText('Dr. Carlos Oliveira')).toBeInTheDocument()
-      })
-      
-      const searchInput = screen.getByPlaceholderText('Buscar profissionais...')
-      fireEvent.change(searchInput, { target: { value: 'Ana' } })
-      
+        expect(screen.getByText('Dr. Ana Silva')).toBeInTheDocument();
+        expect(screen.getByText('Dr. Carlos Oliveira')).toBeInTheDocument();
+      });
+
+      const searchInput = screen.getByPlaceholderText(
+        'Buscar profissionais...'
+      );
+      fireEvent.change(searchInput, { target: { value: 'Ana' } });
+
       await waitFor(() => {
-        expect(screen.getByText('Dr. Ana Silva')).toBeInTheDocument()
-        expect(screen.queryByText('Dr. Carlos Oliveira')).not.toBeInTheDocument()
-      })
-    })
+        expect(screen.getByText('Dr. Ana Silva')).toBeInTheDocument();
+        expect(
+          screen.queryByText('Dr. Carlos Oliveira')
+        ).not.toBeInTheDocument();
+      });
+    });
 
     it('should filter professionals by status', async () => {
-      render(<ProfessionalManagement />)
-      
+      render(<ProfessionalManagement />);
+
       await waitFor(() => {
-        expect(screen.getByText('Dr. Ana Silva')).toBeInTheDocument()
-        expect(screen.getByText('Dr. Carlos Oliveira')).toBeInTheDocument()
-      })
-      
+        expect(screen.getByText('Dr. Ana Silva')).toBeInTheDocument();
+        expect(screen.getByText('Dr. Carlos Oliveira')).toBeInTheDocument();
+      });
+
       // This would require more complex interaction with Select component
       // For now, testing that the filter elements exist
-      expect(screen.getByRole('combobox')).toBeInTheDocument()
-    })
+      expect(screen.getByRole('combobox')).toBeInTheDocument();
+    });
 
     it('should clear search results when search term is empty', async () => {
-      render(<ProfessionalManagement />)
-      
-      const searchInput = screen.getByPlaceholderText('Buscar profissionais...')
-      fireEvent.change(searchInput, { target: { value: 'Ana' } })
-      fireEvent.change(searchInput, { target: { value: '' } })
-      
+      render(<ProfessionalManagement />);
+
+      const searchInput = screen.getByPlaceholderText(
+        'Buscar profissionais...'
+      );
+      fireEvent.change(searchInput, { target: { value: 'Ana' } });
+      fireEvent.change(searchInput, { target: { value: '' } });
+
       await waitFor(() => {
-        expect(screen.getByText('Dr. Ana Silva')).toBeInTheDocument()
-        expect(screen.getByText('Dr. Carlos Oliveira')).toBeInTheDocument()
-      })
-    })
-  })
+        expect(screen.getByText('Dr. Ana Silva')).toBeInTheDocument();
+        expect(screen.getByText('Dr. Carlos Oliveira')).toBeInTheDocument();
+      });
+    });
+  });
 
   describe('Professional Actions', () => {
     it('should open details dialog when view details is clicked', async () => {
-      render(<ProfessionalManagement />)
-      
+      render(<ProfessionalManagement />);
+
       await waitFor(() => {
-        expect(screen.getByText('Dr. Ana Silva')).toBeInTheDocument()
-      })
-      
+        expect(screen.getByText('Dr. Ana Silva')).toBeInTheDocument();
+      });
+
       // Click on the dropdown menu
-      const moreButtons = screen.getAllByRole('button', { name: /more/i })
-      fireEvent.click(moreButtons[0])
-      
+      const moreButtons = screen.getAllByRole('button', { name: /more/i });
+      fireEvent.click(moreButtons[0]);
+
       // Click on view details
-      const viewDetailsButton = screen.getByText('Ver Detalhes')
-      fireEvent.click(viewDetailsButton)
-      
+      const viewDetailsButton = screen.getByText('Ver Detalhes');
+      fireEvent.click(viewDetailsButton);
+
       await waitFor(() => {
-        expect(getProfessionalCredentials).toHaveBeenCalledWith('1')
-        expect(getProfessionalServices).toHaveBeenCalledWith('1')
-      })
-    })
+        expect(getProfessionalCredentials).toHaveBeenCalledWith('1');
+        expect(getProfessionalServices).toHaveBeenCalledWith('1');
+      });
+    });
 
     it('should handle delete professional', async () => {
-      ;(deleteProfessional as jest.Mock).mockResolvedValue(undefined)
-      
-      render(<ProfessionalManagement />)
-      
+      (deleteProfessional as jest.Mock).mockResolvedValue(undefined);
+
+      render(<ProfessionalManagement />);
+
       await waitFor(() => {
-        expect(screen.getByText('Dr. Ana Silva')).toBeInTheDocument()
-      })
-      
+        expect(screen.getByText('Dr. Ana Silva')).toBeInTheDocument();
+      });
+
       // This would require more complex interaction to test delete functionality
       // For now, we're testing that the function is mocked correctly
-      expect(deleteProfessional).toBeDefined()
-    })
+      expect(deleteProfessional).toBeDefined();
+    });
 
     it('should handle credential verification', async () => {
-      ;(verifyCredential as jest.Mock).mockResolvedValue(undefined)
-      
-      render(<ProfessionalManagement />)
-      
+      (verifyCredential as jest.Mock).mockResolvedValue(undefined);
+
+      render(<ProfessionalManagement />);
+
       // This would require opening the details dialog and clicking verify
       // For now, testing that the function is available
-      expect(verifyCredential).toBeDefined()
-    })
-  })
+      expect(verifyCredential).toBeDefined();
+    });
+  });
 
   describe('Status Badges', () => {
     it('should display correct status badges', async () => {
-      render(<ProfessionalManagement />)
-      
+      render(<ProfessionalManagement />);
+
       await waitFor(() => {
-        expect(screen.getByText('Ativo')).toBeInTheDocument()
-        expect(screen.getByText('Pendente')).toBeInTheDocument()
-      })
-    })
+        expect(screen.getByText('Ativo')).toBeInTheDocument();
+        expect(screen.getByText('Pendente')).toBeInTheDocument();
+      });
+    });
 
     it('should apply correct badge variants for different statuses', async () => {
-      render(<ProfessionalManagement />)
-      
+      render(<ProfessionalManagement />);
+
       await waitFor(() => {
-        const activeBadge = screen.getByText('Ativo')
-        const pendingBadge = screen.getByText('Pendente')
-        
-        expect(activeBadge).toHaveClass('bg-primary')
-        expect(pendingBadge).toHaveClass('border')
-      })
-    })
-  })
+        const activeBadge = screen.getByText('Ativo');
+        const pendingBadge = screen.getByText('Pendente');
+
+        expect(activeBadge).toHaveClass('bg-primary');
+        expect(pendingBadge).toHaveClass('border');
+      });
+    });
+  });
 
   describe('Error Handling', () => {
     it('should handle professional loading errors', async () => {
-      ;(getProfessionals as jest.Mock).mockRejectedValue(new Error('Network error'))
-      
-      render(<ProfessionalManagement />)
-      
+      (getProfessionals as jest.Mock).mockRejectedValue(
+        new Error('Network error')
+      );
+
+      render(<ProfessionalManagement />);
+
       await waitFor(() => {
-        expect(toast.error).toHaveBeenCalledWith('Erro ao carregar profissionais')
-      })
-    })
+        expect(toast.error).toHaveBeenCalledWith(
+          'Erro ao carregar profissionais'
+        );
+      });
+    });
 
     it('should handle credential loading errors', async () => {
-      ;(getProfessionalCredentials as jest.Mock).mockRejectedValue(new Error('Credential error'))
-      
-      render(<ProfessionalManagement />)
-      
+      (getProfessionalCredentials as jest.Mock).mockRejectedValue(
+        new Error('Credential error')
+      );
+
+      render(<ProfessionalManagement />);
+
       await waitFor(() => {
-        expect(screen.getByText('Dr. Ana Silva')).toBeInTheDocument()
-      })
-      
+        expect(screen.getByText('Dr. Ana Silva')).toBeInTheDocument();
+      });
+
       // Simulate clicking view details
-      const moreButtons = screen.getAllByRole('button', { name: /more/i })
-      fireEvent.click(moreButtons[0])
-      
-      const viewDetailsButton = screen.getByText('Ver Detalhes')
-      fireEvent.click(viewDetailsButton)
-      
+      const moreButtons = screen.getAllByRole('button', { name: /more/i });
+      fireEvent.click(moreButtons[0]);
+
+      const viewDetailsButton = screen.getByText('Ver Detalhes');
+      fireEvent.click(viewDetailsButton);
+
       await waitFor(() => {
-        expect(toast.error).toHaveBeenCalledWith('Erro ao carregar detalhes do profissional')
-      })
-    })
+        expect(toast.error).toHaveBeenCalledWith(
+          'Erro ao carregar detalhes do profissional'
+        );
+      });
+    });
 
     it('should handle delete errors', async () => {
-      ;(deleteProfessional as jest.Mock).mockRejectedValue(new Error('Delete error'))
-      
-      render(<ProfessionalManagement />)
-      
+      (deleteProfessional as jest.Mock).mockRejectedValue(
+        new Error('Delete error')
+      );
+
+      render(<ProfessionalManagement />);
+
       // This would require simulating the delete flow
       // For now, ensuring the error handling is set up
-      expect(deleteProfessional).toBeDefined()
-    })
-  })
+      expect(deleteProfessional).toBeDefined();
+    });
+  });
 
   describe('Professional Details Dialog', () => {
     it('should display professional information in details dialog', async () => {
-      render(<ProfessionalManagement />)
-      
+      render(<ProfessionalManagement />);
+
       await waitFor(() => {
-        expect(screen.getByText('Dr. Ana Silva')).toBeInTheDocument()
-      })
-      
+        expect(screen.getByText('Dr. Ana Silva')).toBeInTheDocument();
+      });
+
       // Open details dialog
-      const moreButtons = screen.getAllByRole('button', { name: /more/i })
-      fireEvent.click(moreButtons[0])
-      
-      const viewDetailsButton = screen.getByText('Ver Detalhes')
-      fireEvent.click(viewDetailsButton)
-      
+      const moreButtons = screen.getAllByRole('button', { name: /more/i });
+      fireEvent.click(moreButtons[0]);
+
+      const viewDetailsButton = screen.getByText('Ver Detalhes');
+      fireEvent.click(viewDetailsButton);
+
       await waitFor(() => {
-        expect(screen.getByText('Detalhes do Profissional')).toBeInTheDocument()
-      })
-    })
+        expect(
+          screen.getByText('Detalhes do Profissional')
+        ).toBeInTheDocument();
+      });
+    });
 
     it('should display credentials in details dialog', async () => {
-      render(<ProfessionalManagement />)
-      
+      render(<ProfessionalManagement />);
+
       await waitFor(() => {
-        expect(screen.getByText('Dr. Ana Silva')).toBeInTheDocument()
-      })
-      
+        expect(screen.getByText('Dr. Ana Silva')).toBeInTheDocument();
+      });
+
       // Open details dialog
-      const moreButtons = screen.getAllByRole('button', { name: /more/i })
-      fireEvent.click(moreButtons[0])
-      
-      const viewDetailsButton = screen.getByText('Ver Detalhes')
-      fireEvent.click(viewDetailsButton)
-      
+      const moreButtons = screen.getAllByRole('button', { name: /more/i });
+      fireEvent.click(moreButtons[0]);
+
+      const viewDetailsButton = screen.getByText('Ver Detalhes');
+      fireEvent.click(viewDetailsButton);
+
       await waitFor(() => {
-        expect(getProfessionalCredentials).toHaveBeenCalledWith('1')
-        expect(getProfessionalServices).toHaveBeenCalledWith('1')
-      })
-    })
+        expect(getProfessionalCredentials).toHaveBeenCalledWith('1');
+        expect(getProfessionalServices).toHaveBeenCalledWith('1');
+      });
+    });
 
     it('should close details dialog when close button is clicked', async () => {
-      render(<ProfessionalManagement />)
-      
+      render(<ProfessionalManagement />);
+
       await waitFor(() => {
-        expect(screen.getByText('Dr. Ana Silva')).toBeInTheDocument()
-      })
-      
+        expect(screen.getByText('Dr. Ana Silva')).toBeInTheDocument();
+      });
+
       // This would require more complex dialog testing
       // For now, ensuring the dialog structure is correct
-      expect(screen.queryByText('Detalhes do Profissional')).not.toBeInTheDocument()
-    })
-  })
+      expect(
+        screen.queryByText('Detalhes do Profissional')
+      ).not.toBeInTheDocument();
+    });
+  });
 
   describe('Navigation', () => {
     it('should navigate to new professional form', () => {
-      const mockPush = jest.fn()
+      const mockPush = jest.fn();
       jest.doMock('next/navigation', () => ({
-        useRouter: () => ({ push: mockPush, back: jest.fn() })
-      }))
-      
-      render(<ProfessionalManagement />)
-      
-      const addButton = screen.getByText('Cadastrar Profissional')
-      fireEvent.click(addButton)
-      
+        useRouter: () => ({ push: mockPush, back: jest.fn() }),
+      }));
+
+      render(<ProfessionalManagement />);
+
+      const addButton = screen.getByText('Cadastrar Profissional');
+      fireEvent.click(addButton);
+
       // Note: This test would need to be adjusted based on actual router implementation
-      expect(addButton).toBeInTheDocument()
-    })
+      expect(addButton).toBeInTheDocument();
+    });
 
     it('should navigate to edit professional form', async () => {
-      render(<ProfessionalManagement />)
-      
+      render(<ProfessionalManagement />);
+
       await waitFor(() => {
-        expect(screen.getByText('Dr. Ana Silva')).toBeInTheDocument()
-      })
-      
+        expect(screen.getByText('Dr. Ana Silva')).toBeInTheDocument();
+      });
+
       // This would require opening the dropdown and clicking edit
       // For now, ensuring the action is available
-      const moreButtons = screen.getAllByRole('button', { name: /more/i })
-      expect(moreButtons.length).toBeGreaterThan(0)
-    })
-  })
+      const moreButtons = screen.getAllByRole('button', { name: /more/i });
+      expect(moreButtons.length).toBeGreaterThan(0);
+    });
+  });
 
   describe('Accessibility', () => {
     it('should have proper ARIA labels', () => {
-      render(<ProfessionalManagement />)
-      
-      expect(screen.getByRole('table')).toBeInTheDocument()
-      expect(screen.getByRole('searchbox')).toBeInTheDocument()
-      expect(screen.getAllByRole('button')).toHaveLength(5) // Add button + more buttons
-    })
+      render(<ProfessionalManagement />);
+
+      expect(screen.getByRole('table')).toBeInTheDocument();
+      expect(screen.getByRole('searchbox')).toBeInTheDocument();
+      expect(screen.getAllByRole('button')).toHaveLength(5); // Add button + more buttons
+    });
 
     it('should support keyboard navigation', () => {
-      render(<ProfessionalManagement />)
-      
-      const searchInput = screen.getByPlaceholderText('Buscar profissionais...')
-      expect(searchInput).toBeInTheDocument()
-      
-      fireEvent.focus(searchInput)
-      expect(document.activeElement).toBe(searchInput)
-    })
-  })
+      render(<ProfessionalManagement />);
+
+      const searchInput = screen.getByPlaceholderText(
+        'Buscar profissionais...'
+      );
+      expect(searchInput).toBeInTheDocument();
+
+      fireEvent.focus(searchInput);
+      expect(document.activeElement).toBe(searchInput);
+    });
+  });
 
   describe('Data Validation', () => {
     it('should handle empty professional data', async () => {
-      ;(getProfessionals as jest.Mock).mockResolvedValue([])
-      
-      render(<ProfessionalManagement />)
-      
+      (getProfessionals as jest.Mock).mockResolvedValue([]);
+
+      render(<ProfessionalManagement />);
+
       await waitFor(() => {
-        expect(screen.getByText('Nenhum profissional encontrado')).toBeInTheDocument()
-      })
-    })
+        expect(
+          screen.getByText('Nenhum profissional encontrado')
+        ).toBeInTheDocument();
+      });
+    });
 
     it('should handle professionals without optional fields', async () => {
       const incompleteProfile = {
         ...mockProfessionals[0],
         phone_number: null,
         birth_date: null,
-        bio: null
-      }
-      
-      ;(getProfessionals as jest.Mock).mockResolvedValue([incompleteProfile])
-      
-      render(<ProfessionalManagement />)
-      
+        bio: null,
+      };
+
+      (getProfessionals as jest.Mock).mockResolvedValue([incompleteProfile]);
+
+      render(<ProfessionalManagement />);
+
       await waitFor(() => {
-        expect(screen.getByText('Dr. Ana Silva')).toBeInTheDocument()
-      })
-    })
+        expect(screen.getByText('Dr. Ana Silva')).toBeInTheDocument();
+      });
+    });
 
     it('should validate professional data structure', async () => {
-      render(<ProfessionalManagement />)
-      
+      render(<ProfessionalManagement />);
+
       await waitFor(() => {
-        expect(getProfessionals).toHaveBeenCalled()
-      })
-      
+        expect(getProfessionals).toHaveBeenCalled();
+      });
+
       // Ensure mock data has required fields
-      expect(mockProfessionals[0]).toHaveProperty('id')
-      expect(mockProfessionals[0]).toHaveProperty('given_name')
-      expect(mockProfessionals[0]).toHaveProperty('family_name')
-      expect(mockProfessionals[0]).toHaveProperty('email')
-      expect(mockProfessionals[0]).toHaveProperty('status')
-    })
-  })
+      expect(mockProfessionals[0]).toHaveProperty('id');
+      expect(mockProfessionals[0]).toHaveProperty('given_name');
+      expect(mockProfessionals[0]).toHaveProperty('family_name');
+      expect(mockProfessionals[0]).toHaveProperty('email');
+      expect(mockProfessionals[0]).toHaveProperty('status');
+    });
+  });
 
   describe('Performance', () => {
     it('should not re-render unnecessarily', async () => {
-      const renderSpy = jest.fn()
-      
+      const renderSpy = jest.fn();
+
       const TestComponent = () => {
-        renderSpy()
-        return <ProfessionalManagement />
-      }
-      
-      render(<TestComponent />)
-      
+        renderSpy();
+        return <ProfessionalManagement />;
+      };
+
+      render(<TestComponent />);
+
       await waitFor(() => {
-        expect(renderSpy).toHaveBeenCalledTimes(1)
-      })
-    })
+        expect(renderSpy).toHaveBeenCalledTimes(1);
+      });
+    });
 
     it('should handle large datasets efficiently', async () => {
       const largeProfessionalSet = Array.from({ length: 100 }, (_, i) => ({
         ...mockProfessionals[0],
         id: `${i + 1}`,
         given_name: `Professional ${i + 1}`,
-        email: `professional${i + 1}@email.com`
-      }))
-      
-      ;(getProfessionals as jest.Mock).mockResolvedValue(largeProfessionalSet)
-      
-      render(<ProfessionalManagement />)
-      
+        email: `professional${i + 1}@email.com`,
+      }));
+
+      (getProfessionals as jest.Mock).mockResolvedValue(largeProfessionalSet);
+
+      render(<ProfessionalManagement />);
+
       await waitFor(() => {
-        expect(screen.getByText('Professional 1')).toBeInTheDocument()
-      })
-    })
-  })
-})
+        expect(screen.getByText('Professional 1')).toBeInTheDocument();
+      });
+    });
+  });
+});

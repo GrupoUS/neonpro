@@ -9,22 +9,53 @@
 // =====================================================================================
 
 export type ItemType = 'supply' | 'medication' | 'equipment' | 'consumable';
-export type StorageType = 'room' | 'cabinet' | 'refrigerator' | 'freezer' | 'controlled';
-export type TransactionType = 'receive' | 'issue' | 'transfer' | 'adjustment' | 'count' | 'expire' | 'return';
-export type ReferenceType = 'purchase_order' | 'treatment' | 'appointment' | 'adjustment' | 'transfer';
-export type AlertType = 'low_stock' | 'expired' | 'expiring' | 'overstock' | 'zero_stock';
+export type StorageType =
+  | 'room'
+  | 'cabinet'
+  | 'refrigerator'
+  | 'freezer'
+  | 'controlled';
+export type TransactionType =
+  | 'receive'
+  | 'issue'
+  | 'transfer'
+  | 'adjustment'
+  | 'count'
+  | 'expire'
+  | 'return';
+export type ReferenceType =
+  | 'purchase_order'
+  | 'treatment'
+  | 'appointment'
+  | 'adjustment'
+  | 'transfer';
+export type AlertType =
+  | 'low_stock'
+  | 'expired'
+  | 'expiring'
+  | 'overstock'
+  | 'zero_stock';
 export type AlertLevel = 'info' | 'warning' | 'critical' | 'urgent';
 export type AlertStatus = 'active' | 'acknowledged' | 'resolved' | 'dismissed';
 export type StockStatus = 'active' | 'quarantine' | 'expired' | 'recalled';
 export type VerificationStatus = 'pending' | 'verified' | 'rejected';
 export type ScanType = 'barcode' | 'qr_code';
 export type ScanFormat = 'code128' | 'code39' | 'ean13' | 'qr' | 'datamatrix';
-export type ScanPurpose = 'stock_in' | 'stock_out' | 'count' | 'lookup' | 'transfer';
+export type ScanPurpose =
+  | 'stock_in'
+  | 'stock_out'
+  | 'count'
+  | 'lookup'
+  | 'transfer';
 export type ScanStatus = 'success' | 'not_found' | 'error' | 'duplicate';
 export type DeviceType = 'mobile' | 'scanner' | 'tablet' | 'desktop';
 export type SyncStatus = 'pending' | 'synced' | 'error' | 'conflict';
 export type SyncOperation = 'create' | 'update' | 'delete';
-export type ConflictResolution = 'server_wins' | 'client_wins' | 'merge' | 'manual';
+export type ConflictResolution =
+  | 'server_wins'
+  | 'client_wins'
+  | 'merge'
+  | 'manual';
 
 // =====================================================================================
 // CORE INVENTORY INTERFACES
@@ -33,36 +64,36 @@ export type ConflictResolution = 'server_wins' | 'client_wins' | 'merge' | 'manu
 export interface InventoryItem {
   id: string;
   clinic_id: string;
-  
+
   // Basic Item Information
   name: string;
   description?: string;
   sku: string;
   barcode?: string;
   qr_code?: string;
-  
+
   // Classification
   category: string;
   subcategory?: string;
   item_type: ItemType;
-  
+
   // Measurement & Ordering
   unit_of_measure: string;
   unit_size?: number;
   unit_cost?: number;
-  
+
   // Stock Management
   reorder_level: number;
   max_stock: number;
   min_stock: number;
   safety_stock: number;
-  
+
   // Medical/Regulatory Information
   requires_prescription: boolean;
   controlled_substance: boolean;
   anvisa_code?: string;
   therapeutic_class?: string;
-  
+
   // Status & Metadata
   is_active: boolean;
   created_at: string;
@@ -73,25 +104,25 @@ export interface InventoryItem {
 export interface InventoryLocation {
   id: string;
   clinic_id: string;
-  
+
   // Location Information
   location_name: string;
   location_code: string;
   address?: string;
   room_number?: string;
-  
+
   // Storage Details
   storage_type: StorageType;
   temperature_controlled: boolean;
   min_temperature?: number;
   max_temperature?: number;
   humidity_controlled: boolean;
-  
+
   // Access Control
   access_permissions: string[];
   requires_authorization: boolean;
   responsible_user_id?: string;
-  
+
   // Status & Metadata
   is_active: boolean;
   created_at: string;
@@ -102,30 +133,30 @@ export interface StockLevel {
   id: string;
   item_id: string;
   location_id: string;
-  
+
   // Stock Quantities
   current_quantity: number;
   reserved_quantity: number;
   available_quantity: number; // computed: current - reserved
   allocated_quantity: number;
-  
+
   // Batch Information
   batch_number?: string;
   lot_number?: string;
   serial_number?: string;
   expiration_date?: string;
   manufacture_date?: string;
-  
+
   // Tracking
   last_counted_at?: string;
   last_counted_by?: string;
   variance_quantity: number;
-  
+
   // Status & Metadata
   status: StockStatus;
   last_updated: string;
   created_at: string;
-  
+
   // Relations (populated when needed)
   item?: InventoryItem;
   location?: InventoryLocation;
@@ -135,42 +166,42 @@ export interface InventoryTransaction {
   id: string;
   item_id: string;
   location_id: string;
-  
+
   // Transaction Details
   transaction_type: TransactionType;
   reference_type?: ReferenceType;
   reference_id?: string;
-  
+
   // Quantities
   quantity_before: number;
   quantity_change: number;
   quantity_after: number;
-  
+
   // Batch Information
   batch_number?: string;
   lot_number?: string;
   expiration_date?: string;
-  
+
   // Cost Information
   unit_cost?: number;
   total_cost?: number;
-  
+
   // Transaction Context
   reason?: string;
   notes?: string;
   source_location_id?: string;
   destination_location_id?: string;
-  
+
   // Audit Information
   transaction_date: string;
   created_by: string;
   approved_by?: string;
-  
+
   // Verification
   verification_status: VerificationStatus;
   verified_by?: string;
   verified_at?: string;
-  
+
   // Relations (populated when needed)
   item?: InventoryItem;
   location?: InventoryLocation;
@@ -188,17 +219,17 @@ export interface StockAlert {
   clinic_id: string;
   item_id: string;
   location_id?: string;
-  
+
   // Alert Details
   alert_type: AlertType;
   alert_level: AlertLevel;
-  
+
   // Alert Content
   title: string;
   message: string;
   current_quantity?: number;
   threshold_quantity?: number;
-  
+
   // Status & Timing
   status: AlertStatus;
   created_at: string;
@@ -206,12 +237,12 @@ export interface StockAlert {
   acknowledged_by?: string;
   resolved_at?: string;
   resolved_by?: string;
-  
+
   // Delivery Tracking
   notification_sent: boolean;
   notification_channels: string[];
   escalation_level: number;
-  
+
   // Relations (populated when needed)
   item?: InventoryItem;
   location?: InventoryLocation;
@@ -224,30 +255,30 @@ export interface StockAlert {
 export interface BarcodeScan {
   id: string;
   clinic_id: string;
-  
+
   // Scan Details
   barcode_value: string;
   scan_type: ScanType;
   scan_format?: ScanFormat;
-  
+
   // Context
   item_id?: string;
   location_id?: string;
   scan_purpose: ScanPurpose;
-  
+
   // Scan Result
   scan_status: ScanStatus;
   error_message?: string;
-  
+
   // Device & User
   device_id?: string;
   device_type?: DeviceType;
   scanned_by: string;
   scanned_at: string;
-  
+
   // Transaction Reference
   transaction_id?: string;
-  
+
   // Relations (populated when needed)
   item?: InventoryItem;
   location?: InventoryLocation;
@@ -261,26 +292,26 @@ export interface BarcodeScan {
 export interface MobileSyncQueue {
   id: string;
   clinic_id: string;
-  
+
   // Sync Details
   entity_type: string;
   entity_id: string;
   operation: SyncOperation;
-  
+
   // Sync Data
   sync_data: Record<string, any>;
   client_timestamp: string;
   server_timestamp: string;
-  
+
   // Status
   sync_status: SyncStatus;
   error_message?: string;
   conflict_resolution?: ConflictResolution;
-  
+
   // Device Info
   device_id: string;
   user_id: string;
-  
+
   // Processing
   processed_at?: string;
   retry_count: number;
@@ -393,25 +424,25 @@ export interface InventorySearchResponse {
 export interface InventoryAnalytics {
   clinic_id: string;
   period: string;
-  
+
   // Stock Overview
   total_items: number;
   total_locations: number;
   total_value: number;
-  
+
   // Stock Status
   in_stock_items: number;
   low_stock_items: number;
   out_of_stock_items: number;
   expired_items: number;
   expiring_items: number;
-  
+
   // Transaction Volume
   total_transactions: number;
   inbound_transactions: number;
   outbound_transactions: number;
   adjustments: number;
-  
+
   // Category Breakdown
   categories: {
     category: string;
@@ -419,7 +450,7 @@ export interface InventoryAnalytics {
     total_value: number;
     low_stock_count: number;
   }[];
-  
+
   // Location Breakdown
   locations: {
     location_id: string;
@@ -428,14 +459,14 @@ export interface InventoryAnalytics {
     total_value: number;
     utilization_percentage: number;
   }[];
-  
+
   // Trends
   stock_trend: {
     date: string;
     total_quantity: number;
     total_value: number;
   }[];
-  
+
   // Top Items
   top_used_items: {
     item_id: string;
@@ -443,7 +474,7 @@ export interface InventoryAnalytics {
     usage_quantity: number;
     usage_frequency: number;
   }[];
-  
+
   top_value_items: {
     item_id: string;
     item_name: string;
@@ -458,17 +489,17 @@ export interface InventoryKPIs {
   inventory_turnover: number;
   days_on_hand: number;
   fill_rate: number; // percentage
-  
+
   // Cost Metrics
   carrying_cost: number;
   stockout_cost: number;
   obsolescence_cost: number;
-  
+
   // Operational Metrics
   cycle_count_accuracy: number;
   replenishment_frequency: number;
   lead_time_variance: number;
-  
+
   // Alert Metrics
   alert_response_time: number; // average in minutes
   alerts_resolved_percentage: number;

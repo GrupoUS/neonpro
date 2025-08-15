@@ -1,7 +1,7 @@
 // Story 11.2: Individual No-Show Prediction API Routes
 // CRUD operations for specific predictions
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { noShowPredictionEngine } from '@/app/lib/services/no-show-prediction';
 import { UpdatePredictionInputSchema } from '@/app/lib/validations/no-show-prediction';
 import { createClient } from '@/app/utils/supabase/server';
@@ -12,25 +12,30 @@ interface RouteParams {
   };
 }
 
-export async function GET(request: NextRequest, { params }: RouteParams) {
+export async function GET(_request: NextRequest, { params }: RouteParams) {
   try {
     const supabase = await createClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const prediction = await noShowPredictionEngine.getPrediction(params.id);
-    
+
     if (!prediction) {
-      return NextResponse.json({ error: 'Prediction not found' }, { status: 404 });
+      return NextResponse.json(
+        { error: 'Prediction not found' },
+        { status: 404 }
+      );
     }
 
     // Get related data
     const [riskFactors, interventions] = await Promise.all([
       noShowPredictionEngine.getRiskFactorsByPatient(prediction.patient_id),
-      noShowPredictionEngine.getRecommendedInterventions(prediction.id)
+      noShowPredictionEngine.getRecommendedInterventions(prediction.id),
     ]);
 
     // Get appointment details
@@ -64,9 +69,8 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       appointment,
       risk_factors: riskFactors,
       interventions,
-      confidence_breakdown: prediction.factors_analyzed
+      confidence_breakdown: prediction.factors_analyzed,
     });
-
   } catch (error) {
     console.error('API error:', error);
     return NextResponse.json(
@@ -79,8 +83,10 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
     const supabase = await createClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -89,9 +95,14 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     const validatedInput = UpdatePredictionInputSchema.parse(body);
 
     // Check if prediction exists
-    const existingPrediction = await noShowPredictionEngine.getPrediction(params.id);
+    const existingPrediction = await noShowPredictionEngine.getPrediction(
+      params.id
+    );
     if (!existingPrediction) {
-      return NextResponse.json({ error: 'Prediction not found' }, { status: 404 });
+      return NextResponse.json(
+        { error: 'Prediction not found' },
+        { status: 404 }
+      );
     }
 
     // Update the prediction
@@ -108,20 +119,21 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
     // Get updated related data
     const [riskFactors, interventions] = await Promise.all([
-      noShowPredictionEngine.getRiskFactorsByPatient(updatedPrediction.patient_id),
-      noShowPredictionEngine.getRecommendedInterventions(updatedPrediction.id)
+      noShowPredictionEngine.getRiskFactorsByPatient(
+        updatedPrediction.patient_id
+      ),
+      noShowPredictionEngine.getRecommendedInterventions(updatedPrediction.id),
     ]);
 
     return NextResponse.json({
       prediction: updatedPrediction,
       risk_factors: riskFactors,
       interventions,
-      message: 'Prediction updated successfully'
+      message: 'Prediction updated successfully',
     });
-
   } catch (error) {
     console.error('API error:', error);
-    
+
     if (error instanceof Error && error.message.includes('validation')) {
       return NextResponse.json(
         { error: 'Invalid input data', details: error.message },
@@ -136,19 +148,26 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: RouteParams) {
+export async function DELETE(_request: NextRequest, { params }: RouteParams) {
   try {
     const supabase = await createClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Check if prediction exists
-    const existingPrediction = await noShowPredictionEngine.getPrediction(params.id);
+    const existingPrediction = await noShowPredictionEngine.getPrediction(
+      params.id
+    );
     if (!existingPrediction) {
-      return NextResponse.json({ error: 'Prediction not found' }, { status: 404 });
+      return NextResponse.json(
+        { error: 'Prediction not found' },
+        { status: 404 }
+      );
     }
 
     // Delete the prediction (cascade will handle related interventions)
@@ -159,13 +178,15 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
 
     if (error) {
       console.error('Database error:', error);
-      return NextResponse.json({ error: 'Failed to delete prediction' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Failed to delete prediction' },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json({
-      message: 'Prediction deleted successfully'
+      message: 'Prediction deleted successfully',
     });
-
   } catch (error) {
     console.error('API error:', error);
     return NextResponse.json(

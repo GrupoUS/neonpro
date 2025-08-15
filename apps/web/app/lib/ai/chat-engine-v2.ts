@@ -1,21 +1,21 @@
 // NeonProAIChatEngine - Core AI Chat Processing Engine
 // Implementation of Story 4.1: Universal AI Chat Assistant
 
-import { createClient } from "@/app/utils/supabase/server";
-import type { SupabaseClient } from "@supabase/supabase-js";
-import OpenAI from "openai";
-import {
+import type { SupabaseClient } from '@supabase/supabase-js';
+import OpenAI from 'openai';
+import { createClient } from '@/app/utils/supabase/server';
+import type {
   AIRequest,
   AIResponse,
   EnrichedContext,
   QueryClassification,
   SecurityValidation,
   UniversalChatContext,
-} from "./types";
+} from './types';
 
 // Initialize OpenAI client
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || "",
+  apiKey: process.env.OPENAI_API_KEY || '',
 });
 
 /**
@@ -35,7 +35,7 @@ export class NeonProAIChatEngine {
    */
   async processChat(request: AIRequest): Promise<AIResponse> {
     try {
-      console.log("[NeonProAI] Processing chat request:", request.query);
+      console.log('[NeonProAI] Processing chat request:', request.query);
 
       // Step 1: Security validation
       const securityCheck = await this.validateSecurity(request);
@@ -62,10 +62,10 @@ export class NeonProAIChatEngine {
         classification
       );
 
-      console.log("[NeonProAI] Chat processed successfully");
+      console.log('[NeonProAI] Chat processed successfully');
       return response;
     } catch (error) {
-      console.error("[NeonProAI] Error processing chat:", error);
+      console.error('[NeonProAI] Error processing chat:', error);
       return this.createErrorResponse(error as Error);
     }
   }
@@ -80,7 +80,7 @@ export class NeonProAIChatEngine {
     try {
       // Validate user session
       if (!request.sessionId) {
-        return { isValid: false, reason: "Missing session ID" };
+        return { isValid: false, reason: 'Missing session ID' };
       }
 
       // Check user permissions based on query type
@@ -90,16 +90,16 @@ export class NeonProAIChatEngine {
       );
 
       if (!hasPermission) {
-        return { isValid: false, reason: "Insufficient permissions" };
+        return { isValid: false, reason: 'Insufficient permissions' };
       }
 
       // LGPD compliance check
       const lgpdCompliant = this.validateLGPDCompliance(request.query);
       if (!lgpdCompliant) {
-        return { isValid: false, reason: "LGPD compliance violation detected" };
+        return { isValid: false, reason: 'LGPD compliance violation detected' };
       }
 
-      return { isValid: true, reason: "Security validation passed" };
+      return { isValid: true, reason: 'Security validation passed' };
     } catch (error) {
       return { isValid: false, reason: `Security validation error: ${error}` };
     }
@@ -120,35 +120,35 @@ export class NeonProAIChatEngine {
       );
 
       const completion = await openai.chat.completions.create({
-        model: "gpt-4",
+        model: 'gpt-4',
         messages: [
-          { role: "system", content: classificationPrompt },
-          { role: "user", content: message },
+          { role: 'system', content: classificationPrompt },
+          { role: 'user', content: message },
         ],
-        response_format: { type: "json_object" },
+        response_format: { type: 'json_object' },
         temperature: 0.1,
       });
 
-      const result = JSON.parse(completion.choices[0].message.content || "{}");
+      const result = JSON.parse(completion.choices[0].message.content || '{}');
 
       return {
-        epic: "epic4" as const,
-        category: result.category || "general_query",
+        epic: 'epic4' as const,
+        category: result.category || 'general_query',
         confidence: result.confidence || 0.5,
-        requiredPermissions: result.permissions || ["read_basic"],
+        requiredPermissions: result.permissions || ['read_basic'],
         suggestedActions: result.actions || [],
-        affectedSystems: result.systems || ["general"],
+        affectedSystems: result.systems || ['general'],
       };
     } catch (error) {
-      console.error("[NeonProAI] Query classification error:", error);
+      console.error('[NeonProAI] Query classification error:', error);
       // Fallback classification
       return {
-        epic: "epic4" as const,
-        category: "general_query",
+        epic: 'epic4' as const,
+        category: 'general_query',
         confidence: 0.3,
-        requiredPermissions: ["read_basic"],
-        suggestedActions: ["show_help"],
-        affectedSystems: ["general"],
+        requiredPermissions: ['read_basic'],
+        suggestedActions: ['show_help'],
+        affectedSystems: ['general'],
       };
     }
   }
@@ -173,21 +173,21 @@ export class NeonProAIChatEngine {
     try {
       // Add relevant data based on classification
       switch (classification.category) {
-        case "appointment_query":
+        case 'appointment_query':
           if (enriched.relevantData) {
             enriched.relevantData.recentAppointments =
               await this.getRecentAppointments(baseContext.clinic.id, 10);
           }
           break;
 
-        case "financial_query":
+        case 'financial_query':
           if (enriched.relevantData) {
             enriched.relevantData.financialSummary =
               await this.getFinancialSummary(baseContext.clinic.id);
           }
           break;
 
-        case "patient_query":
+        case 'patient_query':
           // LGPD-compliant patient data (anonymized)
           if (enriched.relevantData) {
             enriched.relevantData.patientStats =
@@ -195,7 +195,7 @@ export class NeonProAIChatEngine {
           }
           break;
 
-        case "analytics_query":
+        case 'analytics_query':
           if (enriched.relevantData) {
             enriched.relevantData.analytics = await this.getAnalyticsSummary(
               baseContext.clinic.id
@@ -206,7 +206,7 @@ export class NeonProAIChatEngine {
 
       return enriched;
     } catch (error) {
-      console.error("[NeonProAI] Context enrichment error:", error);
+      console.error('[NeonProAI] Context enrichment error:', error);
       return enriched;
     }
   }
@@ -223,10 +223,10 @@ export class NeonProAIChatEngine {
       const systemPrompt = this.buildSystemPrompt(context, classification);
 
       const completion = await openai.chat.completions.create({
-        model: "gpt-4",
+        model: 'gpt-4',
         messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: message },
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: message },
         ],
         temperature: 0.7,
         max_tokens: 1000,
@@ -234,7 +234,7 @@ export class NeonProAIChatEngine {
 
       const responseContent =
         completion.choices[0].message.content ||
-        "Desculpe, não consegui gerar uma resposta adequada.";
+        'Desculpe, não consegui gerar uma resposta adequada.';
 
       return {
         message: responseContent,
@@ -243,7 +243,7 @@ export class NeonProAIChatEngine {
         actions: classification.suggestedActions,
       };
     } catch (error) {
-      console.error("[NeonProAI] Response generation error:", error);
+      console.error('[NeonProAI] Response generation error:', error);
       return this.createErrorResponse(error as Error);
     }
   }
@@ -252,7 +252,7 @@ export class NeonProAIChatEngine {
    * Build classification prompt for OpenAI
    */
   private buildClassificationPrompt(
-    message: string,
+    _message: string,
     context: UniversalChatContext
   ): string {
     return `You are a clinical management AI assistant. Classify the following user query and respond with JSON.
@@ -290,7 +290,7 @@ Required JSON format:
   ): string {
     const clinicInfo = `Clinic: ${context.clinic.name} (${context.clinic.id})`;
     const userInfo = `User: ${context.user.name} (${context.user.role})`;
-    const systemsInfo = `Systems: ${classification.affectedSystems.join(", ")}`;
+    const systemsInfo = `Systems: ${classification.affectedSystems.join(', ')}`;
 
     return `You are NeonPro AI, an intelligent assistant for ${
       context.clinic.name
@@ -317,10 +317,10 @@ Available Data: ${JSON.stringify(context.relevantData, null, 2)}`;
    */
   private async getRecentAppointments(clinicId: string, limit: number) {
     const { data } = await this.supabase
-      .from("appointments")
-      .select("id, start_time, status, service_type")
-      .eq("clinic_id", clinicId)
-      .order("start_time", { ascending: false })
+      .from('appointments')
+      .select('id, start_time, status, service_type')
+      .eq('clinic_id', clinicId)
+      .order('start_time', { ascending: false })
       .limit(limit);
 
     return data || [];
@@ -328,22 +328,22 @@ Available Data: ${JSON.stringify(context.relevantData, null, 2)}`;
 
   private async getFinancialSummary(clinicId: string) {
     const { data } = await this.supabase
-      .from("financial_transactions")
-      .select("amount, type, created_at")
-      .eq("clinic_id", clinicId)
+      .from('financial_transactions')
+      .select('amount, type, created_at')
+      .eq('clinic_id', clinicId)
       .gte(
-        "created_at",
+        'created_at',
         new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
       );
 
     return {
       totalRevenue:
         data
-          ?.filter((t) => t.type === "income")
+          ?.filter((t) => t.type === 'income')
           .reduce((sum, t) => sum + t.amount, 0) || 0,
       totalExpenses:
         data
-          ?.filter((t) => t.type === "expense")
+          ?.filter((t) => t.type === 'expense')
           .reduce((sum, t) => sum + t.amount, 0) || 0,
       transactionCount: data?.length || 0,
     };
@@ -351,9 +351,9 @@ Available Data: ${JSON.stringify(context.relevantData, null, 2)}`;
 
   private async getPatientStatistics(clinicId: string) {
     const { data } = await this.supabase
-      .from("patients")
-      .select("id, created_at")
-      .eq("clinic_id", clinicId);
+      .from('patients')
+      .select('id, created_at')
+      .eq('clinic_id', clinicId);
 
     return {
       totalPatients: data?.length || 0,
@@ -366,7 +366,7 @@ Available Data: ${JSON.stringify(context.relevantData, null, 2)}`;
     };
   }
 
-  private async getAnalyticsSummary(clinicId: string) {
+  private async getAnalyticsSummary(_clinicId: string) {
     // This would integrate with Epic 3 business intelligence
     return {
       revenue: 0,
@@ -379,12 +379,12 @@ Available Data: ${JSON.stringify(context.relevantData, null, 2)}`;
    * Security and compliance helpers
    */
   private async checkUserPermissions(
-    sessionId: string,
-    clinicId: string
+    _sessionId: string,
+    _clinicId: string
   ): Promise<boolean> {
     try {
       const { data: session } = await this.supabase.auth.getSession();
-      return session.session?.user?.id ? true : false;
+      return !!session.session?.user?.id;
     } catch {
       return false;
     }
@@ -402,14 +402,14 @@ Available Data: ${JSON.stringify(context.relevantData, null, 2)}`;
   }
 
   private extractSources(context: EnrichedContext): string[] {
-    const sources = ["neonpro_database"];
+    const sources = ['neonpro_database'];
 
     if (context.relevantData?.recentAppointments)
-      sources.push("appointments_system");
+      sources.push('appointments_system');
     if (context.relevantData?.financialSummary)
-      sources.push("financial_system");
-    if (context.relevantData?.patientStats) sources.push("patient_management");
-    if (context.relevantData?.analytics) sources.push("business_intelligence");
+      sources.push('financial_system');
+    if (context.relevantData?.patientStats) sources.push('patient_management');
+    if (context.relevantData?.analytics) sources.push('business_intelligence');
 
     return sources;
   }
@@ -418,27 +418,27 @@ Available Data: ${JSON.stringify(context.relevantData, null, 2)}`;
     const visualizations: string[] = [];
 
     switch (classification.category) {
-      case "financial_query":
-        visualizations.push("revenue_chart", "expense_breakdown");
+      case 'financial_query':
+        visualizations.push('revenue_chart', 'expense_breakdown');
         break;
-      case "appointment_query":
-        visualizations.push("calendar_view", "schedule_timeline");
+      case 'appointment_query':
+        visualizations.push('calendar_view', 'schedule_timeline');
         break;
-      case "analytics_query":
-        visualizations.push("dashboard_overview", "kpi_metrics");
+      case 'analytics_query':
+        visualizations.push('dashboard_overview', 'kpi_metrics');
         break;
     }
 
     return visualizations;
   }
 
-  private createErrorResponse(error: Error): AIResponse {
+  private createErrorResponse(_error: Error): AIResponse {
     return {
       message:
-        "Desculpe, encontrei um problema ao processar sua solicitação. Tente novamente em alguns instantes.",
-      sources: ["error_handler"],
+        'Desculpe, encontrei um problema ao processar sua solicitação. Tente novamente em alguns instantes.',
+      sources: ['error_handler'],
       visualizations: [],
-      actions: ["retry", "contact_support"],
+      actions: ['retry', 'contact_support'],
     };
   }
 }

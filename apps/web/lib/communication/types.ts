@@ -4,8 +4,18 @@
  */
 
 export type CommunicationChannel = 'sms' | 'email' | 'whatsapp';
-export type MessageType = 'reminder' | 'confirmation' | 'followup' | 'waitlist' | 'cancellation';
-export type MessageStatus = 'pending' | 'sent' | 'delivered' | 'failed' | 'responded';
+export type MessageType =
+  | 'reminder'
+  | 'confirmation'
+  | 'followup'
+  | 'waitlist'
+  | 'cancellation';
+export type MessageStatus =
+  | 'pending'
+  | 'sent'
+  | 'delivered'
+  | 'failed'
+  | 'responded';
 export type ReminderTiming = 24 | 2 | 0.5; // hours before appointment
 
 /**
@@ -230,7 +240,11 @@ export interface ProviderConfig {
  */
 export interface CommunicationJob {
   id: string;
-  type: 'send_reminder' | 'send_confirmation' | 'send_followup' | 'process_campaign';
+  type:
+    | 'send_reminder'
+    | 'send_confirmation'
+    | 'send_followup'
+    | 'process_campaign';
   data: {
     appointment_id?: string;
     patient_id: string;

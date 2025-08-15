@@ -2,34 +2,39 @@
 // Epic 7.3: Treatment Follow-up Automation
 // Author: VoidBeast Agent
 
+import { type NextRequest, NextResponse } from 'next/server';
 import { treatmentFollowupService } from '@/app/lib/services/treatment-followup-service';
-import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const { escalationLevel, reason, notifyRoles, autoScheduleAppointment } = await request.json();
-    
+    const { escalationLevel, reason, notifyRoles, autoScheduleAppointment } =
+      await request.json();
+
     // Check escalation triggers
-    const triggeredRules = await treatmentFollowupService.checkEscalationTriggers(params.id);
-    
+    const triggeredRules =
+      await treatmentFollowupService.checkEscalationTriggers(params.id);
+
     if (triggeredRules.length === 0) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'No escalation triggers met for this follow-up' 
+        {
+          success: false,
+          error: 'No escalation triggers met for this follow-up',
         },
         { status: 400 }
       );
     }
 
     // Update follow-up status to escalated
-    const followup = await treatmentFollowupService.updatePatientFollowup(params.id, {
-      status: 'escalated',
-      notes: reason || 'Escalated automatically due to triggered rules'
-    });
+    const followup = await treatmentFollowupService.updatePatientFollowup(
+      params.id,
+      {
+        status: 'escalated',
+        notes: reason || 'Escalated automatically due to triggered rules',
+      }
+    );
 
     // In a real implementation, this would:
     // 1. Send notifications to specified roles
@@ -46,18 +51,18 @@ export async function POST(
         actionsPerformed: {
           statusUpdated: true,
           notificationsSent: notifyRoles?.length || 0,
-          appointmentScheduled: autoScheduleAppointment || false
-        }
+          appointmentScheduled: autoScheduleAppointment,
+        },
       },
-      message: 'Follow-up escalated successfully'
+      message: 'Follow-up escalated successfully',
     });
   } catch (error) {
     console.error('Error escalating follow-up:', error);
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: 'Failed to escalate follow-up',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );

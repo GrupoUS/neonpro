@@ -3,7 +3,7 @@
  * Provides session metrics and analytics data
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { SessionManager } from '@/lib/auth/session-manager';
 import { createClient } from '@/lib/supabase/server';
 
@@ -19,9 +19,11 @@ async function getSessionManager() {
       enableDeviceTracking: true,
       enableSecurityMonitoring: true,
       enableSuspiciousActivityDetection: true,
-      sessionCleanupInterval: 300000,
+      sessionCleanupInterval: 300_000,
       securityEventRetention: 30 * 24 * 60 * 60 * 1000,
-      encryptionKey: process.env.SESSION_ENCRYPTION_KEY || 'default-key-change-in-production'
+      encryptionKey:
+        process.env.SESSION_ENCRYPTION_KEY ||
+        'default-key-change-in-production',
     });
   }
   return sessionManager;
@@ -35,13 +37,13 @@ export async function GET(request: NextRequest) {
     const timeframe = searchParams.get('timeframe') || '7d'; // 1d, 7d, 30d, 90d
     const includeDevices = searchParams.get('includeDevices') === 'true';
     const includeSecurity = searchParams.get('includeSecurity') === 'true';
-    
+
     const manager = await getSessionManager();
-    
+
     // Calculate date range based on timeframe
     const now = new Date();
     const startDate = new Date();
-    
+
     switch (timeframe) {
       case '1d':
         startDate.setDate(now.getDate() - 1);
@@ -64,7 +66,7 @@ export async function GET(request: NextRequest) {
       startDate: startDate.toISOString(),
       endDate: now.toISOString(),
       includeDevices,
-      includeSecurity
+      includeSecurity,
     });
 
     // Get additional analytics
@@ -72,7 +74,7 @@ export async function GET(request: NextRequest) {
       timeframe,
       period: {
         start: startDate.toISOString(),
-        end: now.toISOString()
+        end: now.toISOString(),
       },
       metrics,
       summary: {
@@ -81,8 +83,8 @@ export async function GET(request: NextRequest) {
         averageSessionDuration: metrics.averageSessionDuration || 0,
         securityEvents: metrics.securityEvents || 0,
         uniqueDevices: metrics.uniqueDevices || 0,
-        suspiciousActivities: metrics.suspiciousActivities || 0
-      }
+        suspiciousActivities: metrics.suspiciousActivities || 0,
+      },
     };
 
     // Add device breakdown if requested
@@ -96,10 +98,9 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json(analytics);
-
   } catch (error) {
     console.error('Get session analytics error:', error);
-    
+
     return NextResponse.json(
       { error: 'Internal server error while fetching session analytics' },
       { status: 500 }
@@ -111,7 +112,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const { userId } = await request.json();
-    
+
     if (!userId) {
       return NextResponse.json(
         { error: 'User ID is required' },
@@ -120,56 +121,57 @@ export async function POST(request: NextRequest) {
     }
 
     const manager = await getSessionManager();
-    
+
     // Get real-time session data
     const activeSessions = await manager.getActiveSessions(userId);
     const recentSecurityEvents = await manager.getSecurityEvents(
       { user_id: userId },
       10, // limit
-      0   // offset
+      0 // offset
     );
-    
+
     // Calculate session health score
     const healthScore = await manager.calculateSessionHealthScore(userId);
-    
+
     const realTimeData = {
       timestamp: new Date().toISOString(),
       activeSessions: activeSessions.length,
-      sessions: activeSessions.map(session => ({
+      sessions: activeSessions.map((session) => ({
         id: session.id,
         device: session.device_info,
         location: session.ip_address,
         lastActivity: session.last_activity,
-        securityScore: session.security_score
+        securityScore: session.security_score,
       })),
       recentSecurityEvents: recentSecurityEvents.slice(0, 5),
       healthScore,
       alerts: {
         suspiciousActivity: recentSecurityEvents.filter(
-          event => event.severity === 'HIGH'
+          (event) => event.severity === 'HIGH'
         ).length,
         newDevices: recentSecurityEvents.filter(
-          event => event.event_type === 'DEVICE_REGISTERED'
+          (event) => event.event_type === 'DEVICE_REGISTERED'
         ).length,
         failedValidations: recentSecurityEvents.filter(
-          event => event.event_type === 'SESSION_VALIDATION_FAILED'
-        ).length
-      }
+          (event) => event.event_type === 'SESSION_VALIDATION_FAILED'
+        ).length,
+      },
     };
 
     return NextResponse.json(realTimeData);
-
   } catch (error) {
     console.error('Get real-time session status error:', error);
-    
+
     return NextResponse.json(
-      { error: 'Internal server error while fetching real-time session status' },
+      {
+        error: 'Internal server error while fetching real-time session status',
+      },
       { status: 500 }
     );
   }
 }
 
-export async function OPTIONS(request: NextRequest) {
+export async function OPTIONS(_request: NextRequest) {
   return new NextResponse(null, {
     status: 200,
     headers: {

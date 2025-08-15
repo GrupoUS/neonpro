@@ -1,7 +1,7 @@
 /**
  * NeonPro Notification System - Main Export
  * Story 1.7: Sistema de Notificações
- * 
+ *
  * Sistema completo de notificações para NeonPro
  * Suporte a múltiplos canais, templates, automação e analytics
  */
@@ -10,40 +10,36 @@
 // CORE EXPORTS
 // ============================================================================
 
-// Types
-export * from './types';
-
-// Core Manager
-export { NotificationManager } from './notification-manager';
-export { TemplateEngine } from './template-engine';
-
+// Automation
+export { AutomationEngine } from './automation/automation-engine';
 // Channels
 export { NotificationChannelManager } from './channels';
 export { EmailProvider } from './channels/email-provider';
-export { SMSProvider } from './channels/sms-provider';
-export { PushProvider } from './channels/push-provider';
 export { InAppProvider } from './channels/in-app-provider';
-
-// Automation
-export { AutomationEngine } from './automation/automation-engine';
+export { PushProvider } from './channels/push-provider';
+export { SMSProvider } from './channels/sms-provider';
+// Core Manager
+export { NotificationManager } from './notification-manager';
+export { TemplateEngine } from './template-engine';
+// Types
+export * from './types';
 
 // ============================================================================
 // CONVENIENCE EXPORTS
 // ============================================================================
 
-import { NotificationManager } from './notification-manager';
-import { TemplateEngine } from './template-engine';
+import { AutomationEngine } from './automation/automation-engine';
 import { NotificationChannelManager } from './channels';
 import { EmailProvider } from './channels/email-provider';
-import { SMSProvider } from './channels/sms-provider';
-import { PushProvider } from './channels/push-provider';
 import { InAppProvider } from './channels/in-app-provider';
-import { AutomationEngine } from './automation/automation-engine';
+import { PushProvider } from './channels/push-provider';
+import { SMSProvider } from './channels/sms-provider';
+import { NotificationManager } from './notification-manager';
+import { TemplateEngine } from './template-engine';
 import {
+  type ChannelConfig,
   NotificationChannel,
   NotificationType,
-  NotificationPriority,
-  ChannelConfig
 } from './types';
 
 // ============================================================================
@@ -62,41 +58,41 @@ export async function createNotificationSystem(config: {
 }) {
   // Criar template engine
   const templateEngine = new TemplateEngine();
-  
+
   // Criar gerenciador de canais
   const channelManager = new NotificationChannelManager();
-  
+
   // Registrar provedores de canal
   if (config.email) {
     const emailProvider = new EmailProvider();
     await emailProvider.initialize(config.email);
     channelManager.registerProvider(emailProvider);
   }
-  
+
   if (config.sms) {
     const smsProvider = new SMSProvider();
     await smsProvider.initialize(config.sms);
     channelManager.registerProvider(smsProvider);
   }
-  
+
   if (config.push) {
     const pushProvider = new PushProvider();
     await pushProvider.initialize(config.push);
     channelManager.registerProvider(pushProvider);
   }
-  
+
   if (config.inApp) {
     const inAppProvider = new InAppProvider();
     await inAppProvider.initialize(config.inApp);
     channelManager.registerProvider(inAppProvider);
   }
-  
+
   // Criar gerenciador principal
   const notificationManager = new NotificationManager(
     channelManager,
     templateEngine
   );
-  
+
   // Criar motor de automação se habilitado
   let automationEngine: AutomationEngine | undefined;
   if (config.enableAutomation) {
@@ -106,12 +102,12 @@ export async function createNotificationSystem(config: {
     );
     automationEngine.start();
   }
-  
+
   return {
     notificationManager,
     templateEngine,
     channelManager,
-    automationEngine
+    automationEngine,
   };
 }
 
@@ -135,18 +131,18 @@ export function createDefaultConfig(): {
         apiKey: process.env.RESEND_API_KEY || 'mock-key',
         fromEmail: process.env.FROM_EMAIL || 'noreply@neonpro.com.br',
         fromName: process.env.FROM_NAME || 'NeonPro',
-        replyTo: process.env.REPLY_TO_EMAIL
+        replyTo: process.env.REPLY_TO_EMAIL,
       },
       rateLimits: {
         perMinute: 60,
         perHour: 1000,
-        perDay: 10000
+        perDay: 10_000,
       },
       retryPolicy: {
         maxAttempts: 3,
         backoffMultiplier: 2,
-        initialDelay: 1000
-      }
+        initialDelay: 1000,
+      },
     },
     sms: {
       id: 'default-sms',
@@ -156,18 +152,18 @@ export function createDefaultConfig(): {
       settings: {
         accountSid: process.env.TWILIO_ACCOUNT_SID || 'mock-sid',
         authToken: process.env.TWILIO_AUTH_TOKEN || 'mock-token',
-        fromNumber: process.env.TWILIO_FROM_NUMBER || '+5511999999999'
+        fromNumber: process.env.TWILIO_FROM_NUMBER || '+5511999999999',
       },
       rateLimits: {
         perMinute: 10,
         perHour: 100,
-        perDay: 1000
+        perDay: 1000,
       },
       retryPolicy: {
         maxAttempts: 2,
         backoffMultiplier: 2,
-        initialDelay: 2000
-      }
+        initialDelay: 2000,
+      },
     },
     push: {
       id: 'default-push',
@@ -178,18 +174,18 @@ export function createDefaultConfig(): {
         serverKey: process.env.FIREBASE_SERVER_KEY || 'mock-key',
         projectId: process.env.FIREBASE_PROJECT_ID || 'neonpro-dev',
         senderId: process.env.FIREBASE_SENDER_ID,
-        vapidKey: process.env.FIREBASE_VAPID_KEY
+        vapidKey: process.env.FIREBASE_VAPID_KEY,
       },
       rateLimits: {
         perMinute: 100,
         perHour: 5000,
-        perDay: 50000
+        perDay: 50_000,
       },
       retryPolicy: {
         maxAttempts: 3,
         backoffMultiplier: 1.5,
-        initialDelay: 500
-      }
+        initialDelay: 500,
+      },
     },
     inApp: {
       id: 'default-inapp',
@@ -202,20 +198,20 @@ export function createDefaultConfig(): {
         maxNotifications: 100,
         autoMarkAsRead: false,
         soundEnabled: true,
-        persistNotifications: true
+        persistNotifications: true,
       },
       rateLimits: {
         perMinute: 200,
-        perHour: 10000,
-        perDay: 100000
+        perHour: 10_000,
+        perDay: 100_000,
       },
       retryPolicy: {
         maxAttempts: 1,
         backoffMultiplier: 1,
-        initialDelay: 0
-      }
+        initialDelay: 0,
+      },
     },
-    enableAutomation: true
+    enableAutomation: true,
   };
 }
 
@@ -248,14 +244,18 @@ export function createDefaultTemplates() {
       variables: ['user.firstName', 'user.email', 'clinic.name'],
       isActive: true,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     },
     {
       id: 'appointment-reminder',
       name: 'Lembrete de Consulta',
       description: 'Lembrete de consulta agendada',
       type: NotificationType.APPOINTMENT,
-      channels: [NotificationChannel.SMS, NotificationChannel.PUSH, NotificationChannel.IN_APP],
+      channels: [
+        NotificationChannel.SMS,
+        NotificationChannel.PUSH,
+        NotificationChannel.IN_APP,
+      ],
       subject: 'Lembrete: Consulta amanhã às {{appointment.time}}',
       content: `
         Olá {{patient.firstName}},
@@ -279,11 +279,11 @@ export function createDefaultTemplates() {
         'doctor.name',
         'clinic.name',
         'clinic.address',
-        'clinic.phone'
+        'clinic.phone',
       ],
       isActive: true,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     },
     {
       id: 'payment-confirmation',
@@ -313,18 +313,22 @@ export function createDefaultTemplates() {
         'payment.method',
         'payment.date',
         'payment.reference',
-        'clinic.name'
+        'clinic.name',
       ],
       isActive: true,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     },
     {
       id: 'system-alert',
       name: 'Alerta do Sistema',
       description: 'Alerta importante do sistema',
       type: NotificationType.SYSTEM,
-      channels: [NotificationChannel.EMAIL, NotificationChannel.PUSH, NotificationChannel.IN_APP],
+      channels: [
+        NotificationChannel.EMAIL,
+        NotificationChannel.PUSH,
+        NotificationChannel.IN_APP,
+      ],
       subject: '⚠️ Alerta: {{alert.title}}',
       content: `
         <div style="border-left: 4px solid #ff6b6b; padding: 15px; background: #fff5f5;">
@@ -341,8 +345,8 @@ export function createDefaultTemplates() {
       variables: ['alert.title', 'alert.message', 'alert.action'],
       isActive: true,
       createdAt: new Date(),
-      updatedAt: new Date()
-    }
+      updatedAt: new Date(),
+    },
   ];
 }
 
@@ -355,30 +359,24 @@ export function createDefaultTemplates() {
  */
 export function validateSystemConfig(config: any): string[] {
   const errors: string[] = [];
-  
-  if (!config.email && !config.sms && !config.push && !config.inApp) {
+
+  if (!(config.email || config.sms || config.push || config.inApp)) {
     errors.push('Pelo menos um canal deve ser configurado');
   }
-  
+
   // Validar configurações específicas de cada canal
-  if (config.email) {
-    if (!config.email.settings?.fromEmail) {
-      errors.push('Email de origem é obrigatório para canal de email');
-    }
+  if (config.email && !config.email.settings?.fromEmail) {
+    errors.push('Email de origem é obrigatório para canal de email');
   }
-  
-  if (config.sms) {
-    if (!config.sms.settings?.fromNumber) {
-      errors.push('Número de origem é obrigatório para canal SMS');
-    }
+
+  if (config.sms && !config.sms.settings?.fromNumber) {
+    errors.push('Número de origem é obrigatório para canal SMS');
   }
-  
-  if (config.push) {
-    if (!config.push.settings?.projectId) {
-      errors.push('Project ID é obrigatório para canal push');
-    }
+
+  if (config.push && !config.push.settings?.projectId) {
+    errors.push('Project ID é obrigatório para canal push');
   }
-  
+
   return errors;
 }
 
@@ -396,13 +394,13 @@ export function getSystemInfo() {
       'Automação baseada em eventos',
       'Rate limiting e retry policies',
       'Analytics e monitoramento',
-      'Integração com audit trail'
+      'Integração com audit trail',
     ],
     supportedChannels: [
       NotificationChannel.EMAIL,
       NotificationChannel.SMS,
       NotificationChannel.PUSH,
-      NotificationChannel.IN_APP
+      NotificationChannel.IN_APP,
     ],
     supportedTypes: [
       NotificationType.APPOINTMENT,
@@ -410,8 +408,8 @@ export function getSystemInfo() {
       NotificationType.REMINDER,
       NotificationType.ALERT,
       NotificationType.MARKETING,
-      NotificationType.SYSTEM
-    ]
+      NotificationType.SYSTEM,
+    ],
   };
 }
 
@@ -428,5 +426,5 @@ export default {
   NotificationManager,
   TemplateEngine,
   NotificationChannelManager,
-  AutomationEngine
+  AutomationEngine,
 };

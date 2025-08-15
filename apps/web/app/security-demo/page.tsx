@@ -1,10 +1,10 @@
-import React from 'react';
+import type { Metadata } from 'next';
 import SessionSecurityDemo from '@/components/security/SessionSecurityDemo';
-import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Session Security Demo - NeonPro',
-  description: 'Demonstração das funcionalidades de segurança de sessão implementadas na Story 1.5',
+  description:
+    'Demonstração das funcionalidades de segurança de sessão implementadas na Story 1.5',
 };
 
 /**

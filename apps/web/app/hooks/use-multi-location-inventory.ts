@@ -1,19 +1,16 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { MultiLocationInventoryService } from '@/app/lib/services/multi-location-inventory-service';
-import type { 
-  InventoryItem, 
-  CreateInventoryItem, 
-  UpdateInventoryItem,
-  InventoryStock,
-  UpdateInventoryStock,
-  StockTransfer,
-  CreateStockTransfer,
-  UpdateStockTransfer,
-  InventoryFilters,
-  StockTransferFilters,
-  StockTransactionFilters
-} from '@/app/lib/types/inventory';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-hot-toast';
+import { MultiLocationInventoryService } from '@/app/lib/services/multi-location-inventory-service';
+import type {
+  CreateInventoryItem,
+  CreateStockTransfer,
+  InventoryFilters,
+  StockTransactionFilters,
+  StockTransferFilters,
+  UpdateInventoryItem,
+  UpdateInventoryStock,
+  UpdateStockTransfer,
+} from '@/app/lib/types/inventory';
 
 const inventoryService = new MultiLocationInventoryService();
 
@@ -37,9 +34,10 @@ export function useInventoryItem(id: string) {
 
 export function useCreateInventoryItem() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
-    mutationFn: (item: CreateInventoryItem) => inventoryService.createInventoryItem(item),
+    mutationFn: (item: CreateInventoryItem) =>
+      inventoryService.createInventoryItem(item),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['inventory-items'] });
       toast.success(`Item "${data.name}" criado com sucesso!`);
@@ -53,9 +51,10 @@ export function useCreateInventoryItem() {
 
 export function useUpdateInventoryItem() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
-    mutationFn: (item: UpdateInventoryItem) => inventoryService.updateInventoryItem(item),
+    mutationFn: (item: UpdateInventoryItem) =>
+      inventoryService.updateInventoryItem(item),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['inventory-items'] });
       queryClient.invalidateQueries({ queryKey: ['inventory-item', data.id] });
@@ -70,7 +69,7 @@ export function useUpdateInventoryItem() {
 
 export function useDeleteInventoryItem() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (id: string) => inventoryService.deleteInventoryItem(id),
     onSuccess: () => {
@@ -105,10 +104,11 @@ export function useStockByLocation(clinic_id: string, room_id?: string) {
 
 export function useUpdateStock() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
-    mutationFn: (stock: UpdateInventoryStock) => inventoryService.updateStock(stock),
-    onSuccess: (data) => {
+    mutationFn: (stock: UpdateInventoryStock) =>
+      inventoryService.updateStock(stock),
+    onSuccess: (_data) => {
       queryClient.invalidateQueries({ queryKey: ['inventory-stock'] });
       queryClient.invalidateQueries({ queryKey: ['stock-by-location'] });
       queryClient.invalidateQueries({ queryKey: ['low-stock-alerts'] });
@@ -123,9 +123,10 @@ export function useUpdateStock() {
 
 export function useBulkUpdateStock() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
-    mutationFn: (updates: UpdateInventoryStock[]) => inventoryService.bulkUpdateStock(updates),
+    mutationFn: (updates: UpdateInventoryStock[]) =>
+      inventoryService.bulkUpdateStock(updates),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['inventory-stock'] });
       queryClient.invalidateQueries({ queryKey: ['stock-by-location'] });
@@ -137,7 +138,7 @@ export function useBulkUpdateStock() {
       toast.error('Erro ao atualizar estoque em lote');
     },
   });
-}// ===== STOCK TRANSFERS HOOKS =====
+} // ===== STOCK TRANSFERS HOOKS =====
 
 export function useStockTransfers(filters: StockTransferFilters = {}) {
   return useQuery({
@@ -149,13 +150,16 @@ export function useStockTransfers(filters: StockTransferFilters = {}) {
 
 export function useCreateStockTransfer() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
-    mutationFn: (transfer: CreateStockTransfer) => inventoryService.createStockTransfer(transfer),
+    mutationFn: (transfer: CreateStockTransfer) =>
+      inventoryService.createStockTransfer(transfer),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['stock-transfers'] });
       queryClient.invalidateQueries({ queryKey: ['inventory-stock'] });
-      toast.success(`Transferência ${data.transfer_number} criada com sucesso!`);
+      toast.success(
+        `Transferência ${data.transfer_number} criada com sucesso!`
+      );
     },
     onError: (error) => {
       console.error('Error creating stock transfer:', error);
@@ -166,22 +170,26 @@ export function useCreateStockTransfer() {
 
 export function useUpdateStockTransfer() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
-    mutationFn: (transfer: UpdateStockTransfer) => inventoryService.updateStockTransfer(transfer),
+    mutationFn: (transfer: UpdateStockTransfer) =>
+      inventoryService.updateStockTransfer(transfer),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['stock-transfers'] });
       queryClient.invalidateQueries({ queryKey: ['inventory-stock'] });
       queryClient.invalidateQueries({ queryKey: ['stock-transactions'] });
-      
+
       const statusMessages = {
         approved: 'Transferência aprovada!',
         in_transit: 'Transferência em trânsito!',
         completed: 'Transferência concluída!',
-        cancelled: 'Transferência cancelada!'
+        cancelled: 'Transferência cancelada!',
       };
-      
-      toast.success(statusMessages[data.status as keyof typeof statusMessages] || 'Transferência atualizada!');
+
+      toast.success(
+        statusMessages[data.status as keyof typeof statusMessages] ||
+          'Transferência atualizada!'
+      );
     },
     onError: (error) => {
       console.error('Error updating stock transfer:', error);
@@ -192,7 +200,7 @@ export function useUpdateStockTransfer() {
 
 export function useTransferStock() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (params: {
       inventory_item_id: string;
@@ -202,15 +210,16 @@ export function useTransferStock() {
       from_room_id?: string;
       to_room_id?: string;
       notes?: string;
-    }) => inventoryService.transferStock(
-      params.inventory_item_id,
-      params.from_clinic_id,
-      params.to_clinic_id,
-      params.quantity,
-      params.from_room_id,
-      params.to_room_id,
-      params.notes
-    ),
+    }) =>
+      inventoryService.transferStock(
+        params.inventory_item_id,
+        params.from_clinic_id,
+        params.to_clinic_id,
+        params.quantity,
+        params.from_room_id,
+        params.to_room_id,
+        params.notes
+      ),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['stock-transfers'] });
       queryClient.invalidateQueries({ queryKey: ['inventory-stock'] });
@@ -243,10 +252,11 @@ export function useLocationStockSummary(clinic_id?: string) {
   });
 }
 
-export function useInventoryMovementSummary(clinic_id?: string, days: number = 30) {
+export function useInventoryMovementSummary(clinic_id?: string, days = 30) {
   return useQuery({
     queryKey: ['inventory-movement-summary', clinic_id, days],
-    queryFn: () => inventoryService.getInventoryMovementSummary(clinic_id, days),
+    queryFn: () =>
+      inventoryService.getInventoryMovementSummary(clinic_id, days),
     staleTime: 15 * 60 * 1000, // 15 minutes
   });
 }
@@ -259,7 +269,7 @@ export function useLowStockAlerts(clinic_id?: string) {
   });
 }
 
-export function useExpiringItems(clinic_id?: string, days: number = 30) {
+export function useExpiringItems(clinic_id?: string, days = 30) {
   return useQuery({
     queryKey: ['expiring-items', clinic_id, days],
     queryFn: () => inventoryService.getExpiringItems(clinic_id, days),
@@ -271,9 +281,9 @@ export function useExpiringItems(clinic_id?: string, days: number = 30) {
 
 export function useRealtimeInventoryStock(clinic_id?: string) {
   const queryClient = useQueryClient();
-  
+
   React.useEffect(() => {
-    const channel = inventoryService['supabase']
+    const channel = inventoryService.supabase
       .channel('inventory-stock-changes')
       .on(
         'postgres_changes',
@@ -294,16 +304,16 @@ export function useRealtimeInventoryStock(clinic_id?: string) {
       .subscribe();
 
     return () => {
-      inventoryService['supabase'].removeChannel(channel);
+      inventoryService.supabase.removeChannel(channel);
     };
   }, [clinic_id, queryClient]);
 }
 
 export function useRealtimeStockTransfers(clinic_id?: string) {
   const queryClient = useQueryClient();
-  
+
   React.useEffect(() => {
-    const channel = inventoryService['supabase']
+    const channel = inventoryService.supabase
       .channel('stock-transfers-changes')
       .on(
         'postgres_changes',
@@ -311,24 +321,26 @@ export function useRealtimeStockTransfers(clinic_id?: string) {
           event: '*',
           schema: 'public',
           table: 'stock_transfers',
-          filter: clinic_id ? `or(from_clinic_id.eq.${clinic_id},to_clinic_id.eq.${clinic_id})` : undefined,
+          filter: clinic_id
+            ? `or(from_clinic_id.eq.${clinic_id},to_clinic_id.eq.${clinic_id})`
+            : undefined,
         },
         (payload) => {
           console.log('Transfer change detected:', payload);
           queryClient.invalidateQueries({ queryKey: ['stock-transfers'] });
-          
+
           // Show real-time notifications for status changes
           if (payload.eventType === 'UPDATE' && payload.new?.status) {
             const status = payload.new.status;
             const transferNumber = payload.new.transfer_number;
-            
+
             const statusMessages = {
               approved: `Transferência ${transferNumber} foi aprovada`,
               in_transit: `Transferência ${transferNumber} está em trânsito`,
               completed: `Transferência ${transferNumber} foi concluída`,
-              cancelled: `Transferência ${transferNumber} foi cancelada`
+              cancelled: `Transferência ${transferNumber} foi cancelada`,
             };
-            
+
             if (statusMessages[status as keyof typeof statusMessages]) {
               toast.info(statusMessages[status as keyof typeof statusMessages]);
             }
@@ -338,7 +350,7 @@ export function useRealtimeStockTransfers(clinic_id?: string) {
       .subscribe();
 
     return () => {
-      inventoryService['supabase'].removeChannel(channel);
+      inventoryService.supabase.removeChannel(channel);
     };
   }, [clinic_id, queryClient]);
 }

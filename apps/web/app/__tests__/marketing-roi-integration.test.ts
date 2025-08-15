@@ -1,8 +1,8 @@
 // Marketing ROI Integration Test
 // Tests the complete Story 8.5 implementation
 
-import { createClient } from '@/app/utils/supabase/client';
 import { MarketingROIService } from '@/app/lib/services/marketing-roi-service';
+import { createClient } from '@/app/utils/supabase/client';
 
 describe('Marketing ROI Analysis - Story 8.5 Integration', () => {
   let supabase: ReturnType<typeof createClient>;
@@ -31,11 +31,11 @@ describe('Marketing ROI Analysis - Story 8.5 Integration', () => {
         'marketing_touchpoints',
         'marketing_roi_alerts',
         'marketing_roi_forecasting',
-        'treatment_roi_analysis'
+        'treatment_roi_analysis',
       ];
 
-      expectedTables.forEach(tableName => {
-        expect(tables?.some(t => t.table_name === tableName)).toBe(true);
+      expectedTables.forEach((tableName) => {
+        expect(tables?.some((t) => t.table_name === tableName)).toBe(true);
       });
     });
   });
@@ -67,12 +67,15 @@ describe('Marketing ROI Analysis - Story 8.5 Integration', () => {
     });
 
     test('✅ ROI optimization recommendations', async () => {
-      const recommendations = await roiService.getROIRecommendations('test-clinic');
+      const recommendations =
+        await roiService.getROIRecommendations('test-clinic');
       expect(recommendations).toBeDefined();
     });
 
     test('✅ Advanced BI dashboard for marketing performance', async () => {
-      const response = await fetch('/api/marketing-roi/dashboard-metrics?clinic_id=test');
+      const response = await fetch(
+        '/api/marketing-roi/dashboard-metrics?clinic_id=test'
+      );
       expect(response.status).toBe(200);
     });
 
@@ -86,10 +89,12 @@ describe('Marketing ROI Analysis - Story 8.5 Integration', () => {
     });
 
     test('✅ ROI forecasting and predictive analytics', async () => {
-      const forecast = await roiService.generateROIForecast('test-clinic', 'test-campaign', 90);
+      const forecast = await roiService.generateROIForecast(
+        'test-clinic',
+        'test-campaign',
+        90
+      );
       expect(forecast).toBeDefined();
     });
   });
 });
-
-export { };

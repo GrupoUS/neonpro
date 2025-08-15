@@ -37,38 +37,38 @@ export class RateLimitLogic {
   ): RateLimitResult {
     const key = `${identifier}:${route}:${method}`;
     const now = Date.now();
-    const limits = this.getAdaptiveLimits(route, method);
-    
+    const limits = RateLimitLogic.getAdaptiveLimits(route, method);
+
     // Get or create entry
     let entry = rateLimitCache.get(key);
-    
+
     if (!entry) {
       entry = {
         count: 0,
         firstRequest: now,
-        blocked: false
+        blocked: false,
       };
     }
-    
+
     // Check if window has expired
     if (now - entry.firstRequest > limits.windowMs) {
       entry = {
         count: 0,
         firstRequest: now,
-        blocked: false
+        blocked: false,
       };
     }
-    
+
     // Check if still blocked
     if (entry.blocked && entry.blockUntil && now < entry.blockUntil) {
       return {
         allowed: false,
         remaining: 0,
         resetTime: entry.blockUntil,
-        reason: "Currently blocked due to rate limit violation"
+        reason: 'Currently blocked due to rate limit violation',
       };
     }
-    
+
     // Reset block status if block period has expired
     if (entry.blocked && entry.blockUntil && now >= entry.blockUntil) {
       entry.blocked = false;
@@ -76,7 +76,7 @@ export class RateLimitLogic {
       entry.count = 0;
       entry.firstRequest = now;
     }
-    
+
     // Increment count
     entry.count++;
     rateLimitCache.set(key, entry);
@@ -91,7 +91,7 @@ export class RateLimitLogic {
         allowed: false,
         remaining: 0,
         resetTime: entry.blockUntil,
-        reason: "Rate limit exceeded",
+        reason: 'Rate limit exceeded',
       };
     }
 
@@ -142,10 +142,16 @@ export class RateLimitLogic {
   /**
    * Get current cache stats
    */
-  static getCacheStats(): { size: number; entries: Array<{ key: string; entry: RateLimitEntry }> } {
+  static getCacheStats(): {
+    size: number;
+    entries: Array<{ key: string; entry: RateLimitEntry }>;
+  } {
     return {
       size: rateLimitCache.size,
-      entries: Array.from(rateLimitCache.entries()).map(([key, entry]) => ({ key, entry }))
+      entries: Array.from(rateLimitCache.entries()).map(([key, entry]) => ({
+        key,
+        entry,
+      })),
     };
   }
 }

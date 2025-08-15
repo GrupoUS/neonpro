@@ -9,7 +9,13 @@ import { nlpEngine, type SupportedLanguage } from './nlp-engine';
 
 // Types
 export interface IndexableContent {
-  contentType: 'patient' | 'appointment' | 'treatment' | 'note' | 'file' | 'provider';
+  contentType:
+    | 'patient'
+    | 'appointment'
+    | 'treatment'
+    | 'note'
+    | 'file'
+    | 'provider';
   contentId: string;
   searchableText: string;
   metadata?: Record<string, any>;
@@ -50,14 +56,14 @@ export class SearchIndexer {
     totalEntries: 0,
     lastIndexed: new Date().toISOString(),
     indexingSpeed: 0,
-    errorCount: 0
+    errorCount: 0,
   };
 
   constructor(supabaseUrl?: string, supabaseKey?: string) {
     if (supabaseUrl && supabaseKey) {
       this.supabase = createClient(supabaseUrl, supabaseKey);
     }
-    
+
     // Start processing queue
     this.startProcessing();
   }
@@ -69,7 +75,7 @@ export class SearchIndexer {
     try {
       // Add to queue for batch processing
       this.indexingQueue.push(content);
-      
+
       // If queue is getting large, process immediately
       if (this.indexingQueue.length >= this.batchSize) {
         await this.processQueue();
@@ -120,18 +126,20 @@ export class SearchIndexer {
   async bulkIndex(contents: IndexableContent[]): Promise<void> {
     try {
       const startTime = Date.now();
-      
+
       for (const content of contents) {
         this.indexingQueue.push(content);
       }
-      
+
       await this.processQueue();
-      
+
       const endTime = Date.now();
       const processingTime = (endTime - startTime) / 1000;
       this.stats.indexingSpeed = contents.length / processingTime;
-      
-      console.log(`Bulk indexed ${contents.length} items in ${processingTime}s`);
+
+      console.log(
+        `Bulk indexed ${contents.length} items in ${processingTime}s`
+      );
     } catch (error) {
       console.error('Error in bulk indexing:', error);
       this.stats.errorCount++;
@@ -156,7 +164,7 @@ export class SearchIndexer {
     processingTime: number;
   }> {
     const startTime = Date.now();
-    
+
     try {
       if (!this.supabase) {
         throw new Error('Supabase client not initialized');
@@ -167,21 +175,20 @@ export class SearchIndexer {
         contentTypes,
         limit = 20,
         offset = 0,
-        filters = {}
+        filters = {},
       } = options;
 
       // Process query with NLP
       const nlpResult = await nlpEngine.processQuery(query, language);
-      
+
       // Build search query
-      let searchQuery = this.supabase
-        .rpc('search_with_nlp', {
-          p_query: nlpResult.normalized,
-          p_language: language,
-          p_limit: limit,
-          p_offset: offset,
-          p_content_types: contentTypes
-        });
+      let searchQuery = this.supabase.rpc('search_with_nlp', {
+        p_query: nlpResult.normalized,
+        p_language: language,
+        p_limit: limit,
+        p_offset: offset,
+        p_content_types: contentTypes,
+      });
 
       // Apply additional filters
       if (Object.keys(filters).length > 0) {
@@ -197,23 +204,28 @@ export class SearchIndexer {
       }
 
       const processingTime = Date.now() - startTime;
-      
+
       // Log search analytics
-      await this.logSearchAnalytics(query, nlpResult, data?.length || 0, processingTime);
+      await this.logSearchAnalytics(
+        query,
+        nlpResult,
+        data?.length || 0,
+        processingTime
+      );
 
       return {
         results: data || [],
         totalCount: count || 0,
-        processingTime
+        processingTime,
       };
     } catch (error) {
       console.error('Search error:', error);
       this.stats.errorCount++;
-      
+
       return {
         results: [],
         totalCount: 0,
-        processingTime: Date.now() - startTime
+        processingTime: Date.now() - startTime,
       };
     }
   }
@@ -224,7 +236,7 @@ export class SearchIndexer {
   async getSuggestions(
     partialQuery: string,
     language: SupportedLanguage = 'pt',
-    limit: number = 10
+    limit = 10
   ): Promise<string[]> {
     try {
       if (!this.supabase) {
@@ -245,8 +257,8 @@ export class SearchIndexer {
         throw error;
       }
 
-      const suggestions = data?.map(item => item.suggestion_text) || [];
-      
+      const suggestions = data?.map((item) => item.suggestion_text) || [];
+
       // Combine with NLP suggestions if we have fewer than requested
       if (suggestions.length < limit) {
         const nlpSuggestions = nlpEngine.getSuggestions(partialQuery, language);
@@ -275,14 +287,14 @@ export class SearchIndexer {
     try {
       const batch = this.indexingQueue.splice(0, this.batchSize);
       const indexEntries = await Promise.all(
-        batch.map(content => this.prepareIndexEntry(content))
+        batch.map((content) => this.prepareIndexEntry(content))
       );
 
       if (this.supabase) {
         const { error } = await this.supabase
           .from('search_index')
           .upsert(indexEntries, {
-            onConflict: 'content_type,content_id'
+            onConflict: 'content_type,content_id',
           });
 
         if (error) {
@@ -292,11 +304,13 @@ export class SearchIndexer {
 
       this.stats.totalEntries += batch.length;
       this.stats.lastIndexed = new Date().toISOString();
-      
+
       const processingTime = (Date.now() - startTime) / 1000;
       this.stats.indexingSpeed = batch.length / processingTime;
 
-      console.log(`Processed ${batch.length} index entries in ${processingTime}s`);
+      console.log(
+        `Processed ${batch.length} index entries in ${processingTime}s`
+      );
     } catch (error) {
       console.error('Error processing index queue:', error);
       this.stats.errorCount++;
@@ -310,19 +324,25 @@ export class SearchIndexer {
    */
   private async prepareIndexEntry(content: IndexableContent): Promise<any> {
     const language = content.language || 'pt';
-    
+
     // Process with NLP to extract keywords and improve searchability
-    const nlpResult = await nlpEngine.processQuery(content.searchableText, language);
-    
+    const nlpResult = await nlpEngine.processQuery(
+      content.searchableText,
+      language
+    );
+
     // Extract keywords from NLP tokens and entities
     const keywords = [
       ...nlpResult.tokens,
-      ...nlpResult.entities.map(e => e.value),
-      ...(content.keywords || [])
+      ...nlpResult.entities.map((e) => e.value),
+      ...(content.keywords || []),
     ];
 
     // Calculate relevance score based on content type and NLP confidence
-    const relevanceScore = this.calculateRelevanceScore(content, nlpResult.confidence);
+    const relevanceScore = this.calculateRelevanceScore(
+      content,
+      nlpResult.confidence
+    );
 
     return {
       content_type: content.contentType,
@@ -332,16 +352,19 @@ export class SearchIndexer {
       keywords: [...new Set(keywords)],
       language,
       relevance_score: relevanceScore,
-      last_updated: new Date().toISOString()
+      last_updated: new Date().toISOString(),
     };
   }
 
   /**
    * Calculate relevance score for content
    */
-  private calculateRelevanceScore(content: IndexableContent, nlpConfidence: number): number {
+  private calculateRelevanceScore(
+    content: IndexableContent,
+    nlpConfidence: number
+  ): number {
     let score = 1.0;
-    
+
     // Boost score based on content type importance
     switch (content.contentType) {
       case 'patient':
@@ -359,10 +382,10 @@ export class SearchIndexer {
       default:
         score *= 1.0;
     }
-    
+
     // Factor in NLP confidence
-    score *= (0.5 + nlpConfidence * 0.5);
-    
+    score *= 0.5 + nlpConfidence * 0.5;
+
     // Boost for longer, more detailed content
     const textLength = content.searchableText.length;
     if (textLength > 500) {
@@ -370,7 +393,7 @@ export class SearchIndexer {
     } else if (textLength > 100) {
       score *= 1.1;
     }
-    
+
     return Math.round(score * 100) / 100;
   }
 
@@ -388,18 +411,16 @@ export class SearchIndexer {
         return;
       }
 
-      const { error } = await this.supabase
-        .from('search_analytics')
-        .insert({
-          query,
-          normalized_query: nlpResult.normalized,
-          query_intent: nlpResult.intent.primary,
-          results_count: resultCount,
-          response_time_ms: responseTime,
-          language: nlpResult.language,
-          search_filters: {},
-          timestamp: new Date().toISOString()
-        });
+      const { error } = await this.supabase.from('search_analytics').insert({
+        query,
+        normalized_query: nlpResult.normalized,
+        query_intent: nlpResult.intent.primary,
+        results_count: resultCount,
+        response_time_ms: responseTime,
+        language: nlpResult.language,
+        search_filters: {},
+        timestamp: new Date().toISOString(),
+      });
 
       if (error) {
         console.error('Error logging search analytics:', error);
@@ -438,7 +459,7 @@ export class SearchIndexer {
       }
 
       let query = this.supabase.from('search_index').delete();
-      
+
       if (contentType) {
         query = query.eq('content_type', contentType);
       } else {
@@ -451,7 +472,9 @@ export class SearchIndexer {
         throw error;
       }
 
-      console.log(`Cleared search index${contentType ? ` for ${contentType}` : ''}`);
+      console.log(
+        `Cleared search index${contentType ? ` for ${contentType}` : ''}`
+      );
     } catch (error) {
       console.error('Error clearing index:', error);
       this.stats.errorCount++;
@@ -464,16 +487,16 @@ export class SearchIndexer {
   async rebuildIndex(): Promise<void> {
     try {
       console.log('Starting index rebuild...');
-      
+
       // Clear existing index
       await this.clearIndex();
-      
+
       // TODO: Implement full rebuild by fetching all content from database
       // This would typically involve:
       // 1. Fetch all patients, appointments, treatments, etc.
       // 2. Process each item through indexContent()
       // 3. Monitor progress and handle errors
-      
+
       console.log('Index rebuild completed');
     } catch (error) {
       console.error('Error rebuilding index:', error);

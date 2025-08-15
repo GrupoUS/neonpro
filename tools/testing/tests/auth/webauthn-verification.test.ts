@@ -1,11 +1,11 @@
 /**
  * WebAuthn API Integration Tests
  * TASK-002: Authentication & Security Enhancement
- * 
+ *
  * Tests for WebAuthn/FIDO2 authentication implementation
  */
 
-import { describe, it, expect } from '@jest/globals';
+import { describe, expect, it } from '@jest/globals';
 
 describe('WebAuthn Implementation Verification', () => {
   it('should have WebAuthn service utilities', () => {
@@ -13,11 +13,11 @@ describe('WebAuthn Implementation Verification', () => {
     expect(() => {
       require('../../lib/auth/webauthn-service');
     }).not.toThrow();
-    
+
     expect(() => {
       require('../../lib/auth/webauthn-client');
     }).not.toThrow();
-    
+
     expect(() => {
       require('../../lib/auth/performance-tracker');
     }).not.toThrow();
@@ -25,9 +25,9 @@ describe('WebAuthn Implementation Verification', () => {
 
   it('should have WebAuthn API endpoints', async () => {
     // Test that API route files exist
-    const fs = require('fs');
-    const path = require('path');
-    
+    const fs = require('node:fs');
+    const path = require('node:path');
+
     const apiPaths = [
       'app/api/auth/webauthn/register/options/route.ts',
       'app/api/auth/webauthn/register/verify/route.ts',
@@ -44,10 +44,13 @@ describe('WebAuthn Implementation Verification', () => {
   });
 
   it('should have WebAuthn React component', () => {
-    const fs = require('fs');
-    const path = require('path');
-    
-    const componentPath = path.join(process.cwd(), 'components/auth/webauthn-manager.tsx');
+    const fs = require('node:fs');
+    const path = require('node:path');
+
+    const componentPath = path.join(
+      process.cwd(),
+      'components/auth/webauthn-manager.tsx'
+    );
     expect(fs.existsSync(componentPath)).toBe(true);
   });
 
@@ -56,19 +59,23 @@ describe('WebAuthn Implementation Verification', () => {
     expect(() => {
       require('@simplewebauthn/server');
     }).not.toThrow();
-    
+
     expect(() => {
       require('@simplewebauthn/browser');
     }).not.toThrow();
   });
 
   it('should have performance tracking integration', () => {
-    const { authPerformanceTracker } = require('../../lib/auth/performance-tracker');
-    
+    const {
+      authPerformanceTracker,
+    } = require('../../lib/auth/performance-tracker');
+
     // Test that performance tracker is properly initialized
-    expect(authPerformanceTracker).toBeDefined();
-    expect(typeof authPerformanceTracker.getPerformanceThresholds).toBe('function');
-    
+    expected(authPerformanceTracker).toBeDefined();
+    expect(typeof authPerformanceTracker.getPerformanceThresholds).toBe(
+      'function'
+    );
+
     // Test that performance thresholds match TASK-002 requirements
     const thresholds = authPerformanceTracker.getPerformanceThresholds();
     expect(thresholds.login).toBe(350); // ≤350ms requirement from TASK-002
@@ -85,9 +92,11 @@ describe('WebAuthn Implementation Verification', () => {
 
 describe('TASK-002 Authentication Performance Requirements', () => {
   it('should meet performance targets', () => {
-    const { authPerformanceTracker } = require('../../lib/auth/performance-tracker');
+    const {
+      authPerformanceTracker,
+    } = require('../../lib/auth/performance-tracker');
     const thresholds = authPerformanceTracker.getPerformanceThresholds();
-    
+
     // TASK-002 Story 1.1 Performance Requirements
     expect(thresholds.login).toBeLessThanOrEqual(350); // ≤350ms target
     expect(thresholds.logout).toBeLessThanOrEqual(200);
@@ -101,7 +110,7 @@ describe('TASK-002 Authentication Performance Requirements', () => {
     expect(() => {
       require('../../lib/monitoring/performance');
     }).not.toThrow();
-    
+
     expect(() => {
       require('../../lib/monitoring/analytics');
     }).not.toThrow();
@@ -110,13 +119,16 @@ describe('TASK-002 Authentication Performance Requirements', () => {
 
 describe('WebAuthn Security Features', () => {
   it('should have comprehensive security audit preparation', () => {
-    const fs = require('fs');
-    const path = require('path');
-    
+    const fs = require('node:fs');
+    const path = require('node:path');
+
     // Check that security audit schema is prepared
-    const migrationPath = path.join(process.cwd(), 'supabase/migrations/20250124_webauthn_schema.sql');
+    const migrationPath = path.join(
+      process.cwd(),
+      'supabase/migrations/20250124_webauthn_schema.sql'
+    );
     expect(fs.existsSync(migrationPath)).toBe(true);
-    
+
     // Verify migration contains security audit table
     const migrationContent = fs.readFileSync(migrationPath, 'utf8');
     expect(migrationContent).toContain('security_audit_log');
@@ -126,12 +138,15 @@ describe('WebAuthn Security Features', () => {
   });
 
   it('should have proper database schema for WebAuthn', () => {
-    const fs = require('fs');
-    const path = require('path');
-    
-    const migrationPath = path.join(process.cwd(), 'supabase/migrations/20250124_webauthn_schema.sql');
+    const fs = require('node:fs');
+    const path = require('node:path');
+
+    const migrationPath = path.join(
+      process.cwd(),
+      'supabase/migrations/20250124_webauthn_schema.sql'
+    );
     const content = fs.readFileSync(migrationPath, 'utf8');
-    
+
     // Verify essential WebAuthn fields are present
     expect(content).toContain('credential_id');
     expect(content).toContain('public_key');

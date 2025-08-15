@@ -3,8 +3,8 @@
 // Epic 7 - Story 7.2: Automated marketing campaigns with personalization
 // =====================================================================================
 
+import { type NextRequest, NextResponse } from 'next/server';
 import { marketingCampaignsService } from '@/app/lib/services/marketing-campaigns-service';
-import { NextRequest, NextResponse } from 'next/server';
 
 // GET /api/marketing/campaigns/[id]/analytics - Get campaign analytics
 export async function GET(
@@ -74,19 +74,21 @@ export async function GET(
           start_date: startDate,
           end_date: endDate,
           include_segments: includeSegments,
-          include_devices: includeDevices
-        }
-      }
+          include_devices: includeDevices,
+        },
+      },
     });
-
   } catch (error) {
-    console.error(`GET /api/marketing/campaigns/${params.id}/analytics error:`, error);
+    console.error(
+      `GET /api/marketing/campaigns/${params.id}/analytics error:`,
+      error
+    );
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: 'Failed to fetch campaign analytics',
-        message: error instanceof Error ? error.message : 'Unknown error'
-      }, 
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
       { status: 500 }
     );
   }

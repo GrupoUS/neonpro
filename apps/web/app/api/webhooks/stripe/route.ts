@@ -2,12 +2,12 @@
  * Stripe Webhooks Handler
  * Epic: EPIC-001 - Advanced Subscription Management
  * Story: EPIC-001.1 - Subscription Middleware & Management System
- * 
+ *
  * POST /api/webhooks/stripe - Handle Stripe webhook events
  */
 
-import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
+import { type NextRequest, NextResponse } from 'next/server';
 import type { Database } from '@/types/database';
 
 const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
     const body = await request.text();
     const signature = request.headers.get('stripe-signature');
 
-    if (!signature || !STRIPE_WEBHOOK_SECRET) {
+    if (!(signature && STRIPE_WEBHOOK_SECRET)) {
       console.error('Missing Stripe signature or webhook secret');
       return NextResponse.json(
         { error: 'Missing signature or webhook secret' },
@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
 
     // TODO: Verify Stripe webhook signature
     // const event = stripe.webhooks.constructEvent(body, signature, STRIPE_WEBHOOK_SECRET);
-    
+
     // Placeholder event structure for development
     const event = JSON.parse(body);
 
@@ -36,10 +36,12 @@ export async function POST(request: NextRequest) {
       process.env.SUPABASE_SERVICE_ROLE_KEY!,
       {
         cookies: {
-          get() { return undefined; },
+          get() {
+            return;
+          },
           set() {},
-          remove() {}
-        }
+          remove() {},
+        },
       }
     );
 
@@ -78,7 +80,6 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({ received: true });
-
   } catch (error) {
     console.error('Stripe webhook error:', error);
     return NextResponse.json(
@@ -93,7 +94,7 @@ async function handleCheckoutCompleted(supabase: any, event: any) {
     const session = event.data.object;
     const metadata = session.metadata;
 
-    if (!metadata?.clinic_id || !metadata?.plan_id) {
+    if (!(metadata?.clinic_id && metadata?.plan_id)) {
       console.error('Missing required metadata in checkout session');
       return;
     }
@@ -104,7 +105,10 @@ async function handleCheckoutCompleted(supabase: any, event: any) {
       user_id: metadata.user_id,
       plan_id: metadata.plan_id,
       status: 'active' as const,
-      billing_cycle: metadata.billing_cycle as 'monthly' | 'quarterly' | 'yearly',
+      billing_cycle: metadata.billing_cycle as
+        | 'monthly'
+        | 'quarterly'
+        | 'yearly',
       payment_provider: 'stripe',
       external_subscription_id: session.subscription,
       external_customer_id: session.customer,
@@ -113,15 +117,15 @@ async function handleCheckoutCompleted(supabase: any, event: any) {
       next_billing_date: calculatePeriodEnd(metadata.billing_cycle),
       metadata: {
         stripe_session_id: session.id,
-        stripe_payment_intent: session.payment_intent
-      }
+        stripe_payment_intent: session.payment_intent,
+      },
     };
 
     const { error } = await supabase
       .from('user_subscriptions')
       .upsert(subscriptionData, {
         onConflict: 'clinic_id',
-        ignoreDuplicates: false
+        ignoreDuplicates: false,
       });
 
     if (error) {
@@ -130,25 +134,22 @@ async function handleCheckoutCompleted(supabase: any, event: any) {
     }
 
     // Create billing event
-    await supabase
-      .from('billing_events')
-      .insert({
-        event_type: 'subscription_created',
-        amount: session.amount_total / 100, // Convert from cents
-        currency: session.currency.toUpperCase(),
-        status: 'succeeded',
-        external_event_id: event.id,
-        external_invoice_id: session.invoice,
-        external_payment_intent_id: session.payment_intent,
-        processed_at: new Date().toISOString(),
-        metadata: {
-          stripe_session_id: session.id,
-          checkout_completed_at: new Date(session.created * 1000).toISOString()
-        }
-      });
+    await supabase.from('billing_events').insert({
+      event_type: 'subscription_created',
+      amount: session.amount_total / 100, // Convert from cents
+      currency: session.currency.toUpperCase(),
+      status: 'succeeded',
+      external_event_id: event.id,
+      external_invoice_id: session.invoice,
+      external_payment_intent_id: session.payment_intent,
+      processed_at: new Date().toISOString(),
+      metadata: {
+        stripe_session_id: session.id,
+        checkout_completed_at: new Date(session.created * 1000).toISOString(),
+      },
+    });
 
     console.log(`Subscription created for clinic ${metadata.clinic_id}`);
-
   } catch (error) {
     console.error('Error handling checkout completed:', error);
   }
@@ -157,7 +158,7 @@ async function handleCheckoutCompleted(supabase: any, event: any) {
 async function handlePaymentSucceeded(supabase: any, event: any) {
   try {
     const invoice = event.data.object;
-    
+
     // Find subscription by external ID
     const { data: subscription } = await supabase
       .from('user_subscriptions')
@@ -166,7 +167,10 @@ async function handlePaymentSucceeded(supabase: any, event: any) {
       .single();
 
     if (!subscription) {
-      console.error('Subscription not found for invoice:', invoice.subscription);
+      console.error(
+        'Subscription not found for invoice:',
+        invoice.subscription
+      );
       return;
     }
 
@@ -175,33 +179,32 @@ async function handlePaymentSucceeded(supabase: any, event: any) {
       .from('user_subscriptions')
       .update({
         status: 'active',
-        current_period_start: new Date(invoice.period_start * 1000).toISOString(),
+        current_period_start: new Date(
+          invoice.period_start * 1000
+        ).toISOString(),
         current_period_end: new Date(invoice.period_end * 1000).toISOString(),
-        next_billing_date: new Date(invoice.period_end * 1000).toISOString()
+        next_billing_date: new Date(invoice.period_end * 1000).toISOString(),
       })
       .eq('id', subscription.id);
 
     // Create billing event
-    await supabase
-      .from('billing_events')
-      .insert({
-        subscription_id: subscription.id,
-        event_type: 'invoice_payment_succeeded',
-        amount: invoice.amount_paid / 100,
-        currency: invoice.currency.toUpperCase(),
-        status: 'succeeded',
-        external_event_id: event.id,
-        external_invoice_id: invoice.id,
-        external_payment_intent_id: invoice.payment_intent,
-        processed_at: new Date().toISOString(),
-        metadata: {
-          period_start: new Date(invoice.period_start * 1000).toISOString(),
-          period_end: new Date(invoice.period_end * 1000).toISOString()
-        }
-      });
+    await supabase.from('billing_events').insert({
+      subscription_id: subscription.id,
+      event_type: 'invoice_payment_succeeded',
+      amount: invoice.amount_paid / 100,
+      currency: invoice.currency.toUpperCase(),
+      status: 'succeeded',
+      external_event_id: event.id,
+      external_invoice_id: invoice.id,
+      external_payment_intent_id: invoice.payment_intent,
+      processed_at: new Date().toISOString(),
+      metadata: {
+        period_start: new Date(invoice.period_start * 1000).toISOString(),
+        period_end: new Date(invoice.period_end * 1000).toISOString(),
+      },
+    });
 
     console.log(`Payment succeeded for subscription ${subscription.id}`);
-
   } catch (error) {
     console.error('Error handling payment succeeded:', error);
   }
@@ -210,7 +213,7 @@ async function handlePaymentSucceeded(supabase: any, event: any) {
 async function handlePaymentFailed(supabase: any, event: any) {
   try {
     const invoice = event.data.object;
-    
+
     // Find subscription by external ID
     const { data: subscription } = await supabase
       .from('user_subscriptions')
@@ -219,7 +222,10 @@ async function handlePaymentFailed(supabase: any, event: any) {
       .single();
 
     if (!subscription) {
-      console.error('Subscription not found for failed payment:', invoice.subscription);
+      console.error(
+        'Subscription not found for failed payment:',
+        invoice.subscription
+      );
       return;
     }
 
@@ -227,42 +233,38 @@ async function handlePaymentFailed(supabase: any, event: any) {
     await supabase
       .from('user_subscriptions')
       .update({
-        status: 'past_due'
+        status: 'past_due',
       })
       .eq('id', subscription.id);
 
     // Create billing event
-    await supabase
-      .from('billing_events')
-      .insert({
-        subscription_id: subscription.id,
-        event_type: 'invoice_payment_failed',
-        amount: invoice.amount_due / 100,
-        currency: invoice.currency.toUpperCase(),
-        status: 'failed',
-        external_event_id: event.id,
-        external_invoice_id: invoice.id,
-        processed_at: new Date().toISOString(),
-        metadata: {
-          attempt_count: invoice.attempt_count,
-          failure_reason: invoice.status
-        }
-      });
+    await supabase.from('billing_events').insert({
+      subscription_id: subscription.id,
+      event_type: 'invoice_payment_failed',
+      amount: invoice.amount_due / 100,
+      currency: invoice.currency.toUpperCase(),
+      status: 'failed',
+      external_event_id: event.id,
+      external_invoice_id: invoice.id,
+      processed_at: new Date().toISOString(),
+      metadata: {
+        attempt_count: invoice.attempt_count,
+        failure_reason: invoice.status,
+      },
+    });
 
     console.log(`Payment failed for subscription ${subscription.id}`);
-
   } catch (error) {
     console.error('Error handling payment failed:', error);
   }
 }
 
-async function handleSubscriptionCreated(supabase: any, event: any) {
+async function handleSubscriptionCreated(_supabase: any, event: any) {
   try {
     const subscription = event.data.object;
-    
+
     // Log subscription creation event
     console.log(`Stripe subscription created: ${subscription.id}`);
-
   } catch (error) {
     console.error('Error handling subscription created:', error);
   }
@@ -271,7 +273,7 @@ async function handleSubscriptionCreated(supabase: any, event: any) {
 async function handleSubscriptionUpdated(supabase: any, event: any) {
   try {
     const subscription = event.data.object;
-    
+
     // Find local subscription
     const { data: localSub } = await supabase
       .from('user_subscriptions')
@@ -306,12 +308,13 @@ async function handleSubscriptionUpdated(supabase: any, event: any) {
       .update({
         status,
         cancel_at_period_end: subscription.cancel_at_period_end,
-        canceled_at: subscription.canceled_at ? new Date(subscription.canceled_at * 1000).toISOString() : null
+        canceled_at: subscription.canceled_at
+          ? new Date(subscription.canceled_at * 1000).toISOString()
+          : null,
       })
       .eq('id', localSub.id);
 
     console.log(`Subscription updated: ${subscription.id} -> ${status}`);
-
   } catch (error) {
     console.error('Error handling subscription updated:', error);
   }
@@ -320,13 +323,13 @@ async function handleSubscriptionUpdated(supabase: any, event: any) {
 async function handleSubscriptionDeleted(supabase: any, event: any) {
   try {
     const subscription = event.data.object;
-    
+
     // Find and cancel local subscription
     const { error } = await supabase
       .from('user_subscriptions')
       .update({
         status: 'canceled',
-        canceled_at: new Date().toISOString()
+        canceled_at: new Date().toISOString(),
       })
       .eq('external_subscription_id', subscription.id);
 
@@ -336,7 +339,6 @@ async function handleSubscriptionDeleted(supabase: any, event: any) {
     }
 
     console.log(`Subscription canceled: ${subscription.id}`);
-
   } catch (error) {
     console.error('Error handling subscription deleted:', error);
   }
@@ -345,7 +347,7 @@ async function handleSubscriptionDeleted(supabase: any, event: any) {
 async function handleInvoiceCreated(supabase: any, event: any) {
   try {
     const invoice = event.data.object;
-    
+
     // Find subscription
     const { data: subscription } = await supabase
       .from('user_subscriptions')
@@ -354,31 +356,31 @@ async function handleInvoiceCreated(supabase: any, event: any) {
       .single();
 
     if (!subscription) {
-      console.error('Subscription not found for invoice:', invoice.subscription);
+      console.error(
+        'Subscription not found for invoice:',
+        invoice.subscription
+      );
       return;
     }
 
     // Create billing event
-    await supabase
-      .from('billing_events')
-      .insert({
-        subscription_id: subscription.id,
-        event_type: 'invoice_created',
-        amount: invoice.amount_due / 100,
-        currency: invoice.currency.toUpperCase(),
-        status: 'pending',
-        external_event_id: event.id,
-        external_invoice_id: invoice.id,
-        processed_at: new Date().toISOString(),
-        metadata: {
-          due_date: new Date(invoice.due_date * 1000).toISOString(),
-          period_start: new Date(invoice.period_start * 1000).toISOString(),
-          period_end: new Date(invoice.period_end * 1000).toISOString()
-        }
-      });
+    await supabase.from('billing_events').insert({
+      subscription_id: subscription.id,
+      event_type: 'invoice_created',
+      amount: invoice.amount_due / 100,
+      currency: invoice.currency.toUpperCase(),
+      status: 'pending',
+      external_event_id: event.id,
+      external_invoice_id: invoice.id,
+      processed_at: new Date().toISOString(),
+      metadata: {
+        due_date: new Date(invoice.due_date * 1000).toISOString(),
+        period_start: new Date(invoice.period_start * 1000).toISOString(),
+        period_end: new Date(invoice.period_end * 1000).toISOString(),
+      },
+    });
 
     console.log(`Invoice created for subscription ${subscription.id}`);
-
   } catch (error) {
     console.error('Error handling invoice created:', error);
   }
@@ -386,15 +388,31 @@ async function handleInvoiceCreated(supabase: any, event: any) {
 
 function calculatePeriodEnd(billingCycle: string): string {
   const now = new Date();
-  
+
   switch (billingCycle) {
     case 'monthly':
-      return new Date(now.getFullYear(), now.getMonth() + 1, now.getDate()).toISOString();
+      return new Date(
+        now.getFullYear(),
+        now.getMonth() + 1,
+        now.getDate()
+      ).toISOString();
     case 'quarterly':
-      return new Date(now.getFullYear(), now.getMonth() + 3, now.getDate()).toISOString();
+      return new Date(
+        now.getFullYear(),
+        now.getMonth() + 3,
+        now.getDate()
+      ).toISOString();
     case 'yearly':
-      return new Date(now.getFullYear() + 1, now.getMonth(), now.getDate()).toISOString();
+      return new Date(
+        now.getFullYear() + 1,
+        now.getMonth(),
+        now.getDate()
+      ).toISOString();
     default:
-      return new Date(now.getFullYear(), now.getMonth() + 1, now.getDate()).toISOString();
+      return new Date(
+        now.getFullYear(),
+        now.getMonth() + 1,
+        now.getDate()
+      ).toISOString();
   }
 }

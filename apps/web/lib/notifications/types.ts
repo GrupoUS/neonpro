@@ -1,7 +1,7 @@
 /**
  * NeonPro Notification System - Core Types
  * Story 1.7: Sistema de Notificações
- * 
+ *
  * Sistema completo de notificações para clínicas estéticas
  * Suporte a múltiplos canais, templates e automação
  */
@@ -20,34 +20,34 @@ export enum NotificationType {
   APPOINTMENT_CANCELLED = 'appointment_cancelled',
   APPOINTMENT_REMINDER = 'appointment_reminder',
   APPOINTMENT_CONFIRMATION = 'appointment_confirmation',
-  
+
   // Notificações de Paciente
   PATIENT_REGISTERED = 'patient_registered',
   PATIENT_UPDATED = 'patient_updated',
   PATIENT_BIRTHDAY = 'patient_birthday',
   PATIENT_FOLLOW_UP = 'patient_follow_up',
-  
+
   // Notificações de Sistema
   SYSTEM_MAINTENANCE = 'system_maintenance',
   SYSTEM_UPDATE = 'system_update',
   SYSTEM_ALERT = 'system_alert',
   SECURITY_ALERT = 'security_alert',
-  
+
   // Notificações de Pagamento
   PAYMENT_RECEIVED = 'payment_received',
   PAYMENT_FAILED = 'payment_failed',
   PAYMENT_REMINDER = 'payment_reminder',
   INVOICE_GENERATED = 'invoice_generated',
-  
+
   // Notificações de Marketing
   PROMOTIONAL_OFFER = 'promotional_offer',
   NEWSLETTER = 'newsletter',
   CAMPAIGN_MESSAGE = 'campaign_message',
-  
+
   // Notificações de Staff
   STAFF_SCHEDULE_CHANGE = 'staff_schedule_change',
   STAFF_TASK_ASSIGNED = 'staff_task_assigned',
-  STAFF_PERFORMANCE_REPORT = 'staff_performance_report'
+  STAFF_PERFORMANCE_REPORT = 'staff_performance_report',
 }
 
 /**
@@ -59,7 +59,7 @@ export enum NotificationChannel {
   PUSH = 'push',
   IN_APP = 'in_app',
   WHATSAPP = 'whatsapp',
-  WEBHOOK = 'webhook'
+  WEBHOOK = 'webhook',
 }
 
 /**
@@ -70,7 +70,7 @@ export enum NotificationPriority {
   NORMAL = 'normal',
   HIGH = 'high',
   URGENT = 'urgent',
-  CRITICAL = 'critical'
+  CRITICAL = 'critical',
 }
 
 /**
@@ -83,7 +83,7 @@ export enum NotificationStatus {
   READ = 'read',
   FAILED = 'failed',
   CANCELLED = 'cancelled',
-  EXPIRED = 'expired'
+  EXPIRED = 'expired',
 }
 
 /**
@@ -96,7 +96,7 @@ export enum NotificationCategory {
   PAYMENT = 'payment',
   MARKETING = 'marketing',
   STAFF = 'staff',
-  SECURITY = 'security'
+  SECURITY = 'security',
 }
 
 // ============================================================================
@@ -160,7 +160,7 @@ export interface NotificationPreferences {
       channels: NotificationChannel[];
       quietHours?: {
         start: string; // HH:mm
-        end: string;   // HH:mm
+        end: string; // HH:mm
       };
     };
   };
@@ -206,7 +206,7 @@ export interface ChannelConfig {
         pass: string;
       };
     };
-    
+
     // SMS
     sms?: {
       provider: 'twilio' | 'aws-sns' | 'custom';
@@ -214,21 +214,21 @@ export interface ChannelConfig {
       apiSecret: string;
       from: string;
     };
-    
+
     // Push
     push?: {
       provider: 'firebase' | 'apns' | 'custom';
       serverKey: string;
       bundleId?: string;
     };
-    
+
     // WhatsApp
     whatsapp?: {
       provider: 'twilio' | 'meta' | 'custom';
       apiKey: string;
       phoneNumberId: string;
     };
-    
+
     // Webhook
     webhook?: {
       url: string;
@@ -319,7 +319,14 @@ export interface NotificationTrigger {
  */
 export interface NotificationCondition {
   field: string;
-  operator: 'equals' | 'not_equals' | 'contains' | 'greater_than' | 'less_than' | 'in' | 'not_in';
+  operator:
+    | 'equals'
+    | 'not_equals'
+    | 'contains'
+    | 'greater_than'
+    | 'less_than'
+    | 'in'
+    | 'not_in';
   value: any;
   logicalOperator?: 'AND' | 'OR';
 }
@@ -568,7 +575,10 @@ export interface NotificationEvent {
 
 export type NotificationData = Record<string, any>;
 export type TemplateVariables = Record<string, any>;
-export type NotificationCallback = (notification: DeliveryNotification, result: DeliveryResult) => void;
+export type NotificationCallback = (
+  notification: DeliveryNotification,
+  result: DeliveryResult
+) => void;
 
 /**
  * Configuração de inicialização do sistema

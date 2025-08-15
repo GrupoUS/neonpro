@@ -15,8 +15,6 @@ export interface RLSPolicy {
 }
 
 export class DatabaseRLS {
-  private supabase: any;
-
   constructor() {
     this.supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -32,14 +30,16 @@ export class DatabaseRLS {
       policy_name: 'patients_select_own_data',
       policy_type: 'SELECT',
       roles: ['authenticated'],
-      condition: 'auth.uid() = user_id OR auth.jwt() ->> \'role\' IN (\'admin\', \'doctor\', \'nurse\', \'receptionist\')'
+      condition:
+        "auth.uid() = user_id OR auth.jwt() ->> 'role' IN ('admin', 'doctor', 'nurse', 'receptionist')",
     },
     {
       table_name: 'patients',
       policy_name: 'patients_insert_policy',
       policy_type: 'INSERT',
       roles: ['authenticated'],
-      condition: 'auth.jwt() ->> \'role\' IN (\'admin\', \'doctor\', \'nurse\', \'receptionist\')'
+      condition:
+        "auth.jwt() ->> 'role' IN ('admin', 'doctor', 'nurse', 'receptionist')",
     },
 
     // Medical Records - Strict Access Control
@@ -52,14 +52,14 @@ export class DatabaseRLS {
         SELECT 1 FROM patients 
         WHERE patients.id = medical_records.patient_id 
         AND (patients.user_id = auth.uid() OR auth.jwt() ->> 'role' IN ('admin', 'doctor', 'nurse'))
-      )`
+      )`,
     },
     {
       table_name: 'medical_records',
       policy_name: 'medical_records_insert_policy',
       policy_type: 'INSERT',
       roles: ['authenticated'],
-      condition: 'auth.jwt() ->> \'role\' IN (\'admin\', \'doctor\', \'nurse\')'
+      condition: "auth.jwt() ->> 'role' IN ('admin', 'doctor', 'nurse')",
     },
 
     // Appointments - Role-Based Access
@@ -72,14 +72,15 @@ export class DatabaseRLS {
         SELECT 1 FROM patients 
         WHERE patients.id = appointments.patient_id 
         AND patients.user_id = auth.uid()
-      ) OR auth.jwt() ->> 'role' IN ('admin', 'doctor', 'nurse', 'receptionist')`
+      ) OR auth.jwt() ->> 'role' IN ('admin', 'doctor', 'nurse', 'receptionist')`,
     },
     {
       table_name: 'appointments',
       policy_name: 'appointments_insert_policy',
       policy_type: 'INSERT',
       roles: ['authenticated'],
-      condition: 'auth.jwt() ->> \'role\' IN (\'admin\', \'doctor\', \'nurse\', \'receptionist\') OR auth.uid() = patient_user_id'
+      condition:
+        "auth.jwt() ->> 'role' IN ('admin', 'doctor', 'nurse', 'receptionist') OR auth.uid() = patient_user_id",
     },
 
     // Audit Logs - Admin Only
@@ -88,30 +89,38 @@ export class DatabaseRLS {
       policy_name: 'audit_logs_select_policy',
       policy_type: 'SELECT',
       roles: ['authenticated'],
-      condition: 'auth.jwt() ->> \'role\' = \'admin\''
+      condition: "auth.jwt() ->> 'role' = 'admin'",
     },
     {
       table_name: 'audit_logs',
       policy_name: 'audit_logs_insert_policy',
       policy_type: 'INSERT',
       roles: ['authenticated'],
-      condition: 'true' // System can always insert audit logs
-    }
+      condition: 'true', // System can always insert audit logs
+    },
   ];
 
   // Enable RLS on all healthcare tables
   async enableRLSOnAllTables(): Promise<{ success: boolean; results: any[] }> {
     const tables = [
-      'patients', 'medical_records', 'appointments', 'treatments',
-      'financial_transactions', 'audit_logs', 'lgpd_consents',
-      'anvisa_products', 'medical_professionals'
+      'patients',
+      'medical_records',
+      'appointments',
+      'treatments',
+      'financial_transactions',
+      'audit_logs',
+      'lgpd_consents',
+      'anvisa_products',
+      'medical_professionals',
     ];
 
     const results = [];
 
     for (const table of tables) {
       try {
-        await this.executeSQL(`ALTER TABLE ${table} ENABLE ROW LEVEL SECURITY;`);
+        await this.executeSQL(
+          `ALTER TABLE ${table} ENABLE ROW LEVEL SECURITY;`
+        );
         results.push({ table, success: true });
       } catch (err) {
         results.push({ table, success: false, error: err });
@@ -119,8 +128,8 @@ export class DatabaseRLS {
     }
 
     return {
-      success: results.every(r => r.success),
-      results
+      success: results.every((r) => r.success),
+      results,
     };
   }
 
@@ -133,22 +142,24 @@ export class DatabaseRLS {
         const result = await this.createRLSPolicy(policy);
         results.push({ policy: policy.policy_name, ...result });
       } catch (error) {
-        results.push({ 
-          policy: policy.policy_name, 
-          success: false, 
-          error: error instanceof Error ? error.message : 'Unknown error' 
+        results.push({
+          policy: policy.policy_name,
+          success: false,
+          error: error instanceof Error ? error.message : 'Unknown error',
         });
       }
     }
 
     return {
-      success: results.every(r => r.success),
-      results
+      success: results.every((r) => r.success),
+      results,
     };
   }
 
   // Create individual RLS policy
-  async createRLSPolicy(policy: RLSPolicy): Promise<{ success: boolean; error?: string }> {
+  async createRLSPolicy(
+    policy: RLSPolicy
+  ): Promise<{ success: boolean; error?: string }> {
     try {
       let policySQL = `
         CREATE POLICY ${policy.policy_name}
@@ -166,12 +177,12 @@ export class DatabaseRLS {
 
       return {
         success: !error,
-        error: error?.message
+        error: error?.message,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -180,9 +191,15 @@ export class DatabaseRLS {
   async generateRLSComplianceReport(): Promise<any> {
     try {
       const healthcareTables = [
-        'patients', 'medical_records', 'appointments', 'treatments',
-        'financial_transactions', 'audit_logs', 'lgpd_consents',
-        'anvisa_products', 'medical_professionals'
+        'patients',
+        'medical_records',
+        'appointments',
+        'treatments',
+        'financial_transactions',
+        'audit_logs',
+        'lgpd_consents',
+        'anvisa_products',
+        'medical_professionals',
       ];
 
       return {
@@ -194,14 +211,14 @@ export class DatabaseRLS {
           recommendations: [
             'Enable RLS on all healthcare tables',
             'Test RLS policies with different user roles',
-            'Implement audit logging for all data access'
-          ]
-        }
+            'Implement audit logging for all data access',
+          ],
+        },
       };
     } catch (error) {
       return {
         error: error instanceof Error ? error.message : 'Unknown error',
-        success: false
+        success: false,
       };
     }
   }

@@ -2,10 +2,10 @@
 // Story 6.1 - Task 2: Recurring Payment System
 // Webhook handler for Stripe recurring payment events
 
-import { NextRequest, NextResponse } from 'next/server';
-import { headers } from 'next/headers';
-import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
+import { headers } from 'next/headers';
+import { type NextRequest, NextResponse } from 'next/server';
+import Stripe from 'stripe';
 import { recurringPaymentProcessor } from '@/lib/payments/recurring/recurring-payment-processor';
 import { logger } from '@/lib/utils/logger';
 
@@ -29,10 +29,7 @@ export async function POST(request: NextRequest) {
 
     if (!signature) {
       logger.error('Missing Stripe signature');
-      return NextResponse.json(
-        { error: 'Missing signature' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Missing signature' }, { status: 400 });
     }
 
     let event: Stripe.Event;
@@ -41,10 +38,7 @@ export async function POST(request: NextRequest) {
       event = stripe.webhooks.constructEvent(body, signature, endpointSecret);
     } catch (err) {
       logger.error('Webhook signature verification failed:', err);
-      return NextResponse.json(
-        { error: 'Invalid signature' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
     }
 
     logger.info(`Received Stripe webhook event: ${event.type}`);
@@ -52,7 +46,9 @@ export async function POST(request: NextRequest) {
     // Handle different event types
     switch (event.type) {
       case 'invoice.payment_succeeded':
-        await handleInvoicePaymentSucceeded(event.data.object as Stripe.Invoice);
+        await handleInvoicePaymentSucceeded(
+          event.data.object as Stripe.Invoice
+        );
         break;
 
       case 'invoice.payment_failed':
@@ -68,27 +64,39 @@ export async function POST(request: NextRequest) {
         break;
 
       case 'customer.subscription.created':
-        await handleSubscriptionCreated(event.data.object as Stripe.Subscription);
+        await handleSubscriptionCreated(
+          event.data.object as Stripe.Subscription
+        );
         break;
 
       case 'customer.subscription.updated':
-        await handleSubscriptionUpdated(event.data.object as Stripe.Subscription);
+        await handleSubscriptionUpdated(
+          event.data.object as Stripe.Subscription
+        );
         break;
 
       case 'customer.subscription.deleted':
-        await handleSubscriptionDeleted(event.data.object as Stripe.Subscription);
+        await handleSubscriptionDeleted(
+          event.data.object as Stripe.Subscription
+        );
         break;
 
       case 'customer.subscription.trial_will_end':
-        await handleSubscriptionTrialWillEnd(event.data.object as Stripe.Subscription);
+        await handleSubscriptionTrialWillEnd(
+          event.data.object as Stripe.Subscription
+        );
         break;
 
       case 'payment_intent.succeeded':
-        await handlePaymentIntentSucceeded(event.data.object as Stripe.PaymentIntent);
+        await handlePaymentIntentSucceeded(
+          event.data.object as Stripe.PaymentIntent
+        );
         break;
 
       case 'payment_intent.payment_failed':
-        await handlePaymentIntentFailed(event.data.object as Stripe.PaymentIntent);
+        await handlePaymentIntentFailed(
+          event.data.object as Stripe.PaymentIntent
+        );
         break;
 
       default:
@@ -126,9 +134,11 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
         .from('billing_events')
         .update({
           status: 'paid',
-          paid_at: new Date(invoice.status_transitions.paid_at! * 1000).toISOString(),
+          paid_at: new Date(
+            invoice.status_transitions.paid_at! * 1000
+          ).toISOString(),
           stripe_payment_intent_id: invoice.payment_intent as string,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', billingEvent.id);
 
@@ -137,9 +147,11 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
         .from('subscriptions')
         .update({
           status: 'active',
-          current_period_start: new Date(invoice.period_start * 1000).toISOString(),
+          current_period_start: new Date(
+            invoice.period_start * 1000
+          ).toISOString(),
           current_period_end: new Date(invoice.period_end * 1000).toISOString(),
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('stripe_subscription_id', invoice.subscription);
 
@@ -171,8 +183,9 @@ async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
         .from('billing_events')
         .update({
           status: 'payment_failed',
-          failure_reason: invoice.last_finalization_error?.message || 'Payment failed',
-          updated_at: new Date().toISOString()
+          failure_reason:
+            invoice.last_finalization_error?.message || 'Payment failed',
+          updated_at: new Date().toISOString(),
         })
         .eq('id', billingEvent.id);
 
@@ -203,22 +216,22 @@ async function handleInvoiceCreated(invoice: Stripe.Invoice) {
 
     if (subscription) {
       // Create billing event
-      await supabase
-        .from('billing_events')
-        .insert({
-          subscription_id: subscription.id,
-          amount: invoice.amount_due / 100, // Convert from cents
-          currency: invoice.currency,
-          status: 'pending',
-          billing_period_start: new Date(invoice.period_start * 1000).toISOString(),
-          billing_period_end: new Date(invoice.period_end * 1000).toISOString(),
-          stripe_invoice_id: invoice.id,
-          metadata: {
-            invoice_number: invoice.number,
-            hosted_invoice_url: invoice.hosted_invoice_url,
-            invoice_pdf: invoice.invoice_pdf
-          }
-        });
+      await supabase.from('billing_events').insert({
+        subscription_id: subscription.id,
+        amount: invoice.amount_due / 100, // Convert from cents
+        currency: invoice.currency,
+        status: 'pending',
+        billing_period_start: new Date(
+          invoice.period_start * 1000
+        ).toISOString(),
+        billing_period_end: new Date(invoice.period_end * 1000).toISOString(),
+        stripe_invoice_id: invoice.id,
+        metadata: {
+          invoice_number: invoice.number,
+          hosted_invoice_url: invoice.hosted_invoice_url,
+          invoice_pdf: invoice.invoice_pdf,
+        },
+      });
 
       logger.info(`Invoice created: ${invoice.id}`);
     }
@@ -239,9 +252,11 @@ async function handleInvoiceFinalized(invoice: Stripe.Invoice) {
           invoice_number: invoice.number,
           hosted_invoice_url: invoice.hosted_invoice_url,
           invoice_pdf: invoice.invoice_pdf,
-          due_date: invoice.due_date ? new Date(invoice.due_date * 1000).toISOString() : null
+          due_date: invoice.due_date
+            ? new Date(invoice.due_date * 1000).toISOString()
+            : null,
         },
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('stripe_invoice_id', invoice.id);
 
@@ -259,11 +274,19 @@ async function handleSubscriptionCreated(subscription: Stripe.Subscription) {
       .from('subscriptions')
       .update({
         status: subscription.status,
-        current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
-        current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
-        trial_start: subscription.trial_start ? new Date(subscription.trial_start * 1000).toISOString() : null,
-        trial_end: subscription.trial_end ? new Date(subscription.trial_end * 1000).toISOString() : null,
-        updated_at: new Date().toISOString()
+        current_period_start: new Date(
+          subscription.current_period_start * 1000
+        ).toISOString(),
+        current_period_end: new Date(
+          subscription.current_period_end * 1000
+        ).toISOString(),
+        trial_start: subscription.trial_start
+          ? new Date(subscription.trial_start * 1000).toISOString()
+          : null,
+        trial_end: subscription.trial_end
+          ? new Date(subscription.trial_end * 1000).toISOString()
+          : null,
+        updated_at: new Date().toISOString(),
       })
       .eq('stripe_subscription_id', subscription.id);
 
@@ -281,11 +304,19 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
       .from('subscriptions')
       .update({
         status: subscription.status,
-        current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
-        current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
-        trial_start: subscription.trial_start ? new Date(subscription.trial_start * 1000).toISOString() : null,
-        trial_end: subscription.trial_end ? new Date(subscription.trial_end * 1000).toISOString() : null,
-        updated_at: new Date().toISOString()
+        current_period_start: new Date(
+          subscription.current_period_start * 1000
+        ).toISOString(),
+        current_period_end: new Date(
+          subscription.current_period_end * 1000
+        ).toISOString(),
+        trial_start: subscription.trial_start
+          ? new Date(subscription.trial_start * 1000).toISOString()
+          : null,
+        trial_end: subscription.trial_end
+          ? new Date(subscription.trial_end * 1000).toISOString()
+          : null,
+        updated_at: new Date().toISOString(),
       })
       .eq('stripe_subscription_id', subscription.id);
 
@@ -304,7 +335,7 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
       .update({
         status: 'cancelled',
         cancelled_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('stripe_subscription_id', subscription.id);
 
@@ -315,7 +346,9 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
 }
 
 // Handle subscription trial ending soon
-async function handleSubscriptionTrialWillEnd(subscription: Stripe.Subscription) {
+async function handleSubscriptionTrialWillEnd(
+  subscription: Stripe.Subscription
+) {
   try {
     // Find the subscription
     const { data: subscriptionData } = await supabase
@@ -331,7 +364,7 @@ async function handleSubscriptionTrialWillEnd(subscription: Stripe.Subscription)
       // Send trial ending notification
       // This would integrate with your notification system
       logger.info(`Trial will end for subscription: ${subscription.id}`);
-      
+
       // You can add email notification logic here
       // await sendTrialEndingNotification(subscriptionData);
     }
@@ -341,14 +374,16 @@ async function handleSubscriptionTrialWillEnd(subscription: Stripe.Subscription)
 }
 
 // Handle successful payment intent
-async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent) {
+async function handlePaymentIntentSucceeded(
+  paymentIntent: Stripe.PaymentIntent
+) {
   try {
     // Update any related billing events
     await supabase
       .from('billing_events')
       .update({
         stripe_payment_intent_id: paymentIntent.id,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('stripe_payment_intent_id', paymentIntent.id);
 
@@ -366,8 +401,9 @@ async function handlePaymentIntentFailed(paymentIntent: Stripe.PaymentIntent) {
       .from('billing_events')
       .update({
         stripe_payment_intent_id: paymentIntent.id,
-        failure_reason: paymentIntent.last_payment_error?.message || 'Payment failed',
-        updated_at: new Date().toISOString()
+        failure_reason:
+          paymentIntent.last_payment_error?.message || 'Payment failed',
+        updated_at: new Date().toISOString(),
       })
       .eq('stripe_payment_intent_id', paymentIntent.id);
 

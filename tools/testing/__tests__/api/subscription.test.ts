@@ -1,29 +1,32 @@
 /**
  * API Routes Integration Tests
  * Tests subscription API endpoints and integration functionality
- * 
+ *
  * @description Comprehensive integration tests for subscription API routes,
  *              covering CRUD operations, authentication, and error handling
  * @version 1.0.0
  * @created 2025-07-22
  */
 
-import { describe, it, expect, jest, beforeEach } from '@jest/globals'
-import { createMocks } from 'node-mocks-http'
-import type { NextApiRequest, NextApiResponse } from 'next'
-import { createMockSubscription, createMockResponse } from '../utils/testUtils'
+import { beforeEach, describe, expect, it, jest } from '@jest/globals';
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { createMocks } from 'node-mocks-http';
+import { createMockSubscription } from '../utils/testUtils';
 
 // Mock API handler (to be imported when it exists)
-const mockSubscriptionHandler = async (req: NextApiRequest, res: NextApiResponse) => {
+const mockSubscriptionHandler = async (
+  req: NextApiRequest,
+  res: NextApiResponse
+) => {
   if (req.method === 'GET') {
-    const subscription = createMockSubscription()
-    res.status(200).json(subscription)
+    const subscription = createMockSubscription();
+    res.status(200).json(subscription);
   } else if (req.method === 'POST') {
-    res.status(201).json({ success: true })
+    res.status(201).json({ success: true });
   } else {
-    res.status(405).json({ error: 'Method not allowed' })
+    res.status(405).json({ error: 'Method not allowed' });
   }
-}
+};
 
 // ============================================================================
 // API Integration Tests
@@ -31,8 +34,8 @@ const mockSubscriptionHandler = async (req: NextApiRequest, res: NextApiResponse
 
 describe('Subscription API Routes', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
-  })
+    jest.clearAllMocks();
+  });
 
   // ============================================================================
   // GET /api/subscription Tests
@@ -45,34 +48,37 @@ describe('Subscription API Routes', () => {
         headers: {
           authorization: 'Bearer test-token',
         },
-      })
+      });
 
-      await mockSubscriptionHandler(req, res)
+      await mockSubscriptionHandler(req, res);
 
-      expect(res._getStatusCode()).toBe(200)
-      const data = JSON.parse(res._getData())
-      expect(data).toHaveProperty('id')
-      expect(data).toHaveProperty('status')
-      expect(data).toHaveProperty('tier')
-    })
+      expect(res._getStatusCode()).toBe(200);
+      const data = JSON.parse(res._getData());
+      expect(data).toHaveProperty('id');
+      expect(data).toHaveProperty('status');
+      expect(data).toHaveProperty('tier');
+    });
 
     it('should return 401 for unauthenticated requests', async () => {
       const { req, res } = createMocks({
         method: 'GET',
         headers: {},
-      })
+      });
 
       // Mock unauthenticated handler
-      const unauthenticatedHandler = async (req: NextApiRequest, res: NextApiResponse) => {
-        res.status(401).json({ error: 'Unauthorized' })
-      }
+      const unauthenticatedHandler = async (
+        _req: NextApiRequest,
+        res: NextApiResponse
+      ) => {
+        res.status(401).json({ error: 'Unauthorized' });
+      };
 
-      await unauthenticatedHandler(req, res)
+      await unauthenticatedHandler(req, res);
 
-      expect(res._getStatusCode()).toBe(401)
-      const data = JSON.parse(res._getData())
-      expect(data).toEqual({ error: 'Unauthorized' })
-    })
+      expect(res._getStatusCode()).toBe(401);
+      const data = JSON.parse(res._getData());
+      expect(data).toEqual({ error: 'Unauthorized' });
+    });
 
     it('should handle database errors gracefully', async () => {
       const { req, res } = createMocks({
@@ -80,18 +86,21 @@ describe('Subscription API Routes', () => {
         headers: {
           authorization: 'Bearer test-token',
         },
-      })
+      });
 
       // Mock error handler
-      const errorHandler = async (req: NextApiRequest, res: NextApiResponse) => {
-        res.status(500).json({ error: 'Internal server error' })
-      }
+      const errorHandler = async (
+        _req: NextApiRequest,
+        res: NextApiResponse
+      ) => {
+        res.status(500).json({ error: 'Internal server error' });
+      };
 
-      await errorHandler(req, res)
+      await errorHandler(req, res);
 
-      expect(res._getStatusCode()).toBe(500)
-    })
-  })
+      expect(res._getStatusCode()).toBe(500);
+    });
+  });
 
   // ============================================================================
   // POST /api/subscription Tests
@@ -108,14 +117,14 @@ describe('Subscription API Routes', () => {
         headers: {
           'content-type': 'application/json',
         },
-      })
+      });
 
-      await mockSubscriptionHandler(req, res)
+      await mockSubscriptionHandler(req, res);
 
-      expect(res._getStatusCode()).toBe(201)
-      const data = JSON.parse(res._getData())
-      expect(data).toEqual({ success: true })
-    })
+      expect(res._getStatusCode()).toBe(201);
+      const data = JSON.parse(res._getData());
+      expect(data).toEqual({ success: true });
+    });
 
     it('should validate required fields', async () => {
       const { req, res } = createMocks({
@@ -126,18 +135,21 @@ describe('Subscription API Routes', () => {
         headers: {
           'content-type': 'application/json',
         },
-      })
+      });
 
       // Mock validation error handler
-      const validationHandler = async (req: NextApiRequest, res: NextApiResponse) => {
-        res.status(400).json({ error: 'Missing required fields' })
-      }
+      const validationHandler = async (
+        _req: NextApiRequest,
+        res: NextApiResponse
+      ) => {
+        res.status(400).json({ error: 'Missing required fields' });
+      };
 
-      await validationHandler(req, res)
+      await validationHandler(req, res);
 
-      expect(res._getStatusCode()).toBe(400)
-    })
-  })
+      expect(res._getStatusCode()).toBe(400);
+    });
+  });
 
   // ============================================================================
   // Method Not Allowed Tests
@@ -147,30 +159,33 @@ describe('Subscription API Routes', () => {
     it('should return 405 for unsupported methods', async () => {
       const { req, res } = createMocks({
         method: 'DELETE',
-      })
+      });
 
-      await mockSubscriptionHandler(req, res)
+      await mockSubscriptionHandler(req, res);
 
-      expect(res._getStatusCode()).toBe(405)
-      const data = JSON.parse(res._getData())
-      expect(data).toEqual({ error: 'Method not allowed' })
-    })
+      expect(res._getStatusCode()).toBe(405);
+      const data = JSON.parse(res._getData());
+      expect(data).toEqual({ error: 'Method not allowed' });
+    });
 
     it('should handle OPTIONS requests correctly', async () => {
       const { req, res } = createMocks({
         method: 'OPTIONS',
-      })
+      });
 
       // Mock OPTIONS handler
-      const optionsHandler = async (req: NextApiRequest, res: NextApiResponse) => {
-        res.setHeader('Allow', ['GET', 'POST'])
-        res.status(200).end()
-      }
+      const optionsHandler = async (
+        _req: NextApiRequest,
+        res: NextApiResponse
+      ) => {
+        res.setHeader('Allow', ['GET', 'POST']);
+        res.status(200).end();
+      };
 
-      await optionsHandler(req, res)
+      await optionsHandler(req, res);
 
-      expect(res._getStatusCode()).toBe(200)
-      expect(res.getHeader('Allow')).toEqual(['GET', 'POST'])
-    })
-  })
-})
+      expect(res._getStatusCode()).toBe(200);
+      expect(res.getHeader('Allow')).toEqual(['GET', 'POST']);
+    });
+  });
+});

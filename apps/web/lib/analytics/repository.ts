@@ -2,23 +2,21 @@
 // Data access layer for analytics with optimized queries and caching
 // Created: 2025-01-22
 
-import { createClient } from '@/app/utils/supabase/server'
-import type { 
-  AnalyticsQuery, 
-  MetricType, 
-  RevenueMetric, 
-  ConversionMetric, 
-  TrialMetric,
+import { createClient } from '@/app/utils/supabase/server';
+import type {
+  AnalyticsQuery,
+  ConversionMetric,
   MetricAggregation,
-  RealTimeMetric 
-} from './types'
-import { cache } from 'react'
+  RealTimeMetric,
+  RevenueMetric,
+  TrialMetric,
+} from './types';
 
 export class AnalyticsRepository {
-  private supabase: ReturnType<typeof createClient>
+  private supabase: ReturnType<typeof createClient>;
 
   constructor() {
-    this.supabase = createClient()
+    this.supabase = createClient();
   }
 
   // ========================================================================
@@ -26,83 +24,95 @@ export class AnalyticsRepository {
   // ========================================================================
 
   async getRevenueMetrics(query: AnalyticsQuery): Promise<RevenueMetric[]> {
-    const { data, error } = await this.supabase
-      .rpc('get_revenue_metrics', {
-        p_start_date: query.startDate.toISOString(),
-        p_end_date: query.endDate.toISOString(),
-        p_filters: query.filters || {}
-      })
+    const { data, error } = await this.supabase.rpc('get_revenue_metrics', {
+      p_start_date: query.startDate.toISOString(),
+      p_end_date: query.endDate.toISOString(),
+      p_filters: query.filters || {},
+    });
 
-    if (error) throw new Error(`Revenue metrics query failed: ${error.message}`)
-    return data || []
+    if (error)
+      throw new Error(`Revenue metrics query failed: ${error.message}`);
+    return data || [];
   }
 
-  async getConversionMetrics(query: AnalyticsQuery): Promise<ConversionMetric[]> {
-    const { data, error } = await this.supabase
-      .rpc('get_conversion_metrics', {
-        p_start_date: query.startDate.toISOString(),
-        p_end_date: query.endDate.toISOString(),
-        p_filters: query.filters || {}
-      })
+  async getConversionMetrics(
+    query: AnalyticsQuery
+  ): Promise<ConversionMetric[]> {
+    const { data, error } = await this.supabase.rpc('get_conversion_metrics', {
+      p_start_date: query.startDate.toISOString(),
+      p_end_date: query.endDate.toISOString(),
+      p_filters: query.filters || {},
+    });
 
-    if (error) throw new Error(`Conversion metrics query failed: ${error.message}`)
-    return data || []
-  }  async getTrialMetrics(query: AnalyticsQuery): Promise<TrialMetric[]> {
-    const { data, error } = await this.supabase
-      .rpc('get_trial_metrics', {
-        p_start_date: query.startDate.toISOString(),
-        p_end_date: query.endDate.toISOString(),
-        p_filters: query.filters || {}
-      })
+    if (error)
+      throw new Error(`Conversion metrics query failed: ${error.message}`);
+    return data || [];
+  }
+  async getTrialMetrics(query: AnalyticsQuery): Promise<TrialMetric[]> {
+    const { data, error } = await this.supabase.rpc('get_trial_metrics', {
+      p_start_date: query.startDate.toISOString(),
+      p_end_date: query.endDate.toISOString(),
+      p_filters: query.filters || {},
+    });
 
-    if (error) throw new Error(`Trial metrics query failed: ${error.message}`)
-    return data || []
+    if (error) throw new Error(`Trial metrics query failed: ${error.message}`);
+    return data || [];
   }
 
   // ========================================================================
   // AGGREGATED ANALYTICS QUERIES
   // ========================================================================
 
-  async getRevenueAggregation(query: AnalyticsQuery): Promise<MetricAggregation> {
-    const { data, error } = await this.supabase
-      .rpc('calculate_revenue_aggregation', {
+  async getRevenueAggregation(
+    query: AnalyticsQuery
+  ): Promise<MetricAggregation> {
+    const { data, error } = await this.supabase.rpc(
+      'calculate_revenue_aggregation',
+      {
         p_period: query.period,
         p_start_date: query.startDate.toISOString(),
         p_end_date: query.endDate.toISOString(),
-        p_group_by: query.groupBy || []
-      })
+        p_group_by: query.groupBy || [],
+      }
+    );
 
-    if (error) throw new Error(`Revenue aggregation failed: ${error.message}`)
-    return data?.[0] || this.createEmptyAggregation(query)
+    if (error) throw new Error(`Revenue aggregation failed: ${error.message}`);
+    return data?.[0] || this.createEmptyAggregation(query);
   }
 
-  async getConversionAggregation(query: AnalyticsQuery): Promise<MetricAggregation> {
-    const { data, error } = await this.supabase
-      .rpc('calculate_conversion_aggregation', {
+  async getConversionAggregation(
+    query: AnalyticsQuery
+  ): Promise<MetricAggregation> {
+    const { data, error } = await this.supabase.rpc(
+      'calculate_conversion_aggregation',
+      {
         p_period: query.period,
         p_start_date: query.startDate.toISOString(),
         p_end_date: query.endDate.toISOString(),
-        p_group_by: query.groupBy || []
-      })
+        p_group_by: query.groupBy || [],
+      }
+    );
 
-    if (error) throw new Error(`Conversion aggregation failed: ${error.message}`)
-    return data?.[0] || this.createEmptyAggregation(query)
-  }  // ========================================================================
+    if (error)
+      throw new Error(`Conversion aggregation failed: ${error.message}`);
+    return data?.[0] || this.createEmptyAggregation(query);
+  } // ========================================================================
   // REAL-TIME METRICS & STREAMING
   // ========================================================================
 
   async getRealTimeMetrics(): Promise<RealTimeMetric[]> {
-    const { data, error } = await this.supabase
-      .rpc('get_realtime_metrics')
+    const { data, error } = await this.supabase.rpc('get_realtime_metrics');
 
-    if (error) throw new Error(`Real-time metrics query failed: ${error.message}`)
-    return data || []
+    if (error)
+      throw new Error(`Real-time metrics query failed: ${error.message}`);
+    return data || [];
   }
 
   async subscribeToRealTimeMetrics(callback: (metric: RealTimeMetric) => void) {
     const channel = this.supabase
       .channel('realtime-analytics')
-      .on('postgres_changes', 
+      .on(
+        'postgres_changes',
         { event: '*', schema: 'analytics', table: 'metrics' },
         (payload) => {
           const metric: RealTimeMetric = {
@@ -111,14 +121,14 @@ export class AnalyticsRepository {
             value: payload.new?.value || 0,
             delta: payload.new?.delta || 0,
             timestamp: new Date(payload.new?.created_at || Date.now()),
-            trend: payload.new?.trend || 'stable'
-          }
-          callback(metric)
+            trend: payload.new?.trend || 'stable',
+          };
+          callback(metric);
         }
       )
-      .subscribe()
+      .subscribe();
 
-    return () => channel.unsubscribe()
+    return () => channel.unsubscribe();
   }
 
   // ========================================================================
@@ -135,7 +145,7 @@ export class AnalyticsRepository {
       median: 0,
       percentile95: 0,
       growth: 0,
-      periodOverPeriod: 0
-    }
+      periodOverPeriod: 0,
+    };
   }
 }

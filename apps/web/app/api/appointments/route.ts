@@ -1,9 +1,9 @@
+import { NextResponse } from 'next/server';
 import type {
-    BookingResponse,
-    CreateAppointmentFormData,
-} from "@/app/lib/types/appointments";
-import { createClient } from "@/app/utils/supabase/server";
-import { NextResponse } from "next/server";
+  BookingResponse,
+  CreateAppointmentFormData,
+} from '@/app/lib/types/appointments';
+import { createClient } from '@/app/utils/supabase/server';
 
 export async function POST(request: Request) {
   try {
@@ -16,7 +16,7 @@ export async function POST(request: Request) {
 
     if (!user) {
       return NextResponse.json(
-        { success: false, error_message: "Unauthorized" },
+        { success: false, error_message: 'Unauthorized' },
         { status: 401 }
       );
     }
@@ -26,16 +26,18 @@ export async function POST(request: Request) {
 
     // Validate required fields
     if (
-      !body.patient_id ||
-      !body.professional_id ||
-      !body.service_type_id ||
-      !body.start_time ||
-      !body.end_time
+      !(
+        body.patient_id &&
+        body.professional_id &&
+        body.service_type_id &&
+        body.start_time &&
+        body.end_time
+      )
     ) {
       return NextResponse.json(
         {
           success: false,
-          error_message: "Dados obrigatórios não fornecidos",
+          error_message: 'Dados obrigatórios não fornecidos',
         },
         { status: 400 }
       );
@@ -43,16 +45,16 @@ export async function POST(request: Request) {
 
     // Get clinic_id from user's profile
     const { data: profile, error: profileError } = await supabase
-      .from("profiles")
-      .select("clinic_id")
-      .eq("id", user.id)
+      .from('profiles')
+      .select('clinic_id')
+      .eq('id', user.id)
       .single();
 
     if (profileError || !profile?.clinic_id) {
       return NextResponse.json(
         {
           success: false,
-          error_message: "Perfil de usuário não encontrado",
+          error_message: 'Perfil de usuário não encontrado',
         },
         { status: 400 }
       );
@@ -60,7 +62,7 @@ export async function POST(request: Request) {
 
     // Call the stored procedure to book the appointment
     const { data: bookingResult, error: bookingError } = await supabase.rpc(
-      "book_appointment",
+      'book_appointment',
       {
         p_clinic_id: profile.clinic_id,
         p_patient_id: body.patient_id,
@@ -75,14 +77,14 @@ export async function POST(request: Request) {
     );
 
     if (bookingError) {
-      console.error("Booking error:", bookingError);
+      console.error('Booking error:', bookingError);
 
       // Check for specific errors
-      if (bookingError.message.includes("conflict")) {
+      if (bookingError.message.includes('conflict')) {
         return NextResponse.json(
           {
             success: false,
-            error_message: "Conflito de horário detectado",
+            error_message: 'Conflito de horário detectado',
             error_details: bookingError.message,
           },
           { status: 409 }
@@ -92,19 +94,19 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           success: false,
-          error_message: "Erro ao agendar",
+          error_message: 'Erro ao agendar',
           error_details: bookingError.message,
         },
         { status: 500 }
       );
     }
 
-    if (!bookingResult || !bookingResult.success) {
+    if (!(bookingResult && bookingResult.success)) {
       return NextResponse.json(
         {
           success: false,
           error_message:
-            bookingResult?.error_message || "Erro desconhecido ao agendar",
+            bookingResult?.error_message || 'Erro desconhecido ao agendar',
         },
         { status: 400 }
       );
@@ -114,16 +116,16 @@ export async function POST(request: Request) {
     const response: BookingResponse = {
       success: true,
       appointment_id: bookingResult.appointment_id,
-      message: "Agendamento criado com sucesso",
+      message: 'Agendamento criado com sucesso',
     };
 
     return NextResponse.json(response, { status: 201 });
   } catch (error) {
-    console.error("API Error:", error);
+    console.error('API Error:', error);
     return NextResponse.json(
       {
         success: false,
-        error_message: "Erro interno do servidor",
+        error_message: 'Erro interno do servidor',
       },
       { status: 500 }
     );
@@ -140,18 +142,18 @@ export async function GET(request: Request) {
     } = await supabase.auth.getUser();
 
     if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Get clinic_id from user's profile
     const { data: profile } = await supabase
-      .from("profiles")
-      .select("clinic_id")
-      .eq("id", user.id)
+      .from('profiles')
+      .select('clinic_id')
+      .eq('id', user.id)
       .single();
 
     if (!profile?.clinic_id) {
-      return NextResponse.json({ error: "Clinic not found" }, { status: 400 });
+      return NextResponse.json({ error: 'Clinic not found' }, { status: 400 });
     }
 
     // Parse query parameters for filters
@@ -165,7 +167,7 @@ export async function GET(request: Request) {
 
     // Build base query
     let query = supabase
-      .from("appointments")
+      .from('appointments')
       .select(
         `
         id,
@@ -196,7 +198,7 @@ export async function GET(request: Request) {
         )
       `
       )
-      .eq("clinic_id", profile.clinic_id);
+      .eq('clinic_id', profile.clinic_id);
 
     // Apply filters
     if (status && status !== 'all') {
@@ -224,7 +226,9 @@ export async function GET(request: Request) {
 
     // For search, we need to use text search on patient name
     // Since we can't search on joined tables directly, we'll filter after fetching
-    const { data: appointmentsData, error } = await query.order("start_time", { ascending: true });
+    const { data: appointmentsData, error } = await query.order('start_time', {
+      ascending: true,
+    });
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
@@ -234,12 +238,16 @@ export async function GET(request: Request) {
     let appointments = appointmentsData;
     if (search && appointments) {
       const searchLower = search.toLowerCase();
-      appointments = appointments.filter(appointment => {
-        const patientName = (appointment.patients as any)?.[0]?.full_name?.toLowerCase() || '';
+      appointments = appointments.filter((appointment) => {
+        const patientName =
+          (appointment.patients as any)?.[0]?.full_name?.toLowerCase() || '';
         const notes = appointment.notes?.toLowerCase() || '';
-        const professionalName = (appointment.professionals as any)?.[0]?.full_name?.toLowerCase() || '';
-        const serviceName = (appointment.service_types as any)?.[0]?.name?.toLowerCase() || '';
-        
+        const professionalName =
+          (appointment.professionals as any)?.[0]?.full_name?.toLowerCase() ||
+          '';
+        const serviceName =
+          (appointment.service_types as any)?.[0]?.name?.toLowerCase() || '';
+
         return (
           patientName.includes(searchLower) ||
           notes.includes(searchLower) ||
@@ -251,9 +259,9 @@ export async function GET(request: Request) {
 
     return NextResponse.json(appointments);
   } catch (error) {
-    console.error("API Error:", error);
+    console.error('API Error:', error);
     return NextResponse.json(
-      { error: "Internal Server Error" },
+      { error: 'Internal Server Error' },
       { status: 500 }
     );
   }

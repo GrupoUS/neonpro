@@ -3,25 +3,29 @@
 // Epic 7 - Story 7.2: Automated marketing campaigns with personalization
 // =====================================================================================
 
+import { type NextRequest, NextResponse } from 'next/server';
 import { marketingCampaignsService } from '@/app/lib/services/marketing-campaigns-service';
 import type { CreateCampaignData } from '@/app/types/marketing-campaigns';
-import { NextRequest, NextResponse } from 'next/server';
 
 // GET /api/marketing/campaigns - List campaigns with filters
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    
+
     const filters = {
       status: searchParams.get('status')?.split(','),
       type: searchParams.get('type')?.split(','),
       clinicId: searchParams.get('clinic_id') || undefined,
-      limit: searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : undefined,
-      offset: searchParams.get('offset') ? parseInt(searchParams.get('offset')!) : undefined,
+      limit: searchParams.get('limit')
+        ? Number.parseInt(searchParams.get('limit')!, 10)
+        : undefined,
+      offset: searchParams.get('offset')
+        ? Number.parseInt(searchParams.get('offset')!, 10)
+        : undefined,
     };
 
     // Remove undefined values
-    Object.keys(filters).forEach(key => {
+    Object.keys(filters).forEach((key) => {
       if (filters[key as keyof typeof filters] === undefined) {
         delete filters[key as keyof typeof filters];
       }
@@ -33,17 +37,16 @@ export async function GET(request: NextRequest) {
       success: true,
       data: campaigns,
       total: campaigns.length,
-      filters: filters
+      filters,
     });
-
   } catch (error) {
     console.error('GET /api/marketing/campaigns error:', error);
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: 'Failed to fetch campaigns',
-        message: error instanceof Error ? error.message : 'Unknown error'
-      }, 
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
       { status: 500 }
     );
   }
@@ -53,47 +56,65 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    
+
     // Validate required fields
     const requiredFields = [
-      'name', 'campaignType', 'content', 'triggerType', 'createdBy', 'clinicId'
+      'name',
+      'campaignType',
+      'content',
+      'triggerType',
+      'createdBy',
+      'clinicId',
     ];
-    
+
     for (const field of requiredFields) {
       if (!body[field]) {
         return NextResponse.json(
-          { 
-            success: false, 
-            error: `Missing required field: ${field}` 
-          }, 
+          {
+            success: false,
+            error: `Missing required field: ${field}`,
+          },
           { status: 400 }
         );
       }
     }
 
     // Validate campaign type
-    const validCampaignTypes = ['email', 'sms', 'whatsapp', 'push_notification', 'in_app', 'multi_channel'];
+    const validCampaignTypes = [
+      'email',
+      'sms',
+      'whatsapp',
+      'push_notification',
+      'in_app',
+      'multi_channel',
+    ];
     if (!validCampaignTypes.includes(body.campaignType)) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: `Invalid campaign type. Must be one of: ${validCampaignTypes.join(', ')}` 
-        }, 
+        {
+          success: false,
+          error: `Invalid campaign type. Must be one of: ${validCampaignTypes.join(', ')}`,
+        },
         { status: 400 }
       );
     }
 
     // Validate trigger type
     const validTriggerTypes = [
-      'manual', 'scheduled', 'event_based', 'segment_entry', 'segment_exit',
-      'behavioral', 'date_based', 'lifecycle_stage'
+      'manual',
+      'scheduled',
+      'event_based',
+      'segment_entry',
+      'segment_exit',
+      'behavioral',
+      'date_based',
+      'lifecycle_stage',
     ];
     if (!validTriggerTypes.includes(body.triggerType)) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: `Invalid trigger type. Must be one of: ${validTriggerTypes.join(', ')}` 
-        }, 
+        {
+          success: false,
+          error: `Invalid trigger type. Must be one of: ${validTriggerTypes.join(', ')}`,
+        },
         { status: 400 }
       );
     }
@@ -108,7 +129,9 @@ export async function POST(request: NextRequest) {
       targetSegments: body.targetSegments || [],
       includeCriteria: body.includeCriteria,
       excludeCriteria: body.excludeCriteria,
-      scheduledStart: body.scheduledStart ? new Date(body.scheduledStart) : undefined,
+      scheduledStart: body.scheduledStart
+        ? new Date(body.scheduledStart)
+        : undefined,
       scheduledEnd: body.scheduledEnd ? new Date(body.scheduledEnd) : undefined,
       timezone: body.timezone || 'America/Sao_Paulo',
       templateId: body.templateId,
@@ -118,30 +141,33 @@ export async function POST(request: NextRequest) {
       personalizationData: body.personalizationData || {},
       triggerType: body.triggerType,
       triggerConfig: body.triggerConfig,
-      autoOptimization: body.autoOptimization || false,
+      autoOptimization: body.autoOptimization,
       requiresConsent: body.requiresConsent !== false, // Default to true
       consentTypes: body.consentTypes || [],
       respectUnsubscribe: body.respectUnsubscribe !== false, // Default to true
       createdBy: body.createdBy,
-      clinicId: body.clinicId
+      clinicId: body.clinicId,
     };
 
-    const campaign = await marketingCampaignsService.createCampaign(campaignData);
+    const campaign =
+      await marketingCampaignsService.createCampaign(campaignData);
 
-    return NextResponse.json({
-      success: true,
-      data: campaign,
-      message: 'Campaign created successfully'
-    }, { status: 201 });
-
+    return NextResponse.json(
+      {
+        success: true,
+        data: campaign,
+        message: 'Campaign created successfully',
+      },
+      { status: 201 }
+    );
   } catch (error) {
     console.error('POST /api/marketing/campaigns error:', error);
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: 'Failed to create campaign',
-        message: error instanceof Error ? error.message : 'Unknown error'
-      }, 
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
       { status: 500 }
     );
   }

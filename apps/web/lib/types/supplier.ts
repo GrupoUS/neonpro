@@ -16,7 +16,7 @@ export enum SupplierStatus {
   INACTIVE = 'inactive',
   SUSPENDED = 'suspended',
   PENDING_VERIFICATION = 'pending_verification',
-  BLOCKED = 'blocked'
+  BLOCKED = 'blocked',
 }
 
 export enum SupplierCategory {
@@ -27,7 +27,7 @@ export enum SupplierCategory {
   TECHNOLOGY = 'technology',
   SERVICES = 'services',
   MAINTENANCE = 'maintenance',
-  OFFICE_SUPPLIES = 'office_supplies'
+  OFFICE_SUPPLIES = 'office_supplies',
 }
 
 export enum ContractType {
@@ -35,7 +35,7 @@ export enum ContractType {
   INDEFINITE = 'indefinite',
   PROJECT_BASED = 'project_based',
   FRAMEWORK = 'framework',
-  SPOT_PURCHASE = 'spot_purchase'
+  SPOT_PURCHASE = 'spot_purchase',
 }
 
 export enum PaymentTerms {
@@ -46,7 +46,7 @@ export enum PaymentTerms {
   NET_60 = 'net_60',
   IMMEDIATE = 'immediate',
   ADVANCE = 'advance',
-  COD = 'cod'
+  COD = 'cod',
 }
 
 export enum PerformanceMetric {
@@ -57,14 +57,14 @@ export enum PerformanceMetric {
   COMMUNICATION = 'communication',
   COMPLIANCE = 'compliance',
   INNOVATION = 'innovation',
-  SUSTAINABILITY = 'sustainability'
+  SUSTAINABILITY = 'sustainability',
 }
 
 export enum RiskLevel {
   LOW = 'low',
   MEDIUM = 'medium',
   HIGH = 'high',
-  CRITICAL = 'critical'
+  CRITICAL = 'critical',
 }
 
 export enum QualityIssueType {
@@ -74,7 +74,7 @@ export enum QualityIssueType {
   CONTAMINATION = 'contamination',
   EXPIRY_ISSUES = 'expiry_issues',
   DOCUMENTATION_ERROR = 'documentation_error',
-  REGULATORY_NON_COMPLIANCE = 'regulatory_non_compliance'
+  REGULATORY_NON_COMPLIANCE = 'regulatory_non_compliance',
 }
 
 export enum IssueStatus {
@@ -82,7 +82,7 @@ export enum IssueStatus {
   IN_PROGRESS = 'in_progress',
   RESOLVED = 'resolved',
   ESCALATED = 'escalated',
-  CLOSED = 'closed'
+  CLOSED = 'closed',
 }
 
 // ============================================================================
@@ -98,48 +98,48 @@ export interface Supplier {
   category: SupplierCategory;
   subcategories: string[];
   status: SupplierStatus;
-  
+
   // Contact Information
   primary_contact: ContactInfo;
   secondary_contacts: ContactInfo[];
-  
+
   // Business Information
   website?: string;
   registration_number?: string;
   tax_id?: string;
-  
+
   // Address Information
   address: Address;
   billing_address?: Address;
-  
+
   // Performance & Rating
   performance_score: number; // 0-100
   quality_rating: number; // 1-5 stars
   reliability_score: number; // 0-100
   cost_competitiveness: number; // 0-100
-  
+
   // Financial Information
   credit_rating?: string;
   payment_terms: PaymentTerms;
   currency: string;
   early_payment_discount?: number;
-  
+
   // Risk Assessment
   risk_level: RiskLevel;
   risk_factors: string[];
-  
+
   // Certifications & Compliance
   certifications: Certification[];
   regulatory_compliance: boolean;
   anvisa_registration?: string;
-  
+
   // Metadata
   created_at: string;
   updated_at: string;
   created_by: string;
   last_reviewed_at?: string;
   next_review_date?: string;
-  
+
   // Relationships
   clinic_id: string;
   tags: string[];
@@ -190,38 +190,38 @@ export interface SupplierContract {
   contract_number: string;
   title: string;
   type: ContractType;
-  
+
   // Terms & Conditions
   start_date: string;
   end_date?: string;
   renewal_terms?: string;
   payment_terms: PaymentTerms;
   delivery_terms: string;
-  
+
   // Financial Terms
   total_value?: number;
   currency: string;
   price_adjustment_clause?: string;
   penalty_clauses: string[];
-  
+
   // Performance Requirements
   sla_requirements: SLARequirement[];
   quality_standards: QualityStandard[];
   delivery_schedule: DeliverySchedule[];
-  
+
   // Legal & Compliance
   governing_law: string;
   dispute_resolution: string;
   confidentiality_clause: boolean;
-  
+
   // Documents
   contract_document_url?: string;
   amendments: ContractAmendment[];
-  
+
   // Alerts & Notifications
   renewal_alert_days: number;
   auto_renewal: boolean;
-  
+
   // Status & Tracking
   status: 'draft' | 'active' | 'expired' | 'terminated' | 'suspended';
   created_at: string;
@@ -270,28 +270,28 @@ export interface SupplierPerformance {
   id: string;
   supplier_id: string;
   evaluation_period: string; // YYYY-MM format
-  
+
   // Core Metrics
   delivery_performance: PerformanceDetail;
   quality_performance: PerformanceDetail;
   pricing_performance: PerformanceDetail;
   service_performance: PerformanceDetail;
-  
+
   // Calculated Scores
   overall_score: number; // 0-100 weighted average
   previous_score?: number;
   score_trend: 'improving' | 'declining' | 'stable';
-  
+
   // Benchmarking
   industry_benchmark?: number;
   peer_ranking?: number;
   category_average?: number;
-  
+
   // Recommendations
   strengths: string[];
   improvement_areas: string[];
   recommended_actions: string[];
-  
+
   // Metadata
   evaluated_at: string;
   evaluated_by: string;
@@ -327,30 +327,36 @@ export interface ProcurementRequest {
   title: string;
   description: string;
   category: SupplierCategory;
-  
+
   // Requirements
   items: ProcurementItem[];
   specifications: ItemSpecification[];
   delivery_requirements: DeliveryRequirement;
   quality_requirements: QualityRequirement[];
-  
+
   // Process Management
-  status: 'draft' | 'published' | 'bidding' | 'evaluation' | 'awarded' | 'cancelled';
+  status:
+    | 'draft'
+    | 'published'
+    | 'bidding'
+    | 'evaluation'
+    | 'awarded'
+    | 'cancelled';
   request_type: 'rfq' | 'rfp' | 'tender' | 'quote';
-  
+
   // Timeline
   published_date?: string;
   submission_deadline: string;
   evaluation_period: string;
   award_date?: string;
-  
+
   // Invited Suppliers
   invited_suppliers: string[]; // supplier_ids
   public_tender: boolean;
-  
+
   // Evaluation Criteria
   evaluation_criteria: EvaluationCriteria[];
-  
+
   // Metadata
   created_at: string;
   created_by: string;
@@ -407,34 +413,40 @@ export interface SupplierBid {
   procurement_request_id: string;
   supplier_id: string;
   bid_number: string;
-  
+
   // Bid Details
   bid_items: BidItem[];
   total_value: number;
   currency: string;
   validity_period: string;
-  
+
   // Terms & Conditions
   payment_terms: PaymentTerms;
   delivery_terms: string;
   warranty_terms?: string;
   special_conditions?: string[];
-  
+
   // Compliance & Documentation
   compliance_checklist: ComplianceItem[];
   supporting_documents: BidDocument[];
-  
+
   // Evaluation
   technical_score?: number;
   commercial_score?: number;
   overall_score?: number;
   evaluation_notes?: string;
-  
+
   // Status & Timeline
-  status: 'draft' | 'submitted' | 'under_evaluation' | 'shortlisted' | 'rejected' | 'awarded';
+  status:
+    | 'draft'
+    | 'submitted'
+    | 'under_evaluation'
+    | 'shortlisted'
+    | 'rejected'
+    | 'awarded';
   submitted_at?: string;
   evaluated_at?: string;
-  
+
   // Metadata
   created_at: string;
   clinic_id: string;
@@ -480,43 +492,43 @@ export interface QualityIssue {
   description: string;
   type: QualityIssueType;
   severity: 'low' | 'medium' | 'high' | 'critical';
-  
+
   // Related Information
   purchase_order_id?: string;
   product_batch?: string;
   affected_quantity: number;
-  
+
   // Impact Assessment
   financial_impact?: number;
   operational_impact: string;
   patient_safety_impact: boolean;
-  
+
   // Resolution
   status: IssueStatus;
   root_cause?: string;
   corrective_actions: CorrectiveAction[];
   preventive_actions: PreventiveAction[];
-  
+
   // Timeline
   reported_date: string;
   acknowledged_date?: string;
   resolved_date?: string;
   closure_date?: string;
-  
+
   // Stakeholders
   reported_by: string;
   assigned_to?: string;
   supplier_representative?: string;
-  
+
   // Documentation
   evidence_documents: QualityDocument[];
   resolution_documents: QualityDocument[];
-  
+
   // Follow-up
   follow_up_required: boolean;
   follow_up_date?: string;
   verification_required: boolean;
-  
+
   // Metadata
   clinic_id: string;
   created_at: string;
@@ -545,7 +557,12 @@ export interface PreventiveAction {
 
 export interface QualityDocument {
   id: string;
-  document_type: 'photo' | 'report' | 'certificate' | 'test_result' | 'correspondence';
+  document_type:
+    | 'photo'
+    | 'report'
+    | 'certificate'
+    | 'test_result'
+    | 'correspondence';
   file_name: string;
   file_url: string;
   description?: string;
@@ -564,26 +581,32 @@ export interface SupplierCommunication {
   message: string;
   type: 'email' | 'phone' | 'meeting' | 'document' | 'system_notification';
   direction: 'inbound' | 'outbound';
-  
+
   // Participants
   from_contact: string;
   to_contacts: string[];
   cc_contacts?: string[];
-  
+
   // Content
   attachments: CommunicationAttachment[];
   priority: 'low' | 'normal' | 'high' | 'urgent';
-  
+
   // Classification
-  category: 'order' | 'quality' | 'payment' | 'general' | 'complaint' | 'inquiry';
+  category:
+    | 'order'
+    | 'quality'
+    | 'payment'
+    | 'general'
+    | 'complaint'
+    | 'inquiry';
   tags: string[];
-  
+
   // Status & Follow-up
   status: 'sent' | 'delivered' | 'read' | 'replied' | 'archived';
   requires_response: boolean;
   response_deadline?: string;
   follow_up_date?: string;
-  
+
   // Metadata
   timestamp: string;
   clinic_id: string;
@@ -606,34 +629,34 @@ export interface CommunicationAttachment {
 export interface SupplierAnalytics {
   supplier_id: string;
   period: string;
-  
+
   // Performance Summary
   overall_performance: PerformanceSummary;
   trend_analysis: TrendAnalysis;
   comparative_analysis: ComparativeAnalysis;
-  
+
   // Financial Analytics
   spend_analysis: SpendAnalysis;
   cost_savings: CostSavingsAnalysis;
   payment_analytics: PaymentAnalytics;
-  
+
   // Operational Analytics
   delivery_analytics: DeliveryAnalytics;
   quality_analytics: QualityAnalytics;
   order_analytics: OrderAnalytics;
-  
+
   // Risk Analytics
   risk_assessment: RiskAssessment;
   compliance_status: ComplianceStatus;
-  
+
   // Benchmarking
   industry_benchmarks: IndustryBenchmark[];
   peer_comparison: PeerComparison[];
-  
+
   // Recommendations
   optimization_opportunities: OptimizationOpportunity[];
   action_items: ActionItem[];
-  
+
   // Metadata
   generated_at: string;
   clinic_id: string;
@@ -785,7 +808,7 @@ export const ContactInfoSchema = z.object({
   mobile: z.string().optional(),
   department: z.string().optional(),
   is_primary: z.boolean(),
-  preferred_contact_method: z.enum(['email', 'phone', 'whatsapp'])
+  preferred_contact_method: z.enum(['email', 'phone', 'whatsapp']),
 });
 
 // Address Schema
@@ -797,7 +820,7 @@ export const AddressSchema = z.object({
   city: z.string().min(1, 'Cidade é obrigatória'),
   state: z.string().min(2, 'Estado é obrigatório'),
   postal_code: z.string().regex(/^\d{5}-?\d{3}$/, 'CEP inválido'),
-  country: z.string().default('Brasil')
+  country: z.string().default('Brasil'),
 });
 
 // Certification Schema
@@ -809,7 +832,7 @@ export const CertificationSchema = z.object({
   issue_date: z.string(),
   expiry_date: z.string().optional(),
   document_url: z.string().url().optional(),
-  verification_status: z.enum(['verified', 'pending', 'expired', 'invalid'])
+  verification_status: z.enum(['verified', 'pending', 'expired', 'invalid']),
 });
 
 // Supplier Schema
@@ -817,48 +840,54 @@ export const SupplierSchema = z.object({
   id: z.string(),
   name: z.string().min(1, 'Nome do fornecedor é obrigatório'),
   legal_name: z.string().min(1, 'Razão social é obrigatória'),
-  cnpj: z.string().regex(/^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/, 'CNPJ inválido').optional(),
-  cpf: z.string().regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, 'CPF inválido').optional(),
+  cnpj: z
+    .string()
+    .regex(/^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/, 'CNPJ inválido')
+    .optional(),
+  cpf: z
+    .string()
+    .regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, 'CPF inválido')
+    .optional(),
   category: z.nativeEnum(SupplierCategory),
   subcategories: z.array(z.string()),
   status: z.nativeEnum(SupplierStatus),
-  
+
   primary_contact: ContactInfoSchema,
   secondary_contacts: z.array(ContactInfoSchema),
-  
+
   website: z.string().url().optional(),
   registration_number: z.string().optional(),
   tax_id: z.string().optional(),
-  
+
   address: AddressSchema,
   billing_address: AddressSchema.optional(),
-  
+
   performance_score: z.number().min(0).max(100),
   quality_rating: z.number().min(1).max(5),
   reliability_score: z.number().min(0).max(100),
   cost_competitiveness: z.number().min(0).max(100),
-  
+
   credit_rating: z.string().optional(),
   payment_terms: z.nativeEnum(PaymentTerms),
   currency: z.string().default('BRL'),
   early_payment_discount: z.number().min(0).max(100).optional(),
-  
+
   risk_level: z.nativeEnum(RiskLevel),
   risk_factors: z.array(z.string()),
-  
+
   certifications: z.array(CertificationSchema),
   regulatory_compliance: z.boolean(),
   anvisa_registration: z.string().optional(),
-  
+
   created_at: z.string(),
   updated_at: z.string(),
   created_by: z.string(),
   last_reviewed_at: z.string().optional(),
   next_review_date: z.string().optional(),
-  
+
   clinic_id: z.string(),
   tags: z.array(z.string()),
-  notes: z.string().optional()
+  notes: z.string().optional(),
 });
 
 // Procurement Request Schema
@@ -868,7 +897,14 @@ export const ProcurementRequestSchema = z.object({
   title: z.string().min(1, 'Título é obrigatório'),
   description: z.string().min(1, 'Descrição é obrigatória'),
   category: z.nativeEnum(SupplierCategory),
-  status: z.enum(['draft', 'published', 'bidding', 'evaluation', 'awarded', 'cancelled']),
+  status: z.enum([
+    'draft',
+    'published',
+    'bidding',
+    'evaluation',
+    'awarded',
+    'cancelled',
+  ]),
   request_type: z.enum(['rfq', 'rfp', 'tender', 'quote']),
   submission_deadline: z.string(),
   evaluation_period: z.string(),
@@ -876,7 +912,7 @@ export const ProcurementRequestSchema = z.object({
   public_tender: z.boolean(),
   created_at: z.string(),
   created_by: z.string(),
-  clinic_id: z.string()
+  clinic_id: z.string(),
 });
 
 // Quality Issue Schema
@@ -892,7 +928,7 @@ export const QualityIssueSchema = z.object({
   status: z.nativeEnum(IssueStatus),
   reported_date: z.string(),
   reported_by: z.string(),
-  clinic_id: z.string()
+  clinic_id: z.string(),
 });
 
 // Export all schemas for external use
@@ -902,7 +938,7 @@ export const SupplierSchemas = {
   Address: AddressSchema,
   Certification: CertificationSchema,
   ProcurementRequest: ProcurementRequestSchema,
-  QualityIssue: QualityIssueSchema
+  QualityIssue: QualityIssueSchema,
 } as const;
 
 // Export utility types

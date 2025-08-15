@@ -32,7 +32,13 @@ export interface MarketingCampaign {
   personalization_config?: Record<string, any>;
   send_time_optimization: boolean;
   automation_level: number; // Target ≥80% automation
-  status: 'draft' | 'scheduled' | 'running' | 'paused' | 'completed' | 'cancelled';
+  status:
+    | 'draft'
+    | 'scheduled'
+    | 'running'
+    | 'paused'
+    | 'completed'
+    | 'cancelled';
   start_date?: string;
   end_date?: string;
   created_by?: string;
@@ -82,7 +88,12 @@ export interface CampaignTrigger {
   id: string;
   campaign_id: string;
   trigger_name: string;
-  trigger_type: 'event' | 'behavioral' | 'date-based' | 'milestone' | 'lifecycle';
+  trigger_type:
+    | 'event'
+    | 'behavioral'
+    | 'date-based'
+    | 'milestone'
+    | 'lifecycle';
   trigger_conditions: Record<string, any>;
   delay_config?: Record<string, any>;
   frequency_limits?: Record<string, any>;

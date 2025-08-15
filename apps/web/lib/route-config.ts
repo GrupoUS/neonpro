@@ -1,26 +1,30 @@
 /**
  * Route Configuration Management
- * 
+ *
  * This module provides utilities for managing route configurations,
  * permissions, and feature flags in a centralized way.
- * 
+ *
  * @author NeonPro Development Team
  * @version 1.0.0
  */
 
-import { type RoutePermission, type SubscriptionTier, type UserRole } from './route-protection'
+import type {
+  RoutePermission,
+  SubscriptionTier,
+  UserRole,
+} from './route-protection';
 
 // Route configuration presets
 export const ROUTE_PRESETS = {
   PUBLIC: {
     requiresAuth: false,
     requiresSubscription: false,
-    auditLevel: 'none' as const
+    auditLevel: 'none' as const,
   },
   FREE_TIER: {
     requiresAuth: true,
     requiresSubscription: false,
-    auditLevel: 'basic' as const
+    auditLevel: 'basic' as const,
   },
   BASIC_TIER: {
     requiresAuth: true,
@@ -28,7 +32,7 @@ export const ROUTE_PRESETS = {
     minimumTier: 'basic' as SubscriptionTier,
     allowGracePeriod: true,
     gracePeriodDays: 3,
-    auditLevel: 'detailed' as const
+    auditLevel: 'detailed' as const,
   },
   PREMIUM_TIER: {
     requiresAuth: true,
@@ -36,132 +40,129 @@ export const ROUTE_PRESETS = {
     minimumTier: 'premium' as SubscriptionTier,
     allowGracePeriod: true,
     gracePeriodDays: 1,
-    auditLevel: 'detailed' as const
+    auditLevel: 'detailed' as const,
   },
   ENTERPRISE_TIER: {
     requiresAuth: true,
     requiresSubscription: true,
     minimumTier: 'enterprise' as SubscriptionTier,
     allowGracePeriod: false,
-    auditLevel: 'detailed' as const
-  }
-}
+    auditLevel: 'detailed' as const,
+  },
+};
 
 // Role-based access control presets
 export const RBAC_PRESETS = {
   PATIENT_ONLY: {
-    allowedRoles: ['patient'] as UserRole[]
+    allowedRoles: ['patient'] as UserRole[],
   },
   STAFF_PLUS: {
-    allowedRoles: ['staff', 'doctor', 'admin', 'owner'] as UserRole[]
+    allowedRoles: ['staff', 'doctor', 'admin', 'owner'] as UserRole[],
   },
   DOCTOR_PLUS: {
-    allowedRoles: ['doctor', 'admin', 'owner'] as UserRole[]
+    allowedRoles: ['doctor', 'admin', 'owner'] as UserRole[],
   },
   ADMIN_ONLY: {
-    allowedRoles: ['admin', 'owner'] as UserRole[]
+    allowedRoles: ['admin', 'owner'] as UserRole[],
   },
   OWNER_ONLY: {
-    allowedRoles: ['owner'] as UserRole[]
-  }
-}
+    allowedRoles: ['owner'] as UserRole[],
+  },
+};
 
 // Permission level presets
 export const PERMISSION_PRESETS = {
   READ_ONLY: {
-    requiredPermissions: ['read']
+    requiredPermissions: ['read'],
   },
   READ_WRITE: {
-    requiredPermissions: ['read', 'write']
+    requiredPermissions: ['read', 'write'],
   },
   ADMIN_ACCESS: {
-    requiredPermissions: ['read', 'write', 'admin']
+    requiredPermissions: ['read', 'write', 'admin'],
   },
   OWNER_ACCESS: {
-    requiredPermissions: ['read', 'write', 'admin', 'owner']
-  }
-}
+    requiredPermissions: ['read', 'write', 'admin', 'owner'],
+  },
+};
 
 // Feature flag groups
 export const FEATURE_GROUPS = {
-  BASIC_FEATURES: [
-    'mobile_app_sync'
-  ],
+  BASIC_FEATURES: ['mobile_app_sync'],
   PREMIUM_FEATURES: [
     'advanced_treatments',
     'advanced_reporting',
-    'third_party_integrations'
+    'third_party_integrations',
   ],
   ENTERPRISE_FEATURES: [
     'multi_clinic_support',
     'advanced_analytics',
-    'custom_reports'
+    'custom_reports',
   ],
-  EXPERIMENTAL_FEATURES: [
-    'ai_suggestions'
-  ]
-}
+  EXPERIMENTAL_FEATURES: ['ai_suggestions'],
+};
 
 // Route builder utility
 export class RouteBuilder {
-  private route: Partial<RoutePermission> = {}
+  private route: Partial<RoutePermission> = {};
 
   constructor(pattern: string, name: string) {
-    this.route.pattern = pattern
-    this.route.name = name
+    this.route.pattern = pattern;
+    this.route.name = name;
   }
 
   description(desc: string): RouteBuilder {
-    this.route.description = desc
-    return this
+    this.route.description = desc;
+    return this;
   }
 
   preset(preset: keyof typeof ROUTE_PRESETS): RouteBuilder {
-    Object.assign(this.route, ROUTE_PRESETS[preset])
-    return this
+    Object.assign(this.route, ROUTE_PRESETS[preset]);
+    return this;
   }
 
   rbac(preset: keyof typeof RBAC_PRESETS): RouteBuilder {
-    Object.assign(this.route, RBAC_PRESETS[preset])
-    return this
+    Object.assign(this.route, RBAC_PRESETS[preset]);
+    return this;
   }
 
   permissions(preset: keyof typeof PERMISSION_PRESETS): RouteBuilder {
-    Object.assign(this.route, PERMISSION_PRESETS[preset])
-    return this
+    Object.assign(this.route, PERMISSION_PRESETS[preset]);
+    return this;
   }
 
   features(group: keyof typeof FEATURE_GROUPS): RouteBuilder {
-    this.route.featureFlags = FEATURE_GROUPS[group]
-    return this
+    this.route.featureFlags = FEATURE_GROUPS[group];
+    return this;
   }
 
   rateLimit(rpm: number): RouteBuilder {
-    this.route.rateLimitRpm = rpm
-    return this
+    this.route.rateLimitRpm = rpm;
+    return this;
   }
 
   customGracePeriod(days: number): RouteBuilder {
-    this.route.gracePeriodDays = days
-    return this
+    this.route.gracePeriodDays = days;
+    return this;
   }
 
   build(): RoutePermission {
-    if (!this.route.pattern || !this.route.name) {
-      throw new Error('Pattern and name are required')
+    if (!(this.route.pattern && this.route.name)) {
+      throw new Error('Pattern and name are required');
     }
-    
+
     return {
       requiresAuth: false,
       requiresSubscription: false,
       auditLevel: 'none',
-      ...this.route
-    } as RoutePermission
+      ...this.route,
+    } as RoutePermission;
   }
 }
 
 // Quick route creation helpers
-export const createRoute = (pattern: string, name: string) => new RouteBuilder(pattern, name)
+export const createRoute = (pattern: string, name: string) =>
+  new RouteBuilder(pattern, name);
 
 // Predefined route configurations using the builder
 export const PREDEFINED_ROUTES: RoutePermission[] = [
@@ -276,139 +277,154 @@ export const PREDEFINED_ROUTES: RoutePermission[] = [
     .rateLimit(30)
     .build(),
 
-  createRoute('^/dashboard/settings/(security|integrations|api)$', 'admin_settings')
+  createRoute(
+    '^/dashboard/settings/(security|integrations|api)$',
+    'admin_settings'
+  )
     .description('Advanced system settings')
     .preset('PREMIUM_TIER')
     .rbac('ADMIN_ONLY')
     .permissions('ADMIN_ACCESS')
     .rateLimit(25)
-    .build()
-]
+    .build(),
+];
 
 // Configuration validation utilities
 export class ConfigValidator {
-  static validateRoute(route: RoutePermission): { valid: boolean; errors: string[] } {
-    const errors: string[] = []
+  static validateRoute(route: RoutePermission): {
+    valid: boolean;
+    errors: string[];
+  } {
+    const errors: string[] = [];
 
     if (!route.pattern) {
-      errors.push('Pattern is required')
+      errors.push('Pattern is required');
     }
 
     if (!route.name) {
-      errors.push('Name is required')
+      errors.push('Name is required');
     }
 
     if (!route.description) {
-      errors.push('Description is required')
+      errors.push('Description is required');
     }
 
     if (route.requiresSubscription && !route.minimumTier) {
-      errors.push('Minimum tier is required when subscription is required')
+      errors.push('Minimum tier is required when subscription is required');
     }
 
     if (route.allowGracePeriod && !route.gracePeriodDays) {
-      errors.push('Grace period days required when grace period is allowed')
+      errors.push('Grace period days required when grace period is allowed');
     }
 
     // Validate pattern as regex
     try {
-      new RegExp(route.pattern)
+      new RegExp(route.pattern);
     } catch {
-      errors.push('Invalid regex pattern')
+      errors.push('Invalid regex pattern');
     }
 
     return {
       valid: errors.length === 0,
-      errors
-    }
+      errors,
+    };
   }
 
-  static validateAllRoutes(routes: RoutePermission[]): { valid: boolean; errors: Record<string, string[]> } {
-    const errors: Record<string, string[]> = {}
-    let hasErrors = false
+  static validateAllRoutes(routes: RoutePermission[]): {
+    valid: boolean;
+    errors: Record<string, string[]>;
+  } {
+    const errors: Record<string, string[]> = {};
+    let hasErrors = false;
 
     routes.forEach((route, index) => {
-      const validation = this.validateRoute(route)
+      const validation = ConfigValidator.validateRoute(route);
       if (!validation.valid) {
-        errors[`route_${index}_${route.name || 'unnamed'}`] = validation.errors
-        hasErrors = true
+        errors[`route_${index}_${route.name || 'unnamed'}`] = validation.errors;
+        hasErrors = true;
       }
-    })
+    });
 
     // Check for duplicate patterns
-    const patterns = new Set<string>()
+    const patterns = new Set<string>();
     routes.forEach((route, index) => {
       if (patterns.has(route.pattern)) {
         if (!errors[`route_${index}_${route.name}`]) {
-          errors[`route_${index}_${route.name}`] = []
+          errors[`route_${index}_${route.name}`] = [];
         }
-        errors[`route_${index}_${route.name}`].push('Duplicate pattern detected')
-        hasErrors = true
+        errors[`route_${index}_${route.name}`].push(
+          'Duplicate pattern detected'
+        );
+        hasErrors = true;
       }
-      patterns.add(route.pattern)
-    })
+      patterns.add(route.pattern);
+    });
 
     return {
       valid: !hasErrors,
-      errors
-    }
+      errors,
+    };
   }
 }
 
 // Export utilities
-export { PREDEFINED_ROUTES as DEFAULT_ROUTE_CONFIG }
+export { PREDEFINED_ROUTES as DEFAULT_ROUTE_CONFIG };
 
 // Configuration management
 export class RouteConfigManager {
-  private routes: RoutePermission[] = []
+  private routes: RoutePermission[] = [];
 
   constructor(initialRoutes: RoutePermission[] = PREDEFINED_ROUTES) {
-    this.routes = [...initialRoutes]
+    this.routes = [...initialRoutes];
   }
 
   addRoute(route: RoutePermission): void {
-    const validation = ConfigValidator.validateRoute(route)
+    const validation = ConfigValidator.validateRoute(route);
     if (!validation.valid) {
-      throw new Error(`Invalid route configuration: ${validation.errors.join(', ')}`)
+      throw new Error(
+        `Invalid route configuration: ${validation.errors.join(', ')}`
+      );
     }
-    this.routes.push(route)
+    this.routes.push(route);
   }
 
   removeRoute(name: string): boolean {
-    const index = this.routes.findIndex(route => route.name === name)
+    const index = this.routes.findIndex((route) => route.name === name);
     if (index !== -1) {
-      this.routes.splice(index, 1)
-      return true
+      this.routes.splice(index, 1);
+      return true;
     }
-    return false
+    return false;
   }
 
   updateRoute(name: string, updates: Partial<RoutePermission>): boolean {
-    const index = this.routes.findIndex(route => route.name === name)
+    const index = this.routes.findIndex((route) => route.name === name);
     if (index !== -1) {
-      const updatedRoute = { ...this.routes[index], ...updates }
-      const validation = ConfigValidator.validateRoute(updatedRoute)
+      const updatedRoute = { ...this.routes[index], ...updates };
+      const validation = ConfigValidator.validateRoute(updatedRoute);
       if (!validation.valid) {
-        throw new Error(`Invalid route update: ${validation.errors.join(', ')}`)
+        throw new Error(
+          `Invalid route update: ${validation.errors.join(', ')}`
+        );
       }
-      this.routes[index] = updatedRoute
-      return true
+      this.routes[index] = updatedRoute;
+      return true;
     }
-    return false
+    return false;
   }
 
   getRoute(name: string): RoutePermission | undefined {
-    return this.routes.find(route => route.name === name)
+    return this.routes.find((route) => route.name === name);
   }
 
   getAllRoutes(): RoutePermission[] {
-    return [...this.routes]
+    return [...this.routes];
   }
 
   validateAll(): { valid: boolean; errors: Record<string, string[]> } {
-    return ConfigValidator.validateAllRoutes(this.routes)
+    return ConfigValidator.validateAllRoutes(this.routes);
   }
 }
 
 // Global configuration instance
-export const routeConfigManager = new RouteConfigManager()
+export const routeConfigManager = new RouteConfigManager();

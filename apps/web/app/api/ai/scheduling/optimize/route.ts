@@ -1,16 +1,31 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { AISchedulingOptimizer } from '../../../../../lib/ai/scheduling-optimizer';
 
 export async function POST(request: NextRequest) {
   try {
     const requestData = await request.json();
-    
+
     // Validate required fields
-    const { patient_id, treatment_type, preferred_date_range, duration_minutes } = requestData;
-    
-    if (!patient_id || !treatment_type || !preferred_date_range || !duration_minutes) {
+    const {
+      patient_id,
+      treatment_type,
+      preferred_date_range,
+      duration_minutes,
+    } = requestData;
+
+    if (
+      !(
+        patient_id &&
+        treatment_type &&
+        preferred_date_range &&
+        duration_minutes
+      )
+    ) {
       return NextResponse.json(
-        { error: 'Missing required fields: patient_id, treatment_type, preferred_date_range, duration_minutes' },
+        {
+          error:
+            'Missing required fields: patient_id, treatment_type, preferred_date_range, duration_minutes',
+        },
         { status: 400 }
       );
     }
@@ -18,8 +33,8 @@ export async function POST(request: NextRequest) {
     // Validate date range
     const startDate = new Date(preferred_date_range.start);
     const endDate = new Date(preferred_date_range.end);
-    
-    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+
+    if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
       return NextResponse.json(
         { error: 'Invalid date format in preferred_date_range' },
         { status: 400 }
@@ -42,7 +57,7 @@ export async function POST(request: NextRequest) {
     }
 
     const optimizer = new AISchedulingOptimizer();
-    
+
     // Generate optimal slot suggestions
     const optimizedSlots = await optimizer.suggestOptimalSlots({
       patient_id,
@@ -50,7 +65,7 @@ export async function POST(request: NextRequest) {
       preferred_date_range,
       staff_preference: requestData.staff_preference,
       priority: requestData.priority || 'normal',
-      duration_minutes
+      duration_minutes,
     });
 
     return NextResponse.json({
@@ -60,28 +75,33 @@ export async function POST(request: NextRequest) {
         optimization_metadata: {
           total_slots_analyzed: optimizedSlots.length * 2, // Estimated
           ai_confidence_range: {
-            min: Math.min(...optimizedSlots.map(s => s.confidence_score)),
-            max: Math.max(...optimizedSlots.map(s => s.confidence_score)),
-            average: optimizedSlots.reduce((sum, s) => sum + s.confidence_score, 0) / optimizedSlots.length
+            min: Math.min(...optimizedSlots.map((s) => s.confidence_score)),
+            max: Math.max(...optimizedSlots.map((s) => s.confidence_score)),
+            average:
+              optimizedSlots.reduce((sum, s) => sum + s.confidence_score, 0) /
+              optimizedSlots.length,
           },
-          patient_preference_influence: optimizedSlots[0]?.optimization_factors?.patient_preference_score || 0,
-          staff_efficiency_influence: optimizedSlots[0]?.optimization_factors?.staff_efficiency_score || 0
+          patient_preference_influence:
+            optimizedSlots[0]?.optimization_factors?.patient_preference_score ||
+            0,
+          staff_efficiency_influence:
+            optimizedSlots[0]?.optimization_factors?.staff_efficiency_score ||
+            0,
         },
         recommendations: [
           'AI suggests booking the first suggested slot for optimal patient satisfaction',
           'Alternative slots provided maintain high confidence scores',
-          'Scheduling during suggested times maximizes clinic efficiency'
-        ]
-      }
+          'Scheduling during suggested times maximizes clinic efficiency',
+        ],
+      },
     });
-
   } catch (error) {
     console.error('AI scheduling optimization error:', error);
-    
+
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to generate optimal scheduling suggestions',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );
@@ -92,7 +112,7 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const patientId = searchParams.get('patient_id');
-    
+
     if (!patientId) {
       return NextResponse.json(
         { error: 'patient_id parameter is required' },
@@ -101,10 +121,10 @@ export async function GET(request: NextRequest) {
     }
 
     const optimizer = new AISchedulingOptimizer();
-    
+
     // Get patient's current preferences and recent optimization history
     const preferenceData = await optimizer.getPatientPreferenceData(patientId);
-    
+
     return NextResponse.json({
       success: true,
       data: {
@@ -115,18 +135,18 @@ export async function GET(request: NextRequest) {
         ai_insights: {
           preferred_time_slots: preferenceData.insights?.preferred_times || [],
           preferred_staff: preferenceData.insights?.preferred_staff || [],
-          optimization_opportunities: preferenceData.insights?.opportunities || []
-        }
-      }
+          optimization_opportunities:
+            preferenceData.insights?.opportunities || [],
+        },
+      },
     });
-
   } catch (error) {
     console.error('Get patient preferences error:', error);
-    
+
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to retrieve patient scheduling preferences',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );

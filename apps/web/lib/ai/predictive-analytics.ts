@@ -1,7 +1,7 @@
 /**
  * AI-powered Predictive Analytics Engine
  * Provides comprehensive treatment outcome prediction and complication risk assessment
- * 
+ *
  * Features:
  * - Treatment outcome prediction modeling
  * - Complication risk assessment algorithms
@@ -11,10 +11,9 @@
  * - Recovery time and follow-up prediction
  */
 
-import { Patient } from '@/types/patient';
-import { TreatmentHistory, MedicalRecord, Treatment } from '@/types/treatment';
-import { RiskAssessment } from './risk-assessment';
-import { TreatmentRecommendation } from './treatment-recommendations';
+import type { Patient } from '@/types/patient';
+import type { Treatment, TreatmentHistory } from '@/types/treatment';
+import type { RiskAssessment } from './risk-assessment';
 
 // Predictive Analytics Types
 export interface OutcomePrediction {
@@ -140,10 +139,7 @@ export interface PersonalizationFactor {
  * Core system for treatment outcome prediction and risk modeling
  */
 export class AIPredictiveAnalyticsEngine {
-  private predictionModels: Map<string, any> = new Map();
-  private historicalData: Map<string, any[]> = new Map();
   private patientResponseModels: Map<string, PatientResponseModel> = new Map();
-  private outcomeDatabase: Map<string, any[]> = new Map();
 
   constructor() {
     this.initializePredictionModels();
@@ -217,7 +213,7 @@ export class AIPredictiveAnalyticsEngine {
         confidence_score: confidenceScore,
         contributing_factors: contributingFactors,
         alternative_scenarios: alternativeScenarios,
-        monitoring_recommendations: monitoringRecommendations
+        monitoring_recommendations: monitoringRecommendations,
       };
     } catch (error) {
       console.error('Outcome prediction failed:', error);
@@ -234,36 +230,37 @@ export class AIPredictiveAnalyticsEngine {
     riskAssessment: RiskAssessment
   ): Promise<number> {
     const baselineSatisfaction = this.getBaselineSatisfaction(treatment.type);
-    
+
     // Adjust based on patient factors
     let adjustedSatisfaction = baselineSatisfaction;
-    
+
     // Age adjustment
     const age = this.calculateAge(patient.birth_date);
     if (age < 30) adjustedSatisfaction += 0.5;
     else if (age > 60) adjustedSatisfaction -= 0.3;
-    
+
     // Risk level adjustment
     const riskAdjustment = {
-      'low': 0.2,
-      'moderate': 0,
-      'high': -0.4,
-      'critical': -0.8
+      low: 0.2,
+      moderate: 0,
+      high: -0.4,
+      critical: -0.8,
     }[riskAssessment.risk_level];
     adjustedSatisfaction += riskAdjustment;
-    
+
     // Previous treatment history adjustment
     const responseModel = this.patientResponseModels.get(patient.id);
     if (responseModel) {
-      const satisfactionTendency = responseModel.response_profile.satisfaction_tendency;
+      const satisfactionTendency =
+        responseModel.response_profile.satisfaction_tendency;
       const tendencyAdjustment = {
-        'critical': -1.0,
-        'moderate': 0,
-        'easily_satisfied': 0.8
+        critical: -1.0,
+        moderate: 0,
+        easily_satisfied: 0.8,
       }[satisfactionTendency];
       adjustedSatisfaction += tendencyAdjustment;
     }
-    
+
     return Math.min(Math.max(adjustedSatisfaction, 1), 10);
   }
 
@@ -276,19 +273,34 @@ export class AIPredictiveAnalyticsEngine {
     riskAssessment: RiskAssessment
   ): Promise<RecoveryTimeline> {
     const baselineTimeline = this.getBaselineRecoveryTimeline(treatment.type);
-    
+
     // Adjust timeline based on patient factors
     const adjustmentFactor = this.calculateTimelineAdjustmentFactor(
       patient,
       riskAssessment
     );
-    
+
     return {
-      immediate_recovery: this.adjustTimeframe(baselineTimeline.immediate_recovery, adjustmentFactor),
-      short_term_recovery: this.adjustTimeframe(baselineTimeline.short_term_recovery, adjustmentFactor),
-      medium_term_recovery: this.adjustTimeframe(baselineTimeline.medium_term_recovery, adjustmentFactor),
-      long_term_recovery: this.adjustTimeframe(baselineTimeline.long_term_recovery, adjustmentFactor),
-      full_result_timeline: this.adjustTimeframe(baselineTimeline.full_result_timeline, adjustmentFactor)
+      immediate_recovery: this.adjustTimeframe(
+        baselineTimeline.immediate_recovery,
+        adjustmentFactor
+      ),
+      short_term_recovery: this.adjustTimeframe(
+        baselineTimeline.short_term_recovery,
+        adjustmentFactor
+      ),
+      medium_term_recovery: this.adjustTimeframe(
+        baselineTimeline.medium_term_recovery,
+        adjustmentFactor
+      ),
+      long_term_recovery: this.adjustTimeframe(
+        baselineTimeline.long_term_recovery,
+        adjustmentFactor
+      ),
+      full_result_timeline: this.adjustTimeframe(
+        baselineTimeline.full_result_timeline,
+        adjustmentFactor
+      ),
     };
   }
 
@@ -301,29 +313,32 @@ export class AIPredictiveAnalyticsEngine {
     riskAssessment: RiskAssessment
   ): Promise<ComplicationPrediction[]> {
     const complications: ComplicationPrediction[] = [];
-    
+
     // Common complications based on treatment type
-    const treatmentComplications = this.getTreatmentSpecificComplications(treatment.type);
-    
+    const treatmentComplications = this.getTreatmentSpecificComplications(
+      treatment.type
+    );
+
     for (const complication of treatmentComplications) {
       const probability = this.calculateComplicationProbability(
         complication,
         patient,
         riskAssessment
       );
-      
-      if (probability > 0.05) { // Only include complications with >5% probability
+
+      if (probability > 0.05) {
+        // Only include complications with >5% probability
         complications.push({
           complication_type: complication.type,
           probability,
           severity: this.assessComplicationSeverity(complication, patient),
           onset_timeframe: complication.typical_onset,
           prevention_strategies: complication.prevention_strategies,
-          early_warning_signs: complication.warning_signs
+          early_warning_signs: complication.warning_signs,
         });
       }
     }
-    
+
     return complications.sort((a, b) => b.probability - a.probability);
   }
 
@@ -340,25 +355,28 @@ export class AIPredictiveAnalyticsEngine {
       [],
       riskAssessment
     );
-    
+
     // Optimize spacing between treatments
     const optimalSpacing = this.calculateOptimalTreatmentSpacing(
       treatments,
       responseModel
     );
-    
+
     // Optimize treatment sequence
     const optimalSequence = this.optimizeTreatmentSequence(
       treatments,
       patient,
       responseModel
     );
-    
+
     return {
       optimal_spacing: optimalSpacing,
       optimal_sequence: optimalSequence,
-      total_timeline: this.calculateTotalTimeline(optimalSpacing, optimalSequence),
-      rationale: this.generateTimelineRationale(responseModel, treatments)
+      total_timeline: this.calculateTotalTimeline(
+        optimalSpacing,
+        optimalSequence
+      ),
+      rationale: this.generateTimelineRationale(responseModel, treatments),
     };
   }
 
@@ -371,16 +389,28 @@ export class AIPredictiveAnalyticsEngine {
     riskAssessment: RiskAssessment
   ): Promise<LongTermPrognosis> {
     const baseDurability = this.getBaseTreatmentDurability(treatment.type);
-    
+
     // Adjust based on patient factors
-    const durabilityFactor = this.calculateDurabilityFactor(patient, riskAssessment);
+    const durabilityFactor = this.calculateDurabilityFactor(
+      patient,
+      riskAssessment
+    );
     const adjustedDurability = Math.round(baseDurability * durabilityFactor);
-    
+
     return {
       durability_months: adjustedDurability,
-      maintenance_requirements: this.getMaintenanceRequirements(treatment.type, patient),
-      potential_future_treatments: this.getFutureTreatmentOptions(treatment.type, patient),
-      aging_considerations: this.getAgingConsiderations(treatment.type, patient)
+      maintenance_requirements: this.getMaintenanceRequirements(
+        treatment.type,
+        patient
+      ),
+      potential_future_treatments: this.getFutureTreatmentOptions(
+        treatment.type,
+        patient
+      ),
+      aging_considerations: this.getAgingConsiderations(
+        treatment.type,
+        patient
+      ),
     };
   }
 
@@ -396,24 +426,31 @@ export class AIPredictiveAnalyticsEngine {
     if (existingModel) {
       return existingModel;
     }
-    
+
     // Build new response profile
-    const responseProfile = this.analyzeResponseProfile(patient, treatmentHistory, riskAssessment);
+    const responseProfile = this.analyzeResponseProfile(
+      patient,
+      treatmentHistory,
+      riskAssessment
+    );
     const historicalPatterns = this.extractHistoricalPatterns(treatmentHistory);
-    const predictiveIndicators = this.identifyPredictiveIndicators(patient, riskAssessment);
+    const predictiveIndicators = this.identifyPredictiveIndicators(
+      patient,
+      riskAssessment
+    );
     const personalizationFactors = this.extractPersonalizationFactors(patient);
-    
+
     const model: PatientResponseModel = {
       patient_id: patient.id,
       response_profile: responseProfile,
       historical_patterns: historicalPatterns,
       predictive_indicators: predictiveIndicators,
-      personalization_factors: personalizationFactors
+      personalization_factors: personalizationFactors,
     };
-    
+
     // Cache the model
     this.patientResponseModels.set(patient.id, model);
-    
+
     return model;
   }
 
@@ -424,29 +461,30 @@ export class AIPredictiveAnalyticsEngine {
   ): ResponseProfile {
     // Analyze healing rate
     const healingRate = this.analyzeHealingRate(patient, treatmentHistory);
-    
+
     // Analyze pain tolerance
     const painTolerance = this.analyzePainTolerance(patient, treatmentHistory);
-    
+
     // Analyze compliance tendency
     const complianceTendency = this.analyzeComplianceTendency(treatmentHistory);
-    
+
     // Analyze satisfaction tendency
-    const satisfactionTendency = this.analyzeSatisfactionTendency(treatmentHistory);
-    
+    const satisfactionTendency =
+      this.analyzeSatisfactionTendency(treatmentHistory);
+
     // Analyze complication susceptibility
     const complicationSusceptibility = this.analyzeComplicationSusceptibility(
       patient,
       treatmentHistory,
       riskAssessment
     );
-    
+
     return {
       healing_rate: healingRate,
       pain_tolerance: painTolerance,
       compliance_tendency: complianceTendency,
       satisfaction_tendency: satisfactionTendency,
-      complication_susceptibility: complicationSusceptibility
+      complication_susceptibility: complicationSusceptibility,
     };
   }
 
@@ -460,29 +498,36 @@ export class AIPredictiveAnalyticsEngine {
       // Patient demographics
       age: this.calculateAge(patient.birth_date),
       gender: patient.gender,
-      
+
       // Health factors
       overall_health: riskAssessment.overall_score,
       risk_level: riskAssessment.risk_level,
-      chronic_conditions: patient.medical_history?.filter(h => h.condition_type === 'chronic').length || 0,
-      
+      chronic_conditions:
+        patient.medical_history?.filter((h) => h.condition_type === 'chronic')
+          .length || 0,
+
       // Lifestyle factors
       smoking_status: patient.lifestyle_factors?.smoking || 'unknown',
       alcohol_consumption: patient.lifestyle_factors?.alcohol || 'unknown',
       exercise_level: patient.lifestyle_factors?.exercise || 'unknown',
-      
+
       // Treatment factors
       treatment_type: treatment.type,
       treatment_complexity: this.assessTreatmentComplexity(treatment),
-      
+
       // Response profile
       healing_rate: responseModel.response_profile.healing_rate,
       compliance_tendency: responseModel.response_profile.compliance_tendency,
-      complication_susceptibility: responseModel.response_profile.complication_susceptibility,
-      
+      complication_susceptibility:
+        responseModel.response_profile.complication_susceptibility,
+
       // Historical patterns
-      previous_satisfaction_avg: this.calculateAverageSatisfaction(responseModel.historical_patterns),
-      previous_complication_rate: this.calculateComplicationRate(responseModel.historical_patterns)
+      previous_satisfaction_avg: this.calculateAverageSatisfaction(
+        responseModel.historical_patterns
+      ),
+      previous_complication_rate: this.calculateComplicationRate(
+        responseModel.historical_patterns
+      ),
     };
   }
 
@@ -492,30 +537,49 @@ export class AIPredictiveAnalyticsEngine {
     responseModel: PatientResponseModel
   ): Promise<PredictedOutcome> {
     // Generate success probability
-    const successProbability = this.predictSuccessProbability(features, treatment);
-    
+    const successProbability = this.predictSuccessProbability(
+      features,
+      treatment
+    );
+
     // Generate satisfaction score
-    const satisfactionScore = this.predictSatisfactionScore(features, responseModel);
-    
+    const satisfactionScore = this.predictSatisfactionScore(
+      features,
+      responseModel
+    );
+
     // Generate recovery timeline
-    const recoveryTimeline = this.predictRecoveryTimelineFromFeatures(features, treatment);
-    
+    const recoveryTimeline = this.predictRecoveryTimelineFromFeatures(
+      features,
+      treatment
+    );
+
     // Generate complication predictions
-    const potentialComplications = this.predictComplications(features, treatment);
-    
+    const potentialComplications = this.predictComplications(
+      features,
+      treatment
+    );
+
     // Generate expected results
-    const expectedResults = this.generateExpectedResults(features, treatment, successProbability);
-    
+    const expectedResults = this.generateExpectedResults(
+      features,
+      treatment,
+      successProbability
+    );
+
     // Generate long-term prognosis
-    const longTermPrognosis = this.generateLongTermPrognosis(features, treatment);
-    
+    const longTermPrognosis = this.generateLongTermPrognosis(
+      features,
+      treatment
+    );
+
     return {
       success_probability: successProbability,
       satisfaction_score: satisfactionScore,
       recovery_timeline: recoveryTimeline,
       potential_complications: potentialComplications,
       expected_results: expectedResults,
-      long_term_prognosis: longTermPrognosis
+      long_term_prognosis: longTermPrognosis,
     };
   }
 
@@ -525,7 +589,10 @@ export class AIPredictiveAnalyticsEngine {
     const today = new Date();
     let age = today.getFullYear() - birth.getFullYear();
     const monthDiff = today.getMonth() - birth.getMonth();
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birth.getDate())
+    ) {
       age--;
     }
     return age;
@@ -533,46 +600,48 @@ export class AIPredictiveAnalyticsEngine {
 
   private getBaselineSatisfaction(treatmentType: string): number {
     const baselines = {
-      'aesthetic': 8.2,
-      'wellness': 7.8,
-      'medical': 7.5,
-      'preventive': 7.0
+      aesthetic: 8.2,
+      wellness: 7.8,
+      medical: 7.5,
+      preventive: 7.0,
     };
     return baselines[treatmentType as keyof typeof baselines] || 7.5;
   }
 
   private getBaselineRecoveryTimeline(treatmentType: string): RecoveryTimeline {
     const timelines = {
-      'botox': {
+      botox: {
         immediate_recovery: '0-2 hours',
         short_term_recovery: '1-3 days',
         medium_term_recovery: '1-2 weeks',
         long_term_recovery: '3-4 weeks',
-        full_result_timeline: '2-3 months'
+        full_result_timeline: '2-3 months',
       },
-      'dermal_fillers': {
+      dermal_fillers: {
         immediate_recovery: '0-4 hours',
         short_term_recovery: '2-5 days',
         medium_term_recovery: '1-2 weeks',
         long_term_recovery: '2-4 weeks',
-        full_result_timeline: '1-2 months'
+        full_result_timeline: '1-2 months',
       },
-      'laser_resurfacing': {
+      laser_resurfacing: {
         immediate_recovery: '2-6 hours',
         short_term_recovery: '5-10 days',
         medium_term_recovery: '2-4 weeks',
         long_term_recovery: '6-12 weeks',
-        full_result_timeline: '3-6 months'
+        full_result_timeline: '3-6 months',
+      },
+    };
+
+    return (
+      timelines[treatmentType as keyof typeof timelines] || {
+        immediate_recovery: '0-4 hours',
+        short_term_recovery: '1-7 days',
+        medium_term_recovery: '1-4 weeks',
+        long_term_recovery: '4-12 weeks',
+        full_result_timeline: '2-6 months',
       }
-    };
-    
-    return timelines[treatmentType as keyof typeof timelines] || {
-      immediate_recovery: '0-4 hours',
-      short_term_recovery: '1-7 days',
-      medium_term_recovery: '1-4 weeks',
-      long_term_recovery: '4-12 weeks',
-      full_result_timeline: '2-6 months'
-    };
+    );
   }
 
   private calculateTimelineAdjustmentFactor(
@@ -580,33 +649,33 @@ export class AIPredictiveAnalyticsEngine {
     riskAssessment: RiskAssessment
   ): number {
     let factor = 1.0;
-    
+
     // Age adjustment
     const age = this.calculateAge(patient.birth_date);
     if (age > 60) factor *= 1.3;
     else if (age < 30) factor *= 0.8;
-    
+
     // Risk level adjustment
     const riskAdjustments = {
-      'low': 0.9,
-      'moderate': 1.0,
-      'high': 1.2,
-      'critical': 1.5
+      low: 0.9,
+      moderate: 1.0,
+      high: 1.2,
+      critical: 1.5,
     };
     factor *= riskAdjustments[riskAssessment.risk_level];
-    
+
     // Lifestyle adjustments
     if (patient.lifestyle_factors?.smoking === 'current') factor *= 1.4;
     if (patient.lifestyle_factors?.exercise === 'high') factor *= 0.9;
-    
+
     return factor;
   }
 
   private adjustTimeframe(timeframe: string, adjustmentFactor: number): string {
     // Simple timeframe adjustment logic
     if (adjustmentFactor > 1.2) {
-      return timeframe.replace(/\d+/g, (match) => 
-        Math.ceil(parseInt(match) * adjustmentFactor).toString()
+      return timeframe.replace(/\d+/g, (match) =>
+        Math.ceil(Number.parseInt(match, 10) * adjustmentFactor).toString()
       );
     }
     return timeframe;
@@ -626,86 +695,122 @@ export class AIPredictiveAnalyticsEngine {
   }
 
   // Additional helper methods would be implemented here...
-  private analyzeHealingRate(patient: Patient, history: TreatmentHistory[]): 'slow' | 'average' | 'fast' {
+  private analyzeHealingRate(
+    _patient: Patient,
+    _history: TreatmentHistory[]
+  ): 'slow' | 'average' | 'fast' {
     // Analyze healing patterns from history
     return 'average';
   }
 
-  private analyzePainTolerance(patient: Patient, history: TreatmentHistory[]): 'low' | 'moderate' | 'high' {
+  private analyzePainTolerance(
+    _patient: Patient,
+    _history: TreatmentHistory[]
+  ): 'low' | 'moderate' | 'high' {
     // Analyze pain tolerance from history
     return 'moderate';
   }
 
-  private analyzeComplianceTendency(history: TreatmentHistory[]): 'poor' | 'average' | 'excellent' {
+  private analyzeComplianceTendency(
+    _history: TreatmentHistory[]
+  ): 'poor' | 'average' | 'excellent' {
     // Analyze compliance patterns
     return 'average';
   }
 
-  private analyzeSatisfactionTendency(history: TreatmentHistory[]): 'critical' | 'moderate' | 'easily_satisfied' {
+  private analyzeSatisfactionTendency(
+    _history: TreatmentHistory[]
+  ): 'critical' | 'moderate' | 'easily_satisfied' {
     // Analyze satisfaction patterns
     return 'moderate';
   }
 
   private analyzeComplicationSusceptibility(
-    patient: Patient,
-    history: TreatmentHistory[],
+    _patient: Patient,
+    _history: TreatmentHistory[],
     riskAssessment: RiskAssessment
   ): 'low' | 'moderate' | 'high' {
     // Analyze complication susceptibility
-    return riskAssessment.risk_level === 'high' || riskAssessment.risk_level === 'critical' ? 'high' : 'moderate';
+    return riskAssessment.risk_level === 'high' ||
+      riskAssessment.risk_level === 'critical'
+      ? 'high'
+      : 'moderate';
   }
 
-  private extractHistoricalPatterns(history: TreatmentHistory[]): HistoricalPattern[] {
+  private extractHistoricalPatterns(
+    _history: TreatmentHistory[]
+  ): HistoricalPattern[] {
     // Extract patterns from treatment history
     return [];
   }
 
-  private identifyPredictiveIndicators(patient: Patient, riskAssessment: RiskAssessment): PredictiveIndicator[] {
+  private identifyPredictiveIndicators(
+    _patient: Patient,
+    _riskAssessment: RiskAssessment
+  ): PredictiveIndicator[] {
     // Identify predictive indicators
     return [];
   }
 
-  private extractPersonalizationFactors(patient: Patient): PersonalizationFactor[] {
+  private extractPersonalizationFactors(
+    _patient: Patient
+  ): PersonalizationFactor[] {
     // Extract personalization factors
     return [];
   }
 
-  private assessTreatmentComplexity(treatment: Treatment): number {
+  private assessTreatmentComplexity(_treatment: Treatment): number {
     // Assess treatment complexity (0-1 scale)
     return 0.5;
   }
 
-  private calculateAverageSatisfaction(patterns: HistoricalPattern[]): number {
+  private calculateAverageSatisfaction(_patterns: HistoricalPattern[]): number {
     // Calculate average satisfaction from patterns
     return 8.0;
   }
 
-  private calculateComplicationRate(patterns: HistoricalPattern[]): number {
+  private calculateComplicationRate(_patterns: HistoricalPattern[]): number {
     // Calculate complication rate from patterns
     return 0.05;
   }
 
-  private predictSuccessProbability(features: any, treatment: Treatment): number {
+  private predictSuccessProbability(
+    _features: any,
+    _treatment: Treatment
+  ): number {
     // Predict success probability using ML model
     return 0.85;
   }
 
-  private predictSatisfactionScore(features: any, responseModel: PatientResponseModel): number {
+  private predictSatisfactionScore(
+    _features: any,
+    _responseModel: PatientResponseModel
+  ): number {
     // Predict satisfaction score
     return 8.2;
   }
 
-  private predictRecoveryTimelineFromFeatures(features: any, treatment: Treatment): RecoveryTimeline {
+  private predictRecoveryTimelineFromFeatures(
+    _features: any,
+    treatment: Treatment
+  ): RecoveryTimeline {
     // Predict recovery timeline from features
     return this.getBaselineRecoveryTimeline(treatment.type);
   }
 
-  private predictComplications(features: any, treatment: Treatment): ComplicationPrediction[] {
+  private predictComplications(
+    _features: any,
+    _treatment: Treatment
+  ): ComplicationPrediction[] {
     // Predict potential complications
     return [];
   }
 
-  private generateExpectedResults(features: any, treatment: Treatment, successProbability: number): ExpectedResult[] {
+  private generateExpectedResults(
+    _features: any,
+    _treatment: Treatment,
+    successProbability: number
+  ): ExpectedResult[] {
     // Generate expected results
     return [
       {
@@ -713,79 +818,115 @@ export class AIPredictiveAnalyticsEngine {
         description: 'Visible improvement in target area',
         probability: successProbability,
         measurement_criteria: ['Clinical assessment', 'Patient satisfaction'],
-        timeline_to_achieve: '2-4 weeks'
-      }
+        timeline_to_achieve: '2-4 weeks',
+      },
     ];
   }
 
-  private generateLongTermPrognosis(features: any, treatment: Treatment): LongTermPrognosis {
+  private generateLongTermPrognosis(
+    _features: any,
+    _treatment: Treatment
+  ): LongTermPrognosis {
     // Generate long-term prognosis
     return {
       durability_months: 12,
       maintenance_requirements: ['Annual follow-up'],
       potential_future_treatments: ['Touch-up treatments'],
-      aging_considerations: ['Natural aging process']
+      aging_considerations: ['Natural aging process'],
     };
   }
 
-  private identifyContributingFactors(features: any, outcome: PredictedOutcome): PredictionFactor[] {
+  private identifyContributingFactors(
+    _features: any,
+    _outcome: PredictedOutcome
+  ): PredictionFactor[] {
     // Identify factors contributing to prediction
     return [];
   }
 
-  private generateAlternativeScenarios(features: any, outcome: PredictedOutcome): AlternativeScenario[] {
+  private generateAlternativeScenarios(
+    _features: any,
+    _outcome: PredictedOutcome
+  ): AlternativeScenario[] {
     // Generate alternative scenarios
     return [];
   }
 
-  private generateMonitoringRecommendations(outcome: PredictedOutcome, riskAssessment: RiskAssessment): string[] {
+  private generateMonitoringRecommendations(
+    _outcome: PredictedOutcome,
+    riskAssessment: RiskAssessment
+  ): string[] {
     // Generate monitoring recommendations
     const recommendations = ['Regular follow-up appointments'];
-    
-    if (riskAssessment.risk_level === 'high' || riskAssessment.risk_level === 'critical') {
+
+    if (
+      riskAssessment.risk_level === 'high' ||
+      riskAssessment.risk_level === 'critical'
+    ) {
       recommendations.push('Enhanced monitoring protocol');
       recommendations.push('Early intervention if complications arise');
     }
-    
+
     return recommendations;
   }
 
-  private calculatePredictionConfidence(features: any, responseModel: PatientResponseModel, treatment: Treatment): number {
+  private calculatePredictionConfidence(
+    _features: any,
+    _responseModel: PatientResponseModel,
+    _treatment: Treatment
+  ): number {
     // Calculate prediction confidence
     return 0.85;
   }
 
-  private getTreatmentSpecificComplications(treatmentType: string): any[] {
+  private getTreatmentSpecificComplications(_treatmentType: string): any[] {
     // Get treatment-specific complications
     return [];
   }
 
-  private calculateComplicationProbability(complication: any, patient: Patient, riskAssessment: RiskAssessment): number {
+  private calculateComplicationProbability(
+    _complication: any,
+    _patient: Patient,
+    _riskAssessment: RiskAssessment
+  ): number {
     // Calculate complication probability
     return 0.05;
   }
 
-  private assessComplicationSeverity(complication: any, patient: Patient): 'mild' | 'moderate' | 'severe' {
+  private assessComplicationSeverity(
+    _complication: any,
+    _patient: Patient
+  ): 'mild' | 'moderate' | 'severe' {
     // Assess complication severity
     return 'mild';
   }
 
-  private calculateOptimalTreatmentSpacing(treatments: Treatment[], responseModel: PatientResponseModel): any {
+  private calculateOptimalTreatmentSpacing(
+    _treatments: Treatment[],
+    _responseModel: PatientResponseModel
+  ): any {
     // Calculate optimal spacing between treatments
     return {};
   }
 
-  private optimizeTreatmentSequence(treatments: Treatment[], patient: Patient, responseModel: PatientResponseModel): any {
+  private optimizeTreatmentSequence(
+    _treatments: Treatment[],
+    _patient: Patient,
+    _responseModel: PatientResponseModel
+  ): any {
     // Optimize treatment sequence
     return {};
   }
 
-  private calculateTotalTimeline(spacing: any, sequence: any): string {
+  private calculateTotalTimeline(_spacing: any, _sequence: any): string {
     // Calculate total treatment timeline
     return '3-6 months';
   }
 
-  private generateTimelineRationale(responseModel: PatientResponseModel, treatments: Treatment[]): string {
+  private generateTimelineRationale(
+    _responseModel: PatientResponseModel,
+    _treatments: Treatment[]
+  ): string {
     // Generate rationale for timeline optimization
     return 'Timeline optimized based on patient response profile and treatment requirements';
   }
@@ -793,41 +934,56 @@ export class AIPredictiveAnalyticsEngine {
   private getBaseTreatmentDurability(treatmentType: string): number {
     // Get base treatment durability in months
     const durabilities = {
-      'botox': 4,
-      'dermal_fillers': 12,
-      'laser_resurfacing': 24,
-      'microneedling': 6
+      botox: 4,
+      dermal_fillers: 12,
+      laser_resurfacing: 24,
+      microneedling: 6,
     };
     return durabilities[treatmentType as keyof typeof durabilities] || 12;
   }
 
-  private calculateDurabilityFactor(patient: Patient, riskAssessment: RiskAssessment): number {
+  private calculateDurabilityFactor(
+    patient: Patient,
+    riskAssessment: RiskAssessment
+  ): number {
     // Calculate durability adjustment factor
     let factor = 1.0;
-    
+
     const age = this.calculateAge(patient.birth_date);
     if (age < 30) factor *= 1.2;
     else if (age > 60) factor *= 0.8;
-    
+
     if (riskAssessment.risk_level === 'low') factor *= 1.1;
     else if (riskAssessment.risk_level === 'high') factor *= 0.9;
-    
+
     return factor;
   }
 
-  private getMaintenanceRequirements(treatmentType: string, patient: Patient): string[] {
+  private getMaintenanceRequirements(
+    _treatmentType: string,
+    _patient: Patient
+  ): string[] {
     // Get maintenance requirements
     return ['Regular follow-up appointments', 'Proper skincare routine'];
   }
 
-  private getFutureTreatmentOptions(treatmentType: string, patient: Patient): string[] {
+  private getFutureTreatmentOptions(
+    _treatmentType: string,
+    _patient: Patient
+  ): string[] {
     // Get future treatment options
     return ['Touch-up treatments', 'Complementary procedures'];
   }
 
-  private getAgingConsiderations(treatmentType: string, patient: Patient): string[] {
+  private getAgingConsiderations(
+    _treatmentType: string,
+    _patient: Patient
+  ): string[] {
     // Get aging considerations
-    return ['Natural aging process will continue', 'Results may change over time'];
+    return [
+      'Natural aging process will continue',
+      'Results may change over time',
+    ];
   }
 }
 

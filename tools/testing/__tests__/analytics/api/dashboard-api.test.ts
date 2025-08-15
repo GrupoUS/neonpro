@@ -1,11 +1,20 @@
-import { describe, expect, test, beforeEach, afterEach, jest } from '@jest/globals';
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  jest,
+  test,
+} from '@jest/globals';
 import { NextRequest } from 'next/server';
 import { GET, POST } from '@/app/api/analytics/dashboard/route';
 import { createClient } from '@/utils/supabase/server';
 
 // Mock Supabase client
 jest.mock('@/utils/supabase/server');
-const mockCreateClient = createClient as jest.MockedFunction<typeof createClient>;
+const mockCreateClient = createClient as jest.MockedFunction<
+  typeof createClient
+>;
 
 // Mock analytics service
 jest.mock('@/lib/analytics/service');
@@ -17,12 +26,12 @@ describe('Analytics Dashboard API Routes', () => {
     // Setup mock Supabase client
     mockSupabase = {
       auth: {
-        getUser: jest.fn()
+        getUser: jest.fn(),
       },
       from: jest.fn(),
-      rpc: jest.fn()
+      rpc: jest.fn(),
     };
-    
+
     mockCreateClient.mockResolvedValue(mockSupabase);
   });
 
@@ -36,45 +45,48 @@ describe('Analytics Dashboard API Routes', () => {
       const mockUser = {
         id: 'user123',
         email: 'test@example.com',
-        user_metadata: { role: 'admin' }
+        user_metadata: { role: 'admin' },
       };
 
       const mockMetrics = {
         subscriptionMetrics: {
           totalSubscriptions: 150,
           activeSubscriptions: 125,
-          mrr: 15000,
-          arr: 180000,
+          mrr: 15_000,
+          arr: 180_000,
           churnRate: 0.05,
-          growthRate: 0.12
+          growthRate: 0.12,
         },
         trialMetrics: {
           totalTrials: 500,
           activeTrials: 150,
-          conversionRate: 0.25
+          conversionRate: 0.25,
         },
         revenueMetrics: {
-          totalRevenue: 180000,
-          monthlyGrowth: 0.12
-        }
+          totalRevenue: 180_000,
+          monthlyGrowth: 0.12,
+        },
       };
 
       mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: mockUser },
-        error: null
+        error: null,
       });
 
       mockSupabase.rpc.mockResolvedValue({
         data: mockMetrics,
-        error: null
+        error: null,
       });
 
-      const request = new NextRequest('http://localhost:3000/api/analytics/dashboard', {
-        method: 'GET',
-        headers: {
-          'Authorization': 'Bearer mock-token'
+      const request = new NextRequest(
+        'http://localhost:3000/api/analytics/dashboard',
+        {
+          method: 'GET',
+          headers: {
+            Authorization: 'Bearer mock-token',
+          },
         }
-      });
+      );
 
       // Act
       const response = await GET(request);
@@ -91,12 +103,15 @@ describe('Analytics Dashboard API Routes', () => {
       // Arrange
       mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: null },
-        error: { message: 'Invalid token' }
+        error: { message: 'Invalid token' },
       });
 
-      const request = new NextRequest('http://localhost:3000/api/analytics/dashboard', {
-        method: 'GET'
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/analytics/dashboard',
+        {
+          method: 'GET',
+        }
+      );
 
       // Act
       const response = await GET(request);
@@ -112,22 +127,25 @@ describe('Analytics Dashboard API Routes', () => {
       // Arrange
       const mockUser = {
         id: 'user123',
-        email: 'test@example.com'
+        email: 'test@example.com',
       };
 
       mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: mockUser },
-        error: null
+        error: null,
       });
 
       mockSupabase.rpc.mockResolvedValue({
         data: null,
-        error: { message: 'Database connection failed' }
+        error: { message: 'Database connection failed' },
       });
 
-      const request = new NextRequest('http://localhost:3000/api/analytics/dashboard', {
-        method: 'GET'
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/analytics/dashboard',
+        {
+          method: 'GET',
+        }
+      );
 
       // Act
       const response = await GET(request);
@@ -144,27 +162,32 @@ describe('Analytics Dashboard API Routes', () => {
       const mockUser = { id: 'user123', email: 'test@example.com' };
       mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: mockUser },
-        error: null
+        error: null,
       });
 
-      const request = new NextRequest('http://localhost:3000/api/analytics/dashboard', {
-        method: 'GET',
-        headers: {
-          'x-forwarded-for': '127.0.0.1'
+      const request = new NextRequest(
+        'http://localhost:3000/api/analytics/dashboard',
+        {
+          method: 'GET',
+          headers: {
+            'x-forwarded-for': '127.0.0.1',
+          },
         }
-      });
+      );
 
       // Simulate rate limit exceeded
       // This would depend on your actual rate limiting implementation
-      const requests = Array(11).fill(null).map(() => GET(request));
+      const requests = Array(11)
+        .fill(null)
+        .map(() => GET(request));
 
       // Act
       const responses = await Promise.all(requests);
-      const lastResponse = responses[responses.length - 1];
+      const _lastResponse = responses[responses.length - 1];
 
       // Assert
       // At least one request should be rate limited (this is implementation-dependent)
-      const rateLimitedResponse = responses.find(res => res.status === 429);
+      const rateLimitedResponse = responses.find((res) => res.status === 429);
       if (rateLimitedResponse) {
         expect(rateLimitedResponse.status).toBe(429);
       }
@@ -175,7 +198,7 @@ describe('Analytics Dashboard API Routes', () => {
       const mockUser = { id: 'user123', email: 'test@example.com' };
       mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: mockUser },
-        error: null
+        error: null,
       });
 
       const request = new NextRequest(
@@ -201,31 +224,34 @@ describe('Analytics Dashboard API Routes', () => {
       const dashboardConfig = {
         widgets: ['subscription_metrics', 'trial_metrics', 'revenue_chart'],
         layout: 'grid',
-        refreshInterval: 30000
+        refreshInterval: 30_000,
       };
 
       mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: mockUser },
-        error: null
+        error: null,
       });
 
       const mockFrom = {
         insert: jest.fn().mockReturnThis(),
         select: jest.fn().mockResolvedValue({
           data: [{ id: 'config123', ...dashboardConfig }],
-          error: null
-        })
+          error: null,
+        }),
       };
 
       mockSupabase.from.mockReturnValue(mockFrom);
 
-      const request = new NextRequest('http://localhost:3000/api/analytics/dashboard', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(dashboardConfig)
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/analytics/dashboard',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(dashboardConfig),
+        }
+      );
 
       // Act
       const response = await POST(request);
@@ -235,7 +261,9 @@ describe('Analytics Dashboard API Routes', () => {
       expect(response.status).toBe(201);
       expect(responseData.success).toBe(true);
       expect(responseData.data.widgets).toEqual(dashboardConfig.widgets);
-      expect(mockSupabase.from).toHaveBeenCalledWith('dashboard_configurations');
+      expect(mockSupabase.from).toHaveBeenCalledWith(
+        'dashboard_configurations'
+      );
     });
 
     test('should validate dashboard configuration schema', async () => {
@@ -244,21 +272,24 @@ describe('Analytics Dashboard API Routes', () => {
       const invalidConfig = {
         widgets: 'invalid', // Should be array
         layout: 'invalid_layout',
-        refreshInterval: -1000 // Should be positive
+        refreshInterval: -1000, // Should be positive
       };
 
       mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: mockUser },
-        error: null
+        error: null,
       });
 
-      const request = new NextRequest('http://localhost:3000/api/analytics/dashboard', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(invalidConfig)
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/analytics/dashboard',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(invalidConfig),
+        }
+      );
 
       // Act
       const response = await POST(request);
@@ -279,17 +310,20 @@ describe('Analytics Dashboard API Routes', () => {
 
       mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: mockUser },
-        error: null
+        error: null,
       });
 
       mockSupabase.rpc.mockResolvedValue({
         data: mockMetrics,
-        error: null
+        error: null,
       });
 
-      const request = new NextRequest('http://localhost:3000/api/analytics/dashboard', {
-        method: 'GET'
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/analytics/dashboard',
+        {
+          method: 'GET',
+        }
+      );
 
       // Act
       const response1 = await GET(request);
@@ -310,17 +344,20 @@ describe('Analytics Dashboard API Routes', () => {
 
       mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: mockUser },
-        error: null
+        error: null,
       });
 
       mockSupabase.rpc.mockResolvedValue({
         data: mockMetrics,
-        error: null
+        error: null,
       });
 
-      const request = new NextRequest('http://localhost:3000/api/analytics/dashboard', {
-        method: 'GET'
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/analytics/dashboard',
+        {
+          method: 'GET',
+        }
+      );
 
       // Act
       const response = await GET(request);
@@ -335,15 +372,18 @@ describe('Analytics Dashboard API Routes', () => {
     test('should include security headers', async () => {
       // Arrange
       const mockUser = { id: 'user123', email: 'test@example.com' };
-      
+
       mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: mockUser },
-        error: null
+        error: null,
       });
 
-      const request = new NextRequest('http://localhost:3000/api/analytics/dashboard', {
-        method: 'GET'
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/analytics/dashboard',
+        {
+          method: 'GET',
+        }
+      );
 
       // Act
       const response = await GET(request);
@@ -359,12 +399,12 @@ describe('Analytics Dashboard API Routes', () => {
       const mockUser = {
         id: 'user123',
         email: 'test@example.com',
-        user_metadata: { role: 'user' } // Not admin
+        user_metadata: { role: 'user' }, // Not admin
       };
 
       mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: mockUser },
-        error: null
+        error: null,
       });
 
       const request = new NextRequest(
@@ -387,19 +427,22 @@ describe('Analytics Dashboard API Routes', () => {
     test('should handle malformed JSON requests', async () => {
       // Arrange
       const mockUser = { id: 'user123', email: 'test@example.com' };
-      
+
       mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: mockUser },
-        error: null
+        error: null,
       });
 
-      const request = new NextRequest('http://localhost:3000/api/analytics/dashboard', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: 'invalid json{'
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/analytics/dashboard',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: 'invalid json{',
+        }
+      );
 
       // Act
       const response = await POST(request);
@@ -413,11 +456,16 @@ describe('Analytics Dashboard API Routes', () => {
 
     test('should handle unexpected server errors', async () => {
       // Arrange
-      mockSupabase.auth.getUser.mockRejectedValue(new Error('Unexpected error'));
+      mockSupabase.auth.getUser.mockRejectedValue(
+        new Error('Unexpected error')
+      );
 
-      const request = new NextRequest('http://localhost:3000/api/analytics/dashboard', {
-        method: 'GET'
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/analytics/dashboard',
+        {
+          method: 'GET',
+        }
+      );
 
       // Act
       const response = await GET(request);

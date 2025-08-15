@@ -1,9 +1,9 @@
 // Intelligent Session Timeout System
 // Implements activity-based session management with role-specific timeouts
 
-import { UserRole, UserSession, SessionPolicy } from '@/types/session';
 import { SessionConfig } from '@/lib/auth/config/session-config';
 import { SessionUtils } from '@/lib/auth/utils/session-utils';
+import type { UserRole, UserSession } from '@/types/session';
 
 export interface ActivityEvent {
   type: ActivityType;
@@ -13,7 +13,7 @@ export interface ActivityEvent {
   metadata?: Record<string, any>;
 }
 
-export type ActivityType = 
+export type ActivityType =
   | 'mouse_move'
   | 'keyboard_input'
   | 'click'
@@ -66,9 +66,12 @@ export class IntelligentTimeoutManager {
   private initializeActivityTracking(): void {
     if (typeof window !== 'undefined') {
       // Mouse movement tracking
-      document.addEventListener('mousemove', this.throttle(() => {
-        this.recordActivity('mouse_move');
-      }, 1000));
+      document.addEventListener(
+        'mousemove',
+        this.throttle(() => {
+          this.recordActivity('mouse_move');
+        }, 1000)
+      );
 
       // Keyboard input tracking
       document.addEventListener('keydown', () => {
@@ -81,9 +84,12 @@ export class IntelligentTimeoutManager {
       });
 
       // Scroll tracking
-      document.addEventListener('scroll', this.throttle(() => {
-        this.recordActivity('scroll');
-      }, 2000));
+      document.addEventListener(
+        'scroll',
+        this.throttle(() => {
+          this.recordActivity('scroll');
+        }, 2000)
+      );
 
       // Page visibility change
       document.addEventListener('visibilitychange', () => {
@@ -128,13 +134,18 @@ export class IntelligentTimeoutManager {
 
     this.timeoutTimers.set(session.id, timeoutTimer);
 
-    console.log(`Timeout management started for session ${session.id} with ${timeoutConfig.baseTimeout} minute timeout`);
+    console.log(
+      `Timeout management started for session ${session.id} with ${timeoutConfig.baseTimeout} minute timeout`
+    );
   }
 
   /**
    * Record user activity
    */
-  public recordActivity(type: ActivityType, metadata?: Record<string, any>): void {
+  public recordActivity(
+    type: ActivityType,
+    metadata?: Record<string, any>
+  ): void {
     const sessionId = this.getCurrentSessionId();
     if (!sessionId) return;
 
@@ -143,7 +154,7 @@ export class IntelligentTimeoutManager {
       timestamp: Date.now(),
       sessionId,
       userId: this.getCurrentUserId() || '',
-      metadata
+      metadata,
     };
 
     // Add to buffer
@@ -168,7 +179,7 @@ export class IntelligentTimeoutManager {
     this.recordActivity('api_call', {
       endpoint,
       method,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -179,7 +190,7 @@ export class IntelligentTimeoutManager {
     this.recordActivity('data_entry', {
       formId,
       fieldCount,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -197,19 +208,23 @@ export class IntelligentTimeoutManager {
       extensionGracePeriod: 15,
       maxExtensions: 3,
       activityThreshold: 2, // 2 activities per minute
-      inactivityGracePeriod: 5
+      inactivityGracePeriod: 5,
     };
   }
 
   /**
    * Schedule timeout warnings
    */
-  private scheduleWarnings(session: UserSession, config: SessionTimeoutConfig): void {
+  private scheduleWarnings(
+    session: UserSession,
+    config: SessionTimeoutConfig
+  ): void {
     const warnings: TimeoutWarning[] = [];
 
     config.warningIntervals.forEach((minutesBefore, index) => {
       const warningTime = (config.baseTimeout - minutesBefore) * 60 * 1000;
-      const warningType = index === config.warningIntervals.length - 1 ? 'final' : 'initial';
+      const warningType =
+        index === config.warningIntervals.length - 1 ? 'final' : 'initial';
 
       const timer = setTimeout(() => {
         this.showTimeoutWarning(session, minutesBefore * 60, warningType);
@@ -221,7 +236,7 @@ export class IntelligentTimeoutManager {
         warningType,
         timeRemaining: minutesBefore * 60,
         scheduledAt: Date.now() + warningTime,
-        dismissed: false
+        dismissed: false,
       };
 
       warnings.push(warning);
@@ -234,25 +249,32 @@ export class IntelligentTimeoutManager {
   /**
    * Show timeout warning to user
    */
-  private showTimeoutWarning(session: UserSession, timeRemaining: number, type: 'initial' | 'final'): void {
+  private showTimeoutWarning(
+    session: UserSession,
+    timeRemaining: number,
+    type: 'initial' | 'final'
+  ): void {
     const minutes = Math.floor(timeRemaining / 60);
     const seconds = timeRemaining % 60;
 
-    const message = type === 'final' 
-      ? `Sua sessão expirará em ${minutes}:${seconds.toString().padStart(2, '0')}. Clique em "Continuar" para estender.`
-      : `Sua sessão expirará em ${minutes} minutos devido à inatividade.`;
+    const message =
+      type === 'final'
+        ? `Sua sessão expirará em ${minutes}:${seconds.toString().padStart(2, '0')}. Clique em "Continuar" para estender.`
+        : `Sua sessão expirará em ${minutes} minutos devido à inatividade.`;
 
     // Dispatch custom event for UI to handle
     if (typeof window !== 'undefined') {
-      window.dispatchEvent(new CustomEvent('sessionTimeoutWarning', {
-        detail: {
-          sessionId: session.id,
-          message,
-          timeRemaining,
-          type,
-          canExtend: this.canExtendSession(session.id)
-        }
-      }));
+      window.dispatchEvent(
+        new CustomEvent('sessionTimeoutWarning', {
+          detail: {
+            sessionId: session.id,
+            message,
+            timeRemaining,
+            type,
+            canExtend: this.canExtendSession(session.id),
+          },
+        })
+      );
     }
 
     console.warn(`Session timeout warning: ${message}`);
@@ -261,7 +283,10 @@ export class IntelligentTimeoutManager {
   /**
    * Extend session timeout
    */
-  public async extendSession(sessionId: string, reason?: string): Promise<boolean> {
+  public async extendSession(
+    sessionId: string,
+    reason?: string
+  ): Promise<boolean> {
     if (!this.canExtendSession(sessionId)) {
       return false;
     }
@@ -271,12 +296,12 @@ export class IntelligentTimeoutManager {
       const response = await fetch('/api/session/extend', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           extendMinutes: this.getTimeoutConfig('').extensionGracePeriod,
-          reason: reason || 'User activity detected'
-        })
+          reason: reason || 'User activity detected',
+        }),
       });
 
       if (response.ok) {
@@ -317,13 +342,15 @@ export class IntelligentTimeoutManager {
   private evaluateSessionExtension(sessionId: string): void {
     const activities = this.activityBuffer.get(sessionId) || [];
     const now = Date.now();
-    const recentActivities = activities.filter(a => now - a.timestamp < 60000); // Last minute
+    const recentActivities = activities.filter(
+      (a) => now - a.timestamp < 60_000
+    ); // Last minute
 
     const config = this.getTimeoutConfig('');
     if (recentActivities.length >= config.activityThreshold) {
       // High activity detected, consider auto-extension
       const warnings = this.activeWarnings.get(sessionId) || [];
-      const hasActiveWarnings = warnings.some(w => !w.dismissed);
+      const hasActiveWarnings = warnings.some((w) => !w.dismissed);
 
       if (hasActiveWarnings && this.canExtendSession(sessionId)) {
         this.extendSession(sessionId, 'High user activity detected');
@@ -339,11 +366,14 @@ export class IntelligentTimeoutManager {
       // Check for recent activity before timing out
       const activities = this.activityBuffer.get(session.id) || [];
       const now = Date.now();
-      const recentActivity = activities.find(a => now - a.timestamp < 30000); // Last 30 seconds
+      const recentActivity = activities.find((a) => now - a.timestamp < 30_000); // Last 30 seconds
 
       if (recentActivity && this.canExtendSession(session.id)) {
         // Grace period extension for recent activity
-        await this.extendSession(session.id, 'Grace period for recent activity');
+        await this.extendSession(
+          session.id,
+          'Grace period for recent activity'
+        );
         return;
       }
 
@@ -351,11 +381,11 @@ export class IntelligentTimeoutManager {
       await fetch('/api/session/terminate', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          reason: 'Session timeout due to inactivity'
-        })
+          reason: 'Session timeout due to inactivity',
+        }),
       });
 
       // Clean up
@@ -366,12 +396,14 @@ export class IntelligentTimeoutManager {
 
       // Notify user
       if (typeof window !== 'undefined') {
-        window.dispatchEvent(new CustomEvent('sessionExpired', {
-          detail: {
-            sessionId: session.id,
-            reason: 'Session expired due to inactivity'
-          }
-        }));
+        window.dispatchEvent(
+          new CustomEvent('sessionExpired', {
+            detail: {
+              sessionId: session.id,
+              reason: 'Session expired due to inactivity',
+            },
+          })
+        );
       }
 
       console.log(`Session ${session.id} timed out and terminated`);
@@ -385,7 +417,7 @@ export class IntelligentTimeoutManager {
    */
   public dismissWarnings(sessionId: string): void {
     const warnings = this.activeWarnings.get(sessionId) || [];
-    warnings.forEach(warning => {
+    warnings.forEach((warning) => {
       warning.dismissed = true;
       const timerId = `${sessionId}_${warning.id}`;
       const timer = this.warningTimers.get(timerId);
@@ -409,7 +441,7 @@ export class IntelligentTimeoutManager {
 
     // Clear warning timers
     const warnings = this.activeWarnings.get(sessionId) || [];
-    warnings.forEach(warning => {
+    warnings.forEach((warning) => {
       const timerId = `${sessionId}_${warning.id}`;
       const timer = this.warningTimers.get(timerId);
       if (timer) {
@@ -431,7 +463,9 @@ export class IntelligentTimeoutManager {
   } {
     const activities = this.activityBuffer.get(sessionId) || [];
     const now = Date.now();
-    const recentActivities = activities.filter(a => now - a.timestamp < 300000); // Last 5 minutes
+    const recentActivities = activities.filter(
+      (a) => now - a.timestamp < 300_000
+    ); // Last 5 minutes
 
     const activityTypes: Record<ActivityType, number> = {
       mouse_move: 0,
@@ -443,14 +477,15 @@ export class IntelligentTimeoutManager {
       form_interaction: 0,
       file_upload: 0,
       data_entry: 0,
-      system_interaction: 0
+      system_interaction: 0,
     };
 
-    activities.forEach(activity => {
+    activities.forEach((activity) => {
       activityTypes[activity.type]++;
     });
 
-    const lastActivity = activities.length > 0 ? activities[activities.length - 1].timestamp : 0;
+    const lastActivity =
+      activities.length > 0 ? activities[activities.length - 1].timestamp : 0;
     const activityScore = Math.min(100, (recentActivities.length / 10) * 100); // Score out of 100
 
     return {
@@ -458,7 +493,7 @@ export class IntelligentTimeoutManager {
       recentActivities: recentActivities.length,
       activityTypes,
       lastActivity,
-      activityScore
+      activityScore,
     };
   }
 
@@ -477,11 +512,11 @@ export class IntelligentTimeoutManager {
    */
   private throttle(func: Function, limit: number): Function {
     let inThrottle: boolean;
-    return function(this: any, ...args: any[]) {
+    return function (this: any, ...args: any[]) {
       if (!inThrottle) {
         func.apply(this, args);
         inThrottle = true;
-        setTimeout(() => inThrottle = false, limit);
+        setTimeout(() => (inThrottle = false), limit);
       }
     };
   }
@@ -500,7 +535,7 @@ export class IntelligentTimeoutManager {
     return null;
   }
 
-  private getUserRole(userId: string): UserRole {
+  private getUserRole(_userId: string): UserRole {
     // This would typically come from user context or API
     // For now, return a default role
     return 'patient';
@@ -508,7 +543,9 @@ export class IntelligentTimeoutManager {
 
   private async getSessionById(sessionId: string): Promise<UserSession | null> {
     try {
-      const response = await fetch(`/api/session/validate?sessionId=${sessionId}`);
+      const response = await fetch(
+        `/api/session/validate?sessionId=${sessionId}`
+      );
       if (response.ok) {
         const data = await response.json();
         return data.session;

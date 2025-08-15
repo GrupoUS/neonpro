@@ -4,7 +4,7 @@
 // Created: 2025-01-26
 // =====================================================================================
 
-"use client";
+'use client';
 
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
@@ -15,7 +15,12 @@ import { toast } from 'sonner';
 
 interface InventoryAlert {
   id: string;
-  type: 'low_stock' | 'out_of_stock' | 'expired' | 'expiring_soon' | 'overstock';
+  type:
+    | 'low_stock'
+    | 'out_of_stock'
+    | 'expired'
+    | 'expiring_soon'
+    | 'overstock';
   title: string;
   message: string;
   item_name: string;
@@ -60,15 +65,15 @@ export function useInventoryAlerts(): UseAlertsResult {
   const [alerts, setAlerts] = useState<InventoryAlert[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [mounted, setMounted] = useState(true);
+  const [_mounted, setMounted] = useState(true);
 
   // =====================================================================================
   // COMPUTED VALUES
   // =====================================================================================
 
-  const unreadCount = alerts.filter(alert => !alert.is_read).length;
-  const criticalCount = alerts.filter(alert => 
-    alert.severity === 'critical' || alert.severity === 'high'
+  const unreadCount = alerts.filter((alert) => !alert.is_read).length;
+  const criticalCount = alerts.filter(
+    (alert) => alert.severity === 'critical' || alert.severity === 'high'
   ).length;
 
   // =====================================================================================
@@ -81,20 +86,24 @@ export function useInventoryAlerts(): UseAlertsResult {
       setError(null);
 
       const searchParams = new URLSearchParams();
-      
+
       if (filters.type) searchParams.set('type', filters.type);
       if (filters.severity) searchParams.set('severity', filters.severity);
-      if (filters.is_read !== undefined) searchParams.set('is_read', filters.is_read.toString());
-      if (filters.location_id) searchParams.set('location_id', filters.location_id);
+      if (filters.is_read !== undefined)
+        searchParams.set('is_read', filters.is_read.toString());
+      if (filters.location_id)
+        searchParams.set('location_id', filters.location_id);
       if (filters.limit) searchParams.set('limit', filters.limit.toString());
       if (filters.offset) searchParams.set('offset', filters.offset.toString());
 
-      const response = await fetch(`/api/inventory/alerts?${searchParams.toString()}`);
-      
+      const response = await fetch(
+        `/api/inventory/alerts?${searchParams.toString()}`
+      );
+
       if (!response.ok) {
         throw new Error('Failed to load alerts');
       }
-      
+
       const data = await response.json();
       setAlerts(data);
     } catch (err) {
@@ -113,16 +122,18 @@ export function useInventoryAlerts(): UseAlertsResult {
   const markAsRead = useCallback(async (alertId: string) => {
     try {
       const response = await fetch(`/api/inventory/alerts/${alertId}`, {
-        method: 'PATCH'
+        method: 'PATCH',
       });
-      
+
       if (!response.ok) {
         throw new Error('Failed to mark alert as read');
       }
-      
-      setAlerts(prev => prev.map(alert => 
-        alert.id === alertId ? { ...alert, is_read: true } : alert
-      ));
+
+      setAlerts((prev) =>
+        prev.map((alert) =>
+          alert.id === alertId ? { ...alert, is_read: true } : alert
+        )
+      );
 
       toast.success('Alert marked as read');
     } catch (err) {
@@ -138,14 +149,14 @@ export function useInventoryAlerts(): UseAlertsResult {
   const dismissAlert = useCallback(async (alertId: string) => {
     try {
       const response = await fetch(`/api/inventory/alerts/${alertId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
       });
-      
+
       if (!response.ok) {
         throw new Error('Failed to dismiss alert');
       }
-      
-      setAlerts(prev => prev.filter(alert => alert.id !== alertId));
+
+      setAlerts((prev) => prev.filter((alert) => alert.id !== alertId));
       toast.success('Alert dismissed');
     } catch (err) {
       console.error('Error dismissing alert:', err);
@@ -160,14 +171,14 @@ export function useInventoryAlerts(): UseAlertsResult {
   const markAllAsRead = useCallback(async () => {
     try {
       const response = await fetch('/api/inventory/alerts/mark-all-read', {
-        method: 'PATCH'
+        method: 'PATCH',
       });
-      
+
       if (!response.ok) {
         throw new Error('Failed to mark all alerts as read');
       }
-      
-      setAlerts(prev => prev.map(alert => ({ ...alert, is_read: true })));
+
+      setAlerts((prev) => prev.map((alert) => ({ ...alert, is_read: true })));
       toast.success('All alerts marked as read');
     } catch (err) {
       console.error('Error marking all alerts as read:', err);
@@ -179,34 +190,37 @@ export function useInventoryAlerts(): UseAlertsResult {
   // CREATE ALERT
   // =====================================================================================
 
-  const createAlert = useCallback(async (alertData: Partial<InventoryAlert>) => {
-    try {
-      const response = await fetch('/api/inventory/alerts', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(alertData)
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to create alert');
+  const createAlert = useCallback(
+    async (alertData: Partial<InventoryAlert>) => {
+      try {
+        const response = await fetch('/api/inventory/alerts', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(alertData),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to create alert');
+        }
+
+        const newAlert = await response.json();
+        setAlerts((prev) => [newAlert, ...prev]);
+
+        // Show notification based on severity
+        if (newAlert.severity === 'critical' || newAlert.severity === 'high') {
+          toast.error(`Critical Alert: ${newAlert.title}`);
+        } else {
+          toast.warning(`New Alert: ${newAlert.title}`);
+        }
+      } catch (err) {
+        console.error('Error creating alert:', err);
+        toast.error('Failed to create alert');
       }
-      
-      const newAlert = await response.json();
-      setAlerts(prev => [newAlert, ...prev]);
-      
-      // Show notification based on severity
-      if (newAlert.severity === 'critical' || newAlert.severity === 'high') {
-        toast.error(`Critical Alert: ${newAlert.title}`);
-      } else {
-        toast.warning(`New Alert: ${newAlert.title}`);
-      }
-    } catch (err) {
-      console.error('Error creating alert:', err);
-      toast.error('Failed to create alert');
-    }
-  }, []);
+    },
+    []
+  );
 
   // =====================================================================================
   // REFRESH ALERTS
@@ -231,7 +245,7 @@ export function useInventoryAlerts(): UseAlertsResult {
   useEffect(() => {
     const interval = setInterval(() => {
       loadAlerts();
-    }, 30000); // Refresh every 30 seconds
+    }, 30_000); // Refresh every 30 seconds
 
     return () => clearInterval(interval);
   }, [loadAlerts]);
@@ -243,7 +257,7 @@ export function useInventoryAlerts(): UseAlertsResult {
   // =====================================================================================
   // CLEANUP EFFECT
   // =====================================================================================
-  
+
   useEffect(() => {
     return () => {
       setMounted(false);
@@ -261,7 +275,7 @@ export function useInventoryAlerts(): UseAlertsResult {
     dismissAlert,
     markAllAsRead,
     createAlert,
-    refreshAlerts
+    refreshAlerts,
   };
 }
 
@@ -273,7 +287,7 @@ export const AlertSeverity = {
   LOW: 'low' as const,
   MEDIUM: 'medium' as const,
   HIGH: 'high' as const,
-  CRITICAL: 'critical' as const
+  CRITICAL: 'critical' as const,
 };
 
 export const AlertType = {
@@ -281,7 +295,7 @@ export const AlertType = {
   OUT_OF_STOCK: 'out_of_stock' as const,
   EXPIRED: 'expired' as const,
   EXPIRING_SOON: 'expiring_soon' as const,
-  OVERSTOCK: 'overstock' as const
+  OVERSTOCK: 'overstock' as const,
 };
 
 // =====================================================================================
@@ -291,36 +305,52 @@ export const AlertType = {
 export const alertUtils = {
   getSeverityColor: (severity: string) => {
     switch (severity) {
-      case 'critical': return 'text-red-600';
-      case 'high': return 'text-orange-600';
-      case 'medium': return 'text-yellow-600';
-      case 'low': return 'text-gray-600';
-      default: return 'text-gray-600';
+      case 'critical':
+        return 'text-red-600';
+      case 'high':
+        return 'text-orange-600';
+      case 'medium':
+        return 'text-yellow-600';
+      case 'low':
+        return 'text-gray-600';
+      default:
+        return 'text-gray-600';
     }
   },
 
   getSeverityBadgeColor: (severity: string) => {
     switch (severity) {
-      case 'critical': return 'bg-red-100 text-red-800';
-      case 'high': return 'bg-orange-100 text-orange-800';
-      case 'medium': return 'bg-yellow-100 text-yellow-800';
-      case 'low': return 'bg-gray-100 text-gray-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'critical':
+        return 'bg-red-100 text-red-800';
+      case 'high':
+        return 'bg-orange-100 text-orange-800';
+      case 'medium':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'low':
+        return 'bg-gray-100 text-gray-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   },
 
   getTypeLabel: (type: string) => {
     switch (type) {
-      case 'low_stock': return 'Low Stock';
-      case 'out_of_stock': return 'Out of Stock';
-      case 'expired': return 'Expired';
-      case 'expiring_soon': return 'Expiring Soon';
-      case 'overstock': return 'Overstock';
-      default: return 'Unknown';
+      case 'low_stock':
+        return 'Low Stock';
+      case 'out_of_stock':
+        return 'Out of Stock';
+      case 'expired':
+        return 'Expired';
+      case 'expiring_soon':
+        return 'Expiring Soon';
+      case 'overstock':
+        return 'Overstock';
+      default:
+        return 'Unknown';
     }
   },
 
   shouldShowNotification: (alert: InventoryAlert) => {
     return alert.severity === 'critical' || alert.severity === 'high';
-  }
+  },
 };

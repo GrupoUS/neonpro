@@ -1,39 +1,42 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Progress } from '@/components/ui/progress';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { 
-  Shield, 
-  FileText, 
-  Download, 
-  Eye, 
-  Trash2, 
-  Edit, 
-  CheckCircle, 
-  XCircle, 
-  Clock,
+import {
   AlertTriangle,
-  Info,
-  Lock,
-  Unlock,
-  UserCheck,
-  Database,
   BarChart3,
-  Calendar
+  CheckCircle,
+  Clock,
+  Database,
+  Download,
+  Edit,
+  Eye,
+  FileText,
+  Info,
+  Shield,
+  Trash2,
+  UserCheck,
+  XCircle,
 } from 'lucide-react';
-import { 
-  ConsentRecord, 
-  DataSubjectRequest, 
-  ComplianceReport, 
-  LGPDConfig,
+import { useEffect, useState } from 'react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  type ComplianceReport,
+  type ConsentRecord,
   ConsentStatus,
+  type DataSubjectRequest,
+  DataSubjectRight,
+  type LGPDConfig,
   RequestStatus,
-  DataSubjectRight
 } from '@/types/lgpd';
 
 interface LGPDTransparencyPortalProps {
@@ -41,7 +44,10 @@ interface LGPDTransparencyPortalProps {
   clinicId: string;
 }
 
-export default function LGPDTransparencyPortal({ userId, clinicId }: LGPDTransparencyPortalProps) {
+export default function LGPDTransparencyPortal({
+  userId,
+  clinicId,
+}: LGPDTransparencyPortalProps) {
   const [consents, setConsents] = useState<ConsentRecord[]>([]);
   const [requests, setRequests] = useState<DataSubjectRequest[]>([]);
   const [reports, setReports] = useState<ComplianceReport[]>([]);
@@ -51,19 +57,20 @@ export default function LGPDTransparencyPortal({ userId, clinicId }: LGPDTranspa
 
   useEffect(() => {
     loadPortalData();
-  }, [userId, clinicId]);
+  }, [loadPortalData]);
 
   const loadPortalData = async () => {
     try {
       setLoading(true);
-      
+
       // Carregar dados do portal
-      const [consentsData, requestsData, reportsData, configData] = await Promise.all([
-        fetchUserConsents(),
-        fetchUserRequests(),
-        fetchComplianceReports(),
-        fetchLGPDConfig()
-      ]);
+      const [consentsData, requestsData, reportsData, configData] =
+        await Promise.all([
+          fetchUserConsents(),
+          fetchUserRequests(),
+          fetchComplianceReports(),
+          fetchLGPDConfig(),
+        ]);
 
       setConsents(consentsData);
       setRequests(requestsData);
@@ -107,13 +114,16 @@ export default function LGPDTransparencyPortal({ userId, clinicId }: LGPDTranspa
       dpoContact: {
         name: 'Data Protection Officer',
         email: 'dpo@clinic.com',
-        phone: '(11) 99999-9999'
+        phone: '(11) 99999-9999',
       },
-      lastUpdated: new Date()
+      lastUpdated: new Date(),
     };
   };
 
-  const handleConsentAction = async (consentId: string, action: 'grant' | 'withdraw') => {
+  const handleConsentAction = async (
+    consentId: string,
+    action: 'grant' | 'withdraw'
+  ) => {
     try {
       // Implementar ação de consentimento
       console.log(`${action} consent:`, consentId);
@@ -160,51 +170,55 @@ export default function LGPDTransparencyPortal({ userId, clinicId }: LGPDTranspa
       [RequestStatus.PENDING]: 'secondary',
       [RequestStatus.IN_PROGRESS]: 'default',
       [RequestStatus.COMPLETED]: 'default',
-      [RequestStatus.REJECTED]: 'destructive'
+      [RequestStatus.REJECTED]: 'destructive',
     } as const;
 
-    return (
-      <Badge variant={variants[status] || 'secondary'}>
-        {status}
-      </Badge>
-    );
+    return <Badge variant={variants[status] || 'secondary'}>{status}</Badge>;
   };
 
   const calculateComplianceScore = (): number => {
-    const activeConsents = consents.filter(c => c.status === ConsentStatus.GRANTED).length;
+    const activeConsents = consents.filter(
+      (c) => c.status === ConsentStatus.GRANTED
+    ).length;
     const totalConsents = consents.length;
-    const completedRequests = requests.filter(r => r.status === RequestStatus.COMPLETED).length;
+    const completedRequests = requests.filter(
+      (r) => r.status === RequestStatus.COMPLETED
+    ).length;
     const totalRequests = requests.length;
-    
+
     if (totalConsents === 0 && totalRequests === 0) return 100;
-    
-    const consentScore = totalConsents > 0 ? (activeConsents / totalConsents) * 50 : 50;
-    const requestScore = totalRequests > 0 ? (completedRequests / totalRequests) * 50 : 50;
-    
+
+    const consentScore =
+      totalConsents > 0 ? (activeConsents / totalConsents) * 50 : 50;
+    const requestScore =
+      totalRequests > 0 ? (completedRequests / totalRequests) * 50 : 50;
+
     return Math.round(consentScore + requestScore);
   };
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      <div className="flex h-64 items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-blue-600 border-b-2" />
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <div className="container mx-auto space-y-6 p-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Portal de Transparência LGPD</h1>
-          <p className="text-gray-600 mt-2">
+          <h1 className="font-bold text-3xl text-gray-900">
+            Portal de Transparência LGPD
+          </h1>
+          <p className="mt-2 text-gray-600">
             Gerencie seus dados pessoais e direitos de privacidade
           </p>
         </div>
         <div className="flex items-center space-x-2">
           <Shield className="h-8 w-8 text-blue-600" />
-          <Badge variant="outline" className="text-sm">
+          <Badge className="text-sm" variant="outline">
             Compliance Score: {calculateComplianceScore()}%
           </Badge>
         </div>
@@ -219,36 +233,51 @@ export default function LGPDTransparencyPortal({ userId, clinicId }: LGPDTranspa
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
             <div className="text-center">
-              <div className="text-2xl font-bold text-green-600">{consents.filter(c => c.status === ConsentStatus.GRANTED).length}</div>
-              <div className="text-sm text-gray-600">Consentimentos Ativos</div>
+              <div className="font-bold text-2xl text-green-600">
+                {
+                  consents.filter((c) => c.status === ConsentStatus.GRANTED)
+                    .length
+                }
+              </div>
+              <div className="text-gray-600 text-sm">Consentimentos Ativos</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-blue-600">{requests.length}</div>
-              <div className="text-sm text-gray-600">Solicitações Realizadas</div>
+              <div className="font-bold text-2xl text-blue-600">
+                {requests.length}
+              </div>
+              <div className="text-gray-600 text-sm">
+                Solicitações Realizadas
+              </div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-purple-600">{reports.length}</div>
-              <div className="text-sm text-gray-600">Relatórios Disponíveis</div>
+              <div className="font-bold text-2xl text-purple-600">
+                {reports.length}
+              </div>
+              <div className="text-gray-600 text-sm">
+                Relatórios Disponíveis
+              </div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-orange-600">{calculateComplianceScore()}%</div>
-              <div className="text-sm text-gray-600">Score de Compliance</div>
+              <div className="font-bold text-2xl text-orange-600">
+                {calculateComplianceScore()}%
+              </div>
+              <div className="text-gray-600 text-sm">Score de Compliance</div>
             </div>
           </div>
           <div className="mt-4">
-            <div className="flex justify-between text-sm text-gray-600 mb-2">
+            <div className="mb-2 flex justify-between text-gray-600 text-sm">
               <span>Nível de Compliance</span>
               <span>{calculateComplianceScore()}%</span>
             </div>
-            <Progress value={calculateComplianceScore()} className="h-2" />
+            <Progress className="h-2" value={calculateComplianceScore()} />
           </div>
         </CardContent>
       </Card>
 
       {/* Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
+      <Tabs onValueChange={setActiveTab} value={activeTab}>
         <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="overview">Visão Geral</TabsTrigger>
           <TabsTrigger value="consents">Consentimentos</TabsTrigger>
@@ -256,10 +285,9 @@ export default function LGPDTransparencyPortal({ userId, clinicId }: LGPDTranspa
           <TabsTrigger value="data">Meus Dados</TabsTrigger>
           <TabsTrigger value="reports">Relatórios</TabsTrigger>
         </TabsList>
-
         {/* Overview Tab */}
-        <TabsContent value="overview" className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <TabsContent className="space-y-4" value="overview">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
@@ -270,22 +298,25 @@ export default function LGPDTransparencyPortal({ userId, clinicId }: LGPDTranspa
               <CardContent>
                 <div className="space-y-3">
                   {consents.slice(0, 3).map((consent) => (
-                    <div key={consent.id} className="flex items-center justify-between">
+                    <div
+                      className="flex items-center justify-between"
+                      key={consent.id}
+                    >
                       <div className="flex items-center space-x-2">
                         {getConsentStatusIcon(consent.status)}
                         <span className="text-sm">{consent.consentType}</span>
                       </div>
-                      <Badge variant="outline" className="text-xs">
+                      <Badge className="text-xs" variant="outline">
                         {consent.status}
                       </Badge>
                     </div>
                   ))}
                 </div>
                 {consents.length > 3 && (
-                  <Button 
-                    variant="link" 
-                    className="mt-2 p-0 h-auto"
+                  <Button
+                    className="mt-2 h-auto p-0"
                     onClick={() => setActiveTab('consents')}
+                    variant="link"
                   >
                     Ver todos os consentimentos
                   </Button>
@@ -303,10 +334,15 @@ export default function LGPDTransparencyPortal({ userId, clinicId }: LGPDTranspa
               <CardContent>
                 <div className="space-y-3">
                   {requests.slice(0, 3).map((request) => (
-                    <div key={request.id} className="flex items-center justify-between">
+                    <div
+                      className="flex items-center justify-between"
+                      key={request.id}
+                    >
                       <div>
-                        <div className="text-sm font-medium">{request.requestType}</div>
-                        <div className="text-xs text-gray-500">
+                        <div className="font-medium text-sm">
+                          {request.requestType}
+                        </div>
+                        <div className="text-gray-500 text-xs">
                           {new Date(request.createdAt).toLocaleDateString()}
                         </div>
                       </div>
@@ -315,10 +351,10 @@ export default function LGPDTransparencyPortal({ userId, clinicId }: LGPDTranspa
                   ))}
                 </div>
                 {requests.length > 3 && (
-                  <Button 
-                    variant="link" 
-                    className="mt-2 p-0 h-auto"
+                  <Button
+                    className="mt-2 h-auto p-0"
                     onClick={() => setActiveTab('requests')}
+                    variant="link"
                   >
                     Ver todas as solicitações
                   </Button>
@@ -336,35 +372,37 @@ export default function LGPDTransparencyPortal({ userId, clinicId }: LGPDTranspa
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <Button 
-                  variant="outline" 
+              <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+                <Button
                   className="h-20 flex-col space-y-2"
                   onClick={() => handleDataRequest(DataSubjectRight.ACCESS)}
+                  variant="outline"
                 >
                   <Eye className="h-6 w-6" />
                   <span className="text-xs">Acessar Dados</span>
                 </Button>
-                <Button 
-                  variant="outline" 
+                <Button
                   className="h-20 flex-col space-y-2"
                   onClick={() => downloadData('json')}
+                  variant="outline"
                 >
                   <Download className="h-6 w-6" />
                   <span className="text-xs">Baixar Dados</span>
                 </Button>
-                <Button 
-                  variant="outline" 
+                <Button
                   className="h-20 flex-col space-y-2"
-                  onClick={() => handleDataRequest(DataSubjectRight.RECTIFICATION)}
+                  onClick={() =>
+                    handleDataRequest(DataSubjectRight.RECTIFICATION)
+                  }
+                  variant="outline"
                 >
                   <Edit className="h-6 w-6" />
                   <span className="text-xs">Corrigir Dados</span>
                 </Button>
-                <Button 
-                  variant="outline" 
+                <Button
                   className="h-20 flex-col space-y-2"
                   onClick={() => handleDataRequest(DataSubjectRight.ERASURE)}
+                  variant="outline"
                 >
                   <Trash2 className="h-6 w-6" />
                   <span className="text-xs">Excluir Dados</span>
@@ -372,8 +410,9 @@ export default function LGPDTransparencyPortal({ userId, clinicId }: LGPDTranspa
               </div>
             </CardContent>
           </Card>
-        </TabsContent>        {/* Consents Tab */}
-        <TabsContent value="consents" className="space-y-4">
+        </TabsContent>{' '}
+        {/* Consents Tab */}
+        <TabsContent className="space-y-4" value="consents">
           <Card>
             <CardHeader>
               <CardTitle>Gerenciar Consentimentos</CardTitle>
@@ -384,61 +423,71 @@ export default function LGPDTransparencyPortal({ userId, clinicId }: LGPDTranspa
             <CardContent>
               <div className="space-y-4">
                 {consents.map((consent) => (
-                  <div key={consent.id} className="border rounded-lg p-4">
-                    <div className="flex items-center justify-between mb-2">
+                  <div className="rounded-lg border p-4" key={consent.id}>
+                    <div className="mb-2 flex items-center justify-between">
                       <div className="flex items-center space-x-2">
                         {getConsentStatusIcon(consent.status)}
                         <h3 className="font-medium">{consent.consentType}</h3>
                       </div>
                       <Badge variant="outline">{consent.status}</Badge>
                     </div>
-                    
-                    <p className="text-sm text-gray-600 mb-3">
+
+                    <p className="mb-3 text-gray-600 text-sm">
                       {consent.purpose}
                     </p>
-                    
-                    <div className="grid grid-cols-2 gap-4 text-sm mb-3">
+
+                    <div className="mb-3 grid grid-cols-2 gap-4 text-sm">
                       <div>
                         <span className="font-medium">Concedido em:</span>
-                        <div>{new Date(consent.grantedAt).toLocaleDateString()}</div>
+                        <div>
+                          {new Date(consent.grantedAt).toLocaleDateString()}
+                        </div>
                       </div>
                       <div>
                         <span className="font-medium">Expira em:</span>
-                        <div>{consent.expiresAt ? new Date(consent.expiresAt).toLocaleDateString() : 'Nunca'}</div>
+                        <div>
+                          {consent.expiresAt
+                            ? new Date(consent.expiresAt).toLocaleDateString()
+                            : 'Nunca'}
+                        </div>
                       </div>
                     </div>
-                    
+
                     <div className="flex space-x-2">
                       {consent.status === ConsentStatus.GRANTED ? (
-                        <Button 
-                          variant="destructive" 
+                        <Button
+                          onClick={() =>
+                            handleConsentAction(consent.id, 'withdraw')
+                          }
                           size="sm"
-                          onClick={() => handleConsentAction(consent.id, 'withdraw')}
+                          variant="destructive"
                         >
-                          <XCircle className="h-4 w-4 mr-1" />
+                          <XCircle className="mr-1 h-4 w-4" />
                           Retirar Consentimento
                         </Button>
                       ) : (
-                        <Button 
-                          variant="default" 
+                        <Button
+                          onClick={() =>
+                            handleConsentAction(consent.id, 'grant')
+                          }
                           size="sm"
-                          onClick={() => handleConsentAction(consent.id, 'grant')}
+                          variant="default"
                         >
-                          <CheckCircle className="h-4 w-4 mr-1" />
+                          <CheckCircle className="mr-1 h-4 w-4" />
                           Conceder Consentimento
                         </Button>
                       )}
-                      <Button variant="outline" size="sm">
-                        <Info className="h-4 w-4 mr-1" />
+                      <Button size="sm" variant="outline">
+                        <Info className="mr-1 h-4 w-4" />
                         Detalhes
                       </Button>
                     </div>
                   </div>
                 ))}
-                
+
                 {consents.length === 0 && (
-                  <div className="text-center py-8 text-gray-500">
-                    <UserCheck className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                  <div className="py-8 text-center text-gray-500">
+                    <UserCheck className="mx-auto mb-4 h-12 w-12 opacity-50" />
                     <p>Nenhum consentimento encontrado</p>
                   </div>
                 )}
@@ -446,9 +495,8 @@ export default function LGPDTransparencyPortal({ userId, clinicId }: LGPDTranspa
             </CardContent>
           </Card>
         </TabsContent>
-
         {/* Data Subject Rights Tab */}
-        <TabsContent value="requests" className="space-y-4">
+        <TabsContent className="space-y-4" value="requests">
           <Card>
             <CardHeader>
               <CardTitle>Meus Direitos como Titular de Dados</CardTitle>
@@ -458,21 +506,21 @@ export default function LGPDTransparencyPortal({ userId, clinicId }: LGPDTranspa
             </CardHeader>
             <CardContent>
               {/* Rights Actions */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2">
                 <Card>
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-lg flex items-center space-x-2">
+                    <CardTitle className="flex items-center space-x-2 text-lg">
                       <Eye className="h-5 w-5" />
                       <span>Direito de Acesso</span>
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm text-gray-600 mb-3">
+                    <p className="mb-3 text-gray-600 text-sm">
                       Solicite acesso aos seus dados pessoais que processamos
                     </p>
-                    <Button 
-                      onClick={() => handleDataRequest(DataSubjectRight.ACCESS)}
+                    <Button
                       className="w-full"
+                      onClick={() => handleDataRequest(DataSubjectRight.ACCESS)}
                     >
                       Solicitar Acesso
                     </Button>
@@ -481,18 +529,20 @@ export default function LGPDTransparencyPortal({ userId, clinicId }: LGPDTranspa
 
                 <Card>
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-lg flex items-center space-x-2">
+                    <CardTitle className="flex items-center space-x-2 text-lg">
                       <Download className="h-5 w-5" />
                       <span>Portabilidade</span>
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm text-gray-600 mb-3">
+                    <p className="mb-3 text-gray-600 text-sm">
                       Baixe seus dados em formato estruturado
                     </p>
-                    <Button 
-                      onClick={() => handleDataRequest(DataSubjectRight.PORTABILITY)}
+                    <Button
                       className="w-full"
+                      onClick={() =>
+                        handleDataRequest(DataSubjectRight.PORTABILITY)
+                      }
                     >
                       Solicitar Portabilidade
                     </Button>
@@ -501,18 +551,20 @@ export default function LGPDTransparencyPortal({ userId, clinicId }: LGPDTranspa
 
                 <Card>
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-lg flex items-center space-x-2">
+                    <CardTitle className="flex items-center space-x-2 text-lg">
                       <Edit className="h-5 w-5" />
                       <span>Retificação</span>
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm text-gray-600 mb-3">
+                    <p className="mb-3 text-gray-600 text-sm">
                       Solicite correção de dados incorretos ou incompletos
                     </p>
-                    <Button 
-                      onClick={() => handleDataRequest(DataSubjectRight.RECTIFICATION)}
+                    <Button
                       className="w-full"
+                      onClick={() =>
+                        handleDataRequest(DataSubjectRight.RECTIFICATION)
+                      }
                     >
                       Solicitar Correção
                     </Button>
@@ -521,19 +573,21 @@ export default function LGPDTransparencyPortal({ userId, clinicId }: LGPDTranspa
 
                 <Card>
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-lg flex items-center space-x-2">
+                    <CardTitle className="flex items-center space-x-2 text-lg">
                       <Trash2 className="h-5 w-5" />
                       <span>Eliminação</span>
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm text-gray-600 mb-3">
+                    <p className="mb-3 text-gray-600 text-sm">
                       Solicite a exclusão dos seus dados pessoais
                     </p>
-                    <Button 
-                      onClick={() => handleDataRequest(DataSubjectRight.ERASURE)}
-                      variant="destructive"
+                    <Button
                       className="w-full"
+                      onClick={() =>
+                        handleDataRequest(DataSubjectRight.ERASURE)
+                      }
+                      variant="destructive"
                     >
                       Solicitar Exclusão
                     </Button>
@@ -543,42 +597,48 @@ export default function LGPDTransparencyPortal({ userId, clinicId }: LGPDTranspa
 
               {/* Request History */}
               <div>
-                <h3 className="text-lg font-medium mb-4">Histórico de Solicitações</h3>
+                <h3 className="mb-4 font-medium text-lg">
+                  Histórico de Solicitações
+                </h3>
                 <div className="space-y-3">
                   {requests.map((request) => (
-                    <div key={request.id} className="border rounded-lg p-4">
-                      <div className="flex items-center justify-between mb-2">
+                    <div className="rounded-lg border p-4" key={request.id}>
+                      <div className="mb-2 flex items-center justify-between">
                         <h4 className="font-medium">{request.requestType}</h4>
                         {getRequestStatusBadge(request.status)}
                       </div>
-                      
-                      <p className="text-sm text-gray-600 mb-2">
+
+                      <p className="mb-2 text-gray-600 text-sm">
                         {request.description}
                       </p>
-                      
+
                       <div className="grid grid-cols-2 gap-4 text-sm">
                         <div>
                           <span className="font-medium">Solicitado em:</span>
-                          <div>{new Date(request.createdAt).toLocaleDateString()}</div>
+                          <div>
+                            {new Date(request.createdAt).toLocaleDateString()}
+                          </div>
                         </div>
                         <div>
                           <span className="font-medium">Prazo:</span>
-                          <div>{new Date(request.dueDate).toLocaleDateString()}</div>
+                          <div>
+                            {new Date(request.dueDate).toLocaleDateString()}
+                          </div>
                         </div>
                       </div>
-                      
+
                       {request.response && (
-                        <div className="mt-3 p-3 bg-gray-50 rounded">
+                        <div className="mt-3 rounded bg-gray-50 p-3">
                           <span className="font-medium text-sm">Resposta:</span>
-                          <p className="text-sm mt-1">{request.response}</p>
+                          <p className="mt-1 text-sm">{request.response}</p>
                         </div>
                       )}
                     </div>
                   ))}
-                  
+
                   {requests.length === 0 && (
-                    <div className="text-center py-8 text-gray-500">
-                      <FileText className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <div className="py-8 text-center text-gray-500">
+                      <FileText className="mx-auto mb-4 h-12 w-12 opacity-50" />
                       <p>Nenhuma solicitação encontrada</p>
                     </div>
                   )}
@@ -587,9 +647,8 @@ export default function LGPDTransparencyPortal({ userId, clinicId }: LGPDTranspa
             </CardContent>
           </Card>
         </TabsContent>
-
         {/* My Data Tab */}
-        <TabsContent value="data" className="space-y-4">
+        <TabsContent className="space-y-4" value="data">
           <Card>
             <CardHeader>
               <CardTitle>Meus Dados Pessoais</CardTitle>
@@ -600,9 +659,9 @@ export default function LGPDTransparencyPortal({ userId, clinicId }: LGPDTranspa
             <CardContent>
               {/* Data Categories */}
               <div className="space-y-4">
-                <div className="border rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="font-medium flex items-center space-x-2">
+                <div className="rounded-lg border p-4">
+                  <div className="mb-3 flex items-center justify-between">
+                    <h3 className="flex items-center space-x-2 font-medium">
                       <Database className="h-5 w-5" />
                       <span>Dados de Identificação</span>
                     </h3>
@@ -618,21 +677,21 @@ export default function LGPDTransparencyPortal({ userId, clinicId }: LGPDTranspa
                       <div>Identificação e cadastro</div>
                     </div>
                   </div>
-                  <div className="flex space-x-2 mt-3">
+                  <div className="mt-3 flex space-x-2">
                     <Button size="sm" variant="outline">
-                      <Eye className="h-4 w-4 mr-1" />
+                      <Eye className="mr-1 h-4 w-4" />
                       Visualizar
                     </Button>
                     <Button size="sm" variant="outline">
-                      <Download className="h-4 w-4 mr-1" />
+                      <Download className="mr-1 h-4 w-4" />
                       Exportar
                     </Button>
                   </div>
                 </div>
 
-                <div className="border rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="font-medium flex items-center space-x-2">
+                <div className="rounded-lg border p-4">
+                  <div className="mb-3 flex items-center justify-between">
+                    <h3 className="flex items-center space-x-2 font-medium">
                       <Database className="h-5 w-5" />
                       <span>Dados de Contato</span>
                     </h3>
@@ -648,21 +707,21 @@ export default function LGPDTransparencyPortal({ userId, clinicId }: LGPDTranspa
                       <div>Comunicação e localização</div>
                     </div>
                   </div>
-                  <div className="flex space-x-2 mt-3">
+                  <div className="mt-3 flex space-x-2">
                     <Button size="sm" variant="outline">
-                      <Eye className="h-4 w-4 mr-1" />
+                      <Eye className="mr-1 h-4 w-4" />
                       Visualizar
                     </Button>
                     <Button size="sm" variant="outline">
-                      <Download className="h-4 w-4 mr-1" />
+                      <Download className="mr-1 h-4 w-4" />
                       Exportar
                     </Button>
                   </div>
                 </div>
 
-                <div className="border rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="font-medium flex items-center space-x-2">
+                <div className="rounded-lg border p-4">
+                  <div className="mb-3 flex items-center justify-between">
+                    <h3 className="flex items-center space-x-2 font-medium">
                       <Database className="h-5 w-5" />
                       <span>Dados Médicos</span>
                     </h3>
@@ -678,13 +737,13 @@ export default function LGPDTransparencyPortal({ userId, clinicId }: LGPDTranspa
                       <div>Prestação de cuidados médicos</div>
                     </div>
                   </div>
-                  <div className="flex space-x-2 mt-3">
+                  <div className="mt-3 flex space-x-2">
                     <Button size="sm" variant="outline">
-                      <Eye className="h-4 w-4 mr-1" />
+                      <Eye className="mr-1 h-4 w-4" />
                       Visualizar
                     </Button>
                     <Button size="sm" variant="outline">
-                      <Download className="h-4 w-4 mr-1" />
+                      <Download className="mr-1 h-4 w-4" />
                       Exportar
                     </Button>
                   </div>
@@ -692,22 +751,22 @@ export default function LGPDTransparencyPortal({ userId, clinicId }: LGPDTranspa
               </div>
 
               {/* Data Export Options */}
-              <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-                <h3 className="font-medium mb-3">Exportar Todos os Dados</h3>
-                <p className="text-sm text-gray-600 mb-4">
+              <div className="mt-6 rounded-lg bg-blue-50 p-4">
+                <h3 className="mb-3 font-medium">Exportar Todos os Dados</h3>
+                <p className="mb-4 text-gray-600 text-sm">
                   Baixe todos os seus dados pessoais em formato estruturado
                 </p>
                 <div className="flex space-x-2">
                   <Button onClick={() => downloadData('json')}>
-                    <Download className="h-4 w-4 mr-1" />
+                    <Download className="mr-1 h-4 w-4" />
                     JSON
                   </Button>
                   <Button onClick={() => downloadData('csv')} variant="outline">
-                    <Download className="h-4 w-4 mr-1" />
+                    <Download className="mr-1 h-4 w-4" />
                     CSV
                   </Button>
                   <Button onClick={() => downloadData('pdf')} variant="outline">
-                    <Download className="h-4 w-4 mr-1" />
+                    <Download className="mr-1 h-4 w-4" />
                     PDF
                   </Button>
                 </div>
@@ -715,9 +774,8 @@ export default function LGPDTransparencyPortal({ userId, clinicId }: LGPDTranspa
             </CardContent>
           </Card>
         </TabsContent>
-
         {/* Reports Tab */}
-        <TabsContent value="reports" className="space-y-4">
+        <TabsContent className="space-y-4" value="reports">
           <Card>
             <CardHeader>
               <CardTitle>Relatórios de Transparência</CardTitle>
@@ -728,23 +786,26 @@ export default function LGPDTransparencyPortal({ userId, clinicId }: LGPDTranspa
             <CardContent>
               <div className="space-y-4">
                 {reports.map((report) => (
-                  <div key={report.id} className="border rounded-lg p-4">
-                    <div className="flex items-center justify-between mb-2">
+                  <div className="rounded-lg border p-4" key={report.id}>
+                    <div className="mb-2 flex items-center justify-between">
                       <h3 className="font-medium">{report.title}</h3>
                       <Badge variant="outline">
                         {new Date(report.generatedAt).toLocaleDateString()}
                       </Badge>
                     </div>
-                    
-                    <p className="text-sm text-gray-600 mb-3">
+
+                    <p className="mb-3 text-gray-600 text-sm">
                       {report.description}
                     </p>
-                    
-                    <div className="grid grid-cols-2 gap-4 text-sm mb-3">
+
+                    <div className="mb-3 grid grid-cols-2 gap-4 text-sm">
                       <div>
                         <span className="font-medium">Período:</span>
                         <div>
-                          {new Date(report.period.startDate).toLocaleDateString()} - 
+                          {new Date(
+                            report.period.startDate
+                          ).toLocaleDateString()}{' '}
+                          -
                           {new Date(report.period.endDate).toLocaleDateString()}
                         </div>
                       </div>
@@ -753,17 +814,17 @@ export default function LGPDTransparencyPortal({ userId, clinicId }: LGPDTranspa
                         <div>{report.reportType}</div>
                       </div>
                     </div>
-                    
+
                     <Button size="sm" variant="outline">
-                      <Download className="h-4 w-4 mr-1" />
+                      <Download className="mr-1 h-4 w-4" />
                       Baixar Relatório
                     </Button>
                   </div>
                 ))}
-                
+
                 {reports.length === 0 && (
-                  <div className="text-center py-8 text-gray-500">
-                    <BarChart3 className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                  <div className="py-8 text-center text-gray-500">
+                    <BarChart3 className="mx-auto mb-4 h-12 w-12 opacity-50" />
                     <p>Nenhum relatório disponível</p>
                   </div>
                 )}
@@ -783,7 +844,7 @@ export default function LGPDTransparencyPortal({ userId, clinicId }: LGPDTranspa
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
               <div>
                 <span className="font-medium">Nome:</span>
                 <div>{config.dpoContact.name}</div>
@@ -800,8 +861,9 @@ export default function LGPDTransparencyPortal({ userId, clinicId }: LGPDTranspa
             <Alert className="mt-4">
               <Info className="h-4 w-4" />
               <AlertDescription>
-                Para dúvidas sobre privacidade e proteção de dados, entre em contato com nosso DPO.
-                Responderemos em até 15 dias úteis conforme estabelecido pela LGPD.
+                Para dúvidas sobre privacidade e proteção de dados, entre em
+                contato com nosso DPO. Responderemos em até 15 dias úteis
+                conforme estabelecido pela LGPD.
               </AlertDescription>
             </Alert>
           </CardContent>

@@ -8,19 +8,11 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { RetentionAnalyticsService } from '@/app/lib/services/retention-analytics-service';
 import {
-  PatientRetentionMetrics,
-  ChurnPrediction,
-  RetentionStrategy,
-  RetentionPerformance,
-  RetentionAnalyticsDashboard,
-  ChurnRiskLevel,
   ChurnModelType,
-  CreateRetentionStrategy,
-  UpdateRetentionStrategy,
-  RetentionStrategiesResponse,
-  ChurnPredictionsResponse,
-  RetentionAnalyticsResponse,
-  RetentionPerformanceResponse
+  type ChurnPrediction,
+  ChurnRiskLevel,
+  type CreateRetentionStrategy,
+  type PatientRetentionMetrics,
 } from '@/app/types/retention-analytics';
 
 // =====================================================================================
@@ -46,7 +38,8 @@ export function usePatientRetentionMetrics(
 ) {
   return useQuery({
     queryKey: ['patient-retention-metrics', patientId, clinicId],
-    queryFn: () => retentionService.getPatientRetentionMetrics(patientId, clinicId),
+    queryFn: () =>
+      retentionService.getPatientRetentionMetrics(patientId, clinicId),
     enabled: options?.enabled !== false && !!patientId && !!clinicId,
     refetchInterval: options?.refetchInterval || 5 * 60 * 1000, // 5 minutes
     staleTime: 2 * 60 * 1000, // 2 minutes
@@ -65,10 +58,11 @@ export function useClinicRetentionMetrics(
   }
 ) {
   const { limit = 100, offset = 0, enabled = true } = options || {};
-  
+
   return useQuery({
     queryKey: ['clinic-retention-metrics', clinicId, limit, offset],
-    queryFn: () => retentionService.getClinicRetentionMetrics(clinicId, limit, offset),
+    queryFn: () =>
+      retentionService.getClinicRetentionMetrics(clinicId, limit, offset),
     enabled: enabled && !!clinicId,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
@@ -81,15 +75,25 @@ export function useCalculatePatientRetentionMetrics() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ patientId, clinicId }: { patientId: string; clinicId: string }) =>
+    mutationFn: ({
+      patientId,
+      clinicId,
+    }: {
+      patientId: string;
+      clinicId: string;
+    }) =>
       retentionService.calculatePatientRetentionMetrics(patientId, clinicId),
     onSuccess: (data) => {
       // Invalidate and update related queries
       queryClient.invalidateQueries({
-        queryKey: ['patient-retention-metrics', data.patient_id, data.clinic_id]
+        queryKey: [
+          'patient-retention-metrics',
+          data.patient_id,
+          data.clinic_id,
+        ],
       });
       queryClient.invalidateQueries({
-        queryKey: ['clinic-retention-metrics', data.clinic_id]
+        queryKey: ['clinic-retention-metrics', data.clinic_id],
       });
     },
   });
@@ -112,10 +116,11 @@ export function useChurnPredictions(
   }
 ) {
   const { riskLevel, limit = 100, offset = 0, enabled = true } = options || {};
-  
+
   return useQuery({
     queryKey: ['churn-predictions', clinicId, riskLevel, limit, offset],
-    queryFn: () => retentionService.getChurnPredictions(clinicId, riskLevel, limit, offset),
+    queryFn: () =>
+      retentionService.getChurnPredictions(clinicId, riskLevel, limit, offset),
     enabled: enabled && !!clinicId,
     staleTime: 10 * 60 * 1000, // 10 minutes
   });
@@ -128,22 +133,23 @@ export function useGenerateChurnPrediction() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ 
-      patientId, 
-      clinicId, 
-      modelType = ChurnModelType.ENSEMBLE 
-    }: { 
-      patientId: string; 
-      clinicId: string; 
+    mutationFn: ({
+      patientId,
+      clinicId,
+      modelType = ChurnModelType.ENSEMBLE,
+    }: {
+      patientId: string;
+      clinicId: string;
       modelType?: ChurnModelType;
-    }) => retentionService.generateChurnPrediction(patientId, clinicId, modelType),
+    }) =>
+      retentionService.generateChurnPrediction(patientId, clinicId, modelType),
     onSuccess: (data) => {
       // Invalidate related queries
       queryClient.invalidateQueries({
-        queryKey: ['churn-predictions', data.clinic_id]
+        queryKey: ['churn-predictions', data.clinic_id],
       });
       queryClient.invalidateQueries({
-        queryKey: ['retention-dashboard', data.clinic_id]
+        queryKey: ['retention-dashboard', data.clinic_id],
       });
     },
   });
@@ -164,10 +170,11 @@ export function useRetentionStrategies(
   }
 ) {
   const { activeOnly = false, enabled = true } = options || {};
-  
+
   return useQuery({
     queryKey: ['retention-strategies', clinicId, activeOnly],
-    queryFn: () => retentionService.getRetentionStrategies(clinicId, activeOnly),
+    queryFn: () =>
+      retentionService.getRetentionStrategies(clinicId, activeOnly),
     enabled: enabled && !!clinicId,
     staleTime: 15 * 60 * 1000, // 15 minutes
   });
@@ -185,7 +192,7 @@ export function useCreateRetentionStrategy() {
     onSuccess: (data) => {
       // Invalidate strategies list
       queryClient.invalidateQueries({
-        queryKey: ['retention-strategies', data.clinic_id]
+        queryKey: ['retention-strategies', data.clinic_id],
       });
     },
   });
@@ -198,15 +205,20 @@ export function useExecuteRetentionStrategy() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ strategyId, patientIds }: { strategyId: string; patientIds: string[] }) =>
-      retentionService.executeRetentionStrategy(strategyId, patientIds),
-    onSuccess: (data, variables) => {
+    mutationFn: ({
+      strategyId,
+      patientIds,
+    }: {
+      strategyId: string;
+      patientIds: string[];
+    }) => retentionService.executeRetentionStrategy(strategyId, patientIds),
+    onSuccess: (_data, _variables) => {
       // Invalidate performance data
       queryClient.invalidateQueries({
-        queryKey: ['retention-performance']
+        queryKey: ['retention-performance'],
       });
       queryClient.invalidateQueries({
-        queryKey: ['retention-strategies']
+        queryKey: ['retention-strategies'],
       });
     },
   });
@@ -230,8 +242,14 @@ export function useRetentionAnalyticsDashboard(
 ) {
   return useQuery({
     queryKey: ['retention-dashboard', clinicId, periodStart, periodEnd],
-    queryFn: () => retentionService.generateRetentionAnalyticsDashboard(clinicId, periodStart, periodEnd),
-    enabled: options?.enabled !== false && !!clinicId && !!periodStart && !!periodEnd,
+    queryFn: () =>
+      retentionService.generateRetentionAnalyticsDashboard(
+        clinicId,
+        periodStart,
+        periodEnd
+      ),
+    enabled:
+      options?.enabled !== false && !!clinicId && !!periodStart && !!periodEnd,
     refetchInterval: options?.refetchInterval || 15 * 60 * 1000, // 15 minutes
     staleTime: 10 * 60 * 1000, // 10 minutes
   });
@@ -260,7 +278,7 @@ export function useChurnRiskMonitoring(
     criticalRisk: 0,
     highRisk: 0,
     mediumRisk: 0,
-    newPredictions: 0
+    newPredictions: 0,
   });
 
   const { data: predictions } = useChurnPredictions(clinicId, {
@@ -270,21 +288,27 @@ export function useChurnRiskMonitoring(
   // Calculate real-time alerts
   React.useEffect(() => {
     if (predictions) {
-      const critical = predictions.filter(p => p.risk_level === ChurnRiskLevel.CRITICAL).length;
-      const high = predictions.filter(p => p.risk_level === ChurnRiskLevel.HIGH).length;
-      const medium = predictions.filter(p => p.risk_level === ChurnRiskLevel.MEDIUM).length;
-      
+      const critical = predictions.filter(
+        (p) => p.risk_level === ChurnRiskLevel.CRITICAL
+      ).length;
+      const high = predictions.filter(
+        (p) => p.risk_level === ChurnRiskLevel.HIGH
+      ).length;
+      const medium = predictions.filter(
+        (p) => p.risk_level === ChurnRiskLevel.MEDIUM
+      ).length;
+
       // Count predictions from last 24 hours
       const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000);
-      const newPredictions = predictions.filter(p => 
-        new Date(p.prediction_date) > yesterday
+      const newPredictions = predictions.filter(
+        (p) => new Date(p.prediction_date) > yesterday
       ).length;
 
       setAlerts({
         criticalRisk: critical,
         highRisk: high,
         mediumRisk: medium,
-        newPredictions
+        newPredictions,
       });
     }
   }, [predictions]);
@@ -310,13 +334,14 @@ export function useRetentionStrategyAnalytics(
     queryKey: ['retention-strategy-analytics', clinicId, strategyId],
     queryFn: async () => {
       // Get strategy performance data
-      const strategies = await retentionService.getRetentionStrategies(clinicId);
-      
+      const strategies =
+        await retentionService.getRetentionStrategies(clinicId);
+
       if (strategyId) {
-        const strategy = strategies.find(s => s.id === strategyId);
+        const strategy = strategies.find((s) => s.id === strategyId);
         return strategy ? [strategy] : [];
       }
-      
+
       return strategies;
     },
     enabled: options?.enabled !== false && !!clinicId,
@@ -335,14 +360,15 @@ export function usePatientRiskInsights(
   }
 ) {
   const { data: metrics } = usePatientRetentionMetrics(patientId, clinicId, {
-    enabled: options?.enabled
+    enabled: options?.enabled,
   });
 
   const { data: predictions } = useQuery({
     queryKey: ['patient-churn-predictions', patientId, clinicId],
     queryFn: async () => {
-      const allPredictions = await retentionService.getChurnPredictions(clinicId);
-      return allPredictions.filter(p => p.patient_id === patientId);
+      const allPredictions =
+        await retentionService.getChurnPredictions(clinicId);
+      return allPredictions.filter((p) => p.patient_id === patientId);
     },
     enabled: options?.enabled !== false && !!patientId && !!clinicId,
   });
@@ -359,7 +385,7 @@ export function usePatientRiskInsights(
       riskFactors.push({
         factor: 'Long time since last appointment',
         severity: 'high',
-        value: `${metrics.days_since_last_appointment} days`
+        value: `${metrics.days_since_last_appointment} days`,
       });
       recommendations.push('Schedule follow-up call to re-engage patient');
     }
@@ -368,7 +394,7 @@ export function usePatientRiskInsights(
       riskFactors.push({
         factor: 'Low follow-up response rate',
         severity: 'medium',
-        value: `${Math.round(metrics.response_rate * 100)}%`
+        value: `${Math.round(metrics.response_rate * 100)}%`,
       });
       recommendations.push('Review communication strategy and channels');
     }
@@ -377,7 +403,7 @@ export function usePatientRiskInsights(
       riskFactors.push({
         factor: 'Low satisfaction score',
         severity: 'high',
-        value: `${metrics.satisfaction_score}/10`
+        value: `${metrics.satisfaction_score}/10`,
       });
       recommendations.push('Address satisfaction concerns immediately');
     }
@@ -386,7 +412,7 @@ export function usePatientRiskInsights(
       riskFactors.push({
         factor: 'High cancellation rate',
         severity: 'medium',
-        value: `${Math.round(metrics.cancellation_rate * 100)}%`
+        value: `${Math.round(metrics.cancellation_rate * 100)}%`,
       });
       recommendations.push('Investigate scheduling or service issues');
     }
@@ -398,9 +424,10 @@ export function usePatientRiskInsights(
       recommendations,
       daysToChurn: metrics.days_to_predicted_churn,
       lifetimeValue: metrics.lifetime_value,
-      trend: predictions && predictions.length > 1 
-        ? predictions[0].churn_probability - predictions[1].churn_probability
-        : 0
+      trend:
+        predictions && predictions.length > 1
+          ? predictions[0].churn_probability - predictions[1].churn_probability
+          : 0,
     };
   }, [metrics, predictions]);
 
@@ -423,45 +450,50 @@ export function useBulkChurnPrediction() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ 
-      clinicId, 
-      patientIds, 
-      modelType = ChurnModelType.ENSEMBLE 
-    }: { 
-      clinicId: string; 
-      patientIds: string[]; 
+    mutationFn: async ({
+      clinicId,
+      patientIds,
+      modelType = ChurnModelType.ENSEMBLE,
+    }: {
+      clinicId: string;
+      patientIds: string[];
       modelType?: ChurnModelType;
     }) => {
       const predictions = [];
-      
+
       // Generate predictions in batches to avoid overwhelming the system
       const batchSize = 10;
       for (let i = 0; i < patientIds.length; i += batchSize) {
         const batch = patientIds.slice(i, i + batchSize);
-        const batchPromises = batch.map(patientId =>
-          retentionService.generateChurnPrediction(patientId, clinicId, modelType)
+        const batchPromises = batch.map((patientId) =>
+          retentionService.generateChurnPrediction(
+            patientId,
+            clinicId,
+            modelType
+          )
         );
-        
+
         const batchResults = await Promise.allSettled(batchPromises);
         const successful = batchResults
-          .filter((result): result is PromiseFulfilledResult<ChurnPrediction> => 
-            result.status === 'fulfilled'
+          .filter(
+            (result): result is PromiseFulfilledResult<ChurnPrediction> =>
+              result.status === 'fulfilled'
           )
-          .map(result => result.value);
-        
+          .map((result) => result.value);
+
         predictions.push(...successful);
       }
-      
+
       return predictions;
     },
     onSuccess: (data) => {
       if (data.length > 0) {
         const clinicId = data[0].clinic_id;
         queryClient.invalidateQueries({
-          queryKey: ['churn-predictions', clinicId]
+          queryKey: ['churn-predictions', clinicId],
         });
         queryClient.invalidateQueries({
-          queryKey: ['retention-dashboard', clinicId]
+          queryKey: ['retention-dashboard', clinicId],
         });
       }
     },
@@ -475,40 +507,43 @@ export function useBulkRetentionMetrics() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ 
-      clinicId, 
-      patientIds 
-    }: { 
-      clinicId: string; 
+    mutationFn: async ({
+      clinicId,
+      patientIds,
+    }: {
+      clinicId: string;
       patientIds: string[];
     }) => {
       const metrics = [];
-      
+
       // Calculate metrics in batches
       const batchSize = 5; // Smaller batch for metrics calculation
       for (let i = 0; i < patientIds.length; i += batchSize) {
         const batch = patientIds.slice(i, i + batchSize);
-        const batchPromises = batch.map(patientId =>
+        const batchPromises = batch.map((patientId) =>
           retentionService.calculatePatientRetentionMetrics(patientId, clinicId)
         );
-        
+
         const batchResults = await Promise.allSettled(batchPromises);
         const successful = batchResults
-          .filter((result): result is PromiseFulfilledResult<PatientRetentionMetrics> => 
-            result.status === 'fulfilled'
+          .filter(
+            (
+              result
+            ): result is PromiseFulfilledResult<PatientRetentionMetrics> =>
+              result.status === 'fulfilled'
           )
-          .map(result => result.value);
-        
+          .map((result) => result.value);
+
         metrics.push(...successful);
       }
-      
+
       return metrics;
     },
     onSuccess: (data) => {
       if (data.length > 0) {
         const clinicId = data[0].clinic_id;
         queryClient.invalidateQueries({
-          queryKey: ['clinic-retention-metrics', clinicId]
+          queryKey: ['clinic-retention-metrics', clinicId],
         });
       }
     },
@@ -523,7 +558,9 @@ export function useBulkRetentionMetrics() {
  * Hook for formatting retention analytics data
  */
 export function useRetentionAnalyticsFormatters() {
-  const formatRiskLevel = (level: ChurnRiskLevel): { color: string; label: string } => {
+  const formatRiskLevel = (
+    level: ChurnRiskLevel
+  ): { color: string; label: string } => {
     switch (level) {
       case ChurnRiskLevel.CRITICAL:
         return { color: 'red', label: 'Critical Risk' };
@@ -545,7 +582,7 @@ export function useRetentionAnalyticsFormatters() {
   const formatCurrency = (amount: number): string => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
-      currency: 'BRL'
+      currency: 'BRL',
     }).format(amount);
   };
 

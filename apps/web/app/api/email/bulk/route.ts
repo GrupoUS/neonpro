@@ -1,26 +1,28 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import EmailService from '@/app/lib/services/email-service';
 import { EmailMessageSchema } from '@/app/types/email';
-import { z } from 'zod';
+import { createClient } from '@/app/utils/supabase/server';
 
 const BulkEmailSchema = z.object({
-  messages: z.array(EmailMessageSchema).min(1, 'At least one message is required'),
+  messages: z
+    .array(EmailMessageSchema)
+    .min(1, 'At least one message is required'),
   batchSize: z.number().min(1).max(100).optional().default(10),
-  delayBetweenBatches: z.number().min(0).max(60000).optional().default(1000), // Max 1 minute delay
+  delayBetweenBatches: z.number().min(0).max(60_000).optional().default(1000), // Max 1 minute delay
 });
 
 export async function POST(request: NextRequest) {
   try {
     // Authentication check
     const supabase = await createClient();
-    const { data: { session }, error: authError } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+      error: authError,
+    } = await supabase.auth.getSession();
+
     if (authError || !session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Get user profile to verify clinic access
@@ -31,10 +33,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (!profile?.clinic_id) {
-      return NextResponse.json(
-        { error: 'Clinic not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Clinic not found' }, { status: 404 });
     }
 
     // Check if user has permission for bulk sending
@@ -47,18 +46,18 @@ export async function POST(request: NextRequest) {
 
     // Parse and validate request body
     const body = await request.json();
-    
+
     try {
       BulkEmailSchema.parse(body);
     } catch (validationError) {
       if (validationError instanceof z.ZodError) {
         return NextResponse.json(
-          { 
+          {
             error: 'Validation failed',
-            details: validationError.errors.map(err => ({
+            details: validationError.errors.map((err) => ({
               field: err.path.join('.'),
               message: err.message,
-            }))
+            })),
           },
           { status: 400 }
         );
@@ -71,7 +70,7 @@ export async function POST(request: NextRequest) {
     // Check rate limits
     const now = new Date();
     const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
-    
+
     const { count: recentEmailCount } = await supabase
       .from('email_logs')
       .select('*', { count: 'exact', head: true })
@@ -85,14 +84,16 @@ export async function POST(request: NextRequest) {
       .eq('clinic_id', profile.clinic_id)
       .single();
 
-    const hourlyLimit = settings?.delivery_optimization?.rateLimit?.emailsPerHour || 1000;
-    const dailyLimit = settings?.delivery_optimization?.rateLimit?.emailsPerDay || 10000;
+    const hourlyLimit =
+      settings?.delivery_optimization?.rateLimit?.emailsPerHour || 1000;
+    const dailyLimit =
+      settings?.delivery_optimization?.rateLimit?.emailsPerDay || 10_000;
 
     if ((recentEmailCount || 0) + messages.length > hourlyLimit) {
       return NextResponse.json(
-        { 
+        {
           error: 'Rate limit exceeded',
-          details: `Hourly limit of ${hourlyLimit} emails would be exceeded`
+          details: `Hourly limit of ${hourlyLimit} emails would be exceeded`,
         },
         { status: 429 }
       );
@@ -108,9 +109,9 @@ export async function POST(request: NextRequest) {
 
     if ((dailyEmailCount || 0) + messages.length > dailyLimit) {
       return NextResponse.json(
-        { 
+        {
           error: 'Daily rate limit exceeded',
-          details: `Daily limit of ${dailyLimit} emails would be exceeded`
+          details: `Daily limit of ${dailyLimit} emails would be exceeded`,
         },
         { status: 429 }
       );
@@ -135,22 +136,23 @@ export async function POST(request: NextRequest) {
     }
 
     // Initialize providers
-    await emailService.initializeProviders(providerConfigs.map(config => ({
-      provider: config.provider,
-      name: config.name,
-      settings: config.settings,
-      isActive: config.is_active,
-      priority: config.priority,
-      dailyLimit: config.daily_limit,
-      monthlyLimit: config.monthly_limit,
-      rateLimit: config.rate_limit,
-    })));
+    await emailService.initializeProviders(
+      providerConfigs.map((config) => ({
+        provider: config.provider,
+        name: config.name,
+        settings: config.settings,
+        isActive: config.is_active,
+        priority: config.priority,
+        dailyLimit: config.daily_limit,
+        monthlyLimit: config.monthly_limit,
+        rateLimit: config.rate_limit,
+      }))
+    );
 
     // Create bulk email campaign record
     const campaignId = crypto.randomUUID();
-    await supabase
-      .from('email_campaigns')
-      .insert([{
+    await supabase.from('email_campaigns').insert([
+      {
         id: campaignId,
         clinic_id: profile.clinic_id,
         created_by: session.user.id,
@@ -160,10 +162,15 @@ export async function POST(request: NextRequest) {
         batch_size: batchSize,
         created_at: new Date().toISOString(),
         started_at: new Date().toISOString(),
-      }]);
+      },
+    ]);
 
     // Send bulk emails
-    const result = await emailService.sendBulkEmail(messages, undefined, batchSize);
+    const result = await emailService.sendBulkEmail(
+      messages,
+      undefined,
+      batchSize
+    );
 
     // Log each email send attempt
     const emailLogs = result.results.map((emailResult, index) => ({
@@ -223,13 +230,12 @@ export async function POST(request: NextRequest) {
         },
       },
     });
-
   } catch (error) {
     console.error('Bulk email send error:', error);
     return NextResponse.json(
-      { 
+      {
         success: false,
-        error: error instanceof Error ? error.message : 'Internal server error' 
+        error: error instanceof Error ? error.message : 'Internal server error',
       },
       { status: 500 }
     );
@@ -240,13 +246,13 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { session }, error: authError } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+      error: authError,
+    } = await supabase.auth.getSession();
+
     if (authError || !session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { data: profile } = await supabase
@@ -256,10 +262,7 @@ export async function GET(request: NextRequest) {
       .single();
 
     if (!profile?.clinic_id) {
-      return NextResponse.json(
-        { error: 'Clinic not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Clinic not found' }, { status: 404 });
     }
 
     const url = new URL(request.url);
@@ -311,7 +314,7 @@ export async function GET(request: NextRequest) {
     const { data: events } = await supabase
       .from('email_events')
       .select('*')
-      .in('message_id', emailLogs?.map(log => log.message_id) || [])
+      .in('message_id', emailLogs?.map((log) => log.message_id) || [])
       .eq('clinic_id', profile.clinic_id);
 
     return NextResponse.json({
@@ -319,15 +322,17 @@ export async function GET(request: NextRequest) {
       emailLogs: emailLogs || [],
       events: events || [],
       analytics: {
-        sent: emailLogs?.filter(log => log.status === 'sent').length || 0,
-        failed: emailLogs?.filter(log => log.status === 'failed').length || 0,
-        delivered: events?.filter(event => event.event === 'delivered').length || 0,
-        opened: events?.filter(event => event.event === 'opened').length || 0,
-        clicked: events?.filter(event => event.event === 'clicked').length || 0,
-        bounced: events?.filter(event => event.event === 'bounced').length || 0,
+        sent: emailLogs?.filter((log) => log.status === 'sent').length || 0,
+        failed: emailLogs?.filter((log) => log.status === 'failed').length || 0,
+        delivered:
+          events?.filter((event) => event.event === 'delivered').length || 0,
+        opened: events?.filter((event) => event.event === 'opened').length || 0,
+        clicked:
+          events?.filter((event) => event.event === 'clicked').length || 0,
+        bounced:
+          events?.filter((event) => event.event === 'bounced').length || 0,
       },
     });
-
   } catch (error) {
     console.error('Bulk email status check error:', error);
     return NextResponse.json(

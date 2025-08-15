@@ -2,13 +2,13 @@
 // Story 7.4: Advanced patient retention analytics with predictive modeling
 
 import type {
-    ChurnRiskLevel,
-    InterventionChannel,
-    InterventionStatus,
-    PatientChurnPrediction,
-    PatientRetentionAnalytics,
-    RetentionIntervention,
-    RetentionMetrics
+  ChurnRiskLevel,
+  InterventionChannel,
+  InterventionStatus,
+  PatientChurnPrediction,
+  PatientRetentionAnalytics,
+  RetentionIntervention,
+  RetentionMetrics,
 } from '@/app/types/retention';
 import { createClient } from '@/app/utils/supabase/client';
 
@@ -16,9 +16,9 @@ export class RetentionService {
   private static getClient() {
     return createClient();
   }
-  
+
   // Patient Retention Analytics Operations
-  
+
   /**
    * Get patient retention analytics with filtering and pagination
    */
@@ -33,7 +33,7 @@ export class RetentionService {
     sort_by?: string;
     sort_order?: 'asc' | 'desc';
   }) {
-    const supabase = this.getClient();
+    const supabase = RetentionService.getClient();
     const {
       page = 1,
       limit = 20,
@@ -43,12 +43,10 @@ export class RetentionService {
       date_range,
       search,
       sort_by = 'created_at',
-      sort_order = 'desc'
+      sort_order = 'desc',
     } = params;
 
-    let query = supabase
-      .from('patient_retention_analytics')
-      .select(`
+    let query = supabase.from('patient_retention_analytics').select(`
         *,
         patients!inner(
           first_name,
@@ -107,17 +105,22 @@ export class RetentionService {
       pagination: {
         page,
         limit,
-        total: data?.length || 0
-      }
+        total: data?.length || 0,
+      },
     };
   }
 
   /**
    * Create patient retention analytics record
    */
-  static async createPatientRetentionAnalytics(analyticsData: Omit<PatientRetentionAnalytics, 'id' | 'created_at' | 'updated_at'>) {
-    const supabase = this.getClient();
-    
+  static async createPatientRetentionAnalytics(
+    analyticsData: Omit<
+      PatientRetentionAnalytics,
+      'id' | 'created_at' | 'updated_at'
+    >
+  ) {
+    const supabase = RetentionService.getClient();
+
     const { data, error } = await supabase
       .from('patient_retention_analytics')
       .insert([analyticsData])
@@ -135,9 +138,12 @@ export class RetentionService {
   /**
    * Update patient retention analytics record
    */
-  static async updatePatientRetentionAnalytics(id: string, updates: Partial<PatientRetentionAnalytics>) {
-    const supabase = this.getClient();
-    
+  static async updatePatientRetentionAnalytics(
+    id: string,
+    updates: Partial<PatientRetentionAnalytics>
+  ) {
+    const supabase = RetentionService.getClient();
+
     const { data, error } = await supabase
       .from('patient_retention_analytics')
       .update(updates)
@@ -154,7 +160,7 @@ export class RetentionService {
   }
 
   // Churn Prediction Operations
-  
+
   /**
    * Get churn predictions with filtering and pagination
    */
@@ -169,7 +175,7 @@ export class RetentionService {
     sort_by?: string;
     sort_order?: 'asc' | 'desc';
   }) {
-    const supabase = this.getClient();
+    const supabase = RetentionService.getClient();
     const {
       page = 1,
       limit = 20,
@@ -179,12 +185,10 @@ export class RetentionService {
       model_version,
       validation_status,
       sort_by = 'prediction_date',
-      sort_order = 'desc'
+      sort_order = 'desc',
     } = params;
 
-    let query = supabase
-      .from('patient_churn_predictions')
-      .select(`
+    let query = supabase.from('patient_churn_predictions').select(`
         *,
         patients!inner(
           first_name,
@@ -236,17 +240,22 @@ export class RetentionService {
       pagination: {
         page,
         limit,
-        total: data?.length || 0
-      }
+        total: data?.length || 0,
+      },
     };
   }
 
   /**
    * Create churn prediction
    */
-  static async createChurnPrediction(predictionData: Omit<PatientChurnPrediction, 'id' | 'created_at' | 'updated_at'>) {
-    const supabase = this.getClient();
-    
+  static async createChurnPrediction(
+    predictionData: Omit<
+      PatientChurnPrediction,
+      'id' | 'created_at' | 'updated_at'
+    >
+  ) {
+    const supabase = RetentionService.getClient();
+
     // Deactivate previous predictions for the same patient
     await supabase
       .from('patient_churn_predictions')
@@ -271,19 +280,19 @@ export class RetentionService {
    * Update churn prediction validation
    */
   static async updateChurnPredictionValidation(
-    id: string, 
+    id: string,
     validation_status: 'pending' | 'validated' | 'disputed',
     actual_outcome?: 'retained' | 'churned' | 'unknown',
     outcome_date?: string
   ) {
-    const supabase = this.getClient();
-    
+    const supabase = RetentionService.getClient();
+
     const updates: any = { validation_status };
-    
+
     if (actual_outcome) {
       updates.actual_outcome = actual_outcome;
     }
-    
+
     if (outcome_date) {
       updates.outcome_date = outcome_date;
     }
@@ -304,7 +313,7 @@ export class RetentionService {
   }
 
   // Retention Intervention Operations
-  
+
   /**
    * Get retention interventions with filtering and pagination
    */
@@ -319,7 +328,7 @@ export class RetentionService {
     sort_by?: string;
     sort_order?: 'asc' | 'desc';
   }) {
-    const supabase = this.getClient();
+    const supabase = RetentionService.getClient();
     const {
       page = 1,
       limit = 20,
@@ -329,12 +338,10 @@ export class RetentionService {
       campaign_id,
       date_range,
       sort_by = 'created_at',
-      sort_order = 'desc'
+      sort_order = 'desc',
     } = params;
 
-    let query = supabase
-      .from('retention_interventions')
-      .select(`
+    let query = supabase.from('retention_interventions').select(`
         *,
         patients!inner(
           first_name,
@@ -383,17 +390,22 @@ export class RetentionService {
       pagination: {
         page,
         limit,
-        total: data?.length || 0
-      }
+        total: data?.length || 0,
+      },
     };
   }
 
   /**
    * Create retention intervention
    */
-  static async createRetentionIntervention(interventionData: Omit<RetentionIntervention, 'id' | 'created_at' | 'updated_at'>) {
-    const supabase = this.getClient();
-    
+  static async createRetentionIntervention(
+    interventionData: Omit<
+      RetentionIntervention,
+      'id' | 'created_at' | 'updated_at'
+    >
+  ) {
+    const supabase = RetentionService.getClient();
+
     const { data, error } = await supabase
       .from('retention_interventions')
       .insert([interventionData])
@@ -418,23 +430,28 @@ export class RetentionService {
     effectiveness_score?: number,
     roi?: number
   ) {
-    const supabase = this.getClient();
-    
+    const supabase = RetentionService.getClient();
+
     const updates: any = { status };
-    
+
     if (response_data) {
       updates.response_data = response_data;
     }
-    
+
     if (effectiveness_score !== undefined) {
       updates.effectiveness_score = effectiveness_score;
     }
-    
+
     if (roi !== undefined) {
       updates.roi = roi;
     }
 
-    if (status === 'delivered' || status === 'opened' || status === 'clicked' || status === 'responded') {
+    if (
+      status === 'delivered' ||
+      status === 'opened' ||
+      status === 'clicked' ||
+      status === 'responded'
+    ) {
       updates.executed_date = new Date().toISOString();
     }
 
@@ -454,7 +471,7 @@ export class RetentionService {
   }
 
   // Analytics and Metrics Operations
-  
+
   /**
    * Get retention metrics summary
    */
@@ -463,8 +480,8 @@ export class RetentionService {
     segment?: string;
     risk_level?: ChurnRiskLevel;
   }): Promise<RetentionMetrics> {
-    const supabase = this.getClient();
-    
+    const supabase = RetentionService.getClient();
+
     try {
       // Calculate high-risk and critical-risk patient counts
       const { count: highRiskPatients } = await supabase
@@ -493,10 +510,26 @@ export class RetentionService {
 
       // Calculate averages and metrics
       const totalPatients = churnSummary?.length || 0;
-      const avgChurnProbability = churnSummary?.reduce((sum, item) => sum + (item.churn_probability || 0), 0) / totalPatients || 0;
-      const avgLifetimeValue = churnSummary?.reduce((sum, item) => sum + (item.lifetime_value || 0), 0) / totalPatients || 0;
-      const avgPredictedLTV = churnSummary?.reduce((sum, item) => sum + (item.predicted_ltv || 0), 0) / totalPatients || 0;
-      const avgRetentionScore = churnSummary?.reduce((sum, item) => sum + (item.retention_score || 0), 0) / totalPatients || 0;
+      const avgChurnProbability =
+        churnSummary?.reduce(
+          (sum, item) => sum + (item.churn_probability || 0),
+          0
+        ) / totalPatients || 0;
+      const avgLifetimeValue =
+        churnSummary?.reduce(
+          (sum, item) => sum + (item.lifetime_value || 0),
+          0
+        ) / totalPatients || 0;
+      const avgPredictedLTV =
+        churnSummary?.reduce(
+          (sum, item) => sum + (item.predicted_ltv || 0),
+          0
+        ) / totalPatients || 0;
+      const avgRetentionScore =
+        churnSummary?.reduce(
+          (sum, item) => sum + (item.retention_score || 0),
+          0
+        ) / totalPatients || 0;
 
       return {
         total_patients: totalPatients,
@@ -507,8 +540,10 @@ export class RetentionService {
         average_ltv: avgLifetimeValue,
         predicted_ltv: avgPredictedLTV,
         average_retention_score: avgRetentionScore,
-        period_start: params.date_range?.start_date || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
-        period_end: params.date_range?.end_date || new Date().toISOString()
+        period_start:
+          params.date_range?.start_date ||
+          new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+        period_end: params.date_range?.end_date || new Date().toISOString(),
       } as RetentionMetrics;
     } catch (error) {
       console.error('Error calculating retention metrics:', error);
@@ -519,9 +554,12 @@ export class RetentionService {
   /**
    * Get dashboard summary data
    */
-  static async getDashboardSummary(date_range?: { start_date: string; end_date: string }) {
-    const supabase = this.getClient();
-    
+  static async getDashboardSummary(_date_range?: {
+    start_date: string;
+    end_date: string;
+  }) {
+    const supabase = RetentionService.getClient();
+
     const { data, error } = await supabase
       .from('patient_retention_analytics')
       .select(`
@@ -538,22 +576,31 @@ export class RetentionService {
     }
 
     const summary = data || [];
-    
+
     return {
       total_patients: summary.length,
       risk_distribution: {
-        low: summary.filter(p => p.churn_risk_level === 'low').length,
-        medium: summary.filter(p => p.churn_risk_level === 'medium').length,
-        high: summary.filter(p => p.churn_risk_level === 'high').length,
-        critical: summary.filter(p => p.churn_risk_level === 'critical').length
+        low: summary.filter((p) => p.churn_risk_level === 'low').length,
+        medium: summary.filter((p) => p.churn_risk_level === 'medium').length,
+        high: summary.filter((p) => p.churn_risk_level === 'high').length,
+        critical: summary.filter((p) => p.churn_risk_level === 'critical')
+          .length,
       },
-      average_retention_score: summary.reduce((sum, p) => sum + (p.retention_score || 0), 0) / summary.length || 0,
-      average_churn_probability: summary.reduce((sum, p) => sum + (p.churn_probability || 0), 0) / summary.length || 0,
-      average_lifetime_value: summary.reduce((sum, p) => sum + (p.lifetime_value || 0), 0) / summary.length || 0,
-      segments: [...new Set(summary.map(p => p.retention_segment))].map(segment => ({
-        name: segment,
-        count: summary.filter(p => p.retention_segment === segment).length
-      }))
+      average_retention_score:
+        summary.reduce((sum, p) => sum + (p.retention_score || 0), 0) /
+          summary.length || 0,
+      average_churn_probability:
+        summary.reduce((sum, p) => sum + (p.churn_probability || 0), 0) /
+          summary.length || 0,
+      average_lifetime_value:
+        summary.reduce((sum, p) => sum + (p.lifetime_value || 0), 0) /
+          summary.length || 0,
+      segments: [...new Set(summary.map((p) => p.retention_segment))].map(
+        (segment) => ({
+          name: segment,
+          count: summary.filter((p) => p.retention_segment === segment).length,
+        })
+      ),
     };
   }
 }

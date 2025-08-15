@@ -29,8 +29,13 @@ async function syncPrismaToSupabase() {
   console.log('📊 STATUS ATUAL:');
   console.log('DATABASE_URL:', dbUrl ? '✅ Configurada' : '❌ Ausente');
   console.log('DIRECT_URL:', directUrl ? '✅ Configurada' : '❌ Ausente');
-  console.log('DB_PASSWORD:', dbPassword && dbPassword !== 'your_database_password_here' ? '✅ Configurada' : '❌ Precisa configurar');
-  
+  console.log(
+    'DB_PASSWORD:',
+    dbPassword && dbPassword !== 'your_database_password_here'
+      ? '✅ Configurada'
+      : '❌ Precisa configurar'
+  );
+
   if (!dbPassword || dbPassword === 'your_database_password_here') {
     console.log('');
     console.log('🔐 **AÇÃO NECESSÁRIA:**');

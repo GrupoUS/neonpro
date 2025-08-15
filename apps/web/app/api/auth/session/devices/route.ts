@@ -3,13 +3,13 @@
  * Manages trusted devices and device registration
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { SessionManager } from '@/lib/auth/session-manager';
 import { createClient } from '@/lib/supabase/server';
 import {
+  type DeviceType,
   SecurityEventType,
   SecuritySeverity,
-  DeviceType
 } from '@/types/session';
 
 // Initialize session manager
@@ -24,9 +24,11 @@ async function getSessionManager() {
       enableDeviceTracking: true,
       enableSecurityMonitoring: true,
       enableSuspiciousActivityDetection: true,
-      sessionCleanupInterval: 300000,
+      sessionCleanupInterval: 300_000,
       securityEventRetention: 30 * 24 * 60 * 60 * 1000,
-      encryptionKey: process.env.SESSION_ENCRYPTION_KEY || 'default-key-change-in-production'
+      encryptionKey:
+        process.env.SESSION_ENCRYPTION_KEY ||
+        'default-key-change-in-production',
     });
   }
   return sessionManager;
@@ -37,7 +39,7 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const userId = searchParams.get('userId');
-    
+
     if (!userId) {
       return NextResponse.json(
         { error: 'User ID is required' },
@@ -49,10 +51,9 @@ export async function GET(request: NextRequest) {
     const devices = await manager.getUserDevices(userId);
 
     return NextResponse.json({ devices });
-
   } catch (error) {
     console.error('Get devices error:', error);
-    
+
     return NextResponse.json(
       { error: 'Internal server error while fetching devices' },
       { status: 500 }
@@ -67,10 +68,10 @@ export async function POST(request: NextRequest) {
       userId,
       deviceName,
       deviceType,
-      trusted = false
+      trusted = false,
     } = await request.json();
-    
-    if (!userId || !deviceName || !deviceType) {
+
+    if (!(userId && deviceName && deviceType)) {
       return NextResponse.json(
         { error: 'User ID, device name, and device type are required' },
         { status: 400 }
@@ -78,9 +79,10 @@ export async function POST(request: NextRequest) {
     }
 
     const manager = await getSessionManager();
-    const clientIP = request.headers.get('x-forwarded-for') || 
-                    request.headers.get('x-real-ip') || 
-                    '127.0.0.1';
+    const clientIP =
+      request.headers.get('x-forwarded-for') ||
+      request.headers.get('x-real-ip') ||
+      '127.0.0.1';
     const userAgent = request.headers.get('user-agent') || 'Unknown';
 
     // Register the device
@@ -91,7 +93,7 @@ export async function POST(request: NextRequest) {
       ip_address: clientIP,
       user_agent: userAgent,
       trusted,
-      last_seen: new Date().toISOString()
+      last_seen: new Date().toISOString(),
     });
 
     // Log device registration event
@@ -108,15 +110,14 @@ export async function POST(request: NextRequest) {
         device_name: deviceName,
         device_type: deviceType,
         trusted,
-        timestamp: new Date().toISOString()
-      }
+        timestamp: new Date().toISOString(),
+      },
     });
 
     return NextResponse.json({ device });
-
   } catch (error) {
     console.error('Device registration error:', error);
-    
+
     return NextResponse.json(
       { error: 'Internal server error during device registration' },
       { status: 500 }
@@ -127,12 +128,8 @@ export async function POST(request: NextRequest) {
 // Update device (trust/untrust)
 export async function PUT(request: NextRequest) {
   try {
-    const {
-      deviceId,
-      trusted,
-      deviceName
-    } = await request.json();
-    
+    const { deviceId, trusted, deviceName } = await request.json();
+
     if (!deviceId) {
       return NextResponse.json(
         { error: 'Device ID is required' },
@@ -141,29 +138,29 @@ export async function PUT(request: NextRequest) {
     }
 
     const manager = await getSessionManager();
-    const clientIP = request.headers.get('x-forwarded-for') || 
-                    request.headers.get('x-real-ip') || 
-                    '127.0.0.1';
+    const clientIP =
+      request.headers.get('x-forwarded-for') ||
+      request.headers.get('x-real-ip') ||
+      '127.0.0.1';
     const userAgent = request.headers.get('user-agent') || 'Unknown';
 
     // Update device
     const updatedDevice = await manager.updateDevice(deviceId, {
       trusted,
       device_name: deviceName,
-      last_seen: new Date().toISOString()
+      last_seen: new Date().toISOString(),
     });
 
     if (!updatedDevice) {
-      return NextResponse.json(
-        { error: 'Device not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Device not found' }, { status: 404 });
     }
 
     // Log device update event
     await manager.logSecurityEvent({
       session_id: 'device-update',
-      event_type: trusted ? SecurityEventType.DEVICE_TRUSTED : SecurityEventType.DEVICE_UNTRUSTED,
+      event_type: trusted
+        ? SecurityEventType.DEVICE_TRUSTED
+        : SecurityEventType.DEVICE_UNTRUSTED,
       severity: SecuritySeverity.MEDIUM,
       description: `Device ${trusted ? 'trusted' : 'untrusted'}: ${deviceName || deviceId}`,
       ip_address: clientIP,
@@ -172,15 +169,14 @@ export async function PUT(request: NextRequest) {
         device_id: deviceId,
         device_name: deviceName,
         trusted,
-        timestamp: new Date().toISOString()
-      }
+        timestamp: new Date().toISOString(),
+      },
     });
 
     return NextResponse.json({ device: updatedDevice });
-
   } catch (error) {
     console.error('Device update error:', error);
-    
+
     return NextResponse.json(
       { error: 'Internal server error during device update' },
       { status: 500 }
@@ -193,7 +189,7 @@ export async function DELETE(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const deviceId = searchParams.get('deviceId');
-    
+
     if (!deviceId) {
       return NextResponse.json(
         { error: 'Device ID is required' },
@@ -202,17 +198,18 @@ export async function DELETE(request: NextRequest) {
     }
 
     const manager = await getSessionManager();
-    const clientIP = request.headers.get('x-forwarded-for') || 
-                    request.headers.get('x-real-ip') || 
-                    '127.0.0.1';
+    const clientIP =
+      request.headers.get('x-forwarded-for') ||
+      request.headers.get('x-real-ip') ||
+      '127.0.0.1';
     const userAgent = request.headers.get('user-agent') || 'Unknown';
 
     // Get device info before deletion
     const device = await manager.getDevice(deviceId);
-    
+
     // Remove device
     const removed = await manager.removeDevice(deviceId);
-    
+
     if (!removed) {
       return NextResponse.json(
         { error: 'Device not found or could not be removed' },
@@ -231,18 +228,17 @@ export async function DELETE(request: NextRequest) {
       metadata: {
         device_id: deviceId,
         device_name: device?.device_name,
-        timestamp: new Date().toISOString()
-      }
+        timestamp: new Date().toISOString(),
+      },
     });
 
-    return NextResponse.json({ 
-      success: true, 
-      message: 'Device removed successfully' 
+    return NextResponse.json({
+      success: true,
+      message: 'Device removed successfully',
     });
-
   } catch (error) {
     console.error('Device removal error:', error);
-    
+
     return NextResponse.json(
       { error: 'Internal server error during device removal' },
       { status: 500 }
@@ -250,7 +246,7 @@ export async function DELETE(request: NextRequest) {
   }
 }
 
-export async function OPTIONS(request: NextRequest) {
+export async function OPTIONS(_request: NextRequest) {
   return new NextResponse(null, {
     status: 200,
     headers: {

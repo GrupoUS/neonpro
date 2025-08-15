@@ -1,7 +1,7 @@
 /**
  * Suspicious Activity Detector
  * Story 1.4 - Task 4: Detection and monitoring of suspicious activities
- * 
+ *
  * Features:
  * - Real-time activity pattern analysis
  * - Anomaly detection algorithms
@@ -12,14 +12,24 @@
  */
 
 import { createClient } from '@supabase/supabase-js';
-import { UserRole } from '@/types/auth';
+import type { UserRole } from '@/types/auth';
 import { SecurityAuditLogger } from './security-audit-logger';
 
 export interface ActivityPattern {
   userId: string;
   sessionId: string;
   deviceId: string;
-  activityType: 'login' | 'logout' | 'page_view' | 'api_call' | 'data_access' | 'file_download' | 'settings_change' | 'user_creation' | 'permission_change' | 'bulk_operation';
+  activityType:
+    | 'login'
+    | 'logout'
+    | 'page_view'
+    | 'api_call'
+    | 'data_access'
+    | 'file_download'
+    | 'settings_change'
+    | 'user_creation'
+    | 'permission_change'
+    | 'bulk_operation';
   timestamp: Date;
   ipAddress: string;
   userAgent: string;
@@ -54,7 +64,17 @@ export interface SuspiciousActivityAlert {
   userId: string;
   sessionId: string;
   deviceId: string;
-  alertType: 'velocity_anomaly' | 'location_anomaly' | 'behavior_anomaly' | 'access_pattern_anomaly' | 'data_exfiltration' | 'privilege_escalation' | 'brute_force' | 'session_hijacking' | 'bot_activity' | 'impossible_travel';
+  alertType:
+    | 'velocity_anomaly'
+    | 'location_anomaly'
+    | 'behavior_anomaly'
+    | 'access_pattern_anomaly'
+    | 'data_exfiltration'
+    | 'privilege_escalation'
+    | 'brute_force'
+    | 'session_hijacking'
+    | 'bot_activity'
+    | 'impossible_travel';
   severity: 'low' | 'medium' | 'high' | 'critical';
   riskScore: number;
   description: string;
@@ -67,7 +87,13 @@ export interface SuspiciousActivityAlert {
   resolution?: string;
   falsePositive: boolean;
   automatedResponse?: {
-    action: 'none' | 'warn_user' | 'require_mfa' | 'terminate_session' | 'block_user' | 'escalate_admin';
+    action:
+      | 'none'
+      | 'warn_user'
+      | 'require_mfa'
+      | 'terminate_session'
+      | 'block_user'
+      | 'escalate_admin';
     executedAt?: Date;
     result?: string;
   };
@@ -145,16 +171,16 @@ const DEFAULT_DETECTION_RULES: DetectionRule[] = [
         threshold: 100,
         operator: 'gt',
         field: 'api_calls',
-        value: 100
-      }
+        value: 100,
+      },
     ],
     actions: [
       {
         action: 'warn_user',
-        delay: 0
-      }
+        delay: 0,
+      },
     ],
-    applicableRoles: ['owner', 'manager', 'staff', 'patient']
+    applicableRoles: ['owner', 'manager', 'staff', 'patient'],
   },
   {
     ruleId: 'location_anomaly_1',
@@ -169,20 +195,20 @@ const DEFAULT_DETECTION_RULES: DetectionRule[] = [
         threshold: 1000,
         operator: 'gt',
         field: 'distance_km',
-        value: 1000
-      }
+        value: 1000,
+      },
     ],
     actions: [
       {
         action: 'require_mfa',
-        delay: 0
+        delay: 0,
       },
       {
         action: 'escalate_admin',
-        delay: 300
-      }
+        delay: 300,
+      },
     ],
-    applicableRoles: ['owner', 'manager', 'staff']
+    applicableRoles: ['owner', 'manager', 'staff'],
   },
   {
     ruleId: 'data_exfiltration_1',
@@ -197,16 +223,16 @@ const DEFAULT_DETECTION_RULES: DetectionRule[] = [
         threshold: 100 * 1024 * 1024, // 100MB
         operator: 'gt',
         field: 'data_volume',
-        value: 100 * 1024 * 1024
-      }
+        value: 100 * 1024 * 1024,
+      },
     ],
     actions: [
       {
         action: 'escalate_admin',
-        delay: 0
-      }
+        delay: 0,
+      },
     ],
-    applicableRoles: ['staff', 'patient']
+    applicableRoles: ['staff', 'patient'],
   },
   {
     ruleId: 'brute_force_1',
@@ -221,16 +247,16 @@ const DEFAULT_DETECTION_RULES: DetectionRule[] = [
         threshold: 5,
         operator: 'gte',
         field: 'failed_logins',
-        value: 5
-      }
+        value: 5,
+      },
     ],
     actions: [
       {
         action: 'block_user',
-        delay: 0
-      }
+        delay: 0,
+      },
     ],
-    applicableRoles: ['owner', 'manager', 'staff', 'patient']
+    applicableRoles: ['owner', 'manager', 'staff', 'patient'],
   },
   {
     ruleId: 'bot_activity_1',
@@ -245,24 +271,24 @@ const DEFAULT_DETECTION_RULES: DetectionRule[] = [
         threshold: 0.1,
         operator: 'lt',
         field: 'mouse_movement_variance',
-        value: 0.1
+        value: 0.1,
       },
       {
         timeWindow: 10,
         threshold: 50,
         operator: 'gt',
         field: 'api_calls',
-        value: 50
-      }
+        value: 50,
+      },
     ],
     actions: [
       {
         action: 'require_mfa',
-        delay: 0
-      }
+        delay: 0,
+      },
     ],
-    applicableRoles: ['owner', 'manager', 'staff', 'patient']
-  }
+    applicableRoles: ['owner', 'manager', 'staff', 'patient'],
+  },
 ];
 
 export class SuspiciousActivityDetector {
@@ -282,11 +308,11 @@ export class SuspiciousActivityDetector {
     this.supabase = createClient(supabaseUrl, supabaseKey);
     this.auditLogger = new SecurityAuditLogger(supabaseUrl, supabaseKey);
     this.detectionRules = customRules || DEFAULT_DETECTION_RULES;
-    
+
     // Start processing intervals
     this.startProcessingInterval();
     this.startBaselineUpdateInterval();
-    
+
     // Load existing baselines
     this.loadUserBaselines();
   }
@@ -294,11 +320,13 @@ export class SuspiciousActivityDetector {
   /**
    * Record user activity for analysis
    */
-  async recordActivity(activity: Omit<ActivityPattern, 'timestamp'>): Promise<void> {
+  async recordActivity(
+    activity: Omit<ActivityPattern, 'timestamp'>
+  ): Promise<void> {
     try {
       const activityWithTimestamp: ActivityPattern = {
         ...activity,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
 
       // Store in database
@@ -313,7 +341,7 @@ export class SuspiciousActivityDetector {
           ip_address: activity.ipAddress,
           user_agent: activity.userAgent,
           location: activity.location,
-          metadata: activity.metadata
+          metadata: activity.metadata,
         });
 
       if (error) {
@@ -324,19 +352,18 @@ export class SuspiciousActivityDetector {
       // Add to processing buffer
       const userBuffer = this.activityBuffer.get(activity.userId) || [];
       userBuffer.push(activityWithTimestamp);
-      
+
       // Keep only recent activities in buffer (last 1000 activities)
       if (userBuffer.length > 1000) {
         userBuffer.splice(0, userBuffer.length - 1000);
       }
-      
+
       this.activityBuffer.set(activity.userId, userBuffer);
 
       // Trigger real-time analysis for critical activities
       if (this.isCriticalActivity(activity.activityType)) {
         await this.analyzeUserActivity(activity.userId);
       }
-
     } catch (error) {
       console.error('Failed to record activity:', error);
     }
@@ -345,11 +372,13 @@ export class SuspiciousActivityDetector {
   /**
    * Analyze user activity for suspicious patterns
    */
-  async analyzeUserActivity(userId: string): Promise<SuspiciousActivityAlert[]> {
+  async analyzeUserActivity(
+    userId: string
+  ): Promise<SuspiciousActivityAlert[]> {
     try {
       const alerts: SuspiciousActivityAlert[] = [];
       const userActivities = this.activityBuffer.get(userId) || [];
-      
+
       if (userActivities.length === 0) {
         return alerts;
       }
@@ -361,8 +390,13 @@ export class SuspiciousActivityDetector {
       }
 
       // Apply detection rules
-      for (const rule of this.detectionRules.filter(r => r.isEnabled)) {
-        const ruleAlerts = await this.applyDetectionRule(rule, userId, userActivities, baseline);
+      for (const rule of this.detectionRules.filter((r) => r.isEnabled)) {
+        const ruleAlerts = await this.applyDetectionRule(
+          rule,
+          userId,
+          userActivities,
+          baseline
+        );
         alerts.push(...ruleAlerts);
       }
 
@@ -373,7 +407,6 @@ export class SuspiciousActivityDetector {
       }
 
       return alerts;
-
     } catch (error) {
       console.error('Failed to analyze user activity:', error);
       return [];
@@ -387,7 +420,7 @@ export class SuspiciousActivityDetector {
     try {
       // Get historical activity data (last 30 days)
       const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-      
+
       const { data: activities, error } = await this.supabase
         .from('user_activity_patterns')
         .select('*')
@@ -401,7 +434,7 @@ export class SuspiciousActivityDetector {
 
       // Get user role
       const userRole = await this.getUserRole(userId);
-      
+
       // Calculate baseline patterns
       const baseline: UserBehaviorBaseline = {
         userId,
@@ -409,7 +442,10 @@ export class SuspiciousActivityDetector {
         establishedAt: new Date(),
         lastUpdated: new Date(),
         patterns: this.calculateBaselinePatterns(activities || []),
-        anomalyThresholds: this.calculateAnomalyThresholds(userRole, activities || [])
+        anomalyThresholds: this.calculateAnomalyThresholds(
+          userRole,
+          activities || []
+        ),
       };
 
       // Store baseline
@@ -417,7 +453,6 @@ export class SuspiciousActivityDetector {
       this.userBaselines.set(userId, baseline);
 
       return baseline;
-
     } catch (error) {
       console.error('Failed to establish user baseline:', error);
       throw error;
@@ -437,7 +472,7 @@ export class SuspiciousActivityDetector {
 
       // Get recent activity data (last 7 days)
       const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-      
+
       const { data: recentActivities, error } = await this.supabase
         .from('user_activity_patterns')
         .select('*')
@@ -454,13 +489,16 @@ export class SuspiciousActivityDetector {
       const updatedBaseline: UserBehaviorBaseline = {
         ...existingBaseline,
         lastUpdated: new Date(),
-        patterns: this.mergePatterns(existingBaseline.patterns, recentPatterns, 0.8)
+        patterns: this.mergePatterns(
+          existingBaseline.patterns,
+          recentPatterns,
+          0.8
+        ),
       };
 
       // Store updated baseline
       await this.storeUserBaseline(updatedBaseline);
       this.userBaselines.set(userId, updatedBaseline);
-
     } catch (error) {
       console.error('Failed to update user baseline:', error);
     }
@@ -503,7 +541,10 @@ export class SuspiciousActivityDetector {
       }
 
       if (options?.offset) {
-        query = query.range(options.offset, (options.offset + (options.limit || 50)) - 1);
+        query = query.range(
+          options.offset,
+          options.offset + (options.limit || 50) - 1
+        );
       }
 
       const { data, error } = await query;
@@ -513,7 +554,6 @@ export class SuspiciousActivityDetector {
       }
 
       return (data || []).map(this.mapDatabaseToAlert);
-
     } catch (error) {
       console.error('Failed to get user alerts:', error);
       throw error;
@@ -527,7 +567,7 @@ export class SuspiciousActivityDetector {
     alertId: string,
     resolution: string,
     resolvedBy: string,
-    falsePositive: boolean = false
+    falsePositive = false
   ): Promise<void> {
     try {
       const { error } = await this.supabase
@@ -537,7 +577,7 @@ export class SuspiciousActivityDetector {
           resolved_at: new Date().toISOString(),
           resolved_by: resolvedBy,
           resolution,
-          false_positive: falsePositive
+          false_positive: falsePositive,
         })
         .eq('alert_id', alertId);
 
@@ -552,10 +592,9 @@ export class SuspiciousActivityDetector {
           alertId,
           resolution,
           resolvedBy,
-          falsePositive
-        }
+          falsePositive,
+        },
       });
-
     } catch (error) {
       console.error('Failed to resolve alert:', error);
       throw error;
@@ -566,7 +605,9 @@ export class SuspiciousActivityDetector {
    * Add or update detection rule
    */
   addDetectionRule(rule: DetectionRule): void {
-    const existingIndex = this.detectionRules.findIndex(r => r.ruleId === rule.ruleId);
+    const existingIndex = this.detectionRules.findIndex(
+      (r) => r.ruleId === rule.ruleId
+    );
     if (existingIndex >= 0) {
       this.detectionRules[existingIndex] = rule;
     } else {
@@ -578,7 +619,9 @@ export class SuspiciousActivityDetector {
    * Remove detection rule
    */
   removeDetectionRule(ruleId: string): void {
-    this.detectionRules = this.detectionRules.filter(r => r.ruleId !== ruleId);
+    this.detectionRules = this.detectionRules.filter(
+      (r) => r.ruleId !== ruleId
+    );
   }
 
   /**
@@ -604,27 +647,31 @@ export class SuspiciousActivityDetector {
       }
 
       const alertData = alerts || [];
-      
+
       // Calculate statistics
-      const alertsBySeverity: Record<SuspiciousActivityAlert['severity'], number> = {
+      const alertsBySeverity: Record<
+        SuspiciousActivityAlert['severity'],
+        number
+      > = {
         low: 0,
         medium: 0,
         high: 0,
-        critical: 0
+        critical: 0,
       };
 
-      const alertsByType: Record<SuspiciousActivityAlert['alertType'], number> = {
-        velocity_anomaly: 0,
-        location_anomaly: 0,
-        behavior_anomaly: 0,
-        access_pattern_anomaly: 0,
-        data_exfiltration: 0,
-        privilege_escalation: 0,
-        brute_force: 0,
-        session_hijacking: 0,
-        bot_activity: 0,
-        impossible_travel: 0
-      };
+      const alertsByType: Record<SuspiciousActivityAlert['alertType'], number> =
+        {
+          velocity_anomaly: 0,
+          location_anomaly: 0,
+          behavior_anomaly: 0,
+          access_pattern_anomaly: 0,
+          data_exfiltration: 0,
+          privilege_escalation: 0,
+          brute_force: 0,
+          session_hijacking: 0,
+          bot_activity: 0,
+          impossible_travel: 0,
+        };
 
       const userAlertCounts: Record<string, number> = {};
       let falsePositives = 0;
@@ -632,17 +679,24 @@ export class SuspiciousActivityDetector {
       let resolvedAlerts = 0;
 
       for (const alert of alertData) {
-        alertsBySeverity[alert.severity as SuspiciousActivityAlert['severity']]++;
-        alertsByType[alert.alert_type as SuspiciousActivityAlert['alertType']]++;
-        
-        userAlertCounts[alert.user_id] = (userAlertCounts[alert.user_id] || 0) + 1;
-        
+        alertsBySeverity[
+          alert.severity as SuspiciousActivityAlert['severity']
+        ]++;
+        alertsByType[
+          alert.alert_type as SuspiciousActivityAlert['alertType']
+        ]++;
+
+        userAlertCounts[alert.user_id] =
+          (userAlertCounts[alert.user_id] || 0) + 1;
+
         if (alert.false_positive) {
           falsePositives++;
         }
-        
+
         if (alert.is_resolved && alert.resolved_at) {
-          const resolutionTime = new Date(alert.resolved_at).getTime() - new Date(alert.detected_at).getTime();
+          const resolutionTime =
+            new Date(alert.resolved_at).getTime() -
+            new Date(alert.detected_at).getTime();
           totalResolutionTime += resolutionTime;
           resolvedAlerts++;
         }
@@ -657,11 +711,12 @@ export class SuspiciousActivityDetector {
         totalAlerts: alertData.length,
         alertsBySeverity,
         alertsByType,
-        falsePositiveRate: alertData.length > 0 ? falsePositives / alertData.length : 0,
-        averageResolutionTime: resolvedAlerts > 0 ? totalResolutionTime / resolvedAlerts : 0,
-        topUsers
+        falsePositiveRate:
+          alertData.length > 0 ? falsePositives / alertData.length : 0,
+        averageResolutionTime:
+          resolvedAlerts > 0 ? totalResolutionTime / resolvedAlerts : 0,
+        topUsers,
       };
-
     } catch (error) {
       console.error('Failed to get detection statistics:', error);
       throw error;
@@ -676,20 +731,27 @@ export class SuspiciousActivityDetector {
       clearInterval(this.processingInterval);
       this.processingInterval = undefined;
     }
-    
+
     if (this.baselineUpdateInterval) {
       clearInterval(this.baselineUpdateInterval);
       this.baselineUpdateInterval = undefined;
     }
-    
+
     this.activityBuffer.clear();
     this.userBaselines.clear();
   }
 
   // Private methods
 
-  private isCriticalActivity(activityType: ActivityPattern['activityType']): boolean {
-    return ['login', 'permission_change', 'user_creation', 'bulk_operation'].includes(activityType);
+  private isCriticalActivity(
+    activityType: ActivityPattern['activityType']
+  ): boolean {
+    return [
+      'login',
+      'permission_change',
+      'user_creation',
+      'bulk_operation',
+    ].includes(activityType);
   }
 
   private async applyDetectionRule(
@@ -699,7 +761,7 @@ export class SuspiciousActivityDetector {
     baseline: UserBehaviorBaseline
   ): Promise<SuspiciousActivityAlert[]> {
     const alerts: SuspiciousActivityAlert[] = [];
-    
+
     // Check if rule applies to user role
     if (!rule.applicableRoles.includes(baseline.userRole)) {
       return alerts;
@@ -708,19 +770,22 @@ export class SuspiciousActivityDetector {
     // Get activities within the rule's time window
     const timeWindow = rule.conditions[0]?.timeWindow || 60;
     const windowStart = new Date(Date.now() - timeWindow * 60 * 1000);
-    const windowActivities = activities.filter(a => a.timestamp >= windowStart);
+    const windowActivities = activities.filter(
+      (a) => a.timestamp >= windowStart
+    );
 
     // Apply rule conditions
-    const conditionResults = rule.conditions.map(condition => 
+    const conditionResults = rule.conditions.map((condition) =>
       this.evaluateCondition(condition, windowActivities, baseline)
     );
 
     // All conditions must be met
-    if (conditionResults.every(result => result.met)) {
+    if (conditionResults.every((result) => result.met)) {
       const alert: SuspiciousActivityAlert = {
         alertId: `alert_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         userId,
-        sessionId: windowActivities[windowActivities.length - 1]?.sessionId || '',
+        sessionId:
+          windowActivities[windowActivities.length - 1]?.sessionId || '',
         deviceId: windowActivities[windowActivities.length - 1]?.deviceId || '',
         alertType: rule.alertType,
         severity: rule.severity,
@@ -731,10 +796,10 @@ export class SuspiciousActivityDetector {
         evidence: {
           rule: rule.name,
           conditions: conditionResults,
-          baseline: baseline.patterns
+          baseline: baseline.patterns,
         },
         isResolved: false,
-        falsePositive: false
+        falsePositive: false,
       };
 
       alerts.push(alert);
@@ -746,21 +811,24 @@ export class SuspiciousActivityDetector {
   private evaluateCondition(
     condition: DetectionRule['conditions'][0],
     activities: ActivityPattern[],
-    baseline: UserBehaviorBaseline
+    _baseline: UserBehaviorBaseline
   ): { met: boolean; value: any; threshold: any } {
     let value: any;
-    
+
     switch (condition.field) {
       case 'api_calls':
-        value = activities.filter(a => a.activityType === 'api_call').length;
+        value = activities.filter((a) => a.activityType === 'api_call').length;
         break;
       case 'failed_logins':
-        value = activities.filter(a => 
-          a.activityType === 'login' && a.metadata.statusCode >= 400
+        value = activities.filter(
+          (a) => a.activityType === 'login' && a.metadata.statusCode >= 400
         ).length;
         break;
       case 'data_volume':
-        value = activities.reduce((sum, a) => sum + (a.metadata.dataVolume || 0), 0);
+        value = activities.reduce(
+          (sum, a) => sum + (a.metadata.dataVolume || 0),
+          0
+        );
         break;
       case 'distance_km':
         value = this.calculateMaxDistance(activities);
@@ -772,29 +840,39 @@ export class SuspiciousActivityDetector {
         value = 0;
     }
 
-    const met = this.compareValues(value, condition.operator, condition.threshold);
-    
+    const met = this.compareValues(
+      value,
+      condition.operator,
+      condition.threshold
+    );
+
     return { met, value, threshold: condition.threshold };
   }
 
   private compareValues(value: any, operator: string, threshold: any): boolean {
     switch (operator) {
-      case 'gt': return value > threshold;
-      case 'lt': return value < threshold;
-      case 'eq': return value === threshold;
-      case 'gte': return value >= threshold;
-      case 'lte': return value <= threshold;
-      default: return false;
+      case 'gt':
+        return value > threshold;
+      case 'lt':
+        return value < threshold;
+      case 'eq':
+        return value === threshold;
+      case 'gte':
+        return value >= threshold;
+      case 'lte':
+        return value <= threshold;
+      default:
+        return false;
     }
   }
 
   private calculateMaxDistance(activities: ActivityPattern[]): number {
     let maxDistance = 0;
-    
+
     for (let i = 1; i < activities.length; i++) {
       const prev = activities[i - 1];
       const curr = activities[i];
-      
+
       if (prev.location?.coordinates && curr.location?.coordinates) {
         const distance = this.calculateDistance(
           prev.location.coordinates,
@@ -803,7 +881,7 @@ export class SuspiciousActivityDetector {
         maxDistance = Math.max(maxDistance, distance);
       }
     }
-    
+
     return maxDistance;
   }
 
@@ -814,11 +892,14 @@ export class SuspiciousActivityDetector {
     const R = 6371; // Earth's radius in km
     const dLat = this.toRadians(coord2.latitude - coord1.latitude);
     const dLon = this.toRadians(coord2.longitude - coord1.longitude);
-    
-    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(this.toRadians(coord1.latitude)) * Math.cos(this.toRadians(coord2.latitude)) *
-      Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    
+
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(this.toRadians(coord1.latitude)) *
+        Math.cos(this.toRadians(coord2.latitude)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
   }
@@ -827,59 +908,70 @@ export class SuspiciousActivityDetector {
     return degrees * (Math.PI / 180);
   }
 
-  private calculateMouseMovementVariance(activities: ActivityPattern[]): number {
+  private calculateMouseMovementVariance(
+    activities: ActivityPattern[]
+  ): number {
     const movements = activities
-      .map(a => a.metadata.mouseMovements || 0)
-      .filter(m => m > 0);
-    
+      .map((a) => a.metadata.mouseMovements || 0)
+      .filter((m) => m > 0);
+
     if (movements.length === 0) return 0;
-    
+
     const mean = movements.reduce((sum, m) => sum + m, 0) / movements.length;
-    const variance = movements.reduce((sum, m) => sum + Math.pow(m - mean, 2), 0) / movements.length;
-    
+    const variance =
+      movements.reduce((sum, m) => sum + (m - mean) ** 2, 0) / movements.length;
+
     return Math.sqrt(variance);
   }
 
-  private calculateBaselinePatterns(activities: any[]): UserBehaviorBaseline['patterns'] {
+  private calculateBaselinePatterns(
+    activities: any[]
+  ): UserBehaviorBaseline['patterns'] {
     // This is a simplified implementation
     // In production, you'd use more sophisticated statistical analysis
-    
+
     const loginTimes = activities
-      .filter(a => a.activity_type === 'login')
-      .map(a => new Date(a.timestamp).getHours());
-    
+      .filter((a) => a.activity_type === 'login')
+      .map((a) => new Date(a.timestamp).getHours());
+
     const sessionDurations = activities
-      .filter(a => a.activity_type === 'logout')
-      .map(a => a.metadata?.sessionDuration || 0)
-      .filter(d => d > 0);
-    
+      .filter((a) => a.activity_type === 'logout')
+      .map((a) => a.metadata?.sessionDuration || 0)
+      .filter((d) => d > 0);
+
     return {
       typicalLoginTimes: [...new Set(loginTimes)],
       typicalDaysOfWeek: [1, 2, 3, 4, 5], // Weekdays
-      averageSessionDuration: sessionDurations.length > 0 
-        ? sessionDurations.reduce((sum, d) => sum + d, 0) / sessionDurations.length 
-        : 30,
-      typicalLocations: [...new Set(activities.map(a => a.location?.country).filter(Boolean))],
-      commonDevices: [...new Set(activities.map(a => a.device_id).filter(Boolean))],
+      averageSessionDuration:
+        sessionDurations.length > 0
+          ? sessionDurations.reduce((sum, d) => sum + d, 0) /
+            sessionDurations.length
+          : 30,
+      typicalLocations: [
+        ...new Set(activities.map((a) => a.location?.country).filter(Boolean)),
+      ],
+      commonDevices: [
+        ...new Set(activities.map((a) => a.device_id).filter(Boolean)),
+      ],
       averageApiCallsPerHour: 10,
       commonEndpoints: [],
       typicalDataVolume: 1024 * 1024, // 1MB
       mouseMovementPatterns: {
         averageSpeed: 100,
         clickFrequency: 10,
-        scrollPatterns: []
+        scrollPatterns: [],
       },
       keystrokePatterns: {
         averageWPM: 40,
         typingRhythm: [],
-        pausePatterns: []
-      }
+        pausePatterns: [],
+      },
     };
   }
 
   private calculateAnomalyThresholds(
     userRole: UserRole,
-    activities: any[]
+    _activities: any[]
   ): UserBehaviorBaseline['anomalyThresholds'] {
     // Role-based thresholds
     const baseThresholds = {
@@ -889,7 +981,7 @@ export class SuspiciousActivityDetector {
         sessionDurationMultiplier: 3,
         apiCallMultiplier: 5,
         dataVolumeMultiplier: 10,
-        velocityThreshold: 100
+        velocityThreshold: 100,
       },
       manager: {
         locationDeviationKm: 500,
@@ -897,7 +989,7 @@ export class SuspiciousActivityDetector {
         sessionDurationMultiplier: 2.5,
         apiCallMultiplier: 3,
         dataVolumeMultiplier: 5,
-        velocityThreshold: 50
+        velocityThreshold: 50,
       },
       staff: {
         locationDeviationKm: 200,
@@ -905,7 +997,7 @@ export class SuspiciousActivityDetector {
         sessionDurationMultiplier: 2,
         apiCallMultiplier: 2,
         dataVolumeMultiplier: 3,
-        velocityThreshold: 30
+        velocityThreshold: 30,
       },
       patient: {
         locationDeviationKm: 100,
@@ -913,10 +1005,10 @@ export class SuspiciousActivityDetector {
         sessionDurationMultiplier: 1.5,
         apiCallMultiplier: 1.5,
         dataVolumeMultiplier: 2,
-        velocityThreshold: 10
-      }
+        velocityThreshold: 10,
+      },
     };
-    
+
     return baseThresholds[userRole];
   }
 
@@ -928,9 +1020,15 @@ export class SuspiciousActivityDetector {
     // Weighted merge of patterns (simplified)
     return {
       ...existing,
-      averageSessionDuration: existing.averageSessionDuration * weight + recent.averageSessionDuration * (1 - weight),
-      averageApiCallsPerHour: existing.averageApiCallsPerHour * weight + recent.averageApiCallsPerHour * (1 - weight),
-      typicalDataVolume: existing.typicalDataVolume * weight + recent.typicalDataVolume * (1 - weight)
+      averageSessionDuration:
+        existing.averageSessionDuration * weight +
+        recent.averageSessionDuration * (1 - weight),
+      averageApiCallsPerHour:
+        existing.averageApiCallsPerHour * weight +
+        recent.averageApiCallsPerHour * (1 - weight),
+      typicalDataVolume:
+        existing.typicalDataVolume * weight +
+        recent.typicalDataVolume * (1 - weight),
     };
   }
 
@@ -942,18 +1040,23 @@ export class SuspiciousActivityDetector {
       low: 0.25,
       medium: 0.5,
       high: 0.75,
-      critical: 1.0
+      critical: 1.0,
     }[rule.severity];
-    
+
     // Calculate deviation from thresholds
-    const deviationScore = conditionResults.reduce((sum, result) => {
-      if (typeof result.value === 'number' && typeof result.threshold === 'number') {
-        const deviation = Math.abs(result.value - result.threshold) / result.threshold;
-        return sum + Math.min(deviation, 1);
-      }
-      return sum;
-    }, 0) / conditionResults.length;
-    
+    const deviationScore =
+      conditionResults.reduce((sum, result) => {
+        if (
+          typeof result.value === 'number' &&
+          typeof result.threshold === 'number'
+        ) {
+          const deviation =
+            Math.abs(result.value - result.threshold) / result.threshold;
+          return sum + Math.min(deviation, 1);
+        }
+        return sum;
+      }, 0) / conditionResults.length;
+
     return Math.min(baseSeverityScore + deviationScore * 0.3, 1.0);
   }
 
@@ -961,7 +1064,9 @@ export class SuspiciousActivityDetector {
     rule: DetectionRule,
     conditionResults: { met: boolean; value: any; threshold: any }[]
   ): string {
-    const values = conditionResults.map(r => `${r.value} (threshold: ${r.threshold})`).join(', ');
+    const values = conditionResults
+      .map((r) => `${r.value} (threshold: ${r.threshold})`)
+      .join(', ');
     return `${rule.description}. Detected values: ${values}`;
   }
 
@@ -983,7 +1088,7 @@ export class SuspiciousActivityDetector {
           evidence: alert.evidence,
           is_resolved: alert.isResolved,
           false_positive: alert.falsePositive,
-          automated_response: alert.automatedResponse
+          automated_response: alert.automatedResponse,
         });
 
       if (error) {
@@ -994,17 +1099,24 @@ export class SuspiciousActivityDetector {
     }
   }
 
-  private async executeAutomatedResponse(alert: SuspiciousActivityAlert): Promise<void> {
+  private async executeAutomatedResponse(
+    alert: SuspiciousActivityAlert
+  ): Promise<void> {
     try {
-      const rule = this.detectionRules.find(r => r.alertType === alert.alertType);
-      if (!rule || !rule.actions.length) {
+      const rule = this.detectionRules.find(
+        (r) => r.alertType === alert.alertType
+      );
+      if (!(rule && rule.actions.length)) {
         return;
       }
 
       for (const action of rule.actions) {
         // Delay execution if specified
         if (action.delay > 0) {
-          setTimeout(() => this.executeAction(alert, action.action), action.delay * 1000);
+          setTimeout(
+            () => this.executeAction(alert, action.action),
+            action.delay * 1000
+          );
         } else {
           await this.executeAction(alert, action.action);
         }
@@ -1029,8 +1141,8 @@ export class SuspiciousActivityDetector {
           alertId: alert.alertId,
           action,
           alertType: alert.alertType,
-          severity: alert.severity
-        }
+          severity: alert.severity,
+        },
       });
 
       // Update alert with automated response info
@@ -1040,20 +1152,21 @@ export class SuspiciousActivityDetector {
           automated_response: {
             action,
             executedAt: new Date().toISOString(),
-            result: 'executed'
-          }
+            result: 'executed',
+          },
         })
         .eq('alert_id', alert.alertId);
 
       // Note: Actual action execution would integrate with your session management,
       // notification, and user management systems
-      
     } catch (error) {
       console.error('Failed to execute action:', error);
     }
   }
 
-  private async storeUserBaseline(baseline: UserBehaviorBaseline): Promise<void> {
+  private async storeUserBaseline(
+    baseline: UserBehaviorBaseline
+  ): Promise<void> {
     try {
       const { error } = await this.supabase
         .from('user_behavior_baselines')
@@ -1063,7 +1176,7 @@ export class SuspiciousActivityDetector {
           established_at: baseline.establishedAt.toISOString(),
           last_updated: baseline.lastUpdated.toISOString(),
           patterns: baseline.patterns,
-          anomaly_thresholds: baseline.anomalyThresholds
+          anomaly_thresholds: baseline.anomalyThresholds,
         });
 
       if (error) {
@@ -1092,7 +1205,7 @@ export class SuspiciousActivityDetector {
           establishedAt: new Date(baseline.established_at),
           lastUpdated: new Date(baseline.last_updated),
           patterns: baseline.patterns,
-          anomalyThresholds: baseline.anomaly_thresholds
+          anomalyThresholds: baseline.anomaly_thresholds,
         });
       }
     } catch (error) {
@@ -1100,7 +1213,7 @@ export class SuspiciousActivityDetector {
     }
   }
 
-  private async getUserRole(userId: string): Promise<UserRole> {
+  private async getUserRole(_userId: string): Promise<UserRole> {
     // This would fetch the user's role from your user management system
     // For now, return a default role
     return 'staff';
@@ -1124,7 +1237,7 @@ export class SuspiciousActivityDetector {
       resolvedBy: data.resolved_by,
       resolution: data.resolution,
       falsePositive: data.false_positive,
-      automatedResponse: data.automated_response
+      automatedResponse: data.automated_response,
     };
   }
 
@@ -1142,15 +1255,18 @@ export class SuspiciousActivityDetector {
   }
 
   private startBaselineUpdateInterval(): void {
-    this.baselineUpdateInterval = setInterval(async () => {
-      try {
-        // Update baselines for all users
-        for (const userId of this.userBaselines.keys()) {
-          await this.updateUserBaseline(userId);
+    this.baselineUpdateInterval = setInterval(
+      async () => {
+        try {
+          // Update baselines for all users
+          for (const userId of this.userBaselines.keys()) {
+            await this.updateUserBaseline(userId);
+          }
+        } catch (error) {
+          console.error('Baseline update failed:', error);
         }
-      } catch (error) {
-        console.error('Baseline update failed:', error);
-      }
-    }, 24 * 60 * 60 * 1000); // Daily
+      },
+      24 * 60 * 60 * 1000
+    ); // Daily
   }
 }

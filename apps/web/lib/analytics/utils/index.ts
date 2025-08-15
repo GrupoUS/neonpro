@@ -3,8 +3,8 @@
  * Helper functions for data processing, calculations, and formatting
  */
 
-import { format, isValid } from 'date-fns';
-import { groupBy, sumBy, orderBy } from 'lodash';
+import { format } from 'date-fns';
+import { groupBy } from 'lodash';
 
 // Types
 export interface TimeRange {
@@ -43,12 +43,12 @@ export interface AnalyticsFilters {
 
 // Formatting Utilities
 export const formatCurrency = (
-  value: number | null | undefined, 
-  currency: string = 'USD', 
-  precision: number = 2
+  value: number | null | undefined,
+  currency = 'USD',
+  precision = 2
 ): string => {
   // Handle invalid inputs
-  if (value === null || value === undefined || isNaN(value)) {
+  if (value === null || value === undefined || Number.isNaN(value)) {
     value = 0;
   }
 
@@ -64,11 +64,16 @@ export const formatCurrency = (
 };
 
 export const formatPercentage = (
-  value: number | null | undefined, 
-  precision: number = 2
+  value: number | null | undefined,
+  precision = 2
 ): string => {
   // Handle invalid edge cases
-  if (value === null || value === undefined || isNaN(value) || !isFinite(value)) {
+  if (
+    value === null ||
+    value === undefined ||
+    Number.isNaN(value) ||
+    !Number.isFinite(value)
+  ) {
     return `0.${'0'.repeat(precision)}%`;
   }
 
@@ -77,21 +82,26 @@ export const formatPercentage = (
 
 // Calculation Utilities
 export const calculateGrowthRate = (
-  previous: number | null | undefined, 
+  previous: number | null | undefined,
   current: number | null | undefined
 ): number => {
   // Handle invalid inputs
-  if (previous === null || previous === undefined || current === null || current === undefined) {
-    return NaN;
+  if (
+    previous === null ||
+    previous === undefined ||
+    current === null ||
+    current === undefined
+  ) {
+    return Number.NaN;
   }
-  
-  if (isNaN(previous) || isNaN(current)) {
-    return NaN;
+
+  if (Number.isNaN(previous) || Number.isNaN(current)) {
+    return Number.NaN;
   }
 
   // Handle zero previous value
   if (previous === 0) {
-    return current === 0 ? 0 : (current > 0 ? Infinity : -1);
+    return current === 0 ? 0 : current > 0 ? Number.POSITIVE_INFINITY : -1;
   }
 
   // Standard growth rate formula: (current - previous) / previous
@@ -103,13 +113,17 @@ export const calculateChurnRate = (
   customersAtStart: number | null | undefined
 ): number => {
   // Handle invalid inputs
-  if (customersAtStart === null || customersAtStart === undefined || 
-      customersChurned === null || customersChurned === undefined) {
-    return NaN;
+  if (
+    customersAtStart === null ||
+    customersAtStart === undefined ||
+    customersChurned === null ||
+    customersChurned === undefined
+  ) {
+    return Number.NaN;
   }
 
-  if (isNaN(customersAtStart) || isNaN(customersChurned)) {
-    return NaN;
+  if (Number.isNaN(customersAtStart) || Number.isNaN(customersChurned)) {
+    return Number.NaN;
   }
 
   // Handle edge cases
@@ -130,12 +144,17 @@ export const calculateLTV = (
   churnRate: number | null | undefined
 ): number => {
   // Handle invalid inputs
-  if (arpu === null || arpu === undefined || churnRate === null || churnRate === undefined) {
-    return NaN;
+  if (
+    arpu === null ||
+    arpu === undefined ||
+    churnRate === null ||
+    churnRate === undefined
+  ) {
+    return Number.NaN;
   }
 
-  if (isNaN(arpu) || isNaN(churnRate)) {
-    return NaN;
+  if (Number.isNaN(arpu) || Number.isNaN(churnRate)) {
+    return Number.NaN;
   }
 
   // Handle negative ARPU
@@ -150,31 +169,39 @@ export const calculateLTV = (
 
   // Handle zero churn rate
   if (churnRate === 0) {
-    return Infinity;
+    return Number.POSITIVE_INFINITY;
   }
 
   // Standard LTV formula: ARPU / churn rate
   return arpu / churnRate;
 };
 
-export const calculateMRR = (subscriptions: Subscription[] | null | undefined): number => {
+export const calculateMRR = (
+  subscriptions: Subscription[] | null | undefined
+): number => {
   // Handle invalid inputs
-  if (!subscriptions || !Array.isArray(subscriptions)) {
+  if (!(subscriptions && Array.isArray(subscriptions))) {
     return 0;
   }
 
   // Filter active subscriptions and sum amounts (convert from cents to dollars)
   return subscriptions
-    .filter(sub => sub && sub.status === 'active' && typeof sub.amount === 'number' && !isNaN(sub.amount))
-    .reduce((total, sub) => total + (sub.amount / 100), 0);
+    .filter(
+      (sub) =>
+        sub &&
+        sub.status === 'active' &&
+        typeof sub.amount === 'number' &&
+        !Number.isNaN(sub.amount)
+    )
+    .reduce((total, sub) => total + sub.amount / 100, 0);
 };
 
 export const calculateARR = (mrr: number | null | undefined): number => {
   // Handle invalid inputs
-  if (mrr === null || mrr === undefined || isNaN(mrr)) {
-    return NaN;
+  if (mrr === null || mrr === undefined || Number.isNaN(mrr)) {
+    return Number.NaN;
   }
-  
+
   if (mrr < 0) {
     return mrr * 12; // Allow negative ARR
   }
@@ -188,14 +215,27 @@ export const aggregateMetricsByPeriod = (
   period: 'day' | 'week' | 'month' | 'year',
   aggregateFunction: (items: any[]) => number
 ): { period: string; value: number }[] => {
-  if (!data || !Array.isArray(data) || data.length === 0) {
+  if (!(data && Array.isArray(data)) || data.length === 0) {
     return [];
   }
 
   // Simple date formatting without date-fns dependency for testing
   const formatDate = (date: Date, formatType: string) => {
     if (formatType === 'MMM yyyy') {
-      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const monthNames = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec',
+      ];
       return `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
     }
     if (formatType === 'yyyy-MM-dd') {
@@ -212,11 +252,11 @@ export const aggregateMetricsByPeriod = (
     day: 'yyyy-MM-dd',
     week: 'yyyy-ww', // Note: this is simplified, proper week formatting would need more logic
     month: 'MMM yyyy',
-    year: 'yyyy'
+    year: 'yyyy',
   } as const;
 
   const formatString = formatMap[period];
-  
+
   // Handle both Date objects and date strings
   const grouped = groupBy(data, (item) => {
     // Parse date string carefully to avoid timezone issues
@@ -225,7 +265,11 @@ export const aggregateMetricsByPeriod = (
       // Use local date parsing to avoid UTC conversion issues
       const parts = item.date.split('-');
       if (parts.length === 3) {
-        date = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+        date = new Date(
+          Number.parseInt(parts[0], 10),
+          Number.parseInt(parts[1], 10) - 1,
+          Number.parseInt(parts[2], 10)
+        );
       } else {
         date = new Date(item.date);
       }
@@ -236,9 +280,9 @@ export const aggregateMetricsByPeriod = (
   });
 
   // Aggregate each group and return as array
-  const result = Object.keys(grouped).map(key => ({
+  const result = Object.keys(grouped).map((key) => ({
     period: key,
-    value: aggregateFunction(grouped[key])
+    value: aggregateFunction(grouped[key]),
   }));
 
   // Sort by date instead of alphabetically
@@ -246,10 +290,23 @@ export const aggregateMetricsByPeriod = (
     // For month format "MMM yyyy", parse back to date for proper sorting
     if (formatString === 'MMM yyyy') {
       const parseMonthYear = (str: string) => {
-        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const monthNames = [
+          'Jan',
+          'Feb',
+          'Mar',
+          'Apr',
+          'May',
+          'Jun',
+          'Jul',
+          'Aug',
+          'Sep',
+          'Oct',
+          'Nov',
+          'Dec',
+        ];
         const [month, year] = str.split(' ');
         const monthIndex = monthNames.indexOf(month);
-        return new Date(parseInt(year), monthIndex, 1);
+        return new Date(Number.parseInt(year, 10), monthIndex, 1);
       };
       const dateA = parseMonthYear(a.period);
       const dateB = parseMonthYear(b.period);
@@ -271,18 +328,22 @@ export const generateDateRange = (startDate: Date, endDate: Date): Date[] => {
 
   const dates: Date[] = [];
   const currentDate = new Date(startDate);
-  
+
   while (currentDate <= endDate) {
     dates.push(new Date(currentDate));
     currentDate.setDate(currentDate.getDate() + 1);
   }
-  
+
   return dates;
 };
 
 export const validateDateRange = (startDate: Date, endDate: Date): boolean => {
   // Check if dates are valid using getTime() method
-  if (!startDate || !endDate || isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+  if (
+    !(startDate && endDate) ||
+    Number.isNaN(startDate.getTime()) ||
+    Number.isNaN(endDate.getTime())
+  ) {
     return false;
   }
 
@@ -291,7 +352,9 @@ export const validateDateRange = (startDate: Date, endDate: Date): boolean => {
 };
 
 // Filter Parsing
-export const parseAnalyticsFilters = (params: URLSearchParams): AnalyticsFilters => {
+export const parseAnalyticsFilters = (
+  params: URLSearchParams
+): AnalyticsFilters => {
   const period = params.get('period') || 'last_30_days';
   const metric = params.get('metric') || 'all';
   const startDateStr = params.get('start_date') || params.get('startDate');
@@ -299,10 +362,26 @@ export const parseAnalyticsFilters = (params: URLSearchParams): AnalyticsFilters
   const groupBy = params.get('group_by') || params.get('groupBy');
 
   // Validate parameters - add missing periods/metrics from tests
-  const validPeriods = ['last_7_days', 'last_30_days', 'last_month', 'monthly', 'quarterly', 'last_quarter', 'last_year', 'custom'];
-  const validMetrics = ['all', 'revenue', 'users', 'churn', 'ltv', 'subscriptions'];
+  const validPeriods = [
+    'last_7_days',
+    'last_30_days',
+    'last_month',
+    'monthly',
+    'quarterly',
+    'last_quarter',
+    'last_year',
+    'custom',
+  ];
+  const validMetrics = [
+    'all',
+    'revenue',
+    'users',
+    'churn',
+    'ltv',
+    'subscriptions',
+  ];
 
-  if (!validPeriods.includes(period) || !validMetrics.includes(metric)) {
+  if (!(validPeriods.includes(period) && validMetrics.includes(metric))) {
     throw new Error('Invalid filter parameters');
   }
 
@@ -312,20 +391,20 @@ export const parseAnalyticsFilters = (params: URLSearchParams): AnalyticsFilters
 
   if (startDateStr) {
     startDate = new Date(startDateStr);
-    if (isNaN(startDate.getTime())) {
+    if (Number.isNaN(startDate.getTime())) {
       throw new Error('Invalid filter parameters');
     }
   }
 
   if (endDateStr) {
     endDate = new Date(endDateStr);
-    if (isNaN(endDate.getTime())) {
+    if (Number.isNaN(endDate.getTime())) {
       throw new Error('Invalid filter parameters');
     }
   }
 
   // For default case with no params, provide default dates
-  if (!startDateStr && !endDateStr && period === 'last_30_days') {
+  if (!(startDateStr || endDateStr) && period === 'last_30_days') {
     const now = new Date();
     endDate = now;
     startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
@@ -333,7 +412,7 @@ export const parseAnalyticsFilters = (params: URLSearchParams): AnalyticsFilters
 
   // Parse additional filters (looking for filter[key] pattern)
   const filters: Record<string, any> = {};
-  
+
   // Handle filter[key] format
   for (const [key, value] of params.entries()) {
     const filterMatch = key.match(/^filter\[(.+)\]$/);
@@ -354,7 +433,7 @@ export const parseAnalyticsFilters = (params: URLSearchParams): AnalyticsFilters
   const result: AnalyticsFilters = {
     period,
     metric,
-    filters: Object.keys(filters).length > 0 ? filters : {}
+    filters: Object.keys(filters).length > 0 ? filters : {},
   };
 
   if (startDate) result.startDate = startDate;
@@ -366,69 +445,71 @@ export const parseAnalyticsFilters = (params: URLSearchParams): AnalyticsFilters
 
 // Export Functions
 export const exportToCSV = (
-  data: any[], 
-  type: string, 
-  options?: { filename?: string; includeTimestamp?: boolean }
+  data: any[],
+  _type: string,
+  _options?: { filename?: string; includeTimestamp?: boolean }
 ): string => {
   // Use XLSX to convert data to CSV for testing compatibility
   const XLSX = require('xlsx');
   const worksheet = XLSX.utils.json_to_sheet(data);
   const csvData = XLSX.utils.sheet_to_csv(worksheet);
-  
+
   return csvData || 'mock,csv,data';
 };
 
 export const exportToPDF = (
-  data: any[], 
-  title: string, 
-  options?: { 
-    pageSize?: string; 
-    orientation?: string; 
-    fontSize?: number; 
-    margin?: number 
+  data: any[],
+  title: string,
+  _options?: {
+    pageSize?: string;
+    orientation?: string;
+    fontSize?: number;
+    margin?: number;
   }
 ): string => {
   const jsPDF = require('jspdf').default;
   const doc = new jsPDF();
-  
+
   // Add title
   doc.text(title, 20, 20);
-  
+
   // Handle large datasets with pagination
   if (data.length > 20) {
     doc.addPage();
   }
-  
+
   // Add data (simplified for testing)
   data.forEach((item, index) => {
-    const y = 40 + (index * 10);
-    if (y > 250) {  // New page if needed
+    const y = 40 + index * 10;
+    if (y > 250) {
+      // New page if needed
       doc.addPage();
     }
     doc.text(JSON.stringify(item), 20, y);
   });
-  
+
   return doc.output();
 };
 
 export const exportToExcel = (
-  data: any, 
-  filename: string, 
-  options?: { 
-    sheets?: Record<string, any[]>; 
-    formatting?: Record<string, any> 
+  data: any,
+  _filename: string,
+  options?: {
+    sheets?: Record<string, any[]>;
+    formatting?: Record<string, any>;
   }
 ): string => {
   const XLSX = require('xlsx');
-  
+
   // Create new workbook
   const workbook = XLSX.utils.book_new();
-  
+
   // Check if data itself contains multiple sheets (object with multiple arrays)
   if (typeof data === 'object' && !Array.isArray(data) && data !== null) {
     const keys = Object.keys(data);
-    const hasMultipleArrays = keys.length > 1 && keys.every(key => Array.isArray(data[key]));
-    
+    const hasMultipleArrays =
+      keys.length > 1 && keys.every((key) => Array.isArray(data[key]));
+
     if (hasMultipleArrays) {
       // Data is a multi-sheet object
       Object.entries(data).forEach(([sheetName, sheetData]) => {
@@ -443,20 +524,27 @@ export const exportToExcel = (
       });
     } else {
       // Single sheet
-      const worksheet = XLSX.utils.json_to_sheet(Array.isArray(data) ? data : [data]);
+      const worksheet = XLSX.utils.json_to_sheet(
+        Array.isArray(data) ? data : [data]
+      );
       XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
     }
   } else {
     // Single sheet from array data
-    const worksheet = XLSX.utils.json_to_sheet(Array.isArray(data) ? data : [data]);
+    const worksheet = XLSX.utils.json_to_sheet(
+      Array.isArray(data) ? data : [data]
+    );
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
   }
-  
+
   // Return mock data for testing
   return 'mock-xlsx-data';
 };
 
 // Date formatting
-export const formatDate = (date: Date, formatString: string = 'MMM dd, yyyy'): string => {
+export const formatDate = (
+  date: Date,
+  formatString = 'MMM dd, yyyy'
+): string => {
   return format(date, formatString);
 };

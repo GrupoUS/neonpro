@@ -26,18 +26,8 @@
       "@neonpro/config/*": ["./packages/config/*"]
     }
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "**/*.js",
-    "**/*.jsx"
-  ],
-  "exclude": [
-    "node_modules",
-    ".next",
-    "dist",
-    "out"
-  ],
+  "include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
+  "exclude": ["node_modules", ".next", "dist", "out"],
   "references": [
     {
       "path": "./apps/web"

@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { AuditLogger } from '../../audit/audit-logger';
-import { EncryptionService } from '../../security/encryption-service';
 import { LGPDManager } from '../../lgpd/lgpd-manager';
+import { EncryptionService } from '../../security/encryption-service';
 
 export interface StorageConfig {
   provider: 'local' | 's3' | 'azure' | 'gcp' | 'ftp' | 'sftp';
@@ -92,8 +92,16 @@ export abstract class StorageProvider {
 
   abstract connect(): Promise<void>;
   abstract disconnect(): Promise<void>;
-  abstract upload(localPath: string, remotePath: string, options?: any): Promise<StorageResult>;
-  abstract download(remotePath: string, localPath: string, options?: any): Promise<StorageResult>;
+  abstract upload(
+    localPath: string,
+    remotePath: string,
+    options?: any
+  ): Promise<StorageResult>;
+  abstract download(
+    remotePath: string,
+    localPath: string,
+    options?: any
+  ): Promise<StorageResult>;
   abstract delete(remotePath: string): Promise<boolean>;
   abstract list(remotePath: string): Promise<StorageLocation[]>;
   abstract exists(remotePath: string): Promise<boolean>;
@@ -111,25 +119,25 @@ export abstract class StorageProvider {
           return await this.encryptionService.encryptFile(filePath);
         }
         return filePath;
-        
+
       case 'decrypt':
         if (this.config.encryption_enabled) {
           return await this.encryptionService.decryptFile(filePath);
         }
         return filePath;
-        
+
       case 'compress':
         if (this.config.compression_enabled) {
           return await this.compressFile(filePath);
         }
         return filePath;
-        
+
       case 'decompress':
         if (this.config.compression_enabled) {
           return await this.decompressFile(filePath);
         }
         return filePath;
-        
+
       default:
         return filePath;
     }
@@ -149,12 +157,12 @@ export abstract class StorageProvider {
     return decompressedPath;
   }
 
-  protected calculateChecksum(filePath: string): Promise<string> {
+  protected calculateChecksum(_filePath: string): Promise<string> {
     // Implementar cálculo de checksum
     return Promise.resolve('mock_checksum');
   }
 
-  protected getFileSize(filePath: string): Promise<number> {
+  protected getFileSize(_filePath: string): Promise<number> {
     // Implementar obtenção do tamanho do arquivo
     return Promise.resolve(0);
   }
@@ -178,9 +186,13 @@ export class LocalStorageProvider extends StorageProvider {
     console.log('Desconectando do armazenamento local');
   }
 
-  async upload(localPath: string, remotePath: string, options?: any): Promise<StorageResult> {
+  async upload(
+    localPath: string,
+    remotePath: string,
+    options?: any
+  ): Promise<StorageResult> {
     const startTime = Date.now();
-    
+
     try {
       // Processar arquivo (criptografia/compressão)
       let processedPath = localPath;
@@ -190,17 +202,17 @@ export class LocalStorageProvider extends StorageProvider {
       if (this.config.encryption_enabled) {
         processedPath = await this.processFile(processedPath, 'encrypt');
       }
-      
+
       const targetPath = `${this.basePath}/${remotePath}`;
       const fileSize = await this.getFileSize(processedPath);
       const checksum = await this.calculateChecksum(processedPath);
-      
+
       // Simular cópia do arquivo
       console.log(`Copiando ${processedPath} para ${targetPath}`);
-      
+
       const duration = Date.now() - startTime;
-      const transferRate = (fileSize / 1024 / 1024) / (duration / 1000); // MB/s
-      
+      const transferRate = fileSize / 1024 / 1024 / (duration / 1000); // MB/s
+
       const location: StorageLocation = {
         id: this.generateLocationId(),
         provider: this.config.provider,
@@ -210,11 +222,15 @@ export class LocalStorageProvider extends StorageProvider {
         encrypted: this.config.encryption_enabled,
         compressed: this.config.compression_enabled,
         created_at: new Date(),
-        expires_at: this.config.retention_days > 0 ? 
-          new Date(Date.now() + this.config.retention_days * 24 * 60 * 60 * 1000) : undefined,
-        metadata: options?.metadata || {}
+        expires_at:
+          this.config.retention_days > 0
+            ? new Date(
+                Date.now() + this.config.retention_days * 24 * 60 * 60 * 1000
+              )
+            : undefined,
+        metadata: options?.metadata || {},
       };
-      
+
       await this.auditLogger.log({
         action: 'storage_upload',
         resource_type: 'storage_file',
@@ -223,42 +239,46 @@ export class LocalStorageProvider extends StorageProvider {
           provider: this.config.provider,
           path: remotePath,
           size_bytes: fileSize,
-          duration_ms: duration
-        }
+          duration_ms: duration,
+        },
       });
-      
+
       return {
         success: true,
         location,
         duration_ms: duration,
         bytes_transferred: fileSize,
-        transfer_rate_mbps: transferRate
+        transfer_rate_mbps: transferRate,
       };
     } catch (error) {
       const duration = Date.now() - startTime;
-      
+
       return {
         success: false,
         error: error.toString(),
         duration_ms: duration,
         bytes_transferred: 0,
-        transfer_rate_mbps: 0
+        transfer_rate_mbps: 0,
       };
     }
   }
 
-  async download(remotePath: string, localPath: string, options?: any): Promise<StorageResult> {
+  async download(
+    remotePath: string,
+    localPath: string,
+    _options?: any
+  ): Promise<StorageResult> {
     const startTime = Date.now();
-    
+
     try {
       const sourcePath = `${this.basePath}/${remotePath}`;
       const fileSize = await this.getFileSize(sourcePath);
-      
+
       // Simular cópia do arquivo
       console.log(`Copiando ${sourcePath} para ${localPath}`);
-      
+
       let processedPath = localPath;
-      
+
       // Processar arquivo (descriptografia/descompressão)
       if (this.config.encryption_enabled) {
         processedPath = await this.processFile(processedPath, 'decrypt');
@@ -266,10 +286,10 @@ export class LocalStorageProvider extends StorageProvider {
       if (this.config.compression_enabled) {
         processedPath = await this.processFile(processedPath, 'decompress');
       }
-      
+
       const duration = Date.now() - startTime;
-      const transferRate = (fileSize / 1024 / 1024) / (duration / 1000); // MB/s
-      
+      const transferRate = fileSize / 1024 / 1024 / (duration / 1000); // MB/s
+
       await this.auditLogger.log({
         action: 'storage_download',
         resource_type: 'storage_file',
@@ -278,25 +298,25 @@ export class LocalStorageProvider extends StorageProvider {
           provider: this.config.provider,
           path: remotePath,
           size_bytes: fileSize,
-          duration_ms: duration
-        }
+          duration_ms: duration,
+        },
       });
-      
+
       return {
         success: true,
         duration_ms: duration,
         bytes_transferred: fileSize,
-        transfer_rate_mbps: transferRate
+        transfer_rate_mbps: transferRate,
       };
     } catch (error) {
       const duration = Date.now() - startTime;
-      
+
       return {
         success: false,
         error: error.toString(),
         duration_ms: duration,
         bytes_transferred: 0,
-        transfer_rate_mbps: 0
+        transfer_rate_mbps: 0,
       };
     }
   }
@@ -305,17 +325,17 @@ export class LocalStorageProvider extends StorageProvider {
     try {
       const targetPath = `${this.basePath}/${remotePath}`;
       console.log(`Deletando arquivo: ${targetPath}`);
-      
+
       await this.auditLogger.log({
         action: 'storage_delete',
         resource_type: 'storage_file',
         resource_id: remotePath,
         details: {
           provider: this.config.provider,
-          path: remotePath
-        }
+          path: remotePath,
+        },
       });
-      
+
       return true;
     } catch (error) {
       console.error(`Erro ao deletar arquivo: ${error}`);
@@ -327,7 +347,7 @@ export class LocalStorageProvider extends StorageProvider {
     try {
       const targetPath = `${this.basePath}/${remotePath}`;
       console.log(`Listando arquivos em: ${targetPath}`);
-      
+
       // Simular listagem de arquivos
       const files: StorageLocation[] = [
         {
@@ -339,10 +359,10 @@ export class LocalStorageProvider extends StorageProvider {
           encrypted: this.config.encryption_enabled,
           compressed: this.config.compression_enabled,
           created_at: new Date(),
-          metadata: {}
-        }
+          metadata: {},
+        },
       ];
-      
+
       return files;
     } catch (error) {
       console.error(`Erro ao listar arquivos: ${error}`);
@@ -355,7 +375,7 @@ export class LocalStorageProvider extends StorageProvider {
       const targetPath = `${this.basePath}/${remotePath}`;
       console.log(`Verificando existência: ${targetPath}`);
       return true; // Simulado
-    } catch (error) {
+    } catch (_error) {
       return false;
     }
   }
@@ -376,7 +396,7 @@ export class LocalStorageProvider extends StorageProvider {
       bandwidth_usage_gb: Math.random() * 500,
       error_rate: Math.random() * 5,
       last_health_check: new Date(),
-      health_status: 'healthy'
+      health_status: 'healthy',
     };
   }
 
@@ -384,7 +404,7 @@ export class LocalStorageProvider extends StorageProvider {
     try {
       console.log(`Testando conexão com armazenamento local: ${this.basePath}`);
       return true;
-    } catch (error) {
+    } catch (_error) {
       return false;
     }
   }
@@ -393,12 +413,12 @@ export class LocalStorageProvider extends StorageProvider {
     try {
       const cutoffDate = new Date();
       cutoffDate.setDate(cutoffDate.getDate() - olderThanDays);
-      
+
       console.log(`Limpando arquivos anteriores a: ${cutoffDate}`);
-      
+
       // Simular limpeza
       const deletedCount = Math.floor(Math.random() * 10);
-      
+
       await this.auditLogger.log({
         action: 'storage_cleanup',
         resource_type: 'storage_provider',
@@ -406,10 +426,10 @@ export class LocalStorageProvider extends StorageProvider {
         details: {
           provider: this.config.provider,
           older_than_days: olderThanDays,
-          deleted_count: deletedCount
-        }
+          deleted_count: deletedCount,
+        },
       });
-      
+
       return deletedCount;
     } catch (error) {
       console.error(`Erro na limpeza: ${error}`);
@@ -424,7 +444,6 @@ export class LocalStorageProvider extends StorageProvider {
 
 // Implementação para Amazon S3
 export class S3StorageProvider extends StorageProvider {
-  private s3Client: any;
   private bucket: string;
 
   constructor(config: StorageConfig) {
@@ -442,9 +461,13 @@ export class S3StorageProvider extends StorageProvider {
     console.log('Desconectando do S3');
   }
 
-  async upload(localPath: string, remotePath: string, options?: any): Promise<StorageResult> {
+  async upload(
+    localPath: string,
+    remotePath: string,
+    options?: any
+  ): Promise<StorageResult> {
     const startTime = Date.now();
-    
+
     try {
       // Processar arquivo
       let processedPath = localPath;
@@ -454,16 +477,18 @@ export class S3StorageProvider extends StorageProvider {
       if (this.config.encryption_enabled) {
         processedPath = await this.processFile(processedPath, 'encrypt');
       }
-      
+
       const fileSize = await this.getFileSize(processedPath);
       const checksum = await this.calculateChecksum(processedPath);
-      
+
       // Simular upload para S3
-      console.log(`Uploading ${processedPath} to S3: ${this.bucket}/${remotePath}`);
-      
+      console.log(
+        `Uploading ${processedPath} to S3: ${this.bucket}/${remotePath}`
+      );
+
       const duration = Date.now() - startTime;
-      const transferRate = (fileSize / 1024 / 1024) / (duration / 1000);
-      
+      const transferRate = fileSize / 1024 / 1024 / (duration / 1000);
+
       const location: StorageLocation = {
         id: this.generateLocationId(),
         provider: this.config.provider,
@@ -473,46 +498,56 @@ export class S3StorageProvider extends StorageProvider {
         encrypted: this.config.encryption_enabled,
         compressed: this.config.compression_enabled,
         created_at: new Date(),
-        expires_at: this.config.retention_days > 0 ? 
-          new Date(Date.now() + this.config.retention_days * 24 * 60 * 60 * 1000) : undefined,
+        expires_at:
+          this.config.retention_days > 0
+            ? new Date(
+                Date.now() + this.config.retention_days * 24 * 60 * 60 * 1000
+              )
+            : undefined,
         metadata: {
           bucket: this.bucket,
           storage_class: options?.storage_class || 'STANDARD',
-          ...options?.metadata
-        }
+          ...options?.metadata,
+        },
       };
-      
+
       return {
         success: true,
         location,
         duration_ms: duration,
         bytes_transferred: fileSize,
-        transfer_rate_mbps: transferRate
+        transfer_rate_mbps: transferRate,
       };
     } catch (error) {
       const duration = Date.now() - startTime;
-      
+
       return {
         success: false,
         error: error.toString(),
         duration_ms: duration,
         bytes_transferred: 0,
-        transfer_rate_mbps: 0
+        transfer_rate_mbps: 0,
       };
     }
   }
 
-  async download(remotePath: string, localPath: string, options?: any): Promise<StorageResult> {
+  async download(
+    remotePath: string,
+    localPath: string,
+    _options?: any
+  ): Promise<StorageResult> {
     const startTime = Date.now();
-    
+
     try {
-      console.log(`Downloading from S3: ${this.bucket}/${remotePath} to ${localPath}`);
-      
+      console.log(
+        `Downloading from S3: ${this.bucket}/${remotePath} to ${localPath}`
+      );
+
       // Simular download
       const fileSize = 1024 * 1024; // 1MB simulado
-      
+
       let processedPath = localPath;
-      
+
       // Processar arquivo
       if (this.config.encryption_enabled) {
         processedPath = await this.processFile(processedPath, 'decrypt');
@@ -520,25 +555,25 @@ export class S3StorageProvider extends StorageProvider {
       if (this.config.compression_enabled) {
         processedPath = await this.processFile(processedPath, 'decompress');
       }
-      
+
       const duration = Date.now() - startTime;
-      const transferRate = (fileSize / 1024 / 1024) / (duration / 1000);
-      
+      const transferRate = fileSize / 1024 / 1024 / (duration / 1000);
+
       return {
         success: true,
         duration_ms: duration,
         bytes_transferred: fileSize,
-        transfer_rate_mbps: transferRate
+        transfer_rate_mbps: transferRate,
       };
     } catch (error) {
       const duration = Date.now() - startTime;
-      
+
       return {
         success: false,
         error: error.toString(),
         duration_ms: duration,
         bytes_transferred: 0,
-        transfer_rate_mbps: 0
+        transfer_rate_mbps: 0,
       };
     }
   }
@@ -547,7 +582,7 @@ export class S3StorageProvider extends StorageProvider {
     try {
       console.log(`Deletando do S3: ${this.bucket}/${remotePath}`);
       return true;
-    } catch (error) {
+    } catch (_error) {
       return false;
     }
   }
@@ -556,7 +591,7 @@ export class S3StorageProvider extends StorageProvider {
     try {
       console.log(`Listando objetos S3 em: ${this.bucket}/${remotePath}`);
       return [];
-    } catch (error) {
+    } catch (_error) {
       return [];
     }
   }
@@ -565,7 +600,7 @@ export class S3StorageProvider extends StorageProvider {
     try {
       console.log(`Verificando existência no S3: ${this.bucket}/${remotePath}`);
       return true;
-    } catch (error) {
+    } catch (_error) {
       return false;
     }
   }
@@ -586,7 +621,7 @@ export class S3StorageProvider extends StorageProvider {
       bandwidth_usage_gb: Math.random() * 1000,
       error_rate: Math.random() * 2,
       last_health_check: new Date(),
-      health_status: 'healthy'
+      health_status: 'healthy',
     };
   }
 
@@ -594,7 +629,7 @@ export class S3StorageProvider extends StorageProvider {
     try {
       console.log(`Testando conexão S3: ${this.bucket}`);
       return true;
-    } catch (error) {
+    } catch (_error) {
       return false;
     }
   }
@@ -603,7 +638,7 @@ export class S3StorageProvider extends StorageProvider {
     try {
       console.log(`Limpando objetos S3 anteriores a ${olderThanDays} dias`);
       return Math.floor(Math.random() * 50);
-    } catch (error) {
+    } catch (_error) {
       return 0;
     }
   }
@@ -625,7 +660,7 @@ export class StorageManager {
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
-    
+
     this.auditLogger = new AuditLogger();
   }
 
@@ -635,7 +670,7 @@ export class StorageManager {
   async registerProvider(config: StorageConfig): Promise<void> {
     try {
       let provider: StorageProvider;
-      
+
       switch (config.provider) {
         case 'local':
           provider = new LocalStorageProvider(config);
@@ -646,21 +681,21 @@ export class StorageManager {
         default:
           throw new Error(`Provedor não suportado: ${config.provider}`);
       }
-      
+
       await provider.connect();
       this.providers.set(config.name, provider);
-      
+
       // Salvar configuração
       await this.saveStorageConfig(config);
-      
+
       await this.auditLogger.log({
         action: 'storage_provider_registered',
         resource_type: 'storage_provider',
         resource_id: config.name,
         details: {
           provider: config.provider,
-          enabled: config.enabled
-        }
+          enabled: config.enabled,
+        },
       });
     } catch (error) {
       throw new Error(`Erro ao registrar provedor: ${error}`);
@@ -677,14 +712,14 @@ export class StorageManager {
         await provider.disconnect();
         this.providers.delete(name);
       }
-      
+
       // Remover configuração
       await this.deleteStorageConfig(name);
-      
+
       await this.auditLogger.log({
         action: 'storage_provider_unregistered',
         resource_type: 'storage_provider',
-        resource_id: name
+        resource_id: name,
       });
     } catch (error) {
       throw new Error(`Erro ao remover provedor: ${error}`);
@@ -701,14 +736,14 @@ export class StorageManager {
     options?: any
   ): Promise<StorageResult> {
     try {
-      const provider = providerName ? 
-        this.providers.get(providerName) : 
-        this.selectBestProvider('upload');
-      
+      const provider = providerName
+        ? this.providers.get(providerName)
+        : this.selectBestProvider('upload');
+
       if (!provider) {
         throw new Error('Nenhum provedor disponível');
       }
-      
+
       const operationId = this.generateOperationId();
       const operation: StorageOperation = {
         id: operationId,
@@ -719,28 +754,28 @@ export class StorageManager {
         status: 'running',
         started_at: new Date(),
         progress_percentage: 0,
-        bytes_total: await provider['getFileSize'](localPath),
+        bytes_total: await provider.getFileSize(localPath),
         bytes_transferred: 0,
         transfer_rate_mbps: 0,
         retry_count: 0,
         max_retries: 3,
-        metadata: options?.metadata || {}
+        metadata: options?.metadata || {},
       };
-      
+
       this.activeOperations.set(operationId, operation);
-      
+
       const result = await provider.upload(localPath, remotePath, options);
-      
+
       operation.status = result.success ? 'completed' : 'failed';
       operation.completed_at = new Date();
       operation.progress_percentage = 100;
       operation.bytes_transferred = result.bytes_transferred;
       operation.transfer_rate_mbps = result.transfer_rate_mbps;
       operation.error_message = result.error;
-      
+
       await this.saveStorageOperation(operation);
       this.activeOperations.delete(operationId);
-      
+
       return result;
     } catch (error) {
       throw new Error(`Erro no upload: ${error}`);
@@ -757,14 +792,14 @@ export class StorageManager {
     options?: any
   ): Promise<StorageResult> {
     try {
-      const provider = providerName ? 
-        this.providers.get(providerName) : 
-        this.selectBestProvider('download');
-      
+      const provider = providerName
+        ? this.providers.get(providerName)
+        : this.selectBestProvider('download');
+
       if (!provider) {
         throw new Error('Nenhum provedor disponível');
       }
-      
+
       const operationId = this.generateOperationId();
       const operation: StorageOperation = {
         id: operationId,
@@ -780,23 +815,23 @@ export class StorageManager {
         transfer_rate_mbps: 0,
         retry_count: 0,
         max_retries: 3,
-        metadata: options?.metadata || {}
+        metadata: options?.metadata || {},
       };
-      
+
       this.activeOperations.set(operationId, operation);
-      
+
       const result = await provider.download(remotePath, localPath, options);
-      
+
       operation.status = result.success ? 'completed' : 'failed';
       operation.completed_at = new Date();
       operation.progress_percentage = 100;
       operation.bytes_transferred = result.bytes_transferred;
       operation.transfer_rate_mbps = result.transfer_rate_mbps;
       operation.error_message = result.error;
-      
+
       await this.saveStorageOperation(operation);
       this.activeOperations.delete(operationId);
-      
+
       return result;
     } catch (error) {
       throw new Error(`Erro no download: ${error}`);
@@ -811,14 +846,14 @@ export class StorageManager {
     providerName?: string
   ): Promise<StorageLocation[]> {
     try {
-      const provider = providerName ? 
-        this.providers.get(providerName) : 
-        this.selectBestProvider('list');
-      
+      const provider = providerName
+        ? this.providers.get(providerName)
+        : this.selectBestProvider('list');
+
       if (!provider) {
         throw new Error('Nenhum provedor disponível');
       }
-      
+
       return await provider.list(remotePath);
     } catch (error) {
       throw new Error(`Erro ao listar arquivos: ${error}`);
@@ -833,14 +868,14 @@ export class StorageManager {
     providerName?: string
   ): Promise<boolean> {
     try {
-      const provider = providerName ? 
-        this.providers.get(providerName) : 
-        this.selectBestProvider('delete');
-      
+      const provider = providerName
+        ? this.providers.get(providerName)
+        : this.selectBestProvider('delete');
+
       if (!provider) {
         throw new Error('Nenhum provedor disponível');
       }
-      
+
       return await provider.delete(remotePath);
     } catch (error) {
       throw new Error(`Erro ao deletar arquivo: ${error}`);
@@ -852,7 +887,7 @@ export class StorageManager {
    */
   async getAllMetrics(): Promise<StorageMetrics[]> {
     const metrics: StorageMetrics[] = [];
-    
+
     for (const [name, provider] of this.providers) {
       try {
         const providerMetrics = await provider.getMetrics();
@@ -861,7 +896,7 @@ export class StorageManager {
         console.error(`Erro ao obter métricas do provedor ${name}:`, error);
       }
     }
-    
+
     return metrics;
   }
 
@@ -870,15 +905,15 @@ export class StorageManager {
    */
   async testAllConnections(): Promise<Record<string, boolean>> {
     const results: Record<string, boolean> = {};
-    
+
     for (const [name, provider] of this.providers) {
       try {
         results[name] = await provider.testConnection();
-      } catch (error) {
+      } catch (_error) {
         results[name] = false;
       }
     }
-    
+
     return results;
   }
 
@@ -887,7 +922,7 @@ export class StorageManager {
    */
   async cleanupAll(olderThanDays: number): Promise<Record<string, number>> {
     const results: Record<string, number> = {};
-    
+
     for (const [name, provider] of this.providers) {
       try {
         results[name] = await provider.cleanup(olderThanDays);
@@ -896,7 +931,7 @@ export class StorageManager {
         console.error(`Erro na limpeza do provedor ${name}:`, error);
       }
     }
-    
+
     return results;
   }
 
@@ -926,43 +961,43 @@ export class StorageManager {
         .from('storage_operations')
         .select('*', { count: 'exact' })
         .order('started_at', { ascending: false });
-      
+
       if (filters?.type) {
         query = query.in('type', filters.type);
       }
-      
+
       if (filters?.provider) {
         query = query.eq('provider', filters.provider);
       }
-      
+
       if (filters?.status) {
         query = query.in('status', filters.status);
       }
-      
+
       if (filters?.date_from) {
         query = query.gte('started_at', filters.date_from.toISOString());
       }
-      
+
       if (filters?.date_to) {
         query = query.lte('started_at', filters.date_to.toISOString());
       }
-      
+
       if (pagination) {
         const offset = (pagination.page - 1) * pagination.limit;
         query = query.range(offset, offset + pagination.limit - 1);
       }
-      
+
       const { data, error, count } = await query;
-      
+
       if (error) throw error;
-      
+
       const operations = data.map(this.mapDatabaseToStorageOperation);
-      
+
       return {
         operations,
         total: count || 0,
         page: pagination?.page || 1,
-        limit: pagination?.limit || operations.length
+        limit: pagination?.limit || operations.length,
       };
     } catch (error) {
       throw new Error(`Erro ao listar operações: ${error}`);
@@ -970,17 +1005,18 @@ export class StorageManager {
   }
 
   // Métodos privados
-  private selectBestProvider(operation: string): StorageProvider | null {
+  private selectBestProvider(_operation: string): StorageProvider | null {
     // Implementar lógica de seleção do melhor provedor
     // baseado em prioridade, disponibilidade, performance, etc.
-    
-    const availableProviders = Array.from(this.providers.values())
-      .filter(provider => provider['config'].enabled);
-    
+
+    const availableProviders = Array.from(this.providers.values()).filter(
+      (provider) => provider.config.enabled
+    );
+
     if (availableProviders.length === 0) {
       return null;
     }
-    
+
     // Por enquanto, retorna o primeiro disponível
     // TODO: Implementar lógica mais sofisticada
     return availableProviders[0];
@@ -992,23 +1028,21 @@ export class StorageManager {
 
   // Métodos de persistência
   private async saveStorageConfig(config: StorageConfig): Promise<void> {
-    const { error } = await this.supabase
-      .from('storage_configs')
-      .upsert({
-        name: config.name,
-        provider: config.provider,
-        enabled: config.enabled,
-        priority: config.priority,
-        connection_config: config.connection_config,
-        encryption_enabled: config.encryption_enabled,
-        compression_enabled: config.compression_enabled,
-        retention_days: config.retention_days,
-        max_storage_gb: config.max_storage_gb,
-        cost_per_gb: config.cost_per_gb,
-        bandwidth_limit_mbps: config.bandwidth_limit_mbps,
-        metadata: config.metadata
-      });
-    
+    const { error } = await this.supabase.from('storage_configs').upsert({
+      name: config.name,
+      provider: config.provider,
+      enabled: config.enabled,
+      priority: config.priority,
+      connection_config: config.connection_config,
+      encryption_enabled: config.encryption_enabled,
+      compression_enabled: config.compression_enabled,
+      retention_days: config.retention_days,
+      max_storage_gb: config.max_storage_gb,
+      cost_per_gb: config.cost_per_gb,
+      bandwidth_limit_mbps: config.bandwidth_limit_mbps,
+      metadata: config.metadata,
+    });
+
     if (error) throw error;
   }
 
@@ -1017,32 +1051,32 @@ export class StorageManager {
       .from('storage_configs')
       .delete()
       .eq('name', name);
-    
+
     if (error) throw error;
   }
 
-  private async saveStorageOperation(operation: StorageOperation): Promise<void> {
-    const { error } = await this.supabase
-      .from('storage_operations')
-      .insert({
-        id: operation.id,
-        type: operation.type,
-        provider: operation.provider,
-        source_path: operation.source_path,
-        target_path: operation.target_path,
-        status: operation.status,
-        started_at: operation.started_at.toISOString(),
-        completed_at: operation.completed_at?.toISOString(),
-        progress_percentage: operation.progress_percentage,
-        bytes_total: operation.bytes_total,
-        bytes_transferred: operation.bytes_transferred,
-        transfer_rate_mbps: operation.transfer_rate_mbps,
-        error_message: operation.error_message,
-        retry_count: operation.retry_count,
-        max_retries: operation.max_retries,
-        metadata: operation.metadata
-      });
-    
+  private async saveStorageOperation(
+    operation: StorageOperation
+  ): Promise<void> {
+    const { error } = await this.supabase.from('storage_operations').insert({
+      id: operation.id,
+      type: operation.type,
+      provider: operation.provider,
+      source_path: operation.source_path,
+      target_path: operation.target_path,
+      status: operation.status,
+      started_at: operation.started_at.toISOString(),
+      completed_at: operation.completed_at?.toISOString(),
+      progress_percentage: operation.progress_percentage,
+      bytes_total: operation.bytes_total,
+      bytes_transferred: operation.bytes_transferred,
+      transfer_rate_mbps: operation.transfer_rate_mbps,
+      error_message: operation.error_message,
+      retry_count: operation.retry_count,
+      max_retries: operation.max_retries,
+      metadata: operation.metadata,
+    });
+
     if (error) throw error;
   }
 
@@ -1063,7 +1097,7 @@ export class StorageManager {
       error_message: data.error_message,
       retry_count: data.retry_count || 0,
       max_retries: data.max_retries || 3,
-      metadata: data.metadata || {}
+      metadata: data.metadata || {},
     };
   }
 }

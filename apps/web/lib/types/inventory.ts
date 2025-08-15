@@ -14,7 +14,7 @@ export interface InventoryItem {
   category_id: string;
   supplier_id?: string;
   location_id: string;
-  
+
   // Stock Information
   current_stock: number;
   minimum_stock: number;
@@ -23,17 +23,17 @@ export interface InventoryItem {
   unit_cost: number;
   selling_price?: number;
   unit_of_measure: string;
-  
+
   // Tracking Information
   batch_number?: string;
   expiration_date?: string;
   manufactured_date?: string;
   lot_number?: string;
-  
+
   // Status
   status: InventoryStatus;
   is_active: boolean;
-  
+
   // Metadata
   created_at: string;
   updated_at: string;
@@ -70,18 +70,18 @@ export interface StockMovement {
   movement_type: MovementType;
   quantity: number;
   unit_cost?: number;
-  
+
   // Reference Information
   reference_type?: ReferenceType;
   reference_id?: string;
   batch_number?: string;
   expiration_date?: string;
-  
+
   // Tracking
   notes?: string;
   created_at: string;
   created_by: string;
-  
+
   // Related Data
   inventory_item?: InventoryItem;
   location?: InventoryLocation;
@@ -96,16 +96,16 @@ export interface StockAlert {
   severity: AlertSeverity;
   status: AlertStatus;
   message: string;
-  
+
   // Notification
   notified_users: string[];
   notification_sent_at?: string;
-  
+
   // Resolution
   resolved_at?: string;
   resolved_by?: string;
   resolution_notes?: string;
-  
+
   created_at: string;
   updated_at: string;
 }
@@ -116,11 +116,11 @@ export interface BarcodeSession {
   session_type: SessionType;
   location_id: string;
   status: SessionStatus;
-  
+
   // Scanned Items
   scanned_items: ScannedItem[];
   total_items_scanned: number;
-  
+
   // Session Metadata
   started_at: string;
   ended_at?: string;
@@ -134,11 +134,11 @@ export interface ScannedItem {
   barcode_value: string;
   scan_timestamp: string;
   scan_result: ScanResult;
-  
+
   // Manual Override
   manual_quantity?: number;
   manual_notes?: string;
-  
+
   // Error Handling
   error_message?: string;
   needs_manual_review: boolean;
@@ -151,7 +151,7 @@ export enum InventoryStatus {
   DISCONTINUED = 'discontinued',
   OUT_OF_STOCK = 'out_of_stock',
   RESERVED = 'reserved',
-  DAMAGED = 'damaged'
+  DAMAGED = 'damaged',
 }
 
 export enum LocationType {
@@ -161,7 +161,7 @@ export enum LocationType {
   CABINET = 'cabinet',
   REFRIGERATOR = 'refrigerator',
   TREATMENT_ROOM = 'treatment_room',
-  RECEPTION = 'reception'
+  RECEPTION = 'reception',
 }
 
 export enum MovementType {
@@ -174,7 +174,7 @@ export enum MovementType {
   WASTE = 'waste',
   RETURN = 'return',
   USAGE = 'usage',
-  STOCKTAKE = 'stocktake'
+  STOCKTAKE = 'stocktake',
 }
 
 export enum ReferenceType {
@@ -184,7 +184,7 @@ export enum ReferenceType {
   PROCEDURE = 'procedure',
   ADJUSTMENT = 'adjustment',
   TRANSFER = 'transfer',
-  STOCKTAKE = 'stocktake'
+  STOCKTAKE = 'stocktake',
 }
 
 export enum AlertType {
@@ -193,21 +193,21 @@ export enum AlertType {
   OVERSTOCKED = 'overstocked',
   EXPIRING_SOON = 'expiring_soon',
   EXPIRED = 'expired',
-  REORDER_POINT = 'reorder_point'
+  REORDER_POINT = 'reorder_point',
 }
 
 export enum AlertSeverity {
   LOW = 'low',
   MEDIUM = 'medium',
   HIGH = 'high',
-  CRITICAL = 'critical'
+  CRITICAL = 'critical',
 }
 
 export enum AlertStatus {
   ACTIVE = 'active',
   ACKNOWLEDGED = 'acknowledged',
   RESOLVED = 'resolved',
-  DISMISSED = 'dismissed'
+  DISMISSED = 'dismissed',
 }
 
 export enum SessionType {
@@ -216,14 +216,14 @@ export enum SessionType {
   STOCKTAKE = 'stocktake',
   ADJUSTMENT = 'adjustment',
   TRANSFER = 'transfer',
-  USAGE_TRACKING = 'usage_tracking'
+  USAGE_TRACKING = 'usage_tracking',
 }
 
 export enum SessionStatus {
   ACTIVE = 'active',
   PAUSED = 'paused',
   COMPLETED = 'completed',
-  CANCELLED = 'cancelled'
+  CANCELLED = 'cancelled',
 }
 
 export enum ScanResult {
@@ -231,7 +231,7 @@ export enum ScanResult {
   ITEM_NOT_FOUND = 'item_not_found',
   INVALID_BARCODE = 'invalid_barcode',
   DUPLICATE_SCAN = 'duplicate_scan',
-  ERROR = 'error'
+  ERROR = 'error',
 }
 
 // Real-time Inventory State
@@ -242,14 +242,14 @@ export interface InventoryState {
   movements: StockMovement[];
   alerts: StockAlert[];
   activeSessions: BarcodeSession[];
-  
+
   // UI State
   loading: boolean;
   error: string | null;
   selectedLocation?: string;
   selectedCategory?: string;
   searchQuery?: string;
-  
+
   // Real-time Updates
   lastUpdated: string;
   isRealTimeEnabled: boolean;
@@ -260,7 +260,7 @@ export enum ConnectionStatus {
   CONNECTED = 'connected',
   DISCONNECTED = 'disconnected',
   RECONNECTING = 'reconnecting',
-  ERROR = 'error'
+  ERROR = 'error',
 }
 
 // API Response Types
@@ -292,7 +292,7 @@ export interface BarcodeResult {
   sessionId?: string;
 }
 
-export type BarcodeFormat = 
+export type BarcodeFormat =
   | 'qr_code'
   | 'code_128'
   | 'code_39'
@@ -316,7 +316,15 @@ export interface ScannerConfig {
 
 // Scanner State and Error Types
 export interface ScannerError {
-  type: 'PERMISSION_DENIED' | 'INITIALIZATION_ERROR' | 'NO_VIDEO_ELEMENT' | 'NO_CAMERA_AVAILABLE' | 'START_ERROR' | 'CHECKSUM_ERROR' | 'FORMAT_ERROR' | 'SCAN_ERROR';
+  type:
+    | 'PERMISSION_DENIED'
+    | 'INITIALIZATION_ERROR'
+    | 'NO_VIDEO_ELEMENT'
+    | 'NO_CAMERA_AVAILABLE'
+    | 'START_ERROR'
+    | 'CHECKSUM_ERROR'
+    | 'FORMAT_ERROR'
+    | 'SCAN_ERROR';
   message: string;
   timestamp: string;
 }

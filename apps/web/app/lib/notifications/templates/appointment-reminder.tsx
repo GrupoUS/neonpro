@@ -12,11 +12,10 @@ import {
   Hr,
   Html,
   Img,
-  Link,
   Preview,
   Section,
-  Text,
   Tailwind,
+  Text,
 } from '@react-email/components';
 
 interface AppointmentReminderEmailProps {
@@ -46,104 +45,110 @@ export const AppointmentReminderEmail = ({
   cancellationLink,
   rescheduleLink,
   confirmationLink,
-  timezone = 'UTC'
+  timezone = 'UTC',
 }: AppointmentReminderEmailProps) => {
   return (
     <Html>
       <Head />
-      <Preview>Appointment reminder for {appointmentDate} at {appointmentTime}</Preview>
+      <Preview>
+        Appointment reminder for {appointmentDate} at {appointmentTime}
+      </Preview>
       <Tailwind>
-        <Body className="bg-white my-auto mx-auto font-sans">
-          <Container className="border border-solid border-[#eaeaea] rounded my-[40px] mx-auto p-[20px] w-[465px]">
+        <Body className="mx-auto my-auto bg-white font-sans">
+          <Container className="mx-auto my-[40px] w-[465px] rounded border border-[#eaeaea] border-solid p-[20px]">
             <Section className="mt-[32px]">
               <Img
+                alt={clinicName}
+                className="mx-auto my-0"
+                height="60"
                 src="https://your-clinic-logo.com/logo.png"
                 width="200"
-                height="60"
-                alt={clinicName}
-                className="my-0 mx-auto"
               />
             </Section>
-            
-            <Heading className="text-black text-[24px] font-normal text-center p-0 my-[30px] mx-0">
+
+            <Heading className="mx-0 my-[30px] p-0 text-center font-normal text-[24px] text-black">
               Appointment Reminder
             </Heading>
-            
-            <Text className="text-black text-[14px] leading-[24px]">
+
+            <Text className="text-[14px] text-black leading-[24px]">
               Dear {patientName},
             </Text>
-            
-            <Text className="text-black text-[14px] leading-[24px]">
-              This is a friendly reminder that you have an upcoming appointment scheduled:
+
+            <Text className="text-[14px] text-black leading-[24px]">
+              This is a friendly reminder that you have an upcoming appointment
+              scheduled:
             </Text>
-            
-            <Section className="bg-[#f6f6f6] rounded-[8px] p-[20px] my-[20px]">
-              <Text className="text-black text-[16px] font-bold leading-[24px] m-0">
+
+            <Section className="my-[20px] rounded-[8px] bg-[#f6f6f6] p-[20px]">
+              <Text className="m-0 font-bold text-[16px] text-black leading-[24px]">
                 Appointment Details
               </Text>
-              <Hr className="border border-solid border-[#eaeaea] my-[16px] mx-0 w-full" />
-              <Text className="text-black text-[14px] leading-[20px] m-0">
+              <Hr className="mx-0 my-[16px] w-full border border-[#eaeaea] border-solid" />
+              <Text className="m-0 text-[14px] text-black leading-[20px]">
                 <strong>Date:</strong> {appointmentDate}
               </Text>
-              <Text className="text-black text-[14px] leading-[20px] m-0">
+              <Text className="m-0 text-[14px] text-black leading-[20px]">
                 <strong>Time:</strong> {appointmentTime} ({timezone})
               </Text>
-              <Text className="text-black text-[14px] leading-[20px] m-0">
+              <Text className="m-0 text-[14px] text-black leading-[20px]">
                 <strong>Treatment:</strong> {treatmentType}
               </Text>
-              <Text className="text-black text-[14px] leading-[20px] m-0">
+              <Text className="m-0 text-[14px] text-black leading-[20px]">
                 <strong>Provider:</strong> {doctorName}
               </Text>
-              <Text className="text-black text-[14px] leading-[20px] m-0">
+              <Text className="m-0 text-[14px] text-black leading-[20px]">
                 <strong>Location:</strong> {clinicAddress}
               </Text>
             </Section>
-            
-            <Text className="text-black text-[14px] leading-[24px]">
-              Please arrive 15 minutes early for check-in. If you need to cancel or reschedule, 
-              please do so at least 24 hours in advance.
+
+            <Text className="text-[14px] text-black leading-[24px]">
+              Please arrive 15 minutes early for check-in. If you need to cancel
+              or reschedule, please do so at least 24 hours in advance.
             </Text>
-            
-            <Section className="text-center mt-[32px] mb-[32px]">
+
+            <Section className="mt-[32px] mb-[32px] text-center">
               {confirmationLink && (
                 <Button
-                  className="bg-[#000000] rounded text-white text-[12px] font-semibold no-underline text-center px-[20px] py-[12px] mr-[8px]"
+                  className="mr-[8px] rounded bg-[#000000] px-[20px] py-[12px] text-center font-semibold text-[12px] text-white no-underline"
                   href={confirmationLink}
                 >
                   Confirm Appointment
                 </Button>
               )}
-              
+
               {rescheduleLink && (
                 <Button
-                  className="bg-[#0070f3] rounded text-white text-[12px] font-semibold no-underline text-center px-[20px] py-[12px] mr-[8px]"
+                  className="mr-[8px] rounded bg-[#0070f3] px-[20px] py-[12px] text-center font-semibold text-[12px] text-white no-underline"
                   href={rescheduleLink}
                 >
                   Reschedule
                 </Button>
               )}
-              
+
               {cancellationLink && (
                 <Button
-                  className="bg-[#dc2626] rounded text-white text-[12px] font-semibold no-underline text-center px-[20px] py-[12px]"
+                  className="rounded bg-[#dc2626] px-[20px] py-[12px] text-center font-semibold text-[12px] text-white no-underline"
                   href={cancellationLink}
                 >
                   Cancel
                 </Button>
               )}
             </Section>
-            
-            <Hr className="border border-solid border-[#eaeaea] my-[26px] mx-0 w-full" />
-            
+
+            <Hr className="mx-0 my-[26px] w-full border border-[#eaeaea] border-solid" />
+
             <Text className="text-[#666666] text-[12px] leading-[24px]">
-              {clinicName}<br />
-              {clinicAddress}<br />
+              {clinicName}
+              <br />
+              {clinicAddress}
+              <br />
               Phone: {clinicPhone}
             </Text>
-            
-            <Text className="text-[#666666] text-[10px] leading-[16px] mt-[20px]">
-              This email contains confidential health information protected by HIPAA. 
-              If you are not the intended recipient, please delete this email immediately.
+
+            <Text className="mt-[20px] text-[#666666] text-[10px] leading-[16px]">
+              This email contains confidential health information protected by
+              HIPAA. If you are not the intended recipient, please delete this
+              email immediately.
             </Text>
           </Container>
         </Body>

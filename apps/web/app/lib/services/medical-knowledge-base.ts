@@ -2,28 +2,27 @@
 // Story 9.5: Comprehensive medical knowledge management backend service
 
 import {
-    DrugInformation,
-    DrugInteraction,
-    DrugSearchQuery,
-    EvidenceValidationRequest,
-    EvidenceValidationResponse,
-    KnowledgeBaseDashboard,
-    KnowledgeSource,
-    MedicalGuideline,
-    MedicalKnowledge,
-    MedicalSearchQuery,
-    ResearchCache,
-    ValidationResult
-} from '@/app/types/medical-knowledge-base';
-
-import {
-    createKnowledgeSourceRequestSchema,
-    createMedicalKnowledgeRequestSchema,
-    drugSearchQuerySchema,
-    evidenceValidationRequestSchema,
-    medicalSearchQuerySchema,
-    updateKnowledgeSourceRequestSchema
+  createKnowledgeSourceRequestSchema,
+  createMedicalKnowledgeRequestSchema,
+  drugSearchQuerySchema,
+  evidenceValidationRequestSchema,
+  medicalSearchQuerySchema,
+  updateKnowledgeSourceRequestSchema,
 } from '@/app/lib/validations/medical-knowledge-base';
+import type {
+  DrugInformation,
+  DrugInteraction,
+  DrugSearchQuery,
+  EvidenceValidationRequest,
+  EvidenceValidationResponse,
+  KnowledgeBaseDashboard,
+  KnowledgeSource,
+  MedicalGuideline,
+  MedicalKnowledge,
+  MedicalSearchQuery,
+  ResearchCache,
+  ValidationResult,
+} from '@/app/types/medical-knowledge-base';
 
 import { createClient } from '@/app/utils/supabase/server';
 
@@ -36,7 +35,7 @@ export class MedicalKnowledgeBaseService {
   async createKnowledgeSource(data: any): Promise<KnowledgeSource> {
     const validatedData = createKnowledgeSourceRequestSchema.parse(data);
     const supabase = await this.getSupabase();
-    
+
     const { data: source, error } = await supabase
       .from('knowledge_sources')
       .insert([validatedData])
@@ -50,7 +49,10 @@ export class MedicalKnowledgeBaseService {
     return source as KnowledgeSource;
   }
 
-  async getKnowledgeSources(filters?: { status?: string; source_type?: string }): Promise<KnowledgeSource[]> {
+  async getKnowledgeSources(filters?: {
+    status?: string;
+    source_type?: string;
+  }): Promise<KnowledgeSource[]> {
     const supabase = await this.getSupabase();
     let query = supabase.from('knowledge_sources').select('*');
 
@@ -61,7 +63,9 @@ export class MedicalKnowledgeBaseService {
       query = query.eq('source_type', filters.source_type);
     }
 
-    const { data, error } = await query.order('created_at', { ascending: false });
+    const { data, error } = await query.order('created_at', {
+      ascending: false,
+    });
 
     if (error) {
       throw new Error(`Failed to fetch knowledge sources: ${error.message}`);
@@ -70,7 +74,10 @@ export class MedicalKnowledgeBaseService {
     return data as KnowledgeSource[];
   }
 
-  async updateKnowledgeSource(id: string, updates: any): Promise<KnowledgeSource> {
+  async updateKnowledgeSource(
+    id: string,
+    updates: any
+  ): Promise<KnowledgeSource> {
     const validatedData = updateKnowledgeSourceRequestSchema.parse(updates);
     const supabase = await this.getSupabase();
 
@@ -140,23 +147,26 @@ export class MedicalKnowledgeBaseService {
     // Apply filters
     if (validatedQuery.filters) {
       const filters = validatedQuery.filters;
-      
+
       if (filters.knowledge_type?.length) {
         dbQuery = dbQuery.in('knowledge_type', filters.knowledge_type);
       }
-      
+
       if (filters.evidence_level?.length) {
         dbQuery = dbQuery.in('evidence_level', filters.evidence_level);
       }
-      
+
       if (filters.medical_categories?.length) {
-        dbQuery = dbQuery.overlaps('medical_categories', filters.medical_categories);
+        dbQuery = dbQuery.overlaps(
+          'medical_categories',
+          filters.medical_categories
+        );
       }
-      
+
       if (filters.quality_threshold) {
         dbQuery = dbQuery.gte('quality_score', filters.quality_threshold);
       }
-      
+
       if (filters.date_range) {
         if (filters.date_range.start) {
           dbQuery = dbQuery.gte('created_at', filters.date_range.start);
@@ -169,8 +179,8 @@ export class MedicalKnowledgeBaseService {
 
     // Apply sorting
     if (validatedQuery.sort) {
-      dbQuery = dbQuery.order(validatedQuery.sort.field, { 
-        ascending: validatedQuery.sort.direction === 'asc' 
+      dbQuery = dbQuery.order(validatedQuery.sort.field, {
+        ascending: validatedQuery.sort.direction === 'asc',
       });
     } else {
       dbQuery = dbQuery.order('quality_score', { ascending: false });
@@ -216,7 +226,10 @@ export class MedicalKnowledgeBaseService {
     return data as MedicalKnowledge;
   }
 
-  async updateMedicalKnowledge(id: string, updates: Partial<MedicalKnowledge>): Promise<MedicalKnowledge> {
+  async updateMedicalKnowledge(
+    id: string,
+    updates: Partial<MedicalKnowledge>
+  ): Promise<MedicalKnowledge> {
     const supabase = await this.getSupabase();
 
     const { data, error } = await supabase
@@ -250,15 +263,18 @@ export class MedicalKnowledgeBaseService {
     if (validatedQuery.drug_name) {
       dbQuery = dbQuery.ilike('drug_name', `%${validatedQuery.drug_name}%`);
     }
-    
+
     if (validatedQuery.generic_name) {
-      dbQuery = dbQuery.ilike('generic_name', `%${validatedQuery.generic_name}%`);
+      dbQuery = dbQuery.ilike(
+        'generic_name',
+        `%${validatedQuery.generic_name}%`
+      );
     }
-    
+
     if (validatedQuery.drug_class) {
       dbQuery = dbQuery.ilike('drug_class', `%${validatedQuery.drug_class}%`);
     }
-    
+
     if (validatedQuery.indication) {
       dbQuery = dbQuery.contains('indications', [validatedQuery.indication]);
     }
@@ -270,16 +286,18 @@ export class MedicalKnowledgeBaseService {
     }
 
     let interactions: DrugInteraction[] = [];
-    
+
     // Check for drug interactions if interaction_check is provided
     if (validatedQuery.interaction_check?.length && drugs?.length) {
-      const drugIds = drugs.map(d => d.id);
+      const drugIds = drugs.map((d) => d.id);
       const checkIds = validatedQuery.interaction_check;
 
       const { data: interactionData, error: interactionError } = await supabase
         .from('drug_interactions')
         .select('*')
-        .or(`and(drug_1_id.in.(${drugIds.join(',')}),drug_2_id.in.(${checkIds.join(',')})),and(drug_1_id.in.(${checkIds.join(',')}),drug_2_id.in.(${drugIds.join(',')}))`);
+        .or(
+          `and(drug_1_id.in.(${drugIds.join(',')}),drug_2_id.in.(${checkIds.join(',')})),and(drug_1_id.in.(${checkIds.join(',')}),drug_2_id.in.(${drugIds.join(',')}))`
+        );
 
       if (interactionError) {
         console.error('Error fetching drug interactions:', interactionError);
@@ -324,7 +342,9 @@ export class MedicalKnowledgeBaseService {
     const { data, error } = await supabase
       .from('drug_interactions')
       .select('*')
-      .or(`and(drug_1_id.in.(${drugIds.join(',')}),drug_2_id.in.(${drugIds.join(',')})),and(drug_2_id.in.(${drugIds.join(',')}),drug_1_id.in.(${drugIds.join(',')}))`);
+      .or(
+        `and(drug_1_id.in.(${drugIds.join(',')}),drug_2_id.in.(${drugIds.join(',')})),and(drug_2_id.in.(${drugIds.join(',')}),drug_1_id.in.(${drugIds.join(',')}))`
+      );
 
     if (error) {
       throw new Error(`Failed to check drug interactions: ${error.message}`);
@@ -334,10 +354,10 @@ export class MedicalKnowledgeBaseService {
   }
 
   // Medical Guidelines Management
-  async getMedicalGuidelines(filters?: { 
-    specialty?: string; 
-    status?: string; 
-    conditions?: string[] 
+  async getMedicalGuidelines(filters?: {
+    specialty?: string;
+    status?: string;
+    conditions?: string[];
   }): Promise<MedicalGuideline[]> {
     const supabase = await this.getSupabase();
     let query = supabase.from('medical_guidelines').select('*');
@@ -345,16 +365,18 @@ export class MedicalKnowledgeBaseService {
     if (filters?.specialty) {
       query = query.eq('specialty', filters.specialty);
     }
-    
+
     if (filters?.status) {
       query = query.eq('status', filters.status);
     }
-    
+
     if (filters?.conditions?.length) {
       query = query.overlaps('conditions_covered', filters.conditions);
     }
 
-    const { data, error } = await query.order('publication_date', { ascending: false });
+    const { data, error } = await query.order('publication_date', {
+      ascending: false,
+    });
 
     if (error) {
       throw new Error(`Failed to fetch medical guidelines: ${error.message}`);
@@ -383,14 +405,17 @@ export class MedicalKnowledgeBaseService {
   }
 
   // Evidence Validation
-  async validateRecommendation(request: EvidenceValidationRequest): Promise<EvidenceValidationResponse> {
+  async validateRecommendation(
+    request: EvidenceValidationRequest
+  ): Promise<EvidenceValidationResponse> {
     const validatedRequest = evidenceValidationRequestSchema.parse(request);
     const supabase = await this.getSupabase();
 
     // Search for relevant evidence based on recommendation
-    const evidenceQuery = validatedRequest.recommendation_content.title || 
-                         validatedRequest.recommendation_content.summary || 
-                         'general medical evidence';
+    const evidenceQuery =
+      validatedRequest.recommendation_content.title ||
+      validatedRequest.recommendation_content.summary ||
+      'general medical evidence';
 
     const { data: evidence, error } = await supabase
       .from('medical_knowledge')
@@ -403,19 +428,28 @@ export class MedicalKnowledgeBaseService {
     }
 
     // Analyze evidence and generate validation response
-    const evidenceSources = evidence?.map(item => ({
-      source_id: item.source_id || '',
-      source_name: item.knowledge_sources?.source_name || 'Unknown',
-      evidence_level: item.evidence_level || 'Not Graded',
-      relevance_score: Math.random() * 0.4 + 0.6, // Simulate relevance scoring
-      supports_recommendation: Math.random() > 0.3, // Simulate evidence analysis
-      conflicting_evidence: Math.random() < 0.2, // Simulate conflict detection
-    })) || [];
+    const evidenceSources =
+      evidence?.map((item) => ({
+        source_id: item.source_id || '',
+        source_name: item.knowledge_sources?.source_name || 'Unknown',
+        evidence_level: item.evidence_level || 'Not Graded',
+        relevance_score: Math.random() * 0.4 + 0.6, // Simulate relevance scoring
+        supports_recommendation: Math.random() > 0.3, // Simulate evidence analysis
+        conflicting_evidence: Math.random() < 0.2, // Simulate conflict detection
+      })) || [];
 
-    const supportingEvidence = evidenceSources.filter(e => e.supports_recommendation);
-    const conflictingEvidence = evidenceSources.filter(e => e.conflicting_evidence);
+    const supportingEvidence = evidenceSources.filter(
+      (e) => e.supports_recommendation
+    );
+    const conflictingEvidence = evidenceSources.filter(
+      (e) => e.conflicting_evidence
+    );
 
-    let overallStatus: 'validated' | 'conflicted' | 'unsupported' | 'requires_review';
+    let overallStatus:
+      | 'validated'
+      | 'conflicted'
+      | 'unsupported'
+      | 'requires_review';
     let confidenceScore: number;
     let action: 'approve' | 'review' | 'reject' | 'modify';
     let humanReviewRequired: boolean;
@@ -459,7 +493,9 @@ export class MedicalKnowledgeBaseService {
       .single();
 
     if (storeError) {
-      throw new Error(`Failed to store validation result: ${storeError.message}`);
+      throw new Error(
+        `Failed to store validation result: ${storeError.message}`
+      );
     }
 
     return {
@@ -470,16 +506,20 @@ export class MedicalKnowledgeBaseService {
       recommendations: {
         action,
         reason: `Based on analysis of ${evidenceSources.length} evidence sources`,
-        suggested_modifications: conflictingEvidence.length > 0 
-          ? ['Review conflicting evidence', 'Consider alternative approaches']
-          : undefined,
+        suggested_modifications:
+          conflictingEvidence.length > 0
+            ? ['Review conflicting evidence', 'Consider alternative approaches']
+            : undefined,
       },
       human_review_required: humanReviewRequired,
     };
   }
 
   // Research Cache Management
-  async getCachedSearchResults(query: string, sourceId?: string): Promise<ResearchCache | null> {
+  async getCachedSearchResults(
+    query: string,
+    sourceId?: string
+  ): Promise<ResearchCache | null> {
     const supabase = await this.getSupabase();
 
     let dbQuery = supabase
@@ -504,7 +544,9 @@ export class MedicalKnowledgeBaseService {
     return data as ResearchCache;
   }
 
-  async cacheSearchResults(cacheData: Omit<ResearchCache, 'id' | 'cache_date'>): Promise<ResearchCache> {
+  async cacheSearchResults(
+    cacheData: Omit<ResearchCache, 'id' | 'cache_date'>
+  ): Promise<ResearchCache> {
     const supabase = await this.getSupabase();
 
     const { data, error } = await supabase
@@ -525,14 +567,19 @@ export class MedicalKnowledgeBaseService {
     const supabase = await this.getSupabase();
 
     // Get overview statistics
-    const [sourcesResult, knowledgeResult, validationsResult] = await Promise.all([
-      supabase.from('knowledge_sources').select('status', { count: 'exact' }),
-      supabase.from('medical_knowledge').select('id', { count: 'exact' }),
-      supabase.from('validation_results').select('validation_status', { count: 'exact' }).eq('validation_status', 'pending'),
-    ]);
+    const [sourcesResult, knowledgeResult, validationsResult] =
+      await Promise.all([
+        supabase.from('knowledge_sources').select('status', { count: 'exact' }),
+        supabase.from('medical_knowledge').select('id', { count: 'exact' }),
+        supabase
+          .from('validation_results')
+          .select('validation_status', { count: 'exact' })
+          .eq('validation_status', 'pending'),
+      ]);
 
     const totalSources = sourcesResult.count || 0;
-    const activeSources = sourcesResult.data?.filter(s => s.status === 'active').length || 0;
+    const activeSources =
+      sourcesResult.data?.filter((s) => s.status === 'active').length || 0;
     const totalKnowledge = knowledgeResult.count || 0;
     const validationsPending = validationsResult.count || 0;
 
@@ -546,14 +593,15 @@ export class MedicalKnowledgeBaseService {
       throw new Error(`Failed to fetch source details: ${sourceError.message}`);
     }
 
-    const sourceStatus = sourceDetails?.map(source => ({
-      source_id: source.id,
-      source_name: source.source_name,
-      status: source.status,
-      last_sync: source.last_sync || '',
-      item_count: Math.floor(Math.random() * 1000), // Simulate item count
-      health_score: Math.random() * 0.3 + 0.7, // Simulate health score
-    })) || [];
+    const sourceStatus =
+      sourceDetails?.map((source) => ({
+        source_id: source.id,
+        source_name: source.source_name,
+        status: source.status,
+        last_sync: source.last_sync || '',
+        item_count: Math.floor(Math.random() * 1000), // Simulate item count
+        health_score: Math.random() * 0.3 + 0.7, // Simulate health score
+      })) || [];
 
     return {
       overview: {
@@ -570,13 +618,13 @@ export class MedicalKnowledgeBaseService {
   }
 
   // Sync Management
-  async triggerSync(sourceId: string, forceFull: boolean = false): Promise<void> {
+  async triggerSync(sourceId: string, _forceFull = false): Promise<void> {
     const supabase = await this.getSupabase();
 
     // Update source status to syncing
     const { error: updateError } = await supabase
       .from('knowledge_sources')
-      .update({ 
+      .update({
         status: 'syncing',
         last_sync: new Date().toISOString(),
       })
@@ -591,7 +639,7 @@ export class MedicalKnowledgeBaseService {
     setTimeout(async () => {
       await supabase
         .from('knowledge_sources')
-        .update({ 
+        .update({
           status: 'active',
           last_sync: new Date().toISOString(),
         })
@@ -605,7 +653,15 @@ export class MedicalKnowledgeBaseService {
   }
 
   async getKnowledgeTypes(): Promise<string[]> {
-    return ['guideline', 'research', 'drug_info', 'diagnosis', 'treatment', 'protocol', 'reference'];
+    return [
+      'guideline',
+      'research',
+      'drug_info',
+      'diagnosis',
+      'treatment',
+      'protocol',
+      'reference',
+    ];
   }
 
   async getMedicalCategories(): Promise<string[]> {
@@ -621,7 +677,7 @@ export class MedicalKnowledgeBaseService {
     }
 
     const categories = new Set<string>();
-    data?.forEach(item => {
+    data?.forEach((item) => {
       item.medical_categories?.forEach((cat: string) => categories.add(cat));
     });
 

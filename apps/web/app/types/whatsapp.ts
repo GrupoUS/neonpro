@@ -41,7 +41,7 @@ export enum WhatsAppMessageType {
   VIDEO = 'video',
   LOCATION = 'location',
   CONTACT = 'contact',
-  INTERACTIVE = 'interactive'
+  INTERACTIVE = 'interactive',
 }
 
 export enum WhatsAppMessageStatus {
@@ -49,7 +49,7 @@ export enum WhatsAppMessageStatus {
   SENT = 'sent',
   DELIVERED = 'delivered',
   READ = 'read',
-  FAILED = 'failed'
+  FAILED = 'failed',
 }
 
 export interface WhatsAppTemplate {
@@ -68,14 +68,14 @@ export interface WhatsAppTemplate {
 export enum WhatsAppTemplateCategory {
   AUTHENTICATION = 'authentication',
   MARKETING = 'marketing',
-  UTILITY = 'utility'
+  UTILITY = 'utility',
 }
 
 export enum WhatsAppTemplateStatus {
   PENDING = 'PENDING',
   APPROVED = 'APPROVED',
   REJECTED = 'REJECTED',
-  PAUSED = 'PAUSED'
+  PAUSED = 'PAUSED',
 }
 
 export interface WhatsAppTemplateComponent {
@@ -178,7 +178,12 @@ export interface WhatsAppWebhookPayload {
 // NeonPro specific integration types
 export interface PatientWhatsAppNotification {
   patientId: string;
-  notificationType: 'appointment_reminder' | 'appointment_confirmation' | 'treatment_followup' | 'payment_reminder' | 'welcome_message';
+  notificationType:
+    | 'appointment_reminder'
+    | 'appointment_confirmation'
+    | 'treatment_followup'
+    | 'payment_reminder'
+    | 'welcome_message';
   scheduleTime?: Date;
   templateName: string;
   templateParams: Record<string, string>;

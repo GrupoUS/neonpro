@@ -3,9 +3,9 @@
 // API endpoint for integrating retention interventions with CRM campaigns
 // =====================================================================================
 
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { createClient } from '@/app/utils/supabase/server';
 
 // =====================================================================================
 // VALIDATION SCHEMAS
@@ -15,7 +15,9 @@ const CreateRetentionCampaignSchema = z.object({
   clinicId: z.string().uuid('Invalid clinic ID format'),
   name: z.string().min(1, 'Campaign name is required'),
   description: z.string().optional(),
-  targetSegments: z.array(z.string()).min(1, 'At least one target segment required'),
+  targetSegments: z
+    .array(z.string())
+    .min(1, 'At least one target segment required'),
   triggerConditions: z.object({
     churnProbabilityThreshold: z.number().min(0).max(1),
     daysSinceLastVisit: z.number().min(1),
@@ -39,7 +41,14 @@ const CreateRetentionCampaignSchema = z.object({
     }),
   }),
   measurementCriteria: z.object({
-    successMetrics: z.array(z.enum(['return_visit', 'booking_scheduled', 'payment_made', 'engagement_rate'])),
+    successMetrics: z.array(
+      z.enum([
+        'return_visit',
+        'booking_scheduled',
+        'payment_made',
+        'engagement_rate',
+      ])
+    ),
     trackingPeriodDays: z.number().min(1).max(365).default(30),
     abtestEnabled: z.boolean().default(false),
     abtestSplitPercentage: z.number().min(10).max(90).optional(),
@@ -110,18 +119,27 @@ export async function GET(request: NextRequest) {
     }
 
     // Calculate campaign performance metrics
-    const enrichedCampaigns = campaigns.map(campaign => {
+    const enrichedCampaigns = campaigns.map((campaign) => {
       const metrics = campaign.campaign_metrics[0] || {};
       const executions = campaign.executions[0]?.count || 0;
-      
+
       return {
         ...campaign,
         performance: {
-          deliveryRate: metrics.sent > 0 ? (metrics.delivered / metrics.sent) * 100 : 0,
-          openRate: metrics.delivered > 0 ? (metrics.opened / metrics.delivered) * 100 : 0,
-          clickRate: metrics.opened > 0 ? (metrics.clicked / metrics.opened) * 100 : 0,
-          conversionRate: metrics.sent > 0 ? (metrics.conversions / metrics.sent) * 100 : 0,
-          roi: metrics.costs > 0 ? ((metrics.revenue - metrics.costs) / metrics.costs) * 100 : 0,
+          deliveryRate:
+            metrics.sent > 0 ? (metrics.delivered / metrics.sent) * 100 : 0,
+          openRate:
+            metrics.delivered > 0
+              ? (metrics.opened / metrics.delivered) * 100
+              : 0,
+          clickRate:
+            metrics.opened > 0 ? (metrics.clicked / metrics.opened) * 100 : 0,
+          conversionRate:
+            metrics.sent > 0 ? (metrics.conversions / metrics.sent) * 100 : 0,
+          roi:
+            metrics.costs > 0
+              ? ((metrics.revenue - metrics.costs) / metrics.costs) * 100
+              : 0,
           totalExecutions: executions,
         },
         lastExecuted: campaign.executions[0]?.executed_at || null,
@@ -133,15 +151,14 @@ export async function GET(request: NextRequest) {
       data: enrichedCampaigns,
       total: enrichedCampaigns.length,
     });
-
   } catch (error) {
     console.error('GET /api/retention-analytics/campaigns error:', error);
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: 'Failed to fetch retention campaigns',
-        message: error instanceof Error ? error.message : 'Unknown error'
-      }, 
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
       { status: 500 }
     );
   }
@@ -158,9 +175,9 @@ export async function POST(request: NextRequest) {
 
     if (!validation.success) {
       return NextResponse.json(
-        { 
-          error: 'Invalid campaign data', 
-          details: validation.error.issues 
+        {
+          error: 'Invalid campaign data',
+          details: validation.error.issues,
         },
         { status: 400 }
       );
@@ -202,7 +219,9 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (campaignError) {
-      throw new Error(`Failed to create retention campaign: ${campaignError.message}`);
+      throw new Error(
+        `Failed to create retention campaign: ${campaignError.message}`
+      );
     }
 
     // Initialize campaign metrics
@@ -225,20 +244,22 @@ export async function POST(request: NextRequest) {
       console.error('Failed to initialize campaign metrics:', metricsError);
     }
 
-    return NextResponse.json({
-      success: true,
-      data: campaign,
-      message: 'Retention campaign created successfully',
-    }, { status: 201 });
-
+    return NextResponse.json(
+      {
+        success: true,
+        data: campaign,
+        message: 'Retention campaign created successfully',
+      },
+      { status: 201 }
+    );
   } catch (error) {
     console.error('POST /api/retention-analytics/campaigns error:', error);
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: 'Failed to create retention campaign',
-        message: error instanceof Error ? error.message : 'Unknown error'
-      }, 
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
       { status: 500 }
     );
   }
@@ -255,9 +276,9 @@ export async function PATCH(request: NextRequest) {
 
     if (!validation.success) {
       return NextResponse.json(
-        { 
-          error: 'Invalid metrics data', 
-          details: validation.error.issues 
+        {
+          error: 'Invalid metrics data',
+          details: validation.error.issues,
         },
         { status: 400 }
       );
@@ -286,15 +307,14 @@ export async function PATCH(request: NextRequest) {
       data: updatedMetrics,
       message: 'Campaign metrics updated successfully',
     });
-
   } catch (error) {
     console.error('PATCH /api/retention-analytics/campaigns error:', error);
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: 'Failed to update campaign metrics',
-        message: error instanceof Error ? error.message : 'Unknown error'
-      }, 
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
       { status: 500 }
     );
   }

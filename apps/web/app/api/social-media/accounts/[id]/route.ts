@@ -1,13 +1,13 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { createClient } from '@/app/utils/supabase/server';
 
 /**
  * Individual Social Media Account API Route
- * 
+ *
  * Handles operations for specific social media accounts:
  * - GET: Retrieve account details
- * - PUT: Update account settings  
+ * - PUT: Update account settings
  * - DELETE: Disconnect account
  * - POST: Refresh/sync account data
  */
@@ -17,7 +17,7 @@ const updateAccountSchema = z.object({
   account_handle: z.string().max(255).optional(),
   sync_settings: z.record(z.any()).optional(),
   sync_status: z.enum(['active', 'error', 'paused', 'disconnected']).optional(),
-  status: z.enum(['active', 'inactive', 'suspended', 'deleted']).optional()
+  status: z.enum(['active', 'inactive', 'suspended', 'deleted']).optional(),
 });
 
 interface RouteParams {
@@ -28,19 +28,18 @@ interface RouteParams {
 
 /**
  * GET /api/social-media/accounts/[id]
- * 
+ *
  * Retrieves specific social media account details
  */
-export async function GET(
-  request: NextRequest,
-  { params }: RouteParams
-) {
+export async function GET(_request: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
     const supabase = await createClient();
-    
+
     // Verify authentication
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session) {
       return NextResponse.json(
         { error: 'Authentication required' },
@@ -92,10 +91,7 @@ export async function GET(
       .single();
 
     if (error || !account) {
-      return NextResponse.json(
-        { error: 'Account not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Account not found' }, { status: 404 });
     }
 
     // Add token status information
@@ -103,17 +99,17 @@ export async function GET(
       ...account,
       has_access_token: !!account.access_token,
       has_refresh_token: !!account.refresh_token,
-      token_valid: account.token_expires_at ? 
-        new Date(account.token_expires_at) > new Date() : null,
+      token_valid: account.token_expires_at
+        ? new Date(account.token_expires_at) > new Date()
+        : null,
       access_token: undefined,
-      refresh_token: undefined
+      refresh_token: undefined,
     };
 
     return NextResponse.json({
       success: true,
-      data: accountWithTokenStatus
+      data: accountWithTokenStatus,
     });
-
   } catch (error) {
     console.error('Social media account GET error:', error);
     return NextResponse.json(
@@ -121,21 +117,20 @@ export async function GET(
       { status: 500 }
     );
   }
-}/**
+} /**
  * PUT /api/social-media/accounts/[id]
- * 
+ *
  * Updates social media account settings
  */
-export async function PUT(
-  request: NextRequest,
-  { params }: RouteParams
-) {
+export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
     const supabase = await createClient();
-    
+
     // Verify authentication
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session) {
       return NextResponse.json(
         { error: 'Authentication required' },
@@ -166,10 +161,7 @@ export async function PUT(
       .single();
 
     if (!existingAccount) {
-      return NextResponse.json(
-        { error: 'Account not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Account not found' }, { status: 404 });
     }
 
     // Parse and validate request body
@@ -181,7 +173,7 @@ export async function PUT(
       .from('social_media_accounts')
       .update({
         ...validatedData,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', id)
       .eq('clinic_id', profile.clinic_id)
@@ -210,12 +202,11 @@ export async function PUT(
     return NextResponse.json({
       success: true,
       data: updatedAccount,
-      message: 'Account updated successfully'
+      message: 'Account updated successfully',
     });
-
   } catch (error) {
     console.error('Social media account PUT error:', error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },
@@ -232,19 +223,18 @@ export async function PUT(
 
 /**
  * DELETE /api/social-media/accounts/[id]
- * 
+ *
  * Disconnects/deletes social media account
  */
-export async function DELETE(
-  request: NextRequest,
-  { params }: RouteParams
-) {
+export async function DELETE(_request: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
     const supabase = await createClient();
-    
+
     // Verify authentication
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session) {
       return NextResponse.json(
         { error: 'Authentication required' },
@@ -283,10 +273,7 @@ export async function DELETE(
       .single();
 
     if (!existingAccount) {
-      return NextResponse.json(
-        { error: 'Account not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Account not found' }, { status: 404 });
     }
 
     // Check for dependent records (posts, analytics)
@@ -303,7 +290,7 @@ export async function DELETE(
         .update({
           status: 'deleted',
           sync_status: 'disconnected',
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', id)
         .eq('clinic_id', profile.clinic_id);
@@ -318,30 +305,28 @@ export async function DELETE(
 
       return NextResponse.json({
         success: true,
-        message: 'Account disconnected successfully (data preserved)'
-      });
-    } else {
-      // Hard delete - no dependent records
-      const { error } = await supabase
-        .from('social_media_accounts')
-        .delete()
-        .eq('id', id)
-        .eq('clinic_id', profile.clinic_id);
-
-      if (error) {
-        console.error('Error deleting social media account:', error);
-        return NextResponse.json(
-          { error: 'Failed to delete account' },
-          { status: 500 }
-        );
-      }
-
-      return NextResponse.json({
-        success: true,
-        message: 'Account deleted successfully'
+        message: 'Account disconnected successfully (data preserved)',
       });
     }
+    // Hard delete - no dependent records
+    const { error } = await supabase
+      .from('social_media_accounts')
+      .delete()
+      .eq('id', id)
+      .eq('clinic_id', profile.clinic_id);
 
+    if (error) {
+      console.error('Error deleting social media account:', error);
+      return NextResponse.json(
+        { error: 'Failed to delete account' },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: 'Account deleted successfully',
+    });
   } catch (error) {
     console.error('Social media account DELETE error:', error);
     return NextResponse.json(
@@ -349,21 +334,20 @@ export async function DELETE(
       { status: 500 }
     );
   }
-}/**
+} /**
  * POST /api/social-media/accounts/[id]
- * 
+ *
  * Triggers account sync/refresh operations
  */
-export async function POST(
-  request: NextRequest,
-  { params }: RouteParams
-) {
+export async function POST(request: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
     const supabase = await createClient();
-    
+
     // Verify authentication
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session) {
       return NextResponse.json(
         { error: 'Authentication required' },
@@ -398,14 +382,11 @@ export async function POST(
       .single();
 
     if (!account) {
-      return NextResponse.json(
-        { error: 'Account not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Account not found' }, { status: 404 });
     }
 
     switch (action) {
-      case 'sync':
+      case 'sync': {
         // Update sync timestamp and status
         const { error: syncError } = await supabase
           .from('social_media_accounts')
@@ -413,7 +394,7 @@ export async function POST(
             last_sync_at: new Date().toISOString(),
             sync_status: 'active',
             sync_error_message: null,
-            updated_at: new Date().toISOString()
+            updated_at: new Date().toISOString(),
           })
           .eq('id', id);
 
@@ -426,8 +407,9 @@ export async function POST(
 
         return NextResponse.json({
           success: true,
-          message: 'Account sync initiated successfully'
+          message: 'Account sync initiated successfully',
         });
+      }
 
       case 'test_connection':
         // TODO: Implement connection test logic
@@ -438,17 +420,13 @@ export async function POST(
           message: 'Connection test completed',
           data: {
             connection_status: 'active',
-            last_tested: new Date().toISOString()
-          }
+            last_tested: new Date().toISOString(),
+          },
         });
 
       default:
-        return NextResponse.json(
-          { error: 'Invalid action' },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     }
-
   } catch (error) {
     console.error('Social media account POST error:', error);
     return NextResponse.json(

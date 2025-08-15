@@ -1,5 +1,5 @@
+import { type NextRequest, NextResponse } from 'next/server';
 import { PredictiveAnalyticsService } from '@/app/lib/services/predictive-analytics';
-import { NextRequest, NextResponse } from 'next/server';
 
 const service = new PredictiveAnalyticsService();
 
@@ -9,7 +9,7 @@ export async function PUT(
 ) {
   try {
     const body = await request.json();
-    
+
     const alert = await service.updateAlert(params.id, body);
 
     return NextResponse.json(alert);
@@ -23,7 +23,7 @@ export async function PUT(
 }
 
 export async function DELETE(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {

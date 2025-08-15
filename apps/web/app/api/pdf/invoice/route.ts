@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { renderToBuffer } from '@react-pdf/renderer';
+import { type NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
 import { generateInvoicePDF } from '@/lib/payments/pdf';
-import { renderToBuffer } from '@react-pdf/renderer';
 
 /**
  * API para download de PDF de faturas
@@ -10,13 +10,13 @@ export async function GET(request: NextRequest) {
   try {
     // Validar autenticação
     const supabase = createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Não autorizado' }, 
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
     // Extrair ID da fatura da URL
@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
 
     if (!invoiceId) {
       return NextResponse.json(
-        { error: 'ID da fatura obrigatório' }, 
+        { error: 'ID da fatura obrigatório' },
         { status: 400 }
       );
     }
@@ -47,14 +47,14 @@ export async function GET(request: NextRequest) {
 
     if (invoiceError || !invoice) {
       return NextResponse.json(
-        { error: 'Fatura não encontrada' }, 
+        { error: 'Fatura não encontrada' },
         { status: 404 }
       );
     }
 
     if (!invoice.profiles) {
       return NextResponse.json(
-        { error: 'Dados do cliente não encontrados' }, 
+        { error: 'Dados do cliente não encontrados' },
         { status: 404 }
       );
     }
@@ -69,7 +69,7 @@ export async function GET(request: NextRequest) {
         status: invoice.status,
         clientName: invoice.profiles.full_name || invoice.profiles.email,
         clientEmail: invoice.profiles.email,
-        issuedAt: invoice.created_at
+        issuedAt: invoice.created_at,
       });
 
       const pdfBuffer = await renderToBuffer(pdfDocument);
@@ -82,19 +82,17 @@ export async function GET(request: NextRequest) {
           'Content-Length': pdfBuffer.length.toString(),
         },
       });
-
     } catch (pdfError) {
       console.error('Erro ao gerar PDF:', pdfError);
       return NextResponse.json(
-        { error: 'Falha ao gerar PDF' }, 
+        { error: 'Falha ao gerar PDF' },
         { status: 500 }
       );
     }
-
   } catch (error) {
     console.error('Erro no download de PDF:', error);
     return NextResponse.json(
-      { error: 'Erro interno do servidor' }, 
+      { error: 'Erro interno do servidor' },
       { status: 500 }
     );
   }
@@ -107,13 +105,13 @@ export async function POST(request: NextRequest) {
   try {
     // Validar autenticação
     const supabase = createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Não autorizado' }, 
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
     // Extrair dados do corpo da requisição
@@ -122,7 +120,7 @@ export async function POST(request: NextRequest) {
 
     if (!invoiceId) {
       return NextResponse.json(
-        { error: 'ID da fatura obrigatório' }, 
+        { error: 'ID da fatura obrigatório' },
         { status: 400 }
       );
     }
@@ -144,14 +142,14 @@ export async function POST(request: NextRequest) {
 
     if (invoiceError || !invoice) {
       return NextResponse.json(
-        { error: 'Fatura não encontrada' }, 
+        { error: 'Fatura não encontrada' },
         { status: 404 }
       );
     }
 
     if (!invoice.profiles) {
       return NextResponse.json(
-        { error: 'Dados do cliente não encontrados' }, 
+        { error: 'Dados do cliente não encontrados' },
         { status: 404 }
       );
     }
@@ -166,7 +164,7 @@ export async function POST(request: NextRequest) {
         status: invoice.status,
         clientName: invoice.profiles.full_name || invoice.profiles.email,
         clientEmail: invoice.profiles.email,
-        issuedAt: invoice.created_at
+        issuedAt: invoice.created_at,
       });
 
       const pdfBuffer = await renderToBuffer(pdfDocument);
@@ -177,7 +175,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({
           success: true,
           pdfData: `data:application/pdf;base64,${base64Pdf}`,
-          fileName: `fatura-${invoice.invoice_number}.pdf`
+          fileName: `fatura-${invoice.invoice_number}.pdf`,
         });
       }
 
@@ -189,19 +187,17 @@ export async function POST(request: NextRequest) {
           'Content-Length': pdfBuffer.length.toString(),
         },
       });
-
     } catch (pdfError) {
       console.error('Erro ao gerar PDF:', pdfError);
       return NextResponse.json(
-        { error: 'Falha ao gerar PDF' }, 
+        { error: 'Falha ao gerar PDF' },
         { status: 500 }
       );
     }
-
   } catch (error) {
     console.error('Erro no processo de PDF:', error);
     return NextResponse.json(
-      { error: 'Erro interno do servidor' }, 
+      { error: 'Erro interno do servidor' },
       { status: 500 }
     );
   }

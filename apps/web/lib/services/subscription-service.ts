@@ -1,15 +1,11 @@
+import type Stripe from 'stripe';
 import { createClient } from '@/app/utils/supabase/server';
-import { stripe } from '@/lib/stripe';
-import Stripe from 'stripe';
 import { NEONPRO_PLANS, type PlanId } from '@/lib/constants/plans';
+import { stripe } from '@/lib/stripe';
 
 // Subscription service class
 export class SubscriptionService {
   private supabase: any;
-
-  constructor() {
-    // Initialize Supabase client when needed
-  }
 
   private async getSupabaseClient() {
     if (!this.supabase) {
@@ -27,7 +23,7 @@ export class SubscriptionService {
     cancelUrl: string
   ): Promise<Stripe.Checkout.Session> {
     const plan = NEONPRO_PLANS[planId];
-    
+
     if (!plan) {
       throw new Error(`Invalid plan ID: ${planId}`);
     }
@@ -89,7 +85,9 @@ export class SubscriptionService {
   }
 
   // Get customer's active subscription
-  async getActiveSubscription(customerId: string): Promise<Stripe.Subscription | null> {
+  async getActiveSubscription(
+    customerId: string
+  ): Promise<Stripe.Subscription | null> {
     try {
       const subscriptions = await stripe.subscriptions.list({
         customer: customerId,
@@ -105,7 +103,9 @@ export class SubscriptionService {
   }
 
   // Cancel subscription
-  async cancelSubscription(subscriptionId: string): Promise<Stripe.Subscription> {
+  async cancelSubscription(
+    subscriptionId: string
+  ): Promise<Stripe.Subscription> {
     try {
       const subscription = await stripe.subscriptions.update(subscriptionId, {
         cancel_at_period_end: true,
@@ -119,7 +119,9 @@ export class SubscriptionService {
   }
 
   // Reactivate subscription
-  async reactivateSubscription(subscriptionId: string): Promise<Stripe.Subscription> {
+  async reactivateSubscription(
+    subscriptionId: string
+  ): Promise<Stripe.Subscription> {
     try {
       const subscription = await stripe.subscriptions.update(subscriptionId, {
         cancel_at_period_end: false,
@@ -146,19 +148,18 @@ export class SubscriptionService {
   ): Promise<void> {
     try {
       const supabase = await this.getSupabaseClient();
-      
-      const { error } = await supabase
-        .from('user_subscriptions')
-        .upsert({
-          user_id: userId,
-          stripe_customer_id: subscriptionData.stripeCustomerId,
-          stripe_subscription_id: subscriptionData.stripeSubscriptionId,
-          plan_id: subscriptionData.planId,
-          status: subscriptionData.status,
-          current_period_start: subscriptionData.currentPeriodStart?.toISOString(),
-          current_period_end: subscriptionData.currentPeriodEnd?.toISOString(),
-          updated_at: new Date().toISOString(),
-        });
+
+      const { error } = await supabase.from('user_subscriptions').upsert({
+        user_id: userId,
+        stripe_customer_id: subscriptionData.stripeCustomerId,
+        stripe_subscription_id: subscriptionData.stripeSubscriptionId,
+        plan_id: subscriptionData.planId,
+        status: subscriptionData.status,
+        current_period_start:
+          subscriptionData.currentPeriodStart?.toISOString(),
+        current_period_end: subscriptionData.currentPeriodEnd?.toISOString(),
+        updated_at: new Date().toISOString(),
+      });
 
       if (error) {
         throw error;
@@ -173,7 +174,7 @@ export class SubscriptionService {
   async getUserSubscription(userId: string): Promise<any> {
     try {
       const supabase = await this.getSupabaseClient();
-      
+
       const { data, error } = await supabase
         .from('user_subscriptions')
         .select('*')
@@ -195,9 +196,9 @@ export class SubscriptionService {
   async hasActiveSubscription(userId: string): Promise<boolean> {
     try {
       const subscription = await this.getUserSubscription(userId);
-      
+
       if (!subscription) return false;
-      
+
       return (
         subscription.status === 'active' &&
         new Date(subscription.current_period_end) > new Date()
@@ -251,16 +252,22 @@ export class StripeWebhookHandler {
 
     switch (event.type) {
       case 'checkout.session.completed':
-        await this.handleCheckoutCompleted(event.data.object as Stripe.Checkout.Session);
+        await this.handleCheckoutCompleted(
+          event.data.object as Stripe.Checkout.Session
+        );
         break;
 
       case 'customer.subscription.created':
       case 'customer.subscription.updated':
-        await this.handleSubscriptionChange(event.data.object as Stripe.Subscription);
+        await this.handleSubscriptionChange(
+          event.data.object as Stripe.Subscription
+        );
         break;
 
       case 'customer.subscription.deleted':
-        await this.handleSubscriptionDeleted(event.data.object as Stripe.Subscription);
+        await this.handleSubscriptionDeleted(
+          event.data.object as Stripe.Subscription
+        );
         break;
 
       case 'invoice.payment_succeeded':
@@ -276,10 +283,12 @@ export class StripeWebhookHandler {
     }
   }
 
-  private async handleCheckoutCompleted(session: Stripe.Checkout.Session): Promise<void> {
+  private async handleCheckoutCompleted(
+    session: Stripe.Checkout.Session
+  ): Promise<void> {
     try {
       const userId = session.metadata?.userId;
-      
+
       if (!userId) {
         console.error('No userId in checkout session metadata');
         return;
@@ -295,8 +304,12 @@ export class StripeWebhookHandler {
         stripeSubscriptionId: subscription.id,
         planId: session.metadata?.planId,
         status: subscription.status,
-        currentPeriodStart: new Date((subscription as any).current_period_start * 1000),
-        currentPeriodEnd: new Date((subscription as any).current_period_end * 1000),
+        currentPeriodStart: new Date(
+          (subscription as any).current_period_start * 1000
+        ),
+        currentPeriodEnd: new Date(
+          (subscription as any).current_period_end * 1000
+        ),
       });
 
       console.log(`Subscription created for user ${userId}`);
@@ -305,10 +318,12 @@ export class StripeWebhookHandler {
     }
   }
 
-  private async handleSubscriptionChange(subscription: Stripe.Subscription): Promise<void> {
+  private async handleSubscriptionChange(
+    subscription: Stripe.Subscription
+  ): Promise<void> {
     try {
       const userId = subscription.metadata?.userId;
-      
+
       if (!userId) {
         console.error('No userId in subscription metadata');
         return;
@@ -316,20 +331,28 @@ export class StripeWebhookHandler {
 
       await this.subscriptionService.updateUserSubscription(userId, {
         status: subscription.status,
-        currentPeriodStart: new Date((subscription as any).current_period_start * 1000),
-        currentPeriodEnd: new Date((subscription as any).current_period_end * 1000),
+        currentPeriodStart: new Date(
+          (subscription as any).current_period_start * 1000
+        ),
+        currentPeriodEnd: new Date(
+          (subscription as any).current_period_end * 1000
+        ),
       });
 
-      console.log(`Subscription updated for user ${userId}: ${subscription.status}`);
+      console.log(
+        `Subscription updated for user ${userId}: ${subscription.status}`
+      );
     } catch (error) {
       console.error('Error handling subscription change:', error);
     }
   }
 
-  private async handleSubscriptionDeleted(subscription: Stripe.Subscription): Promise<void> {
+  private async handleSubscriptionDeleted(
+    subscription: Stripe.Subscription
+  ): Promise<void> {
     try {
       const userId = subscription.metadata?.userId;
-      
+
       if (!userId) {
         console.error('No userId in subscription metadata');
         return;

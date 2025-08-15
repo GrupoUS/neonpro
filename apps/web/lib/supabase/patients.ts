@@ -1,28 +1,30 @@
 /**
  * Supabase Patient Management Functions
- * 
+ *
  * Provides FHIR-compliant database operations for patient management
  * with LGPD compliance and comprehensive audit logging.
  */
 
 import { createClient } from '@/app/utils/supabase/client';
-import { createServerClient } from '@/app/utils/supabase/server';
-import { 
-  FHIRPatient, 
-  PatientDB, 
-  PatientConsentDB, 
-  MedicalConditionDB, 
+import type {
   AllergyIntoleranceDB,
-  LGPDConsent
+  FHIRPatient,
+  MedicalConditionDB,
+  PatientConsentDB,
+  PatientDB,
 } from '@/lib/types/fhir';
-import type { 
-  PatientRegistrationData, 
-  PatientSearchParams 
+import type {
+  PatientRegistrationData,
+  PatientSearchParams,
 } from '@/lib/validations/patient';
 
 // Error types for better error handling
 export class PatientError extends Error {
-  constructor(message: string, public code: string, public statusCode: number = 500) {
+  constructor(
+    message: string,
+    public code: string,
+    public statusCode = 500
+  ) {
     super(message);
     this.name = 'PatientError';
   }
@@ -33,9 +35,12 @@ export function transformRegistrationToFHIR(
   data: PatientRegistrationData,
   clinic_id: string,
   user_id: string
-): { patient: Omit<PatientDB, 'id'>, consents: Omit<PatientConsentDB, 'id' | 'patient_id'>[] } {
+): {
+  patient: Omit<PatientDB, 'id'>;
+  consents: Omit<PatientConsentDB, 'id' | 'patient_id'>[];
+} {
   const now = new Date().toISOString();
-  
+
   // Build FHIR Patient resource
   const fhir_patient: FHIRPatient = {
     resourceType: 'Patient',
@@ -43,61 +48,77 @@ export function transformRegistrationToFHIR(
       {
         use: 'official',
         type: {
-          coding: [{
-            system: 'http://terminology.hl7.org/CodeSystem/v2-0203',
-            code: 'MR',
-            display: 'Medical Record Number'
-          }],
-          text: 'Medical Record Number'
+          coding: [
+            {
+              system: 'http://terminology.hl7.org/CodeSystem/v2-0203',
+              code: 'MR',
+              display: 'Medical Record Number',
+            },
+          ],
+          text: 'Medical Record Number',
         },
         system: `${process.env.NEXT_PUBLIC_SITE_URL}/patients`,
-        value: data.medical_record_number
-      }
+        value: data.medical_record_number,
+      },
     ],
     active: true,
-    name: [{
-      use: 'official',
-      family: data.family_name,
-      given: data.given_names,
-      text: `${data.given_names.join(' ')} ${data.family_name}`
-    }],
+    name: [
+      {
+        use: 'official',
+        family: data.family_name,
+        given: data.given_names,
+        text: `${data.given_names.join(' ')} ${data.family_name}`,
+      },
+    ],
     telecom: [
       {
         system: 'phone',
         value: data.phone_primary,
         use: 'mobile',
-        rank: 1
-      }
+        rank: 1,
+      },
     ],
     gender: data.gender,
     birthDate: data.birth_date,
-    address: [{
-      use: 'home',
-      type: 'physical',
-      line: data.address_line2 ? [data.address_line1, data.address_line2] : [data.address_line1],
-      city: data.city,
-      state: data.state,
-      postalCode: data.postal_code,
-      country: data.country || 'BR'
-    }],
-    contact: [{
-      relationship: [{
-        coding: [{
-          system: 'http://terminology.hl7.org/CodeSystem/v2-0131',
-          code: 'EP',
-          display: 'Emergency contact person'
-        }],
-        text: data.emergency_contact_relationship
-      }],
-      name: {
-        text: data.emergency_contact_name
+    address: [
+      {
+        use: 'home',
+        type: 'physical',
+        line: data.address_line2
+          ? [data.address_line1, data.address_line2]
+          : [data.address_line1],
+        city: data.city,
+        state: data.state,
+        postalCode: data.postal_code,
+        country: data.country || 'BR',
       },
-      telecom: [{
-        system: 'phone',
-        value: data.emergency_contact_phone,
-        use: 'home'
-      }]
-    }]
+    ],
+    contact: [
+      {
+        relationship: [
+          {
+            coding: [
+              {
+                system: 'http://terminology.hl7.org/CodeSystem/v2-0131',
+                code: 'EP',
+                display: 'Emergency contact person',
+              },
+            ],
+            text: data.emergency_contact_relationship,
+          },
+        ],
+        name: {
+          text: data.emergency_contact_name,
+        },
+        telecom: [
+          {
+            system: 'phone',
+            value: data.emergency_contact_phone,
+            use: 'home',
+          },
+        ],
+      },
+    ],
   };
 
   // Add optional fields
@@ -105,15 +126,18 @@ export function transformRegistrationToFHIR(
     fhir_patient.identifier?.push({
       use: 'official',
       type: {
-        coding: [{
-          system: 'http://www.saude.gov.br/fhir/r4/CodeSystem/BRTipoDocumento',
-          code: 'CPF',
-          display: 'Cadastro de Pessoa Física'
-        }],
-        text: 'CPF'
+        coding: [
+          {
+            system:
+              'http://www.saude.gov.br/fhir/r4/CodeSystem/BRTipoDocumento',
+            code: 'CPF',
+            display: 'Cadastro de Pessoa Física',
+          },
+        ],
+        text: 'CPF',
       },
       system: 'http://www.receita.fazenda.gov.br/cpf',
-      value: data.cpf
+      value: data.cpf,
     });
   }
 
@@ -121,14 +145,17 @@ export function transformRegistrationToFHIR(
     fhir_patient.identifier?.push({
       use: 'official',
       type: {
-        coding: [{
-          system: 'http://www.saude.gov.br/fhir/r4/CodeSystem/BRTipoDocumento',
-          code: 'RG',
-          display: 'Registro Geral'
-        }],
-        text: 'RG'
+        coding: [
+          {
+            system:
+              'http://www.saude.gov.br/fhir/r4/CodeSystem/BRTipoDocumento',
+            code: 'RG',
+            display: 'Registro Geral',
+          },
+        ],
+        text: 'RG',
       },
-      value: data.rg
+      value: data.rg,
     });
   }
 
@@ -136,7 +163,7 @@ export function transformRegistrationToFHIR(
     fhir_patient.telecom?.push({
       system: 'email',
       value: data.email,
-      use: 'home'
+      use: 'home',
     });
   }
 
@@ -145,7 +172,7 @@ export function transformRegistrationToFHIR(
       system: 'phone',
       value: data.phone_secondary,
       use: 'home',
-      rank: 2
+      rank: 2,
     });
   }
 
@@ -153,31 +180,37 @@ export function transformRegistrationToFHIR(
     fhir_patient.contact?.[0]?.telecom?.push({
       system: 'email',
       value: data.emergency_contact_email,
-      use: 'home'
+      use: 'home',
     });
   }
 
   if (data.marital_status) {
     fhir_patient.maritalStatus = {
-      coding: [{
-        system: 'http://terminology.hl7.org/CodeSystem/v3-MaritalStatus',
-        code: data.marital_status.toUpperCase(),
-        display: data.marital_status
-      }],
-      text: data.marital_status
+      coding: [
+        {
+          system: 'http://terminology.hl7.org/CodeSystem/v3-MaritalStatus',
+          code: data.marital_status.toUpperCase(),
+          display: data.marital_status,
+        },
+      ],
+      text: data.marital_status,
     };
   }
 
   if (data.preferred_language && data.preferred_language !== 'pt-BR') {
-    fhir_patient.communication = [{
-      language: {
-        coding: [{
-          system: 'urn:ietf:bcp:47',
-          code: data.preferred_language
-        }]
+    fhir_patient.communication = [
+      {
+        language: {
+          coding: [
+            {
+              system: 'urn:ietf:bcp:47',
+              code: data.preferred_language,
+            },
+          ],
+        },
+        preferred: true,
       },
-      preferred: true
-    }];
+    ];
   }
 
   // Create patient record
@@ -189,7 +222,7 @@ export function transformRegistrationToFHIR(
     created_at: now,
     updated_at: now,
     created_by: user_id,
-    updated_by: user_id
+    updated_by: user_id,
   };
 
   // Create LGPD consents
@@ -200,28 +233,41 @@ export function transformRegistrationToFHIR(
     consents.push({
       consent_type: 'explicit',
       purpose: 'Healthcare service provision and medical record management',
-      data_categories: ['demographics', 'contact_information', 'medical_history', 'emergency_contacts'],
+      data_categories: [
+        'demographics',
+        'contact_information',
+        'medical_history',
+        'emergency_contacts',
+      ],
       retention_period_years: 20, // Minimum for medical records in Brazil
       consent_date: now,
       is_active: true,
-      legal_basis_article: 'LGPD Article 11, Item I - Health data processing for healthcare provision',
-      processing_details: 'Patient data will be used for healthcare service provision, appointment scheduling, medical record management, and emergency contact purposes.',
+      legal_basis_article:
+        'LGPD Article 11, Item I - Health data processing for healthcare provision',
+      processing_details:
+        'Patient data will be used for healthcare service provision, appointment scheduling, medical record management, and emergency contact purposes.',
       created_at: now,
-      updated_at: now
+      updated_at: now,
     });
-  }  // Marketing consent (optional)
+  } // Marketing consent (optional)
   if (data.lgpd_consent_marketing) {
     consents.push({
       consent_type: 'explicit',
       purpose: 'Marketing communications and promotional materials',
-      data_categories: ['contact_information', 'demographics', 'service_preferences'],
+      data_categories: [
+        'contact_information',
+        'demographics',
+        'service_preferences',
+      ],
       retention_period_years: 5,
       consent_date: now,
       is_active: true,
-      legal_basis_article: 'LGPD Article 7, Item I - Explicit consent for marketing',
-      processing_details: 'Patient contact information will be used to send marketing communications, promotional materials, and service updates.',
+      legal_basis_article:
+        'LGPD Article 7, Item I - Explicit consent for marketing',
+      processing_details:
+        'Patient contact information will be used to send marketing communications, promotional materials, and service updates.',
       created_at: now,
-      updated_at: now
+      updated_at: now,
     });
   }
 
@@ -230,14 +276,20 @@ export function transformRegistrationToFHIR(
     consents.push({
       consent_type: 'explicit',
       purpose: 'Medical research and clinical studies (anonymized)',
-      data_categories: ['medical_history', 'demographics', 'treatment_outcomes'],
+      data_categories: [
+        'medical_history',
+        'demographics',
+        'treatment_outcomes',
+      ],
       retention_period_years: 10,
       consent_date: now,
       is_active: true,
-      legal_basis_article: 'LGPD Article 7, Item I - Explicit consent for research',
-      processing_details: 'Anonymized patient data may be used for medical research and clinical studies to improve healthcare services.',
+      legal_basis_article:
+        'LGPD Article 7, Item I - Explicit consent for research',
+      processing_details:
+        'Anonymized patient data may be used for medical research and clinical studies to improve healthcare services.',
       created_at: now,
-      updated_at: now
+      updated_at: now,
     });
   }
 
@@ -250,10 +302,12 @@ export function transformRegistrationToFHIR(
       retention_period_years: 5,
       consent_date: now,
       is_active: true,
-      legal_basis_article: 'LGPD Article 7, Item I - Explicit consent for third-party sharing',
-      processing_details: 'Patient data may be shared with healthcare partners, insurance providers, and other authorized third parties as necessary for care coordination.',
+      legal_basis_article:
+        'LGPD Article 7, Item I - Explicit consent for third-party sharing',
+      processing_details:
+        'Patient data may be shared with healthcare partners, insurance providers, and other authorized third parties as necessary for care coordination.',
       created_at: now,
-      updated_at: now
+      updated_at: now,
     });
   }
 
@@ -266,7 +320,7 @@ export async function createPatient(
   user_id: string
 ): Promise<{ patient: PatientDB; consents: PatientConsentDB[] }> {
   const supabase = createClient();
-  
+
   try {
     // Get user's clinic
     const { data: profile, error: profileError } = await supabase
@@ -288,7 +342,10 @@ export async function createPatient(
       .single();
 
     if (checkError && checkError.code !== 'PGRST116') {
-      throw new PatientError('Database error checking medical record number', 'DATABASE_ERROR');
+      throw new PatientError(
+        'Database error checking medical record number',
+        'DATABASE_ERROR'
+      );
     }
 
     if (existingPatient) {
@@ -300,11 +357,8 @@ export async function createPatient(
     }
 
     // Transform data to FHIR format
-    const { patient: patientData, consents: consentData } = transformRegistrationToFHIR(
-      data,
-      profile.clinic_id,
-      user_id
-    );
+    const { patient: patientData, consents: consentData } =
+      transformRegistrationToFHIR(data, profile.clinic_id, user_id);
 
     // Insert patient
     const { data: createdPatient, error: patientError } = await supabase
@@ -321,9 +375,9 @@ export async function createPatient(
     }
 
     // Insert consents
-    const consentsWithPatientId = consentData.map(consent => ({
+    const consentsWithPatientId = consentData.map((consent) => ({
       ...consent,
-      patient_id: createdPatient.id
+      patient_id: createdPatient.id,
     }));
 
     const { data: createdConsents, error: consentError } = await supabase
@@ -342,7 +396,7 @@ export async function createPatient(
 
     return {
       patient: createdPatient,
-      consents: createdConsents || []
+      consents: createdConsents || [],
     };
   } catch (error) {
     if (error instanceof PatientError) {
@@ -365,7 +419,7 @@ export async function searchPatients(
   has_next_page: boolean;
 }> {
   const supabase = createClient();
-  
+
   try {
     // Get user's clinic
     const { data: profile, error: profileError } = await supabase
@@ -381,16 +435,21 @@ export async function searchPatients(
     // Build query
     let query = supabase
       .from('patients')
-      .select(`
+      .select(
+        `
         *,
         consents_count:patient_consents(count)
-      `, { count: 'exact' })
+      `,
+        { count: 'exact' }
+      )
       .eq('clinic_id', profile.clinic_id);
 
     // Apply filters
     if (params.query) {
       // Search in patient name (FHIR data) and medical record number
-      query = query.or(`medical_record_number.ilike.%${params.query}%,fhir_data->>name.ilike.%${params.query}%`);
+      query = query.or(
+        `medical_record_number.ilike.%${params.query}%,fhir_data->>name.ilike.%${params.query}%`
+      );
     }
 
     if (params.medical_record_number) {
@@ -410,7 +469,8 @@ export async function searchPatients(
     }
 
     // Apply sorting
-    const sortField = params.sort_by === 'name' ? 'fhir_data->name->0->>text' : params.sort_by;
+    const sortField =
+      params.sort_by === 'name' ? 'fhir_data->name->0->>text' : params.sort_by;
     query = query.order(sortField, { ascending: params.sort_order === 'asc' });
 
     // Apply pagination
@@ -428,7 +488,7 @@ export async function searchPatients(
     return {
       patients: patients || [],
       total_count: count || 0,
-      has_next_page: (count || 0) > params.offset + params.limit
+      has_next_page: (count || 0) > params.offset + params.limit,
     };
   } catch (error) {
     if (error instanceof PatientError) {
@@ -445,13 +505,16 @@ export async function searchPatients(
 export async function getPatientById(
   patient_id: string,
   user_id: string
-): Promise<PatientDB & {
-  consents: PatientConsentDB[];
-  conditions: MedicalConditionDB[];
-  allergies: AllergyIntoleranceDB[];
-} | null> {
+): Promise<
+  | (PatientDB & {
+      consents: PatientConsentDB[];
+      conditions: MedicalConditionDB[];
+      allergies: AllergyIntoleranceDB[];
+    })
+  | null
+> {
   const supabase = createClient();
-  
+
   try {
     // Get user's clinic for security check
     const { data: profile, error: profileError } = await supabase
@@ -507,7 +570,7 @@ export async function updatePatientConsent(
   user_id: string
 ): Promise<PatientConsentDB> {
   const supabase = createClient();
-  
+
   try {
     // Verify patient belongs to user's clinic
     const patient = await getPatientById(patient_id, user_id);
@@ -520,7 +583,7 @@ export async function updatePatientConsent(
       .from('patient_consents')
       .update({
         ...updates,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', consent_id)
       .eq('patient_id', patient_id)
@@ -548,16 +611,19 @@ export async function updatePatientConsent(
 
 /**
  * Get patient statistics for dashboard
- * 
+ *
  * Returns aggregated statistics for patient management dashboard
  * including total patients, new patients, active patients, etc.
  */
 export async function getPatientStats(clinicId?: string) {
   try {
     const supabase = createClient();
-    
+
     // Get current user and clinic
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
     if (userError || !user) {
       throw new PatientError('Authentication required', 'AUTH_REQUIRED', 401);
     }
@@ -569,8 +635,8 @@ export async function getPatientStats(clinicId?: string) {
     }
 
     const now = new Date();
-    const thirtyDaysAgo = new Date(now.getTime() - (30 * 24 * 60 * 60 * 1000));
-    const sevenDaysFromNow = new Date(now.getTime() + (7 * 24 * 60 * 60 * 1000));
+    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+    const sevenDaysFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
 
     // Get total patients count
     const { count: totalPatients, error: totalError } = await supabase
@@ -618,14 +684,15 @@ export async function getPatientStats(clinicId?: string) {
     }
 
     // Get scheduled appointments for next 7 days
-    const { count: scheduledAppointments, error: scheduledError } = await supabase
-      .from('appointments')
-      .select('*', { count: 'exact', head: true })
-      .eq('clinic_id', activeClinicId)
-      .gte('appointment_date', now.toISOString())
-      .lte('appointment_date', sevenDaysFromNow.toISOString())
-      .in('status', ['scheduled', 'confirmed'])
-      .is('deleted_at', null);
+    const { count: scheduledAppointments, error: scheduledError } =
+      await supabase
+        .from('appointments')
+        .select('*', { count: 'exact', head: true })
+        .eq('clinic_id', activeClinicId)
+        .gte('appointment_date', now.toISOString())
+        .lte('appointment_date', sevenDaysFromNow.toISOString())
+        .in('status', ['scheduled', 'confirmed'])
+        .is('deleted_at', null);
 
     if (scheduledError) {
       throw new PatientError(
@@ -644,22 +711,21 @@ export async function getPatientStats(clinicId?: string) {
     return {
       success: true,
       data: stats,
-      message: 'Patient statistics retrieved successfully'
+      message: 'Patient statistics retrieved successfully',
     };
-
   } catch (error) {
     if (error instanceof PatientError) {
       return {
         success: false,
         error: error.message,
-        code: error.code
+        code: error.code,
       };
     }
-    
+
     return {
       success: false,
       error: `Unexpected error getting patient statistics: ${error instanceof Error ? error.message : 'Unknown error'}`,
-      code: 'UNEXPECTED_ERROR'
+      code: 'UNEXPECTED_ERROR',
     };
   }
 }

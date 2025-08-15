@@ -1,7 +1,6 @@
 // Session Preservation System
 // Maintains session state during reconnections and network failures
 
-import { UserSession, UserDevice } from '@/types/session';
 import { SessionConfig } from '@/lib/auth/config/session-config';
 import { SessionUtils } from '@/lib/auth/utils/session-utils';
 
@@ -99,7 +98,7 @@ export interface UserAction {
   duration?: number;
 }
 
-export type ActionType = 
+export type ActionType =
   | 'click'
   | 'navigation'
   | 'form_input'
@@ -127,7 +126,7 @@ export interface BehaviorPattern {
   confidence: number;
 }
 
-export type PatternType = 
+export type PatternType =
   | 'frequent_navigation'
   | 'form_abandonment'
   | 'rapid_clicking'
@@ -261,26 +260,29 @@ export interface PreservationConfig {
   conflictResolution: ConflictResolution;
 }
 
-export type StorageType = 'localStorage' | 'indexedDB' | 'sessionStorage' | 'memory';
+export type StorageType =
+  | 'localStorage'
+  | 'indexedDB'
+  | 'sessionStorage'
+  | 'memory';
 export type ConflictResolution = 'local' | 'server' | 'merge' | 'prompt';
 
 export class SessionPreservationManager {
-  private config: SessionConfig;
   private utils: SessionUtils;
   private preservationConfig: PreservationConfig;
   private snapshots: Map<string, SessionSnapshot[]> = new Map();
   private currentState: Map<string, SessionState> = new Map();
   private snapshotInterval: NodeJS.Timeout | null = null;
   private storageQuota: number = 50 * 1024 * 1024; // 50MB
-  private compressionRatio: number = 0.3;
+  private compressionRatio = 0.3;
   private eventListeners: Map<string, Function[]> = new Map();
 
   constructor(config?: Partial<PreservationConfig>) {
     this.config = SessionConfig.getInstance();
     this.utils = new SessionUtils();
-    
+
     this.preservationConfig = {
-      snapshotInterval: 30000, // 30 seconds
+      snapshotInterval: 30_000, // 30 seconds
       maxSnapshots: 10,
       compressionEnabled: true,
       encryptionEnabled: true,
@@ -288,7 +290,7 @@ export class SessionPreservationManager {
       retentionPeriod: 7 * 24 * 60 * 60 * 1000, // 7 days
       autoRestore: true,
       conflictResolution: 'merge',
-      ...config
+      ...config,
     };
   }
 
@@ -299,19 +301,19 @@ export class SessionPreservationManager {
     try {
       // Initialize storage
       await this.initializeStorage();
-      
+
       // Load existing snapshots
       await this.loadSnapshots();
-      
+
       // Start automatic snapshots
       this.startAutomaticSnapshots();
-      
+
       // Setup event listeners
       this.setupEventListeners();
-      
+
       // Cleanup old snapshots
       await this.cleanupOldSnapshots();
-      
+
       console.log('Session preservation manager initialized');
       this.emit('preservation_initialized', {});
     } catch (error) {
@@ -331,7 +333,7 @@ export class SessionPreservationManager {
     try {
       const state = await this.captureSessionState(sessionId);
       const metadata = await this.captureSessionMetadata();
-      
+
       const snapshot: SessionSnapshot = {
         id: this.utils.generateSessionToken(),
         sessionId,
@@ -341,15 +343,15 @@ export class SessionPreservationManager {
         state,
         metadata,
         checksum: this.calculateChecksum(state),
-        version: this.getNextVersion(sessionId)
+        version: this.getNextVersion(sessionId),
       };
-      
+
       // Store snapshot
       await this.storeSnapshot(snapshot);
-      
+
       // Update current state
       this.currentState.set(sessionId, state);
-      
+
       this.emit('snapshot_created', snapshot);
       return snapshot;
     } catch (error) {
@@ -366,27 +368,27 @@ export class SessionPreservationManager {
     snapshotId?: string
   ): Promise<SessionState | null> {
     try {
-      const snapshot = snapshotId 
+      const snapshot = snapshotId
         ? await this.getSnapshot(sessionId, snapshotId)
         : await this.getLatestSnapshot(sessionId);
-      
+
       if (!snapshot) {
         console.warn(`No snapshot found for session ${sessionId}`);
         return null;
       }
-      
+
       // Verify snapshot integrity
       if (!this.verifySnapshot(snapshot)) {
         console.error('Snapshot integrity check failed');
         return null;
       }
-      
+
       // Restore session state
       await this.applySessionState(sessionId, snapshot.state);
-      
+
       // Update current state
       this.currentState.set(sessionId, snapshot.state);
-      
+
       this.emit('session_restored', { sessionId, snapshot });
       return snapshot.state;
     } catch (error) {
@@ -399,16 +401,18 @@ export class SessionPreservationManager {
    * Capture current session state
    */
   private async captureSessionState(sessionId: string): Promise<SessionState> {
-    const [auth, prefs, nav, forms, cache, perms, activity] = await Promise.all([
-      this.captureAuthenticationState(sessionId),
-      this.captureUserPreferences(sessionId),
-      this.captureNavigationState(),
-      this.captureFormStates(),
-      this.captureCacheState(),
-      this.capturePermissionState(sessionId),
-      this.captureActivityState(sessionId)
-    ]);
-    
+    const [auth, prefs, nav, forms, cache, perms, activity] = await Promise.all(
+      [
+        this.captureAuthenticationState(sessionId),
+        this.captureUserPreferences(sessionId),
+        this.captureNavigationState(),
+        this.captureFormStates(),
+        this.captureCacheState(),
+        this.capturePermissionState(sessionId),
+        this.captureActivityState(sessionId),
+      ]
+    );
+
     return {
       authentication: auth,
       preferences: prefs,
@@ -416,14 +420,16 @@ export class SessionPreservationManager {
       forms,
       cache,
       permissions: perms,
-      activity
+      activity,
     };
   }
 
   /**
    * Capture authentication state
    */
-  private async captureAuthenticationState(sessionId: string): Promise<AuthenticationState> {
+  private async captureAuthenticationState(
+    sessionId: string
+  ): Promise<AuthenticationState> {
     try {
       const response = await fetch(`/api/session/${sessionId}/auth-state`);
       if (response.ok) {
@@ -432,22 +438,29 @@ export class SessionPreservationManager {
     } catch (error) {
       console.error('Error capturing auth state:', error);
     }
-    
+
     return {
       isAuthenticated: false,
       tokenExpiry: 0,
       refreshTokenExpiry: 0,
       lastActivity: Date.now(),
-      mfaStatus: { enabled: false, methods: [], lastVerified: 0, required: false },
+      mfaStatus: {
+        enabled: false,
+        methods: [],
+        lastVerified: 0,
+        required: false,
+      },
       roles: [],
-      permissions: []
+      permissions: [],
     };
   }
 
   /**
    * Capture user preferences
    */
-  private async captureUserPreferences(sessionId: string): Promise<UserPreferences> {
+  private async captureUserPreferences(
+    sessionId: string
+  ): Promise<UserPreferences> {
     try {
       const response = await fetch(`/api/session/${sessionId}/preferences`);
       if (response.ok) {
@@ -456,7 +469,7 @@ export class SessionPreservationManager {
     } catch (error) {
       console.error('Error capturing preferences:', error);
     }
-    
+
     return {
       theme: 'light',
       language: 'en',
@@ -466,21 +479,21 @@ export class SessionPreservationManager {
         push: true,
         sms: false,
         inApp: true,
-        frequency: 'immediate'
+        frequency: 'immediate',
       },
       privacy: {
         analytics: true,
         cookies: true,
         tracking: false,
-        dataSharing: false
+        dataSharing: false,
       },
       accessibility: {
         fontSize: 14,
         contrast: 'normal',
         animations: true,
         screenReader: false,
-        keyboardNavigation: false
-      }
+        keyboardNavigation: false,
+      },
     };
   }
 
@@ -493,7 +506,7 @@ export class SessionPreservationManager {
       history: this.getNavigationHistory(),
       breadcrumbs: this.getBreadcrumbs(),
       tabs: this.getTabStates(),
-      modals: this.getModalStates()
+      modals: this.getModalStates(),
     };
   }
 
@@ -503,28 +516,28 @@ export class SessionPreservationManager {
   private captureFormStates(): FormState[] {
     const forms: FormState[] = [];
     const formElements = document.querySelectorAll('form[data-preserve]');
-    
-    formElements.forEach(form => {
+
+    formElements.forEach((form) => {
       const formId = form.getAttribute('data-preserve') || form.id;
       if (formId) {
         const formData = new FormData(form as HTMLFormElement);
         const fields: Record<string, any> = {};
-        
+
         formData.forEach((value, key) => {
           fields[key] = value;
         });
-        
+
         forms.push({
           formId,
           fields,
           isDirty: form.classList.contains('dirty'),
           isValid: form.classList.contains('valid'),
           errors: this.getFormErrors(form),
-          lastModified: Date.now()
+          lastModified: Date.now(),
         });
       }
     });
-    
+
     return forms;
   }
 
@@ -534,11 +547,11 @@ export class SessionPreservationManager {
   private captureCacheState(): CacheState {
     const cache: Record<string, CachedItem> = {};
     let totalSize = 0;
-    
+
     // Capture localStorage items
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
-      if (key && key.startsWith('neonpro_cache_')) {
+      if (key?.startsWith('neonpro_cache_')) {
         try {
           const item = JSON.parse(localStorage.getItem(key) || '{}');
           cache[key] = item;
@@ -548,18 +561,20 @@ export class SessionPreservationManager {
         }
       }
     }
-    
+
     return {
       data: cache,
       size: totalSize,
-      lastCleanup: Date.now()
+      lastCleanup: Date.now(),
     };
   }
 
   /**
    * Capture permission state
    */
-  private async capturePermissionState(sessionId: string): Promise<PermissionState> {
+  private async capturePermissionState(
+    sessionId: string
+  ): Promise<PermissionState> {
     try {
       const response = await fetch(`/api/session/${sessionId}/permissions`);
       if (response.ok) {
@@ -568,19 +583,21 @@ export class SessionPreservationManager {
     } catch (error) {
       console.error('Error capturing permissions:', error);
     }
-    
+
     return {
       granted: [],
       denied: [],
       pending: [],
-      lastUpdated: Date.now()
+      lastUpdated: Date.now(),
     };
   }
 
   /**
    * Capture activity state
    */
-  private async captureActivityState(sessionId: string): Promise<ActivityState> {
+  private async captureActivityState(
+    sessionId: string
+  ): Promise<ActivityState> {
     try {
       const response = await fetch(`/api/session/${sessionId}/activity`);
       if (response.ok) {
@@ -589,7 +606,7 @@ export class SessionPreservationManager {
     } catch (error) {
       console.error('Error capturing activity:', error);
     }
-    
+
     return {
       actions: [],
       metrics: {
@@ -598,9 +615,9 @@ export class SessionPreservationManager {
         idleTime: 0,
         activeTime: 0,
         pageViews: 0,
-        apiCalls: 0
+        apiCalls: 0,
       },
-      patterns: []
+      patterns: [],
     };
   }
 
@@ -613,33 +630,36 @@ export class SessionPreservationManager {
       network: await this.getNetworkInfo(),
       browser: this.getBrowserInfo(),
       location: await this.getLocationInfo(),
-      performance: this.getPerformanceInfo()
+      performance: this.getPerformanceInfo(),
     };
   }
 
   /**
    * Apply session state
    */
-  private async applySessionState(sessionId: string, state: SessionState): Promise<void> {
+  private async applySessionState(
+    sessionId: string,
+    state: SessionState
+  ): Promise<void> {
     try {
       // Apply authentication state
       await this.applyAuthenticationState(sessionId, state.authentication);
-      
+
       // Apply preferences
       await this.applyUserPreferences(sessionId, state.preferences);
-      
+
       // Apply navigation state
       this.applyNavigationState(state.navigation);
-      
+
       // Apply form states
       this.applyFormStates(state.forms);
-      
+
       // Apply cache state
       this.applyCacheState(state.cache);
-      
+
       // Apply permission state
       await this.applyPermissionState(sessionId, state.permissions);
-      
+
       console.log(`Session state applied for ${sessionId}`);
     } catch (error) {
       console.error('Error applying session state:', error);
@@ -653,44 +673,44 @@ export class SessionPreservationManager {
   private async storeSnapshot(snapshot: SessionSnapshot): Promise<void> {
     try {
       let data = snapshot;
-      
+
       // Compress if enabled
       if (this.preservationConfig.compressionEnabled) {
         data = await this.compressSnapshot(snapshot);
       }
-      
+
       // Encrypt if enabled
       if (this.preservationConfig.encryptionEnabled) {
         data = await this.encryptSnapshot(data);
       }
-      
+
       // Store based on storage type
       switch (this.preservationConfig.storageType) {
         case 'localStorage':
           await this.storeInLocalStorage(snapshot.sessionId, data);
           break;
-          
+
         case 'indexedDB':
           await this.storeInIndexedDB(snapshot.sessionId, data);
           break;
-          
+
         case 'sessionStorage':
           await this.storeInSessionStorage(snapshot.sessionId, data);
           break;
-          
+
         case 'memory':
           this.storeInMemory(snapshot.sessionId, data);
           break;
       }
-      
+
       // Update snapshots map
       if (!this.snapshots.has(snapshot.sessionId)) {
         this.snapshots.set(snapshot.sessionId, []);
       }
-      
+
       const sessionSnapshots = this.snapshots.get(snapshot.sessionId)!;
       sessionSnapshots.push(snapshot);
-      
+
       // Limit number of snapshots
       if (sessionSnapshots.length > this.preservationConfig.maxSnapshots) {
         const removed = sessionSnapshots.shift();
@@ -698,7 +718,6 @@ export class SessionPreservationManager {
           await this.removeSnapshot(removed.id);
         }
       }
-      
     } catch (error) {
       console.error('Error storing snapshot:', error);
       throw error;
@@ -708,25 +727,30 @@ export class SessionPreservationManager {
   /**
    * Get latest snapshot
    */
-  private async getLatestSnapshot(sessionId: string): Promise<SessionSnapshot | null> {
+  private async getLatestSnapshot(
+    sessionId: string
+  ): Promise<SessionSnapshot | null> {
     const sessionSnapshots = this.snapshots.get(sessionId);
     if (!sessionSnapshots || sessionSnapshots.length === 0) {
       return null;
     }
-    
+
     return sessionSnapshots[sessionSnapshots.length - 1];
   }
 
   /**
    * Get specific snapshot
    */
-  private async getSnapshot(sessionId: string, snapshotId: string): Promise<SessionSnapshot | null> {
+  private async getSnapshot(
+    sessionId: string,
+    snapshotId: string
+  ): Promise<SessionSnapshot | null> {
     const sessionSnapshots = this.snapshots.get(sessionId);
     if (!sessionSnapshots) {
       return null;
     }
-    
-    return sessionSnapshots.find(s => s.id === snapshotId) || null;
+
+    return sessionSnapshots.find((s) => s.id === snapshotId) || null;
   }
 
   /**
@@ -745,7 +769,7 @@ export class SessionPreservationManager {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash;
     }
     return hash.toString(16);
@@ -759,8 +783,8 @@ export class SessionPreservationManager {
     if (!sessionSnapshots || sessionSnapshots.length === 0) {
       return 1;
     }
-    
-    const latestVersion = Math.max(...sessionSnapshots.map(s => s.version));
+
+    const latestVersion = Math.max(...sessionSnapshots.map((s) => s.version));
     return latestVersion + 1;
   }
 
@@ -790,15 +814,15 @@ export class SessionPreservationManager {
   private getFormErrors(form: Element): Record<string, string> {
     const errors: Record<string, string> = {};
     const errorElements = form.querySelectorAll('[data-error]');
-    
-    errorElements.forEach(element => {
+
+    errorElements.forEach((element) => {
       const field = element.getAttribute('data-field');
       const error = element.textContent;
       if (field && error) {
         errors[field] = error;
       }
     });
-    
+
     return errors;
   }
 
@@ -810,14 +834,14 @@ export class SessionPreservationManager {
         width: screen.width,
         height: screen.height,
         pixelRatio: window.devicePixelRatio,
-        orientation: screen.orientation?.type || 'unknown'
+        orientation: screen.orientation?.type || 'unknown',
       },
       memory: (navigator as any).deviceMemory || 0,
       storage: {
         available: 0,
         used: 0,
-        quota: 0
-      }
+        quota: 0,
+      },
     };
   }
 
@@ -828,7 +852,7 @@ export class SessionPreservationManager {
       speed: connection?.downlink || 0,
       latency: connection?.rtt || 0,
       isOnline: navigator.onLine,
-      lastOnline: Date.now()
+      lastOnline: Date.now(),
     };
   }
 
@@ -839,7 +863,7 @@ export class SessionPreservationManager {
       userAgent: navigator.userAgent,
       language: navigator.language,
       cookiesEnabled: navigator.cookieEnabled,
-      localStorageEnabled: this.isLocalStorageEnabled()
+      localStorageEnabled: this.isLocalStorageEnabled(),
     };
   }
 
@@ -849,18 +873,22 @@ export class SessionPreservationManager {
       country: 'Unknown',
       region: 'Unknown',
       city: 'Unknown',
-      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     };
   }
 
   private getPerformanceInfo(): PerformanceInfo {
-    const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+    const navigation = performance.getEntriesByType(
+      'navigation'
+    )[0] as PerformanceNavigationTiming;
     return {
       loadTime: navigation?.loadEventEnd - navigation?.loadEventStart || 0,
-      renderTime: navigation?.domContentLoadedEventEnd - navigation?.domContentLoadedEventStart || 0,
+      renderTime:
+        navigation?.domContentLoadedEventEnd -
+          navigation?.domContentLoadedEventStart || 0,
       memoryUsage: (performance as any).memory?.usedJSHeapSize || 0,
       cpuUsage: 0, // Not available in browser
-      networkUsage: 0 // Not available in browser
+      networkUsage: 0, // Not available in browser
     };
   }
 
@@ -872,7 +900,11 @@ export class SessionPreservationManager {
     if (/tablet|ipad|playbook|silk/i.test(userAgent)) {
       return 'tablet';
     }
-    if (/mobile|iphone|ipod|android|blackberry|opera|mini|windows\sce|palm|smartphone|iemobile/i.test(userAgent)) {
+    if (
+      /mobile|iphone|ipod|android|blackberry|opera|mini|windows\sce|palm|smartphone|iemobile/i.test(
+        userAgent
+      )
+    ) {
       return 'mobile';
     }
     return 'desktop';
@@ -915,7 +947,10 @@ export class SessionPreservationManager {
   /**
    * Storage implementations
    */
-  private async storeInLocalStorage(sessionId: string, data: any): Promise<void> {
+  private async storeInLocalStorage(
+    sessionId: string,
+    data: any
+  ): Promise<void> {
     const key = `neonpro_snapshot_${sessionId}`;
     localStorage.setItem(key, JSON.stringify(data));
   }
@@ -924,18 +959,18 @@ export class SessionPreservationManager {
     // IndexedDB implementation
     return new Promise((resolve, reject) => {
       const request = indexedDB.open('NeonProSnapshots', 1);
-      
+
       request.onerror = () => reject(request.error);
       request.onsuccess = () => {
         const db = request.result;
         const transaction = db.transaction(['snapshots'], 'readwrite');
         const store = transaction.objectStore('snapshots');
-        
+
         const putRequest = store.put(data, sessionId);
         putRequest.onsuccess = () => resolve();
         putRequest.onerror = () => reject(putRequest.error);
       };
-      
+
       request.onupgradeneeded = () => {
         const db = request.result;
         if (!db.objectStoreNames.contains('snapshots')) {
@@ -945,12 +980,15 @@ export class SessionPreservationManager {
     });
   }
 
-  private async storeInSessionStorage(sessionId: string, data: any): Promise<void> {
+  private async storeInSessionStorage(
+    sessionId: string,
+    data: any
+  ): Promise<void> {
     const key = `neonpro_snapshot_${sessionId}`;
     sessionStorage.setItem(key, JSON.stringify(data));
   }
 
-  private storeInMemory(sessionId: string, data: any): void {
+  private storeInMemory(_sessionId: string, _data: any): void {
     // Already stored in this.snapshots map
   }
 
@@ -964,7 +1002,7 @@ export class SessionPreservationManager {
       ...snapshot,
       compressed: true,
       originalSize: JSON.stringify(snapshot).length,
-      compressedSize: Math.floor(compressed.length * this.compressionRatio)
+      compressedSize: Math.floor(compressed.length * this.compressionRatio),
     };
   }
 
@@ -973,26 +1011,32 @@ export class SessionPreservationManager {
     return {
       ...snapshot,
       encrypted: true,
-      encryptionMethod: 'AES-256'
+      encryptionMethod: 'AES-256',
     };
   }
 
   /**
    * State application methods
    */
-  private async applyAuthenticationState(sessionId: string, auth: AuthenticationState): Promise<void> {
+  private async applyAuthenticationState(
+    sessionId: string,
+    auth: AuthenticationState
+  ): Promise<void> {
     await fetch(`/api/session/${sessionId}/restore-auth`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(auth)
+      body: JSON.stringify(auth),
     });
   }
 
-  private async applyUserPreferences(sessionId: string, prefs: UserPreferences): Promise<void> {
+  private async applyUserPreferences(
+    sessionId: string,
+    prefs: UserPreferences
+  ): Promise<void> {
     await fetch(`/api/session/${sessionId}/restore-preferences`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(prefs)
+      body: JSON.stringify(prefs),
     });
   }
 
@@ -1005,11 +1049,15 @@ export class SessionPreservationManager {
   }
 
   private applyFormStates(forms: FormState[]): void {
-    forms.forEach(formState => {
-      const form = document.querySelector(`form[data-preserve="${formState.formId}"]`) as HTMLFormElement;
+    forms.forEach((formState) => {
+      const form = document.querySelector(
+        `form[data-preserve="${formState.formId}"]`
+      ) as HTMLFormElement;
       if (form) {
         Object.entries(formState.fields).forEach(([name, value]) => {
-          const field = form.querySelector(`[name="${name}"]`) as HTMLInputElement;
+          const field = form.querySelector(
+            `[name="${name}"]`
+          ) as HTMLInputElement;
           if (field) {
             field.value = value as string;
           }
@@ -1026,11 +1074,14 @@ export class SessionPreservationManager {
     });
   }
 
-  private async applyPermissionState(sessionId: string, perms: PermissionState): Promise<void> {
+  private async applyPermissionState(
+    sessionId: string,
+    perms: PermissionState
+  ): Promise<void> {
     await fetch(`/api/session/${sessionId}/restore-permissions`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(perms)
+      body: JSON.stringify(perms),
     });
   }
 
@@ -1040,15 +1091,15 @@ export class SessionPreservationManager {
   private async cleanupOldSnapshots(): Promise<void> {
     const now = Date.now();
     const cutoff = now - this.preservationConfig.retentionPeriod;
-    
+
     for (const [sessionId, snapshots] of this.snapshots.entries()) {
-      const validSnapshots = snapshots.filter(s => s.timestamp > cutoff);
-      
+      const validSnapshots = snapshots.filter((s) => s.timestamp > cutoff);
+
       if (validSnapshots.length !== snapshots.length) {
         this.snapshots.set(sessionId, validSnapshots);
-        
+
         // Remove from storage
-        const removedSnapshots = snapshots.filter(s => s.timestamp <= cutoff);
+        const removedSnapshots = snapshots.filter((s) => s.timestamp <= cutoff);
         for (const snapshot of removedSnapshots) {
           await this.removeSnapshot(snapshot.id);
         }
@@ -1062,15 +1113,15 @@ export class SessionPreservationManager {
       case 'localStorage':
         localStorage.removeItem(`neonpro_snapshot_${snapshotId}`);
         break;
-        
+
       case 'indexedDB':
         // IndexedDB removal implementation
         break;
-        
+
       case 'sessionStorage':
         sessionStorage.removeItem(`neonpro_snapshot_${snapshotId}`);
         break;
-        
+
       case 'memory':
         // Already removed from memory map
         break;
@@ -1081,10 +1132,10 @@ export class SessionPreservationManager {
     if (this.preservationConfig.storageType === 'indexedDB') {
       return new Promise((resolve, reject) => {
         const request = indexedDB.open('NeonProSnapshots', 1);
-        
+
         request.onerror = () => reject(request.error);
         request.onsuccess = () => resolve();
-        
+
         request.onupgradeneeded = () => {
           const db = request.result;
           if (!db.objectStoreNames.contains('snapshots')) {
@@ -1101,15 +1152,15 @@ export class SessionPreservationManager {
       case 'localStorage':
         this.loadFromLocalStorage();
         break;
-        
+
       case 'indexedDB':
         await this.loadFromIndexedDB();
         break;
-        
+
       case 'sessionStorage':
         this.loadFromSessionStorage();
         break;
-        
+
       case 'memory':
         // Nothing to load for memory storage
         break;
@@ -1119,17 +1170,20 @@ export class SessionPreservationManager {
   private loadFromLocalStorage(): void {
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
-      if (key && key.startsWith('neonpro_snapshot_')) {
+      if (key?.startsWith('neonpro_snapshot_')) {
         try {
           const data = JSON.parse(localStorage.getItem(key) || '{}');
           const sessionId = key.replace('neonpro_snapshot_', '');
-          
+
           if (!this.snapshots.has(sessionId)) {
             this.snapshots.set(sessionId, []);
           }
-          this.snapshots.get(sessionId)!.push(data);
+          this.snapshots.get(sessionId)?.push(data);
         } catch (error) {
-          console.warn(`Error loading snapshot from localStorage: ${key}`, error);
+          console.warn(
+            `Error loading snapshot from localStorage: ${key}`,
+            error
+          );
         }
       }
     }
@@ -1138,13 +1192,13 @@ export class SessionPreservationManager {
   private async loadFromIndexedDB(): Promise<void> {
     return new Promise((resolve, reject) => {
       const request = indexedDB.open('NeonProSnapshots', 1);
-      
+
       request.onerror = () => reject(request.error);
       request.onsuccess = () => {
         const db = request.result;
         const transaction = db.transaction(['snapshots'], 'readonly');
         const store = transaction.objectStore('snapshots');
-        
+
         const getAllRequest = store.getAll();
         getAllRequest.onsuccess = () => {
           const snapshots = getAllRequest.result;
@@ -1152,7 +1206,7 @@ export class SessionPreservationManager {
             if (!this.snapshots.has(snapshot.sessionId)) {
               this.snapshots.set(snapshot.sessionId, []);
             }
-            this.snapshots.get(snapshot.sessionId)!.push(snapshot);
+            this.snapshots.get(snapshot.sessionId)?.push(snapshot);
           });
           resolve();
         };
@@ -1164,17 +1218,20 @@ export class SessionPreservationManager {
   private loadFromSessionStorage(): void {
     for (let i = 0; i < sessionStorage.length; i++) {
       const key = sessionStorage.key(i);
-      if (key && key.startsWith('neonpro_snapshot_')) {
+      if (key?.startsWith('neonpro_snapshot_')) {
         try {
           const data = JSON.parse(sessionStorage.getItem(key) || '{}');
           const sessionId = key.replace('neonpro_snapshot_', '');
-          
+
           if (!this.snapshots.has(sessionId)) {
             this.snapshots.set(sessionId, []);
           }
-          this.snapshots.get(sessionId)!.push(data);
+          this.snapshots.get(sessionId)?.push(data);
         } catch (error) {
-          console.warn(`Error loading snapshot from sessionStorage: ${key}`, error);
+          console.warn(
+            `Error loading snapshot from sessionStorage: ${key}`,
+            error
+          );
         }
       }
     }
@@ -1183,16 +1240,23 @@ export class SessionPreservationManager {
   private startAutomaticSnapshots(): void {
     this.snapshotInterval = setInterval(() => {
       // Create snapshots for all active sessions
-      this.currentState.forEach(async (state, sessionId) => {
+      this.currentState.forEach(async (_state, sessionId) => {
         try {
           // Get session info
           const response = await fetch(`/api/session/${sessionId}`);
           if (response.ok) {
             const session = await response.json();
-            await this.createSnapshot(sessionId, session.userId, session.deviceId);
+            await this.createSnapshot(
+              sessionId,
+              session.userId,
+              session.deviceId
+            );
           }
         } catch (error) {
-          console.error(`Error creating automatic snapshot for ${sessionId}:`, error);
+          console.error(
+            `Error creating automatic snapshot for ${sessionId}:`,
+            error
+          );
         }
       });
     }, this.preservationConfig.snapshotInterval);
@@ -1201,24 +1265,31 @@ export class SessionPreservationManager {
   private setupEventListeners(): void {
     // Listen for page unload to create final snapshot
     window.addEventListener('beforeunload', () => {
-      this.currentState.forEach(async (state, sessionId) => {
+      this.currentState.forEach(async (_state, sessionId) => {
         try {
           const response = await fetch(`/api/session/${sessionId}`);
           if (response.ok) {
             const session = await response.json();
-            await this.createSnapshot(sessionId, session.userId, session.deviceId);
+            await this.createSnapshot(
+              sessionId,
+              session.userId,
+              session.deviceId
+            );
           }
         } catch (error) {
-          console.error(`Error creating final snapshot for ${sessionId}:`, error);
+          console.error(
+            `Error creating final snapshot for ${sessionId}:`,
+            error
+          );
         }
       });
     });
-    
+
     // Listen for online/offline events
     window.addEventListener('online', () => {
       this.emit('network_restored', {});
     });
-    
+
     window.addEventListener('offline', () => {
       this.emit('network_lost', {});
     });
@@ -1231,7 +1302,7 @@ export class SessionPreservationManager {
     if (!this.eventListeners.has(event)) {
       this.eventListeners.set(event, []);
     }
-    this.eventListeners.get(event)!.push(callback);
+    this.eventListeners.get(event)?.push(callback);
   }
 
   public off(event: string, callback: Function): void {
@@ -1247,7 +1318,7 @@ export class SessionPreservationManager {
   private emit(event: string, data: any): void {
     const listeners = this.eventListeners.get(event);
     if (listeners) {
-      listeners.forEach(callback => {
+      listeners.forEach((callback) => {
         try {
           callback(data);
         } catch (error) {
@@ -1260,12 +1331,18 @@ export class SessionPreservationManager {
   /**
    * Public API methods
    */
-  public async manualSnapshot(sessionId: string): Promise<SessionSnapshot | null> {
+  public async manualSnapshot(
+    sessionId: string
+  ): Promise<SessionSnapshot | null> {
     try {
       const response = await fetch(`/api/session/${sessionId}`);
       if (response.ok) {
         const session = await response.json();
-        return await this.createSnapshot(sessionId, session.userId, session.deviceId);
+        return await this.createSnapshot(
+          sessionId,
+          session.userId,
+          session.deviceId
+        );
       }
     } catch (error) {
       console.error('Error creating manual snapshot:', error);
@@ -1289,37 +1366,37 @@ export class SessionPreservationManager {
 
   public getStorageUsage(): { used: number; available: number; quota: number } {
     let used = 0;
-    
+
     // Calculate storage usage based on storage type
     switch (this.preservationConfig.storageType) {
       case 'localStorage':
         for (let i = 0; i < localStorage.length; i++) {
           const key = localStorage.key(i);
-          if (key && key.startsWith('neonpro_snapshot_')) {
+          if (key?.startsWith('neonpro_snapshot_')) {
             used += localStorage.getItem(key)?.length || 0;
           }
         }
         break;
-        
+
       case 'memory':
-        this.snapshots.forEach(snapshots => {
-          snapshots.forEach(snapshot => {
+        this.snapshots.forEach((snapshots) => {
+          snapshots.forEach((snapshot) => {
             used += JSON.stringify(snapshot).length;
           });
         });
         break;
     }
-    
+
     return {
       used,
       available: this.storageQuota - used,
-      quota: this.storageQuota
+      quota: this.storageQuota,
     };
   }
 
   public updateConfig(config: Partial<PreservationConfig>): void {
     this.preservationConfig = { ...this.preservationConfig, ...config };
-    
+
     // Restart automatic snapshots if interval changed
     if (config.snapshotInterval && this.snapshotInterval) {
       clearInterval(this.snapshotInterval);
@@ -1333,7 +1410,7 @@ export class SessionPreservationManager {
       clearInterval(this.snapshotInterval);
       this.snapshotInterval = null;
     }
-    
+
     // Clear state
     this.snapshots.clear();
     this.currentState.clear();

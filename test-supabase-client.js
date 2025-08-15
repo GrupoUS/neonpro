@@ -10,9 +10,12 @@ async function testSupabaseClient() {
 
   console.log('📊 Variáveis de Ambiente:');
   console.log('SUPABASE_URL:', supabaseUrl ? '✅ Configurada' : '❌ Ausente');
-  console.log('SUPABASE_ANON_KEY:', supabaseKey ? '✅ Configurada' : '❌ Ausente');
+  console.log(
+    'SUPABASE_ANON_KEY:',
+    supabaseKey ? '✅ Configurada' : '❌ Ausente'
+  );
 
-  if (!supabaseUrl || !supabaseKey) {
+  if (!(supabaseUrl && supabaseKey)) {
     console.error('❌ Variáveis Supabase não configuradas!');
     return;
   }
@@ -34,14 +37,23 @@ async function testSupabaseClient() {
       console.error('❌ Erro ao listar tabelas:', error.message);
     } else {
       console.log('✅ Conexão Supabase funcionando!');
-      console.log(`📋 Encontradas ${tables?.length || 0} tabelas:`, tables?.map(t => t.table_name));
+      console.log(
+        `📋 Encontradas ${tables?.length || 0} tabelas:`,
+        tables?.map((t) => t.table_name)
+      );
     }
 
     // Testar acesso às tabelas principais (se existirem)
     console.log('\n🏥 Testando acesso às tabelas do sistema...');
 
-    const tablesToTest = ['tenants', 'profiles', 'products', 'appointments', 'patients'];
-    
+    const tablesToTest = [
+      'tenants',
+      'profiles',
+      'products',
+      'appointments',
+      'patients',
+    ];
+
     for (const tableName of tablesToTest) {
       try {
         const { count, error } = await supabase
@@ -57,13 +69,14 @@ async function testSupabaseClient() {
         console.log(`❌ ${tableName}: Erro - ${e.message}`);
       }
     }
-
   } catch (error) {
     console.error('❌ Erro geral:', error.message);
   }
 
   console.log('\n🎯 RESULTADO:');
-  console.log('- Se conexão funcionou: ✅ Supabase OK, problema pode ser no Prisma');
+  console.log(
+    '- Se conexão funcionou: ✅ Supabase OK, problema pode ser no Prisma'
+  );
   console.log('- Se falhou: ❌ Problema nas configurações do Supabase');
   console.log('- Próximo passo: Configurar senha do banco para usar Prisma');
 }

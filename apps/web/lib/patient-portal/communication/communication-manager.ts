@@ -1,8 +1,8 @@
-import { SupabaseClient } from '@supabase/supabase-js';
-import { AuditLogger } from '../../audit/audit-logger';
-import { LGPDManager } from '../../lgpd/lgpd-manager';
-import { SessionManager } from '../auth/session-manager';
-import { NotificationService } from '../../notifications/notification-service';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import type { AuditLogger } from '../../audit/audit-logger';
+import type { LGPDManager } from '../../lgpd/lgpd-manager';
+import type { NotificationService } from '../../notifications/notification-service';
+import type { SessionManager } from '../auth/session-manager';
 
 /**
  * Configuration for communication manager
@@ -30,7 +30,12 @@ export interface Message {
   recipientType: 'patient' | 'staff' | 'department';
   subject?: string;
   content: string;
-  messageType: 'text' | 'appointment_request' | 'prescription_request' | 'general_inquiry' | 'urgent';
+  messageType:
+    | 'text'
+    | 'appointment_request'
+    | 'prescription_request'
+    | 'general_inquiry'
+    | 'urgent';
   priority: 'low' | 'normal' | 'high' | 'urgent';
   status: 'sent' | 'delivered' | 'read' | 'archived';
   attachments?: MessageAttachment[];
@@ -79,7 +84,12 @@ export interface SendMessageRequest {
   recipientType: 'staff' | 'department';
   subject?: string;
   content: string;
-  messageType: 'text' | 'appointment_request' | 'prescription_request' | 'general_inquiry' | 'urgent';
+  messageType:
+    | 'text'
+    | 'appointment_request'
+    | 'prescription_request'
+    | 'general_inquiry'
+    | 'urgent';
   priority: 'low' | 'normal' | 'high' | 'urgent';
   attachments?: File[];
   conversationId?: string;
@@ -139,7 +149,6 @@ export interface MessageActivity {
 export class CommunicationManager {
   private supabase: SupabaseClient;
   private auditLogger: AuditLogger;
-  private lgpdManager: LGPDManager;
   private sessionManager: SessionManager;
   private notificationService: NotificationService;
   private config: CommunicationConfig;
@@ -158,7 +167,7 @@ export class CommunicationManager {
     this.sessionManager = sessionManager;
     this.notificationService = notificationService;
     this.config = config;
-  }  
+  }
   /**
    * Send a message
    */
@@ -168,8 +177,12 @@ export class CommunicationManager {
   ): Promise<SendMessageResult> {
     try {
       // Validate session
-      const sessionValidation = await this.sessionManager.validateSession(sessionToken);
-      if (!sessionValidation.isValid || sessionValidation.session?.patientId !== request.patientId) {
+      const sessionValidation =
+        await this.sessionManager.validateSession(sessionToken);
+      if (
+        !sessionValidation.isValid ||
+        sessionValidation.session?.patientId !== request.patientId
+      ) {
         throw new Error('Invalid session or unauthorized access');
       }
 
@@ -178,7 +191,7 @@ export class CommunicationManager {
       if (!validationResult.isValid) {
         return {
           success: false,
-          message: validationResult.message
+          message: validationResult.message,
         };
       }
 
@@ -191,7 +204,10 @@ export class CommunicationManager {
       // Process attachments if any
       let attachments: MessageAttachment[] = [];
       if (request.attachments && request.attachments.length > 0) {
-        attachments = await this.processAttachments(request.attachments, request.patientId);
+        attachments = await this.processAttachments(
+          request.attachments,
+          request.patientId
+        );
       }
 
       // Create message record
@@ -204,14 +220,15 @@ export class CommunicationManager {
           recipient_id: request.recipientId,
           recipient_type: request.recipientType,
           subject: request.subject,
-          content: this.config.encryptMessages ? 
-            await this.encryptContent(request.content) : request.content,
+          content: this.config.encryptMessages
+            ? await this.encryptContent(request.content)
+            : request.content,
           message_type: request.messageType,
           priority: request.priority,
           status: 'sent',
-          attachments: attachments,
+          attachments,
           is_encrypted: this.config.encryptMessages,
-          created_at: new Date().toISOString()
+          created_at: new Date().toISOString(),
         })
         .select()
         .single();
@@ -221,7 +238,7 @@ export class CommunicationManager {
       // Update conversation
       await this.updateConversation(conversationId, {
         lastMessageAt: new Date(),
-        status: 'active'
+        status: 'active',
       });
 
       // Send notifications
@@ -234,30 +251,30 @@ export class CommunicationManager {
         userType: 'patient',
         details: {
           messageId: message.id,
-          conversationId: conversationId,
+          conversationId,
           messageType: request.messageType,
           priority: request.priority,
-          hasAttachments: attachments.length > 0
-        }
+          hasAttachments: attachments.length > 0,
+        },
       });
 
       return {
         success: true,
         messageId: message.id,
-        conversationId: conversationId,
+        conversationId,
         message: 'Mensagem enviada com sucesso!',
-        estimatedResponseTime: this.getEstimatedResponseTime(request.priority)
+        estimatedResponseTime: this.getEstimatedResponseTime(request.priority),
       };
     } catch (error) {
       await this.auditLogger.log({
         action: 'message_send_failed',
         userId: request.patientId,
         userType: 'patient',
-        details: { error: error.message }
+        details: { error: error.message },
       });
       throw error;
     }
-  }  
+  }
   /**
    * Validate message content
    */
@@ -269,7 +286,7 @@ export class CommunicationManager {
     if (request.content.length > this.config.maxMessageLength) {
       return {
         isValid: false,
-        message: `Mensagem excede o limite de ${this.config.maxMessageLength} caracteres.`
+        message: `Mensagem excede o limite de ${this.config.maxMessageLength} caracteres.`,
       };
     }
 
@@ -277,7 +294,7 @@ export class CommunicationManager {
     if (!request.content.trim()) {
       return {
         isValid: false,
-        message: 'Conteúdo da mensagem não pode estar vazio.'
+        message: 'Conteúdo da mensagem não pode estar vazio.',
       };
     }
 
@@ -286,7 +303,7 @@ export class CommunicationManager {
       if (!this.config.allowAttachments) {
         return {
           isValid: false,
-          message: 'Anexos não são permitidos.'
+          message: 'Anexos não são permitidos.',
         };
       }
 
@@ -294,14 +311,14 @@ export class CommunicationManager {
         if (file.size > this.config.maxAttachmentSize) {
           return {
             isValid: false,
-            message: `Arquivo ${file.name} excede o tamanho máximo permitido.`
+            message: `Arquivo ${file.name} excede o tamanho máximo permitido.`,
           };
         }
 
         if (!this.config.allowedFileTypes.includes(file.type)) {
           return {
             isValid: false,
-            message: `Tipo de arquivo ${file.type} não é permitido.`
+            message: `Tipo de arquivo ${file.type} não é permitido.`,
           };
         }
       }
@@ -309,25 +326,31 @@ export class CommunicationManager {
 
     return {
       isValid: true,
-      message: 'Validação bem-sucedida'
+      message: 'Validação bem-sucedida',
     };
-  }  
+  }
   /**
    * Create a new conversation
    */
-  private async createConversation(request: SendMessageRequest): Promise<string> {
+  private async createConversation(
+    request: SendMessageRequest
+  ): Promise<string> {
     const { data: conversation, error } = await this.supabase
       .from('conversations')
       .insert({
         patient_id: request.patientId,
-        staff_id: request.recipientType === 'staff' ? request.recipientId : null,
-        department_id: request.recipientType === 'department' ? request.recipientId : null,
-        subject: request.subject || `${request.messageType} - ${new Date().toLocaleDateString()}`,
+        staff_id:
+          request.recipientType === 'staff' ? request.recipientId : null,
+        department_id:
+          request.recipientType === 'department' ? request.recipientId : null,
+        subject:
+          request.subject ||
+          `${request.messageType} - ${new Date().toLocaleDateString()}`,
         status: 'active',
         priority: request.priority,
         last_message_at: new Date().toISOString(),
         unread_count: 0,
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
       })
       .select()
       .single();
@@ -348,7 +371,7 @@ export class CommunicationManager {
     }>
   ): Promise<void> {
     const updateData: any = {};
-    
+
     if (updates.lastMessageAt) {
       updateData.last_message_at = updates.lastMessageAt.toISOString();
     }
@@ -365,7 +388,7 @@ export class CommunicationManager {
       .eq('id', conversationId);
 
     if (error) throw error;
-  }  
+  }
   /**
    * Process message attachments
    */
@@ -397,7 +420,7 @@ export class CommunicationManager {
         fileSize: file.size,
         mimeType: file.type,
         downloadUrl: urlData?.signedUrl || '',
-        isEncrypted: this.config.encryptMessages
+        isEncrypted: this.config.encryptMessages,
       });
     }
 
@@ -408,7 +431,7 @@ export class CommunicationManager {
    * Send notifications for new message
    */
   private async sendNotifications(
-    message: any,
+    _message: any,
     request: SendMessageRequest
   ): Promise<void> {
     // This would integrate with the notification service
@@ -419,7 +442,7 @@ export class CommunicationManager {
       messageType: request.messageType,
       priority: request.priority,
       subject: request.subject,
-      senderName: 'Patient' // Would get actual patient name
+      senderName: 'Patient', // Would get actual patient name
     });
   }
 
@@ -458,8 +481,12 @@ export class CommunicationManager {
     sessionToken: string
   ): Promise<CommunicationStats> {
     // Validate session
-    const sessionValidation = await this.sessionManager.validateSession(sessionToken);
-    if (!sessionValidation.isValid || sessionValidation.session?.patientId !== patientId) {
+    const sessionValidation =
+      await this.sessionManager.validateSession(sessionToken);
+    if (
+      !sessionValidation.isValid ||
+      sessionValidation.session?.patientId !== patientId
+    ) {
       throw new Error('Invalid session or unauthorized access');
     }
 
@@ -473,16 +500,16 @@ export class CommunicationManager {
 
     const stats: CommunicationStats = {
       totalMessages: messages.length,
-      unreadMessages: messages.filter(m => m.status !== 'read').length,
+      unreadMessages: messages.filter((m) => m.status !== 'read').length,
       activeConversations: 0, // Would calculate from conversations table
       averageResponseTime: 0, // Would calculate from response times
       messagesByType: {},
-      recentActivity: []
+      recentActivity: [],
     };
 
     // Count messages by type
-    messages.forEach(message => {
-      stats.messagesByType[message.message_type] = 
+    messages.forEach((message) => {
+      stats.messagesByType[message.message_type] =
         (stats.messagesByType[message.message_type] || 0) + 1;
     });
 

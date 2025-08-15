@@ -36,7 +36,11 @@ interface ForecastResult {
     lastPeriodAccuracy: number;
   };
   recommendations: string[];
-  modelUsed: 'exponential_smoothing' | 'seasonal_decomposition' | 'linear_regression' | 'moving_average';
+  modelUsed:
+    | 'exponential_smoothing'
+    | 'seasonal_decomposition'
+    | 'linear_regression'
+    | 'moving_average';
 }
 
 interface SeasonalAnalysis {
@@ -104,8 +108,10 @@ export function useDemandForecasting() {
   const [isLoading, setIsLoading] = useState(false);
   const [forecast, setForecast] = useState<ForecastResult | null>(null);
   const [bulkForecasts, setBulkForecasts] = useState<ForecastResult[]>([]);
-  const [seasonalAnalysis, setSeasonalAnalysis] = useState<SeasonalAnalysis | null>(null);
-  const [accuracyAnalysis, setAccuracyAnalysis] = useState<AccuracyAnalysis | null>(null);
+  const [seasonalAnalysis, setSeasonalAnalysis] =
+    useState<SeasonalAnalysis | null>(null);
+  const [accuracyAnalysis, setAccuracyAnalysis] =
+    useState<AccuracyAnalysis | null>(null);
   const [capabilities, setCapabilities] = useState<any>(null);
 
   // Generate single item forecast
@@ -115,11 +121,11 @@ export function useDemandForecasting() {
       const response = await fetch('/api/inventory/forecasting/demand', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(request)
+        body: JSON.stringify(request),
       });
 
       const result = await response.json();
-      
+
       if (!response.ok) {
         throw new Error(result.error || 'Failed to generate forecast');
       }
@@ -128,7 +134,8 @@ export function useDemandForecasting() {
       toast.success('Demand forecast generated successfully');
       return result.data;
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to generate forecast';
+      const message =
+        error instanceof Error ? error.message : 'Failed to generate forecast';
       toast.error(message);
       throw error;
     } finally {
@@ -137,143 +144,168 @@ export function useDemandForecasting() {
   }, []);
 
   // Generate bulk forecasts
-  const generateBulkForecast = useCallback(async (request: BulkForecastRequest) => {
-    setIsLoading(true);
-    try {
-      const response = await fetch('/api/inventory/forecasting/demand', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(request)
-      });
+  const generateBulkForecast = useCallback(
+    async (request: BulkForecastRequest) => {
+      setIsLoading(true);
+      try {
+        const response = await fetch('/api/inventory/forecasting/demand', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(request),
+        });
 
-      const result = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(result.error || 'Failed to generate bulk forecasts');
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.error || 'Failed to generate bulk forecasts');
+        }
+
+        setBulkForecasts(result.data.forecasts);
+
+        const { successful, failed } = result.data.summary;
+        toast.success(
+          `Generated ${successful} forecasts successfully${failed > 0 ? ` (${failed} failed)` : ''}`
+        );
+
+        return result.data;
+      } catch (error) {
+        const message =
+          error instanceof Error
+            ? error.message
+            : 'Failed to generate bulk forecasts';
+        toast.error(message);
+        throw error;
+      } finally {
+        setIsLoading(false);
       }
-
-      setBulkForecasts(result.data.forecasts);
-      
-      const { successful, failed } = result.data.summary;
-      toast.success(`Generated ${successful} forecasts successfully${failed > 0 ? ` (${failed} failed)` : ''}`);
-      
-      return result.data;
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to generate bulk forecasts';
-      toast.error(message);
-      throw error;
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+    },
+    []
+  );
 
   // Analyze seasonal patterns
-  const analyzeSeasonalPatterns = useCallback(async (
-    itemId: string,
-    clinicId: string,
-    analysisPeriod: number = 365
-  ) => {
-    setIsLoading(true);
-    try {
-      const response = await fetch('/api/inventory/forecasting/seasonal', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ itemId, clinicId, analysisPeriod })
-      });
+  const analyzeSeasonalPatterns = useCallback(
+    async (itemId: string, clinicId: string, analysisPeriod = 365) => {
+      setIsLoading(true);
+      try {
+        const response = await fetch('/api/inventory/forecasting/seasonal', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ itemId, clinicId, analysisPeriod }),
+        });
 
-      const result = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(result.error || 'Failed to analyze seasonal patterns');
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(
+            result.error || 'Failed to analyze seasonal patterns'
+          );
+        }
+
+        setSeasonalAnalysis(result.data);
+        toast.success('Seasonal analysis completed');
+        return result.data;
+      } catch (error) {
+        const message =
+          error instanceof Error
+            ? error.message
+            : 'Failed to analyze seasonal patterns';
+        toast.error(message);
+        throw error;
+      } finally {
+        setIsLoading(false);
       }
-
-      setSeasonalAnalysis(result.data);
-      toast.success('Seasonal analysis completed');
-      return result.data;
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to analyze seasonal patterns';
-      toast.error(message);
-      throw error;
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+    },
+    []
+  );
 
   // Get forecast accuracy analysis
-  const getAccuracyAnalysis = useCallback(async (
-    clinicId: string,
-    itemId?: string,
-    period: string = '30d',
-    modelType?: string
-  ) => {
-    setIsLoading(true);
-    try {
-      const params = new URLSearchParams({
-        clinicId,
-        period,
-        ...(itemId && { itemId }),
-        ...(modelType && { modelType })
-      });
+  const getAccuracyAnalysis = useCallback(
+    async (
+      clinicId: string,
+      itemId?: string,
+      period = '30d',
+      modelType?: string
+    ) => {
+      setIsLoading(true);
+      try {
+        const params = new URLSearchParams({
+          clinicId,
+          period,
+          ...(itemId && { itemId }),
+          ...(modelType && { modelType }),
+        });
 
-      const response = await fetch(`/api/inventory/forecasting/accuracy?${params}`);
-      const result = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(result.error || 'Failed to get accuracy analysis');
+        const response = await fetch(
+          `/api/inventory/forecasting/accuracy?${params}`
+        );
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.error || 'Failed to get accuracy analysis');
+        }
+
+        setAccuracyAnalysis(result.data);
+        return result.data;
+      } catch (error) {
+        const message =
+          error instanceof Error
+            ? error.message
+            : 'Failed to get accuracy analysis';
+        toast.error(message);
+        throw error;
+      } finally {
+        setIsLoading(false);
       }
-
-      setAccuracyAnalysis(result.data);
-      return result.data;
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to get accuracy analysis';
-      toast.error(message);
-      throw error;
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+    },
+    []
+  );
 
   // Log forecast accuracy
-  const logForecastAccuracy = useCallback(async (accuracyData: {
-    clinicId: string;
-    itemId: string;
-    forecastDate: string;
-    forecastPeriod: number;
-    predictedDemand: number;
-    actualDemand: number;
-    accuracyPercentage: number;
-    mape: number;
-    rmse: number;
-    modelUsed: string;
-    confidenceLevel: number;
-    withinConfidenceInterval: boolean;
-  }) => {
-    try {
-      const response = await fetch('/api/inventory/forecasting/accuracy', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(accuracyData)
-      });
+  const logForecastAccuracy = useCallback(
+    async (accuracyData: {
+      clinicId: string;
+      itemId: string;
+      forecastDate: string;
+      forecastPeriod: number;
+      predictedDemand: number;
+      actualDemand: number;
+      accuracyPercentage: number;
+      mape: number;
+      rmse: number;
+      modelUsed: string;
+      confidenceLevel: number;
+      withinConfidenceInterval: boolean;
+    }) => {
+      try {
+        const response = await fetch('/api/inventory/forecasting/accuracy', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(accuracyData),
+        });
 
-      const result = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(result.error || 'Failed to log accuracy data');
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.error || 'Failed to log accuracy data');
+        }
+
+        return result.data;
+      } catch (error) {
+        console.error('Failed to log forecast accuracy:', error);
+        throw error;
       }
-
-      return result.data;
-    } catch (error) {
-      console.error('Failed to log forecast accuracy:', error);
-      throw error;
-    }
-  }, []);
+    },
+    []
+  );
 
   // Get forecasting capabilities
   const getCapabilities = useCallback(async (clinicId: string) => {
     try {
-      const response = await fetch(`/api/inventory/forecasting/demand?clinicId=${clinicId}`);
+      const response = await fetch(
+        `/api/inventory/forecasting/demand?clinicId=${clinicId}`
+      );
       const result = await response.json();
-      
+
       if (!response.ok) {
         throw new Error(result.error || 'Failed to get capabilities');
       }
@@ -307,55 +339,71 @@ export function useDemandForecasting() {
   }, []);
 
   // Calculate forecast confidence score
-  const calculateConfidenceScore = useCallback((forecastResult: ForecastResult): number => {
-    const { accuracy, modelUsed } = forecastResult;
-    
-    // Base score from model accuracy
-    let score = accuracy.lastPeriodAccuracy * 0.4;
-    
-    // Adjust based on MAPE (lower is better)
-    const mapeScore = Math.max(0, 1 - accuracy.mape);
-    score += mapeScore * 0.3;
-    
-    // Adjust based on model type reliability
-    const modelReliability = {
-      'seasonal_decomposition': 0.9,
-      'exponential_smoothing': 0.8,
-      'linear_regression': 0.7,
-      'moving_average': 0.6
-    };
-    score += (modelReliability[modelUsed] || 0.6) * 0.3;
-    
-    return Math.min(1, Math.max(0, score));
-  }, []);
+  const calculateConfidenceScore = useCallback(
+    (forecastResult: ForecastResult): number => {
+      const { accuracy, modelUsed } = forecastResult;
+
+      // Base score from model accuracy
+      let score = accuracy.lastPeriodAccuracy * 0.4;
+
+      // Adjust based on MAPE (lower is better)
+      const mapeScore = Math.max(0, 1 - accuracy.mape);
+      score += mapeScore * 0.3;
+
+      // Adjust based on model type reliability
+      const modelReliability = {
+        seasonal_decomposition: 0.9,
+        exponential_smoothing: 0.8,
+        linear_regression: 0.7,
+        moving_average: 0.6,
+      };
+      score += (modelReliability[modelUsed] || 0.6) * 0.3;
+
+      return Math.min(1, Math.max(0, score));
+    },
+    []
+  );
 
   // Get forecast recommendations
-  const getForecastRecommendations = useCallback((
-    forecastResult: ForecastResult,
-    seasonalData?: SeasonalAnalysis
-  ): string[] => {
-    const recommendations = [...forecastResult.recommendations];
-    
-    if (seasonalData) {
-      const strongPatterns = seasonalData.seasonalPatterns.filter(p => p.strength > 0.5);
-      if (strongPatterns.length > 0) {
-        recommendations.push('Strong seasonal patterns detected - consider seasonal inventory adjustments');
+  const getForecastRecommendations = useCallback(
+    (
+      forecastResult: ForecastResult,
+      seasonalData?: SeasonalAnalysis
+    ): string[] => {
+      const recommendations = [...forecastResult.recommendations];
+
+      if (seasonalData) {
+        const strongPatterns = seasonalData.seasonalPatterns.filter(
+          (p) => p.strength > 0.5
+        );
+        if (strongPatterns.length > 0) {
+          recommendations.push(
+            'Strong seasonal patterns detected - consider seasonal inventory adjustments'
+          );
+        }
+
+        if (seasonalData.demandDrivers.appointmentBased) {
+          recommendations.push(
+            'Demand is appointment-driven - link inventory planning to appointment schedules'
+          );
+        }
       }
-      
-      if (seasonalData.demandDrivers.appointmentBased) {
-        recommendations.push('Demand is appointment-driven - link inventory planning to appointment schedules');
+
+      const confidenceScore = calculateConfidenceScore(forecastResult);
+      if (confidenceScore < 0.6) {
+        recommendations.push(
+          'Low forecast confidence - increase monitoring frequency and safety stock'
+        );
+      } else if (confidenceScore > 0.8) {
+        recommendations.push(
+          'High forecast confidence - suitable for automated reordering'
+        );
       }
-    }
-    
-    const confidenceScore = calculateConfidenceScore(forecastResult);
-    if (confidenceScore < 0.6) {
-      recommendations.push('Low forecast confidence - increase monitoring frequency and safety stock');
-    } else if (confidenceScore > 0.8) {
-      recommendations.push('High forecast confidence - suitable for automated reordering');
-    }
-    
-    return recommendations;
-  }, [calculateConfidenceScore]);
+
+      return recommendations;
+    },
+    [calculateConfidenceScore]
+  );
 
   return {
     // State
@@ -365,7 +413,7 @@ export function useDemandForecasting() {
     seasonalAnalysis,
     accuracyAnalysis,
     capabilities,
-    
+
     // Actions
     generateForecast,
     generateBulkForecast,
@@ -373,15 +421,15 @@ export function useDemandForecasting() {
     getAccuracyAnalysis,
     logForecastAccuracy,
     getCapabilities,
-    
+
     // Clear functions
     clearForecast,
     clearBulkForecasts,
     clearSeasonalAnalysis,
     clearAccuracyAnalysis,
-    
+
     // Utility functions
     calculateConfidenceScore,
-    getForecastRecommendations
+    getForecastRecommendations,
   };
 }

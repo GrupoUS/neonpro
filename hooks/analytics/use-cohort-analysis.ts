@@ -1,54 +1,54 @@
 /**
  * Advanced Cohort Analysis React Hook for NeonPro
- * 
+ *
  * Custom hook providing comprehensive cohort analysis capabilities including:
  * - Cohort generation and definition
  * - Retention rate calculations with heatmap data
  * - Revenue cohort analysis and lifetime value tracking
  * - Statistical insights and trend analysis
  * - Real-time data updates with optimized caching
- * 
+ *
  * Integrates with CohortAnalyzer service and provides UI-ready data formats.
  */
 
-import { useState, useEffect, useCallback, useMemo } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { createClient } from '@/lib/supabase/client'
-import { 
-  CohortDefinition, 
-  CohortMetrics, 
-  CohortAnalysisConfig,
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  type CohortAnalysisConfig,
+  type CohortDefinition,
+  type CohortMetrics,
+  cohortUtils,
   createCohortAnalyzer,
-  cohortUtils
-} from '@/lib/analytics/advanced/cohort-analyzer'
+} from '@/lib/analytics/advanced/cohort-analyzer';
+import { createClient } from '@/lib/supabase/client';
 
 // Types for hook configuration and state
 export interface CohortAnalysisHookConfig {
-  cohortType: 'subscription' | 'trial' | 'revenue'
-  granularity: 'daily' | 'weekly' | 'monthly'
-  periods: number
-  startDate: string
-  endDate: string
-  autoRefresh?: boolean
-  refreshInterval?: number
+  cohortType: 'subscription' | 'trial' | 'revenue';
+  granularity: 'daily' | 'weekly' | 'monthly';
+  periods: number;
+  startDate: string;
+  endDate: string;
+  autoRefresh?: boolean;
+  refreshInterval?: number;
 }
 
 export interface CohortAnalysisState {
-  cohorts: CohortDefinition[]
-  metrics: CohortMetrics[]
-  heatmapData: any[]
-  statistics: any
-  insights: any[]
-  isLoading: boolean
-  error: string | null
-  lastUpdated: Date | null
+  cohorts: CohortDefinition[];
+  metrics: CohortMetrics[];
+  heatmapData: any[];
+  statistics: any;
+  insights: any[];
+  isLoading: boolean;
+  error: string | null;
+  lastUpdated: Date | null;
 }
 
 export interface CohortAnalysisActions {
-  generateAnalysis: (config: CohortAnalysisConfig) => Promise<void>
-  refreshData: () => Promise<void>
-  exportData: (format: 'csv' | 'excel' | 'pdf') => Promise<void>
-  updateConfig: (newConfig: Partial<CohortAnalysisHookConfig>) => void
+  generateAnalysis: (config: CohortAnalysisConfig) => Promise<void>;
+  refreshData: () => Promise<void>;
+  exportData: (format: 'csv' | 'excel' | 'pdf') => Promise<void>;
+  updateConfig: (newConfig: Partial<CohortAnalysisHookConfig>) => void;
 }
 
 /**
@@ -57,29 +57,32 @@ export interface CohortAnalysisActions {
 export function useCohortAnalysis(
   initialConfig: CohortAnalysisHookConfig
 ): CohortAnalysisState & CohortAnalysisActions {
-  const queryClient = useQueryClient()
-  const supabase = createClient()
-  const [config, setConfig] = useState<CohortAnalysisHookConfig>(initialConfig)
-  const [error, setError] = useState<string | null>(null)
+  const queryClient = useQueryClient();
+  const _supabase = createClient();
+  const [config, setConfig] = useState<CohortAnalysisHookConfig>(initialConfig);
+  const [error, setError] = useState<string | null>(null);
 
   // Initialize cohort analyzer
-  const cohortAnalyzer = useMemo(() => createCohortAnalyzer(), [])
+  const cohortAnalyzer = useMemo(() => createCohortAnalyzer(), []);
 
   // Query key for caching
-  const queryKey = useMemo(() => [
-    'cohort-analysis',
-    config.cohortType,
-    config.granularity,
-    config.startDate,
-    config.endDate,
-    config.periods
-  ], [config])
+  const queryKey = useMemo(
+    () => [
+      'cohort-analysis',
+      config.cohortType,
+      config.granularity,
+      config.startDate,
+      config.endDate,
+      config.periods,
+    ],
+    [config]
+  );
 
   // Main data fetching query
   const {
     data: analysisData,
     isLoading,
-    refetch: refreshData
+    refetch: refreshData,
   } = useQuery({
     queryKey,
     queryFn: async () => {
@@ -91,29 +94,36 @@ export function useCohortAnalysis(
           startDate: config.startDate,
           endDate: config.endDate,
           includeRevenue: true,
-          includeChurn: true
-        }
+          includeChurn: true,
+        };
 
         // Generate cohorts
-        const cohorts = await cohortAnalyzer.generateCohorts(analysisConfig)
-        
+        const cohorts = await cohortAnalyzer.generateCohorts(analysisConfig);
+
         if (cohorts.length === 0) {
-          throw new Error('No cohorts found for the specified date range')
+          throw new Error('No cohorts found for the specified date range');
         }
 
         // Calculate retention metrics
-        const metrics = await cohortAnalyzer.calculateCohortRetention(cohorts, analysisConfig)
-        
+        const metrics = await cohortAnalyzer.calculateCohortRetention(
+          cohorts,
+          analysisConfig
+        );
+
         // Calculate revenue cohorts
-        const revenueCohorts = await cohortAnalyzer.calculateRevenueCohorts(cohorts, analysisConfig)
-        
+        const revenueCohorts = await cohortAnalyzer.calculateRevenueCohorts(
+          cohorts,
+          analysisConfig
+        );
+
         // Generate statistical analysis
-        const statistics = await cohortAnalyzer.analyzeCohortStatistics(metrics)
+        const statistics =
+          await cohortAnalyzer.analyzeCohortStatistics(metrics);
 
         // Format data for visualization
-        const heatmapData = cohortUtils.formatForHeatmap(metrics)
-        const comparisonData = cohortUtils.generateComparisonData(metrics)
-        const cohortSizes = cohortUtils.calculateCohortSizes(cohorts)
+        const heatmapData = cohortUtils.formatForHeatmap(metrics);
+        const comparisonData = cohortUtils.generateComparisonData(metrics);
+        const cohortSizes = cohortUtils.calculateCohortSizes(cohorts);
 
         return {
           cohorts,
@@ -123,53 +133,58 @@ export function useCohortAnalysis(
           heatmapData,
           comparisonData,
           cohortSizes,
-          insights: statistics.predictiveInsights || []
-        }
+          insights: statistics.predictiveInsights || [],
+        };
       } catch (err) {
-        console.error('Cohort analysis error:', err)
-        throw err
+        console.error('Cohort analysis error:', err);
+        throw err;
       }
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     cacheTime: 30 * 60 * 1000, // 30 minutes
     retry: 2,
     refetchOnWindowFocus: false,
-    enabled: !!config.startDate && !!config.endDate
-  })
+    enabled: !!config.startDate && !!config.endDate,
+  });
 
   // Auto-refresh effect
   useEffect(() => {
-    if (!config.autoRefresh || !config.refreshInterval) return
+    if (!(config.autoRefresh && config.refreshInterval)) return;
 
     const interval = setInterval(() => {
-      refreshData()
-    }, config.refreshInterval * 1000)
+      refreshData();
+    }, config.refreshInterval * 1000);
 
-    return () => clearInterval(interval)
-  }, [config.autoRefresh, config.refreshInterval, refreshData])
+    return () => clearInterval(interval);
+  }, [config.autoRefresh, config.refreshInterval, refreshData]);
 
   // Generate analysis mutation
   const generateAnalysisMutation = useMutation({
     mutationFn: async (newConfig: CohortAnalysisConfig) => {
-      const cohorts = await cohortAnalyzer.generateCohorts(newConfig)
-      const metrics = await cohortAnalyzer.calculateCohortRetention(cohorts, newConfig)
-      const statistics = await cohortAnalyzer.analyzeCohortStatistics(metrics)
-      
-      return { cohorts, metrics, statistics }
+      const cohorts = await cohortAnalyzer.generateCohorts(newConfig);
+      const metrics = await cohortAnalyzer.calculateCohortRetention(
+        cohorts,
+        newConfig
+      );
+      const statistics = await cohortAnalyzer.analyzeCohortStatistics(metrics);
+
+      return { cohorts, metrics, statistics };
     },
     onSuccess: (data) => {
-      queryClient.setQueryData(queryKey, data)
-      setError(null)
+      queryClient.setQueryData(queryKey, data);
+      setError(null);
     },
     onError: (err) => {
-      setError(err instanceof Error ? err.message : 'Analysis generation failed')
-    }
-  })
+      setError(
+        err instanceof Error ? err.message : 'Analysis generation failed'
+      );
+    },
+  });
 
   // Export data mutation
   const exportDataMutation = useMutation({
     mutationFn: async (format: 'csv' | 'excel' | 'pdf') => {
-      if (!analysisData) throw new Error('No data to export')
+      if (!analysisData) throw new Error('No data to export');
 
       const response = await fetch('/api/analytics/export', {
         method: 'POST',
@@ -180,41 +195,50 @@ export function useCohortAnalysis(
           data: {
             cohorts: analysisData.cohorts,
             metrics: analysisData.metrics,
-            statistics: analysisData.statistics
-          }
-        })
-      })
+            statistics: analysisData.statistics,
+          },
+        }),
+      });
 
-      if (!response.ok) throw new Error('Export failed')
+      if (!response.ok) throw new Error('Export failed');
 
-      const blob = await response.blob()
-      const url = window.URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `cohort-analysis-${new Date().toISOString().split('T')[0]}.${format}`
-      document.body.appendChild(a)
-      a.click()
-      window.URL.revokeObjectURL(url)
-      document.body.removeChild(a)
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `cohort-analysis-${new Date().toISOString().split('T')[0]}.${format}`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
     },
     onError: (err) => {
-      setError(err instanceof Error ? err.message : 'Export failed')
-    }
-  })
+      setError(err instanceof Error ? err.message : 'Export failed');
+    },
+  });
 
   // Actions
-  const generateAnalysis = useCallback(async (newConfig: CohortAnalysisConfig) => {
-    await generateAnalysisMutation.mutateAsync(newConfig)
-  }, [generateAnalysisMutation])
+  const generateAnalysis = useCallback(
+    async (newConfig: CohortAnalysisConfig) => {
+      await generateAnalysisMutation.mutateAsync(newConfig);
+    },
+    [generateAnalysisMutation]
+  );
 
-  const exportData = useCallback(async (format: 'csv' | 'excel' | 'pdf') => {
-    await exportDataMutation.mutateAsync(format)
-  }, [exportDataMutation])
+  const exportData = useCallback(
+    async (format: 'csv' | 'excel' | 'pdf') => {
+      await exportDataMutation.mutateAsync(format);
+    },
+    [exportDataMutation]
+  );
 
-  const updateConfig = useCallback((newConfig: Partial<CohortAnalysisHookConfig>) => {
-    setConfig(prev => ({ ...prev, ...newConfig }))
-    setError(null)
-  }, [])
+  const updateConfig = useCallback(
+    (newConfig: Partial<CohortAnalysisHookConfig>) => {
+      setConfig((prev) => ({ ...prev, ...newConfig }));
+      setError(null);
+    },
+    []
+  );
 
   // Return hook interface
   return {
@@ -225,53 +249,56 @@ export function useCohortAnalysis(
     statistics: analysisData?.statistics || null,
     insights: analysisData?.insights || [],
     isLoading: isLoading || generateAnalysisMutation.isPending,
-    error: error || (generateAnalysisMutation.error?.message) || null,
+    error: error || generateAnalysisMutation.error?.message || null,
     lastUpdated: analysisData ? new Date() : null,
 
     // Actions
     generateAnalysis,
     refreshData,
     exportData,
-    updateConfig
-  }
+    updateConfig,
+  };
 }
 
 /**
  * Hook for cohort comparison analysis
  */
 export function useCohortComparison(cohortIds: string[]) {
-  const queryClient = useQueryClient()
-  
+  const _queryClient = useQueryClient();
+
   return useQuery({
     queryKey: ['cohort-comparison', cohortIds],
     queryFn: async () => {
-      const response = await fetch('/api/analytics/advanced?type=cohort-analysis', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'compare',
-          cohortIds,
-          includeStatistics: true
-        })
-      })
+      const response = await fetch(
+        '/api/analytics/advanced?type=cohort-analysis',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'compare',
+            cohortIds,
+            includeStatistics: true,
+          }),
+        }
+      );
 
-      if (!response.ok) throw new Error('Cohort comparison failed')
-      return response.json()
+      if (!response.ok) throw new Error('Cohort comparison failed');
+      return response.json();
     },
     enabled: cohortIds.length > 1,
-    staleTime: 10 * 60 * 1000 // 10 minutes
-  })
+    staleTime: 10 * 60 * 1000, // 10 minutes
+  });
 }
 
 /**
  * Hook for real-time cohort metrics
  */
-export function useRealTimeCohortMetrics(cohortId: string, enabled: boolean = true) {
-  const [metrics, setMetrics] = useState<CohortMetrics[]>([])
-  const supabase = createClient()
+export function useRealTimeCohortMetrics(cohortId: string, enabled = true) {
+  const [metrics, setMetrics] = useState<CohortMetrics[]>([]);
+  const supabase = createClient();
 
   useEffect(() => {
-    if (!enabled || !cohortId) return
+    if (!(enabled && cohortId)) return;
 
     // Subscribe to real-time updates
     const subscription = supabase
@@ -282,34 +309,34 @@ export function useRealTimeCohortMetrics(cohortId: string, enabled: boolean = tr
           event: '*',
           schema: 'public',
           table: 'subscription_cohorts',
-          filter: `cohort_month=eq.${cohortId}`
+          filter: `cohort_month=eq.${cohortId}`,
         },
         (payload) => {
           // Update metrics when data changes
-          setMetrics(prev => {
-            const updated = [...prev]
-            const index = updated.findIndex(m => m.cohortId === cohortId)
-            
+          setMetrics((prev) => {
+            const updated = [...prev];
+            const index = updated.findIndex((m) => m.cohortId === cohortId);
+
             if (index >= 0) {
               // Update existing metric
-              updated[index] = { ...updated[index], ...payload.new }
+              updated[index] = { ...updated[index], ...payload.new };
             } else {
               // Add new metric
-              updated.push(payload.new as CohortMetrics)
+              updated.push(payload.new as CohortMetrics);
             }
-            
-            return updated
-          })
+
+            return updated;
+          });
         }
       )
-      .subscribe()
+      .subscribe();
 
     return () => {
-      subscription.unsubscribe()
-    }
-  }, [cohortId, enabled, supabase])
+      subscription.unsubscribe();
+    };
+  }, [cohortId, enabled, supabase]);
 
-  return metrics
+  return metrics;
 }
 
 /**
@@ -325,61 +352,77 @@ export function useCohortInsights(config: CohortAnalysisHookConfig) {
         body: JSON.stringify({
           type: 'cohort',
           config,
-          analysisDepth: 'comprehensive'
-        })
-      })
+          analysisDepth: 'comprehensive',
+        }),
+      });
 
-      if (!response.ok) throw new Error('Failed to generate insights')
-      return response.json()
+      if (!response.ok) throw new Error('Failed to generate insights');
+      return response.json();
     },
     staleTime: 15 * 60 * 1000, // 15 minutes
-    enabled: !!config.startDate && !!config.endDate
-  })
+    enabled: !!config.startDate && !!config.endDate,
+  });
 }
 
 /**
  * Utility hook for cohort data formatting
  */
 export function useCohortDataFormatters() {
-  return useMemo(() => ({
-    formatRetentionRate: (rate: number): string => {
-      return `${Math.round(rate * 100) / 100}%`
-    },
-    
-    formatRevenue: (amount: number): string => {
-      return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD'
-      }).format(amount)
-    },
-    
-    formatCohortName: (date: string, granularity: string): string => {
-      const d = new Date(date)
-      if (granularity === 'daily') {
-        return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-      } else if (granularity === 'weekly') {
-        return `Week of ${d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`
-      } else {
-        return d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
-      }
-    },
-    
-    formatPeriodLabel: (period: number, granularity: string): string => {
-      if (period === 0) return 'Initial'
-      const unit = granularity === 'daily' ? 'day' : granularity === 'weekly' ? 'week' : 'month'
-      return `${period} ${unit}${period > 1 ? 's' : ''}`
-    },
-    
-    getRetentionColor: (rate: number): string => {
-      if (rate >= 80) return 'text-green-600'
-      if (rate >= 60) return 'text-yellow-600'
-      return 'text-red-600'
-    },
-    
-    getRetentionBadgeVariant: (rate: number): 'default' | 'secondary' | 'destructive' => {
-      if (rate >= 80) return 'default'
-      if (rate >= 60) return 'secondary'
-      return 'destructive'
-    }
-  }), [])
+  return useMemo(
+    () => ({
+      formatRetentionRate: (rate: number): string => {
+        return `${Math.round(rate * 100) / 100}%`;
+      },
+
+      formatRevenue: (amount: number): string => {
+        return new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'USD',
+        }).format(amount);
+      },
+
+      formatCohortName: (date: string, granularity: string): string => {
+        const d = new Date(date);
+        if (granularity === 'daily') {
+          return d.toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+          });
+        }
+        if (granularity === 'weekly') {
+          return `Week of ${d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+        }
+        return d.toLocaleDateString('en-US', {
+          month: 'long',
+          year: 'numeric',
+        });
+      },
+
+      formatPeriodLabel: (period: number, granularity: string): string => {
+        if (period === 0) return 'Initial';
+        const unit =
+          granularity === 'daily'
+            ? 'day'
+            : granularity === 'weekly'
+              ? 'week'
+              : 'month';
+        return `${period} ${unit}${period > 1 ? 's' : ''}`;
+      },
+
+      getRetentionColor: (rate: number): string => {
+        if (rate >= 80) return 'text-green-600';
+        if (rate >= 60) return 'text-yellow-600';
+        return 'text-red-600';
+      },
+
+      getRetentionBadgeVariant: (
+        rate: number
+      ): 'default' | 'secondary' | 'destructive' => {
+        if (rate >= 80) return 'default';
+        if (rate >= 60) return 'secondary';
+        return 'destructive';
+      },
+    }),
+    []
+  );
 }

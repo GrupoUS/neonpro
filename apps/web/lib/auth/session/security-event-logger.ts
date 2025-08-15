@@ -3,10 +3,10 @@
 // Story 1.4: Session Management & Security
 // =====================================================
 
-import { SupabaseClient } from '@supabase/supabase-js'
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 // Types
-export type SecurityEventType = 
+export type SecurityEventType =
   | 'suspicious_login'
   | 'unusual_location'
   | 'rapid_requests'
@@ -14,67 +14,67 @@ export type SecurityEventType =
   | 'concurrent_limit_exceeded'
   | 'security_violation'
   | 'device_registration'
-  | 'mfa_bypass_attempt'
+  | 'mfa_bypass_attempt';
 
-export type EventSeverity = 'low' | 'medium' | 'high' | 'critical'
+export type EventSeverity = 'low' | 'medium' | 'high' | 'critical';
 
 export interface SecurityEvent {
-  id?: string
-  sessionId?: string
-  userId: string | null
-  eventType: SecurityEventType
-  severity: EventSeverity
-  details: Record<string, any>
-  ipAddress?: string
-  userAgent?: string
-  resolved?: boolean
-  resolvedAt?: Date
-  resolvedBy?: string
-  timestamp?: Date
-  createdAt?: Date
-  updatedAt?: Date
+  id?: string;
+  sessionId?: string;
+  userId: string | null;
+  eventType: SecurityEventType;
+  severity: EventSeverity;
+  details: Record<string, any>;
+  ipAddress?: string;
+  userAgent?: string;
+  resolved?: boolean;
+  resolvedAt?: Date;
+  resolvedBy?: string;
+  timestamp?: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface SecurityEventFilter {
-  userId?: string
-  sessionId?: string
-  eventType?: SecurityEventType
-  severity?: EventSeverity
-  resolved?: boolean
-  startDate?: Date
-  endDate?: Date
-  ipAddress?: string
-  limit?: number
-  offset?: number
+  userId?: string;
+  sessionId?: string;
+  eventType?: SecurityEventType;
+  severity?: EventSeverity;
+  resolved?: boolean;
+  startDate?: Date;
+  endDate?: Date;
+  ipAddress?: string;
+  limit?: number;
+  offset?: number;
 }
 
 export interface SecurityEventStats {
-  totalEvents: number
-  eventsBySeverity: Record<EventSeverity, number>
-  eventsByType: Record<SecurityEventType, number>
-  unresolvedEvents: number
-  recentEvents: number
-  topIpAddresses: Array<{ ip: string; count: number }>
-  topUsers: Array<{ userId: string; email?: string; count: number }>
+  totalEvents: number;
+  eventsBySeverity: Record<EventSeverity, number>;
+  eventsByType: Record<SecurityEventType, number>;
+  unresolvedEvents: number;
+  recentEvents: number;
+  topIpAddresses: Array<{ ip: string; count: number }>;
+  topUsers: Array<{ userId: string; email?: string; count: number }>;
 }
 
 export interface SecurityAlert {
-  id: string
-  title: string
-  description: string
-  severity: EventSeverity
-  eventCount: number
-  affectedUsers: number
-  timeframe: string
-  recommendations: string[]
+  id: string;
+  title: string;
+  description: string;
+  severity: EventSeverity;
+  eventCount: number;
+  affectedUsers: number;
+  timeframe: string;
+  recommendations: string[];
 }
 
 // Security Event Logger Service
 export class SecurityEventLogger {
-  private supabase: SupabaseClient
+  private supabase: SupabaseClient;
 
   constructor(supabase: SupabaseClient) {
-    this.supabase = supabase
+    this.supabase = supabase;
   }
 
   // =====================================================
@@ -96,25 +96,25 @@ export class SecurityEventLogger {
           details: event.details,
           ip_address: event.ipAddress,
           user_agent: event.userAgent,
-          resolved: event.resolved || false,
-          timestamp: event.timestamp?.toISOString() || new Date().toISOString()
+          resolved: event.resolved,
+          timestamp: event.timestamp?.toISOString() || new Date().toISOString(),
         })
         .select()
-        .single()
+        .single();
 
       if (error) {
-        throw new Error(`Failed to log security event: ${error.message}`)
+        throw new Error(`Failed to log security event: ${error.message}`);
       }
 
-      const loggedEvent = this.mapSecurityEvent(data)
+      const loggedEvent = this.mapSecurityEvent(data);
 
       // Check if this event triggers any alerts
-      await this.checkForAlerts(loggedEvent)
+      await this.checkForAlerts(loggedEvent);
 
-      return loggedEvent
+      return loggedEvent;
     } catch (error) {
-      console.error('Security event logging error:', error)
-      throw error
+      console.error('Security event logging error:', error);
+      throw error;
     }
   }
 
@@ -123,7 +123,7 @@ export class SecurityEventLogger {
    */
   async logEvents(events: SecurityEvent[]): Promise<SecurityEvent[]> {
     try {
-      const eventData = events.map(event => ({
+      const eventData = events.map((event) => ({
         session_id: event.sessionId,
         user_id: event.userId,
         event_type: event.eventType,
@@ -131,34 +131,34 @@ export class SecurityEventLogger {
         details: event.details,
         ip_address: event.ipAddress,
         user_agent: event.userAgent,
-        resolved: event.resolved || false,
-        timestamp: event.timestamp?.toISOString() || new Date().toISOString()
-      }))
+        resolved: event.resolved,
+        timestamp: event.timestamp?.toISOString() || new Date().toISOString(),
+      }));
 
       const { data, error } = await this.supabase
         .from('session_security_events')
         .insert(eventData)
-        .select()
+        .select();
 
       if (error) {
-        throw new Error(`Failed to log security events: ${error.message}`)
+        throw new Error(`Failed to log security events: ${error.message}`);
       }
 
-      const loggedEvents = data.map(this.mapSecurityEvent)
+      const loggedEvents = data.map(this.mapSecurityEvent);
 
       // Check for alerts on high severity events
-      const highSeverityEvents = loggedEvents.filter(e => 
-        e.severity === 'high' || e.severity === 'critical'
-      )
-      
+      const highSeverityEvents = loggedEvents.filter(
+        (e) => e.severity === 'high' || e.severity === 'critical'
+      );
+
       for (const event of highSeverityEvents) {
-        await this.checkForAlerts(event)
+        await this.checkForAlerts(event);
       }
 
-      return loggedEvents
+      return loggedEvents;
     } catch (error) {
-      console.error('Batch security event logging error:', error)
-      throw error
+      console.error('Batch security event logging error:', error);
+      throw error;
     }
   }
 
@@ -171,60 +171,61 @@ export class SecurityEventLogger {
    */
   async getEvents(filter: SecurityEventFilter = {}): Promise<SecurityEvent[]> {
     try {
-      let query = this.supabase
-        .from('session_security_events')
-        .select(`
+      let query = this.supabase.from('session_security_events').select(`
           *,
           profiles:user_id(email, full_name)
-        `)
+        `);
 
       // Apply filters
       if (filter.userId) {
-        query = query.eq('user_id', filter.userId)
+        query = query.eq('user_id', filter.userId);
       }
       if (filter.sessionId) {
-        query = query.eq('session_id', filter.sessionId)
+        query = query.eq('session_id', filter.sessionId);
       }
       if (filter.eventType) {
-        query = query.eq('event_type', filter.eventType)
+        query = query.eq('event_type', filter.eventType);
       }
       if (filter.severity) {
-        query = query.eq('severity', filter.severity)
+        query = query.eq('severity', filter.severity);
       }
       if (filter.resolved !== undefined) {
-        query = query.eq('resolved', filter.resolved)
+        query = query.eq('resolved', filter.resolved);
       }
       if (filter.ipAddress) {
-        query = query.eq('ip_address', filter.ipAddress)
+        query = query.eq('ip_address', filter.ipAddress);
       }
       if (filter.startDate) {
-        query = query.gte('timestamp', filter.startDate.toISOString())
+        query = query.gte('timestamp', filter.startDate.toISOString());
       }
       if (filter.endDate) {
-        query = query.lte('timestamp', filter.endDate.toISOString())
+        query = query.lte('timestamp', filter.endDate.toISOString());
       }
 
       // Apply pagination
       if (filter.limit) {
-        query = query.limit(filter.limit)
+        query = query.limit(filter.limit);
       }
       if (filter.offset) {
-        query = query.range(filter.offset, (filter.offset + (filter.limit || 50)) - 1)
+        query = query.range(
+          filter.offset,
+          filter.offset + (filter.limit || 50) - 1
+        );
       }
 
       // Order by timestamp descending
-      query = query.order('timestamp', { ascending: false })
+      query = query.order('timestamp', { ascending: false });
 
-      const { data, error } = await query
+      const { data, error } = await query;
 
       if (error) {
-        throw new Error(`Failed to get security events: ${error.message}`)
+        throw new Error(`Failed to get security events: ${error.message}`);
       }
 
-      return data.map(this.mapSecurityEvent)
+      return data.map(this.mapSecurityEvent);
     } catch (error) {
-      console.error('Get security events error:', error)
-      return []
+      console.error('Get security events error:', error);
+      return [];
     }
   }
 
@@ -241,38 +242,38 @@ export class SecurityEventLogger {
           resolver:resolved_by(email, full_name)
         `)
         .eq('id', eventId)
-        .single()
+        .single();
 
       if (error && error.code !== 'PGRST116') {
-        throw new Error(`Failed to get security event: ${error.message}`)
+        throw new Error(`Failed to get security event: ${error.message}`);
       }
 
-      return data ? this.mapSecurityEvent(data) : null
+      return data ? this.mapSecurityEvent(data) : null;
     } catch (error) {
-      console.error('Get security event by ID error:', error)
-      return null
+      console.error('Get security event by ID error:', error);
+      return null;
     }
   }
 
   /**
    * Get unresolved security events
    */
-  async getUnresolvedEvents(limit: number = 50): Promise<SecurityEvent[]> {
+  async getUnresolvedEvents(limit = 50): Promise<SecurityEvent[]> {
     return this.getEvents({
       resolved: false,
-      limit
-    })
+      limit,
+    });
   }
 
   /**
    * Get recent security events
    */
-  async getRecentEvents(hours: number = 24, limit: number = 100): Promise<SecurityEvent[]> {
-    const startDate = new Date(Date.now() - hours * 60 * 60 * 1000)
+  async getRecentEvents(hours = 24, limit = 100): Promise<SecurityEvent[]> {
+    const startDate = new Date(Date.now() - hours * 60 * 60 * 1000);
     return this.getEvents({
       startDate,
-      limit
-    })
+      limit,
+    });
   }
 
   // =====================================================
@@ -294,23 +295,25 @@ export class SecurityEventLogger {
           resolved: true,
           resolved_at: new Date().toISOString(),
           resolved_by: resolvedBy,
-          details: resolution ? {
-            ...((await this.getEventById(eventId))?.details || {}),
-            resolution
-          } : undefined
+          details: resolution
+            ? {
+                ...((await this.getEventById(eventId))?.details || {}),
+                resolution,
+              }
+            : undefined,
         })
         .eq('id', eventId)
         .select()
-        .single()
+        .single();
 
       if (error) {
-        throw new Error(`Failed to resolve security event: ${error.message}`)
+        throw new Error(`Failed to resolve security event: ${error.message}`);
       }
 
-      return this.mapSecurityEvent(data)
+      return this.mapSecurityEvent(data);
     } catch (error) {
-      console.error('Resolve security event error:', error)
-      throw error
+      console.error('Resolve security event error:', error);
+      throw error;
     }
   }
 
@@ -333,21 +336,21 @@ export class SecurityEventLogger {
             details: this.supabase.rpc('jsonb_set', {
               target: 'details',
               path: '{resolution}',
-              new_value: JSON.stringify(resolution)
-            })
-          })
+              new_value: JSON.stringify(resolution),
+            }),
+          }),
         })
         .in('id', eventIds)
-        .select()
+        .select();
 
       if (error) {
-        throw new Error(`Failed to resolve security events: ${error.message}`)
+        throw new Error(`Failed to resolve security events: ${error.message}`);
       }
 
-      return data.map(this.mapSecurityEvent)
+      return data.map(this.mapSecurityEvent);
     } catch (error) {
-      console.error('Bulk resolve security events error:', error)
-      throw error
+      console.error('Bulk resolve security events error:', error);
+      throw error;
     }
   }
 
@@ -363,40 +366,40 @@ export class SecurityEventLogger {
     endDate?: Date
   ): Promise<SecurityEventStats> {
     try {
-      const start = startDate || new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
-      const end = endDate || new Date()
+      const start = startDate || new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+      const end = endDate || new Date();
 
       // Get total events
       const { count: totalEvents } = await this.supabase
         .from('session_security_events')
         .select('*', { count: 'exact', head: true })
         .gte('timestamp', start.toISOString())
-        .lte('timestamp', end.toISOString())
+        .lte('timestamp', end.toISOString());
 
       // Get events by severity
       const { data: severityData } = await this.supabase
         .from('session_security_events')
         .select('severity')
         .gte('timestamp', start.toISOString())
-        .lte('timestamp', end.toISOString())
+        .lte('timestamp', end.toISOString());
 
       const eventsBySeverity: Record<EventSeverity, number> = {
         low: 0,
         medium: 0,
         high: 0,
-        critical: 0
-      }
+        critical: 0,
+      };
 
-      severityData?.forEach(event => {
-        eventsBySeverity[event.severity as EventSeverity]++
-      })
+      severityData?.forEach((event) => {
+        eventsBySeverity[event.severity as EventSeverity]++;
+      });
 
       // Get events by type
       const { data: typeData } = await this.supabase
         .from('session_security_events')
         .select('event_type')
         .gte('timestamp', start.toISOString())
-        .lte('timestamp', end.toISOString())
+        .lte('timestamp', end.toISOString());
 
       const eventsByType: Record<SecurityEventType, number> = {
         suspicious_login: 0,
@@ -406,12 +409,12 @@ export class SecurityEventLogger {
         concurrent_limit_exceeded: 0,
         security_violation: 0,
         device_registration: 0,
-        mfa_bypass_attempt: 0
-      }
+        mfa_bypass_attempt: 0,
+      };
 
-      typeData?.forEach(event => {
-        eventsByType[event.event_type as SecurityEventType]++
-      })
+      typeData?.forEach((event) => {
+        eventsByType[event.event_type as SecurityEventType]++;
+      });
 
       // Get unresolved events count
       const { count: unresolvedEvents } = await this.supabase
@@ -419,14 +422,14 @@ export class SecurityEventLogger {
         .select('*', { count: 'exact', head: true })
         .eq('resolved', false)
         .gte('timestamp', start.toISOString())
-        .lte('timestamp', end.toISOString())
+        .lte('timestamp', end.toISOString());
 
       // Get recent events (last 24 hours)
-      const recentStart = new Date(Date.now() - 24 * 60 * 60 * 1000)
+      const recentStart = new Date(Date.now() - 24 * 60 * 60 * 1000);
       const { count: recentEvents } = await this.supabase
         .from('session_security_events')
         .select('*', { count: 'exact', head: true })
-        .gte('timestamp', recentStart.toISOString())
+        .gte('timestamp', recentStart.toISOString());
 
       // Get top IP addresses
       const { data: ipData } = await this.supabase
@@ -434,19 +437,19 @@ export class SecurityEventLogger {
         .select('ip_address')
         .gte('timestamp', start.toISOString())
         .lte('timestamp', end.toISOString())
-        .not('ip_address', 'is', null)
+        .not('ip_address', 'is', null);
 
-      const ipCounts: Record<string, number> = {}
-      ipData?.forEach(event => {
+      const ipCounts: Record<string, number> = {};
+      ipData?.forEach((event) => {
         if (event.ip_address) {
-          ipCounts[event.ip_address] = (ipCounts[event.ip_address] || 0) + 1
+          ipCounts[event.ip_address] = (ipCounts[event.ip_address] || 0) + 1;
         }
-      })
+      });
 
       const topIpAddresses = Object.entries(ipCounts)
-        .sort(([,a], [,b]) => b - a)
+        .sort(([, a], [, b]) => b - a)
         .slice(0, 10)
-        .map(([ip, count]) => ({ ip, count }))
+        .map(([ip, count]) => ({ ip, count }));
 
       // Get top users
       const { data: userData } = await this.supabase
@@ -457,29 +460,29 @@ export class SecurityEventLogger {
         `)
         .gte('timestamp', start.toISOString())
         .lte('timestamp', end.toISOString())
-        .not('user_id', 'is', null)
+        .not('user_id', 'is', null);
 
-      const userCounts: Record<string, { count: number; email?: string }> = {}
-      userData?.forEach(event => {
+      const userCounts: Record<string, { count: number; email?: string }> = {};
+      userData?.forEach((event) => {
         if (event.user_id) {
           if (!userCounts[event.user_id]) {
             userCounts[event.user_id] = {
               count: 0,
-              email: event.profiles?.email
-            }
+              email: event.profiles?.email,
+            };
           }
-          userCounts[event.user_id].count++
+          userCounts[event.user_id].count++;
         }
-      })
+      });
 
       const topUsers = Object.entries(userCounts)
-        .sort(([,a], [,b]) => b.count - a.count)
+        .sort(([, a], [, b]) => b.count - a.count)
         .slice(0, 10)
         .map(([userId, data]) => ({
           userId,
           email: data.email,
-          count: data.count
-        }))
+          count: data.count,
+        }));
 
       return {
         totalEvents: totalEvents || 0,
@@ -488,10 +491,10 @@ export class SecurityEventLogger {
         unresolvedEvents: unresolvedEvents || 0,
         recentEvents: recentEvents || 0,
         topIpAddresses,
-        topUsers
-      }
+        topUsers,
+      };
     } catch (error) {
-      console.error('Get event statistics error:', error)
+      console.error('Get event statistics error:', error);
       return {
         totalEvents: 0,
         eventsBySeverity: { low: 0, medium: 0, high: 0, critical: 0 },
@@ -503,13 +506,13 @@ export class SecurityEventLogger {
           concurrent_limit_exceeded: 0,
           security_violation: 0,
           device_registration: 0,
-          mfa_bypass_attempt: 0
+          mfa_bypass_attempt: 0,
         },
         unresolvedEvents: 0,
         recentEvents: 0,
         topIpAddresses: [],
-        topUsers: []
-      }
+        topUsers: [],
+      };
     }
   }
 
@@ -518,17 +521,17 @@ export class SecurityEventLogger {
    */
   async generateSecurityAlerts(): Promise<SecurityAlert[]> {
     try {
-      const alerts: SecurityAlert[] = []
-      const now = new Date()
-      const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000)
-      const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000)
+      const alerts: SecurityAlert[] = [];
+      const now = new Date();
+      const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
+      const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
       // Alert 1: High number of failed login attempts
       const { count: failedLogins } = await this.supabase
         .from('session_security_events')
         .select('*', { count: 'exact', head: true })
         .eq('event_type', 'suspicious_login')
-        .gte('timestamp', oneHourAgo.toISOString())
+        .gte('timestamp', oneHourAgo.toISOString());
 
       if (failedLogins && failedLogins > 10) {
         alerts.push({
@@ -542,9 +545,9 @@ export class SecurityEventLogger {
           recommendations: [
             'Review IP addresses for potential brute force attacks',
             'Consider implementing rate limiting',
-            'Check for compromised accounts'
-          ]
-        })
+            'Check for compromised accounts',
+          ],
+        });
       }
 
       // Alert 2: Multiple session hijack attempts
@@ -552,7 +555,7 @@ export class SecurityEventLogger {
         .from('session_security_events')
         .select('*', { count: 'exact', head: true })
         .eq('event_type', 'session_hijack_attempt')
-        .gte('timestamp', oneDayAgo.toISOString())
+        .gte('timestamp', oneDayAgo.toISOString());
 
       if (hijackAttempts && hijackAttempts > 5) {
         alerts.push({
@@ -566,9 +569,9 @@ export class SecurityEventLogger {
           recommendations: [
             'Investigate affected sessions immediately',
             'Force logout of suspicious sessions',
-            'Review session security measures'
-          ]
-        })
+            'Review session security measures',
+          ],
+        });
       }
 
       // Alert 3: Unusual location patterns
@@ -576,7 +579,7 @@ export class SecurityEventLogger {
         .from('session_security_events')
         .select('user_id, details')
         .eq('event_type', 'unusual_location')
-        .gte('timestamp', oneDayAgo.toISOString())
+        .gte('timestamp', oneDayAgo.toISOString());
 
       if (locationEvents && locationEvents.length > 20) {
         alerts.push({
@@ -585,20 +588,20 @@ export class SecurityEventLogger {
           description: `${locationEvents.length} logins from unusual locations in the last 24 hours`,
           severity: 'medium',
           eventCount: locationEvents.length,
-          affectedUsers: new Set(locationEvents.map(e => e.user_id)).size,
+          affectedUsers: new Set(locationEvents.map((e) => e.user_id)).size,
           timeframe: '24 hours',
           recommendations: [
             'Review geographic login patterns',
             'Consider implementing location-based restrictions',
-            'Notify users of unusual activity'
-          ]
-        })
+            'Notify users of unusual activity',
+          ],
+        });
       }
 
-      return alerts
+      return alerts;
     } catch (error) {
-      console.error('Generate security alerts error:', error)
-      return []
+      console.error('Generate security alerts error:', error);
+      return [];
     }
   }
 
@@ -624,8 +627,8 @@ export class SecurityEventLogger {
       resolvedBy: data.resolved_by,
       timestamp: new Date(data.timestamp),
       createdAt: new Date(data.created_at),
-      updatedAt: new Date(data.updated_at)
-    }
+      updatedAt: new Date(data.updated_at),
+    };
   }
 
   /**
@@ -635,19 +638,19 @@ export class SecurityEventLogger {
     try {
       // Critical events trigger immediate alerts
       if (event.severity === 'critical') {
-        await this.triggerCriticalAlert(event)
+        await this.triggerCriticalAlert(event);
       }
 
       // Check for patterns that might indicate attacks
       if (event.eventType === 'suspicious_login') {
-        await this.checkForBruteForcePattern(event)
+        await this.checkForBruteForcePattern(event);
       }
 
       if (event.eventType === 'session_hijack_attempt') {
-        await this.triggerSessionHijackAlert(event)
+        await this.triggerSessionHijackAlert(event);
       }
     } catch (error) {
-      console.error('Check for alerts error:', error)
+      console.error('Check for alerts error:', error);
     }
   }
 
@@ -659,23 +662,23 @@ export class SecurityEventLogger {
     // - Send notifications to security team
     // - Create incident tickets
     // - Trigger automated responses
-    console.warn('CRITICAL SECURITY EVENT:', event)
+    console.warn('CRITICAL SECURITY EVENT:', event);
   }
 
   /**
    * Check for brute force attack patterns
    */
   private async checkForBruteForcePattern(event: SecurityEvent): Promise<void> {
-    if (!event.ipAddress) return
+    if (!event.ipAddress) return;
 
-    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000)
-    
+    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+
     const { count } = await this.supabase
       .from('session_security_events')
       .select('*', { count: 'exact', head: true })
       .eq('event_type', 'suspicious_login')
       .eq('ip_address', event.ipAddress)
-      .gte('timestamp', fiveMinutesAgo.toISOString())
+      .gte('timestamp', fiveMinutesAgo.toISOString());
 
     if (count && count > 5) {
       await this.logEvent({
@@ -685,10 +688,10 @@ export class SecurityEventLogger {
         details: {
           ip_address: event.ipAddress,
           attempt_count: count,
-          timeframe: '5 minutes'
+          timeframe: '5 minutes',
         },
-        ipAddress: event.ipAddress
-      })
+        ipAddress: event.ipAddress,
+      });
     }
   }
 
@@ -697,8 +700,8 @@ export class SecurityEventLogger {
    */
   private async triggerSessionHijackAlert(event: SecurityEvent): Promise<void> {
     // Immediate response for session hijack attempts
-    console.error('SESSION HIJACK ATTEMPT DETECTED:', event)
-    
+    console.error('SESSION HIJACK ATTEMPT DETECTED:', event);
+
     // In production, this would trigger:
     // - Immediate session termination
     // - User notification
@@ -706,4 +709,4 @@ export class SecurityEventLogger {
   }
 }
 
-export default SecurityEventLogger
+export default SecurityEventLogger;

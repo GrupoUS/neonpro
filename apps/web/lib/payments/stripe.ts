@@ -1,21 +1,21 @@
-import Stripe from 'stripe'
-import { loadStripe, Stripe as StripeInstance } from '@stripe/stripe-js'
+import { loadStripe, type Stripe as StripeInstance } from '@stripe/stripe-js';
+import Stripe from 'stripe';
 
 // Server-side Stripe instance
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2025-01-27.acacia',
   typescript: true,
-})
+});
 
 // Client-side Stripe instance
-let stripePromise: Promise<StripeInstance | null>
+let stripePromise: Promise<StripeInstance | null>;
 
 export const getStripe = () => {
   if (!stripePromise) {
-    stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
+    stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
   }
-  return stripePromise
-}
+  return stripePromise;
+};
 
 // Stripe configuration constants
 export const STRIPE_CONFIG = {
@@ -28,25 +28,25 @@ export const STRIPE_CONFIG = {
   automatic_tax: {
     enabled: false,
   },
-} as const
+} as const;
 
 // Payment status types
-export type PaymentStatus = 
+export type PaymentStatus =
   | 'draft'
   | 'pending'
-  | 'processing' 
+  | 'processing'
   | 'succeeded'
   | 'canceled'
   | 'requires_payment_method'
   | 'requires_confirmation'
-  | 'requires_action'
+  | 'requires_action';
 
 export type PaymentIntentData = {
-  id: string
-  amount: number
-  currency: string
-  status: PaymentStatus
-  client_secret: string | null
-  metadata: Record<string, string>
-  created: number
-}
+  id: string;
+  amount: number;
+  currency: string;
+  status: PaymentStatus;
+  client_secret: string | null;
+  metadata: Record<string, string>;
+  created: number;
+};

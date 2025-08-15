@@ -1,12 +1,21 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { prisma } from '@/lib/prisma';
 
 // Schema de validação para query parameters
 const querySchema = z.object({
-  include_products: z.string().optional().transform(val => val === 'true'),
-  limit: z.string().optional().transform(val => val ? parseInt(val, 10) : 10),
-  offset: z.string().optional().transform(val => val ? parseInt(val, 10) : 0),
+  include_products: z
+    .string()
+    .optional()
+    .transform((val) => val === 'true'),
+  limit: z
+    .string()
+    .optional()
+    .transform((val) => (val ? Number.parseInt(val, 10) : 10)),
+  offset: z
+    .string()
+    .optional()
+    .transform((val) => (val ? Number.parseInt(val, 10) : 0)),
 });
 
 /**
@@ -25,14 +34,16 @@ export async function GET(request: NextRequest) {
         created_at: 'desc',
       },
       include: {
-        products: query.include_products ? {
-          where: {
-            is_active: true,
-          },
-          orderBy: {
-            name: 'asc',
-          },
-        } : false,
+        products: query.include_products
+          ? {
+              where: {
+                is_active: true,
+              },
+              orderBy: {
+                name: 'asc',
+              },
+            }
+          : false,
         _count: {
           select: {
             products: true,
@@ -43,7 +54,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Transformar dados para formato mais amigável
-    const transformedTenants = tenants.map(tenant => ({
+    const transformedTenants = tenants.map((tenant) => ({
       id: tenant.id,
       name: tenant.name,
       slug: tenant.slug,
@@ -74,7 +85,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('Erro ao buscar tenants:', error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -90,7 +101,8 @@ export async function GET(request: NextRequest) {
       {
         success: false,
         error: 'Erro interno do servidor',
-        message: process.env.NODE_ENV === 'development' ? error.message : undefined,
+        message:
+          process.env.NODE_ENV === 'development' ? error.message : undefined,
       },
       { status: 500 }
     );
@@ -104,16 +116,24 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    
+
     const tenantSchema = z.object({
       name: z.string().min(1, 'Nome é obrigatório'),
-      slug: z.string().min(1, 'Slug é obrigatório').regex(/^[a-z0-9-]+$/, 'Slug deve conter apenas letras minúsculas, números e hífens'),
+      slug: z
+        .string()
+        .min(1, 'Slug é obrigatório')
+        .regex(
+          /^[a-z0-9-]+$/,
+          'Slug deve conter apenas letras minúsculas, números e hífens'
+        ),
       description: z.string().optional(),
       logo_url: z.string().url().optional(),
       website_url: z.string().url().optional(),
       contact_email: z.string().email().optional(),
       contact_phone: z.string().optional(),
-      subscription_plan: z.enum(['basic', 'pro', 'enterprise']).default('basic'),
+      subscription_plan: z
+        .enum(['basic', 'pro', 'enterprise'])
+        .default('basic'),
     });
 
     const validatedData = tenantSchema.parse(body);
@@ -145,7 +165,7 @@ export async function POST(request: NextRequest) {
     );
   } catch (error) {
     console.error('Erro ao criar tenant:', error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -173,7 +193,8 @@ export async function POST(request: NextRequest) {
       {
         success: false,
         error: 'Erro interno do servidor',
-        message: process.env.NODE_ENV === 'development' ? error.message : undefined,
+        message:
+          process.env.NODE_ENV === 'development' ? error.message : undefined,
       },
       { status: 500 }
     );

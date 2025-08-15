@@ -5,71 +5,147 @@ import { z } from 'zod';
 
 // Enum schemas
 export const VisualizationTypeSchema = z.enum([
-  'table', 'chart', 'graph', 'metric', 'pivot', 'dashboard'
+  'table',
+  'chart',
+  'graph',
+  'metric',
+  'pivot',
+  'dashboard',
 ]);
 
 export const TemplateCategorySchema = z.enum([
-  'financial', 'patient', 'operational', 'clinical', 'inventory', 'custom'
+  'financial',
+  'patient',
+  'operational',
+  'clinical',
+  'inventory',
+  'custom',
 ]);
 
 export const UsageActionTypeSchema = z.enum([
-  'view', 'generate', 'export', 'share', 'edit', 'clone'
+  'view',
+  'generate',
+  'export',
+  'share',
+  'edit',
+  'clone',
 ]);
 
 export const DeliveryMethodSchema = z.enum([
-  'email', 'dashboard', 'webhook', 'file_system'
+  'email',
+  'dashboard',
+  'webhook',
+  'file_system',
 ]);
 
 export const ReportFormatSchema = z.enum([
-  'pdf', 'excel', 'csv', 'powerpoint', 'json'
+  'pdf',
+  'excel',
+  'csv',
+  'powerpoint',
+  'json',
 ]);
 
-export const PermissionLevelSchema = z.enum([
-  'view', 'edit', 'admin', 'owner'
-]);
+export const PermissionLevelSchema = z.enum(['view', 'edit', 'admin', 'owner']);
 
 export const ConnectorTypeSchema = z.enum([
-  'internal', 'database', 'api', 'file', 'webhook'
+  'internal',
+  'database',
+  'api',
+  'file',
+  'webhook',
 ]);
 
 export const TestStatusSchema = z.enum([
-  'success', 'failed', 'unknown', 'testing'
+  'success',
+  'failed',
+  'unknown',
+  'testing',
 ]);
 
 export const ChartTypeSchema = z.enum([
-  'line', 'bar', 'pie', 'donut', 'area', 'scatter', 'gauge', 
-  'funnel', 'heatmap', 'treemap', 'waterfall', 'combo'
+  'line',
+  'bar',
+  'pie',
+  'donut',
+  'area',
+  'scatter',
+  'gauge',
+  'funnel',
+  'heatmap',
+  'treemap',
+  'waterfall',
+  'combo',
 ]);
 
 export const DataSourceTypeSchema = z.enum([
-  'sql', 'api', 'file', 'real_time', 'cached'
+  'sql',
+  'api',
+  'file',
+  'real_time',
+  'cached',
 ]);
 
 export const AggregationTypeSchema = z.enum([
-  'sum', 'avg', 'count', 'min', 'max', 'distinct', 'percentile'
+  'sum',
+  'avg',
+  'count',
+  'min',
+  'max',
+  'distinct',
+  'percentile',
 ]);
 
 export const ComponentTypeSchema = z.enum([
-  'chart', 'table', 'metric', 'filter', 'text', 'image', 'container'
+  'chart',
+  'table',
+  'metric',
+  'filter',
+  'text',
+  'image',
+  'container',
 ]);
 
 export const RefreshRateSchema = z.enum([
-  'real_time', 'every_minute', 'every_5_minutes', 'every_15_minutes', 
-  'every_hour', 'daily', 'manual'
+  'real_time',
+  'every_minute',
+  'every_5_minutes',
+  'every_15_minutes',
+  'every_hour',
+  'daily',
+  'manual',
 ]);
 
 export const FilterOperatorSchema = z.enum([
-  '=', '!=', '>', '<', '>=', '<=', 'in', 'not_in', 'like', 'not_like'
+  '=',
+  '!=',
+  '>',
+  '<',
+  '>=',
+  '<=',
+  'in',
+  'not_in',
+  'like',
+  'not_like',
 ]);
 
 export const FilterTypeSchema = z.enum([
-  'date', 'number', 'text', 'select', 'multi_select', 'boolean'
+  'date',
+  'number',
+  'text',
+  'select',
+  'multi_select',
+  'boolean',
 ]);
 
 export const FilterLogicSchema = z.enum(['AND', 'OR']);
 
 export const ScheduleFrequencySchema = z.enum([
-  'daily', 'weekly', 'monthly', 'yearly', 'custom'
+  'daily',
+  'weekly',
+  'monthly',
+  'yearly',
+  'custom',
 ]);
 
 export const RecipientTypeSchema = z.enum(['to', 'cc', 'bcc']);
@@ -80,7 +156,7 @@ export const ErrorSeveritySchema = z.enum(['error', 'warning', 'info']);
 export const PositionSchema = z.object({
   x: z.number().min(0),
   y: z.number().min(0),
-  z: z.number().optional()
+  z: z.number().optional(),
 });
 
 export const SizeSchema = z.object({
@@ -89,34 +165,34 @@ export const SizeSchema = z.object({
   min_width: z.number().positive().optional(),
   min_height: z.number().positive().optional(),
   max_width: z.number().positive().optional(),
-  max_height: z.number().positive().optional()
+  max_height: z.number().positive().optional(),
 });
 
 export const SpacingSchema = z.object({
   top: z.number().min(0),
   right: z.number().min(0),
   bottom: z.number().min(0),
-  left: z.number().min(0)
+  left: z.number().min(0),
 });
 
 export const GridSizeSchema = z.object({
   columns: z.number().int().positive(),
   rows: z.number().int().positive(),
   cell_width: z.number().positive(),
-  cell_height: z.number().positive()
+  cell_height: z.number().positive(),
 });
 
 export const ComponentSpacingSchema = z.object({
   margin: SpacingSchema,
   padding: SpacingSchema,
-  gap: z.number().min(0)
+  gap: z.number().min(0),
 });
 
 export const ResponsiveBreakpointsSchema = z.object({
   mobile: z.number().positive(),
   tablet: z.number().positive(),
   desktop: z.number().positive(),
-  large_desktop: z.number().positive()
+  large_desktop: z.number().positive(),
 });
 
 export const FontSizesSchema = z.object({
@@ -125,7 +201,7 @@ export const FontSizesSchema = z.object({
   md: z.string(),
   lg: z.string(),
   xl: z.string(),
-  xxl: z.string()
+  xxl: z.string(),
 });
 
 export const ThemeConfigSchema = z.object({
@@ -136,14 +212,14 @@ export const ThemeConfigSchema = z.object({
   border_color: z.string().regex(/^#[0-9A-Fa-f]{6}$/),
   accent_color: z.string().regex(/^#[0-9A-Fa-f]{6}$/),
   font_family: z.string().min(1),
-  font_sizes: FontSizesSchema
+  font_sizes: FontSizesSchema,
 });
 
 export const HeaderActionSchema = z.object({
   type: z.string(),
   label: z.string().min(1),
   icon: z.string().optional(),
-  handler: z.string().min(1)
+  handler: z.string().min(1),
 });
 
 export const HeaderConfigSchema = z.object({
@@ -151,20 +227,20 @@ export const HeaderConfigSchema = z.object({
   title: z.string().min(1),
   subtitle: z.string().optional(),
   logo: z.string().optional(),
-  actions: z.array(HeaderActionSchema)
+  actions: z.array(HeaderActionSchema),
 });
 
 export const FooterLinkSchema = z.object({
   label: z.string().min(1),
   url: z.string().url(),
-  target: z.string().optional()
+  target: z.string().optional(),
 });
 
 export const FooterConfigSchema = z.object({
   show_footer: z.boolean(),
   content: z.string(),
   links: z.array(FooterLinkSchema),
-  generated_info: z.boolean()
+  generated_info: z.boolean(),
 });
 
 export const ChartStylingSchema = z.object({
@@ -174,14 +250,14 @@ export const ChartStylingSchema = z.object({
   border_color: z.string().regex(/^#[0-9A-Fa-f]{6}$/),
   background_color: z.string().regex(/^#[0-9A-Fa-f]{6}$/),
   font_size: z.number().positive(),
-  font_weight: z.string()
+  font_weight: z.string(),
 });
 
 export const ChartFilterSchema = z.object({
   field: z.string().min(1),
   operator: FilterOperatorSchema,
   value: z.any(),
-  is_required: z.boolean()
+  is_required: z.boolean(),
 });
 
 export const ChartConfigSchema = z.object({
@@ -195,13 +271,13 @@ export const ChartConfigSchema = z.object({
   position: PositionSchema,
   size: SizeSchema,
   styling: ChartStylingSchema,
-  filters: z.array(ChartFilterSchema)
+  filters: z.array(ChartFilterSchema),
 });
 
 export const FilterOptionSchema = z.object({
   label: z.string().min(1),
   value: z.any(),
-  group: z.string().optional()
+  group: z.string().optional(),
 });
 
 export const GlobalFilterSchema = z.object({
@@ -210,13 +286,13 @@ export const GlobalFilterSchema = z.object({
   type: FilterTypeSchema,
   options: z.array(FilterOptionSchema),
   default_value: z.any(),
-  affects_charts: z.array(z.string().uuid())
+  affects_charts: z.array(z.string().uuid()),
 });
 
 export const ChartFilterGroupSchema = z.object({
   chart_id: z.string().uuid(),
   filters: z.array(ChartFilterSchema),
-  logic: FilterLogicSchema
+  logic: FilterLogicSchema,
 });
 
 export const FilterConfigSchema = z.object({
@@ -224,7 +300,7 @@ export const FilterConfigSchema = z.object({
   field: z.string().min(1),
   operator: FilterOperatorSchema,
   value: z.any(),
-  label: z.string().min(1)
+  label: z.string().min(1),
 });
 
 export const UserFilterSchema = z.object({
@@ -232,12 +308,12 @@ export const UserFilterSchema = z.object({
   user_id: z.string().uuid(),
   filter_config: FilterConfigSchema,
   is_saved: z.boolean(),
-  name: z.string().optional()
+  name: z.string().optional(),
 });
 
 export const FilterTransformationSchema = z.object({
   type: z.enum(['map', 'filter', 'aggregate', 'join', 'pivot']),
-  config: z.record(z.any())
+  config: z.record(z.any()),
 });
 
 export const DynamicFilterSchema = z.object({
@@ -245,55 +321,55 @@ export const DynamicFilterSchema = z.object({
   source_field: z.string().min(1),
   target_charts: z.array(z.string().uuid()),
   update_trigger: z.enum(['change', 'click', 'hover', 'time']),
-  transformation: FilterTransformationSchema
+  transformation: FilterTransformationSchema,
 });
 
 export const ReportFiltersSchema = z.object({
   global_filters: z.array(GlobalFilterSchema),
   chart_filters: z.array(ChartFilterGroupSchema),
   user_filters: z.array(UserFilterSchema),
-  dynamic_filters: z.array(DynamicFilterSchema)
+  dynamic_filters: z.array(DynamicFilterSchema),
 });
 
 export const LayoutSettingsSchema = z.object({
   auto_layout: z.boolean(),
   grid_snap: z.boolean(),
   alignment_guides: z.boolean(),
-  responsive_mode: z.boolean()
+  responsive_mode: z.boolean(),
 });
 
 export const TypographyConfigSchema = z.object({
   font_family: z.string().min(1),
   font_sizes: FontSizesSchema,
   line_heights: z.record(z.number().positive()),
-  font_weights: z.record(z.string())
+  font_weights: z.record(z.string()),
 });
 
 export const StylingConfigSchema = z.object({
   theme: z.string().min(1),
   custom_css: z.string().optional(),
   brand_colors: z.array(z.string().regex(/^#[0-9A-Fa-f]{6}$/)),
-  typography: TypographyConfigSchema
+  typography: TypographyConfigSchema,
 });
 
 export const ClickActionSchema = z.object({
   type: z.enum(['drill_down', 'filter', 'navigate', 'modal', 'custom']),
   target: z.string().min(1),
-  config: z.record(z.any())
+  config: z.record(z.any()),
 });
 
 export const InteractivityConfigSchema = z.object({
   drill_down: z.boolean(),
   cross_filtering: z.boolean(),
   hover_effects: z.boolean(),
-  click_actions: z.array(ClickActionSchema)
+  click_actions: z.array(ClickActionSchema),
 });
 
 export const PerformanceConfigSchema = z.object({
   lazy_loading: z.boolean(),
   virtualization: z.boolean(),
   data_sampling: z.boolean(),
-  cache_strategy: z.string().min(1)
+  cache_strategy: z.string().min(1),
 });
 
 export const LayoutConfigSchema = z.object({
@@ -302,7 +378,7 @@ export const LayoutConfigSchema = z.object({
   component_spacing: ComponentSpacingSchema,
   theme: ThemeConfigSchema,
   header_config: HeaderConfigSchema,
-  footer_config: FooterConfigSchema
+  footer_config: FooterConfigSchema,
 });
 
 export const ReportConfigSchema = z.object({
@@ -311,7 +387,7 @@ export const ReportConfigSchema = z.object({
   layout: LayoutSettingsSchema,
   styling: StylingConfigSchema,
   interactivity: InteractivityConfigSchema,
-  performance: PerformanceConfigSchema
+  performance: PerformanceConfigSchema,
 });
 
 export const ConnectionInfoSchema = z.object({
@@ -322,15 +398,23 @@ export const ConnectionInfoSchema = z.object({
   password: z.string().optional(),
   api_key: z.string().optional(),
   endpoint: z.string().url().optional(),
-  headers: z.record(z.string()).optional()
+  headers: z.record(z.string()).optional(),
 });
 
 export const SchemaFieldSchema = z.object({
   name: z.string().min(1),
-  type: z.enum(['string', 'number', 'boolean', 'date', 'datetime', 'json', 'array']),
+  type: z.enum([
+    'string',
+    'number',
+    'boolean',
+    'date',
+    'datetime',
+    'json',
+    'array',
+  ]),
   nullable: z.boolean(),
   default_value: z.any().optional(),
-  description: z.string().optional()
+  description: z.string().optional(),
 });
 
 export const RelationshipSchema = z.object({
@@ -338,40 +422,40 @@ export const RelationshipSchema = z.object({
   from_field: z.string().min(1),
   to_table: z.string().min(1),
   to_field: z.string().min(1),
-  type: z.enum(['one_to_one', 'one_to_many', 'many_to_many'])
+  type: z.enum(['one_to_one', 'one_to_many', 'many_to_many']),
 });
 
 export const CustomFieldSchema = z.object({
   name: z.string().min(1),
   type: z.string().min(1),
   formula: z.string().min(1),
-  description: z.string().optional()
+  description: z.string().optional(),
 });
 
 export const TableSchemaSchema = z.object({
   name: z.string().min(1),
   fields: z.array(SchemaFieldSchema),
   display_name: z.string().optional(),
-  description: z.string().optional()
+  description: z.string().optional(),
 });
 
 export const DataSchemaSchema = z.object({
   tables: z.array(TableSchemaSchema),
   relationships: z.array(RelationshipSchema),
-  custom_fields: z.array(CustomFieldSchema)
+  custom_fields: z.array(CustomFieldSchema),
 });
 
 export const InvalidationRuleSchema = z.object({
   trigger: z.enum(['time', 'data_change', 'manual', 'api_call']),
   condition: z.string().min(1),
-  action: z.enum(['refresh', 'clear', 'partial_refresh'])
+  action: z.enum(['refresh', 'clear', 'partial_refresh']),
 });
 
 export const CacheConfigSchema = z.object({
   enabled: z.boolean(),
   ttl: z.number().int().positive(),
   strategy: z.enum(['lru', 'fifo', 'ttl', 'manual']),
-  invalidation_rules: z.array(InvalidationRuleSchema)
+  invalidation_rules: z.array(InvalidationRuleSchema),
 });
 
 export const DataSourceSchema = z.object({
@@ -381,7 +465,7 @@ export const DataSourceSchema = z.object({
   connection: ConnectionInfoSchema,
   schema: DataSchemaSchema,
   refresh_rate: RefreshRateSchema,
-  cache_config: CacheConfigSchema
+  cache_config: CacheConfigSchema,
 });
 
 // Main entity schemas
@@ -401,7 +485,7 @@ export const CustomReportSchema = z.object({
   created_at: z.string().datetime(),
   updated_at: z.string().datetime(),
   last_generated: z.string().datetime().optional(),
-  generation_count: z.number().int().min(0)
+  generation_count: z.number().int().min(0),
 });
 
 export const ReportTemplateSchema = z.object({
@@ -419,7 +503,7 @@ export const ReportTemplateSchema = z.object({
   created_by: z.string().uuid().optional(),
   clinic_id: z.string().uuid(),
   created_at: z.string().datetime(),
-  updated_at: z.string().datetime()
+  updated_at: z.string().datetime(),
 });
 
 export const ReportUsageAnalyticsSchema = z.object({
@@ -431,13 +515,13 @@ export const ReportUsageAnalyticsSchema = z.object({
   usage_duration: z.number().int().min(0),
   action_type: UsageActionTypeSchema,
   session_data: z.record(z.any()),
-  created_at: z.string().datetime()
+  created_at: z.string().datetime(),
 });
 
 export const RecipientSchema = z.object({
   email: z.string().email(),
   name: z.string().optional(),
-  type: RecipientTypeSchema
+  type: RecipientTypeSchema,
 });
 
 export const ScheduleConfigSchema = z.object({
@@ -446,7 +530,7 @@ export const ScheduleConfigSchema = z.object({
   timezone: z.string().min(1),
   days_of_week: z.array(z.number().int().min(0).max(6)).optional(),
   days_of_month: z.array(z.number().int().min(1).max(31)).optional(),
-  custom_cron: z.string().optional()
+  custom_cron: z.string().optional(),
 });
 
 export const ReportScheduleSchema = z.object({
@@ -464,7 +548,7 @@ export const ReportScheduleSchema = z.object({
   failure_count: z.number().int().min(0),
   created_by: z.string().uuid(),
   created_at: z.string().datetime(),
-  updated_at: z.string().datetime()
+  updated_at: z.string().datetime(),
 });
 
 export const ReportCollaboratorSchema = z.object({
@@ -475,7 +559,7 @@ export const ReportCollaboratorSchema = z.object({
   invited_by: z.string().uuid().optional(),
   invited_at: z.string().datetime(),
   accepted_at: z.string().datetime().optional(),
-  last_activity: z.string().datetime().optional()
+  last_activity: z.string().datetime().optional(),
 });
 
 export const ReportCommentSchema = z.object({
@@ -486,7 +570,7 @@ export const ReportCommentSchema = z.object({
   parent_comment_id: z.string().uuid().optional(),
   is_resolved: z.boolean(),
   created_at: z.string().datetime(),
-  updated_at: z.string().datetime()
+  updated_at: z.string().datetime(),
 });
 
 export const DataSourceConnectorSchema = z.object({
@@ -500,7 +584,7 @@ export const DataSourceConnectorSchema = z.object({
   test_status: TestStatusSchema,
   clinic_id: z.string().uuid(),
   created_at: z.string().datetime(),
-  updated_at: z.string().datetime()
+  updated_at: z.string().datetime(),
 });
 
 // Drag & Drop schemas
@@ -510,7 +594,7 @@ export const ComponentMetadataSchema = z.object({
   modified_at: z.string().datetime(),
   version: z.number().int().positive(),
   description: z.string().optional(),
-  tags: z.array(z.string())
+  tags: z.array(z.string()),
 });
 
 export const DragConstraintsSchema = z.object({
@@ -522,14 +606,14 @@ export const DragConstraintsSchema = z.object({
     min_x: z.number(),
     max_x: z.number(),
     min_y: z.number(),
-    max_y: z.number()
-  })
+    max_y: z.number(),
+  }),
 });
 
 export const ComponentContentSchema = z.object({
   config: z.record(z.any()),
   data: z.any().optional(),
-  styling: z.record(z.any()).optional()
+  styling: z.record(z.any()).optional(),
 });
 
 export const DragDropItemSchema = z.object({
@@ -539,13 +623,13 @@ export const DragDropItemSchema = z.object({
   position: PositionSchema,
   size: SizeSchema,
   constraints: DragConstraintsSchema,
-  metadata: ComponentMetadataSchema
+  metadata: ComponentMetadataSchema,
 });
 
 export const ValidationRuleSchema = z.object({
   type: z.enum(['required', 'min_size', 'max_size', 'data_type', 'custom']),
   constraint: z.any(),
-  message: z.string().min(1)
+  message: z.string().min(1),
 });
 
 export const DropZoneSchema = z.object({
@@ -554,7 +638,7 @@ export const DropZoneSchema = z.object({
   position: PositionSchema,
   size: SizeSchema,
   is_occupied: z.boolean(),
-  validation_rules: z.array(ValidationRuleSchema)
+  validation_rules: z.array(ValidationRuleSchema),
 });
 
 // API request/response schemas
@@ -565,7 +649,7 @@ export const CreateReportRequestSchema = z.object({
   report_config: ReportConfigSchema.partial().optional(),
   data_sources: z.array(DataSourceSchema).optional(),
   visualization_type: VisualizationTypeSchema.optional(),
-  is_public: z.boolean().optional()
+  is_public: z.boolean().optional(),
 });
 
 export const UpdateReportRequestSchema = z.object({
@@ -576,14 +660,14 @@ export const UpdateReportRequestSchema = z.object({
   visualization_type: VisualizationTypeSchema.optional(),
   filters: ReportFiltersSchema.partial().optional(),
   layout_config: LayoutConfigSchema.partial().optional(),
-  is_public: z.boolean().optional()
+  is_public: z.boolean().optional(),
 });
 
 export const GenerateReportRequestSchema = z.object({
   report_id: z.string().uuid(),
   format: ReportFormatSchema.optional(),
   filters: z.record(z.any()).optional(),
-  parameters: z.record(z.any()).optional()
+  parameters: z.record(z.any()).optional(),
 });
 
 export const CreateReportScheduleRequestSchema = z.object({
@@ -593,7 +677,7 @@ export const CreateReportScheduleRequestSchema = z.object({
   recipients: z.array(RecipientSchema),
   delivery_method: DeliveryMethodSchema,
   format: ReportFormatSchema,
-  is_active: z.boolean().optional().default(true)
+  is_active: z.boolean().optional().default(true),
 });
 
 export const CreateReportTemplateRequestSchema = z.object({
@@ -603,13 +687,13 @@ export const CreateReportTemplateRequestSchema = z.object({
   template_config: z.record(z.any()),
   query_config: z.record(z.any()),
   visualization_type: VisualizationTypeSchema,
-  is_public: z.boolean().optional().default(false)
+  is_public: z.boolean().optional().default(false),
 });
 
 export const CreateReportShareRequestSchema = z.object({
   share_type: z.enum(['public', 'private', 'organization']),
   permissions: z.array(z.enum(['view', 'generate', 'export'])),
-  expires_at: z.string().datetime().optional()
+  expires_at: z.string().datetime().optional(),
 });
 
 export const UpdateReportScheduleRequestSchema = z.object({
@@ -618,21 +702,21 @@ export const UpdateReportScheduleRequestSchema = z.object({
   recipients: z.array(RecipientSchema).optional(),
   delivery_method: DeliveryMethodSchema.optional(),
   format: ReportFormatSchema.optional(),
-  is_active: z.boolean().optional()
+  is_active: z.boolean().optional(),
 });
 
 export const ValidationErrorSchema = z.object({
   component_id: z.string().uuid().optional(),
   field: z.string().min(1),
   message: z.string().min(1),
-  severity: ErrorSeveritySchema
+  severity: ErrorSeveritySchema,
 });
 
 export const ReportBuilderActionSchema = z.object({
   type: z.string().min(1),
   timestamp: z.string().datetime(),
   data: z.any(),
-  user_id: z.string().uuid()
+  user_id: z.string().uuid(),
 });
 
 export const ReportBuilderStateSchema = z.object({
@@ -645,7 +729,7 @@ export const ReportBuilderStateSchema = z.object({
   redo_stack: z.array(ReportBuilderActionSchema),
   preview_mode: z.boolean(),
   is_saving: z.boolean(),
-  validation_errors: z.array(ValidationErrorSchema)
+  validation_errors: z.array(ValidationErrorSchema),
 });
 
 // Component Library schemas
@@ -654,7 +738,7 @@ export const ComponentCategorySchema = z.object({
   name: z.string().min(1),
   description: z.string(),
   icon: z.string().min(1),
-  components: z.array(z.string().uuid())
+  components: z.array(z.string().uuid()),
 });
 
 export const LibraryComponentSchema = z.object({
@@ -664,7 +748,7 @@ export const LibraryComponentSchema = z.object({
   icon: z.string().min(1),
   category: z.string().uuid(),
   config_template: z.record(z.any()),
-  preview_image: z.string().optional()
+  preview_image: z.string().optional(),
 });
 
 export const CustomComponentSchema = z.object({
@@ -673,22 +757,34 @@ export const CustomComponentSchema = z.object({
   description: z.string(),
   config: z.record(z.any()),
   created_by: z.string().uuid(),
-  is_public: z.boolean()
+  is_public: z.boolean(),
 });
 
 export const ComponentLibrarySchema = z.object({
   categories: z.array(ComponentCategorySchema),
   components: z.array(LibraryComponentSchema),
   custom_components: z.array(CustomComponentSchema),
-  favorites: z.array(z.string().uuid())
+  favorites: z.array(z.string().uuid()),
 });
 
 // Export all schemas for use in API routes and services
 export {
-    ComponentLibrarySchema as ComponentLibrary, CreateReportRequestSchema as CreateReportRequest, CreateReportScheduleRequestSchema as CreateReportScheduleRequest, CreateReportShareRequestSchema as CreateReportShareRequest, CreateReportTemplateRequestSchema as CreateReportTemplateRequest, CustomReportSchema as CustomReport, DataSourceConnectorSchema as DataSourceConnector, DragDropItemSchema as DragDropItem,
-    DropZoneSchema as DropZone, GenerateReportRequestSchema as GenerateReportRequest,
-    ReportBuilderStateSchema as ReportBuilderState, ReportCollaboratorSchema as ReportCollaborator,
-    ReportCommentSchema as ReportComment, ReportScheduleSchema as ReportSchedule, ReportTemplateSchema as ReportTemplate,
-    ReportUsageAnalyticsSchema as ReportUsageAnalytics, UpdateReportRequestSchema as UpdateReportRequest, UpdateReportScheduleRequestSchema as UpdateReportScheduleRequest
+  ComponentLibrarySchema as ComponentLibrary,
+  CreateReportRequestSchema as CreateReportRequest,
+  CreateReportScheduleRequestSchema as CreateReportScheduleRequest,
+  CreateReportShareRequestSchema as CreateReportShareRequest,
+  CreateReportTemplateRequestSchema as CreateReportTemplateRequest,
+  CustomReportSchema as CustomReport,
+  DataSourceConnectorSchema as DataSourceConnector,
+  DragDropItemSchema as DragDropItem,
+  DropZoneSchema as DropZone,
+  GenerateReportRequestSchema as GenerateReportRequest,
+  ReportBuilderStateSchema as ReportBuilderState,
+  ReportCollaboratorSchema as ReportCollaborator,
+  ReportCommentSchema as ReportComment,
+  ReportScheduleSchema as ReportSchedule,
+  ReportTemplateSchema as ReportTemplate,
+  ReportUsageAnalyticsSchema as ReportUsageAnalytics,
+  UpdateReportRequestSchema as UpdateReportRequest,
+  UpdateReportScheduleRequestSchema as UpdateReportScheduleRequest,
 };
-

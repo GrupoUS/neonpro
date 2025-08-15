@@ -1,8 +1,8 @@
+import crypto from 'node:crypto';
 import { createClient } from '@supabase/supabase-js';
-import { AuditLogger } from '../../audit/audit-logger';
-import { EncryptionService } from '../../security/encryption-service';
-import { LGPDManager } from '../../security/lgpd-manager';
-import crypto from 'crypto';
+import type { AuditLogger } from '../../audit/audit-logger';
+import type { EncryptionService } from '../../security/encryption-service';
+import type { LGPDManager } from '../../security/lgpd-manager';
 
 // Types and Interfaces
 export interface PortalAuthConfig {
@@ -67,7 +67,12 @@ export interface LoginAttempt {
 }
 
 export interface SecurityEvent {
-  type: 'login' | 'logout' | 'session_expired' | 'suspicious_activity' | 'password_change';
+  type:
+    | 'login'
+    | 'logout'
+    | 'session_expired'
+    | 'suspicious_activity'
+    | 'password_change';
   patientId: string;
   sessionId?: string;
   ipAddress: string;
@@ -84,8 +89,6 @@ export interface SecurityEvent {
 export class PortalAuthManager {
   private supabase: any;
   private auditLogger: AuditLogger;
-  private encryptionService: EncryptionService;
-  private lgpdManager: LGPDManager;
   private config: PortalAuthConfig;
   private activeSessions: Map<string, PortalSession> = new Map();
   private loginAttempts: Map<string, LoginAttempt[]> = new Map();
@@ -103,7 +106,7 @@ export class PortalAuthManager {
     this.auditLogger = auditLogger;
     this.encryptionService = encryptionService;
     this.lgpdManager = lgpdManager;
-    
+
     this.config = {
       sessionDuration: 480, // 8 horas
       maxConcurrentSessions: 3,
@@ -114,9 +117,9 @@ export class PortalAuthManager {
         requireUppercase: true,
         requireLowercase: true,
         requireNumbers: true,
-        requireSpecialChars: true
+        requireSpecialChars: true,
       },
-      ...config
+      ...config,
     };
 
     // Inicializar limpeza automática de sessões
@@ -143,12 +146,12 @@ export class PortalAuthManager {
           userAgent,
           details: { reason: 'blocked_ip', email },
           severity: 'high',
-          timestamp: new Date()
+          timestamp: new Date(),
         });
-        
+
         return {
           success: false,
-          error: 'Acesso bloqueado por motivos de segurança'
+          error: 'Acesso bloqueado por motivos de segurança',
         };
       }
 
@@ -158,7 +161,7 @@ export class PortalAuthManager {
         await this.blockIpAddress(ipAddress, 'Muitas tentativas de login');
         return {
           success: false,
-          error: 'Muitas tentativas de login. Tente novamente em 15 minutos.'
+          error: 'Muitas tentativas de login. Tente novamente em 15 minutos.',
         };
       }
 
@@ -189,17 +192,20 @@ export class PortalAuthManager {
           userAgent,
           success: false,
           failureReason: 'patient_not_found',
-          timestamp: new Date()
+          timestamp: new Date(),
         });
-        
+
         return {
           success: false,
-          error: 'Credenciais inválidas'
+          error: 'Credenciais inválidas',
         };
       }
 
       // Verificar senha
-      const passwordValid = await this.verifyPassword(password, patient.password_hash);
+      const passwordValid = await this.verifyPassword(
+        password,
+        patient.password_hash
+      );
       if (!passwordValid) {
         await this.recordLoginAttempt({
           patientId: patient.id,
@@ -208,37 +214,37 @@ export class PortalAuthManager {
           userAgent,
           success: false,
           failureReason: 'invalid_password',
-          timestamp: new Date()
+          timestamp: new Date(),
         });
-        
+
         // Incrementar tentativas falhadas
         await this.incrementFailedAttempts(patient.id);
-        
+
         return {
           success: false,
-          error: 'Credenciais inválidas'
+          error: 'Credenciais inválidas',
         };
       }
 
       // Verificar se requer 2FA
       if (this.config.requireTwoFactor || patient.two_factor_enabled) {
         const twoFactorToken = this.generateTwoFactorToken();
-        
+
         // Enviar código 2FA (implementar integração com SMS/Email)
         await this.sendTwoFactorCode(patient, twoFactorToken);
-        
+
         return {
           success: false,
           requiresTwoFactor: true,
           twoFactorToken,
-          error: 'Código de verificação enviado'
+          error: 'Código de verificação enviado',
         };
       }
 
       // Verificar sessões ativas
       await this.cleanupExpiredSessions(patient.id);
       const activeSessions = await this.getActiveSessionsCount(patient.id);
-      
+
       if (activeSessions >= this.config.maxConcurrentSessions) {
         // Remover sessão mais antiga
         await this.removeOldestSession(patient.id);
@@ -249,7 +255,7 @@ export class PortalAuthManager {
         patientId: patient.id,
         ipAddress,
         userAgent,
-        deviceFingerprint
+        deviceFingerprint,
       });
 
       // Registrar login bem-sucedido
@@ -259,7 +265,7 @@ export class PortalAuthManager {
         ipAddress,
         userAgent,
         success: true,
-        timestamp: new Date()
+        timestamp: new Date(),
       });
 
       // Atualizar último login
@@ -275,9 +281,9 @@ export class PortalAuthManager {
         details: {
           ipAddress,
           userAgent,
-          deviceFingerprint
+          deviceFingerprint,
         },
-        clinicId: patient.clinic_id
+        clinicId: patient.clinic_id,
       });
 
       // Log de segurança
@@ -289,7 +295,7 @@ export class PortalAuthManager {
         userAgent,
         details: { deviceFingerprint },
         severity: 'low',
-        timestamp: new Date()
+        timestamp: new Date(),
       });
 
       return {
@@ -300,13 +306,12 @@ export class PortalAuthManager {
           name: patient.name,
           email: patient.email,
           phone: patient.phone,
-          clinicId: patient.clinic_id
-        }
+          clinicId: patient.clinic_id,
+        },
       };
-
     } catch (error) {
       console.error('Erro na autenticação do portal:', error);
-      
+
       await this.auditLogger.log({
         action: 'patient_portal_login_error',
         userId: '',
@@ -316,13 +321,13 @@ export class PortalAuthManager {
           error: error instanceof Error ? error.message : 'Erro desconhecido',
           email,
           ipAddress,
-          userAgent
-        }
+          userAgent,
+        },
       });
 
       return {
         success: false,
-        error: 'Erro interno do servidor'
+        error: 'Erro interno do servidor',
       };
     }
   }
@@ -339,11 +344,14 @@ export class PortalAuthManager {
   ): Promise<AuthResult> {
     try {
       // Verificar token 2FA
-      const isValidToken = await this.verifyTwoFactorToken(twoFactorToken, code);
+      const isValidToken = await this.verifyTwoFactorToken(
+        twoFactorToken,
+        code
+      );
       if (!isValidToken) {
         return {
           success: false,
-          error: 'Código de verificação inválido'
+          error: 'Código de verificação inválido',
         };
       }
 
@@ -357,7 +365,7 @@ export class PortalAuthManager {
       if (!patient) {
         return {
           success: false,
-          error: 'Paciente não encontrado'
+          error: 'Paciente não encontrado',
         };
       }
 
@@ -365,7 +373,7 @@ export class PortalAuthManager {
       const session = await this.createSession({
         patientId: patient.id,
         ipAddress,
-        userAgent
+        userAgent,
       });
 
       return {
@@ -376,15 +384,14 @@ export class PortalAuthManager {
           name: patient.name,
           email: patient.email,
           phone: patient.phone,
-          clinicId: patient.clinic_id
-        }
+          clinicId: patient.clinic_id,
+        },
       };
-
     } catch (error) {
       console.error('Erro na verificação 2FA:', error);
       return {
         success: false,
-        error: 'Erro na verificação'
+        error: 'Erro na verificação',
       };
     }
   }
@@ -392,7 +399,10 @@ export class PortalAuthManager {
   /**
    * Valida uma sessão existente
    */
-  async validateSession(sessionToken: string, ipAddress: string): Promise<AuthResult> {
+  async validateSession(
+    sessionToken: string,
+    _ipAddress: string
+  ): Promise<AuthResult> {
     try {
       // Buscar sessão no banco
       const { data: sessionData, error } = await this.supabase
@@ -414,7 +424,7 @@ export class PortalAuthManager {
       if (error || !sessionData) {
         return {
           success: false,
-          error: 'Sessão inválida'
+          error: 'Sessão inválida',
         };
       }
 
@@ -426,19 +436,21 @@ export class PortalAuthManager {
         await this.invalidateSession(sessionToken);
         return {
           success: false,
-          error: 'Sessão expirada'
+          error: 'Sessão expirada',
         };
       }
 
       // Verificar inatividade
       const lastActivity = new Date(session.last_activity);
-      const inactivityLimit = new Date(Date.now() - (this.config.sessionInactivityTimeout * 60 * 1000));
-      
+      const inactivityLimit = new Date(
+        Date.now() - this.config.sessionInactivityTimeout * 60 * 1000
+      );
+
       if (lastActivity < inactivityLimit) {
         await this.invalidateSession(sessionToken);
         return {
           success: false,
-          error: 'Sessão expirada por inatividade'
+          error: 'Sessão expirada por inatividade',
         };
       }
 
@@ -447,7 +459,7 @@ export class PortalAuthManager {
         await this.invalidateSession(sessionToken);
         return {
           success: false,
-          error: 'Conta desativada'
+          error: 'Conta desativada',
         };
       }
 
@@ -462,7 +474,7 @@ export class PortalAuthManager {
         lastActivity: new Date(),
         ipAddress: session.ip_address,
         userAgent: session.user_agent,
-        isActive: true
+        isActive: true,
       };
 
       return {
@@ -473,15 +485,14 @@ export class PortalAuthManager {
           name: patient.name,
           email: patient.email,
           phone: patient.phone,
-          clinicId: patient.clinic_id
-        }
+          clinicId: patient.clinic_id,
+        },
       };
-
     } catch (error) {
       console.error('Erro na validação de sessão:', error);
       return {
         success: false,
-        error: 'Erro na validação'
+        error: 'Erro na validação',
       };
     }
   }
@@ -501,7 +512,7 @@ export class PortalAuthManager {
           userAgent: session.userAgent,
           details: {},
           severity: 'low',
-          timestamp: new Date()
+          timestamp: new Date(),
         });
       }
 
@@ -523,7 +534,9 @@ export class PortalAuthManager {
     deviceFingerprint?: string;
   }): Promise<PortalSession> {
     const sessionToken = this.generateSessionToken();
-    const expiresAt = new Date(Date.now() + (this.config.sessionDuration * 60 * 1000));
+    const expiresAt = new Date(
+      Date.now() + this.config.sessionDuration * 60 * 1000
+    );
 
     const { data, error } = await this.supabase
       .from('patient_portal_sessions')
@@ -532,7 +545,7 @@ export class PortalAuthManager {
         session_token: sessionToken,
         expires_at: expiresAt.toISOString(),
         ip_address: params.ipAddress,
-        user_agent: params.userAgent
+        user_agent: params.userAgent,
       })
       .select()
       .single();
@@ -550,7 +563,7 @@ export class PortalAuthManager {
       ipAddress: params.ipAddress,
       userAgent: params.userAgent,
       isActive: true,
-      deviceFingerprint: params.deviceFingerprint
+      deviceFingerprint: params.deviceFingerprint,
     };
 
     this.activeSessions.set(sessionToken, session);
@@ -565,19 +578,25 @@ export class PortalAuthManager {
     return crypto.randomBytes(16).toString('hex');
   }
 
-  private async verifyPassword(password: string, hash: string): Promise<boolean> {
+  private async verifyPassword(
+    password: string,
+    hash: string
+  ): Promise<boolean> {
     // Implementar verificação de senha com bcrypt ou similar
     const bcrypt = require('bcrypt');
     return await bcrypt.compare(password, hash);
   }
 
-  private async verifyTwoFactorToken(token: string, code: string): Promise<boolean> {
+  private async verifyTwoFactorToken(
+    _token: string,
+    code: string
+  ): Promise<boolean> {
     // Implementar verificação de código 2FA
     // Por enquanto, simulação simples
     return code.length === 6 && /^\d{6}$/.test(code);
   }
 
-  private async sendTwoFactorCode(patient: any, token: string): Promise<void> {
+  private async sendTwoFactorCode(patient: any, _token: string): Promise<void> {
     // Implementar envio de código 2FA via SMS/Email
     console.log(`Enviando código 2FA para ${patient.email}`);
   }
@@ -627,7 +646,9 @@ export class PortalAuthManager {
     }
   }
 
-  private async getSessionByToken(sessionToken: string): Promise<PortalSession | null> {
+  private async getSessionByToken(
+    sessionToken: string
+  ): Promise<PortalSession | null> {
     const cached = this.activeSessions.get(sessionToken);
     if (cached) return cached;
 
@@ -647,23 +668,28 @@ export class PortalAuthManager {
       lastActivity: new Date(data.last_activity),
       ipAddress: data.ip_address,
       userAgent: data.user_agent,
-      isActive: true
+      isActive: true,
     };
   }
 
-  private getRecentLoginAttempts(email: string, ipAddress: string): LoginAttempt[] {
+  private getRecentLoginAttempts(
+    email: string,
+    ipAddress: string
+  ): LoginAttempt[] {
     const key = `${email}:${ipAddress}`;
     const attempts = this.loginAttempts.get(key) || [];
     const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000);
-    
-    return attempts.filter(attempt => attempt.timestamp > fifteenMinutesAgo);
+
+    return attempts.filter((attempt) => attempt.timestamp > fifteenMinutesAgo);
   }
 
-  private async recordLoginAttempt(attempt: Omit<LoginAttempt, 'id' | 'blocked'>): Promise<void> {
+  private async recordLoginAttempt(
+    attempt: Omit<LoginAttempt, 'id' | 'blocked'>
+  ): Promise<void> {
     const loginAttempt: LoginAttempt = {
       id: crypto.randomUUID(),
       blocked: false,
-      ...attempt
+      ...attempt,
     };
 
     const key = `${attempt.email}:${attempt.ipAddress}`;
@@ -672,33 +698,37 @@ export class PortalAuthManager {
     this.loginAttempts.set(key, attempts);
 
     // Salvar no banco
-    await this.supabase
-      .from('patient_login_attempts')
-      .insert({
-        patient_id: attempt.patientId,
-        email: attempt.email,
-        ip_address: attempt.ipAddress,
-        user_agent: attempt.userAgent,
-        success: attempt.success,
-        failure_reason: attempt.failureReason,
-        timestamp: attempt.timestamp.toISOString()
-      });
+    await this.supabase.from('patient_login_attempts').insert({
+      patient_id: attempt.patientId,
+      email: attempt.email,
+      ip_address: attempt.ipAddress,
+      user_agent: attempt.userAgent,
+      success: attempt.success,
+      failure_reason: attempt.failureReason,
+      timestamp: attempt.timestamp.toISOString(),
+    });
   }
 
-  private async blockIpAddress(ipAddress: string, reason: string): Promise<void> {
+  private async blockIpAddress(
+    ipAddress: string,
+    reason: string
+  ): Promise<void> {
     this.blockedIps.add(ipAddress);
-    
+
     // Remover bloqueio após 15 minutos
-    setTimeout(() => {
-      this.blockedIps.delete(ipAddress);
-    }, 15 * 60 * 1000);
+    setTimeout(
+      () => {
+        this.blockedIps.delete(ipAddress);
+      },
+      15 * 60 * 1000
+    );
 
     await this.auditLogger.log({
       action: 'ip_blocked',
       userId: '',
       userType: 'system',
       resource: 'security',
-      details: { ipAddress, reason }
+      details: { ipAddress, reason },
     });
   }
 
@@ -706,7 +736,7 @@ export class PortalAuthManager {
     await this.supabase
       .from('patients')
       .update({
-        failed_login_attempts: this.supabase.raw('failed_login_attempts + 1')
+        failed_login_attempts: this.supabase.raw('failed_login_attempts + 1'),
       })
       .eq('id', patientId);
   }
@@ -716,7 +746,7 @@ export class PortalAuthManager {
       .from('patients')
       .update({
         last_login: new Date().toISOString(),
-        failed_login_attempts: 0
+        failed_login_attempts: 0,
       })
       .eq('id', patientId);
   }
@@ -735,25 +765,26 @@ export class PortalAuthManager {
   }
 
   private async logSecurityEvent(event: SecurityEvent): Promise<void> {
-    await this.supabase
-      .from('patient_security_events')
-      .insert({
-        event_type: event.type,
-        patient_id: event.patientId,
-        session_id: event.sessionId,
-        ip_address: event.ipAddress,
-        user_agent: event.userAgent,
-        details: event.details,
-        severity: event.severity,
-        timestamp: event.timestamp.toISOString()
-      });
+    await this.supabase.from('patient_security_events').insert({
+      event_type: event.type,
+      patient_id: event.patientId,
+      session_id: event.sessionId,
+      ip_address: event.ipAddress,
+      user_agent: event.userAgent,
+      details: event.details,
+      severity: event.severity,
+      timestamp: event.timestamp.toISOString(),
+    });
   }
 
   private startSessionCleanup(): void {
     // Limpeza a cada 30 minutos
-    setInterval(async () => {
-      await this.cleanupExpiredSessions();
-    }, 30 * 60 * 1000);
+    setInterval(
+      async () => {
+        await this.cleanupExpiredSessions();
+      },
+      30 * 60 * 1000
+    );
   }
 
   /**
@@ -776,7 +807,10 @@ export class PortalAuthManager {
         return { success: false, error: 'Paciente não encontrado' };
       }
 
-      const isCurrentPasswordValid = await this.verifyPassword(currentPassword, patient.password_hash);
+      const isCurrentPasswordValid = await this.verifyPassword(
+        currentPassword,
+        patient.password_hash
+      );
       if (!isCurrentPasswordValid) {
         return { success: false, error: 'Senha atual incorreta' };
       }
@@ -803,7 +837,7 @@ export class PortalAuthManager {
         userId: patientId,
         userType: 'patient',
         resource: 'patient_account',
-        resourceId: patientId
+        resourceId: patientId,
       });
 
       return { success: true };
@@ -813,29 +847,47 @@ export class PortalAuthManager {
     }
   }
 
-  private validatePassword(password: string): { valid: boolean; error?: string } {
+  private validatePassword(password: string): {
+    valid: boolean;
+    error?: string;
+  } {
     const policy = this.config.passwordPolicy;
-    
+
     if (password.length < policy.minLength) {
-      return { valid: false, error: `Senha deve ter pelo menos ${policy.minLength} caracteres` };
+      return {
+        valid: false,
+        error: `Senha deve ter pelo menos ${policy.minLength} caracteres`,
+      };
     }
-    
+
     if (policy.requireUppercase && !/[A-Z]/.test(password)) {
-      return { valid: false, error: 'Senha deve conter pelo menos uma letra maiúscula' };
+      return {
+        valid: false,
+        error: 'Senha deve conter pelo menos uma letra maiúscula',
+      };
     }
-    
+
     if (policy.requireLowercase && !/[a-z]/.test(password)) {
-      return { valid: false, error: 'Senha deve conter pelo menos uma letra minúscula' };
+      return {
+        valid: false,
+        error: 'Senha deve conter pelo menos uma letra minúscula',
+      };
     }
-    
+
     if (policy.requireNumbers && !/\d/.test(password)) {
       return { valid: false, error: 'Senha deve conter pelo menos um número' };
     }
-    
-    if (policy.requireSpecialChars && !/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
-      return { valid: false, error: 'Senha deve conter pelo menos um caractere especial' };
+
+    if (
+      policy.requireSpecialChars &&
+      !/[!@#$%^&*(),.?":{}|<>]/.test(password)
+    ) {
+      return {
+        valid: false,
+        error: 'Senha deve conter pelo menos um caractere especial',
+      };
     }
-    
+
     return { valid: true };
   }
 
@@ -847,7 +899,7 @@ export class PortalAuthManager {
       .gt('expires_at', new Date().toISOString())
       .order('last_activity', { ascending: false });
 
-    return (data || []).map(session => ({
+    return (data || []).map((session) => ({
       id: session.id,
       patientId: session.patient_id,
       sessionToken: session.session_token,
@@ -855,11 +907,14 @@ export class PortalAuthManager {
       lastActivity: new Date(session.last_activity),
       ipAddress: session.ip_address,
       userAgent: session.user_agent,
-      isActive: true
+      isActive: true,
     }));
   }
 
-  async terminateSession(patientId: string, sessionId: string): Promise<boolean> {
+  async terminateSession(
+    patientId: string,
+    sessionId: string
+  ): Promise<boolean> {
     try {
       const { data } = await this.supabase
         .from('patient_portal_sessions')
@@ -879,7 +934,10 @@ export class PortalAuthManager {
     }
   }
 
-  async terminateAllSessions(patientId: string, exceptSessionToken?: string): Promise<number> {
+  async terminateAllSessions(
+    patientId: string,
+    exceptSessionToken?: string
+  ): Promise<number> {
     try {
       let query = this.supabase
         .from('patient_portal_sessions')

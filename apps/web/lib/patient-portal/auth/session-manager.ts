@@ -1,8 +1,8 @@
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { AuditLogger } from '../../audit/audit-logger';
-import { EncryptionService } from '../../security/encryption-service';
-import { LGPDManager } from '../../lgpd/lgpd-manager';
-import crypto from 'crypto';
+import crypto from 'node:crypto';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import type { AuditLogger } from '../../audit/audit-logger';
+import type { LGPDManager } from '../../lgpd/lgpd-manager';
+import type { EncryptionService } from '../../security/encryption-service';
 
 // Session configuration interface
 export interface SessionConfig {
@@ -65,7 +65,6 @@ export class SessionManager {
   private supabase: SupabaseClient;
   private auditLogger: AuditLogger;
   private encryption: EncryptionService;
-  private lgpdManager: LGPDManager;
   private config: SessionConfig;
   private cleanupInterval?: NodeJS.Timeout;
 
@@ -81,7 +80,7 @@ export class SessionManager {
     this.auditLogger = auditLogger;
     this.encryption = encryption;
     this.lgpdManager = lgpdManager;
-    
+
     // Default configuration
     this.config = {
       sessionTimeout: 120, // 2 hours
@@ -94,7 +93,7 @@ export class SessionManager {
       maxLoginAttempts: 5,
       lockoutDuration: 15, // 15 minutes
       enableTwoFactor: false,
-      ...config
+      ...config,
     };
 
     this.startCleanupInterval();
@@ -115,8 +114,10 @@ export class SessionManager {
 
       // Generate secure session token
       const sessionToken = this.generateSessionToken();
-      const expiresAt = new Date(Date.now() + this.config.sessionTimeout * 60 * 1000);
-      
+      const expiresAt = new Date(
+        Date.now() + this.config.sessionTimeout * 60 * 1000
+      );
+
       // Create session record
       const sessionData: Omit<SessionData, 'id'> = {
         patientId,
@@ -125,9 +126,11 @@ export class SessionManager {
         lastActivity: new Date(),
         ipAddress,
         userAgent,
-        deviceFingerprint: deviceFingerprint ? deviceFingerprint.hash : undefined,
+        deviceFingerprint: deviceFingerprint
+          ? deviceFingerprint.hash
+          : undefined,
         isActive: true,
-        createdAt: new Date()
+        createdAt: new Date(),
       };
 
       const { data, error } = await this.supabase
@@ -142,7 +145,7 @@ export class SessionManager {
 
       const session: SessionData = {
         ...data,
-        sessionToken // Return unencrypted token for client use
+        sessionToken, // Return unencrypted token for client use
       };
 
       // Log session creation
@@ -155,10 +158,10 @@ export class SessionManager {
         details: {
           ipAddress,
           userAgent: userAgent.substring(0, 100),
-          expiresAt: expiresAt.toISOString()
+          expiresAt: expiresAt.toISOString(),
         },
         ipAddress,
-        userAgent
+        userAgent,
       });
 
       // Log security event
@@ -170,9 +173,9 @@ export class SessionManager {
         userAgent,
         details: {
           deviceFingerprint: deviceFingerprint?.hash,
-          sessionDuration: this.config.sessionTimeout
+          sessionDuration: this.config.sessionTimeout,
         },
-        severity: 'low'
+        severity: 'low',
       });
 
       return session;
@@ -185,10 +188,10 @@ export class SessionManager {
         details: {
           error: error instanceof Error ? error.message : 'Unknown error',
           ipAddress,
-          userAgent: userAgent.substring(0, 100)
+          userAgent: userAgent.substring(0, 100),
         },
         ipAddress,
-        userAgent
+        userAgent,
       });
       throw error;
     }
@@ -197,7 +200,9 @@ export class SessionManager {
   /**
    * Validate a session token
    */
-  async validateSession(sessionToken: string): Promise<SessionValidationResult> {
+  async validateSession(
+    sessionToken: string
+  ): Promise<SessionValidationResult> {
     try {
       // Get all active sessions and check each one
       const { data: sessions, error } = await this.supabase
@@ -213,7 +218,9 @@ export class SessionManager {
       // Find matching session by decrypting tokens
       for (const sessionRecord of sessions || []) {
         try {
-          const decryptedToken = await this.encryption.decrypt(sessionRecord.session_token);
+          const decryptedToken = await this.encryption.decrypt(
+            sessionRecord.session_token
+          );
           if (decryptedToken === sessionToken) {
             const session: SessionData = {
               id: sessionRecord.id,
@@ -225,18 +232,20 @@ export class SessionManager {
               userAgent: sessionRecord.user_agent,
               deviceFingerprint: sessionRecord.device_fingerprint,
               isActive: sessionRecord.is_active,
-              createdAt: new Date(sessionRecord.created_at)
+              createdAt: new Date(sessionRecord.created_at),
             };
 
             // Check if session needs refresh due to inactivity
-            const inactivityLimit = new Date(Date.now() - this.config.inactivityTimeout * 60 * 1000);
+            const inactivityLimit = new Date(
+              Date.now() - this.config.inactivityTimeout * 60 * 1000
+            );
             const requiresRefresh = session.lastActivity < inactivityLimit;
 
             if (requiresRefresh) {
               return {
                 isValid: false,
                 reason: 'Session expired due to inactivity',
-                requiresRefresh: true
+                requiresRefresh: true,
               };
             }
 
@@ -245,17 +254,14 @@ export class SessionManager {
 
             return { isValid: true, session };
           }
-        } catch (decryptError) {
-          // Continue to next session if decryption fails
-          continue;
-        }
+        } catch (_decryptError) {}
       }
 
       return { isValid: false, reason: 'Invalid session token' };
     } catch (error) {
       return {
         isValid: false,
-        reason: error instanceof Error ? error.message : 'Unknown error'
+        reason: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -265,13 +271,15 @@ export class SessionManager {
    */
   async refreshSession(sessionId: string): Promise<SessionData | null> {
     try {
-      const newExpiresAt = new Date(Date.now() + this.config.sessionTimeout * 60 * 1000);
-      
+      const newExpiresAt = new Date(
+        Date.now() + this.config.sessionTimeout * 60 * 1000
+      );
+
       const { data, error } = await this.supabase
         .from('patient_portal_sessions')
         .update({
           expires_at: newExpiresAt.toISOString(),
-          last_activity: new Date().toISOString()
+          last_activity: new Date().toISOString(),
         })
         .eq('id', sessionId)
         .select()
@@ -294,7 +302,7 @@ export class SessionManager {
         userAgent: data.user_agent,
         deviceFingerprint: data.device_fingerprint,
         isActive: data.is_active,
-        createdAt: new Date(data.created_at)
+        createdAt: new Date(data.created_at),
       };
     } catch (error) {
       console.error('Error refreshing session:', error);
@@ -333,10 +341,10 @@ export class SessionManager {
           resourceId: sessionId,
           details: {
             reason: reason || 'Manual termination',
-            ipAddress: sessionData.ip_address
+            ipAddress: sessionData.ip_address,
           },
           ipAddress: sessionData.ip_address,
-          userAgent: sessionData.user_agent
+          userAgent: sessionData.user_agent,
         });
 
         // Log security event
@@ -347,7 +355,7 @@ export class SessionManager {
           ipAddress: sessionData.ip_address,
           userAgent: sessionData.user_agent,
           details: { reason: reason || 'Manual termination' },
-          severity: 'low'
+          severity: 'low',
         });
       }
 
@@ -361,7 +369,10 @@ export class SessionManager {
   /**
    * Terminate all sessions for a patient
    */
-  async terminateAllSessions(patientId: string, excludeSessionId?: string): Promise<number> {
+  async terminateAllSessions(
+    patientId: string,
+    excludeSessionId?: string
+  ): Promise<number> {
     try {
       let query = this.supabase
         .from('patient_portal_sessions')
@@ -387,8 +398,8 @@ export class SessionManager {
         resource: 'patient_portal_session',
         details: {
           terminatedCount: count || 0,
-          excludedSession: excludeSessionId
-        }
+          excludedSession: excludeSessionId,
+        },
       });
 
       return count || 0;
@@ -418,7 +429,9 @@ export class SessionManager {
       const sessions: SessionData[] = [];
       for (const sessionRecord of data || []) {
         try {
-          const decryptedToken = await this.encryption.decrypt(sessionRecord.session_token);
+          const decryptedToken = await this.encryption.decrypt(
+            sessionRecord.session_token
+          );
           sessions.push({
             id: sessionRecord.id,
             patientId: sessionRecord.patient_id,
@@ -429,12 +442,9 @@ export class SessionManager {
             userAgent: sessionRecord.user_agent,
             deviceFingerprint: sessionRecord.device_fingerprint,
             isActive: sessionRecord.is_active,
-            createdAt: new Date(sessionRecord.created_at)
+            createdAt: new Date(sessionRecord.created_at),
           });
-        } catch (decryptError) {
-          // Skip sessions that can't be decrypted
-          continue;
-        }
+        } catch (_decryptError) {}
       }
 
       return sessions;
@@ -447,13 +457,15 @@ export class SessionManager {
   /**
    * Generate device fingerprint hash
    */
-  generateDeviceFingerprint(fingerprintData: Omit<DeviceFingerprint, 'hash'>): DeviceFingerprint {
+  generateDeviceFingerprint(
+    fingerprintData: Omit<DeviceFingerprint, 'hash'>
+  ): DeviceFingerprint {
     const dataString = JSON.stringify(fingerprintData);
     const hash = crypto.createHash('sha256').update(dataString).digest('hex');
-    
+
     return {
       ...fingerprintData,
-      hash
+      hash,
     };
   }
 
@@ -462,18 +474,16 @@ export class SessionManager {
    */
   async logActivity(activity: SessionActivity): Promise<void> {
     try {
-      await this.supabase
-        .from('patient_portal_activity')
-        .insert({
-          patient_id: activity.sessionId, // This should be mapped to patient_id
-          session_id: activity.sessionId,
-          activity_type: activity.activityType,
-          description: `Session activity: ${activity.activityType}`,
-          metadata: activity.details || {},
-          ip_address: activity.ipAddress,
-          user_agent: activity.userAgent,
-          timestamp: activity.timestamp.toISOString()
-        });
+      await this.supabase.from('patient_portal_activity').insert({
+        patient_id: activity.sessionId, // This should be mapped to patient_id
+        session_id: activity.sessionId,
+        activity_type: activity.activityType,
+        description: `Session activity: ${activity.activityType}`,
+        metadata: activity.details || {},
+        ip_address: activity.ipAddress,
+        user_agent: activity.userAgent,
+        timestamp: activity.timestamp.toISOString(),
+      });
     } catch (error) {
       console.error('Error logging session activity:', error);
     }
@@ -487,7 +497,9 @@ export class SessionManager {
       const { error, count } = await this.supabase
         .from('patient_portal_sessions')
         .delete()
-        .or(`expires_at.lt.${new Date().toISOString()},last_activity.lt.${new Date(Date.now() - this.config.inactivityTimeout * 60 * 1000).toISOString()}`);
+        .or(
+          `expires_at.lt.${new Date().toISOString()},last_activity.lt.${new Date(Date.now() - this.config.inactivityTimeout * 60 * 1000).toISOString()}`
+        );
 
       if (error) {
         console.error('Error cleaning up expired sessions:', error);
@@ -502,8 +514,8 @@ export class SessionManager {
           resource: 'patient_portal_session',
           details: {
             cleanedUpCount: count,
-            cleanupReason: 'Expired or inactive sessions'
-          }
+            cleanupReason: 'Expired or inactive sessions',
+          },
         });
       }
 
@@ -537,25 +549,30 @@ export class SessionManager {
 
       for (const session of activeSessions || []) {
         // Count sessions by patient
-        sessionsByPatient[session.patient_id] = (sessionsByPatient[session.patient_id] || 0) + 1;
-        
+        sessionsByPatient[session.patient_id] =
+          (sessionsByPatient[session.patient_id] || 0) + 1;
+
         // Calculate session duration
-        const duration = new Date(session.last_activity).getTime() - new Date(session.created_at).getTime();
+        const duration =
+          new Date(session.last_activity).getTime() -
+          new Date(session.created_at).getTime();
         totalDuration += duration;
-        
+
         // Count recent logins
         if (new Date(session.created_at) > oneHourAgo) {
           recentLogins++;
         }
       }
 
-      const averageSessionDuration = activeSessions?.length ? totalDuration / activeSessions.length / (1000 * 60) : 0; // in minutes
+      const averageSessionDuration = activeSessions?.length
+        ? totalDuration / activeSessions.length / (1000 * 60)
+        : 0; // in minutes
 
       return {
         totalActiveSessions: activeSessions?.length || 0,
         sessionsByPatient,
         averageSessionDuration: Math.round(averageSessionDuration),
-        recentLogins
+        recentLogins,
       };
     } catch (error) {
       console.error('Error getting session statistics:', error);
@@ -563,7 +580,7 @@ export class SessionManager {
         totalActiveSessions: 0,
         sessionsByPatient: {},
         averageSessionDuration: 0,
-        recentLogins: 0
+        recentLogins: 0,
       };
     }
   }
@@ -585,13 +602,16 @@ export class SessionManager {
 
   private async enforceSessionLimits(patientId: string): Promise<void> {
     const activeSessions = await this.getActiveSessions(patientId);
-    
+
     if (activeSessions.length >= this.config.maxConcurrentSessions) {
       // Terminate oldest sessions
       const sessionsToTerminate = activeSessions
         .sort((a, b) => a.lastActivity.getTime() - b.lastActivity.getTime())
-        .slice(0, activeSessions.length - this.config.maxConcurrentSessions + 1);
-      
+        .slice(
+          0,
+          activeSessions.length - this.config.maxConcurrentSessions + 1
+        );
+
       for (const session of sessionsToTerminate) {
         await this.terminateSession(session.id, 'Session limit exceeded');
       }
@@ -610,9 +630,12 @@ export class SessionManager {
   }
 
   private startCleanupInterval(): void {
-    this.cleanupInterval = setInterval(async () => {
-      await this.cleanupExpiredSessions();
-    }, this.config.sessionCleanupInterval * 60 * 1000);
+    this.cleanupInterval = setInterval(
+      async () => {
+        await this.cleanupExpiredSessions();
+      },
+      this.config.sessionCleanupInterval * 60 * 1000
+    );
   }
 
   private async logSecurityEvent(event: {
@@ -625,18 +648,16 @@ export class SessionManager {
     severity: 'low' | 'medium' | 'high' | 'critical';
   }): Promise<void> {
     try {
-      await this.supabase
-        .from('patient_security_events')
-        .insert({
-          event_type: event.eventType,
-          patient_id: event.patientId,
-          session_id: event.sessionId,
-          ip_address: event.ipAddress,
-          user_agent: event.userAgent,
-          details: event.details || {},
-          severity: event.severity,
-          timestamp: new Date().toISOString()
-        });
+      await this.supabase.from('patient_security_events').insert({
+        event_type: event.eventType,
+        patient_id: event.patientId,
+        session_id: event.sessionId,
+        ip_address: event.ipAddress,
+        user_agent: event.userAgent,
+        details: event.details || {},
+        severity: event.severity,
+        timestamp: new Date().toISOString(),
+      });
     } catch (error) {
       console.error('Error logging security event:', error);
     }

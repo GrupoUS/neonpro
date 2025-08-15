@@ -46,7 +46,12 @@ export interface ProtocolFeedback {
   id: string;
   protocol_id: string;
   provider_id: string;
-  feedback_type: 'improvement' | 'issue' | 'suggestion' | 'rating' | 'complaint';
+  feedback_type:
+    | 'improvement'
+    | 'issue'
+    | 'suggestion'
+    | 'rating'
+    | 'complaint';
   feedback_data: Record<string, any>;
   improvement_suggestions?: string;
   rating?: number;
@@ -104,7 +109,12 @@ export interface ProtocolExperiment {
 export interface ProtocolEvidence {
   id: string;
   protocol_id: string;
-  evidence_type: 'literature' | 'guideline' | 'regulation' | 'study' | 'best_practice';
+  evidence_type:
+    | 'literature'
+    | 'guideline'
+    | 'regulation'
+    | 'study'
+    | 'best_practice';
   source_reference: string;
   evidence_level?: 'A' | 'B' | 'C' | 'D' | 'expert_opinion';
   evidence_data: Record<string, any>;
@@ -178,7 +188,12 @@ export interface UpdateProtocolVersionRequest {
   description?: string;
   protocol_content?: Record<string, any>;
   optimization_data?: Record<string, any>;
-  approval_status?: 'draft' | 'pending' | 'approved' | 'rejected' | 'deprecated';
+  approval_status?:
+    | 'draft'
+    | 'pending'
+    | 'approved'
+    | 'rejected'
+    | 'deprecated';
   effective_date?: string;
   expiry_date?: string;
   is_active?: boolean;
@@ -202,7 +217,12 @@ export interface CreateProtocolOutcomeRequest {
 // Protocol feedback requests
 export interface CreateProtocolFeedbackRequest {
   protocol_id: string;
-  feedback_type: 'improvement' | 'issue' | 'suggestion' | 'rating' | 'complaint';
+  feedback_type:
+    | 'improvement'
+    | 'issue'
+    | 'suggestion'
+    | 'rating'
+    | 'complaint';
   feedback_data: Record<string, any>;
   improvement_suggestions?: string;
   rating?: number;
@@ -247,7 +267,12 @@ export interface UpdateProtocolExperimentRequest {
 // Protocol evidence requests
 export interface CreateProtocolEvidenceRequest {
   protocol_id: string;
-  evidence_type: 'literature' | 'guideline' | 'regulation' | 'study' | 'best_practice';
+  evidence_type:
+    | 'literature'
+    | 'guideline'
+    | 'regulation'
+    | 'study'
+    | 'best_practice';
   source_reference: string;
   evidence_level?: 'A' | 'B' | 'C' | 'D' | 'expert_opinion';
   evidence_data?: Record<string, any>;

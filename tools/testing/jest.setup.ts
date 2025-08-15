@@ -1,33 +1,43 @@
-import '@testing-library/jest-dom'
-import { TextDecoder, TextEncoder } from 'util'
+import '@testing-library/jest-dom';
+import { TextDecoder, TextEncoder } from 'node:util';
 
 // Set timezone to UTC for consistent date testing across all environments
 process.env.TZ = 'UTC';
 
 // Add global polyfills for WebAuthn dependencies
-global.TextDecoder = TextDecoder
-global.TextEncoder = TextEncoder
+global.TextDecoder = TextDecoder;
+global.TextEncoder = TextEncoder;
 
 // Mock IntersectionObserver
 global.IntersectionObserver = class IntersectionObserver {
-  constructor() {}
-  observe() { return null }
-  disconnect() { return null }
-  unobserve() { return null }
-}
+  observe() {
+    return null;
+  }
+  disconnect() {
+    return null;
+  }
+  unobserve() {
+    return null;
+  }
+};
 
 // Mock ResizeObserver for Recharts
 global.ResizeObserver = class ResizeObserver {
-  constructor(callback: ResizeObserverCallback) {}
-  observe() { return null }
-  disconnect() { return null }
-  unobserve() { return null }
-}
+  observe() {
+    return null;
+  }
+  disconnect() {
+    return null;
+  }
+  unobserve() {
+    return null;
+  }
+};
 
 // Mock window.matchMedia
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: jest.fn().mockImplementation(query => ({
+  value: jest.fn().mockImplementation((query) => ({
     matches: false,
     media: query,
     onchange: null,
@@ -37,7 +47,7 @@ Object.defineProperty(window, 'matchMedia', {
     removeEventListener: jest.fn(),
     dispatchEvent: jest.fn(),
   })),
-})
+});
 
 // Mock next/router
 jest.mock('next/router', () => ({
@@ -59,9 +69,9 @@ jest.mock('next/router', () => ({
         emit: jest.fn(),
       },
       isFallback: false,
-    }
+    };
   },
-}))
+}));
 
 // Mock next/navigation for App Router
 jest.mock('next/navigation', () => ({
@@ -73,21 +83,21 @@ jest.mock('next/navigation', () => ({
       back: jest.fn(),
       forward: jest.fn(),
       prefetch: jest.fn(),
-    }
+    };
   },
   useSearchParams() {
-    return new URLSearchParams()
+    return new URLSearchParams();
   },
   usePathname() {
-    return '/'
+    return '/';
   },
-}))
+}));
 
 // Extend global environment for tests
 declare global {
   namespace jest {
     interface Matchers<R> {
-      toHaveErrorMessage(message: string): R
+      toHaveErrorMessage(message: string): R;
     }
   }
 }
@@ -95,13 +105,13 @@ declare global {
 // Custom Jest matchers
 expect.extend({
   toHaveErrorMessage(received, message) {
-    const pass = received?.message === message
+    const pass = received?.message === message;
     return {
       pass,
       message: () =>
         pass
           ? `Expected error not to have message: ${message}`
           : `Expected error to have message: ${message}, but received: ${received?.message}`,
-    }
+    };
   },
-})
+});

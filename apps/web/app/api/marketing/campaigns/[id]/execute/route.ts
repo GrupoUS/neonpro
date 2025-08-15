@@ -3,8 +3,8 @@
 // Epic 7 - Story 7.2: Automated marketing campaigns with personalization
 // =====================================================================================
 
+import { type NextRequest, NextResponse } from 'next/server';
 import { marketingCampaignsService } from '@/app/lib/services/marketing-campaigns-service';
-import { NextRequest, NextResponse } from 'next/server';
 
 // POST /api/marketing/campaigns/[id]/execute - Execute campaign
 export async function POST(
@@ -34,9 +34,9 @@ export async function POST(
     // Validate campaign status
     if (!['scheduled', 'active', 'draft'].includes(campaign.status)) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: `Cannot execute campaign with status: ${campaign.status}` 
+        {
+          success: false,
+          error: `Cannot execute campaign with status: ${campaign.status}`,
         },
         { status: 400 }
       );
@@ -45,25 +45,30 @@ export async function POST(
     // Execute campaign
     const execution = await marketingCampaignsService.executeCampaign(id, {
       scheduledFor: body.scheduledFor ? new Date(body.scheduledFor) : undefined,
-      testMode: body.testMode || false,
+      testMode: body.testMode,
       testRecipients: body.testRecipients || [],
-      executedBy: body.executedBy
+      executedBy: body.executedBy,
     });
 
-    return NextResponse.json({
-      success: true,
-      data: execution,
-      message: 'Campaign execution started successfully'
-    }, { status: 201 });
-
-  } catch (error) {
-    console.error(`POST /api/marketing/campaigns/${params.id}/execute error:`, error);
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: true,
+        data: execution,
+        message: 'Campaign execution started successfully',
+      },
+      { status: 201 }
+    );
+  } catch (error) {
+    console.error(
+      `POST /api/marketing/campaigns/${params.id}/execute error:`,
+      error
+    );
+    return NextResponse.json(
+      {
+        success: false,
         error: 'Failed to execute campaign',
-        message: error instanceof Error ? error.message : 'Unknown error'
-      }, 
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
       { status: 500 }
     );
   }

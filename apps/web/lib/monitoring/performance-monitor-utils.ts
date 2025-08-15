@@ -36,10 +36,26 @@ export class PerformanceMonitorUtils {
    * Initialize default performance thresholds
    */
   private initializeDefaultThresholds(): void {
-    this.setThreshold('response_time', { metric: 'response_time', warning: 1000, critical: 3000 });
-    this.setThreshold('memory_usage', { metric: 'memory_usage', warning: 80, critical: 95 });
-    this.setThreshold('cpu_usage', { metric: 'cpu_usage', warning: 70, critical: 90 });
-    this.setThreshold('error_rate', { metric: 'error_rate', warning: 5, critical: 10 });
+    this.setThreshold('response_time', {
+      metric: 'response_time',
+      warning: 1000,
+      critical: 3000,
+    });
+    this.setThreshold('memory_usage', {
+      metric: 'memory_usage',
+      warning: 80,
+      critical: 95,
+    });
+    this.setThreshold('cpu_usage', {
+      metric: 'cpu_usage',
+      warning: 70,
+      critical: 90,
+    });
+    this.setThreshold('error_rate', {
+      metric: 'error_rate',
+      warning: 5,
+      critical: 10,
+    });
   }
 
   /**
@@ -65,7 +81,7 @@ export class PerformanceMonitorUtils {
           value: metric.value,
           threshold: threshold.critical,
           severity: 'critical',
-          timestamp: metric.timestamp
+          timestamp: metric.timestamp,
         });
       } else if (metric.value >= threshold.warning) {
         newAlerts.push({
@@ -73,7 +89,7 @@ export class PerformanceMonitorUtils {
           value: metric.value,
           threshold: threshold.warning,
           severity: 'warning',
-          timestamp: metric.timestamp
+          timestamp: metric.timestamp,
         });
       }
     }
@@ -85,7 +101,7 @@ export class PerformanceMonitorUtils {
   /**
    * 📈 Generate performance trends
    */
-  generateTrends(metrics: PerformanceMetric[], buckets: number = 10): any[] {
+  generateTrends(metrics: PerformanceMetric[], buckets = 10): any[] {
     if (metrics.length === 0) return [];
 
     const sorted = metrics.sort((a, b) => a.timestamp - b.timestamp);
@@ -98,9 +114,12 @@ export class PerformanceMonitorUtils {
       const bucketMetrics = sorted.slice(bucketStart, bucketEnd);
 
       if (bucketMetrics.length > 0) {
-        const avgValue = bucketMetrics.reduce((sum, m) => sum + m.value, 0) / bucketMetrics.length;
-        const timestamp = bucketMetrics[Math.floor(bucketMetrics.length / 2)].timestamp;
-        
+        const avgValue =
+          bucketMetrics.reduce((sum, m) => sum + m.value, 0) /
+          bucketMetrics.length;
+        const timestamp =
+          bucketMetrics[Math.floor(bucketMetrics.length / 2)].timestamp;
+
         trends.push({
           timestamp,
           value: Math.round(avgValue),
@@ -117,10 +136,19 @@ export class PerformanceMonitorUtils {
    */
   aggregateMetrics(metrics: PerformanceMetric[]) {
     if (metrics.length === 0) {
-      return { count: 0, avg: 0, p50: 0, p90: 0, p95: 0, p99: 0, min: 0, max: 0 };
+      return {
+        count: 0,
+        avg: 0,
+        p50: 0,
+        p90: 0,
+        p95: 0,
+        p99: 0,
+        min: 0,
+        max: 0,
+      };
     }
 
-    const values = metrics.map(m => m.value).sort((a, b) => a - b);
+    const values = metrics.map((m) => m.value).sort((a, b) => a - b);
     const sum = values.reduce((a, b) => a + b, 0);
 
     return {
@@ -140,15 +168,15 @@ export class PerformanceMonitorUtils {
    */
   private percentile(values: number[], p: number): number {
     if (values.length === 0) return 0;
-    
+
     const index = (p / 100) * (values.length - 1);
     const lower = Math.floor(index);
     const upper = Math.ceil(index);
-    
+
     if (lower === upper) {
       return values[lower];
     }
-    
+
     const weight = index - lower;
     return Math.round(values[lower] * (1 - weight) + values[upper] * weight);
   }
@@ -163,9 +191,10 @@ export class PerformanceMonitorUtils {
   /**
    * Clear old alerts
    */
-  clearOldAlerts(maxAge: number = 3600000): void { // 1 hour default
+  clearOldAlerts(maxAge = 3_600_000): void {
+    // 1 hour default
     const cutoff = Date.now() - maxAge;
-    this.alerts = this.alerts.filter(alert => alert.timestamp > cutoff);
+    this.alerts = this.alerts.filter((alert) => alert.timestamp > cutoff);
   }
 
   /**
@@ -175,8 +204,8 @@ export class PerformanceMonitorUtils {
     if (metrics.length === 0) return 100;
 
     let score = 100;
-    const recentAlerts = this.alerts.filter(alert => 
-      Date.now() - alert.timestamp < 300000 // Last 5 minutes
+    const recentAlerts = this.alerts.filter(
+      (alert) => Date.now() - alert.timestamp < 300_000 // Last 5 minutes
     );
 
     // Deduct points for alerts
@@ -197,8 +226,8 @@ export class PerformanceMonitorUtils {
   generateReport(metrics: PerformanceMetric[]): any {
     const aggregated = this.aggregateMetrics(metrics);
     const trends = this.generateTrends(metrics);
-    const recentAlerts = this.alerts.filter(alert => 
-      Date.now() - alert.timestamp < 3600000 // Last hour
+    const recentAlerts = this.alerts.filter(
+      (alert) => Date.now() - alert.timestamp < 3_600_000 // Last hour
     );
     const score = this.calculatePerformanceScore(metrics);
 
@@ -206,12 +235,12 @@ export class PerformanceMonitorUtils {
       summary: {
         totalMetrics: metrics.length,
         performanceScore: score,
-        alertCount: recentAlerts.length
+        alertCount: recentAlerts.length,
       },
       aggregated,
       trends,
       alerts: recentAlerts,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
   }
 }

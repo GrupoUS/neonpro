@@ -1,45 +1,55 @@
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { createClient } from '@/app/utils/supabase/server';
 import { PatientInsights } from '@/lib/ai/patient-insights';
 import { ProfileManager } from '@/lib/patients/profile-manager';
-import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
 
 // Initialize services
 const profileManager = new ProfileManager();
-const patientInsights = new PatientInsights();
+const _patientInsights = new PatientInsights();
 
 // Validation schema for updates
 const UpdateProfileSchema = z.object({
-  demographics: z.object({
-    name: z.string().optional(),
-    phone: z.string().optional(),
-    email: z.string().email().optional(),
-    address: z.string().optional()
-  }).optional(),
-  medical_history: z.object({
-    allergies: z.array(z.string()).optional(),
-    conditions: z.array(z.string()).optional(),
-    medications: z.array(z.string()).optional(),
-    surgeries: z.array(z.string()).optional()
-  }).optional(),
-  preferences: z.object({
-    language: z.string().optional(),
-    timezone: z.string().optional(),
-    communication_method: z.enum(['email', 'sms', 'phone', 'in_app']).optional(),
-    appointment_reminders: z.boolean().optional()
-  }).optional(),
-  emergency_contact: z.object({
-    name: z.string().optional(),
-    relationship: z.string().optional(),
-    phone: z.string().optional()
-  }).optional()
+  demographics: z
+    .object({
+      name: z.string().optional(),
+      phone: z.string().optional(),
+      email: z.string().email().optional(),
+      address: z.string().optional(),
+    })
+    .optional(),
+  medical_history: z
+    .object({
+      allergies: z.array(z.string()).optional(),
+      conditions: z.array(z.string()).optional(),
+      medications: z.array(z.string()).optional(),
+      surgeries: z.array(z.string()).optional(),
+    })
+    .optional(),
+  preferences: z
+    .object({
+      language: z.string().optional(),
+      timezone: z.string().optional(),
+      communication_method: z
+        .enum(['email', 'sms', 'phone', 'in_app'])
+        .optional(),
+      appointment_reminders: z.boolean().optional(),
+    })
+    .optional(),
+  emergency_contact: z
+    .object({
+      name: z.string().optional(),
+      relationship: z.string().optional(),
+      phone: z.string().optional(),
+    })
+    .optional(),
 });
 
 /**
  * GET /api/patients/profile/[id] - Get specific patient profile
  */
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
@@ -47,21 +57,18 @@ export async function GET(
     const { id: patientId } = await params;
 
     // Verify authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Get patient profile
     const profile = await profileManager.getPatientProfile(patientId);
     if (!profile) {
-      return NextResponse.json(
-        { error: 'Patient not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Patient not found' }, { status: 404 });
     }
 
     return NextResponse.json({ profile });
@@ -86,12 +93,12 @@ export async function PUT(
     const { id: patientId } = await params;
 
     // Verify authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Parse and validate request body
@@ -99,17 +106,17 @@ export async function PUT(
     const validatedData = UpdateProfileSchema.parse(body);
 
     // Update patient profile
-    const updatedProfile = await profileManager.updatePatientProfile(patientId, validatedData);
+    const updatedProfile = await profileManager.updatePatientProfile(
+      patientId,
+      validatedData
+    );
     if (!updatedProfile) {
-      return NextResponse.json(
-        { error: 'Patient not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Patient not found' }, { status: 404 });
     }
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       profile: updatedProfile,
-      message: 'Profile updated successfully'
+      message: 'Profile updated successfully',
     });
   } catch (error) {
     console.error('Error updating patient profile:', error);
@@ -130,7 +137,7 @@ export async function PUT(
  * DELETE /api/patients/profile/[id] - Archive patient profile
  */
 export async function DELETE(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
@@ -138,25 +145,22 @@ export async function DELETE(
     const { id: patientId } = await params;
 
     // Verify authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Archive patient profile (soft delete)
     const archived = await profileManager.archivePatientProfile(patientId);
     if (!archived) {
-      return NextResponse.json(
-        { error: 'Patient not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Patient not found' }, { status: 404 });
     }
 
-    return NextResponse.json({ 
-      message: 'Patient profile archived successfully'
+    return NextResponse.json({
+      message: 'Patient profile archived successfully',
     });
   } catch (error) {
     console.error('Error archiving patient profile:', error);

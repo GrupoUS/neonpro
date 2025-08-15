@@ -1,9 +1,9 @@
 /**
  * Time Series Forecasting Engine for NeonPro
- * 
+ *
  * Advanced forecasting capabilities using machine learning approaches
  * inspired by Python's skforecast library but implemented in TypeScript.
- * 
+ *
  * Features:
  * - Subscription growth forecasting
  * - Revenue prediction with confidence intervals
@@ -13,47 +13,47 @@
  * - Automated feature engineering
  */
 
-import { createClient } from '@/app/utils/supabase/server'
-import { z } from 'zod'
+import { z } from 'zod';
+import { createClient } from '@/app/utils/supabase/server';
 
 // Core forecasting types
 export interface TimeSeriesData {
-  date: string
-  value: number
-  exogenous?: Record<string, number>
+  date: string;
+  value: number;
+  exogenous?: Record<string, number>;
 }
 
 export interface ForecastResult {
-  date: string
-  predicted: number
-  lower_bound: number
-  upper_bound: number
-  confidence: number
+  date: string;
+  predicted: number;
+  lower_bound: number;
+  upper_bound: number;
+  confidence: number;
 }
 
 export interface ForecastConfig {
-  metric: 'subscriptions' | 'revenue' | 'churn_rate' | 'mrr' | 'arr'
-  horizon: number // forecast periods ahead
-  frequency: 'daily' | 'weekly' | 'monthly'
-  includeSeasonality: boolean
-  includeExogenous: boolean
-  confidenceLevel: number // 0.90, 0.95, 0.99
-  modelType: 'linear' | 'polynomial' | 'exponential' | 'seasonal'
+  metric: 'subscriptions' | 'revenue' | 'churn_rate' | 'mrr' | 'arr';
+  horizon: number; // forecast periods ahead
+  frequency: 'daily' | 'weekly' | 'monthly';
+  includeSeasonality: boolean;
+  includeExogenous: boolean;
+  confidenceLevel: number; // 0.90, 0.95, 0.99
+  modelType: 'linear' | 'polynomial' | 'exponential' | 'seasonal';
 }
 
 export interface ModelFeatures {
-  lags: number[] // past values to use as features
+  lags: number[]; // past values to use as features
   rolling_stats: Array<{
-    window: number
-    stats: ('mean' | 'std' | 'min' | 'max')[]
-  }>
+    window: number;
+    stats: ('mean' | 'std' | 'min' | 'max')[];
+  }>;
   seasonality: {
-    weekly: boolean
-    monthly: boolean
-    quarterly: boolean
-  }
-  trends: boolean
-  exogenous_vars: string[]
+    weekly: boolean;
+    monthly: boolean;
+    quarterly: boolean;
+  };
+  trends: boolean;
+  exogenous_vars: string[];
 }
 
 // Validation schemas
@@ -64,36 +64,40 @@ const forecastConfigSchema = z.object({
   includeSeasonality: z.boolean().default(true),
   includeExogenous: z.boolean().default(true),
   confidenceLevel: z.number().min(0.8).max(0.99).default(0.95),
-  modelType: z.enum(['linear', 'polynomial', 'exponential', 'seasonal']).default('seasonal')
-})
+  modelType: z
+    .enum(['linear', 'polynomial', 'exponential', 'seasonal'])
+    .default('seasonal'),
+});
 
 export class ForecastingEngine {
-  private supabase = createClient()
-  private modelCache = new Map<string, any>()
+  private supabase = createClient();
+  private modelCache = new Map<string, any>();
 
   /**
    * Generate forecasts for subscription metrics
    * Based on skforecast ForecasterRecursive pattern
    */
   async generateForecast(config: ForecastConfig): Promise<ForecastResult[]> {
-    const validConfig = forecastConfigSchema.parse(config)
-    
+    const validConfig = forecastConfigSchema.parse(config);
+
     // Get historical data
     const historicalData = await this.getHistoricalData(
       validConfig.metric,
       validConfig.frequency
-    )
+    );
 
     if (historicalData.length < 10) {
-      throw new Error('Insufficient historical data for forecasting (minimum 10 data points required)')
+      throw new Error(
+        'Insufficient historical data for forecasting (minimum 10 data points required)'
+      );
     }
 
     // Prepare features using lag-based approach
-    const features = this.generateModelFeatures(validConfig)
-    const trainingData = this.prepareTrainingData(historicalData, features)
+    const features = this.generateModelFeatures(validConfig);
+    const trainingData = this.prepareTrainingData(historicalData, features);
 
     // Train or retrieve cached model
-    const model = await this.getOrTrainModel(validConfig, trainingData)
+    const model = await this.getOrTrainModel(validConfig, trainingData);
 
     // Generate forecasts
     const forecasts = this.predictFuture(
@@ -102,9 +106,9 @@ export class ForecastingEngine {
       features,
       validConfig.horizon,
       validConfig.confidenceLevel
-    )
+    );
 
-    return forecasts
+    return forecasts;
   }
 
   /**
@@ -115,27 +119,27 @@ export class ForecastingEngine {
     metrics: string[],
     config: Omit<ForecastConfig, 'metric'>
   ): Promise<Record<string, ForecastResult[]>> {
-    const results: Record<string, ForecastResult[]> = {}
+    const results: Record<string, ForecastResult[]> = {};
 
     // Process each metric in parallel
     const forecastPromises = metrics.map(async (metric) => {
       try {
-        const seriesConfig = { ...config, metric: metric as any }
-        const forecast = await this.generateForecast(seriesConfig)
-        return { metric, forecast }
+        const seriesConfig = { ...config, metric: metric as any };
+        const forecast = await this.generateForecast(seriesConfig);
+        return { metric, forecast };
       } catch (error) {
-        console.error(`Error forecasting ${metric}:`, error)
-        return { metric, forecast: [] }
+        console.error(`Error forecasting ${metric}:`, error);
+        return { metric, forecast: [] };
       }
-    })
+    });
 
-    const forecastResults = await Promise.all(forecastPromises)
-    
+    const forecastResults = await Promise.all(forecastPromises);
+
     forecastResults.forEach(({ metric, forecast }) => {
-      results[metric] = forecast
-    })
+      results[metric] = forecast;
+    });
 
-    return results
+    return results;
   }
 
   /**
@@ -144,30 +148,30 @@ export class ForecastingEngine {
   async generateScenarios(
     config: ForecastConfig,
     scenarios: Array<{
-      name: string
+      name: string;
       adjustments: {
-        growth_rate?: number
-        seasonality_factor?: number
-        external_factors?: Record<string, number>
-      }
+        growth_rate?: number;
+        seasonality_factor?: number;
+        external_factors?: Record<string, number>;
+      };
     }>
   ): Promise<Record<string, ForecastResult[]>> {
-    const scenarioResults: Record<string, ForecastResult[]> = {}
+    const scenarioResults: Record<string, ForecastResult[]> = {};
 
     // Generate baseline forecast
-    const baselineForecast = await this.generateForecast(config)
-    scenarioResults['baseline'] = baselineForecast
+    const baselineForecast = await this.generateForecast(config);
+    scenarioResults.baseline = baselineForecast;
 
     // Generate scenario-based forecasts
     for (const scenario of scenarios) {
       const adjustedForecast = this.applyScenarioAdjustments(
         baselineForecast,
         scenario.adjustments
-      )
-      scenarioResults[scenario.name] = adjustedForecast
+      );
+      scenarioResults[scenario.name] = adjustedForecast;
     }
 
-    return scenarioResults
+    return scenarioResults;
   }
 
   /**
@@ -176,36 +180,40 @@ export class ForecastingEngine {
    */
   async evaluateForecastAccuracy(
     config: ForecastConfig,
-    backtestPeriods: number = 4
+    backtestPeriods = 4
   ): Promise<{
-    mae: number // Mean Absolute Error
-    mape: number // Mean Absolute Percentage Error
-    rmse: number // Root Mean Square Error
-    accuracy_score: number
-    predictions: Array<{ actual: number, predicted: number, date: string }>
+    mae: number; // Mean Absolute Error
+    mape: number; // Mean Absolute Percentage Error
+    rmse: number; // Root Mean Square Error
+    accuracy_score: number;
+    predictions: Array<{ actual: number; predicted: number; date: string }>;
   }> {
     // Get extended historical data for backtesting
     const historicalData = await this.getHistoricalData(
       config.metric,
       config.frequency,
       true // extended data
-    )
+    );
 
-    const predictions = []
-    const errors = []
+    const predictions = [];
+    const errors = [];
 
     // Perform time series cross-validation
     for (let i = 0; i < backtestPeriods; i++) {
-      const splitPoint = historicalData.length - (backtestPeriods - i) * config.horizon
-      const trainData = historicalData.slice(0, splitPoint)
-      const testData = historicalData.slice(splitPoint, splitPoint + config.horizon)
+      const splitPoint =
+        historicalData.length - (backtestPeriods - i) * config.horizon;
+      const trainData = historicalData.slice(0, splitPoint);
+      const testData = historicalData.slice(
+        splitPoint,
+        splitPoint + config.horizon
+      );
 
-      if (trainData.length < 10 || testData.length === 0) continue
+      if (trainData.length < 10 || testData.length === 0) continue;
 
       // Generate forecast for this split
-      const features = this.generateModelFeatures(config)
-      const trainingFeatures = this.prepareTrainingData(trainData, features)
-      const model = await this.trainModel(config, trainingFeatures)
+      const features = this.generateModelFeatures(config);
+      const trainingFeatures = this.prepareTrainingData(trainData, features);
+      const model = await this.trainModel(config, trainingFeatures);
 
       const forecast = this.predictFuture(
         model,
@@ -213,47 +221,49 @@ export class ForecastingEngine {
         features,
         testData.length,
         config.confidenceLevel
-      )
+      );
 
       // Compare predictions with actual values
       for (let j = 0; j < Math.min(forecast.length, testData.length); j++) {
-        const actual = testData[j].value
-        const predicted = forecast[j].predicted
-        
+        const actual = testData[j].value;
+        const predicted = forecast[j].predicted;
+
         predictions.push({
           actual,
           predicted,
-          date: testData[j].date
-        })
+          date: testData[j].date,
+        });
 
         errors.push({
           absolute: Math.abs(actual - predicted),
-          squared: Math.pow(actual - predicted, 2),
-          percentage: actual !== 0 ? Math.abs((actual - predicted) / actual) * 100 : 0
-        })
+          squared: (actual - predicted) ** 2,
+          percentage:
+            actual !== 0 ? Math.abs((actual - predicted) / actual) * 100 : 0,
+        });
       }
     }
 
     if (errors.length === 0) {
-      throw new Error('Insufficient data for accuracy evaluation')
+      throw new Error('Insufficient data for accuracy evaluation');
     }
 
     // Calculate accuracy metrics
-    const mae = errors.reduce((sum, e) => sum + e.absolute, 0) / errors.length
-    const mse = errors.reduce((sum, e) => sum + e.squared, 0) / errors.length
-    const rmse = Math.sqrt(mse)
-    const mape = errors.reduce((sum, e) => sum + e.percentage, 0) / errors.length
-    
+    const mae = errors.reduce((sum, e) => sum + e.absolute, 0) / errors.length;
+    const mse = errors.reduce((sum, e) => sum + e.squared, 0) / errors.length;
+    const rmse = Math.sqrt(mse);
+    const mape =
+      errors.reduce((sum, e) => sum + e.percentage, 0) / errors.length;
+
     // Calculate accuracy score (higher is better)
-    const accuracy_score = Math.max(0, 100 - mape)
+    const accuracy_score = Math.max(0, 100 - mape);
 
     return {
       mae: Math.round(mae * 100) / 100,
       mape: Math.round(mape * 100) / 100,
       rmse: Math.round(rmse * 100) / 100,
       accuracy_score: Math.round(accuracy_score * 100) / 100,
-      predictions
-    }
+      predictions,
+    };
   }
 
   /**
@@ -266,41 +276,42 @@ export class ForecastingEngine {
       seasonality: {
         weekly: false,
         monthly: false,
-        quarterly: false
+        quarterly: false,
       },
       trends: true,
-      exogenous_vars: []
-    }
+      exogenous_vars: [],
+    };
 
     // Configure lags based on frequency
     if (config.frequency === 'daily') {
-      features.lags = [1, 7, 14, 30] // 1 day, 1 week, 2 weeks, 1 month
+      features.lags = [1, 7, 14, 30]; // 1 day, 1 week, 2 weeks, 1 month
       features.rolling_stats = [
         { window: 7, stats: ['mean', 'std'] },
-        { window: 30, stats: ['mean', 'min', 'max'] }
-      ]
+        { window: 30, stats: ['mean', 'min', 'max'] },
+      ];
       if (config.includeSeasonality) {
-        features.seasonality.weekly = true
-        features.seasonality.monthly = true
+        features.seasonality.weekly = true;
+        features.seasonality.monthly = true;
       }
     } else if (config.frequency === 'weekly') {
-      features.lags = [1, 4, 12, 24] // 1 week, 1 month, 3 months, 6 months
+      features.lags = [1, 4, 12, 24]; // 1 week, 1 month, 3 months, 6 months
       features.rolling_stats = [
         { window: 4, stats: ['mean', 'std'] },
-        { window: 12, stats: ['mean', 'min', 'max'] }
-      ]
+        { window: 12, stats: ['mean', 'min', 'max'] },
+      ];
       if (config.includeSeasonality) {
-        features.seasonality.monthly = true
-        features.seasonality.quarterly = true
+        features.seasonality.monthly = true;
+        features.seasonality.quarterly = true;
       }
-    } else { // monthly
-      features.lags = [1, 3, 6, 12] // 1, 3, 6, 12 months
+    } else {
+      // monthly
+      features.lags = [1, 3, 6, 12]; // 1, 3, 6, 12 months
       features.rolling_stats = [
         { window: 3, stats: ['mean', 'std'] },
-        { window: 6, stats: ['mean', 'min', 'max'] }
-      ]
+        { window: 6, stats: ['mean', 'min', 'max'] },
+      ];
       if (config.includeSeasonality) {
-        features.seasonality.quarterly = true
+        features.seasonality.quarterly = true;
       }
     }
 
@@ -311,11 +322,11 @@ export class ForecastingEngine {
         'support_tickets',
         'feature_releases',
         'competitor_activity',
-        'economic_indicator'
-      ]
+        'economic_indicator',
+      ];
     }
 
-    return features
+    return features;
   }
 
   /**
@@ -324,86 +335,104 @@ export class ForecastingEngine {
   private prepareTrainingData(
     data: TimeSeriesData[],
     features: ModelFeatures
-  ): Array<{ target: number, features: Record<string, number> }> {
-    const trainingData = []
-    const maxLag = Math.max(...features.lags, 0)
-    const maxWindow = Math.max(...features.rolling_stats.map(rs => rs.window), 0)
-    const startIndex = Math.max(maxLag, maxWindow)
+  ): Array<{ target: number; features: Record<string, number> }> {
+    const trainingData = [];
+    const maxLag = Math.max(...features.lags, 0);
+    const maxWindow = Math.max(
+      ...features.rolling_stats.map((rs) => rs.window),
+      0
+    );
+    const startIndex = Math.max(maxLag, maxWindow);
 
     for (let i = startIndex; i < data.length; i++) {
-      const featureVector: Record<string, number> = {}
-      
+      const featureVector: Record<string, number> = {};
+
       // Add lag features
-      features.lags.forEach(lag => {
+      features.lags.forEach((lag) => {
         if (i - lag >= 0) {
-          featureVector[`lag_${lag}`] = data[i - lag].value
+          featureVector[`lag_${lag}`] = data[i - lag].value;
         }
-      })
+      });
 
       // Add rolling statistics
       features.rolling_stats.forEach(({ window, stats }) => {
         if (i - window + 1 >= 0) {
-          const windowData = data.slice(i - window + 1, i + 1).map(d => d.value)
-          
-          stats.forEach(stat => {
-            let value = 0
+          const windowData = data
+            .slice(i - window + 1, i + 1)
+            .map((d) => d.value);
+
+          stats.forEach((stat) => {
+            let value = 0;
             if (stat === 'mean') {
-              value = windowData.reduce((sum, v) => sum + v, 0) / windowData.length
+              value =
+                windowData.reduce((sum, v) => sum + v, 0) / windowData.length;
             } else if (stat === 'std') {
-              const mean = windowData.reduce((sum, v) => sum + v, 0) / windowData.length
-              value = Math.sqrt(windowData.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) / windowData.length)
+              const mean =
+                windowData.reduce((sum, v) => sum + v, 0) / windowData.length;
+              value = Math.sqrt(
+                windowData.reduce((sum, v) => sum + (v - mean) ** 2, 0) /
+                  windowData.length
+              );
             } else if (stat === 'min') {
-              value = Math.min(...windowData)
+              value = Math.min(...windowData);
             } else if (stat === 'max') {
-              value = Math.max(...windowData)
+              value = Math.max(...windowData);
             }
-            
-            featureVector[`rolling_${window}_${stat}`] = value
-          })
+
+            featureVector[`rolling_${window}_${stat}`] = value;
+          });
         }
-      })
+      });
 
       // Add seasonality features
-      const date = new Date(data[i].date)
+      const date = new Date(data[i].date);
       if (features.seasonality.weekly) {
-        featureVector['day_of_week'] = date.getDay()
-        featureVector['day_of_week_sin'] = Math.sin(2 * Math.PI * date.getDay() / 7)
-        featureVector['day_of_week_cos'] = Math.cos(2 * Math.PI * date.getDay() / 7)
+        featureVector.day_of_week = date.getDay();
+        featureVector.day_of_week_sin = Math.sin(
+          (2 * Math.PI * date.getDay()) / 7
+        );
+        featureVector.day_of_week_cos = Math.cos(
+          (2 * Math.PI * date.getDay()) / 7
+        );
       }
       if (features.seasonality.monthly) {
-        featureVector['day_of_month'] = date.getDate()
-        featureVector['month'] = date.getMonth()
-        featureVector['month_sin'] = Math.sin(2 * Math.PI * date.getMonth() / 12)
-        featureVector['month_cos'] = Math.cos(2 * Math.PI * date.getMonth() / 12)
+        featureVector.day_of_month = date.getDate();
+        featureVector.month = date.getMonth();
+        featureVector.month_sin = Math.sin(
+          (2 * Math.PI * date.getMonth()) / 12
+        );
+        featureVector.month_cos = Math.cos(
+          (2 * Math.PI * date.getMonth()) / 12
+        );
       }
       if (features.seasonality.quarterly) {
-        const quarter = Math.floor(date.getMonth() / 3)
-        featureVector['quarter'] = quarter
-        featureVector['quarter_sin'] = Math.sin(2 * Math.PI * quarter / 4)
-        featureVector['quarter_cos'] = Math.cos(2 * Math.PI * quarter / 4)
+        const quarter = Math.floor(date.getMonth() / 3);
+        featureVector.quarter = quarter;
+        featureVector.quarter_sin = Math.sin((2 * Math.PI * quarter) / 4);
+        featureVector.quarter_cos = Math.cos((2 * Math.PI * quarter) / 4);
       }
 
       // Add trend feature
       if (features.trends) {
-        featureVector['trend'] = i
+        featureVector.trend = i;
       }
 
       // Add exogenous variables
       if (data[i].exogenous) {
-        features.exogenous_vars.forEach(varName => {
-          if (data[i].exogenous![varName] !== undefined) {
-            featureVector[varName] = data[i].exogenous![varName]
+        features.exogenous_vars.forEach((varName) => {
+          if (data[i].exogenous?.[varName] !== undefined) {
+            featureVector[varName] = data[i].exogenous?.[varName];
           }
-        })
+        });
       }
 
       trainingData.push({
         target: data[i].value,
-        features: featureVector
-      })
+        features: featureVector,
+      });
     }
 
-    return trainingData
+    return trainingData;
   }
 
   /**
@@ -412,20 +441,19 @@ export class ForecastingEngine {
   private async getHistoricalData(
     metric: string,
     frequency: string,
-    extended: boolean = false
+    extended = false
   ): Promise<TimeSeriesData[]> {
-    const { data, error } = await this.supabase
-      .rpc('get_forecasting_data', {
-        p_metric: metric,
-        p_frequency: frequency,
-        p_extended: extended
-      })
+    const { data, error } = await this.supabase.rpc('get_forecasting_data', {
+      p_metric: metric,
+      p_frequency: frequency,
+      p_extended: extended,
+    });
 
     if (error) {
-      throw new Error(`Failed to fetch historical data: ${error.message}`)
+      throw new Error(`Failed to fetch historical data: ${error.message}`);
     }
 
-    return data || []
+    return data || [];
   }
 
   /**
@@ -433,24 +461,24 @@ export class ForecastingEngine {
    */
   private async getOrTrainModel(
     config: ForecastConfig,
-    trainingData: Array<{ target: number, features: Record<string, number> }>
+    trainingData: Array<{ target: number; features: Record<string, number> }>
   ): Promise<any> {
-    const cacheKey = this.generateModelCacheKey(config)
-    
+    const cacheKey = this.generateModelCacheKey(config);
+
     if (this.modelCache.has(cacheKey)) {
-      return this.modelCache.get(cacheKey)
+      return this.modelCache.get(cacheKey);
     }
 
-    const model = await this.trainModel(config, trainingData)
-    this.modelCache.set(cacheKey, model)
-    
+    const model = await this.trainModel(config, trainingData);
+    this.modelCache.set(cacheKey, model);
+
     // Cache cleanup (keep only last 10 models)
     if (this.modelCache.size > 10) {
-      const firstKey = this.modelCache.keys().next().value
-      this.modelCache.delete(firstKey)
+      const firstKey = this.modelCache.keys().next().value;
+      this.modelCache.delete(firstKey);
     }
 
-    return model
+    return model;
   }
 
   /**
@@ -458,37 +486,38 @@ export class ForecastingEngine {
    */
   private async trainModel(
     config: ForecastConfig,
-    trainingData: Array<{ target: number, features: Record<string, number> }>
+    trainingData: Array<{ target: number; features: Record<string, number> }>
   ): Promise<any> {
     // Simple linear regression implementation
     // In production, could integrate with ML services or more sophisticated models
-    
+
     if (trainingData.length === 0) {
-      throw new Error('No training data available')
+      throw new Error('No training data available');
     }
 
-    const features = Object.keys(trainingData[0].features)
-    const X = trainingData.map(d => features.map(f => d.features[f] || 0))
-    const y = trainingData.map(d => d.target)
+    const features = Object.keys(trainingData[0].features);
+    const X = trainingData.map((d) => features.map((f) => d.features[f] || 0));
+    const y = trainingData.map((d) => d.target);
 
-    let model: any
+    let model: any;
 
     if (config.modelType === 'linear') {
-      model = this.trainLinearRegression(X, y)
+      model = this.trainLinearRegression(X, y);
     } else if (config.modelType === 'polynomial') {
-      model = this.trainPolynomialRegression(X, y, 2)
+      model = this.trainPolynomialRegression(X, y, 2);
     } else if (config.modelType === 'exponential') {
-      model = this.trainExponentialSmoothing(y)
-    } else { // seasonal
-      model = this.trainSeasonalModel(X, y, config.frequency)
+      model = this.trainExponentialSmoothing(y);
+    } else {
+      // seasonal
+      model = this.trainSeasonalModel(X, y, config.frequency);
     }
 
     return {
       ...model,
       features,
       config,
-      trainedAt: new Date().toISOString()
-    }
+      trainedAt: new Date().toISOString(),
+    };
   }
 
   /**
@@ -501,8 +530,8 @@ export class ForecastingEngine {
     horizon: number,
     confidenceLevel: number
   ): ForecastResult[] {
-    const predictions: ForecastResult[] = []
-    const extendedData = [...historicalData]
+    const predictions: ForecastResult[] = [];
+    const extendedData = [...historicalData];
 
     for (let i = 0; i < horizon; i++) {
       // Prepare features for next prediction
@@ -510,172 +539,190 @@ export class ForecastingEngine {
         extendedData,
         features,
         extendedData.length - 1 + i
-      )
+      );
 
       // Make prediction
-      const predicted = this.makePrediction(model, featureVector)
-      
+      const predicted = this.makePrediction(model, featureVector);
+
       // Calculate confidence interval
       const { lower_bound, upper_bound } = this.calculateConfidenceInterval(
         predicted,
         model.residualStd || predicted * 0.1, // fallback to 10% of prediction
         confidenceLevel
-      )
+      );
 
       // Generate future date
-      const lastDate = new Date(extendedData[extendedData.length - 1].date)
-      const nextDate = this.getNextDate(lastDate, features, model.config.frequency)
+      const lastDate = new Date(extendedData[extendedData.length - 1].date);
+      const nextDate = this.getNextDate(
+        lastDate,
+        features,
+        model.config.frequency
+      );
 
       const result: ForecastResult = {
         date: nextDate.toISOString().split('T')[0],
         predicted: Math.round(predicted * 100) / 100,
         lower_bound: Math.round(lower_bound * 100) / 100,
         upper_bound: Math.round(upper_bound * 100) / 100,
-        confidence: confidenceLevel * 100
-      }
+        confidence: confidenceLevel * 100,
+      };
 
-      predictions.push(result)
+      predictions.push(result);
 
       // Add predicted value to extended data for next iteration
       extendedData.push({
         date: result.date,
-        value: predicted
-      })
+        value: predicted,
+      });
     }
 
-    return predictions
+    return predictions;
   }
 
   // Simplified ML model implementations (in production, use proper ML libraries)
   private trainLinearRegression(X: number[][], y: number[]) {
     // Simple linear regression using normal equation
     // For production, use proper ML libraries
-    const n = X.length
-    const features = X[0].length
+    const n = X.length;
+    const features = X[0].length;
 
     // Add bias term
-    const XWithBias = X.map(row => [1, ...row])
-    
+    const XWithBias = X.map((row) => [1, ...row]);
+
     // Calculate weights using normal equation: w = (X^T * X)^-1 * X^T * y
     // Simplified implementation
-    const weights = new Array(features + 1).fill(0)
-    
+    const weights = new Array(features + 1).fill(0);
+
     // Simple gradient descent approximation
     for (let iter = 0; iter < 1000; iter++) {
-      const predictions = XWithBias.map(row => 
+      const predictions = XWithBias.map((row) =>
         row.reduce((sum, xi, i) => sum + xi * weights[i], 0)
-      )
-      
-      const errors = predictions.map((pred, i) => pred - y[i])
-      
+      );
+
+      const errors = predictions.map((pred, i) => pred - y[i]);
+
       // Update weights
       for (let j = 0; j < weights.length; j++) {
-        const gradient = errors.reduce((sum, error, i) => 
-          sum + error * XWithBias[i][j], 0
-        ) / n
-        weights[j] -= 0.001 * gradient // learning rate
+        const gradient =
+          errors.reduce((sum, error, i) => sum + error * XWithBias[i][j], 0) /
+          n;
+        weights[j] -= 0.001 * gradient; // learning rate
       }
     }
 
     // Calculate residual standard deviation
-    const finalPredictions = XWithBias.map(row => 
+    const finalPredictions = XWithBias.map((row) =>
       row.reduce((sum, xi, i) => sum + xi * weights[i], 0)
-    )
-    const residuals = finalPredictions.map((pred, i) => Math.pow(pred - y[i], 2))
-    const residualStd = Math.sqrt(residuals.reduce((sum, r) => sum + r, 0) / (n - 1))
+    );
+    const residuals = finalPredictions.map((pred, i) => (pred - y[i]) ** 2);
+    const residualStd = Math.sqrt(
+      residuals.reduce((sum, r) => sum + r, 0) / (n - 1)
+    );
 
     return {
       type: 'linear',
       weights,
-      residualStd
-    }
+      residualStd,
+    };
   }
 
-  private trainPolynomialRegression(X: number[][], y: number[], degree: number) {
+  private trainPolynomialRegression(
+    X: number[][],
+    y: number[],
+    degree: number
+  ) {
     // Transform features to polynomial features
-    const polyX = X.map(row => {
-      const polyRow = [1] // bias
-      row.forEach(x => polyRow.push(x)) // linear terms
-      
+    const polyX = X.map((row) => {
+      const polyRow = [1]; // bias
+      row.forEach((x) => polyRow.push(x)); // linear terms
+
       if (degree >= 2) {
         // Add quadratic terms
         row.forEach((x, i) => {
-          polyRow.push(x * x) // x^2
+          polyRow.push(x * x); // x^2
           for (let j = i + 1; j < row.length; j++) {
-            polyRow.push(x * row[j]) // xi * xj
+            polyRow.push(x * row[j]); // xi * xj
           }
-        })
+        });
       }
-      
-      return polyRow
-    })
+
+      return polyRow;
+    });
 
     // Use linear regression on polynomial features
-    return this.trainLinearRegression(polyX.map(row => row.slice(1)), y)
+    return this.trainLinearRegression(
+      polyX.map((row) => row.slice(1)),
+      y
+    );
   }
 
   private trainExponentialSmoothing(y: number[]) {
     // Simple exponential smoothing
-    const alpha = 0.3 // smoothing parameter
-    let smoothed = y[0]
-    const smoothedValues = [smoothed]
+    const alpha = 0.3; // smoothing parameter
+    let smoothed = y[0];
+    const smoothedValues = [smoothed];
 
     for (let i = 1; i < y.length; i++) {
-      smoothed = alpha * y[i] + (1 - alpha) * smoothed
-      smoothedValues.push(smoothed)
+      smoothed = alpha * y[i] + (1 - alpha) * smoothed;
+      smoothedValues.push(smoothed);
     }
 
-    const residuals = y.map((actual, i) => Math.pow(actual - smoothedValues[i], 2))
-    const residualStd = Math.sqrt(residuals.reduce((sum, r) => sum + r, 0) / (y.length - 1))
+    const residuals = y.map((actual, i) => (actual - smoothedValues[i]) ** 2);
+    const residualStd = Math.sqrt(
+      residuals.reduce((sum, r) => sum + r, 0) / (y.length - 1)
+    );
 
     return {
       type: 'exponential',
       alpha,
       lastSmoothed: smoothed,
-      residualStd
-    }
+      residualStd,
+    };
   }
 
   private trainSeasonalModel(X: number[][], y: number[], frequency: string) {
     // Simple seasonal decomposition and linear regression
     // This is a simplified implementation
-    const seasonalPeriod = frequency === 'daily' ? 7 : frequency === 'weekly' ? 4 : 12
-    
+    const seasonalPeriod =
+      frequency === 'daily' ? 7 : frequency === 'weekly' ? 4 : 12;
+
     // Calculate seasonal components
-    const seasonal = this.calculateSeasonalComponents(y, seasonalPeriod)
-    
+    const seasonal = this.calculateSeasonalComponents(y, seasonalPeriod);
+
     // Deseasonalize the data
-    const deseasonalized = y.map((value, i) => value - seasonal[i % seasonalPeriod])
-    
+    const deseasonalized = y.map(
+      (value, i) => value - seasonal[i % seasonalPeriod]
+    );
+
     // Train linear model on deseasonalized data
-    const linearModel = this.trainLinearRegression(X, deseasonalized)
-    
+    const linearModel = this.trainLinearRegression(X, deseasonalized);
+
     return {
       type: 'seasonal',
       linearModel,
       seasonal,
-      seasonalPeriod
-    }
+      seasonalPeriod,
+    };
   }
 
   private calculateSeasonalComponents(y: number[], period: number): number[] {
-    const seasonal = new Array(period).fill(0)
-    const counts = new Array(period).fill(0)
-    
+    const seasonal = new Array(period).fill(0);
+    const counts = new Array(period).fill(0);
+
     y.forEach((value, i) => {
-      const seasonIndex = i % period
-      seasonal[seasonIndex] += value
-      counts[seasonIndex]++
-    })
-    
+      const seasonIndex = i % period;
+      seasonal[seasonIndex] += value;
+      counts[seasonIndex]++;
+    });
+
     // Calculate average for each season
     for (let i = 0; i < period; i++) {
-      seasonal[i] = counts[i] > 0 ? seasonal[i] / counts[i] : 0
+      seasonal[i] = counts[i] > 0 ? seasonal[i] / counts[i] : 0;
     }
-    
+
     // Center the seasonal components
-    const mean = seasonal.reduce((sum, s) => sum + s, 0) / period
-    return seasonal.map(s => s - mean)
+    const mean = seasonal.reduce((sum, s) => sum + s, 0) / period;
+    return seasonal.map((s) => s - mean);
   }
 
   private prepareFeatureVector(
@@ -683,146 +730,167 @@ export class ForecastingEngine {
     features: ModelFeatures,
     index: number
   ): Record<string, number> {
-    const featureVector: Record<string, number> = {}
-    
+    const featureVector: Record<string, number> = {};
+
     // Add lag features
-    features.lags.forEach(lag => {
-      const lagIndex = index - lag
+    features.lags.forEach((lag) => {
+      const lagIndex = index - lag;
       if (lagIndex >= 0 && lagIndex < data.length) {
-        featureVector[`lag_${lag}`] = data[lagIndex].value
+        featureVector[`lag_${lag}`] = data[lagIndex].value;
       } else {
-        featureVector[`lag_${lag}`] = 0
+        featureVector[`lag_${lag}`] = 0;
       }
-    })
+    });
 
     // Add rolling statistics (simplified)
     features.rolling_stats.forEach(({ window, stats }) => {
-      const windowStart = Math.max(0, index - window + 1)
-      const windowEnd = Math.min(data.length, index + 1)
-      const windowData = data.slice(windowStart, windowEnd).map(d => d.value)
-      
+      const windowStart = Math.max(0, index - window + 1);
+      const windowEnd = Math.min(data.length, index + 1);
+      const windowData = data.slice(windowStart, windowEnd).map((d) => d.value);
+
       if (windowData.length > 0) {
-        stats.forEach(stat => {
-          let value = 0
+        stats.forEach((stat) => {
+          let value = 0;
           if (stat === 'mean') {
-            value = windowData.reduce((sum, v) => sum + v, 0) / windowData.length
+            value =
+              windowData.reduce((sum, v) => sum + v, 0) / windowData.length;
           } else if (stat === 'std') {
-            const mean = windowData.reduce((sum, v) => sum + v, 0) / windowData.length
-            value = Math.sqrt(windowData.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) / windowData.length)
+            const mean =
+              windowData.reduce((sum, v) => sum + v, 0) / windowData.length;
+            value = Math.sqrt(
+              windowData.reduce((sum, v) => sum + (v - mean) ** 2, 0) /
+                windowData.length
+            );
           } else if (stat === 'min') {
-            value = Math.min(...windowData)
+            value = Math.min(...windowData);
           } else if (stat === 'max') {
-            value = Math.max(...windowData)
+            value = Math.max(...windowData);
           }
-          featureVector[`rolling_${window}_${stat}`] = value
-        })
+          featureVector[`rolling_${window}_${stat}`] = value;
+        });
       }
-    })
+    });
 
     // Add seasonality and trend features
-    featureVector['trend'] = index
-    
-    return featureVector
+    featureVector.trend = index;
+
+    return featureVector;
   }
 
-  private makePrediction(model: any, featureVector: Record<string, number>): number {
+  private makePrediction(
+    model: any,
+    featureVector: Record<string, number>
+  ): number {
     if (model.type === 'linear' || model.type === 'polynomial') {
-      const features = [1, ...model.features.map(f => featureVector[f] || 0)]
-      return features.reduce((sum, xi, i) => sum + xi * (model.weights[i] || 0), 0)
-    } else if (model.type === 'exponential') {
-      return model.lastSmoothed
-    } else if (model.type === 'seasonal') {
-      const linearPred = this.makePrediction(model.linearModel, featureVector)
-      const seasonalIndex = (featureVector.trend || 0) % model.seasonalPeriod
-      return linearPred + model.seasonal[seasonalIndex]
+      const features = [1, ...model.features.map((f) => featureVector[f] || 0)];
+      return features.reduce(
+        (sum, xi, i) => sum + xi * (model.weights[i] || 0),
+        0
+      );
     }
-    
-    return 0
+    if (model.type === 'exponential') {
+      return model.lastSmoothed;
+    }
+    if (model.type === 'seasonal') {
+      const linearPred = this.makePrediction(model.linearModel, featureVector);
+      const seasonalIndex = (featureVector.trend || 0) % model.seasonalPeriod;
+      return linearPred + model.seasonal[seasonalIndex];
+    }
+
+    return 0;
   }
 
   private calculateConfidenceInterval(
     prediction: number,
     standardError: number,
     confidenceLevel: number
-  ): { lower_bound: number, upper_bound: number } {
+  ): { lower_bound: number; upper_bound: number } {
     // Z-scores for common confidence levels
     const zScores: Record<number, number> = {
-      0.90: 1.645,
+      0.9: 1.645,
       0.95: 1.96,
-      0.99: 2.576
-    }
-    
-    const zScore = zScores[confidenceLevel] || 1.96
-    const margin = zScore * standardError
-    
+      0.99: 2.576,
+    };
+
+    const zScore = zScores[confidenceLevel] || 1.96;
+    const margin = zScore * standardError;
+
     return {
       lower_bound: Math.max(0, prediction - margin), // Don't allow negative predictions
-      upper_bound: prediction + margin
-    }
+      upper_bound: prediction + margin,
+    };
   }
 
-  private getNextDate(lastDate: Date, features: ModelFeatures, frequency: string): Date {
-    const nextDate = new Date(lastDate)
-    
+  private getNextDate(
+    lastDate: Date,
+    _features: ModelFeatures,
+    frequency: string
+  ): Date {
+    const nextDate = new Date(lastDate);
+
     if (frequency === 'daily') {
-      nextDate.setDate(nextDate.getDate() + 1)
+      nextDate.setDate(nextDate.getDate() + 1);
     } else if (frequency === 'weekly') {
-      nextDate.setDate(nextDate.getDate() + 7)
-    } else { // monthly
-      nextDate.setMonth(nextDate.getMonth() + 1)
+      nextDate.setDate(nextDate.getDate() + 7);
+    } else {
+      // monthly
+      nextDate.setMonth(nextDate.getMonth() + 1);
     }
-    
-    return nextDate
+
+    return nextDate;
   }
 
   private applyScenarioAdjustments(
     baselineForecast: ForecastResult[],
     adjustments: {
-      growth_rate?: number
-      seasonality_factor?: number
-      external_factors?: Record<string, number>
+      growth_rate?: number;
+      seasonality_factor?: number;
+      external_factors?: Record<string, number>;
     }
   ): ForecastResult[] {
     return baselineForecast.map((forecast, i) => {
-      let adjusted = forecast.predicted
-      
+      let adjusted = forecast.predicted;
+
       // Apply growth rate adjustment
       if (adjustments.growth_rate) {
-        const growthMultiplier = Math.pow(1 + adjustments.growth_rate / 100, i + 1)
-        adjusted *= growthMultiplier
+        const growthMultiplier = (1 + adjustments.growth_rate / 100) ** (i + 1);
+        adjusted *= growthMultiplier;
       }
-      
+
       // Apply seasonality factor
       if (adjustments.seasonality_factor) {
-        adjusted *= (1 + adjustments.seasonality_factor / 100)
+        adjusted *= 1 + adjustments.seasonality_factor / 100;
       }
-      
+
       // Apply external factors (simplified)
       if (adjustments.external_factors) {
-        const factorSum = Object.values(adjustments.external_factors).reduce((sum, factor) => sum + factor, 0)
-        adjusted *= (1 + factorSum / 100)
+        const factorSum = Object.values(adjustments.external_factors).reduce(
+          (sum, factor) => sum + factor,
+          0
+        );
+        adjusted *= 1 + factorSum / 100;
       }
-      
+
       // Recalculate bounds proportionally
-      const ratio = adjusted / forecast.predicted
-      
+      const ratio = adjusted / forecast.predicted;
+
       return {
         ...forecast,
         predicted: Math.round(adjusted * 100) / 100,
         lower_bound: Math.round(forecast.lower_bound * ratio * 100) / 100,
-        upper_bound: Math.round(forecast.upper_bound * ratio * 100) / 100
-      }
-    })
+        upper_bound: Math.round(forecast.upper_bound * ratio * 100) / 100,
+      };
+    });
   }
 
   private generateModelCacheKey(config: ForecastConfig): string {
-    return `${config.metric}_${config.frequency}_${config.modelType}_${config.horizon}_${config.includeSeasonality}_${config.includeExogenous}`
+    return `${config.metric}_${config.frequency}_${config.modelType}_${config.horizon}_${config.includeSeasonality}_${config.includeExogenous}`;
   }
 }
 
 // Factory function
 export function createForecastingEngine(): ForecastingEngine {
-  return new ForecastingEngine()
+  return new ForecastingEngine();
 }
 
 // Utility functions for forecasting
@@ -830,26 +898,25 @@ export const forecastUtils = {
   /**
    * Calculate forecast accuracy metrics
    */
-  calculateAccuracyMetrics: (
-    actual: number[],
-    predicted: number[]
-  ) => {
+  calculateAccuracyMetrics: (actual: number[], predicted: number[]) => {
     if (actual.length !== predicted.length) {
-      throw new Error('Actual and predicted arrays must have the same length')
+      throw new Error('Actual and predicted arrays must have the same length');
     }
 
-    const n = actual.length
-    const errors = actual.map((a, i) => a - predicted[i])
-    const absoluteErrors = errors.map(e => Math.abs(e))
-    const squaredErrors = errors.map(e => e * e)
-    const percentageErrors = actual.map((a, i) => a !== 0 ? Math.abs((a - predicted[i]) / a) * 100 : 0)
+    const n = actual.length;
+    const errors = actual.map((a, i) => a - predicted[i]);
+    const absoluteErrors = errors.map((e) => Math.abs(e));
+    const squaredErrors = errors.map((e) => e * e);
+    const percentageErrors = actual.map((a, i) =>
+      a !== 0 ? Math.abs((a - predicted[i]) / a) * 100 : 0
+    );
 
     return {
       mae: absoluteErrors.reduce((sum, e) => sum + e, 0) / n,
       mse: squaredErrors.reduce((sum, e) => sum + e, 0) / n,
       rmse: Math.sqrt(squaredErrors.reduce((sum, e) => sum + e, 0) / n),
-      mape: percentageErrors.reduce((sum, e) => sum + e, 0) / n
-    }
+      mape: percentageErrors.reduce((sum, e) => sum + e, 0) / n,
+    };
   },
 
   /**
@@ -860,40 +927,38 @@ export const forecastUtils = {
     forecasts: ForecastResult[]
   ) => {
     return [
-      ...historical.map(h => ({
+      ...historical.map((h) => ({
         date: h.date,
         actual: h.value,
-        type: 'historical'
+        type: 'historical',
       })),
-      ...forecasts.map(f => ({
+      ...forecasts.map((f) => ({
         date: f.date,
         predicted: f.predicted,
         lower_bound: f.lower_bound,
         upper_bound: f.upper_bound,
-        type: 'forecast'
-      }))
-    ]
+        type: 'forecast',
+      })),
+    ];
   },
 
   /**
    * Detect anomalies in forecast vs actual
    */
-  detectAnomalies: (
-    actual: number[],
-    predicted: number[],
-    threshold: number = 2
-  ) => {
-    const errors = actual.map((a, i) => a - predicted[i])
-    const meanError = errors.reduce((sum, e) => sum + e, 0) / errors.length
-    const stdError = Math.sqrt(errors.reduce((sum, e) => sum + Math.pow(e - meanError, 2), 0) / errors.length)
-    
+  detectAnomalies: (actual: number[], predicted: number[], threshold = 2) => {
+    const errors = actual.map((a, i) => a - predicted[i]);
+    const meanError = errors.reduce((sum, e) => sum + e, 0) / errors.length;
+    const stdError = Math.sqrt(
+      errors.reduce((sum, e) => sum + (e - meanError) ** 2, 0) / errors.length
+    );
+
     return errors.map((error, i) => ({
       index: i,
       actual: actual[i],
       predicted: predicted[i],
       error,
       isAnomaly: Math.abs(error - meanError) > threshold * stdError,
-      zScore: stdError > 0 ? (error - meanError) / stdError : 0
-    }))
-  }
-}
+      zScore: stdError > 0 ? (error - meanError) / stdError : 0,
+    }));
+  },
+};

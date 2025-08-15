@@ -1,11 +1,11 @@
 // SSO Callback Route
 // Story 1.3: SSO Integration - OAuth Callback Processing
 
-import { NextRequest, NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { ssoManager } from '@/lib/auth/sso/sso-manager';
 import { logger } from '@/lib/logger';
-import { z } from 'zod';
-import { cookies } from 'next/headers';
 
 const callbackSchema = z.object({
   code: z.string().min(1, 'Authorization code is required'),
@@ -18,12 +18,12 @@ const callbackSchema = z.object({
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    
+
     // Check for OAuth errors first
     const error = searchParams.get('error');
     if (error) {
       const errorDescription = searchParams.get('error_description');
-      
+
       logger.warn('SSO callback: OAuth error received', {
         error,
         errorDescription,
@@ -33,8 +33,11 @@ export async function GET(request: NextRequest) {
       // Redirect to login with error
       const loginUrl = new URL('/auth/login', request.url);
       loginUrl.searchParams.set('error', 'sso_failed');
-      loginUrl.searchParams.set('message', errorDescription || 'SSO authentication failed');
-      
+      loginUrl.searchParams.set(
+        'message',
+        errorDescription || 'SSO authentication failed'
+      );
+
       return NextResponse.redirect(loginUrl);
     }
 
@@ -52,11 +55,11 @@ export async function GET(request: NextRequest) {
         errors: validationResult.error.errors,
         params: Object.fromEntries(searchParams.entries()),
       });
-      
+
       const loginUrl = new URL('/auth/login', request.url);
       loginUrl.searchParams.set('error', 'invalid_callback');
       loginUrl.searchParams.set('message', 'Invalid callback parameters');
-      
+
       return NextResponse.redirect(loginUrl);
     }
 
@@ -76,39 +79,48 @@ export async function GET(request: NextRequest) {
 
       const loginUrl = new URL('/auth/login', request.url);
       loginUrl.searchParams.set('error', 'auth_failed');
-      loginUrl.searchParams.set('message', result.error?.message || 'Authentication failed');
-      
+      loginUrl.searchParams.set(
+        'message',
+        result.error?.message || 'Authentication failed'
+      );
+
       return NextResponse.redirect(loginUrl);
     }
 
     // Set session cookies
     const cookieStore = cookies();
-    
+
     if (result.session) {
       // Set session cookie
       cookieStore.set('sso_session', result.session.id, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
-        maxAge: result.session.expiresAt ? 
-          Math.floor((new Date(result.session.expiresAt).getTime() - Date.now()) / 1000) : 
-          60 * 60 * 24 * 7, // 7 days default
+        maxAge: result.session.expiresAt
+          ? Math.floor(
+              (new Date(result.session.expiresAt).getTime() - Date.now()) / 1000
+            )
+          : 60 * 60 * 24 * 7, // 7 days default
         path: '/',
       });
 
       // Set user info cookie (non-sensitive data only)
-      cookieStore.set('sso_user', JSON.stringify({
-        id: result.user?.id,
-        email: result.user?.email,
-        name: result.user?.name,
-        provider: providerId,
-      }), {
-        httpOnly: false, // Accessible to client-side
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        maxAge: 60 * 60 * 24 * 7, // 7 days
-        path: '/',
-      });
+      cookieStore.set(
+        'sso_user',
+        JSON.stringify({
+          id: result.user?.id,
+          email: result.user?.email,
+          name: result.user?.name,
+          provider: providerId,
+        }),
+        {
+          httpOnly: false, // Accessible to client-side
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'lax',
+          maxAge: 60 * 60 * 24 * 7, // 7 days
+          path: '/',
+        }
+      );
     }
 
     logger.info('SSO callback: Authentication successful', {
@@ -120,7 +132,7 @@ export async function GET(request: NextRequest) {
 
     // Determine redirect URL
     let redirectUrl = '/dashboard'; // Default redirect
-    
+
     if (state) {
       try {
         const stateParams = new URLSearchParams(state);
@@ -133,7 +145,10 @@ export async function GET(request: NextRequest) {
           }
         }
       } catch (error) {
-        logger.warn('SSO callback: Invalid state parameter', { state, error: error.message });
+        logger.warn('SSO callback: Invalid state parameter', {
+          state,
+          error: error.message,
+        });
       }
     }
 
@@ -154,7 +169,7 @@ export async function GET(request: NextRequest) {
     const loginUrl = new URL('/auth/login', request.url);
     loginUrl.searchParams.set('error', 'server_error');
     loginUrl.searchParams.set('message', 'An unexpected error occurred');
-    
+
     return NextResponse.redirect(loginUrl);
   }
 }

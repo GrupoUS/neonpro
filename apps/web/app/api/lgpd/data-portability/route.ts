@@ -1,15 +1,15 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
-import { z } from 'zod';
 import { nanoid } from 'nanoid';
+import { cookies } from 'next/headers';
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 
 /**
  * LGPD Data Portability API Route
- * 
+ *
  * Implements LGPD Article 18 - Right to Data Portability
  * Provides standardized data export for portability to other services
- * 
+ *
  * Features:
  * - Structured data export in standard formats
  * - Machine-readable formats (JSON, CSV, XML)
@@ -17,7 +17,7 @@ import { nanoid } from 'nanoid';
  * - Secure download links
  * - Batch export capabilities
  * - Format validation
- * 
+ *
  * Security:
  * - Authentication required
  * - Encrypted download links
@@ -29,20 +29,26 @@ import { nanoid } from 'nanoid';
 // Request validation schema
 const PortabilityRequestSchema = z.object({
   format: z.enum(['json', 'csv', 'xml', 'fhir']).default('json'),
-  standard: z.enum(['generic', 'fhir', 'hl7', 'proprietary']).default('generic'),
-  categories: z.array(z.enum([
-    'profile',
-    'appointments',
-    'treatments',
-    'medical_records',
-    'payments',
-    'communications',
-    'preferences',
-    'all'
-  ])).default(['all']),
+  standard: z
+    .enum(['generic', 'fhir', 'hl7', 'proprietary'])
+    .default('generic'),
+  categories: z
+    .array(
+      z.enum([
+        'profile',
+        'appointments',
+        'treatments',
+        'medical_records',
+        'payments',
+        'communications',
+        'preferences',
+        'all',
+      ])
+    )
+    .default(['all']),
   includeMetadata: z.boolean().default(true),
   compression: z.enum(['none', 'zip', 'gzip']).default('none'),
-  encryption: z.boolean().default(false)
+  encryption: z.boolean().default(false),
 });
 
 interface PortabilityExport {
@@ -74,28 +80,28 @@ function mapToFHIRPatient(userProfile: any) {
       {
         use: 'usual',
         system: 'http://neonpro.clinic/patient-id',
-        value: userProfile.id
-      }
+        value: userProfile.id,
+      },
     ],
     active: true,
     name: [
       {
         use: 'official',
         family: userProfile.full_name?.split(' ').pop() || '',
-        given: userProfile.full_name?.split(' ').slice(0, -1) || []
-      }
+        given: userProfile.full_name?.split(' ').slice(0, -1) || [],
+      },
     ],
     telecom: [
       {
         system: 'phone',
         value: userProfile.phone,
-        use: 'home'
+        use: 'home',
       },
       {
         system: 'email',
         value: userProfile.email,
-        use: 'home'
-      }
+        use: 'home',
+      },
     ],
     gender: mapGenderToFHIR(userProfile.gender),
     birthDate: userProfile.birth_date,
@@ -106,33 +112,35 @@ function mapToFHIRPatient(userProfile: any) {
         city: userProfile.city,
         state: userProfile.state,
         postalCode: userProfile.zip_code,
-        country: 'BR'
-      }
+        country: 'BR',
+      },
     ],
-    contact: userProfile.emergency_contact_name ? [
-      {
-        relationship: [
+    contact: userProfile.emergency_contact_name
+      ? [
           {
-            coding: [
+            relationship: [
               {
-                system: 'http://terminology.hl7.org/CodeSystem/v2-0131',
-                code: 'EP',
-                display: 'Emergency contact person'
-              }
-            ]
-          }
-        ],
-        name: {
-          text: userProfile.emergency_contact_name
-        },
-        telecom: [
-          {
-            system: 'phone',
-            value: userProfile.emergency_contact_phone
-          }
+                coding: [
+                  {
+                    system: 'http://terminology.hl7.org/CodeSystem/v2-0131',
+                    code: 'EP',
+                    display: 'Emergency contact person',
+                  },
+                ],
+              },
+            ],
+            name: {
+              text: userProfile.emergency_contact_name,
+            },
+            telecom: [
+              {
+                system: 'phone',
+                value: userProfile.emergency_contact_phone,
+              },
+            ],
+          },
         ]
-      }
-    ] : [],
+      : [],
     communication: [
       {
         language: {
@@ -140,22 +148,25 @@ function mapToFHIRPatient(userProfile: any) {
             {
               system: 'urn:ietf:bcp:47',
               code: userProfile.preferred_language || 'pt',
-              display: userProfile.preferred_language === 'en' ? 'English' : 'Portuguese'
-            }
-          ]
+              display:
+                userProfile.preferred_language === 'en'
+                  ? 'English'
+                  : 'Portuguese',
+            },
+          ],
         },
-        preferred: true
-      }
-    ]
+        preferred: true,
+      },
+    ],
   };
 }
 
 function mapGenderToFHIR(gender: string): string {
   const genderMap: Record<string, string> = {
-    'male': 'male',
-    'female': 'female',
-    'other': 'other',
-    'prefer_not_to_say': 'unknown'
+    male: 'male',
+    female: 'female',
+    other: 'other',
+    prefer_not_to_say: 'unknown',
   };
   return genderMap[gender] || 'unknown';
 }
@@ -167,14 +178,14 @@ function mapToFHIREncounter(appointment: any) {
     identifier: [
       {
         system: 'http://neonpro.clinic/appointment-id',
-        value: appointment.id
-      }
+        value: appointment.id,
+      },
     ],
     status: mapAppointmentStatusToFHIR(appointment.status),
     class: {
       system: 'http://terminology.hl7.org/CodeSystem/v3-ActCode',
       code: 'AMB',
-      display: 'ambulatory'
+      display: 'ambulatory',
     },
     type: [
       {
@@ -182,42 +193,44 @@ function mapToFHIREncounter(appointment: any) {
           {
             system: 'http://snomed.info/sct',
             code: '274410002',
-            display: 'Aesthetic medicine consultation'
-          }
+            display: 'Aesthetic medicine consultation',
+          },
         ],
-        text: appointment.treatment_type
-      }
+        text: appointment.treatment_type,
+      },
     ],
     subject: {
-      reference: `Patient/${appointment.patient_id}`
+      reference: `Patient/${appointment.patient_id}`,
     },
     period: {
       start: `${appointment.appointment_date}T${appointment.appointment_time}`,
-      end: `${appointment.appointment_date}T${appointment.appointment_time}` // Would calculate end time
+      end: `${appointment.appointment_date}T${appointment.appointment_time}`, // Would calculate end time
     },
     reasonCode: [
       {
-        text: appointment.notes
-      }
+        text: appointment.notes,
+      },
     ],
-    location: appointment.room ? [
-      {
-        location: {
-          display: `Room ${appointment.room}`
-        }
-      }
-    ] : []
+    location: appointment.room
+      ? [
+          {
+            location: {
+              display: `Room ${appointment.room}`,
+            },
+          },
+        ]
+      : [],
   };
 }
 
 function mapAppointmentStatusToFHIR(status: string): string {
   const statusMap: Record<string, string> = {
-    'scheduled': 'planned',
-    'confirmed': 'planned',
-    'in_progress': 'in-progress',
-    'completed': 'finished',
-    'cancelled': 'cancelled',
-    'no_show': 'cancelled'
+    scheduled: 'planned',
+    confirmed: 'planned',
+    in_progress: 'in-progress',
+    completed: 'finished',
+    cancelled: 'cancelled',
+    no_show: 'cancelled',
   };
   return statusMap[status] || 'unknown';
 }
@@ -229,8 +242,8 @@ function mapToFHIRProcedure(treatment: any) {
     identifier: [
       {
         system: 'http://neonpro.clinic/treatment-id',
-        value: treatment.id
-      }
+        value: treatment.id,
+      },
     ],
     status: mapTreatmentStatusToFHIR(treatment.status),
     code: {
@@ -238,41 +251,47 @@ function mapToFHIRProcedure(treatment: any) {
         {
           system: 'http://snomed.info/sct',
           code: '274410002',
-          display: 'Aesthetic medicine procedure'
-        }
+          display: 'Aesthetic medicine procedure',
+        },
       ],
-      text: treatment.treatment_name
+      text: treatment.treatment_name,
     },
     subject: {
-      reference: `Patient/${treatment.patient_id}`
+      reference: `Patient/${treatment.patient_id}`,
     },
     performedPeriod: {
       start: treatment.start_date,
-      end: treatment.end_date
+      end: treatment.end_date,
     },
     outcome: {
-      text: treatment.results
+      text: treatment.results,
     },
     note: [
       {
-        text: treatment.practitioner_notes
-      }
-    ]
+        text: treatment.practitioner_notes,
+      },
+    ],
   };
 }
 
 function mapTreatmentStatusToFHIR(status: string): string {
   const statusMap: Record<string, string> = {
-    'active': 'in-progress',
-    'completed': 'completed',
-    'cancelled': 'stopped',
-    'on_hold': 'on-hold'
+    active: 'in-progress',
+    completed: 'completed',
+    cancelled: 'stopped',
+    on_hold: 'on-hold',
   };
   return statusMap[status] || 'unknown';
 }
 
 // Generic data extraction
-async function extractPortabilityData(supabase: any, userId: string, categories: string[], format: string, standard: string) {
+async function extractPortabilityData(
+  supabase: any,
+  userId: string,
+  categories: string[],
+  format: string,
+  standard: string
+) {
   const exportData: any = {
     metadata: {
       exportId: nanoid(),
@@ -282,9 +301,9 @@ async function extractPortabilityData(supabase: any, userId: string, categories:
       standard,
       categories,
       version: '1.0',
-      schemaVersion: standard === 'fhir' ? 'R4' : '1.0'
+      schemaVersion: standard === 'fhir' ? 'R4' : '1.0',
     },
-    data: {}
+    data: {},
   };
 
   let totalRecords = 0;
@@ -295,7 +314,7 @@ async function extractPortabilityData(supabase: any, userId: string, categories:
       .select('*')
       .eq('id', userId)
       .single();
-      
+
     if (profile) {
       if (standard === 'fhir') {
         exportData.data.patient = mapToFHIRPatient(profile);
@@ -315,7 +334,7 @@ async function extractPortabilityData(supabase: any, userId: string, categories:
       `)
       .eq('patient_id', userId)
       .order('appointment_date', { ascending: false });
-      
+
     if (appointments && appointments.length > 0) {
       if (standard === 'fhir') {
         exportData.data.encounters = appointments.map(mapToFHIREncounter);
@@ -335,7 +354,7 @@ async function extractPortabilityData(supabase: any, userId: string, categories:
       `)
       .eq('patient_id', userId)
       .order('start_date', { ascending: false });
-      
+
     if (treatments && treatments.length > 0) {
       if (standard === 'fhir') {
         exportData.data.procedures = treatments.map(mapToFHIRProcedure);
@@ -353,7 +372,7 @@ async function extractPortabilityData(supabase: any, userId: string, categories:
       .select('*')
       .eq('patient_id', userId)
       .order('record_date', { ascending: false });
-      
+
     if (medicalRecords && medicalRecords.length > 0) {
       exportData.data.medicalRecords = medicalRecords;
       totalRecords += medicalRecords.length;
@@ -369,7 +388,7 @@ async function extractPortabilityData(supabase: any, userId: string, categories:
       `)
       .eq('patient_id', userId)
       .order('payment_date', { ascending: false });
-      
+
     if (payments && payments.length > 0) {
       exportData.data.payments = payments;
       totalRecords += payments.length;
@@ -382,7 +401,7 @@ async function extractPortabilityData(supabase: any, userId: string, categories:
       .select('*')
       .or(`sender_id.eq.${userId},recipient_id.eq.${userId}`)
       .order('sent_at', { ascending: false });
-      
+
     if (communications && communications.length > 0) {
       exportData.data.communications = communications;
       totalRecords += communications.length;
@@ -395,7 +414,7 @@ async function extractPortabilityData(supabase: any, userId: string, categories:
       .select('*')
       .eq('user_id', userId)
       .single();
-      
+
     if (preferences) {
       exportData.data.preferences = preferences;
       totalRecords++;
@@ -404,45 +423,47 @@ async function extractPortabilityData(supabase: any, userId: string, categories:
 
   exportData.metadata.totalRecords = totalRecords;
   exportData.metadata.exportCompleted = true;
-  
+
   return exportData;
 }
 
 // Format converters
 function convertToCSV(data: any): string {
   const flattenObject = (obj: any, prefix = ''): any => {
-    let flattened: any = {};
-    
-    for (let key in obj) {
+    const flattened: any = {};
+
+    for (const key in obj) {
       if (obj[key] === null || obj[key] === undefined) {
         flattened[prefix + key] = '';
       } else if (typeof obj[key] === 'object' && !Array.isArray(obj[key])) {
-        Object.assign(flattened, flattenObject(obj[key], prefix + key + '_'));
+        Object.assign(flattened, flattenObject(obj[key], `${prefix + key}_`));
       } else if (Array.isArray(obj[key])) {
         flattened[prefix + key] = JSON.stringify(obj[key]);
       } else {
         flattened[prefix + key] = obj[key];
       }
     }
-    
+
     return flattened;
   };
 
   // Convert each data category to CSV
   let csvContent = '';
-  
+
   for (const [category, records] of Object.entries(data.data)) {
     csvContent += `\n\n=== ${category.toUpperCase()} ===\n`;
-    
+
     if (Array.isArray(records)) {
       if (records.length > 0) {
-        const flattened = records.map(record => flattenObject(record));
+        const flattened = records.map((record) => flattenObject(record));
         const headers = Object.keys(flattened[0]);
-        
-        csvContent += headers.join(',') + '\n';
-        flattened.forEach(record => {
-          const values = headers.map(header => `"${String(record[header] || '').replace(/"/g, '""')}"`);
-          csvContent += values.join(',') + '\n';
+
+        csvContent += `${headers.join(',')}\n`;
+        flattened.forEach((record) => {
+          const values = headers.map(
+            (header) => `"${String(record[header] || '').replace(/"/g, '""')}"`
+          );
+          csvContent += `${values.join(',')}\n`;
         });
       }
     } else if (records) {
@@ -453,14 +474,14 @@ function convertToCSV(data: any): string {
       });
     }
   }
-  
+
   return csvContent;
 }
 
 function convertToXML(data: any): string {
   const objectToXML = (obj: any, indent = ''): string => {
     let xml = '';
-    
+
     for (const [key, value] of Object.entries(obj)) {
       if (value === null || value === undefined) {
         xml += `${indent}<${key}/>\n`;
@@ -469,7 +490,7 @@ function convertToXML(data: any): string {
         value.forEach((item, index) => {
           xml += `${indent}  <item index="${index}">\n`;
           if (typeof item === 'object') {
-            xml += objectToXML(item, indent + '    ');
+            xml += objectToXML(item, `${indent}    `);
           } else {
             xml += `${indent}    ${String(item)}\n`;
           }
@@ -478,13 +499,13 @@ function convertToXML(data: any): string {
         xml += `${indent}</${key}>\n`;
       } else if (typeof value === 'object') {
         xml += `${indent}<${key}>\n`;
-        xml += objectToXML(value, indent + '  ');
+        xml += objectToXML(value, `${indent}  `);
         xml += `${indent}</${key}>\n`;
       } else {
         xml += `${indent}<${key}>${String(value)}</${key}>\n`;
       }
     }
-    
+
     return xml;
   };
 
@@ -496,32 +517,35 @@ function generateChecksum(data: string): string {
   let hash = 0;
   for (let i = 0; i < data.length; i++) {
     const char = data.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
+    hash = (hash << 5) - hash + char;
     hash = hash & hash; // Convert to 32-bit integer
   }
   return Math.abs(hash).toString(16);
 }
 
 // Log portability request
-async function logPortabilityRequest(supabase: any, userId: string, exportData: any, success: boolean) {
+async function logPortabilityRequest(
+  supabase: any,
+  userId: string,
+  exportData: any,
+  success: boolean
+) {
   try {
-    await supabase
-      .from('lgpd_portability_logs')
-      .insert([
-        {
-          user_id: userId,
-          export_id: exportData.metadata.exportId,
-          request_type: 'data_portability',
-          request_details: {
-            format: exportData.metadata.format,
-            standard: exportData.metadata.standard,
-            categories: exportData.metadata.categories,
-            totalRecords: exportData.metadata.totalRecords
-          },
-          success,
-          created_at: new Date().toISOString()
-        }
-      ]);
+    await supabase.from('lgpd_portability_logs').insert([
+      {
+        user_id: userId,
+        export_id: exportData.metadata.exportId,
+        request_type: 'data_portability',
+        request_details: {
+          format: exportData.metadata.format,
+          standard: exportData.metadata.standard,
+          categories: exportData.metadata.categories,
+          totalRecords: exportData.metadata.totalRecords,
+        },
+        success,
+        created_at: new Date().toISOString(),
+      },
+    ]);
   } catch (error) {
     console.error('Failed to log portability request:', error);
   }
@@ -532,30 +556,46 @@ export async function POST(request: NextRequest) {
     // Initialize Supabase client
     const cookieStore = cookies();
     const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
-    
+
     // Get authenticated user
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Unauthorized. Please log in to export your data.' },
         { status: 401 }
       );
     }
-    
+
     // Parse and validate request
     const body = await request.json();
     const validatedRequest = PortabilityRequestSchema.parse(body);
-    
-    const { format, standard, categories, includeMetadata, compression, encryption } = validatedRequest;
-    
+
+    const {
+      format,
+      standard,
+      categories,
+      includeMetadata,
+      compression,
+      encryption,
+    } = validatedRequest;
+
     // Extract user data
-    const exportData = await extractPortabilityData(supabase, user.id, categories, format, standard);
-    
+    const exportData = await extractPortabilityData(
+      supabase,
+      user.id,
+      categories,
+      format,
+      standard
+    );
+
     let responseData: string | object = exportData;
     let contentType = 'application/json';
     let fileExtension = 'json';
-    
+
     // Convert to requested format
     switch (format) {
       case 'csv':
@@ -563,36 +603,41 @@ export async function POST(request: NextRequest) {
         contentType = 'text/csv';
         fileExtension = 'csv';
         break;
-        
+
       case 'xml':
         responseData = convertToXML(exportData);
         contentType = 'application/xml';
         fileExtension = 'xml';
         break;
-        
+
       case 'fhir':
         // FHIR Bundle format
         responseData = {
           resourceType: 'Bundle',
           id: exportData.metadata.exportId,
           meta: {
-            lastUpdated: exportData.metadata.exportDate
+            lastUpdated: exportData.metadata.exportDate,
           },
           type: 'collection',
           total: exportData.metadata.totalRecords,
-          entry: Object.values(exportData.data).flat().map((resource: any) => ({
-            resource
-          }))
+          entry: Object.values(exportData.data)
+            .flat()
+            .map((resource: any) => ({
+              resource,
+            })),
         };
         contentType = 'application/fhir+json';
         fileExtension = 'json';
         break;
     }
-    
+
     // Generate checksum
-    const dataString = typeof responseData === 'string' ? responseData : JSON.stringify(responseData);
+    const dataString =
+      typeof responseData === 'string'
+        ? responseData
+        : JSON.stringify(responseData);
     const checksum = generateChecksum(dataString);
-    
+
     // Create export result
     const portabilityResult: PortabilityExport = {
       exportId: exportData.metadata.exportId,
@@ -609,10 +654,10 @@ export async function POST(request: NextRequest) {
         schemaVersion: exportData.metadata.schemaVersion,
         totalRecords: exportData.metadata.totalRecords,
         exportCompleted: true,
-        checksum
-      }
+        checksum,
+      },
     };
-    
+
     // Store export for download if not returning directly
     if (compression !== 'none' || encryption) {
       // Store in temporary storage for processing
@@ -622,39 +667,37 @@ export async function POST(request: NextRequest) {
       // Return data directly
       portabilityResult.data = responseData;
     }
-    
+
     // Log successful request
     await logPortabilityRequest(supabase, user.id, exportData, true);
-    
+
     // Return based on format
     if (format === 'json' || format === 'fhir') {
       return NextResponse.json(portabilityResult);
-    } else {
-      return new NextResponse(responseData as string, {
-        status: 200,
-        headers: {
-          'Content-Type': contentType,
-          'Content-Disposition': `attachment; filename="lgpd-export-${exportData.metadata.exportId}.${fileExtension}"`,
-          'X-Export-ID': exportData.metadata.exportId,
-          'X-Checksum': checksum,
-          'X-Total-Records': exportData.metadata.totalRecords.toString()
-        }
-      });
     }
-    
+    return new NextResponse(responseData as string, {
+      status: 200,
+      headers: {
+        'Content-Type': contentType,
+        'Content-Disposition': `attachment; filename="lgpd-export-${exportData.metadata.exportId}.${fileExtension}"`,
+        'X-Export-ID': exportData.metadata.exportId,
+        'X-Checksum': checksum,
+        'X-Total-Records': exportData.metadata.totalRecords.toString(),
+      },
+    });
   } catch (error) {
     console.error('LGPD Data Portability Error:', error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { 
+        {
           error: 'Invalid request parameters',
-          details: error.errors
+          details: error.errors,
         },
         { status: 400 }
       );
     }
-    
+
     return NextResponse.json(
       { error: 'Internal server error during data export' },
       { status: 500 }
@@ -662,22 +705,22 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     // Initialize Supabase client
     const cookieStore = cookies();
     const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
-    
+
     // Get authenticated user
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-    
+
     // Get user's portability history
     const { data: portabilityHistory, error } = await supabase
       .from('lgpd_portability_logs')
@@ -685,52 +728,52 @@ export async function GET(request: NextRequest) {
       .eq('user_id', user.id)
       .order('created_at', { ascending: false })
       .limit(10);
-      
+
     if (error) {
       console.error('Error fetching portability history:', error);
     }
-    
+
     return NextResponse.json({
       message: 'LGPD Data Portability API - Right to Data Portability',
       supportedFormats: [
         {
           format: 'json',
           description: 'JavaScript Object Notation - Machine readable',
-          mimeType: 'application/json'
+          mimeType: 'application/json',
         },
         {
           format: 'csv',
           description: 'Comma Separated Values - Spreadsheet compatible',
-          mimeType: 'text/csv'
+          mimeType: 'text/csv',
         },
         {
           format: 'xml',
           description: 'Extensible Markup Language - Structured format',
-          mimeType: 'application/xml'
+          mimeType: 'application/xml',
         },
         {
           format: 'fhir',
           description: 'FHIR R4 Bundle - Healthcare interoperability standard',
-          mimeType: 'application/fhir+json'
-        }
+          mimeType: 'application/fhir+json',
+        },
       ],
       supportedStandards: [
         {
           standard: 'generic',
-          description: 'Generic data structure'
+          description: 'Generic data structure',
         },
         {
           standard: 'fhir',
-          description: 'HL7 FHIR R4 - Healthcare interoperability'
+          description: 'HL7 FHIR R4 - Healthcare interoperability',
         },
         {
           standard: 'hl7',
-          description: 'HL7 v3 - Healthcare messaging'
+          description: 'HL7 v3 - Healthcare messaging',
         },
         {
           standard: 'proprietary',
-          description: 'NeonPro proprietary format'
-        }
+          description: 'NeonPro proprietary format',
+        },
       ],
       availableCategories: [
         'profile',
@@ -740,7 +783,7 @@ export async function GET(request: NextRequest) {
         'payments',
         'communications',
         'preferences',
-        'all'
+        'all',
       ],
       recentExports: portabilityHistory || [],
       usage: {
@@ -751,7 +794,7 @@ export async function GET(request: NextRequest) {
           categories: 'Array of data categories (default: ["all"])',
           includeMetadata: 'boolean (default: true)',
           compression: 'none | zip | gzip (default: none)',
-          encryption: 'boolean (default: false)'
+          encryption: 'boolean (default: false)',
         },
         example: {
           format: 'fhir',
@@ -759,11 +802,10 @@ export async function GET(request: NextRequest) {
           categories: ['profile', 'appointments', 'treatments'],
           includeMetadata: true,
           compression: 'zip',
-          encryption: false
-        }
-      }
+          encryption: false,
+        },
+      },
     });
-    
   } catch (error) {
     console.error('LGPD Data Portability GET Error:', error);
     return NextResponse.json(

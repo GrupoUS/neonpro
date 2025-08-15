@@ -1,14 +1,14 @@
-import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/app/utils/supabase/server";
-import { streamText, convertToCoreMessages } from "ai";
-import { openai } from "@ai-sdk/openai";
-import { anthropic } from "@ai-sdk/anthropic";
+import { anthropic } from '@ai-sdk/anthropic';
+import { openai } from '@ai-sdk/openai';
+import { convertToCoreMessages, streamText } from 'ai';
+import { type NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@/app/utils/supabase/server';
 
 // Configuração dos modelos
 const MODELS = {
   gpt4: openai('gpt-4o'),
   claude: anthropic('claude-3-5-sonnet-20241022'),
-  gpt35: openai('gpt-3.5-turbo')
+  gpt35: openai('gpt-3.5-turbo'),
 } as const;
 
 type ModelType = keyof typeof MODELS;
@@ -16,18 +16,21 @@ type ModelType = keyof typeof MODELS;
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Verificar autenticação
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { messages, conversationId, model = 'gpt4' } = await request.json();
 
     // Validar modelo
     if (!MODELS[model as ModelType]) {
-      return NextResponse.json({ error: "Invalid model" }, { status: 400 });
+      return NextResponse.json({ error: 'Invalid model' }, { status: 400 });
     }
 
     // Buscar ou criar conversa
@@ -41,7 +44,10 @@ export async function POST(request: NextRequest) {
         .single();
 
       if (convError || !existingConversation) {
-        return NextResponse.json({ error: "Conversation not found" }, { status: 404 });
+        return NextResponse.json(
+          { error: 'Conversation not found' },
+          { status: 404 }
+        );
       }
       conversation = existingConversation;
     } else {
@@ -52,13 +58,16 @@ export async function POST(request: NextRequest) {
           user_id: user.id,
           title: messages[0]?.content?.substring(0, 50) || 'Nova Conversa',
           model_used: model,
-          is_active: true
+          is_active: true,
         })
         .select()
         .single();
 
       if (createError || !newConversation) {
-        return NextResponse.json({ error: "Failed to create conversation" }, { status: 500 });
+        return NextResponse.json(
+          { error: 'Failed to create conversation' },
+          { status: 500 }
+        );
       }
       conversation = newConversation;
     }
@@ -107,12 +116,17 @@ PREFERÊNCIAS DO ASSISTENTE:
 - Idioma: ${preferences?.language || 'pt-BR'}
 
 CONTEXTO RECENTE:
-${recentAppointments && recentAppointments.length > 0 ? 
-  `Últimos agendamentos:
-${recentAppointments.map(apt => 
-  `- ${apt.date_time}: ${apt.patients?.name} - ${apt.service} (${apt.status})`
-).join('\n')}` : 
-  'Nenhum agendamento recente encontrado.'}
+${
+  recentAppointments && recentAppointments.length > 0
+    ? `Últimos agendamentos:
+${recentAppointments
+  .map(
+    (apt) =>
+      `- ${apt.date_time}: ${apt.patients?.name} - ${apt.service} (${apt.status})`
+  )
+  .join('\n')}`
+    : 'Nenhum agendamento recente encontrado.'
+}
 
 INSTRUÇÕES:
 1. Sempre responda em português brasileiro
@@ -135,7 +149,7 @@ Seja sempre útil, preciso e contextualmente relevante para a gestão de clínic
       user_id: user.id,
       role: 'user',
       content: userMessage.content,
-      model_used: model
+      model_used: model,
     });
 
     // Gerar resposta com streaming
@@ -158,17 +172,16 @@ Seja sempre útil, preciso e contextualmente relevante para a gestão de clínic
         context_used: {
           has_preferences: !!preferences,
           has_profile: !!profile,
-          recent_appointments_count: recentAppointments?.length || 0
-        }
-      }
+          recent_appointments_count: recentAppointments?.length || 0,
+        },
+      },
     });
 
     return result.toDataStreamResponse();
-
   } catch (error) {
     console.error('Assistant API Error:', error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }

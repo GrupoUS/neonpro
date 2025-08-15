@@ -1,7 +1,7 @@
 /**
  * Device Tracking Manager
  * Story 1.4 - Task 3: Device-based session tracking and management
- * 
+ *
  * Features:
  * - Device fingerprinting and identification
  * - Device registration and verification
@@ -12,7 +12,7 @@
  */
 
 import { createClient } from '@supabase/supabase-js';
-import { UserRole } from '@/types/auth';
+import type { UserRole } from '@/types/auth';
 import { SecurityAuditLogger } from './security-audit-logger';
 
 export interface DeviceFingerprint {
@@ -101,7 +101,7 @@ const DEFAULT_DEVICE_POLICIES: Record<UserRole, DeviceSecurityPolicy> = {
     blockSuspiciousDevices: true,
     riskThreshold: 0.7,
     notifyOnNewDevice: true,
-    deviceRetentionDays: 365
+    deviceRetentionDays: 365,
   },
   manager: {
     role: 'manager',
@@ -111,7 +111,7 @@ const DEFAULT_DEVICE_POLICIES: Record<UserRole, DeviceSecurityPolicy> = {
     blockSuspiciousDevices: true,
     riskThreshold: 0.6,
     notifyOnNewDevice: true,
-    deviceRetentionDays: 180
+    deviceRetentionDays: 180,
   },
   staff: {
     role: 'staff',
@@ -121,7 +121,7 @@ const DEFAULT_DEVICE_POLICIES: Record<UserRole, DeviceSecurityPolicy> = {
     blockSuspiciousDevices: true,
     riskThreshold: 0.5,
     notifyOnNewDevice: false,
-    deviceRetentionDays: 90
+    deviceRetentionDays: 90,
   },
   patient: {
     role: 'patient',
@@ -131,8 +131,8 @@ const DEFAULT_DEVICE_POLICIES: Record<UserRole, DeviceSecurityPolicy> = {
     blockSuspiciousDevices: false,
     riskThreshold: 0.8,
     notifyOnNewDevice: false,
-    deviceRetentionDays: 30
-  }
+    deviceRetentionDays: 30,
+  },
 };
 
 export class DeviceTrackingManager {
@@ -149,7 +149,7 @@ export class DeviceTrackingManager {
     this.supabase = createClient(supabaseUrl, supabaseKey);
     this.auditLogger = new SecurityAuditLogger(supabaseUrl, supabaseKey);
     this.devicePolicies = { ...DEFAULT_DEVICE_POLICIES, ...customPolicies };
-    
+
     // Start cleanup interval (daily)
     this.startCleanupInterval();
   }
@@ -184,7 +184,7 @@ export class DeviceTrackingManager {
       canvas: clientInfo.canvas,
       webgl: clientInfo.webgl,
       fonts: clientInfo.fonts,
-      audioContext: clientInfo.audioContext
+      audioContext: clientInfo.audioContext,
     };
   }
 
@@ -198,17 +198,17 @@ export class DeviceTrackingManager {
       timezone: fingerprint.timezone,
       platform: fingerprint.platform,
       canvas: fingerprint.canvas,
-      webgl: fingerprint.webgl
+      webgl: fingerprint.webgl,
     });
-    
+
     // Simple hash function (in production, use a proper crypto hash)
     let hash = 0;
     for (let i = 0; i < fingerprintString.length; i++) {
       const char = fingerprintString.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash; // Convert to 32-bit integer
     }
-    
+
     return `dev_${Math.abs(hash).toString(36)}_${Date.now().toString(36)}`;
   }
 
@@ -225,18 +225,22 @@ export class DeviceTrackingManager {
       location?: DeviceInfo['location'];
     },
     metadata?: Record<string, any>
-  ): Promise<{ deviceId: string; isNewDevice: boolean; requiresVerification: boolean }> {
+  ): Promise<{
+    deviceId: string;
+    isNewDevice: boolean;
+    requiresVerification: boolean;
+  }> {
     try {
       const deviceId = this.generateDeviceId(fingerprint);
       const now = new Date();
-      
+
       // Check if device already exists
       const existingDevice = await this.getDeviceInfo(deviceId);
       const isNewDevice = !existingDevice;
-      
+
       // Determine device type from user agent
       const deviceType = this.detectDeviceType(fingerprint.userAgent);
-      
+
       // Calculate risk score
       const riskFactors = await this.assessDeviceRisk(
         userId,
@@ -247,20 +251,20 @@ export class DeviceTrackingManager {
         isNewDevice
       );
       const riskScore = this.calculateRiskScore(riskFactors);
-      
+
       // Get device policy for user role
       const policy = this.devicePolicies[userRole];
-      
+
       // Determine if verification is required
-      const requiresVerification = isNewDevice && (
-        policy.requireVerification ||
-        riskScore >= policy.riskThreshold ||
-        (policy.blockSuspiciousDevices && riskScore > 0.8)
-      );
-      
+      const requiresVerification =
+        isNewDevice &&
+        (policy.requireVerification ||
+          riskScore >= policy.riskThreshold ||
+          (policy.blockSuspiciousDevices && riskScore > 0.8));
+
       // Block device if risk is too high
       const isBlocked = policy.blockSuspiciousDevices && riskScore >= 0.9;
-      
+
       if (isNewDevice) {
         // Create new device record
         const { error } = await this.supabase
@@ -268,12 +272,14 @@ export class DeviceTrackingManager {
           .insert({
             device_id: deviceId,
             user_id: userId,
-            device_name: deviceInfo.deviceName || this.generateDeviceName(fingerprint),
+            device_name:
+              deviceInfo.deviceName || this.generateDeviceName(fingerprint),
             device_type: deviceType,
-            fingerprint: fingerprint,
+            fingerprint,
             ip_address: deviceInfo.ipAddress,
             location: deviceInfo.location,
-            is_trusted: !requiresVerification && policy.autoTrustAfterVerification,
+            is_trusted:
+              !requiresVerification && policy.autoTrustAfterVerification,
             is_blocked: isBlocked,
             first_seen: now.toISOString(),
             last_seen: now.toISOString(),
@@ -283,8 +289,8 @@ export class DeviceTrackingManager {
               ...metadata,
               riskFactors,
               userRole,
-              registrationPolicy: policy
-            }
+              registrationPolicy: policy,
+            },
           });
 
         if (error) {
@@ -304,15 +310,14 @@ export class DeviceTrackingManager {
             riskFactors,
             requiresVerification,
             isBlocked,
-            location: deviceInfo.location
-          }
+            location: deviceInfo.location,
+          },
         });
 
         // Notify user if configured
         if (policy.notifyOnNewDevice && !isBlocked) {
           await this.notifyNewDevice(userId, deviceId, deviceInfo);
         }
-
       } else {
         // Update existing device
         const { error } = await this.supabase
@@ -327,8 +332,8 @@ export class DeviceTrackingManager {
               ...existingDevice?.metadata,
               ...metadata,
               lastRiskFactors: riskFactors,
-              lastUpdate: now.toISOString()
-            }
+              lastUpdate: now.toISOString(),
+            },
           })
           .eq('device_id', deviceId);
 
@@ -340,9 +345,8 @@ export class DeviceTrackingManager {
       return {
         deviceId,
         isNewDevice,
-        requiresVerification: requiresVerification && !isBlocked
+        requiresVerification: requiresVerification && !isBlocked,
       };
-
     } catch (error) {
       console.error('Failed to register device:', error);
       throw error;
@@ -368,7 +372,6 @@ export class DeviceTrackingManager {
       }
 
       return this.mapDatabaseToDeviceInfo(data);
-
     } catch (error) {
       console.error('Failed to get device info:', error);
       throw error;
@@ -391,7 +394,6 @@ export class DeviceTrackingManager {
       }
 
       return (data || []).map(this.mapDatabaseToDeviceInfo);
-
     } catch (error) {
       console.error('Failed to get user devices:', error);
       throw error;
@@ -413,7 +415,7 @@ export class DeviceTrackingManager {
         .update({
           is_trusted: true,
           trusted_at: new Date().toISOString(),
-          trusted_by: trustedBy
+          trusted_by: trustedBy,
         })
         .eq('device_id', deviceId);
 
@@ -430,10 +432,9 @@ export class DeviceTrackingManager {
         metadata: {
           trustedBy,
           deviceName: device.deviceName,
-          previousRiskScore: device.riskScore
-        }
+          previousRiskScore: device.riskScore,
+        },
       });
-
     } catch (error) {
       console.error('Failed to trust device:', error);
       throw error;
@@ -460,7 +461,7 @@ export class DeviceTrackingManager {
           is_blocked: true,
           blocked_at: new Date().toISOString(),
           blocked_by: blockedBy,
-          block_reason: reason
+          block_reason: reason,
         })
         .eq('device_id', deviceId);
 
@@ -478,16 +479,15 @@ export class DeviceTrackingManager {
           reason,
           blockedBy,
           deviceName: device.deviceName,
-          riskScore: device.riskScore
-        }
+          riskScore: device.riskScore,
+        },
       });
 
       // Terminate all active sessions for this device
       await this.terminateDeviceSessions(deviceId, {
         type: 'security_violation',
-        message: `Device blocked: ${reason}`
+        message: `Device blocked: ${reason}`,
       });
-
     } catch (error) {
       console.error('Failed to block device:', error);
       throw error;
@@ -514,22 +514,23 @@ export class DeviceTrackingManager {
           device_id: deviceId,
           user_id: userId,
           challenge_type: challengeType,
-          code: code,
+          code,
           expires_at: expiresAt.toISOString(),
           attempts: 0,
           max_attempts: 3,
-          is_completed: false
+          is_completed: false,
         });
 
       if (error) {
-        throw new Error(`Failed to create verification challenge: ${error.message}`);
+        throw new Error(
+          `Failed to create verification challenge: ${error.message}`
+        );
       }
 
       // Send verification code (implementation depends on challenge type)
       await this.sendVerificationCode(userId, challengeType, code);
 
       return challengeId;
-
     } catch (error) {
       console.error('Failed to create verification challenge:', error);
       throw error;
@@ -542,7 +543,11 @@ export class DeviceTrackingManager {
   async verifyDeviceChallenge(
     challengeId: string,
     code: string
-  ): Promise<{ success: boolean; deviceId?: string; attemptsRemaining?: number }> {
+  ): Promise<{
+    success: boolean;
+    deviceId?: string;
+    attemptsRemaining?: number;
+  }> {
     try {
       // Get challenge
       const { data: challenge, error: selectError } = await this.supabase
@@ -556,7 +561,10 @@ export class DeviceTrackingManager {
       }
 
       // Check if challenge is expired or completed
-      if (new Date() > new Date(challenge.expires_at) || challenge.is_completed) {
+      if (
+        new Date() > new Date(challenge.expires_at) ||
+        challenge.is_completed
+      ) {
         return { success: false };
       }
 
@@ -576,7 +584,7 @@ export class DeviceTrackingManager {
           .update({
             is_completed: true,
             completed_at: new Date().toISOString(),
-            attempts: newAttempts
+            attempts: newAttempts,
           })
           .eq('challenge_id', challengeId);
 
@@ -585,7 +593,7 @@ export class DeviceTrackingManager {
         if (device) {
           const userRole = await this.getUserRole(device.userId);
           const policy = this.devicePolicies[userRole];
-          
+
           if (policy.autoTrustAfterVerification) {
             await this.trustDevice(challenge.device_id, 'system_verification');
           }
@@ -598,37 +606,34 @@ export class DeviceTrackingManager {
           deviceId: challenge.device_id,
           metadata: {
             challengeType: challenge.challenge_type,
-            attempts: newAttempts
-          }
+            attempts: newAttempts,
+          },
         });
 
         return { success: true, deviceId: challenge.device_id };
-
-      } else {
-        // Update attempt count
-        await this.supabase
-          .from('device_verification_challenges')
-          .update({ attempts: newAttempts })
-          .eq('challenge_id', challengeId);
-
-        // Log failed verification
-        await this.auditLogger.logSecurityEvent({
-          eventType: 'device_verification_failed',
-          userId: challenge.user_id,
-          deviceId: challenge.device_id,
-          metadata: {
-            challengeType: challenge.challenge_type,
-            attempts: newAttempts,
-            maxAttempts: challenge.max_attempts
-          }
-        });
-
-        return {
-          success: false,
-          attemptsRemaining: challenge.max_attempts - newAttempts
-        };
       }
+      // Update attempt count
+      await this.supabase
+        .from('device_verification_challenges')
+        .update({ attempts: newAttempts })
+        .eq('challenge_id', challengeId);
 
+      // Log failed verification
+      await this.auditLogger.logSecurityEvent({
+        eventType: 'device_verification_failed',
+        userId: challenge.user_id,
+        deviceId: challenge.device_id,
+        metadata: {
+          challengeType: challenge.challenge_type,
+          attempts: newAttempts,
+          maxAttempts: challenge.max_attempts,
+        },
+      });
+
+      return {
+        success: false,
+        attemptsRemaining: challenge.max_attempts - newAttempts,
+      };
     } catch (error) {
       console.error('Failed to verify device challenge:', error);
       throw error;
@@ -638,7 +643,10 @@ export class DeviceTrackingManager {
   /**
    * Clean up old devices and challenges
    */
-  async cleanupOldDevices(): Promise<{ devicesRemoved: number; challengesRemoved: number }> {
+  async cleanupOldDevices(): Promise<{
+    devicesRemoved: number;
+    challengesRemoved: number;
+  }> {
     try {
       let devicesRemoved = 0;
       let challengesRemoved = 0;
@@ -655,7 +663,10 @@ export class DeviceTrackingManager {
           .lt('last_seen', retentionDate.toISOString());
 
         if (selectError) {
-          console.error(`Failed to find old devices for role ${role}:`, selectError);
+          console.error(
+            `Failed to find old devices for role ${role}:`,
+            selectError
+          );
           continue;
         }
 
@@ -663,7 +674,10 @@ export class DeviceTrackingManager {
           const { error: deleteError } = await this.supabase
             .from('device_registrations')
             .delete()
-            .in('device_id', oldDevices.map(d => d.device_id));
+            .in(
+              'device_id',
+              oldDevices.map((d) => d.device_id)
+            );
 
           if (!deleteError) {
             devicesRemoved += oldDevices.length;
@@ -672,16 +686,24 @@ export class DeviceTrackingManager {
       }
 
       // Clean up expired challenges
-      const { data: expiredChallenges, error: challengeSelectError } = await this.supabase
-        .from('device_verification_challenges')
-        .select('challenge_id')
-        .lt('expires_at', new Date().toISOString());
+      const { data: expiredChallenges, error: challengeSelectError } =
+        await this.supabase
+          .from('device_verification_challenges')
+          .select('challenge_id')
+          .lt('expires_at', new Date().toISOString());
 
-      if (!challengeSelectError && expiredChallenges && expiredChallenges.length > 0) {
+      if (
+        !challengeSelectError &&
+        expiredChallenges &&
+        expiredChallenges.length > 0
+      ) {
         const { error: challengeDeleteError } = await this.supabase
           .from('device_verification_challenges')
           .delete()
-          .in('challenge_id', expiredChallenges.map(c => c.challenge_id));
+          .in(
+            'challenge_id',
+            expiredChallenges.map((c) => c.challenge_id)
+          );
 
         if (!challengeDeleteError) {
           challengesRemoved = expiredChallenges.length;
@@ -693,12 +715,11 @@ export class DeviceTrackingManager {
         eventType: 'device_cleanup',
         metadata: {
           devicesRemoved,
-          challengesRemoved
-        }
+          challengesRemoved,
+        },
       });
 
       return { devicesRemoved, challengesRemoved };
-
     } catch (error) {
       console.error('Failed to cleanup old devices:', error);
       throw error;
@@ -708,11 +729,14 @@ export class DeviceTrackingManager {
   /**
    * Update device policies
    */
-  updateDevicePolicy(role: UserRole, policy: Partial<DeviceSecurityPolicy>): void {
+  updateDevicePolicy(
+    role: UserRole,
+    policy: Partial<DeviceSecurityPolicy>
+  ): void {
     this.devicePolicies[role] = {
       ...this.devicePolicies[role],
       ...policy,
-      role
+      role,
     };
   }
 
@@ -737,19 +761,23 @@ export class DeviceTrackingManager {
 
   private detectDeviceType(userAgent: string): DeviceInfo['deviceType'] {
     const ua = userAgent.toLowerCase();
-    
-    if (ua.includes('mobile') || ua.includes('android') || ua.includes('iphone')) {
+
+    if (
+      ua.includes('mobile') ||
+      ua.includes('android') ||
+      ua.includes('iphone')
+    ) {
       return 'mobile';
     }
-    
+
     if (ua.includes('tablet') || ua.includes('ipad')) {
       return 'tablet';
     }
-    
+
     if (ua.includes('windows') || ua.includes('mac') || ua.includes('linux')) {
       return 'desktop';
     }
-    
+
     return 'unknown';
   }
 
@@ -757,21 +785,21 @@ export class DeviceTrackingManager {
     const platform = fingerprint.platform || 'Unknown';
     const deviceType = this.detectDeviceType(fingerprint.userAgent);
     const timestamp = new Date().toLocaleDateString();
-    
+
     return `${platform} ${deviceType} (${timestamp})`;
   }
 
   private async assessDeviceRisk(
     userId: string,
-    deviceId: string,
+    _deviceId: string,
     fingerprint: DeviceFingerprint,
     ipAddress: string,
     location?: DeviceInfo['location'],
-    isNewDevice: boolean = false
+    isNewDevice = false
   ): Promise<DeviceRiskFactors> {
     // Get user's previous devices for comparison
     const userDevices = await this.getUserDevices(userId);
-    
+
     // Assess various risk factors
     const riskFactors: DeviceRiskFactors = {
       isNewDevice,
@@ -782,7 +810,7 @@ export class DeviceTrackingManager {
       torDetected: false,
       knownMaliciousIP: false,
       rapidLocationChanges: false,
-      unusualAccessPatterns: false
+      unusualAccessPatterns: false,
     };
 
     if (userDevices.length > 0) {
@@ -797,15 +825,18 @@ export class DeviceTrackingManager {
       }
 
       // Check for fingerprint mismatches
-      const similarDevices = userDevices.filter(d => 
-        d.fingerprint.platform === fingerprint.platform &&
-        d.fingerprint.userAgent.includes(fingerprint.userAgent.split('/')[0])
+      const similarDevices = userDevices.filter(
+        (d) =>
+          d.fingerprint.platform === fingerprint.platform &&
+          d.fingerprint.userAgent.includes(fingerprint.userAgent.split('/')[0])
       );
       riskFactors.fingerprintMismatch = similarDevices.length === 0;
     }
 
     // Check for suspicious user agent
-    riskFactors.suspiciousUserAgent = this.isSuspiciousUserAgent(fingerprint.userAgent);
+    riskFactors.suspiciousUserAgent = this.isSuspiciousUserAgent(
+      fingerprint.userAgent
+    );
 
     // Check for VPN/Tor (simplified - in production, use proper IP intelligence)
     riskFactors.vpnDetected = await this.checkVPN(ipAddress);
@@ -817,7 +848,7 @@ export class DeviceTrackingManager {
 
   private calculateRiskScore(riskFactors: DeviceRiskFactors): number {
     let score = 0;
-    
+
     if (riskFactors.isNewDevice) score += 0.2;
     if (riskFactors.locationChange) score += 0.3;
     if (riskFactors.fingerprintMismatch) score += 0.2;
@@ -827,7 +858,7 @@ export class DeviceTrackingManager {
     if (riskFactors.knownMaliciousIP) score += 0.8;
     if (riskFactors.rapidLocationChanges) score += 0.5;
     if (riskFactors.unusualAccessPatterns) score += 0.4;
-    
+
     return Math.min(score, 1.0); // Cap at 1.0
   }
 
@@ -835,16 +866,19 @@ export class DeviceTrackingManager {
     coord1?: { latitude: number; longitude: number },
     coord2?: { latitude: number; longitude: number }
   ): number {
-    if (!coord1 || !coord2) return 0;
-    
+    if (!(coord1 && coord2)) return 0;
+
     const R = 6371; // Earth's radius in km
     const dLat = this.toRadians(coord2.latitude - coord1.latitude);
     const dLon = this.toRadians(coord2.longitude - coord1.longitude);
-    
-    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(this.toRadians(coord1.latitude)) * Math.cos(this.toRadians(coord2.latitude)) *
-      Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    
+
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(this.toRadians(coord1.latitude)) *
+        Math.cos(this.toRadians(coord2.latitude)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
   }
@@ -862,13 +896,13 @@ export class DeviceTrackingManager {
       /curl/i,
       /wget/i,
       /python/i,
-      /java/i
+      /java/i,
     ];
-    
-    return suspiciousPatterns.some(pattern => pattern.test(userAgent));
+
+    return suspiciousPatterns.some((pattern) => pattern.test(userAgent));
   }
 
-  private async checkVPN(ipAddress: string): Promise<boolean> {
+  private async checkVPN(_ipAddress: string): Promise<boolean> {
     // Simplified VPN detection - in production, use proper IP intelligence service
     try {
       // This would call an IP intelligence API
@@ -878,7 +912,7 @@ export class DeviceTrackingManager {
     }
   }
 
-  private async checkTor(ipAddress: string): Promise<boolean> {
+  private async checkTor(_ipAddress: string): Promise<boolean> {
     // Simplified Tor detection - in production, use Tor exit node lists
     try {
       // This would check against Tor exit node lists
@@ -888,7 +922,7 @@ export class DeviceTrackingManager {
     }
   }
 
-  private async checkMaliciousIP(ipAddress: string): Promise<boolean> {
+  private async checkMaliciousIP(_ipAddress: string): Promise<boolean> {
     // Simplified malicious IP detection - in production, use threat intelligence
     try {
       // This would check against threat intelligence feeds
@@ -898,13 +932,12 @@ export class DeviceTrackingManager {
     }
   }
 
-  private generateVerificationCode(challengeType: DeviceVerificationChallenge['challengeType']): string {
+  private generateVerificationCode(
+    challengeType: DeviceVerificationChallenge['challengeType']
+  ): string {
     switch (challengeType) {
       case 'totp':
-        return Math.floor(100000 + Math.random() * 900000).toString();
-      case 'email':
-      case 'sms':
-      case 'push':
+        return Math.floor(100_000 + Math.random() * 900_000).toString();
       default:
         return Math.floor(1000 + Math.random() * 9000).toString();
     }
@@ -922,12 +955,12 @@ export class DeviceTrackingManager {
       userId,
       metadata: {
         challengeType,
-        codeLength: code.length
-      }
+        codeLength: code.length,
+      },
     });
   }
 
-  private async getUserRole(userId: string): Promise<UserRole> {
+  private async getUserRole(_userId: string): Promise<UserRole> {
     // This would fetch the user's role from your user management system
     // For now, return a default role
     return 'staff';
@@ -942,7 +975,7 @@ export class DeviceTrackingManager {
     await this.auditLogger.logSecurityEvent({
       eventType: 'device_sessions_terminated',
       deviceId,
-      metadata: reason
+      metadata: reason,
     });
   }
 
@@ -958,8 +991,8 @@ export class DeviceTrackingManager {
       deviceId,
       ipAddress: deviceInfo.ipAddress,
       metadata: {
-        location: deviceInfo.location
-      }
+        location: deviceInfo.location,
+      },
     });
   }
 
@@ -978,17 +1011,20 @@ export class DeviceTrackingManager {
       lastSeen: new Date(data.last_seen),
       sessionCount: data.session_count,
       riskScore: data.risk_score,
-      metadata: data.metadata
+      metadata: data.metadata,
     };
   }
 
   private startCleanupInterval(): void {
-    this.cleanupInterval = setInterval(async () => {
-      try {
-        await this.cleanupOldDevices();
-      } catch (error) {
-        console.error('Device cleanup failed:', error);
-      }
-    }, 24 * 60 * 60 * 1000); // Daily cleanup
+    this.cleanupInterval = setInterval(
+      async () => {
+        try {
+          await this.cleanupOldDevices();
+        } catch (error) {
+          console.error('Device cleanup failed:', error);
+        }
+      },
+      24 * 60 * 60 * 1000
+    ); // Daily cleanup
   }
 }

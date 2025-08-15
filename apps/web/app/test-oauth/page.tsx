@@ -1,5 +1,5 @@
 // app/test-oauth/page.tsx
-import LoginTestPage from "@/app/login/test-page";
+import LoginTestPage from '@/app/login/test-page';
 
 export default function TestOAuthPage() {
   return <LoginTestPage />;

@@ -1,6 +1,6 @@
 /**
  * 📊 NeonPro Performance Monitor
- * 
+ *
  * Sistema inteligente de monitoramento que coleta métricas críticas
  * com zero impacto na performance da aplicação
  */
@@ -50,7 +50,7 @@ const aggregationCache = new LRUCache<string, any>({
 export class PerformanceMonitor {
   private static instance: PerformanceMonitor;
   private metrics: PerformanceMetric[] = [];
-  private readonly maxMetrics = 10000; // Limit memory usage
+  private readonly maxMetrics = 10_000; // Limit memory usage
 
   static getInstance(): PerformanceMonitor {
     if (!PerformanceMonitor.instance) {
@@ -88,7 +88,11 @@ export class PerformanceMonitor {
   /**
    * 📱 Record client-side performance
    */
-  recordClientPerformance(name: string, value: number, metadata?: Record<string, any>): void {
+  recordClientPerformance(
+    name: string,
+    value: number,
+    metadata?: Record<string, any>
+  ): void {
     const metric: PerformanceMetric = {
       name: `client.${name}`,
       value,
@@ -101,13 +105,17 @@ export class PerformanceMonitor {
   }
 
   /**
-   * 🗄️ Record database performance  
+   * 🗄️ Record database performance
    */
-  recordDatabasePerformance(operation: string, duration: number, metadata?: Record<string, any>): void {
+  recordDatabasePerformance(
+    operation: string,
+    duration: number,
+    metadata?: Record<string, any>
+  ): void {
     const metric: PerformanceMetric = {
       name: `db.${operation}`,
       value: duration,
-      unit: 'ms', 
+      unit: 'ms',
       timestamp: Date.now(),
       metadata,
     };
@@ -124,16 +132,20 @@ export class PerformanceMonitor {
     clientPerformance: any;
     alerts: string[];
   } {
-    const cacheKey = `summary_${timeWindow}_${Date.now() - (Date.now() % 30000)}`;
+    const cacheKey = `summary_${timeWindow}_${Date.now() - (Date.now() % 30_000)}`;
     const cached = aggregationCache.get(cacheKey);
     if (cached) return cached;
 
     const now = Date.now();
-    const recentMetrics = this.metrics.filter(m => now - m.timestamp <= timeWindow);
+    const recentMetrics = this.metrics.filter(
+      (m) => now - m.timestamp <= timeWindow
+    );
 
-    const apiMetrics = recentMetrics.filter(m => m.name.startsWith('api.'));
-    const dbMetrics = recentMetrics.filter(m => m.name.startsWith('db.'));
-    const clientMetrics = recentMetrics.filter(m => m.name.startsWith('client.'));
+    const apiMetrics = recentMetrics.filter((m) => m.name.startsWith('api.'));
+    const dbMetrics = recentMetrics.filter((m) => m.name.startsWith('db.'));
+    const clientMetrics = recentMetrics.filter((m) =>
+      m.name.startsWith('client.')
+    );
 
     const summary = {
       apiPerformance: this.aggregateMetrics(apiMetrics),
@@ -149,9 +161,12 @@ export class PerformanceMonitor {
   /**
    * 🎯 Get performance for specific route/operation
    */
-  getRoutePerformance(route: string, timeWindow: number = 30 * 60 * 1000): {
+  getRoutePerformance(
+    route: string,
+    timeWindow: number = 30 * 60 * 1000
+  ): {
     p50: number;
-    p90: number;  
+    p90: number;
     p95: number;
     p99: number;
     count: number;
@@ -159,22 +174,31 @@ export class PerformanceMonitor {
     trends: any[];
   } {
     const now = Date.now();
-    const routeMetrics = this.metrics.filter(m => 
-      m.route === route && 
-      now - m.timestamp <= timeWindow
+    const routeMetrics = this.metrics.filter(
+      (m) => m.route === route && now - m.timestamp <= timeWindow
     );
 
     if (routeMetrics.length === 0) {
-      return { p50: 0, p90: 0, p95: 0, p99: 0, count: 0, errorRate: 0, trends: [] };
+      return {
+        p50: 0,
+        p90: 0,
+        p95: 0,
+        p99: 0,
+        count: 0,
+        errorRate: 0,
+        trends: [],
+      };
     }
 
-    const values = routeMetrics.map(m => m.value).sort((a, b) => a - b);
-    const errors = routeMetrics.filter(m => m.metadata?.statusCode >= 400).length;
+    const values = routeMetrics.map((m) => m.value).sort((a, b) => a - b);
+    const errors = routeMetrics.filter(
+      (m) => m.metadata?.statusCode >= 400
+    ).length;
 
     return {
       p50: this.percentile(values, 50),
       p90: this.percentile(values, 90),
-      p95: this.percentile(values, 95), 
+      p95: this.percentile(values, 95),
       p99: this.percentile(values, 99),
       count: routeMetrics.length,
       errorRate: (errors / routeMetrics.length) * 100,
@@ -189,25 +213,31 @@ export class PerformanceMonitor {
     const alerts: string[] = [];
 
     // API performance alerts
-    const apiMetrics = metrics.filter(m => m.name.startsWith('api.'));
+    const apiMetrics = metrics.filter((m) => m.name.startsWith('api.'));
     if (apiMetrics.length > 0) {
-      const slowAPIs = apiMetrics.filter(m => m.value > 1000); // >1s
-      if (slowAPIs.length > apiMetrics.length * 0.05) { // >5% slow
-        alerts.push(`High API latency detected: ${slowAPIs.length}/${apiMetrics.length} requests >1s`);
+      const slowAPIs = apiMetrics.filter((m) => m.value > 1000); // >1s
+      if (slowAPIs.length > apiMetrics.length * 0.05) {
+        // >5% slow
+        alerts.push(
+          `High API latency detected: ${slowAPIs.length}/${apiMetrics.length} requests >1s`
+        );
       }
 
-      const errors = apiMetrics.filter(m => m.metadata?.statusCode >= 500);
+      const errors = apiMetrics.filter((m) => m.metadata?.statusCode >= 500);
       if (errors.length > 0) {
         alerts.push(`${errors.length} server errors in last period`);
       }
     }
 
-    // Database performance alerts  
-    const dbMetrics = metrics.filter(m => m.name.startsWith('db.'));
+    // Database performance alerts
+    const dbMetrics = metrics.filter((m) => m.name.startsWith('db.'));
     if (dbMetrics.length > 0) {
-      const slowQueries = dbMetrics.filter(m => m.value > 500); // >500ms
-      if (slowQueries.length > dbMetrics.length * 0.1) { // >10% slow
-        alerts.push(`Slow database queries detected: ${slowQueries.length}/${dbMetrics.length} queries >500ms`);
+      const slowQueries = dbMetrics.filter((m) => m.value > 500); // >500ms
+      if (slowQueries.length > dbMetrics.length * 0.1) {
+        // >10% slow
+        alerts.push(
+          `Slow database queries detected: ${slowQueries.length}/${dbMetrics.length} queries >500ms`
+        );
       }
     }
 
@@ -226,7 +256,7 @@ export class PerformanceMonitor {
   /**
    * 📈 Generate performance trends
    */
-  private generateTrends(metrics: PerformanceMetric[], buckets: number = 10): any[] {
+  private generateTrends(metrics: PerformanceMetric[], buckets = 10): any[] {
     if (metrics.length === 0) return [];
 
     const sorted = metrics.sort((a, b) => a.timestamp - b.timestamp);
@@ -239,9 +269,12 @@ export class PerformanceMonitor {
       const bucketMetrics = sorted.slice(bucketStart, bucketEnd);
 
       if (bucketMetrics.length > 0) {
-        const avgValue = bucketMetrics.reduce((sum, m) => sum + m.value, 0) / bucketMetrics.length;
-        const timestamp = bucketMetrics[Math.floor(bucketMetrics.length / 2)].timestamp;
-        
+        const avgValue =
+          bucketMetrics.reduce((sum, m) => sum + m.value, 0) /
+          bucketMetrics.length;
+        const timestamp =
+          bucketMetrics[Math.floor(bucketMetrics.length / 2)].timestamp;
+
         trends.push({
           timestamp,
           value: Math.round(avgValue),
@@ -258,10 +291,19 @@ export class PerformanceMonitor {
    */
   private aggregateMetrics(metrics: PerformanceMetric[]) {
     if (metrics.length === 0) {
-      return { count: 0, avg: 0, p50: 0, p90: 0, p95: 0, p99: 0, min: 0, max: 0 };
+      return {
+        count: 0,
+        avg: 0,
+        p50: 0,
+        p90: 0,
+        p95: 0,
+        p99: 0,
+        min: 0,
+        max: 0,
+      };
     }
 
-    const values = metrics.map(m => m.value).sort((a, b) => a - b);
+    const values = metrics.map((m) => m.value).sort((a, b) => a - b);
     const sum = values.reduce((a, b) => a + b, 0);
 
     return {

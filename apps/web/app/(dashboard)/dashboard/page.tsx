@@ -2,27 +2,26 @@
  * NEONPROV1 - Dashboard Principal
  * Página principal com KPIs e visão geral do sistema
  */
-import React from 'react';
-import { Metadata } from 'next';
-import { 
-  AppLayout, 
-  MetricCard, 
-  NeonCard, 
-  StatusBadge, 
-  ActionButton 
-} from '@/components/neonpro';
-import { 
-  Users, 
-  Calendar, 
-  DollarSign, 
+
+import {
   Activity,
-  TrendingUp,
-  Clock,
-  CheckCircle,
   AlertTriangle,
+  Calendar,
+  CheckCircle,
+  Clock,
+  DollarSign,
+  Eye,
   Plus,
-  Eye
+  Users,
 } from 'lucide-react';
+import type { Metadata } from 'next';
+import {
+  ActionButton,
+  AppLayout,
+  MetricCard,
+  NeonCard,
+  StatusBadge,
+} from '@/components/neonpro';
 
 export const metadata: Metadata = {
   title: 'Dashboard - NEONPROV1',
@@ -36,25 +35,19 @@ export default function DashboardPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">
+            <h1 className="font-bold text-3xl text-slate-900 dark:text-slate-100">
               Dashboard
             </h1>
-            <p className="text-slate-600 dark:text-slate-400 mt-1">
+            <p className="mt-1 text-slate-600 dark:text-slate-400">
               Visão geral das atividades do sistema
             </p>
           </div>
-          
+
           <div className="flex items-center gap-3">
-            <ActionButton
-              variant="outline"
-              icon={Eye}
-            >
+            <ActionButton icon={Eye} variant="outline">
               Relatórios
             </ActionButton>
-            <ActionButton
-              variant="primary"
-              icon={Plus}
-            >
+            <ActionButton icon={Plus} variant="primary">
               Nova Consulta
             </ActionButton>
           </div>
@@ -63,147 +56,153 @@ export default function DashboardPage() {
         {/* KPI Cards */}
         <div className="healthcare-grid">
           <MetricCard
-            title="Total de Pacientes"
-            value="1,247"
-            subtitle="pacientes ativos"
-            trend="up"
-            trendValue="+12%"
-            trendLabel="vs. mês anterior"
             icon={Users}
+            subtitle="pacientes ativos"
+            title="Total de Pacientes"
+            trend="up"
+            trendLabel="vs. mês anterior"
+            trendValue="+12%"
+            value="1,247"
             variant="default"
           />
-          
+
           <MetricCard
-            title="Consultas Hoje"
-            value="24"
-            subtitle="agendamentos"
-            trend="up"
-            trendValue="+3"
-            trendLabel="vs. ontem"
             icon={Calendar}
+            subtitle="agendamentos"
+            title="Consultas Hoje"
+            trend="up"
+            trendLabel="vs. ontem"
+            trendValue="+3"
+            value="24"
             variant="success"
           />
-          
+
           <MetricCard
-            title="Receita Mensal"
-            value="R$ 45.2k"
-            subtitle="faturamento"
-            trend="up"
-            trendValue="+8%"
-            trendLabel="vs. mês anterior"
             icon={DollarSign}
+            subtitle="faturamento"
+            title="Receita Mensal"
+            trend="up"
+            trendLabel="vs. mês anterior"
+            trendValue="+8%"
+            value="R$ 45.2k"
             variant="default"
           />
-          
+
           <MetricCard
-            title="Taxa de Ocupação"
-            value="87%"
-            subtitle="utilização"
-            trend="neutral"
-            trendValue="0%"
-            trendLabel="estável"
             icon={Activity}
+            subtitle="utilização"
+            title="Taxa de Ocupação"
+            trend="neutral"
+            trendLabel="estável"
+            trendValue="0%"
+            value="87%"
             variant="warning"
           />
         </div>
 
         {/* Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           {/* Próximas Consultas */}
           <NeonCard
-            title="Próximas Consultas"
             description="Agendamentos para hoje"
+            title="Próximas Consultas"
             variant="default"
           >
             <div className="space-y-4">
-              <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
+              <div className="flex items-center justify-between rounded-lg bg-slate-50 p-3 dark:bg-slate-800">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-neon-primary rounded-full flex items-center justify-center">
-                    <Users className="w-5 h-5 text-white" />
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-neon-primary">
+                    <Users className="h-5 w-5 text-white" />
                   </div>
                   <div>
                     <p className="font-medium text-slate-900 dark:text-slate-100">
                       Maria Silva
                     </p>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                    <p className="text-slate-600 text-sm dark:text-slate-400">
                       09:00 - Consulta Rotina
                     </p>
                   </div>
                 </div>
-                <StatusBadge status="scheduled" size="sm" />
+                <StatusBadge size="sm" status="scheduled" />
               </div>
-              
-              <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
+
+              <div className="flex items-center justify-between rounded-lg bg-slate-50 p-3 dark:bg-slate-800">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-healthcare-urgent rounded-full flex items-center justify-center">
-                    <Users className="w-5 h-5 text-white" />
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-healthcare-urgent">
+                    <Users className="h-5 w-5 text-white" />
                   </div>
                   <div>
                     <p className="font-medium text-slate-900 dark:text-slate-100">
                       João Santos
                     </p>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                    <p className="text-slate-600 text-sm dark:text-slate-400">
                       10:30 - Retorno
                     </p>
                   </div>
                 </div>
-                <StatusBadge status="urgent" size="sm" />
+                <StatusBadge size="sm" status="urgent" />
               </div>
-              
-              <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
+
+              <div className="flex items-center justify-between rounded-lg bg-slate-50 p-3 dark:bg-slate-800">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-healthcare-critical rounded-full flex items-center justify-center">
-                    <Users className="w-5 h-5 text-white" />
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-healthcare-critical">
+                    <Users className="h-5 w-5 text-white" />
                   </div>
                   <div>
                     <p className="font-medium text-slate-900 dark:text-slate-100">
                       Ana Costa
                     </p>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                    <p className="text-slate-600 text-sm dark:text-slate-400">
                       14:00 - Emergência
                     </p>
                   </div>
                 </div>
-                <StatusBadge status="critical" size="sm" pulse />
+                <StatusBadge pulse size="sm" status="critical" />
               </div>
             </div>
           </NeonCard>
 
           {/* Status do Sistema */}
           <NeonCard
-            title="Status do Sistema"
             description="Indicadores de performance"
+            title="Status do Sistema"
             variant="default"
           >
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <CheckCircle className="w-5 h-5 text-healthcare-completed" />
-                  <span className="text-sm font-medium">Sistema Online</span>
+                  <CheckCircle className="h-5 w-5 text-healthcare-completed" />
+                  <span className="font-medium text-sm">Sistema Online</span>
                 </div>
-                <StatusBadge status="normal" size="sm" />
+                <StatusBadge size="sm" status="normal" />
               </div>
-              
+
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Clock className="w-5 h-5 text-healthcare-pending" />
-                  <span className="text-sm font-medium">Backup Programado</span>
+                  <Clock className="h-5 w-5 text-healthcare-pending" />
+                  <span className="font-medium text-sm">Backup Programado</span>
                 </div>
-                <StatusBadge status="pending" size="sm" />
+                <StatusBadge size="sm" status="pending" />
               </div>
-              
+
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <AlertTriangle className="w-5 h-5 text-healthcare-urgent" />
-                  <span className="text-sm font-medium">Atualizações Disponíveis</span>
+                  <AlertTriangle className="h-5 w-5 text-healthcare-urgent" />
+                  <span className="font-medium text-sm">
+                    Atualizações Disponíveis
+                  </span>
                 </div>
-                <StatusBadge status="urgent" size="sm" />
+                <StatusBadge size="sm" status="urgent" />
               </div>
-              
-              <div className="pt-4 border-t border-slate-200 dark:border-slate-700">
+
+              <div className="border-slate-200 border-t pt-4 dark:border-slate-700">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-slate-600 dark:text-slate-400">Uptime</span>
-                  <span className="font-medium text-healthcare-completed">99.9%</span>
+                  <span className="text-slate-600 dark:text-slate-400">
+                    Uptime
+                  </span>
+                  <span className="font-medium text-healthcare-completed">
+                    99.9%
+                  </span>
                 </div>
               </div>
             </div>
@@ -212,20 +211,20 @@ export default function DashboardPage() {
 
         {/* Quick Actions */}
         <NeonCard
-          title="Ações Rápidas"
           description="Acesso rápido às funcionalidades principais"
+          title="Ações Rápidas"
         >
           <div className="flex flex-wrap gap-3">
-            <ActionButton variant="primary" icon={Plus}>
+            <ActionButton icon={Plus} variant="primary">
               Nova Consulta
             </ActionButton>
-            <ActionButton variant="secondary" icon={Users}>
+            <ActionButton icon={Users} variant="secondary">
               Cadastrar Paciente
             </ActionButton>
-            <ActionButton variant="outline" icon={Calendar}>
+            <ActionButton icon={Calendar} variant="outline">
               Ver Agenda
             </ActionButton>
-            <ActionButton variant="outline" icon={DollarSign}>
+            <ActionButton icon={DollarSign} variant="outline">
               Relatório Financeiro
             </ActionButton>
           </div>

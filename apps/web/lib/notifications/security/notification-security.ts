@@ -35,7 +35,13 @@ export interface SecurityValidationResult {
 }
 
 export interface SecurityViolation {
-  type: 'pii_detected' | 'spam_content' | 'malicious_link' | 'rate_limit' | 'unauthorized_access' | 'data_retention';
+  type:
+    | 'pii_detected'
+    | 'spam_content'
+    | 'malicious_link'
+    | 'rate_limit'
+    | 'unauthorized_access'
+    | 'data_retention';
   severity: 'low' | 'medium' | 'high' | 'critical';
   description: string;
   field?: string;
@@ -105,11 +111,11 @@ export class NotificationSecurity {
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
-    
+
     this.auditLogger = new AuditLogger();
     this.lgpdManager = new LGPDManager();
     this.encryptionService = new EncryptionService();
-    
+
     this.securityConfig = {
       encryption_enabled: true,
       data_retention_days: 90,
@@ -119,20 +125,20 @@ export class NotificationSecurity {
         enabled: true,
         max_per_minute: 60,
         max_per_hour: 1000,
-        max_per_day: 10000
+        max_per_day: 10_000,
       },
       content_filtering: {
         enabled: true,
         block_sensitive_data: true,
         block_spam_keywords: true,
-        block_malicious_links: true
+        block_malicious_links: true,
       },
       access_control: {
         require_authentication: true,
         allowed_roles: ['admin', 'notification_manager', 'system'],
-        ip_whitelist: []
+        ip_whitelist: [],
       },
-      ...config
+      ...config,
     };
 
     this.initializeSecurityPatterns();
@@ -170,16 +176,23 @@ export class NotificationSecurity {
       riskScore += contentViolations.length * 25;
 
       // 4. Validação LGPD
-      const lgpdViolations = await this.validateLGPDCompliance(notificationData, context.user_id);
+      const lgpdViolations = await this.validateLGPDCompliance(
+        notificationData,
+        context.user_id
+      );
       violations.push(...lgpdViolations);
       riskScore += lgpdViolations.length * 40;
 
       // 5. Validação de retenção de dados
-      const retentionViolations = await this.validateDataRetention(notificationData);
+      const retentionViolations =
+        await this.validateDataRetention(notificationData);
       violations.push(...retentionViolations);
       riskScore += retentionViolations.length * 15;
 
-      const isValid = violations.filter(v => v.severity === 'critical' || v.severity === 'high').length === 0;
+      const isValid =
+        violations.filter(
+          (v) => v.severity === 'critical' || v.severity === 'high'
+        ).length === 0;
       const recommendations = this.generateSecurityRecommendations(violations);
 
       // Log da auditoria
@@ -191,7 +204,7 @@ export class NotificationSecurity {
           user_agent: context.user_agent,
           security_violations: violations,
           risk_score: riskScore,
-          action_taken: isValid ? 'approved' : 'blocked'
+          action_taken: isValid ? 'approved' : 'blocked',
         });
       }
 
@@ -199,7 +212,7 @@ export class NotificationSecurity {
         is_valid: isValid,
         violations,
         risk_score: Math.min(riskScore, 100),
-        recommendations
+        recommendations,
       };
     } catch (error) {
       throw new Error(`Erro na validação de segurança: ${error}`);
@@ -215,7 +228,12 @@ export class NotificationSecurity {
     }
 
     try {
-      const sensitiveFields = ['content', 'subject', 'recipient_data', 'personal_data'];
+      const sensitiveFields = [
+        'content',
+        'subject',
+        'recipient_data',
+        'personal_data',
+      ];
       const dataToEncrypt = {};
       const metadata = { ...data };
 
@@ -227,15 +245,19 @@ export class NotificationSecurity {
         }
       }
 
-      const encryptedContent = await this.encryptionService.encrypt(JSON.stringify(dataToEncrypt));
-      const encryptedMetadata = await this.encryptionService.encrypt(JSON.stringify(metadata));
+      const encryptedContent = await this.encryptionService.encrypt(
+        JSON.stringify(dataToEncrypt)
+      );
+      const encryptedMetadata = await this.encryptionService.encrypt(
+        JSON.stringify(metadata)
+      );
 
       return {
         encrypted_content: encryptedContent.data,
         encrypted_metadata: encryptedMetadata.data,
         encryption_key_id: encryptedContent.keyId,
         encryption_algorithm: 'AES-256-GCM',
-        created_at: new Date()
+        created_at: new Date(),
       };
     } catch (error) {
       throw new Error(`Erro na criptografia: ${error}`);
@@ -245,7 +267,9 @@ export class NotificationSecurity {
   /**
    * Descriptografa dados da notificação
    */
-  async decryptNotificationData(encryptedData: EncryptedNotificationData): Promise<any> {
+  async decryptNotificationData(
+    encryptedData: EncryptedNotificationData
+  ): Promise<any> {
     if (!this.securityConfig.encryption_enabled) {
       throw new Error('Criptografia não está habilitada');
     }
@@ -253,12 +277,12 @@ export class NotificationSecurity {
     try {
       const decryptedContent = await this.encryptionService.decrypt({
         data: encryptedData.encrypted_content,
-        keyId: encryptedData.encryption_key_id
+        keyId: encryptedData.encryption_key_id,
       });
 
       const decryptedMetadata = await this.encryptionService.decrypt({
         data: encryptedData.encrypted_metadata,
-        keyId: encryptedData.encryption_key_id
+        keyId: encryptedData.encryption_key_id,
       });
 
       const content = JSON.parse(decryptedContent);
@@ -284,7 +308,7 @@ export class NotificationSecurity {
       if (piiDetection.length > 0) {
         issues.push(...piiDetection);
         isSafe = false;
-        
+
         if (this.securityConfig.content_filtering.block_sensitive_data) {
           sanitizedContent = this.sanitizePII(sanitizedContent);
         }
@@ -302,7 +326,7 @@ export class NotificationSecurity {
       if (maliciousLinks.length > 0) {
         issues.push(...maliciousLinks);
         isSafe = false;
-        
+
         if (this.securityConfig.content_filtering.block_malicious_links) {
           sanitizedContent = this.sanitizeMaliciousLinks(sanitizedContent);
         }
@@ -311,7 +335,8 @@ export class NotificationSecurity {
       return {
         is_safe: isSafe,
         detected_issues: issues,
-        sanitized_content: sanitizedContent !== content ? sanitizedContent : undefined
+        sanitized_content:
+          sanitizedContent !== content ? sanitizedContent : undefined,
       };
     } catch (error) {
       throw new Error(`Erro na filtragem de conteúdo: ${error}`);
@@ -332,8 +357,8 @@ export class NotificationSecurity {
         reset_times: {
           minute: new Date(),
           hour: new Date(),
-          day: new Date()
-        }
+          day: new Date(),
+        },
       };
     }
 
@@ -360,8 +385,8 @@ export class NotificationSecurity {
             reset_times: {
               minute: new Date(data.minute_reset || now),
               hour: new Date(data.hour_reset || now),
-              day: new Date(data.day_reset || now)
-            }
+              day: new Date(data.day_reset || now),
+            },
           };
         } else {
           status = {
@@ -371,10 +396,10 @@ export class NotificationSecurity {
             current_day: 0,
             limits_exceeded: false,
             reset_times: {
-              minute: new Date(now.getTime() + 60000),
-              hour: new Date(now.getTime() + 3600000),
-              day: new Date(now.getTime() + 86400000)
-            }
+              minute: new Date(now.getTime() + 60_000),
+              hour: new Date(now.getTime() + 3_600_000),
+              day: new Date(now.getTime() + 86_400_000),
+            },
           };
         }
       }
@@ -382,22 +407,22 @@ export class NotificationSecurity {
       // Verificar se precisa resetar contadores
       if (now >= status.reset_times.minute) {
         status.current_minute = 0;
-        status.reset_times.minute = new Date(now.getTime() + 60000);
+        status.reset_times.minute = new Date(now.getTime() + 60_000);
       }
 
       if (now >= status.reset_times.hour) {
         status.current_hour = 0;
-        status.reset_times.hour = new Date(now.getTime() + 3600000);
+        status.reset_times.hour = new Date(now.getTime() + 3_600_000);
       }
 
       if (now >= status.reset_times.day) {
         status.current_day = 0;
-        status.reset_times.day = new Date(now.getTime() + 86400000);
+        status.reset_times.day = new Date(now.getTime() + 86_400_000);
       }
 
       // Verificar limites
       const limits = this.securityConfig.rate_limiting;
-      status.limits_exceeded = 
+      status.limits_exceeded =
         status.current_minute >= limits.max_per_minute ||
         status.current_hour >= limits.max_per_hour ||
         status.current_day >= limits.max_per_day;
@@ -417,7 +442,7 @@ export class NotificationSecurity {
 
     try {
       const status = await this.checkRateLimit(userId);
-      
+
       status.current_minute++;
       status.current_hour++;
       status.current_day++;
@@ -426,18 +451,16 @@ export class NotificationSecurity {
       this.rateLimitCache.set(`rate_limit_${userId}`, status);
 
       // Atualizar banco de dados
-      await this.supabase
-        .from('notification_rate_limits')
-        .upsert({
-          user_id: userId,
-          current_minute: status.current_minute,
-          current_hour: status.current_hour,
-          current_day: status.current_day,
-          minute_reset: status.reset_times.minute.toISOString(),
-          hour_reset: status.reset_times.hour.toISOString(),
-          day_reset: status.reset_times.day.toISOString(),
-          updated_at: new Date().toISOString()
-        });
+      await this.supabase.from('notification_rate_limits').upsert({
+        user_id: userId,
+        current_minute: status.current_minute,
+        current_hour: status.current_hour,
+        current_day: status.current_day,
+        minute_reset: status.reset_times.minute.toISOString(),
+        hour_reset: status.reset_times.hour.toISOString(),
+        day_reset: status.reset_times.day.toISOString(),
+        updated_at: new Date().toISOString(),
+      });
     } catch (error) {
       throw new Error(`Erro ao incrementar rate limit: ${error}`);
     }
@@ -451,14 +474,14 @@ export class NotificationSecurity {
 
     try {
       await this.lgpdManager.anonymizeData('notification_logs', {
-        id: notificationId
+        id: notificationId,
       });
 
       await this.auditLogger.log({
         action: 'notification_data_anonymized',
         resource_type: 'notification',
         resource_id: notificationId,
-        details: { reason: 'lgpd_compliance' }
+        details: { reason: 'lgpd_compliance' },
       });
     } catch (error) {
       throw new Error(`Erro na anonimização: ${error}`);
@@ -474,7 +497,9 @@ export class NotificationSecurity {
   }> {
     try {
       const cutoffDate = new Date();
-      cutoffDate.setDate(cutoffDate.getDate() - this.securityConfig.data_retention_days);
+      cutoffDate.setDate(
+        cutoffDate.getDate() - this.securityConfig.data_retention_days
+      );
 
       // Buscar notificações expiradas
       const { data: expiredNotifications } = await this.supabase
@@ -510,13 +535,13 @@ export class NotificationSecurity {
         details: {
           cutoff_date: cutoffDate.toISOString(),
           deleted_count: deletedCount,
-          anonymized_count: anonymizedCount
-        }
+          anonymized_count: anonymizedCount,
+        },
       });
 
       return {
         deleted_notifications: deletedCount,
-        anonymized_records: anonymizedCount
+        anonymized_records: anonymizedCount,
       };
     } catch (error) {
       throw new Error(`Erro na limpeza de dados: ${error}`);
@@ -526,7 +551,9 @@ export class NotificationSecurity {
   /**
    * Gera relatório de segurança
    */
-  async generateSecurityReport(period: 'day' | 'week' | 'month' = 'week'): Promise<{
+  async generateSecurityReport(
+    period: 'day' | 'week' | 'month' = 'week'
+  ): Promise<{
     summary: {
       total_validations: number;
       blocked_notifications: number;
@@ -562,23 +589,30 @@ export class NotificationSecurity {
         .eq('event_type', 'notification_security_validation');
 
       const totalValidations = auditLogs?.length || 0;
-      const blockedNotifications = auditLogs?.filter(log => log.action_taken === 'blocked').length || 0;
-      
-      const allViolations = auditLogs?.flatMap(log => log.security_violations || []) || [];
+      const blockedNotifications =
+        auditLogs?.filter((log) => log.action_taken === 'blocked').length || 0;
+
+      const allViolations =
+        auditLogs?.flatMap((log) => log.security_violations || []) || [];
       const totalViolations = allViolations.length;
-      
-      const averageRiskScore = auditLogs?.length ? 
-        auditLogs.reduce((sum, log) => sum + (log.risk_score || 0), 0) / auditLogs.length : 0;
+
+      const averageRiskScore = auditLogs?.length
+        ? auditLogs.reduce((sum, log) => sum + (log.risk_score || 0), 0) /
+          auditLogs.length
+        : 0;
 
       // Violações por tipo
-      const violationsByType = allViolations.reduce((counts, violation) => {
-        counts[violation.type] = (counts[violation.type] || 0) + 1;
-        return counts;
-      }, {} as Record<string, number>);
+      const violationsByType = allViolations.reduce(
+        (counts, violation) => {
+          counts[violation.type] = (counts[violation.type] || 0) + 1;
+          return counts;
+        },
+        {} as Record<string, number>
+      );
 
       // Top violações
       const topViolations = allViolations
-        .filter(v => v.severity === 'high' || v.severity === 'critical')
+        .filter((v) => v.severity === 'high' || v.severity === 'critical')
         .slice(0, 10);
 
       // Stats de rate limit
@@ -587,28 +621,32 @@ export class NotificationSecurity {
         .select('user_id, current_minute, current_hour, current_day')
         .gte('updated_at', startDate.toISOString());
 
-      const usersLimited = rateLimitData?.filter(rl => 
-        rl.current_minute >= this.securityConfig.rate_limiting.max_per_minute ||
-        rl.current_hour >= this.securityConfig.rate_limiting.max_per_hour ||
-        rl.current_day >= this.securityConfig.rate_limiting.max_per_day
-      ).length || 0;
+      const usersLimited =
+        rateLimitData?.filter(
+          (rl) =>
+            rl.current_minute >=
+              this.securityConfig.rate_limiting.max_per_minute ||
+            rl.current_hour >= this.securityConfig.rate_limiting.max_per_hour ||
+            rl.current_day >= this.securityConfig.rate_limiting.max_per_day
+        ).length || 0;
 
-      const recommendations = this.generateSecurityRecommendations(allViolations);
+      const recommendations =
+        this.generateSecurityRecommendations(allViolations);
 
       return {
         summary: {
           total_validations: totalValidations,
           blocked_notifications: blockedNotifications,
           security_violations: totalViolations,
-          average_risk_score: averageRiskScore
+          average_risk_score: averageRiskScore,
         },
         violations_by_type: violationsByType,
         top_violations: topViolations,
         rate_limit_stats: {
           users_limited: usersLimited,
-          total_blocks: blockedNotifications
+          total_blocks: blockedNotifications,
         },
-        recommendations
+        recommendations,
       };
     } catch (error) {
       throw new Error(`Erro ao gerar relatório de segurança: ${error}`);
@@ -623,7 +661,7 @@ export class NotificationSecurity {
       /\b\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}\b/g, // CNPJ
       /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g, // Email
       /\b\(?\d{2}\)?[\s-]?\d{4,5}[\s-]?\d{4}\b/g, // Telefone
-      /\b\d{4}[\s-]?\d{4}[\s-]?\d{4}[\s-]?\d{4}\b/g // Cartão de crédito
+      /\b\d{4}[\s-]?\d{4}[\s-]?\d{4}[\s-]?\d{4}\b/g, // Cartão de crédito
     ];
 
     // Padrões suspeitos
@@ -632,7 +670,7 @@ export class NotificationSecurity {
       /data:text\/html/gi,
       /vbscript:/gi,
       /<script[^>]*>/gi,
-      /on\w+\s*=/gi
+      /on\w+\s*=/gi,
     ];
 
     // Palavras-chave de spam
@@ -643,11 +681,13 @@ export class NotificationSecurity {
       'urgente',
       'parabéns você ganhou',
       'renda extra',
-      'trabalhe em casa'
+      'trabalhe em casa',
     ];
   }
 
-  private async validateAccessControl(context: any): Promise<SecurityViolation[]> {
+  private async validateAccessControl(
+    context: any
+  ): Promise<SecurityViolation[]> {
     const violations: SecurityViolation[] = [];
     const config = this.securityConfig.access_control;
 
@@ -656,33 +696,43 @@ export class NotificationSecurity {
         type: 'unauthorized_access',
         severity: 'critical',
         description: 'Tentativa de envio sem autenticação',
-        recommendation: 'Implementar autenticação obrigatória'
+        recommendation: 'Implementar autenticação obrigatória',
       });
     }
 
-    if (context.role && config.allowed_roles.length > 0 && !config.allowed_roles.includes(context.role)) {
+    if (
+      context.role &&
+      config.allowed_roles.length > 0 &&
+      !config.allowed_roles.includes(context.role)
+    ) {
       violations.push({
         type: 'unauthorized_access',
         severity: 'high',
         description: `Role '${context.role}' não autorizada`,
-        recommendation: 'Verificar permissões do usuário'
+        recommendation: 'Verificar permissões do usuário',
       });
     }
 
-    if (config.ip_whitelist.length > 0 && context.ip_address && !config.ip_whitelist.includes(context.ip_address)) {
+    if (
+      config.ip_whitelist.length > 0 &&
+      context.ip_address &&
+      !config.ip_whitelist.includes(context.ip_address)
+    ) {
       violations.push({
         type: 'unauthorized_access',
         severity: 'medium',
         description: `IP ${context.ip_address} não está na whitelist`,
-        recommendation: 'Adicionar IP à whitelist ou revisar política'
+        recommendation: 'Adicionar IP à whitelist ou revisar política',
       });
     }
 
     return violations;
   }
 
-  private async validateRateLimit(userId?: string): Promise<SecurityViolation[]> {
-    if (!userId || !this.securityConfig.rate_limiting.enabled) {
+  private async validateRateLimit(
+    userId?: string
+  ): Promise<SecurityViolation[]> {
+    if (!(userId && this.securityConfig.rate_limiting.enabled)) {
       return [];
     }
 
@@ -694,7 +744,7 @@ export class NotificationSecurity {
         type: 'rate_limit',
         severity: 'high',
         description: 'Limite de rate limiting excedido',
-        recommendation: 'Aguardar reset do limite ou revisar política'
+        recommendation: 'Aguardar reset do limite ou revisar política',
       });
     }
 
@@ -703,7 +753,7 @@ export class NotificationSecurity {
 
   private async validateContent(data: any): Promise<SecurityViolation[]> {
     const violations: SecurityViolation[] = [];
-    
+
     if (!this.securityConfig.content_filtering.enabled) {
       return violations;
     }
@@ -714,48 +764,63 @@ export class NotificationSecurity {
     for (const issue of filterResult.detected_issues) {
       violations.push({
         type: issue.type as any,
-        severity: issue.confidence > 0.8 ? 'high' : issue.confidence > 0.5 ? 'medium' : 'low',
+        severity:
+          issue.confidence > 0.8
+            ? 'high'
+            : issue.confidence > 0.5
+              ? 'medium'
+              : 'low',
         description: `${issue.type} detectado: ${issue.location}`,
-        recommendation: issue.suggestion
+        recommendation: issue.suggestion,
       });
     }
 
     return violations;
   }
 
-  private async validateLGPDCompliance(data: any, userId?: string): Promise<SecurityViolation[]> {
+  private async validateLGPDCompliance(
+    _data: any,
+    userId?: string
+  ): Promise<SecurityViolation[]> {
     const violations: SecurityViolation[] = [];
 
     if (!userId) return violations;
 
     try {
       // Verificar consentimento
-      const hasConsent = await this.lgpdManager.hasValidConsent(userId, 'notifications');
+      const hasConsent = await this.lgpdManager.hasValidConsent(
+        userId,
+        'notifications'
+      );
       if (!hasConsent) {
         violations.push({
           type: 'pii_detected',
           severity: 'critical',
-          description: 'Usuário não possui consentimento válido para notificações',
-          recommendation: 'Obter consentimento antes do envio'
+          description:
+            'Usuário não possui consentimento válido para notificações',
+          recommendation: 'Obter consentimento antes do envio',
         });
       }
 
       // Verificar se usuário optou por não receber
-      const hasOptOut = await this.lgpdManager.hasOptedOut(userId, 'notifications');
+      const hasOptOut = await this.lgpdManager.hasOptedOut(
+        userId,
+        'notifications'
+      );
       if (hasOptOut) {
         violations.push({
           type: 'pii_detected',
           severity: 'high',
           description: 'Usuário optou por não receber notificações',
-          recommendation: 'Respeitar preferência do usuário'
+          recommendation: 'Respeitar preferência do usuário',
         });
       }
-    } catch (error) {
+    } catch (_error) {
       violations.push({
         type: 'pii_detected',
         severity: 'medium',
         description: 'Erro ao validar compliance LGPD',
-        recommendation: 'Verificar configuração LGPD'
+        recommendation: 'Verificar configuração LGPD',
       });
     }
 
@@ -768,14 +833,16 @@ export class NotificationSecurity {
     if (data.created_at) {
       const createdDate = new Date(data.created_at);
       const now = new Date();
-      const daysDiff = Math.floor((now.getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24));
+      const daysDiff = Math.floor(
+        (now.getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24)
+      );
 
       if (daysDiff > this.securityConfig.data_retention_days) {
         violations.push({
           type: 'data_retention',
           severity: 'medium',
           description: `Dados com ${daysDiff} dias excedem política de retenção`,
-          recommendation: 'Anonimizar ou deletar dados antigos'
+          recommendation: 'Anonimizar ou deletar dados antigos',
         });
       }
     }
@@ -783,7 +850,12 @@ export class NotificationSecurity {
     return violations;
   }
 
-  private detectPII(content: string): Array<{ type: 'pii'; confidence: number; location: string; suggestion: string }> {
+  private detectPII(content: string): Array<{
+    type: 'pii';
+    confidence: number;
+    location: string;
+    suggestion: string;
+  }> {
     const issues = [];
 
     for (const pattern of this.piiPatterns) {
@@ -794,7 +866,7 @@ export class NotificationSecurity {
             type: 'pii' as const,
             confidence: 0.9,
             location: `Texto: "${match}"`,
-            suggestion: 'Remover ou mascarar dados pessoais'
+            suggestion: 'Remover ou mascarar dados pessoais',
           });
         }
       }
@@ -803,7 +875,12 @@ export class NotificationSecurity {
     return issues;
   }
 
-  private detectSpam(content: string): Array<{ type: 'spam'; confidence: number; location: string; suggestion: string }> {
+  private detectSpam(content: string): Array<{
+    type: 'spam';
+    confidence: number;
+    location: string;
+    suggestion: string;
+  }> {
     const issues = [];
     const lowerContent = content.toLowerCase();
 
@@ -813,7 +890,7 @@ export class NotificationSecurity {
           type: 'spam' as const,
           confidence: 0.7,
           location: `Palavra-chave: "${keyword}"`,
-          suggestion: 'Revisar conteúdo para evitar características de spam'
+          suggestion: 'Revisar conteúdo para evitar características de spam',
         });
       }
     }
@@ -821,9 +898,17 @@ export class NotificationSecurity {
     return issues;
   }
 
-  private async detectMaliciousLinks(content: string): Promise<Array<{ type: 'malicious_link'; confidence: number; location: string; suggestion: string }>> {
+  private async detectMaliciousLinks(content: string): Promise<
+    Array<{
+      type: 'malicious_link';
+      confidence: number;
+      location: string;
+      suggestion: string;
+    }>
+  > {
     const issues = [];
-    const urlRegex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/g;
+    const urlRegex =
+      /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/g;
     const urls = content.match(urlRegex) || [];
 
     for (const url of urls) {
@@ -834,7 +919,7 @@ export class NotificationSecurity {
             type: 'malicious_link' as const,
             confidence: 0.8,
             location: `URL: "${url}"`,
-            suggestion: 'Verificar e validar links antes do envio'
+            suggestion: 'Verificar e validar links antes do envio',
           });
           break;
         }
@@ -843,12 +928,12 @@ export class NotificationSecurity {
       // Verificar domínios suspeitos (implementação simplificada)
       const suspiciousDomains = ['bit.ly', 'tinyurl.com', 'short.link'];
       const domain = new URL(url).hostname;
-      if (suspiciousDomains.some(d => domain.includes(d))) {
+      if (suspiciousDomains.some((d) => domain.includes(d))) {
         issues.push({
           type: 'malicious_link' as const,
           confidence: 0.6,
           location: `Domínio suspeito: "${domain}"`,
-          suggestion: 'Evitar links encurtados ou verificar destino'
+          suggestion: 'Evitar links encurtados ou verificar destino',
         });
       }
     }
@@ -876,7 +961,9 @@ export class NotificationSecurity {
     return sanitized;
   }
 
-  private generateSecurityRecommendations(violations: SecurityViolation[]): string[] {
+  private generateSecurityRecommendations(
+    violations: SecurityViolation[]
+  ): string[] {
     const recommendations = new Set<string>();
 
     for (const violation of violations) {
@@ -884,8 +971,10 @@ export class NotificationSecurity {
     }
 
     // Recomendações gerais baseadas no padrão de violações
-    const criticalCount = violations.filter(v => v.severity === 'critical').length;
-    const highCount = violations.filter(v => v.severity === 'high').length;
+    const criticalCount = violations.filter(
+      (v) => v.severity === 'critical'
+    ).length;
+    const highCount = violations.filter((v) => v.severity === 'high').length;
 
     if (criticalCount > 0) {
       recommendations.add('Revisar urgentemente as políticas de segurança');
@@ -895,7 +984,7 @@ export class NotificationSecurity {
       recommendations.add('Implementar treinamento de segurança para equipe');
     }
 
-    const piiCount = violations.filter(v => v.type === 'pii_detected').length;
+    const piiCount = violations.filter((v) => v.type === 'pii_detected').length;
     if (piiCount > 0) {
       recommendations.add('Implementar validação automática de PII');
     }
@@ -903,15 +992,15 @@ export class NotificationSecurity {
     return Array.from(recommendations);
   }
 
-  private async logSecurityAudit(auditData: Omit<SecurityAuditLog, 'id' | 'timestamp' | 'metadata'>): Promise<void> {
+  private async logSecurityAudit(
+    auditData: Omit<SecurityAuditLog, 'id' | 'timestamp' | 'metadata'>
+  ): Promise<void> {
     try {
-      await this.supabase
-        .from('security_audit_logs')
-        .insert({
-          ...auditData,
-          timestamp: new Date().toISOString(),
-          metadata: {}
-        });
+      await this.supabase.from('security_audit_logs').insert({
+        ...auditData,
+        timestamp: new Date().toISOString(),
+        metadata: {},
+      });
     } catch (error) {
       console.error('Erro ao registrar auditoria de segurança:', error);
     }

@@ -1,10 +1,10 @@
 // SSO Authorization Route
 // Story 1.3: SSO Integration - Authorization URL Generation
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { ssoManager } from '@/lib/auth/sso/sso-manager';
 import { logger } from '@/lib/logger';
-import { z } from 'zod';
 
 const authorizeSchema = z.object({
   provider: z.string().min(1, 'Provider is required'),
@@ -17,7 +17,7 @@ const authorizeSchema = z.object({
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    
+
     // Validate query parameters
     const validationResult = authorizeSchema.safeParse({
       provider: searchParams.get('provider'),
@@ -32,9 +32,9 @@ export async function GET(request: NextRequest) {
         errors: validationResult.error.errors,
         params: Object.fromEntries(searchParams.entries()),
       });
-      
+
       return NextResponse.json(
-        { 
+        {
           error: 'INVALID_PARAMETERS',
           message: 'Invalid request parameters',
           details: validationResult.error.errors,
@@ -43,17 +43,23 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const { provider: providerId, redirect_to, login_hint, domain_hint, prompt } = validationResult.data;
+    const {
+      provider: providerId,
+      redirect_to,
+      login_hint,
+      domain_hint,
+      prompt,
+    } = validationResult.data;
 
     // Check if provider exists and is enabled
     const availableProviders = ssoManager.getAvailableProviders();
-    const provider = availableProviders.find(p => p.id === providerId);
-    
+    const provider = availableProviders.find((p) => p.id === providerId);
+
     if (!provider) {
       logger.warn('SSO authorize: Provider not found', { providerId });
-      
+
       return NextResponse.json(
-        { 
+        {
           error: 'PROVIDER_NOT_FOUND',
           message: `SSO provider '${providerId}' not found or disabled`,
         },
@@ -69,7 +75,9 @@ export async function GET(request: NextRequest) {
       domainHint: domain_hint,
       prompt,
       // Store redirect destination in state for later use
-      state: redirect_to ? `redirect_to=${encodeURIComponent(redirect_to)}` : undefined,
+      state: redirect_to
+        ? `redirect_to=${encodeURIComponent(redirect_to)}`
+        : undefined,
     });
 
     logger.info('SSO authorize: Generated auth URL', {
@@ -98,7 +106,8 @@ export async function GET(request: NextRequest) {
       {
         error: 'AUTHORIZATION_FAILED',
         message: 'Failed to generate authorization URL',
-        details: process.env.NODE_ENV === 'development' ? error.message : undefined,
+        details:
+          process.env.NODE_ENV === 'development' ? error.message : undefined,
       },
       { status: 500 }
     );

@@ -4,164 +4,167 @@
 export interface LocalizationStrings {
   // Navigation
   navigation: {
-    skipToMain: string
-    skipToNavigation: string  
-    mainNavigation: string
-    breadcrumbs: string
-    previousPage: string
-    nextPage: string
-    goToPage: (page: number) => string
-  }
+    skipToMain: string;
+    skipToNavigation: string;
+    mainNavigation: string;
+    breadcrumbs: string;
+    previousPage: string;
+    nextPage: string;
+    goToPage: (page: number) => string;
+  };
 
   // Forms
   forms: {
-    required: string
-    optional: string
-    fieldRequired: (field: string) => string
-    fieldOptional: (field: string) => string
-    validationError: string
-    formHasErrors: (count: number) => string
-    pleaseCorrectErrors: string
-    loading: string
-    saving: string
-    saved: string
-    submit: string
-    cancel: string
-    reset: string
-    clear: string
-  }
+    required: string;
+    optional: string;
+    fieldRequired: (field: string) => string;
+    fieldOptional: (field: string) => string;
+    validationError: string;
+    formHasErrors: (count: number) => string;
+    pleaseCorrectErrors: string;
+    loading: string;
+    saving: string;
+    saved: string;
+    submit: string;
+    cancel: string;
+    reset: string;
+    clear: string;
+  };
 
   // Healthcare specific
   healthcare: {
-    patient: string
-    patients: string
-    appointment: string
-    appointments: string
-    consultation: string
-    consultations: string
-    treatment: string
-    treatments: string
-    procedure: string
-    procedures: string
-    diagnosis: string
-    medication: string
-    medications: string
-    allergy: string
-    allergies: string
-    medicalHistory: string
-    vitalSigns: string
-    bloodPressure: string
-    heartRate: string
-    temperature: string
-    weight: string
-    height: string
-  }
+    patient: string;
+    patients: string;
+    appointment: string;
+    appointments: string;
+    consultation: string;
+    consultations: string;
+    treatment: string;
+    treatments: string;
+    procedure: string;
+    procedures: string;
+    diagnosis: string;
+    medication: string;
+    medications: string;
+    allergy: string;
+    allergies: string;
+    medicalHistory: string;
+    vitalSigns: string;
+    bloodPressure: string;
+    heartRate: string;
+    temperature: string;
+    weight: string;
+    height: string;
+  };
 
   // Status announcements
   status: {
-    loading: (context?: string) => string
-    loadingComplete: (context?: string) => string
-    saving: (context?: string) => string
-    saveComplete: (context?: string) => string
-    deleting: (context?: string) => string
-    deleteComplete: (context?: string) => string
-    appointmentScheduled: (patientName?: string) => string
-    appointmentCanceled: (patientName?: string) => string
-    appointmentCompleted: (patientName?: string) => string
-    formSubmitted: string
-    formSubmissionError: string
-    dataUpdated: string
-    dataUpdateError: string
-  }
+    loading: (context?: string) => string;
+    loadingComplete: (context?: string) => string;
+    saving: (context?: string) => string;
+    saveComplete: (context?: string) => string;
+    deleting: (context?: string) => string;
+    deleteComplete: (context?: string) => string;
+    appointmentScheduled: (patientName?: string) => string;
+    appointmentCanceled: (patientName?: string) => string;
+    appointmentCompleted: (patientName?: string) => string;
+    formSubmitted: string;
+    formSubmissionError: string;
+    dataUpdated: string;
+    dataUpdateError: string;
+  };
 
   // Accessibility
   accessibility: {
-    openDialog: (dialogName: string) => string
-    closeDialog: string
-    expandSection: (section: string) => string
-    collapseSection: (section: string) => string
-    sortColumn: (column: string, direction: 'ascending' | 'descending') => string
-    filterResults: (count: number) => string
-    searchResults: (count: number, query: string) => string
-    pageOf: (current: number, total: number) => string
-    selectedOption: (option: string) => string
-    menuExpanded: string
-    menuCollapsed: string
-    tabSelected: (tab: string) => string
-  }
+    openDialog: (dialogName: string) => string;
+    closeDialog: string;
+    expandSection: (section: string) => string;
+    collapseSection: (section: string) => string;
+    sortColumn: (
+      column: string,
+      direction: 'ascending' | 'descending'
+    ) => string;
+    filterResults: (count: number) => string;
+    searchResults: (count: number, query: string) => string;
+    pageOf: (current: number, total: number) => string;
+    selectedOption: (option: string) => string;
+    menuExpanded: string;
+    menuCollapsed: string;
+    tabSelected: (tab: string) => string;
+  };
 
   // Error messages
   errors: {
-    general: string
-    network: string
-    unauthorized: string
-    forbidden: string
-    notFound: string
-    serverError: string
-    validationFailed: string
-    requiredField: (field: string) => string
-    invalidEmail: string
-    invalidPhone: string
-    invalidDate: string
-    invalidTime: string
-    passwordTooShort: (minLength: number) => string
-    passwordMismatch: string
-  }
+    general: string;
+    network: string;
+    unauthorized: string;
+    forbidden: string;
+    notFound: string;
+    serverError: string;
+    validationFailed: string;
+    requiredField: (field: string) => string;
+    invalidEmail: string;
+    invalidPhone: string;
+    invalidDate: string;
+    invalidTime: string;
+    passwordTooShort: (minLength: number) => string;
+    passwordMismatch: string;
+  };
 
   // Success messages
   success: {
-    saved: string
-    updated: string
-    deleted: string
-    created: string
-    sent: string
-    scheduled: string
-    canceled: string
-    completed: string
-  }
+    saved: string;
+    updated: string;
+    deleted: string;
+    created: string;
+    sent: string;
+    scheduled: string;
+    canceled: string;
+    completed: string;
+  };
 
   // Date and time
   dateTime: {
-    today: string
-    tomorrow: string
-    yesterday: string
-    thisWeek: string
-    nextWeek: string
-    lastWeek: string
-    thisMonth: string
-    nextMonth: string
-    lastMonth: string
-    formatDate: (date: Date) => string
-    formatTime: (date: Date) => string
-    formatDateTime: (date: Date) => string
-    relativeTime: (date: Date) => string
-  }
+    today: string;
+    tomorrow: string;
+    yesterday: string;
+    thisWeek: string;
+    nextWeek: string;
+    lastWeek: string;
+    thisMonth: string;
+    nextMonth: string;
+    lastMonth: string;
+    formatDate: (date: Date) => string;
+    formatTime: (date: Date) => string;
+    formatDateTime: (date: Date) => string;
+    relativeTime: (date: Date) => string;
+  };
 
   // Actions
   actions: {
-    edit: string
-    delete: string
-    save: string
-    cancel: string
-    confirm: string
-    close: string
-    open: string
-    add: string
-    remove: string
-    search: string
-    filter: string
-    sort: string
-    refresh: string
-    export: string
-    import: string
-    print: string
-    download: string
-    upload: string
-    schedule: string
-    reschedule: string
-    viewDetails: string
-    viewAll: string
-  }
+    edit: string;
+    delete: string;
+    save: string;
+    cancel: string;
+    confirm: string;
+    close: string;
+    open: string;
+    add: string;
+    remove: string;
+    search: string;
+    filter: string;
+    sort: string;
+    refresh: string;
+    export: string;
+    import: string;
+    print: string;
+    download: string;
+    upload: string;
+    schedule: string;
+    reschedule: string;
+    viewDetails: string;
+    viewAll: string;
+  };
 }
 
 export const ptBRStrings: LocalizationStrings = {
@@ -172,7 +175,7 @@ export const ptBRStrings: LocalizationStrings = {
     breadcrumbs: 'Você está aqui',
     previousPage: 'Página anterior',
     nextPage: 'Próxima página',
-    goToPage: (page: number) => `Ir para página ${page}`
+    goToPage: (page: number) => `Ir para página ${page}`,
   },
 
   forms: {
@@ -181,8 +184,8 @@ export const ptBRStrings: LocalizationStrings = {
     fieldRequired: (field: string) => `${field} é obrigatório`,
     fieldOptional: (field: string) => `${field} é opcional`,
     validationError: 'Erro de validação',
-    formHasErrors: (count: number) => 
-      count === 1 
+    formHasErrors: (count: number) =>
+      count === 1
         ? 'O formulário possui 1 erro que precisa ser corrigido'
         : `O formulário possui ${count} erros que precisam ser corrigidos`,
     pleaseCorrectErrors: 'Por favor, corrija os erros abaixo:',
@@ -192,7 +195,7 @@ export const ptBRStrings: LocalizationStrings = {
     submit: 'Enviar',
     cancel: 'Cancelar',
     reset: 'Limpar',
-    clear: 'Limpar campos'
+    clear: 'Limpar campos',
   },
 
   healthcare: {
@@ -217,38 +220,38 @@ export const ptBRStrings: LocalizationStrings = {
     heartRate: 'frequência cardíaca',
     temperature: 'temperatura',
     weight: 'peso',
-    height: 'altura'
+    height: 'altura',
   },
 
   status: {
-    loading: (context?: string) => 
+    loading: (context?: string) =>
       context ? `Carregando ${context}...` : 'Carregando...',
-    loadingComplete: (context?: string) => 
+    loadingComplete: (context?: string) =>
       context ? `${context} carregado com sucesso` : 'Carregamento concluído',
-    saving: (context?: string) => 
+    saving: (context?: string) =>
       context ? `Salvando ${context}...` : 'Salvando...',
-    saveComplete: (context?: string) => 
+    saveComplete: (context?: string) =>
       context ? `${context} salvo com sucesso` : 'Salvo com sucesso',
-    deleting: (context?: string) => 
+    deleting: (context?: string) =>
       context ? `Excluindo ${context}...` : 'Excluindo...',
-    deleteComplete: (context?: string) => 
+    deleteComplete: (context?: string) =>
       context ? `${context} excluído com sucesso` : 'Excluído com sucesso',
-    appointmentScheduled: (patientName?: string) => 
-      patientName 
-        ? `Consulta agendada para ${patientName}` 
+    appointmentScheduled: (patientName?: string) =>
+      patientName
+        ? `Consulta agendada para ${patientName}`
         : 'Consulta agendada com sucesso',
-    appointmentCanceled: (patientName?: string) => 
-      patientName 
-        ? `Consulta cancelada para ${patientName}` 
+    appointmentCanceled: (patientName?: string) =>
+      patientName
+        ? `Consulta cancelada para ${patientName}`
         : 'Consulta cancelada',
-    appointmentCompleted: (patientName?: string) => 
-      patientName 
-        ? `Consulta concluída para ${patientName}` 
+    appointmentCompleted: (patientName?: string) =>
+      patientName
+        ? `Consulta concluída para ${patientName}`
         : 'Consulta concluída',
     formSubmitted: 'Formulário enviado com sucesso',
     formSubmissionError: 'Erro ao enviar formulário',
     dataUpdated: 'Dados atualizados com sucesso',
-    dataUpdateError: 'Erro ao atualizar dados'
+    dataUpdateError: 'Erro ao atualizar dados',
   },
 
   accessibility: {
@@ -256,25 +259,25 @@ export const ptBRStrings: LocalizationStrings = {
     closeDialog: 'Fechar diálogo',
     expandSection: (section: string) => `Expandir seção: ${section}`,
     collapseSection: (section: string) => `Recolher seção: ${section}`,
-    sortColumn: (column: string, direction: 'ascending' | 'descending') => 
+    sortColumn: (column: string, direction: 'ascending' | 'descending') =>
       `Ordenar coluna ${column} em ordem ${direction === 'ascending' ? 'crescente' : 'decrescente'}`,
-    filterResults: (count: number) => 
-      count === 0 
+    filterResults: (count: number) =>
+      count === 0
         ? 'Nenhum resultado encontrado'
-        : count === 1 
-        ? '1 resultado encontrado'
-        : `${count} resultados encontrados`,
-    searchResults: (count: number, query: string) => 
-      count === 0 
+        : count === 1
+          ? '1 resultado encontrado'
+          : `${count} resultados encontrados`,
+    searchResults: (count: number, query: string) =>
+      count === 0
         ? `Nenhum resultado encontrado para "${query}"`
-        : count === 1 
-        ? `1 resultado encontrado para "${query}"`
-        : `${count} resultados encontrados para "${query}"`,
+        : count === 1
+          ? `1 resultado encontrado para "${query}"`
+          : `${count} resultados encontrados para "${query}"`,
     pageOf: (current: number, total: number) => `Página ${current} de ${total}`,
     selectedOption: (option: string) => `Opção selecionada: ${option}`,
     menuExpanded: 'Menu expandido',
     menuCollapsed: 'Menu recolhido',
-    tabSelected: (tab: string) => `Aba selecionada: ${tab}`
+    tabSelected: (tab: string) => `Aba selecionada: ${tab}`,
   },
 
   errors: {
@@ -290,8 +293,9 @@ export const ptBRStrings: LocalizationStrings = {
     invalidPhone: 'Digite um telefone válido',
     invalidDate: 'Digite uma data válida',
     invalidTime: 'Digite um horário válido',
-    passwordTooShort: (minLength: number) => `A senha deve ter pelo menos ${minLength} caracteres`,
-    passwordMismatch: 'As senhas não coincidem'
+    passwordTooShort: (minLength: number) =>
+      `A senha deve ter pelo menos ${minLength} caracteres`,
+    passwordMismatch: 'As senhas não coincidem',
   },
 
   success: {
@@ -302,7 +306,7 @@ export const ptBRStrings: LocalizationStrings = {
     sent: 'Enviado com sucesso',
     scheduled: 'Agendado com sucesso',
     canceled: 'Cancelado com sucesso',
-    completed: 'Concluído com sucesso'
+    completed: 'Concluído com sucesso',
   },
 
   dateTime: {
@@ -316,23 +320,24 @@ export const ptBRStrings: LocalizationStrings = {
     nextMonth: 'próximo mês',
     lastMonth: 'mês passado',
     formatDate: (date: Date) => date.toLocaleDateString('pt-BR'),
-    formatTime: (date: Date) => date.toLocaleTimeString('pt-BR', { 
-      hour: '2-digit', 
-      minute: '2-digit' 
-    }),
+    formatTime: (date: Date) =>
+      date.toLocaleTimeString('pt-BR', {
+        hour: '2-digit',
+        minute: '2-digit',
+      }),
     formatDateTime: (date: Date) => date.toLocaleString('pt-BR'),
     relativeTime: (date: Date) => {
-      const now = new Date()
-      const diff = now.getTime() - date.getTime()
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24))
-      
-      if (days === 0) return 'hoje'
-      if (days === 1) return 'ontem'
-      if (days === -1) return 'amanhã'
-      if (days > 1) return `há ${days} dias`
-      if (days < -1) return `em ${Math.abs(days)} dias`
-      return date.toLocaleDateString('pt-BR')
-    }
+      const now = new Date();
+      const diff = now.getTime() - date.getTime();
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+      if (days === 0) return 'hoje';
+      if (days === 1) return 'ontem';
+      if (days === -1) return 'amanhã';
+      if (days > 1) return `há ${days} dias`;
+      if (days < -1) return `em ${Math.abs(days)} dias`;
+      return date.toLocaleDateString('pt-BR');
+    },
   },
 
   actions: {
@@ -357,9 +362,9 @@ export const ptBRStrings: LocalizationStrings = {
     schedule: 'agendar',
     reschedule: 'reagendar',
     viewDetails: 'ver detalhes',
-    viewAll: 'ver todos'
-  }
-}
+    viewAll: 'ver todos',
+  },
+};
 
 // Helper function to format healthcare-specific messages
 export function formatHealthcareMessage(
@@ -371,38 +376,40 @@ export function formatHealthcareMessage(
     appointment: 'consulta',
     patient: 'paciente',
     treatment: 'tratamento',
-    medication: 'medicamento'
-  }
+    medication: 'medicamento',
+  };
 
   const actionMap = {
     created: 'criado',
-    updated: 'atualizado', 
+    updated: 'atualizado',
     deleted: 'excluído',
     scheduled: 'agendado',
-    completed: 'concluído'
-  }
+    completed: 'concluído',
+  };
 
-  const typeStr = typeMap[type]
-  const actionStr = actionMap[action]
+  const typeStr = typeMap[type];
+  const actionStr = actionMap[action];
 
   if (name) {
-    return `${typeStr} ${actionStr} para ${name}`
+    return `${typeStr} ${actionStr} para ${name}`;
   }
 
-  return `${typeStr} ${actionStr} com sucesso`
+  return `${typeStr} ${actionStr} com sucesso`;
 }
 
 // ARIA labels for healthcare contexts
 export const healthcareAriaLabels = {
   patientCard: (patientName: string) => `Cartão do paciente ${patientName}`,
-  appointmentCard: (patientName: string, date: string, time: string) => 
+  appointmentCard: (patientName: string, date: string, time: string) =>
     `Consulta de ${patientName} em ${date} às ${time}`,
-  treatmentPlan: (patientName: string) => `Plano de tratamento de ${patientName}`,
+  treatmentPlan: (patientName: string) =>
+    `Plano de tratamento de ${patientName}`,
   medicalHistory: (patientName: string) => `Histórico médico de ${patientName}`,
   vitalSigns: (patientName: string) => `Sinais vitais de ${patientName}`,
-  prescriptionList: (patientName: string) => `Lista de prescrições de ${patientName}`,
+  prescriptionList: (patientName: string) =>
+    `Lista de prescrições de ${patientName}`,
   allergyList: (patientName: string) => `Lista de alergias de ${patientName}`,
   appointmentStatus: (status: string) => `Status da consulta: ${status}`,
   patientStatus: (status: string) => `Status do paciente: ${status}`,
-  urgencyLevel: (level: string) => `Nível de urgência: ${level}`
-}
+  urgencyLevel: (level: string) => `Nível de urgência: ${level}`,
+};

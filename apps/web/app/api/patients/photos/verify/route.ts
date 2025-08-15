@@ -1,72 +1,79 @@
 /**
  * Patient Identity Verification API
  * Handles facial recognition verification for patient identity
- * 
+ *
  * @route POST /api/patients/photos/verify
  * @author APEX Master Developer
  */
 
-import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
-import { PhotoRecognitionManager, defaultPhotoRecognitionConfig } from '../../../../../lib/patients/photo-recognition/photo-recognition-manager'
-import { AuditLogger } from '../../../../../lib/audit/audit-logger'
-import { LGPDManager } from '../../../../../lib/security/lgpd-manager'
+import { createClient } from '@supabase/supabase-js';
+import { type NextRequest, NextResponse } from 'next/server';
+import { AuditLogger } from '../../../../../lib/audit/audit-logger';
+import {
+  defaultPhotoRecognitionConfig,
+  PhotoRecognitionManager,
+} from '../../../../../lib/patients/photo-recognition/photo-recognition-manager';
+import { LGPDManager } from '../../../../../lib/security/lgpd-manager';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+);
 
-const auditLogger = new AuditLogger(supabase)
-const lgpdManager = new LGPDManager(supabase, auditLogger)
+const auditLogger = new AuditLogger(supabase);
+const lgpdManager = new LGPDManager(supabase, auditLogger);
 const photoManager = new PhotoRecognitionManager(
   supabase,
   auditLogger,
   lgpdManager,
   defaultPhotoRecognitionConfig
-)
+);
 
 export async function POST(request: NextRequest) {
   try {
     // Get user session
-    const authHeader = request.headers.get('authorization')
+    const authHeader = request.headers.get('authorization');
     if (!authHeader) {
       return NextResponse.json(
         { error: 'Authorization required' },
         { status: 401 }
-      )
+      );
     }
 
-    const token = authHeader.replace('Bearer ', '')
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token)
-    
+    const token = authHeader.replace('Bearer ', '');
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser(token);
+
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Invalid authentication' },
         { status: 401 }
-      )
+      );
     }
 
     // Parse form data
-    const formData = await request.formData()
-    const photoFile = formData.get('photo') as File
-    const patientId = formData.get('patientId') as string
-    const verificationContext = formData.get('context') as string || 'identity_check'
-    
-    if (!photoFile || !patientId) {
+    const formData = await request.formData();
+    const photoFile = formData.get('photo') as File;
+    const patientId = formData.get('patientId') as string;
+    const verificationContext =
+      (formData.get('context') as string) || 'identity_check';
+
+    if (!(photoFile && patientId)) {
       return NextResponse.json(
         { error: 'Photo file and patient ID are required' },
         { status: 400 }
-      )
+      );
     }
 
     // Validate file type
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
     if (!allowedTypes.includes(photoFile.type)) {
       return NextResponse.json(
         { error: 'Invalid file type. Only JPEG, PNG, and WebP are allowed' },
         { status: 400 }
-      )
+      );
     }
 
     // Validate file size (5MB max for verification)
@@ -74,7 +81,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: 'File too large. Maximum size is 5MB for verification' },
         { status: 400 }
-      )
+      );
     }
 
     // Check if patient exists
@@ -82,13 +89,10 @@ export async function POST(request: NextRequest) {
       .from('patients')
       .select('id, name')
       .eq('id', patientId)
-      .single()
-    
+      .single();
+
     if (patientError || !patient) {
-      return NextResponse.json(
-        { error: 'Patient not found' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: 'Patient not found' }, { status: 404 });
     }
 
     // Perform identity verification
@@ -97,35 +101,34 @@ export async function POST(request: NextRequest) {
       photoFile,
       user.id,
       verificationContext
-    )
+    );
 
     return NextResponse.json({
       success: true,
       data: {
         verified: verificationResult.verified,
         confidence: verificationResult.confidence,
-        matchedPhotos: verificationResult.matchedPhotos.map(photo => ({
+        matchedPhotos: verificationResult.matchedPhotos.map((photo) => ({
           id: photo.id,
           type: photo.type,
           confidence: photo.confidence,
-          uploadedAt: photo.uploadedAt
+          uploadedAt: photo.uploadedAt,
         })),
         verificationId: verificationResult.verificationId,
         timestamp: verificationResult.timestamp,
-        recommendations: verificationResult.recommendations
-      }
-    })
-
+        recommendations: verificationResult.recommendations,
+      },
+    });
   } catch (error) {
-    console.error('Identity verification error:', error)
-    
+    console.error('Identity verification error:', error);
+
     return NextResponse.json(
       {
         error: 'Verification failed',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
-    )
+    );
   }
 }
 
@@ -133,35 +136,38 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     // Get user session
-    const authHeader = request.headers.get('authorization')
+    const authHeader = request.headers.get('authorization');
     if (!authHeader) {
       return NextResponse.json(
         { error: 'Authorization required' },
         { status: 401 }
-      )
+      );
     }
 
-    const token = authHeader.replace('Bearer ', '')
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token)
-    
+    const token = authHeader.replace('Bearer ', '');
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser(token);
+
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Invalid authentication' },
         { status: 401 }
-      )
+      );
     }
 
     // Get query parameters
-    const { searchParams } = new URL(request.url)
-    const patientId = searchParams.get('patientId')
-    const limit = parseInt(searchParams.get('limit') || '10')
-    const offset = parseInt(searchParams.get('offset') || '0')
-    
+    const { searchParams } = new URL(request.url);
+    const patientId = searchParams.get('patientId');
+    const limit = Number.parseInt(searchParams.get('limit') || '10', 10);
+    const offset = Number.parseInt(searchParams.get('offset') || '0', 10);
+
     if (!patientId) {
       return NextResponse.json(
         { error: 'Patient ID is required' },
         { status: 400 }
-      )
+      );
     }
 
     // Get verification history
@@ -177,10 +183,10 @@ export async function GET(request: NextRequest) {
       `)
       .eq('patient_id', patientId)
       .order('created_at', { ascending: false })
-      .range(offset, offset + limit - 1)
-    
+      .range(offset, offset + limit - 1);
+
     if (verificationError) {
-      throw verificationError
+      throw verificationError;
     }
 
     return NextResponse.json({
@@ -189,19 +195,18 @@ export async function GET(request: NextRequest) {
       pagination: {
         limit,
         offset,
-        hasMore: (verifications?.length || 0) === limit
-      }
-    })
-
+        hasMore: (verifications?.length || 0) === limit,
+      },
+    });
   } catch (error) {
-    console.error('Get verification history error:', error)
-    
+    console.error('Get verification history error:', error);
+
     return NextResponse.json(
       {
         error: 'Failed to get verification history',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
-    )
+    );
   }
 }

@@ -67,7 +67,14 @@ export interface ImageAnalysisResult {
 export interface MeasurementMetric {
   id: string;
   metric_name: string;
-  metric_type: 'distance' | 'area' | 'volume' | 'angle' | 'texture' | 'color' | 'symmetry';
+  metric_type:
+    | 'distance'
+    | 'area'
+    | 'volume'
+    | 'angle'
+    | 'texture'
+    | 'color'
+    | 'symmetry';
   measurement_unit?: string;
   calculation_method?: string;
   accuracy_weight: number;
@@ -94,7 +101,12 @@ export interface TreatmentArea {
 export interface VisualAnnotation {
   id: string;
   analysis_result_id: string;
-  annotation_type: 'highlight' | 'measurement' | 'comparison' | 'change_area' | 'improvement_zone';
+  annotation_type:
+    | 'highlight'
+    | 'measurement'
+    | 'comparison'
+    | 'change_area'
+    | 'improvement_zone';
   coordinates: Record<string, any>;
   annotation_data?: Record<string, any>;
   style_properties?: Record<string, any>;
@@ -106,7 +118,12 @@ export interface VisualAnnotation {
 export interface AnalysisReport {
   id: string;
   session_id: string;
-  report_type: 'summary' | 'detailed' | 'patient_consultation' | 'clinical' | 'research';
+  report_type:
+    | 'summary'
+    | 'detailed'
+    | 'patient_consultation'
+    | 'clinical'
+    | 'research';
   report_title?: string;
   generated_at: string;
   report_data?: Record<string, any>;

@@ -6,8 +6,14 @@
 
 'use client';
 
-import type { BarcodeFormat, BarcodeResult, ScanConfiguration, ScannerError, ScannerState } from '@/lib/types/inventory';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import type {
+  BarcodeFormat,
+  BarcodeResult,
+  ScanConfiguration,
+  ScannerError,
+  ScannerState,
+} from '@/lib/types/inventory';
 
 interface UseBarcodeOptions {
   enableContinuousScanning?: boolean;
@@ -25,29 +31,29 @@ interface UseBarcodeReturn {
   isInitialized: boolean;
   hasPermission: boolean;
   error: ScannerError | null;
-  
+
   // Scan result
   lastResult: BarcodeResult | null;
   scanHistory: BarcodeResult[];
-  
+
   // Controls
   startScanning: (videoElement?: HTMLVideoElement) => Promise<boolean>;
   stopScanning: () => void;
   toggleScanning: () => void;
   switchCamera: () => Promise<void>;
-  
+
   // Camera management
   availableCameras: MediaDeviceInfo[];
   currentCamera: MediaDeviceInfo | null;
-  
+
   // Configuration
   configuration: ScanConfiguration;
   updateConfiguration: (config: Partial<ScanConfiguration>) => void;
-  
+
   // Utils
   clearHistory: () => void;
   clearError: () => void;
-  
+
   // Manual input fallback
   processManualInput: (barcodeValue: string) => void;
 }
@@ -60,7 +66,7 @@ const DEFAULT_CONFIGURATION: ScanConfiguration = {
   autoFocus: true,
   preferredCameraFacing: 'environment', // Back camera for mobile
   scanDelay: 500, // ms between scans
-  maxHistorySize: 100
+  maxHistorySize: 100,
 };
 
 export function useBarcode(options: UseBarcodeOptions = {}): UseBarcodeReturn {
@@ -70,7 +76,7 @@ export function useBarcode(options: UseBarcodeOptions = {}): UseBarcodeReturn {
     onScanError,
     beepOnScan = true,
     vibrationOnScan = true,
-    preferredDeviceId
+    preferredDeviceId,
   } = options;
 
   // State
@@ -82,14 +88,14 @@ export function useBarcode(options: UseBarcodeOptions = {}): UseBarcodeReturn {
     lastResult: null,
     scanHistory: [],
     availableCameras: [],
-    currentCamera: null
+    currentCamera: null,
   });
 
   const [configuration, setConfiguration] = useState<ScanConfiguration>({
     ...DEFAULT_CONFIGURATION,
     enableContinuous: enableContinuousScanning,
     beepOnScan,
-    vibrationOnScan
+    vibrationOnScan,
   });
 
   // Refs
@@ -101,18 +107,20 @@ export function useBarcode(options: UseBarcodeOptions = {}): UseBarcodeReturn {
   // Audio feedback
   const playBeep = useCallback(() => {
     if (!configuration.beepOnScan) return;
-    
+
     try {
-      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const audioContext = new (
+        window.AudioContext || (window as any).webkitAudioContext
+      )();
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
-      
+
       oscillator.connect(gainNode);
       gainNode.connect(audioContext.destination);
-      
+
       oscillator.frequency.value = 800; // Hz
       gainNode.gain.value = 0.1;
-      
+
       oscillator.start();
       oscillator.stop(audioContext.currentTime + 0.2);
     } catch (error) {
@@ -122,8 +130,8 @@ export function useBarcode(options: UseBarcodeOptions = {}): UseBarcodeReturn {
 
   // Vibration feedback
   const triggerVibration = useCallback(() => {
-    if (!configuration.vibrationOnScan || !navigator.vibrate) return;
-    
+    if (!(configuration.vibrationOnScan && navigator.vibrate)) return;
+
     try {
       navigator.vibrate(200); // 200ms vibration
     } catch (error) {
@@ -132,12 +140,14 @@ export function useBarcode(options: UseBarcodeOptions = {}): UseBarcodeReturn {
   }, [configuration.vibrationOnScan]);
 
   // Get available cameras
-  const getAvailableCameras = useCallback(async (): Promise<MediaDeviceInfo[]> => {
+  const getAvailableCameras = useCallback(async (): Promise<
+    MediaDeviceInfo[]
+  > => {
     try {
       const devices = await navigator.mediaDevices.enumerateDevices();
-      const cameras = devices.filter(device => device.kind === 'videoinput');
-      
-      setState(prev => ({ ...prev, availableCameras: cameras }));
+      const cameras = devices.filter((device) => device.kind === 'videoinput');
+
+      setState((prev) => ({ ...prev, availableCameras: cameras }));
       return cameras;
     } catch (error) {
       console.error('Error getting cameras:', error);
@@ -149,16 +159,18 @@ export function useBarcode(options: UseBarcodeOptions = {}): UseBarcodeReturn {
   const initializeScanner = useCallback(async (): Promise<boolean> => {
     try {
       // Check for camera permission
-      const permission = await navigator.permissions.query({ name: 'camera' as PermissionName });
-      
+      const permission = await navigator.permissions.query({
+        name: 'camera' as PermissionName,
+      });
+
       if (permission.state === 'denied') {
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
           error: {
             type: 'PERMISSION_DENIED',
             message: 'Camera permission denied',
-            timestamp: new Date().toISOString()
-          }
+            timestamp: new Date().toISOString(),
+          },
         }));
         return false;
       }
@@ -166,175 +178,212 @@ export function useBarcode(options: UseBarcodeOptions = {}): UseBarcodeReturn {
       // Get available cameras
       await getAvailableCameras();
 
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
         isInitialized: true,
-        hasPermission: permission.state === 'granted' || permission.state === 'prompt',
-        error: null
+        hasPermission:
+          permission.state === 'granted' || permission.state === 'prompt',
+        error: null,
       }));
 
       return true;
     } catch (error) {
       console.error('Error initializing scanner:', error);
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
         error: {
           type: 'INITIALIZATION_ERROR',
-          message: error instanceof Error ? error.message : 'Failed to initialize scanner',
-          timestamp: new Date().toISOString()
-        }
+          message:
+            error instanceof Error
+              ? error.message
+              : 'Failed to initialize scanner',
+          timestamp: new Date().toISOString(),
+        },
       }));
       return false;
     }
   }, [getAvailableCameras]);
 
   // Process scan result
-  const processScanResult = useCallback((data: string, format: BarcodeFormat = 'unknown') => {
-    if (isProcessingScan.current) return;
-    isProcessingScan.current = true;
+  const processScanResult = useCallback(
+    (data: string, format: BarcodeFormat = 'unknown') => {
+      if (isProcessingScan.current) return;
+      isProcessingScan.current = true;
 
-    const scanResult: BarcodeResult = {
-      data,
-      format,
-      timestamp: new Date().toISOString(),
-      sessionId: crypto.randomUUID()
-    };
-
-    setState(prev => {
-      const newHistory = configuration.saveScanHistory
-        ? [scanResult, ...prev.scanHistory.slice(0, configuration.maxHistorySize - 1)]
-        : prev.scanHistory;
-
-      return {
-        ...prev,
-        lastResult: scanResult,
-        scanHistory: newHistory,
-        error: null
+      const scanResult: BarcodeResult = {
+        data,
+        format,
+        timestamp: new Date().toISOString(),
+        sessionId: crypto.randomUUID(),
       };
-    });
 
-    // Feedback
-    playBeep();
-    triggerVibration();
+      setState((prev) => {
+        const newHistory = configuration.saveScanHistory
+          ? [
+              scanResult,
+              ...prev.scanHistory.slice(0, configuration.maxHistorySize - 1),
+            ]
+          : prev.scanHistory;
 
-    // Callback
-    if (onScanSuccess) {
-      onScanSuccess(scanResult);
-    }
+        return {
+          ...prev,
+          lastResult: scanResult,
+          scanHistory: newHistory,
+          error: null,
+        };
+      });
 
-    // Reset processing flag after delay
-    setTimeout(() => {
-      isProcessingScan.current = false;
-    }, configuration.scanDelay);
-  }, [configuration.saveScanHistory, configuration.maxHistorySize, configuration.scanDelay, playBeep, triggerVibration, onScanSuccess]);
+      // Feedback
+      playBeep();
+      triggerVibration();
+
+      // Callback
+      if (onScanSuccess) {
+        onScanSuccess(scanResult);
+      }
+
+      // Reset processing flag after delay
+      setTimeout(() => {
+        isProcessingScan.current = false;
+      }, configuration.scanDelay);
+    },
+    [
+      configuration.saveScanHistory,
+      configuration.maxHistorySize,
+      configuration.scanDelay,
+      playBeep,
+      triggerVibration,
+      onScanSuccess,
+    ]
+  );
 
   // Handle scan error
-  const handleScanError = useCallback((error: Error) => {
-    console.error('Scan error:', error);
+  const _handleScanError = useCallback(
+    (error: Error) => {
+      console.error('Scan error:', error);
 
-    const scanError: ScannerError = {
-      type: 'SCAN_ERROR',
-      message: error.message,
-      timestamp: new Date().toISOString()
-    };
-
-    setState(prev => ({ ...prev, error: scanError }));
-
-    if (onScanError) {
-      onScanError(scanError);
-    }
-  }, [onScanError]);
-
-  // Start scanning
-  const startScanning = useCallback(async (videoElement?: HTMLVideoElement): Promise<boolean> => {
-    try {
-      if (!state.isInitialized) {
-        const initialized = await initializeScanner();
-        if (!initialized) return false;
-      }
-
-      const video = videoElement || videoElementRef.current;
-      if (!video) {
-        setState(prev => ({
-          ...prev,
-          error: {
-            type: 'NO_VIDEO_ELEMENT',
-            message: 'No video element provided',
-            timestamp: new Date().toISOString()
-          }
-        }));
-        return false;
-      }
-
-      videoElementRef.current = video;
-
-      // Select camera
-      const cameras = await getAvailableCameras();
-      let selectedCamera = cameras.find(camera => camera.deviceId === preferredDeviceId);
-      
-      if (!selectedCamera && cameras.length > 0) {
-        // Prefer back camera for mobile
-        selectedCamera = cameras.find(camera => 
-          camera.label.toLowerCase().includes('back') || 
-          camera.label.toLowerCase().includes('environment')
-        ) || cameras[0];
-      }
-
-      if (!selectedCamera) {
-        setState(prev => ({
-          ...prev,
-          error: {
-            type: 'NO_CAMERA_AVAILABLE',
-            message: 'No camera available',
-            timestamp: new Date().toISOString()
-          }
-        }));
-        return false;
-      }
-
-      // Get media stream
-      const constraints: MediaStreamConstraints = {
-        video: {
-          deviceId: selectedCamera.deviceId,
-          facingMode: configuration.preferredCameraFacing,
-          width: { ideal: 1280 },
-          height: { ideal: 720 },
-          ...options.constraints
-        }
+      const scanError: ScannerError = {
+        type: 'SCAN_ERROR',
+        message: error.message,
+        timestamp: new Date().toISOString(),
       };
 
-      const stream = await navigator.mediaDevices.getUserMedia(constraints);
-      streamRef.current = stream;
-      video.srcObject = stream;
+      setState((prev) => ({ ...prev, error: scanError }));
 
-      setState(prev => ({
-        ...prev,
-        currentCamera: selectedCamera!,
-        isScanning: true,
-        error: null
-      }));
+      if (onScanError) {
+        onScanError(scanError);
+      }
+    },
+    [onScanError]
+  );
 
-      return true;
-    } catch (error) {
-      console.error('Error starting scanner:', error);
-      setState(prev => ({
-        ...prev,
-        isScanning: false,
-        error: {
-          type: 'START_ERROR',
-          message: error instanceof Error ? error.message : 'Failed to start scanning',
-          timestamp: new Date().toISOString()
+  // Start scanning
+  const startScanning = useCallback(
+    async (videoElement?: HTMLVideoElement): Promise<boolean> => {
+      try {
+        if (!state.isInitialized) {
+          const initialized = await initializeScanner();
+          if (!initialized) return false;
         }
-      }));
-      return false;
-    }
-  }, [state.isInitialized, initializeScanner, getAvailableCameras, preferredDeviceId, configuration.preferredCameraFacing, options.constraints]);
+
+        const video = videoElement || videoElementRef.current;
+        if (!video) {
+          setState((prev) => ({
+            ...prev,
+            error: {
+              type: 'NO_VIDEO_ELEMENT',
+              message: 'No video element provided',
+              timestamp: new Date().toISOString(),
+            },
+          }));
+          return false;
+        }
+
+        videoElementRef.current = video;
+
+        // Select camera
+        const cameras = await getAvailableCameras();
+        let selectedCamera = cameras.find(
+          (camera) => camera.deviceId === preferredDeviceId
+        );
+
+        if (!selectedCamera && cameras.length > 0) {
+          // Prefer back camera for mobile
+          selectedCamera =
+            cameras.find(
+              (camera) =>
+                camera.label.toLowerCase().includes('back') ||
+                camera.label.toLowerCase().includes('environment')
+            ) || cameras[0];
+        }
+
+        if (!selectedCamera) {
+          setState((prev) => ({
+            ...prev,
+            error: {
+              type: 'NO_CAMERA_AVAILABLE',
+              message: 'No camera available',
+              timestamp: new Date().toISOString(),
+            },
+          }));
+          return false;
+        }
+
+        // Get media stream
+        const constraints: MediaStreamConstraints = {
+          video: {
+            deviceId: selectedCamera.deviceId,
+            facingMode: configuration.preferredCameraFacing,
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+            ...options.constraints,
+          },
+        };
+
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        streamRef.current = stream;
+        video.srcObject = stream;
+
+        setState((prev) => ({
+          ...prev,
+          currentCamera: selectedCamera!,
+          isScanning: true,
+          error: null,
+        }));
+
+        return true;
+      } catch (error) {
+        console.error('Error starting scanner:', error);
+        setState((prev) => ({
+          ...prev,
+          isScanning: false,
+          error: {
+            type: 'START_ERROR',
+            message:
+              error instanceof Error
+                ? error.message
+                : 'Failed to start scanning',
+            timestamp: new Date().toISOString(),
+          },
+        }));
+        return false;
+      }
+    },
+    [
+      state.isInitialized,
+      initializeScanner,
+      getAvailableCameras,
+      preferredDeviceId,
+      configuration.preferredCameraFacing,
+      options.constraints,
+    ]
+  );
 
   // Stop scanning
   const stopScanning = useCallback(() => {
     try {
       if (streamRef.current) {
-        streamRef.current.getTracks().forEach(track => track.stop());
+        streamRef.current.getTracks().forEach((track) => track.stop());
         streamRef.current = null;
       }
 
@@ -347,9 +396,9 @@ export function useBarcode(options: UseBarcodeOptions = {}): UseBarcodeReturn {
         scanTimeoutRef.current = null;
       }
 
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
-        isScanning: false
+        isScanning: false,
       }));
     } catch (error) {
       console.error('Error stopping scanner:', error);
@@ -370,9 +419,10 @@ export function useBarcode(options: UseBarcodeOptions = {}): UseBarcodeReturn {
     if (state.availableCameras.length <= 1) return;
 
     const currentIndex = state.availableCameras.findIndex(
-      (camera: MediaDeviceInfo) => camera.deviceId === state.currentCamera?.deviceId
+      (camera: MediaDeviceInfo) =>
+        camera.deviceId === state.currentCamera?.deviceId
     );
-    
+
     const nextIndex = (currentIndex + 1) % state.availableCameras.length;
     const nextCamera = state.availableCameras[nextIndex];
 
@@ -380,35 +430,47 @@ export function useBarcode(options: UseBarcodeOptions = {}): UseBarcodeReturn {
       stopScanning();
       // Small delay before starting with new camera
       setTimeout(() => {
-        setState(prev => ({ ...prev, currentCamera: nextCamera }));
+        setState((prev) => ({ ...prev, currentCamera: nextCamera }));
         startScanning();
       }, 100);
     } else {
-      setState(prev => ({ ...prev, currentCamera: nextCamera }));
+      setState((prev) => ({ ...prev, currentCamera: nextCamera }));
     }
-  }, [state.availableCameras, state.currentCamera, state.isScanning, stopScanning, startScanning]);
+  }, [
+    state.availableCameras,
+    state.currentCamera,
+    state.isScanning,
+    stopScanning,
+    startScanning,
+  ]);
 
   // Update configuration
-  const updateConfiguration = useCallback((config: Partial<ScanConfiguration>) => {
-    setConfiguration(prev => ({ ...prev, ...config }));
-  }, []);
+  const updateConfiguration = useCallback(
+    (config: Partial<ScanConfiguration>) => {
+      setConfiguration((prev) => ({ ...prev, ...config }));
+    },
+    []
+  );
 
   // Clear history
   const clearHistory = useCallback(() => {
-    setState(prev => ({ ...prev, scanHistory: [] }));
+    setState((prev) => ({ ...prev, scanHistory: [] }));
   }, []);
 
   // Clear error
   const clearError = useCallback(() => {
-    setState(prev => ({ ...prev, error: null }));
+    setState((prev) => ({ ...prev, error: null }));
   }, []);
 
   // Manual input fallback
-  const processManualInput = useCallback((barcodeValue: string) => {
-    if (barcodeValue.trim()) {
-      processScanResult(barcodeValue.trim(), 'unknown');
-    }
-  }, [processScanResult]);
+  const processManualInput = useCallback(
+    (barcodeValue: string) => {
+      if (barcodeValue.trim()) {
+        processScanResult(barcodeValue.trim(), 'unknown');
+      }
+    },
+    [processScanResult]
+  );
 
   // Initialize on mount
   useEffect(() => {
@@ -436,6 +498,6 @@ export function useBarcode(options: UseBarcodeOptions = {}): UseBarcodeReturn {
     updateConfiguration,
     clearHistory,
     clearError,
-    processManualInput
+    processManualInput,
   };
 }

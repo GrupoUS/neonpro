@@ -2,9 +2,9 @@
  * =====================================================================================
  * PREDICTIVE CASH FLOW API - SCENARIOS ENDPOINT
  * =====================================================================================
- * 
+ *
  * API for managing forecasting scenarios and scenario-based predictions.
- * 
+ *
  * Epic: 5 - Advanced Financial Intelligence
  * Story: 5.2 - Predictive Cash Flow Analysis
  * Author: VoidBeast V4.0 BMad Method Integration
@@ -12,12 +12,12 @@
  * =====================================================================================
  */
 
-import { NextRequest, NextResponse } from 'next/server';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { createForecastingScenarioSchema } from '@/lib/validations/predictive-cash-flow';
 import type { Database } from '@/lib/database.types';
+import { createForecastingScenarioSchema } from '@/lib/validations/predictive-cash-flow';
 
 const getScenariosSchema = z.object({
   clinicId: z.string().uuid(),
@@ -55,9 +55,11 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json({ scenarios: scenarios || [] });
-
   } catch (error) {
-    console.error('Error in GET /api/financial/predictive-cash-flow/scenarios:', error);
+    console.error(
+      'Error in GET /api/financial/predictive-cash-flow/scenarios:',
+      error
+    );
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -97,9 +99,11 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({ scenario }, { status: 201 });
-
   } catch (error) {
-    console.error('Error in POST /api/financial/predictive-cash-flow/scenarios:', error);
+    console.error(
+      'Error in POST /api/financial/predictive-cash-flow/scenarios:',
+      error
+    );
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

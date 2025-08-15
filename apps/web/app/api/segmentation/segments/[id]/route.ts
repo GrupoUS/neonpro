@@ -1,20 +1,22 @@
+import { type NextRequest, NextResponse } from 'next/server';
 import { patientSegmentationService } from '@/app/lib/services/patient-segmentation-service';
 import { UpdateSegmentSchema } from '@/app/lib/validations/segmentation';
 import { createClient } from '@/app/utils/supabase/server';
-import { NextRequest, NextResponse } from 'next/server';
 
 interface RouteParams {
   id: string;
 }
 
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: RouteParams }
 ) {
   try {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -26,9 +28,8 @@ export async function GET(
 
     return NextResponse.json({
       success: true,
-      data: analytics
+      data: analytics,
     });
-
   } catch (error) {
     console.error('Error fetching segment analytics:', error);
     return NextResponse.json(
@@ -44,15 +45,17 @@ export async function PUT(
 ) {
   try {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { id } = params;
     const body = await request.json();
-    
+
     const validationResult = UpdateSegmentSchema.safeParse(body);
 
     if (!validationResult.success) {
@@ -67,7 +70,7 @@ export async function PUT(
       .from('patient_segments')
       .update({
         ...validationResult.data,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', id);
 
@@ -75,9 +78,8 @@ export async function PUT(
 
     return NextResponse.json({
       success: true,
-      message: 'Segment updated successfully'
+      message: 'Segment updated successfully',
     });
-
   } catch (error) {
     console.error('Error updating segment:', error);
     return NextResponse.json(
@@ -88,13 +90,15 @@ export async function PUT(
 }
 
 export async function DELETE(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: RouteParams }
 ) {
   try {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -106,7 +110,7 @@ export async function DELETE(
       .from('patient_segments')
       .update({
         is_active: false,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', id);
 
@@ -114,9 +118,8 @@ export async function DELETE(
 
     return NextResponse.json({
       success: true,
-      message: 'Segment deactivated successfully'
+      message: 'Segment deactivated successfully',
     });
-
   } catch (error) {
     console.error('Error deactivating segment:', error);
     return NextResponse.json(

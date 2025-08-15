@@ -1,26 +1,24 @@
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import {
-  SessionInfo,
+import type {
   DeviceInfo,
-  SecurityEvent,
-  SessionPolicy,
   DeviceType,
-  SecurityEventType
+  SecurityEvent,
+  SessionInfo,
+  SessionPolicy,
 } from '@/types/session';
 
 /**
  * Session utility functions
  */
 export class SessionUtils {
-  private static supabase = createClientComponentClient();
-
   /**
    * Generate a secure session token
    */
   static generateSessionToken(): string {
     const array = new Uint8Array(32);
     crypto.getRandomValues(array);
-    return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+    return Array.from(array, (byte) => byte.toString(16).padStart(2, '0')).join(
+      ''
+    );
   }
 
   /**
@@ -38,13 +36,13 @@ export class SessionUtils {
     const fingerprint = [
       navigator.userAgent,
       navigator.language,
-      screen.width + 'x' + screen.height,
+      `${screen.width}x${screen.height}`,
       screen.colorDepth,
       new Date().getTimezoneOffset(),
-      canvas.toDataURL()
+      canvas.toDataURL(),
     ].join('|');
 
-    return this.hashString(fingerprint);
+    return SessionUtils.hashString(fingerprint);
   }
 
   /**
@@ -55,7 +53,7 @@ export class SessionUtils {
     const data = encoder.encode(str);
     const hashBuffer = await crypto.subtle.digest('SHA-256', data);
     const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
   }
 
   /**
@@ -66,7 +64,7 @@ export class SessionUtils {
     if (str.length === 0) return hash.toString();
     for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash; // Convert to 32-bit integer
     }
     return Math.abs(hash).toString(16);
@@ -77,15 +75,15 @@ export class SessionUtils {
    */
   static detectDeviceType(userAgent: string): DeviceType {
     const ua = userAgent.toLowerCase();
-    
+
     if (/mobile|android|iphone|ipod|blackberry|windows phone/.test(ua)) {
       return 'MOBILE';
     }
-    
+
     if (/tablet|ipad|kindle|silk/.test(ua)) {
       return 'TABLET';
     }
-    
+
     return 'DESKTOP';
   }
 
@@ -94,7 +92,7 @@ export class SessionUtils {
    */
   static getDeviceName(userAgent: string): string {
     const ua = userAgent.toLowerCase();
-    
+
     // Mobile devices
     if (ua.includes('iphone')) return 'iPhone';
     if (ua.includes('ipad')) return 'iPad';
@@ -102,18 +100,19 @@ export class SessionUtils {
       if (ua.includes('mobile')) return 'Android Phone';
       return 'Android Tablet';
     }
-    
+
     // Desktop browsers
     if (ua.includes('chrome')) return 'Chrome Browser';
     if (ua.includes('firefox')) return 'Firefox Browser';
-    if (ua.includes('safari') && !ua.includes('chrome')) return 'Safari Browser';
+    if (ua.includes('safari') && !ua.includes('chrome'))
+      return 'Safari Browser';
     if (ua.includes('edge')) return 'Edge Browser';
-    
+
     // Operating systems
     if (ua.includes('windows')) return 'Windows Computer';
     if (ua.includes('mac')) return 'Mac Computer';
     if (ua.includes('linux')) return 'Linux Computer';
-    
+
     return 'Unknown Device';
   }
 
@@ -147,17 +146,19 @@ export class SessionUtils {
     if (minutes < 60) {
       return `${minutes}m`;
     }
-    
+
     const hours = Math.floor(minutes / 60);
     const remainingMinutes = minutes % 60;
-    
+
     if (hours < 24) {
-      return remainingMinutes > 0 ? `${hours}h ${remainingMinutes}m` : `${hours}h`;
+      return remainingMinutes > 0
+        ? `${hours}h ${remainingMinutes}m`
+        : `${hours}h`;
     }
-    
+
     const days = Math.floor(hours / 24);
     const remainingHours = hours % 24;
-    
+
     return remainingHours > 0 ? `${days}d ${remainingHours}h` : `${days}d`;
   }
 
@@ -181,28 +182,31 @@ export class SessionUtils {
     // Simple check for same /24 subnet
     const parts1 = ip1.split('.');
     const parts2 = ip2.split('.');
-    
+
     if (parts1.length !== 4 || parts2.length !== 4) {
       return false;
     }
-    
+
     return parts1.slice(0, 3).join('.') === parts2.slice(0, 3).join('.');
   }
 
   /**
    * Generate security score based on session factors
    */
-  static calculateSecurityScore(session: SessionInfo, events: SecurityEvent[]): number {
+  static calculateSecurityScore(
+    session: SessionInfo,
+    events: SecurityEvent[]
+  ): number {
     let score = 100;
-    
+
     // Deduct points for security events
-    const recentEvents = events.filter(event => {
+    const recentEvents = events.filter((event) => {
       const eventTime = new Date(event.timestamp);
       const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
       return eventTime > oneDayAgo;
     });
-    
-    recentEvents.forEach(event => {
+
+    recentEvents.forEach((event) => {
       switch (event.severity) {
         case 'CRITICAL':
           score -= 30;
@@ -218,18 +222,21 @@ export class SessionUtils {
           break;
       }
     });
-    
+
     // Deduct points for session age
-    const sessionAge = this.calculateSessionDuration(session.created_at);
-    if (sessionAge > 24 * 60) { // More than 24 hours
+    const sessionAge = SessionUtils.calculateSessionDuration(
+      session.created_at
+    );
+    if (sessionAge > 24 * 60) {
+      // More than 24 hours
       score -= 10;
     }
-    
+
     // Deduct points if not from trusted device
     if (!session.device_trusted) {
       score -= 15;
     }
-    
+
     return Math.max(0, Math.min(100, score));
   }
 
@@ -237,9 +244,7 @@ export class SessionUtils {
    * Sanitize user input for security events
    */
   static sanitizeInput(input: string): string {
-    return input
-      .replace(/[<>"'&]/g, '')
-      .substring(0, 1000); // Limit length
+    return input.replace(/[<>"'&]/g, '').substring(0, 1000); // Limit length
   }
 
   /**
@@ -255,17 +260,17 @@ export class SessionUtils {
       /wget/i,
       /python-requests/i,
       /java/i,
-      /go-http-client/i
+      /go-http-client/i,
     ];
-    
-    return botPatterns.some(pattern => pattern.test(userAgent));
+
+    return botPatterns.some((pattern) => pattern.test(userAgent));
   }
 
   /**
    * Generate session policy based on user role and security level
    */
   static generateSessionPolicy(
-    userRole: string,
+    _userRole: string,
     securityLevel: 'LOW' | 'MEDIUM' | 'HIGH' = 'MEDIUM'
   ): Partial<SessionPolicy> {
     const basePolicy = {
@@ -275,9 +280,9 @@ export class SessionUtils {
       require_device_trust: false,
       allow_concurrent_ips: true,
       session_refresh_threshold: 60, // 1 hour
-      security_check_interval: 15 // 15 minutes
+      security_check_interval: 15, // 15 minutes
     };
-    
+
     switch (securityLevel) {
       case 'HIGH':
         return {
@@ -288,18 +293,18 @@ export class SessionUtils {
           require_device_trust: true,
           allow_concurrent_ips: false,
           session_refresh_threshold: 30, // 30 minutes
-          security_check_interval: 5 // 5 minutes
+          security_check_interval: 5, // 5 minutes
         };
-        
+
       case 'LOW':
         return {
           ...basePolicy,
           max_session_duration: 24 * 60, // 24 hours
           idle_timeout: 60, // 1 hour
           max_concurrent_sessions: 5,
-          security_check_interval: 30 // 30 minutes
+          security_check_interval: 30, // 30 minutes
         };
-        
+
       default:
         return basePolicy;
     }
@@ -317,35 +322,40 @@ export class SessionUtils {
       false,
       ['encrypt']
     );
-    
+
     const iv = crypto.getRandomValues(new Uint8Array(12));
     const encrypted = await crypto.subtle.encrypt(
       { name: 'AES-GCM', iv },
       keyData,
       encoder.encode(data)
     );
-    
+
     const combined = new Uint8Array(iv.length + encrypted.byteLength);
     combined.set(iv);
     combined.set(new Uint8Array(encrypted), iv.length);
-    
+
     return btoa(String.fromCharCode(...combined));
   }
 
   /**
    * Decrypt sensitive data
    */
-  static async decryptData(encryptedData: string, key: string): Promise<string> {
+  static async decryptData(
+    encryptedData: string,
+    key: string
+  ): Promise<string> {
     const decoder = new TextDecoder();
     const encoder = new TextEncoder();
-    
+
     const combined = new Uint8Array(
-      atob(encryptedData).split('').map(char => char.charCodeAt(0))
+      atob(encryptedData)
+        .split('')
+        .map((char) => char.charCodeAt(0))
     );
-    
+
     const iv = combined.slice(0, 12);
     const encrypted = combined.slice(12);
-    
+
     const keyData = await crypto.subtle.importKey(
       'raw',
       encoder.encode(key.padEnd(32, '0').substring(0, 32)),
@@ -353,13 +363,13 @@ export class SessionUtils {
       false,
       ['decrypt']
     );
-    
+
     const decrypted = await crypto.subtle.decrypt(
       { name: 'AES-GCM', iv },
       keyData,
       encrypted
     );
-    
+
     return decoder.decode(decrypted);
   }
 
@@ -370,15 +380,15 @@ export class SessionUtils {
     if (config.max_session_duration && config.max_session_duration < 5) {
       return false; // Minimum 5 minutes
     }
-    
+
     if (config.idle_timeout && config.idle_timeout < 1) {
       return false; // Minimum 1 minute
     }
-    
+
     if (config.max_concurrent_sessions && config.max_concurrent_sessions < 1) {
       return false; // At least 1 session
     }
-    
+
     return true;
   }
 }
@@ -389,60 +399,60 @@ export class SessionUtils {
 export class SessionStorage {
   private static readonly SESSION_KEY = 'neonpro_session';
   private static readonly DEVICE_KEY = 'neonpro_device';
-  
+
   /**
    * Store session data in localStorage
    */
   static setSession(session: Partial<SessionInfo>): void {
     try {
-      localStorage.setItem(this.SESSION_KEY, JSON.stringify(session));
+      localStorage.setItem(SessionStorage.SESSION_KEY, JSON.stringify(session));
     } catch (error) {
       console.warn('Failed to store session data:', error);
     }
   }
-  
+
   /**
    * Get session data from localStorage
    */
   static getSession(): Partial<SessionInfo> | null {
     try {
-      const data = localStorage.getItem(this.SESSION_KEY);
+      const data = localStorage.getItem(SessionStorage.SESSION_KEY);
       return data ? JSON.parse(data) : null;
     } catch (error) {
       console.warn('Failed to retrieve session data:', error);
       return null;
     }
   }
-  
+
   /**
    * Clear session data
    */
   static clearSession(): void {
     try {
-      localStorage.removeItem(this.SESSION_KEY);
-      localStorage.removeItem(this.DEVICE_KEY);
+      localStorage.removeItem(SessionStorage.SESSION_KEY);
+      localStorage.removeItem(SessionStorage.DEVICE_KEY);
     } catch (error) {
       console.warn('Failed to clear session data:', error);
     }
   }
-  
+
   /**
    * Store device data
    */
   static setDevice(device: Partial<DeviceInfo>): void {
     try {
-      localStorage.setItem(this.DEVICE_KEY, JSON.stringify(device));
+      localStorage.setItem(SessionStorage.DEVICE_KEY, JSON.stringify(device));
     } catch (error) {
       console.warn('Failed to store device data:', error);
     }
   }
-  
+
   /**
    * Get device data
    */
   static getDevice(): Partial<DeviceInfo> | null {
     try {
-      const data = localStorage.getItem(this.DEVICE_KEY);
+      const data = localStorage.getItem(SessionStorage.DEVICE_KEY);
       return data ? JSON.parse(data) : null;
     } catch (error) {
       console.warn('Failed to retrieve device data:', error);

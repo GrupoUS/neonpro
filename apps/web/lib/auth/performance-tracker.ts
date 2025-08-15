@@ -25,9 +25,9 @@ class PerformanceTracker {
   private metrics: Map<string, number[]> = new Map();
   private metricTags: Map<string, Record<string, string>[]> = new Map();
   private readonly MAX_METRICS_PER_TYPE = 1000;
-  
+
   private constructor() {}
-  
+
   public static getInstance(): PerformanceTracker {
     if (!PerformanceTracker.instance) {
       PerformanceTracker.instance = new PerformanceTracker();
@@ -50,15 +50,15 @@ class PerformanceTracker {
         values = [];
         this.metrics.set(name, values);
       }
-      
+
       // Add value
       values.push(value);
-      
+
       // Maintain size limit
       if (values.length > this.MAX_METRICS_PER_TYPE) {
         values.shift(); // Remove oldest
       }
-      
+
       // Store tags if provided
       if (tags) {
         let tagArray = this.metricTags.get(name);
@@ -66,9 +66,9 @@ class PerformanceTracker {
           tagArray = [];
           this.metricTags.set(name, tagArray);
         }
-        
+
         tagArray.push(tags);
-        
+
         // Maintain size limit
         if (tagArray.length > this.MAX_METRICS_PER_TYPE) {
           tagArray.shift();
@@ -87,10 +87,10 @@ class PerformanceTracker {
     if (!values || values.length === 0) {
       return null;
     }
-    
+
     const sorted = [...values].sort((a, b) => a - b);
     const count = sorted.length;
-    
+
     return {
       count,
       min: sorted[0],
@@ -112,17 +112,17 @@ class PerformanceTracker {
   /**
    * Get recent metrics
    */
-  getRecentMetrics(name: string, count: number = 10): PerformanceMetric[] {
+  getRecentMetrics(name: string, count = 10): PerformanceMetric[] {
     const values = this.metrics.get(name);
     const tags = this.metricTags.get(name);
-    
+
     if (!values) {
       return [];
     }
-    
+
     const recentValues = values.slice(-count);
     const recentTags = tags ? tags.slice(-count) : [];
-    
+
     return recentValues.map((value, index) => ({
       name,
       value,
@@ -152,14 +152,14 @@ class PerformanceTracker {
    */
   getPerformanceSummary(): Record<string, PerformanceStats> {
     const summary: Record<string, PerformanceStats> = {};
-    
+
     for (const name of this.getMetricNames()) {
       const stats = this.getStats(name);
       if (stats) {
         summary[name] = stats;
       }
     }
-    
+
     return summary;
   }
 

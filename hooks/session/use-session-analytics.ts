@@ -1,8 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import type { SessionAnalytics, UserSession, UserDevice, SecurityEvent } from '@/types/session';
+import { useCallback, useEffect, useState } from 'react';
 
 interface AnalyticsTimeframe {
   label: string;
@@ -62,7 +61,7 @@ const TIMEFRAMES: AnalyticsTimeframe[] = [
   { label: 'Last 24 hours', value: '1d', days: 1 },
   { label: 'Last 7 days', value: '7d', days: 7 },
   { label: 'Last 30 days', value: '30d', days: 30 },
-  { label: 'Last 90 days', value: '90d', days: 90 }
+  { label: 'Last 90 days', value: '90d', days: 90 },
 ];
 
 export function useSessionAnalytics(initialTimeframe = '7d') {
@@ -75,57 +74,72 @@ export function useSessionAnalytics(initialTimeframe = '7d') {
     trends: [],
     isLoading: false,
     error: null,
-    lastUpdated: null
+    lastUpdated: null,
   });
 
   // Load analytics data
-  const loadAnalytics = useCallback(async (selectedTimeframe?: string) => {
-    setState(prev => ({ ...prev, isLoading: true, error: null }));
-    
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        throw new Error('User not authenticated');
+  const loadAnalytics = useCallback(
+    async (selectedTimeframe?: string) => {
+      setState((prev) => ({ ...prev, isLoading: true, error: null }));
+
+      try {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        if (!user) {
+          throw new Error('User not authenticated');
+        }
+
+        const currentTimeframe = selectedTimeframe || timeframe;
+
+        // Load main analytics
+        const response = await fetch(
+          `/api/auth/session/analytics?timeframe=${currentTimeframe}&includeDevices=true&includeSecurity=true`,
+          {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error('Failed to load analytics');
+        }
+
+        const data = await response.json();
+
+        // Process and set analytics data
+        const processedMetrics = processMetrics(data.analytics);
+        const processedDeviceAnalytics = processDeviceAnalytics(
+          data.analytics.deviceBreakdown || []
+        );
+        const processedSecurityAnalytics = processSecurityAnalytics(
+          data.analytics.securityEvents || []
+        );
+        const processedTrends = processTrends(
+          data.analytics.trends || [],
+          currentTimeframe
+        );
+
+        setState((prev) => ({
+          ...prev,
+          metrics: processedMetrics,
+          deviceAnalytics: processedDeviceAnalytics,
+          securityAnalytics: processedSecurityAnalytics,
+          trends: processedTrends,
+          lastUpdated: new Date(),
+        }));
+      } catch (error) {
+        setState((prev) => ({
+          ...prev,
+          error:
+            error instanceof Error ? error.message : 'Failed to load analytics',
+        }));
+      } finally {
+        setState((prev) => ({ ...prev, isLoading: false }));
       }
-      
-      const currentTimeframe = selectedTimeframe || timeframe;
-      
-      // Load main analytics
-      const response = await fetch(`/api/auth/session/analytics?timeframe=${currentTimeframe}&includeDevices=true&includeSecurity=true`, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' }
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to load analytics');
-      }
-      
-      const data = await response.json();
-      
-      // Process and set analytics data
-      const processedMetrics = processMetrics(data.analytics);
-      const processedDeviceAnalytics = processDeviceAnalytics(data.analytics.deviceBreakdown || []);
-      const processedSecurityAnalytics = processSecurityAnalytics(data.analytics.securityEvents || []);
-      const processedTrends = processTrends(data.analytics.trends || [], currentTimeframe);
-      
-      setState(prev => ({
-        ...prev,
-        metrics: processedMetrics,
-        deviceAnalytics: processedDeviceAnalytics,
-        securityAnalytics: processedSecurityAnalytics,
-        trends: processedTrends,
-        lastUpdated: new Date()
-      }));
-      
-    } catch (error) {
-      setState(prev => ({
-        ...prev,
-        error: error instanceof Error ? error.message : 'Failed to load analytics'
-      }));
-    } finally {
-      setState(prev => ({ ...prev, isLoading: false }));
-    }
-  }, [supabase, timeframe]);
+    },
+    [supabase, timeframe]
+  );
 
   // Process main metrics
   const processMetrics = (analytics: any): SessionMetrics => {
@@ -136,13 +150,13 @@ export function useSessionAnalytics(initialTimeframe = '7d') {
       totalDuration: analytics.totalDuration || 0,
       uniqueDevices: analytics.uniqueDevices || 0,
       securityEvents: analytics.securityEventsCount || 0,
-      healthScore: analytics.healthScore || 0
+      healthScore: analytics.healthScore || 0,
     };
   };
 
   // Process device analytics
   const processDeviceAnalytics = (deviceData: any[]): DeviceAnalytics[] => {
-    return deviceData.map(device => ({
+    return deviceData.map((device) => ({
       deviceId: device.deviceId,
       deviceName: device.deviceName || 'Unknown Device',
       deviceType: device.deviceType || 'unknown',
@@ -150,109 +164,128 @@ export function useSessionAnalytics(initialTimeframe = '7d') {
       totalDuration: device.totalDuration || 0,
       averageDuration: device.averageDuration || 0,
       lastUsed: new Date(device.lastUsed || Date.now()),
-      isTrusted: device.isTrusted || false,
-      securityEvents: device.securityEvents || 0
+      isTrusted: device.isTrusted,
+      securityEvents: device.securityEvents || 0,
     }));
   };
 
   // Process security analytics
-  const processSecurityAnalytics = (securityData: any[]): SecurityAnalytics[] => {
-    const eventGroups = securityData.reduce((acc, event) => {
-      const key = event.eventType;
-      if (!acc[key]) {
-        acc[key] = {
-          eventType: key,
-          count: 0,
-          severity: event.severity,
-          lastOccurrence: new Date(event.createdAt),
-          events: []
-        };
-      }
-      acc[key].count++;
-      acc[key].events.push(event);
-      
-      const eventDate = new Date(event.createdAt);
-      if (eventDate > acc[key].lastOccurrence) {
-        acc[key].lastOccurrence = eventDate;
-        acc[key].severity = event.severity;
-      }
-      
-      return acc;
-    }, {} as Record<string, any>);
-    
+  const processSecurityAnalytics = (
+    securityData: any[]
+  ): SecurityAnalytics[] => {
+    const eventGroups = securityData.reduce(
+      (acc, event) => {
+        const key = event.eventType;
+        if (!acc[key]) {
+          acc[key] = {
+            eventType: key,
+            count: 0,
+            severity: event.severity,
+            lastOccurrence: new Date(event.createdAt),
+            events: [],
+          };
+        }
+        acc[key].count++;
+        acc[key].events.push(event);
+
+        const eventDate = new Date(event.createdAt);
+        if (eventDate > acc[key].lastOccurrence) {
+          acc[key].lastOccurrence = eventDate;
+          acc[key].severity = event.severity;
+        }
+
+        return acc;
+      },
+      {} as Record<string, any>
+    );
+
     return Object.values(eventGroups).map((group: any) => ({
       eventType: group.eventType,
       count: group.count,
       severity: group.severity,
       lastOccurrence: group.lastOccurrence,
-      trend: calculateTrend(group.events)
+      trend: calculateTrend(group.events),
     }));
   };
 
   // Calculate trend for security events
-  const calculateTrend = (events: any[]): 'increasing' | 'decreasing' | 'stable' => {
+  const calculateTrend = (
+    events: any[]
+  ): 'increasing' | 'decreasing' | 'stable' => {
     if (events.length < 2) return 'stable';
-    
+
     const now = Date.now();
-    const halfPeriod = (TIMEFRAMES.find(tf => tf.value === timeframe)?.days || 7) * 24 * 60 * 60 * 1000 / 2;
-    
-    const recentEvents = events.filter(event => 
-      now - new Date(event.createdAt).getTime() < halfPeriod
+    const halfPeriod =
+      ((TIMEFRAMES.find((tf) => tf.value === timeframe)?.days || 7) *
+        24 *
+        60 *
+        60 *
+        1000) /
+      2;
+
+    const recentEvents = events.filter(
+      (event) => now - new Date(event.createdAt).getTime() < halfPeriod
     ).length;
-    
+
     const olderEvents = events.length - recentEvents;
-    
+
     if (recentEvents > olderEvents * 1.2) return 'increasing';
     if (recentEvents < olderEvents * 0.8) return 'decreasing';
     return 'stable';
   };
 
   // Process trends data
-  const processTrends = (trendsData: any[], currentTimeframe: string): SessionTrend[] => {
-    const days = TIMEFRAMES.find(tf => tf.value === currentTimeframe)?.days || 7;
+  const processTrends = (
+    trendsData: any[],
+    currentTimeframe: string
+  ): SessionTrend[] => {
+    const days =
+      TIMEFRAMES.find((tf) => tf.value === currentTimeframe)?.days || 7;
     const trends: SessionTrend[] = [];
-    
+
     for (let i = days - 1; i >= 0; i--) {
       const date = new Date();
       date.setDate(date.getDate() - i);
       const dateStr = date.toISOString().split('T')[0];
-      
-      const dayData = trendsData.find(trend => trend.date === dateStr) || {
+
+      const dayData = trendsData.find((trend) => trend.date === dateStr) || {
         sessions: 0,
         duration: 0,
         devices: 0,
-        securityEvents: 0
+        securityEvents: 0,
       };
-      
+
       trends.push({
         date: dateStr,
         sessions: dayData.sessions || 0,
         duration: dayData.duration || 0,
         devices: dayData.devices || 0,
-        securityEvents: dayData.securityEvents || 0
+        securityEvents: dayData.securityEvents || 0,
       });
     }
-    
+
     return trends;
   };
 
   // Get session status in real-time
   const getSessionStatus = useCallback(async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) return null;
-      
+
       const response = await fetch('/api/auth/session/analytics', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: user.id })
+        body: JSON.stringify({ userId: user.id }),
       });
-      
+
       if (response.ok) {
         const data = await response.json();
         return data.status;
       }
-      
+
       return null;
     } catch (error) {
       console.error('Failed to get session status:', error);
@@ -261,54 +294,57 @@ export function useSessionAnalytics(initialTimeframe = '7d') {
   }, [supabase]);
 
   // Export analytics data
-  const exportAnalytics = useCallback(async (format: 'json' | 'csv' = 'json') => {
-    try {
-      const exportData = {
-        timeframe,
-        generatedAt: new Date().toISOString(),
-        metrics: state.metrics,
-        deviceAnalytics: state.deviceAnalytics,
-        securityAnalytics: state.securityAnalytics,
-        trends: state.trends
-      };
-      
-      if (format === 'json') {
-        const blob = new Blob([JSON.stringify(exportData, null, 2)], {
-          type: 'application/json'
-        });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `session-analytics-${timeframe}-${Date.now()}.json`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-      } else if (format === 'csv') {
-        // Convert to CSV format
-        const csvData = convertToCSV(exportData);
-        const blob = new Blob([csvData], { type: 'text/csv' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `session-analytics-${timeframe}-${Date.now()}.csv`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+  const exportAnalytics = useCallback(
+    async (format: 'json' | 'csv' = 'json') => {
+      try {
+        const exportData = {
+          timeframe,
+          generatedAt: new Date().toISOString(),
+          metrics: state.metrics,
+          deviceAnalytics: state.deviceAnalytics,
+          securityAnalytics: state.securityAnalytics,
+          trends: state.trends,
+        };
+
+        if (format === 'json') {
+          const blob = new Blob([JSON.stringify(exportData, null, 2)], {
+            type: 'application/json',
+          });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `session-analytics-${timeframe}-${Date.now()}.json`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        } else if (format === 'csv') {
+          // Convert to CSV format
+          const csvData = convertToCSV(exportData);
+          const blob = new Blob([csvData], { type: 'text/csv' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `session-analytics-${timeframe}-${Date.now()}.csv`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        }
+
+        return true;
+      } catch (error) {
+        console.error('Failed to export analytics:', error);
+        return false;
       }
-      
-      return true;
-    } catch (error) {
-      console.error('Failed to export analytics:', error);
-      return false;
-    }
-  }, [timeframe, state]);
+    },
+    [timeframe, state]
+  );
 
   // Convert analytics data to CSV
   const convertToCSV = (data: any): string => {
     const lines: string[] = [];
-    
+
     // Add metrics section
     lines.push('METRICS');
     lines.push('Metric,Value');
@@ -318,38 +354,49 @@ export function useSessionAnalytics(initialTimeframe = '7d') {
       });
     }
     lines.push('');
-    
+
     // Add device analytics section
     lines.push('DEVICE ANALYTICS');
-    lines.push('Device ID,Device Name,Device Type,Session Count,Total Duration,Average Duration,Last Used,Is Trusted,Security Events');
+    lines.push(
+      'Device ID,Device Name,Device Type,Session Count,Total Duration,Average Duration,Last Used,Is Trusted,Security Events'
+    );
     data.deviceAnalytics.forEach((device: DeviceAnalytics) => {
-      lines.push(`${device.deviceId},${device.deviceName},${device.deviceType},${device.sessionCount},${device.totalDuration},${device.averageDuration},${device.lastUsed.toISOString()},${device.isTrusted},${device.securityEvents}`);
+      lines.push(
+        `${device.deviceId},${device.deviceName},${device.deviceType},${device.sessionCount},${device.totalDuration},${device.averageDuration},${device.lastUsed.toISOString()},${device.isTrusted},${device.securityEvents}`
+      );
     });
     lines.push('');
-    
+
     // Add security analytics section
     lines.push('SECURITY ANALYTICS');
     lines.push('Event Type,Count,Severity,Last Occurrence,Trend');
     data.securityAnalytics.forEach((security: SecurityAnalytics) => {
-      lines.push(`${security.eventType},${security.count},${security.severity},${security.lastOccurrence.toISOString()},${security.trend}`);
+      lines.push(
+        `${security.eventType},${security.count},${security.severity},${security.lastOccurrence.toISOString()},${security.trend}`
+      );
     });
     lines.push('');
-    
+
     // Add trends section
     lines.push('TRENDS');
     lines.push('Date,Sessions,Duration,Devices,Security Events');
     data.trends.forEach((trend: SessionTrend) => {
-      lines.push(`${trend.date},${trend.sessions},${trend.duration},${trend.devices},${trend.securityEvents}`);
+      lines.push(
+        `${trend.date},${trend.sessions},${trend.duration},${trend.devices},${trend.securityEvents}`
+      );
     });
-    
+
     return lines.join('\n');
   };
 
   // Change timeframe and reload data
-  const changeTimeframe = useCallback(async (newTimeframe: string) => {
-    setTimeframe(newTimeframe);
-    await loadAnalytics(newTimeframe);
-  }, [loadAnalytics]);
+  const changeTimeframe = useCallback(
+    async (newTimeframe: string) => {
+      setTimeframe(newTimeframe);
+      await loadAnalytics(newTimeframe);
+    },
+    [loadAnalytics]
+  );
 
   // Refresh analytics data
   const refreshAnalytics = useCallback(async () => {
@@ -359,22 +406,42 @@ export function useSessionAnalytics(initialTimeframe = '7d') {
   // Get analytics summary
   const getAnalyticsSummary = useCallback(() => {
     if (!state.metrics) return null;
-    
+
     const summary = {
-      healthStatus: state.metrics.healthScore >= 80 ? 'good' : state.metrics.healthScore >= 60 ? 'warning' : 'critical',
-      mostUsedDevice: state.deviceAnalytics.reduce((prev, current) => 
-        (prev.sessionCount > current.sessionCount) ? prev : current, state.deviceAnalytics[0]
+      healthStatus:
+        state.metrics.healthScore >= 80
+          ? 'good'
+          : state.metrics.healthScore >= 60
+            ? 'warning'
+            : 'critical',
+      mostUsedDevice: state.deviceAnalytics.reduce(
+        (prev, current) =>
+          prev.sessionCount > current.sessionCount ? prev : current,
+        state.deviceAnalytics[0]
       ),
-      topSecurityConcern: state.securityAnalytics.reduce((prev, current) => 
-        (prev.count > current.count) ? prev : current, state.securityAnalytics[0]
+      topSecurityConcern: state.securityAnalytics.reduce(
+        (prev, current) => (prev.count > current.count ? prev : current),
+        state.securityAnalytics[0]
       ),
-      averageSessionsPerDay: state.trends.length > 0 ? 
-        state.trends.reduce((sum, trend) => sum + trend.sessions, 0) / state.trends.length : 0,
-      securityTrend: state.securityAnalytics.filter(sa => sa.trend === 'increasing').length > 0 ? 'increasing' : 'stable'
+      averageSessionsPerDay:
+        state.trends.length > 0
+          ? state.trends.reduce((sum, trend) => sum + trend.sessions, 0) /
+            state.trends.length
+          : 0,
+      securityTrend:
+        state.securityAnalytics.filter((sa) => sa.trend === 'increasing')
+          .length > 0
+          ? 'increasing'
+          : 'stable',
     };
-    
+
     return summary;
-  }, [state.metrics, state.deviceAnalytics, state.securityAnalytics, state.trends]);
+  }, [
+    state.metrics,
+    state.deviceAnalytics,
+    state.securityAnalytics,
+    state.trends,
+  ]);
 
   // Initialize analytics on mount
   useEffect(() => {
@@ -386,26 +453,26 @@ export function useSessionAnalytics(initialTimeframe = '7d') {
     ...state,
     timeframe,
     timeframes: TIMEFRAMES,
-    
+
     // Actions
     loadAnalytics,
     changeTimeframe,
     refreshAnalytics,
     getSessionStatus,
     exportAnalytics,
-    
+
     // Computed
     summary: getAnalyticsSummary(),
     hasData: state.metrics !== null,
     isEmpty: state.metrics?.totalSessions === 0,
-    isHealthy: (state.metrics?.healthScore || 0) >= 80
+    isHealthy: (state.metrics?.healthScore || 0) >= 80,
   };
 }
 
-export type { 
-  AnalyticsTimeframe, 
-  SessionMetrics, 
-  DeviceAnalytics, 
-  SecurityAnalytics, 
-  SessionTrend 
+export type {
+  AnalyticsTimeframe,
+  SessionMetrics,
+  DeviceAnalytics,
+  SecurityAnalytics,
+  SessionTrend,
 };

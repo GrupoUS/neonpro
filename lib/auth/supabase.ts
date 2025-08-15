@@ -35,7 +35,10 @@ export interface HealthcareUser {
 export class HealthcareAuth {
   static async getCurrentUser(): Promise<HealthcareUser | null> {
     try {
-      const { data: { user }, error } = await supabase.auth.getUser();
+      const {
+        data: { user },
+        error,
+      } = await supabase.auth.getUser();
       if (error || !user) return null;
 
       // Get user profile with role and permissions
@@ -67,7 +70,7 @@ export class HealthcareAuth {
         permissions: profile.user_roles.permissions || [],
         clinic_id: profile.clinic_id,
         last_login: profile.last_login,
-        created_at: profile.created_at
+        created_at: profile.created_at,
       };
     } catch (error) {
       console.error('Error getting current user:', error);
@@ -75,14 +78,17 @@ export class HealthcareAuth {
     }
   }
 
-  static async signIn(email: string, password: string): Promise<{
+  static async signIn(
+    email: string,
+    password: string
+  ): Promise<{
     user: HealthcareUser | null;
     error: string | null;
   }> {
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
-        password
+        password,
       });
 
       if (error) {
@@ -97,13 +103,13 @@ export class HealthcareAuth {
           .eq('user_id', data.user.id);
       }
 
-      const user = await this.getCurrentUser();
-      
+      const user = await HealthcareAuth.getCurrentUser();
+
       // Log authentication for audit
       console.log(`Healthcare auth: User ${user?.email} signed in`);
-      
+
       return { user, error: null };
-    } catch (error) {
+    } catch (_error) {
       return { user: null, error: 'Authentication failed' };
     }
   }
@@ -128,8 +134,8 @@ export class HealthcareAuth {
         email,
         password,
         options: {
-          data: userData
-        }
+          data: userData,
+        },
       });
 
       if (error) {
@@ -138,34 +144,32 @@ export class HealthcareAuth {
 
       // Create user profile
       if (data.user) {
-        await supabase
-          .from('user_profiles')
-          .insert({
-            user_id: data.user.id,
-            email: data.user.email,
-            full_name: userData.full_name,
-            cpf: userData.cpf,
-            phone: userData.phone,
-            professional_license: userData.professional_license,
-            clinic_id: userData.clinic_id,
-            created_at: new Date().toISOString()
-          });
+        await supabase.from('user_profiles').insert({
+          user_id: data.user.id,
+          email: data.user.email,
+          full_name: userData.full_name,
+          cpf: userData.cpf,
+          phone: userData.phone,
+          professional_license: userData.professional_license,
+          clinic_id: userData.clinic_id,
+          created_at: new Date().toISOString(),
+        });
 
         // Assign role
-        await supabase
-          .from('user_roles')
-          .insert({
-            user_id: data.user.id,
-            role_name: userData.role
-          });
+        await supabase.from('user_roles').insert({
+          user_id: data.user.id,
+          role_name: userData.role,
+        });
       }
 
-      const user = await this.getCurrentUser();
-      
-      console.log(`Healthcare auth: User ${user?.email} signed up with role ${userData.role}`);
-      
+      const user = await HealthcareAuth.getCurrentUser();
+
+      console.log(
+        `Healthcare auth: User ${user?.email} signed up with role ${userData.role}`
+      );
+
       return { user, error: null };
-    } catch (error) {
+    } catch (_error) {
       return { user: null, error: 'Registration failed' };
     }
   }
@@ -173,14 +177,14 @@ export class HealthcareAuth {
   static async signOut(): Promise<{ error: string | null }> {
     try {
       const { error } = await supabase.auth.signOut();
-      
+
       if (error) {
         return { error: error.message };
       }
 
       console.log('Healthcare auth: User signed out');
       return { error: null };
-    } catch (error) {
+    } catch (_error) {
       return { error: 'Sign out failed' };
     }
   }
@@ -188,7 +192,7 @@ export class HealthcareAuth {
   static async resetPassword(email: string): Promise<{ error: string | null }> {
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${process.env.NEXTAUTH_URL}/auth/reset-password`
+        redirectTo: `${process.env.NEXTAUTH_URL}/auth/reset-password`,
       });
 
       if (error) {
@@ -197,15 +201,17 @@ export class HealthcareAuth {
 
       console.log(`Healthcare auth: Password reset requested for ${email}`);
       return { error: null };
-    } catch (error) {
+    } catch (_error) {
       return { error: 'Password reset failed' };
     }
   }
 
-  static async updatePassword(newPassword: string): Promise<{ error: string | null }> {
+  static async updatePassword(
+    newPassword: string
+  ): Promise<{ error: string | null }> {
     try {
       const { error } = await supabase.auth.updateUser({
-        password: newPassword
+        password: newPassword,
       });
 
       if (error) {
@@ -214,15 +220,15 @@ export class HealthcareAuth {
 
       console.log('Healthcare auth: Password updated successfully');
       return { error: null };
-    } catch (error) {
+    } catch (_error) {
       return { error: 'Password update failed' };
     }
   }
 
   static onAuthStateChange(callback: (user: HealthcareUser | null) => void) {
-    return supabase.auth.onAuthStateChange(async (event, session) => {
+    return supabase.auth.onAuthStateChange(async (_event, session) => {
       if (session?.user) {
-        const user = await this.getCurrentUser();
+        const user = await HealthcareAuth.getCurrentUser();
         callback(user);
       } else {
         callback(null);

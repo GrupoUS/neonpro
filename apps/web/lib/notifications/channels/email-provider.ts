@@ -5,13 +5,13 @@
  * Compliance: LGPD + ANVISA + CFM
  */
 
-import { 
-  NotificationChannel, 
-  NotificationProvider, 
-  NotificationResult,
-  NotificationMetadata,
+import type {
   HealthcareNotificationContext,
-  LGPDCompliantData 
+  LGPDCompliantData,
+  NotificationChannel,
+  NotificationMetadata,
+  NotificationProvider,
+  NotificationResult,
 } from '../types/notifications';
 
 // Email-specific types
@@ -113,11 +113,11 @@ class ResendEmailProvider implements EmailProvider {
       // Health check via Resend API
       const response = await fetch('https://api.resend.com/domains', {
         headers: {
-          'Authorization': `Bearer ${this.apiKey}`,
+          Authorization: `Bearer ${this.apiKey}`,
           'Content-Type': 'application/json',
         },
       });
-      
+
       return response.ok;
     } catch (error) {
       console.error(`[${this.id}] Health check failed:`, error);
@@ -127,11 +127,11 @@ class ResendEmailProvider implements EmailProvider {
 
   async sendEmail(params: EmailParams): Promise<NotificationResult> {
     const startTime = Date.now();
-    
+
     try {
       // Validate LGPD compliance
       await this.validateLGPDCompliance(params.metadata.lgpdConsent);
-      
+
       // Prepare email payload
       const emailPayload = {
         from: `${this.fromName} <${this.fromAddress}>`,
@@ -142,7 +142,7 @@ class ResendEmailProvider implements EmailProvider {
         html: params.html,
         text: params.text || this.stripHtml(params.html),
         reply_to: this.replyTo,
-        attachments: params.attachments?.map(att => ({
+        attachments: params.attachments?.map((att) => ({
           filename: att.filename,
           content: att.content,
           content_type: att.contentType,
@@ -153,16 +153,18 @@ class ResendEmailProvider implements EmailProvider {
       const response = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${this.apiKey}`,
+          Authorization: `Bearer ${this.apiKey}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(emailPayload),
       });
 
       const responseData = await response.json();
-      
+
       if (!response.ok) {
-        throw new Error(`Resend API error: ${responseData.message || response.statusText}`);
+        throw new Error(
+          `Resend API error: ${responseData.message || response.statusText}`
+        );
       }
 
       const duration = Date.now() - startTime;
@@ -179,10 +181,9 @@ class ResendEmailProvider implements EmailProvider {
           response: responseData,
         },
       };
-
     } catch (error) {
       const duration = Date.now() - startTime;
-      
+
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -192,7 +193,7 @@ class ResendEmailProvider implements EmailProvider {
         metadata: {
           ...params.metadata,
           duration,
-          error: error,
+          error,
         },
       };
     }
@@ -201,12 +202,12 @@ class ResendEmailProvider implements EmailProvider {
   async sendBulkEmail(params: BulkEmailParams): Promise<NotificationResult[]> {
     const batchSize = params.batchSize || 50; // Resend limit
     const results: NotificationResult[] = [];
-    
+
     // Process in batches
     for (let i = 0; i < params.recipients.length; i += batchSize) {
       const batch = params.recipients.slice(i, i + batchSize);
-      
-      const batchPromises = batch.map(recipient => 
+
+      const batchPromises = batch.map((recipient) =>
         this.sendEmail({
           to: recipient.email,
           subject: params.subject,
@@ -218,7 +219,7 @@ class ResendEmailProvider implements EmailProvider {
       );
 
       const batchResults = await Promise.allSettled(batchPromises);
-      
+
       batchResults.forEach((result, index) => {
         if (result.status === 'fulfilled') {
           results.push(result.value);
@@ -236,14 +237,14 @@ class ResendEmailProvider implements EmailProvider {
 
       // Rate limiting between batches
       if (i + batchSize < params.recipients.length) {
-        await new Promise(resolve => setTimeout(resolve, 1000)); // 1s delay
+        await new Promise((resolve) => setTimeout(resolve, 1000)); // 1s delay
       }
     }
 
     return results;
   }
 
-  async validateTemplate(templateId: string): Promise<boolean> {
+  async validateTemplate(_templateId: string): Promise<boolean> {
     try {
       // Validate template exists and is valid
       // This would typically check against your template storage
@@ -254,22 +255,32 @@ class ResendEmailProvider implements EmailProvider {
     }
   }
 
-  private async validateLGPDCompliance(lgpdData: LGPDCompliantData): Promise<void> {
+  private async validateLGPDCompliance(
+    lgpdData: LGPDCompliantData
+  ): Promise<void> {
     if (!lgpdData.consentGiven) {
       throw new Error('LGPD: Email consent not provided');
     }
-    
+
     if (lgpdData.consentExpiry && new Date() > lgpdData.consentExpiry) {
       throw new Error('LGPD: Email consent expired');
     }
-    
-    if (!lgpdData.purposes.includes('notifications') && !lgpdData.purposes.includes('marketing')) {
+
+    if (
+      !(
+        lgpdData.purposes.includes('notifications') ||
+        lgpdData.purposes.includes('marketing')
+      )
+    ) {
       throw new Error('LGPD: Email purpose not authorized');
     }
   }
 
   private stripHtml(html: string): string {
-    return html.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+    return html
+      .replace(/<[^>]*>/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
   }
 }
 
@@ -300,11 +311,11 @@ class SendGridEmailProvider implements EmailProvider {
     try {
       const response = await fetch('https://api.sendgrid.com/v3/user/profile', {
         headers: {
-          'Authorization': `Bearer ${this.apiKey}`,
+          Authorization: `Bearer ${this.apiKey}`,
           'Content-Type': 'application/json',
         },
       });
-      
+
       return response.ok;
     } catch (error) {
       console.error(`[${this.id}] Health check failed:`, error);
@@ -314,20 +325,22 @@ class SendGridEmailProvider implements EmailProvider {
 
   async sendEmail(params: EmailParams): Promise<NotificationResult> {
     const startTime = Date.now();
-    
+
     try {
       // Validate LGPD compliance
       await this.validateLGPDCompliance(params.metadata.lgpdConsent);
-      
+
       const emailPayload = {
-        personalizations: [{
-          to: Array.isArray(params.to) 
-            ? params.to.map(email => ({ email }))
-            : [{ email: params.to }],
-          cc: params.cc?.map(email => ({ email })),
-          bcc: params.bcc?.map(email => ({ email })),
-          subject: params.subject,
-        }],
+        personalizations: [
+          {
+            to: Array.isArray(params.to)
+              ? params.to.map((email) => ({ email }))
+              : [{ email: params.to }],
+            cc: params.cc?.map((email) => ({ email })),
+            bcc: params.bcc?.map((email) => ({ email })),
+            subject: params.subject,
+          },
+        ],
         from: {
           email: this.fromAddress,
           name: this.fromName,
@@ -343,9 +356,9 @@ class SendGridEmailProvider implements EmailProvider {
             value: params.text || this.stripHtml(params.html),
           },
         ],
-        attachments: params.attachments?.map(att => ({
+        attachments: params.attachments?.map((att) => ({
           filename: att.filename,
-          content: Buffer.isBuffer(att.content) 
+          content: Buffer.isBuffer(att.content)
             ? att.content.toString('base64')
             : Buffer.from(att.content).toString('base64'),
           type: att.contentType,
@@ -356,7 +369,7 @@ class SendGridEmailProvider implements EmailProvider {
       const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${this.apiKey}`,
+          Authorization: `Bearer ${this.apiKey}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(emailPayload),
@@ -366,11 +379,14 @@ class SendGridEmailProvider implements EmailProvider {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(`SendGrid API error: ${errorData.errors?.[0]?.message || response.statusText}`);
+        throw new Error(
+          `SendGrid API error: ${errorData.errors?.[0]?.message || response.statusText}`
+        );
       }
 
       // SendGrid returns empty response on success
-      const messageId = response.headers.get('x-message-id') || `sendgrid-${Date.now()}`;
+      const messageId =
+        response.headers.get('x-message-id') || `sendgrid-${Date.now()}`;
 
       return {
         success: true,
@@ -383,10 +399,9 @@ class SendGridEmailProvider implements EmailProvider {
           duration,
         },
       };
-
     } catch (error) {
       const duration = Date.now() - startTime;
-      
+
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -396,7 +411,7 @@ class SendGridEmailProvider implements EmailProvider {
         metadata: {
           ...params.metadata,
           duration,
-          error: error,
+          error,
         },
       };
     }
@@ -405,7 +420,7 @@ class SendGridEmailProvider implements EmailProvider {
   async sendBulkEmail(params: BulkEmailParams): Promise<NotificationResult[]> {
     // SendGrid batch implementation
     const results: NotificationResult[] = [];
-    
+
     // Process individually for fallback provider
     for (const recipient of params.recipients) {
       const result = await this.sendEmail({
@@ -416,11 +431,11 @@ class SendGridEmailProvider implements EmailProvider {
         templateData: recipient.templateData,
         metadata: recipient.metadata,
       });
-      
+
       results.push(result);
-      
+
       // Rate limiting
-      await new Promise(resolve => setTimeout(resolve, 100)); // 100ms delay
+      await new Promise((resolve) => setTimeout(resolve, 100)); // 100ms delay
     }
 
     return results;
@@ -429,12 +444,15 @@ class SendGridEmailProvider implements EmailProvider {
   async validateTemplate(templateId: string): Promise<boolean> {
     try {
       // SendGrid template validation
-      const response = await fetch(`https://api.sendgrid.com/v3/templates/${templateId}`, {
-        headers: {
-          'Authorization': `Bearer ${this.apiKey}`,
-        },
-      });
-      
+      const response = await fetch(
+        `https://api.sendgrid.com/v3/templates/${templateId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${this.apiKey}`,
+          },
+        }
+      );
+
       return response.ok;
     } catch (error) {
       console.error(`[${this.id}] Template validation failed:`, error);
@@ -442,18 +460,23 @@ class SendGridEmailProvider implements EmailProvider {
     }
   }
 
-  private async validateLGPDCompliance(lgpdData: LGPDCompliantData): Promise<void> {
+  private async validateLGPDCompliance(
+    lgpdData: LGPDCompliantData
+  ): Promise<void> {
     if (!lgpdData.consentGiven) {
       throw new Error('LGPD: Email consent not provided');
     }
-    
+
     if (lgpdData.consentExpiry && new Date() > lgpdData.consentExpiry) {
       throw new Error('LGPD: Email consent expired');
     }
   }
 
   private stripHtml(html: string): string {
-    return html.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+    return html
+      .replace(/<[^>]*>/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
   }
 }
 
@@ -464,7 +487,6 @@ class SendGridEmailProvider implements EmailProvider {
 class EmailProviderFactory {
   private primaryProvider: EmailProvider;
   private fallbackProvider: EmailProvider;
-  private config: EmailProviderConfig;
 
   constructor(config: EmailProviderConfig) {
     this.config = config;
@@ -503,13 +525,15 @@ class EmailProviderFactory {
     }
   }
 
-  async sendBulkWithFallback(params: BulkEmailParams): Promise<NotificationResult[]> {
+  async sendBulkWithFallback(
+    params: BulkEmailParams
+  ): Promise<NotificationResult[]> {
     try {
       const provider = await this.getHealthyProvider();
       return await provider.sendBulkEmail(params);
     } catch (error) {
       // Return failed results for all recipients
-      return params.recipients.map(recipient => ({
+      return params.recipients.map((recipient) => ({
         success: false,
         error: error instanceof Error ? error.message : 'All providers failed',
         providerId: 'email-factory',
@@ -522,5 +546,11 @@ class EmailProviderFactory {
 }
 
 // Export types and implementations
-export type { EmailProvider, EmailParams, BulkEmailParams, EmailAttachment, EmailProviderConfig };
+export type {
+  EmailProvider,
+  EmailParams,
+  BulkEmailParams,
+  EmailAttachment,
+  EmailProviderConfig,
+};
 export { ResendEmailProvider, SendGridEmailProvider, EmailProviderFactory };

@@ -10,11 +10,13 @@ export interface TaxDeclaration {
 }
 
 export class TaxDeclarationService {
-  static async createDeclaration(data: Omit<TaxDeclaration, 'id' | 'createdAt'>): Promise<TaxDeclaration> {
+  static async createDeclaration(
+    data: Omit<TaxDeclaration, 'id' | 'createdAt'>
+  ): Promise<TaxDeclaration> {
     return {
       id: Math.random().toString(36),
       createdAt: new Date(),
-      ...data
+      ...data,
     };
   }
 

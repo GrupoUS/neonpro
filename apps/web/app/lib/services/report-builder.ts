@@ -1,19 +1,19 @@
 // Custom Report Builder Service
 // Story 8.2: Custom Report Builder (Drag-Drop Interface)
 
-import {
-    CreateReportRequest,
-    CustomReport,
-    DataSourceConnector,
-    GenerateReportRequest,
-    ReportAnalyticsResponse,
-    ReportCollaborator,
-    ReportComment,
-    ReportListResponse,
-    ReportSchedule,
-    ReportTemplate,
-    TemplateListResponse,
-    UpdateReportRequest
+import type {
+  CreateReportRequest,
+  CustomReport,
+  DataSourceConnector,
+  GenerateReportRequest,
+  ReportAnalyticsResponse,
+  ReportCollaborator,
+  ReportComment,
+  ReportListResponse,
+  ReportSchedule,
+  ReportTemplate,
+  TemplateListResponse,
+  UpdateReportRequest,
 } from '@/app/types/report-builder';
 import { createClient } from '@/app/utils/supabase/server';
 
@@ -26,7 +26,9 @@ export class ReportBuilderService {
 
   // Custom Reports Management
   async createReport(data: CreateReportRequest): Promise<CustomReport> {
-    const { data: { user } } = await this.supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await this.supabase.auth.getUser();
     if (!user) throw new Error('User not authenticated');
 
     const { data: profile } = await this.supabase
@@ -45,7 +47,7 @@ export class ReportBuilderService {
         .select('config_json')
         .eq('id', data.template_id)
         .single();
-      
+
       if (template) {
         templateConfig = template.config_json;
       }
@@ -60,10 +62,10 @@ export class ReportBuilderService {
       filters: {},
       layout_config: {},
       is_template: false,
-      is_public: data.is_public || false,
+      is_public: data.is_public,
       user_id: user.id,
       clinic_id: profile.clinic_id,
-      generation_count: 0
+      generation_count: 0,
     };
 
     const { data: report, error } = await this.supabase
@@ -80,13 +82,18 @@ export class ReportBuilderService {
     return report;
   }
 
-  async updateReport(reportId: string, data: UpdateReportRequest): Promise<CustomReport> {
-    const { data: { user } } = await this.supabase.auth.getUser();
+  async updateReport(
+    reportId: string,
+    data: UpdateReportRequest
+  ): Promise<CustomReport> {
+    const {
+      data: { user },
+    } = await this.supabase.auth.getUser();
     if (!user) throw new Error('User not authenticated');
 
     const updateData = {
       ...data,
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     };
 
     const { data: report, error } = await this.supabase
@@ -105,7 +112,9 @@ export class ReportBuilderService {
   }
 
   async deleteReport(reportId: string): Promise<void> {
-    const { data: { user } } = await this.supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await this.supabase.auth.getUser();
     if (!user) throw new Error('User not authenticated');
 
     const { error } = await this.supabase
@@ -118,7 +127,9 @@ export class ReportBuilderService {
   }
 
   async getReport(reportId: string): Promise<CustomReport> {
-    const { data: { user } } = await this.supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await this.supabase.auth.getUser();
     if (!user) throw new Error('User not authenticated');
 
     const { data: report, error } = await this.supabase
@@ -128,7 +139,9 @@ export class ReportBuilderService {
         report_collaborators!inner(permission_level)
       `)
       .eq('id', reportId)
-      .or(`user_id.eq.${user.id},is_public.eq.true,report_collaborators.user_id.eq.${user.id}`)
+      .or(
+        `user_id.eq.${user.id},is_public.eq.true,report_collaborators.user_id.eq.${user.id}`
+      )
       .single();
 
     if (error) throw new Error(`Failed to fetch report: ${error.message}`);
@@ -139,8 +152,14 @@ export class ReportBuilderService {
     return report;
   }
 
-  async getReports(page = 1, perPage = 10, filters?: any): Promise<ReportListResponse> {
-    const { data: { user } } = await this.supabase.auth.getUser();
+  async getReports(
+    page = 1,
+    perPage = 10,
+    filters?: any
+  ): Promise<ReportListResponse> {
+    const {
+      data: { user },
+    } = await this.supabase.auth.getUser();
     if (!user) throw new Error('User not authenticated');
 
     const offset = (page - 1) * perPage;
@@ -174,12 +193,14 @@ export class ReportBuilderService {
       total_count: count || 0,
       page,
       per_page: perPage,
-      has_more: (count || 0) > offset + perPage
+      has_more: (count || 0) > offset + perPage,
     };
   }
 
   async cloneReport(reportId: string): Promise<CustomReport> {
-    const { data: { user } } = await this.supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await this.supabase.auth.getUser();
     if (!user) throw new Error('User not authenticated');
 
     const { data: profile } = await this.supabase
@@ -197,7 +218,8 @@ export class ReportBuilderService {
       .eq('id', reportId)
       .single();
 
-    if (fetchError) throw new Error(`Failed to fetch original report: ${fetchError.message}`);
+    if (fetchError)
+      throw new Error(`Failed to fetch original report: ${fetchError.message}`);
 
     // Create clone
     const cloneData = {
@@ -212,7 +234,7 @@ export class ReportBuilderService {
       is_public: false,
       user_id: user.id,
       clinic_id: profile.clinic_id,
-      generation_count: 0
+      generation_count: 0,
     };
 
     const { data: clone, error } = await this.supabase
@@ -240,19 +262,24 @@ export class ReportBuilderService {
 
     if (error) throw new Error(`Failed to fetch templates: ${error.message}`);
 
-    const categories = [...new Set(templates?.map(t => t.category) || [])];
-    const featured = templates?.filter(t => t.is_featured) || [];
+    const categories = [...new Set(templates?.map((t) => t.category) || [])];
+    const featured = templates?.filter((t) => t.is_featured) || [];
 
     return {
       templates: templates || [],
       categories,
       featured,
-      total_count: templates?.length || 0
+      total_count: templates?.length || 0,
     };
   }
 
-  async createTemplate(reportId: string, templateData: any): Promise<ReportTemplate> {
-    const { data: { user } } = await this.supabase.auth.getUser();
+  async createTemplate(
+    reportId: string,
+    templateData: any
+  ): Promise<ReportTemplate> {
+    const {
+      data: { user },
+    } = await this.supabase.auth.getUser();
     if (!user) throw new Error('User not authenticated');
 
     const { data: profile } = await this.supabase
@@ -275,17 +302,18 @@ export class ReportBuilderService {
 
     const template = {
       template_name: templateData.template_name || report.report_name,
-      template_description: templateData.template_description || report.report_description,
+      template_description:
+        templateData.template_description || report.report_description,
       category: templateData.category || 'custom',
       config_json: report.report_config,
       preview_image: templateData.preview_image,
       usage_count: 0,
-      rating: 0.00,
+      rating: 0.0,
       is_featured: false,
       is_active: true,
       tags: templateData.tags || [],
       created_by: user.id,
-      clinic_id: profile.clinic_id
+      clinic_id: profile.clinic_id,
     };
 
     const { data: newTemplate, error } = await this.supabase
@@ -301,7 +329,9 @@ export class ReportBuilderService {
 
   // Report Generation and Export
   async generateReport(request: GenerateReportRequest): Promise<any> {
-    const { data: { user } } = await this.supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await this.supabase.auth.getUser();
     if (!user) throw new Error('User not authenticated');
 
     // Get report configuration
@@ -316,9 +346,9 @@ export class ReportBuilderService {
     // Update generation count
     await this.supabase
       .from('custom_reports')
-      .update({ 
+      .update({
         generation_count: report.generation_count + 1,
-        last_generated: new Date().toISOString()
+        last_generated: new Date().toISOString(),
       })
       .eq('id', request.report_id);
 
@@ -331,19 +361,21 @@ export class ReportBuilderService {
     // 2. Applying filters and transformations
     // 3. Generating visualizations
     // 4. Formatting according to the requested format
-    
+
     return {
       report_id: request.report_id,
       format: request.format || 'pdf',
       generated_at: new Date().toISOString(),
       download_url: `/api/reports/download/${request.report_id}`,
-      expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() // 24 hours
+      expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 hours
     };
   }
 
   // Data Source Management
   async getDataSources(): Promise<DataSourceConnector[]> {
-    const { data: { user } } = await this.supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await this.supabase.auth.getUser();
     if (!user) throw new Error('User not authenticated');
 
     const { data: profile } = await this.supabase
@@ -361,13 +393,18 @@ export class ReportBuilderService {
       .eq('is_active', true)
       .order('connector_name');
 
-    if (error) throw new Error(`Failed to fetch data sources: ${error.message}`);
+    if (error)
+      throw new Error(`Failed to fetch data sources: ${error.message}`);
 
     return connectors || [];
   }
 
-  async testDataSource(connectorId: string): Promise<{ success: boolean; message: string }> {
-    const { data: { user } } = await this.supabase.auth.getUser();
+  async testDataSource(
+    connectorId: string
+  ): Promise<{ success: boolean; message: string }> {
+    const {
+      data: { user },
+    } = await this.supabase.auth.getUser();
     if (!user) throw new Error('User not authenticated');
 
     const { data: connector } = await this.supabase
@@ -381,7 +418,7 @@ export class ReportBuilderService {
     // Here you would implement actual testing logic based on connector type
     const testResult = {
       success: true,
-      message: 'Connection successful'
+      message: 'Connection successful',
     };
 
     // Update test status
@@ -389,7 +426,7 @@ export class ReportBuilderService {
       .from('data_source_connectors')
       .update({
         last_tested: new Date().toISOString(),
-        test_status: testResult.success ? 'success' : 'failed'
+        test_status: testResult.success ? 'success' : 'failed',
       })
       .eq('id', connectorId);
 
@@ -397,8 +434,14 @@ export class ReportBuilderService {
   }
 
   // Report Collaboration
-  async addCollaborator(reportId: string, userId: string, permissionLevel: string): Promise<ReportCollaborator> {
-    const { data: { user } } = await this.supabase.auth.getUser();
+  async addCollaborator(
+    reportId: string,
+    userId: string,
+    permissionLevel: string
+  ): Promise<ReportCollaborator> {
+    const {
+      data: { user },
+    } = await this.supabase.auth.getUser();
     if (!user) throw new Error('User not authenticated');
 
     const collaborator = {
@@ -406,7 +449,7 @@ export class ReportBuilderService {
       user_id: userId,
       permission_level: permissionLevel,
       invited_by: user.id,
-      invited_at: new Date().toISOString()
+      invited_at: new Date().toISOString(),
     };
 
     const { data: newCollaborator, error } = await this.supabase
@@ -421,7 +464,9 @@ export class ReportBuilderService {
   }
 
   async removeCollaborator(reportId: string, userId: string): Promise<void> {
-    const { data: { user } } = await this.supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await this.supabase.auth.getUser();
     if (!user) throw new Error('User not authenticated');
 
     const { error } = await this.supabase
@@ -430,7 +475,8 @@ export class ReportBuilderService {
       .eq('report_id', reportId)
       .eq('user_id', userId);
 
-    if (error) throw new Error(`Failed to remove collaborator: ${error.message}`);
+    if (error)
+      throw new Error(`Failed to remove collaborator: ${error.message}`);
   }
 
   async getCollaborators(reportId: string): Promise<ReportCollaborator[]> {
@@ -446,14 +492,21 @@ export class ReportBuilderService {
       `)
       .eq('report_id', reportId);
 
-    if (error) throw new Error(`Failed to fetch collaborators: ${error.message}`);
+    if (error)
+      throw new Error(`Failed to fetch collaborators: ${error.message}`);
 
     return collaborators || [];
   }
 
   // Report Comments
-  async addComment(reportId: string, commentText: string, parentCommentId?: string): Promise<ReportComment> {
-    const { data: { user } } = await this.supabase.auth.getUser();
+  async addComment(
+    reportId: string,
+    commentText: string,
+    parentCommentId?: string
+  ): Promise<ReportComment> {
+    const {
+      data: { user },
+    } = await this.supabase.auth.getUser();
     if (!user) throw new Error('User not authenticated');
 
     const comment = {
@@ -461,7 +514,7 @@ export class ReportBuilderService {
       user_id: user.id,
       comment_text: commentText,
       parent_comment_id: parentCommentId,
-      is_resolved: false
+      is_resolved: false,
     };
 
     const { data: newComment, error } = await this.supabase
@@ -494,7 +547,9 @@ export class ReportBuilderService {
   }
 
   async resolveComment(commentId: string): Promise<void> {
-    const { data: { user } } = await this.supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await this.supabase.auth.getUser();
     if (!user) throw new Error('User not authenticated');
 
     const { error } = await this.supabase
@@ -507,7 +562,9 @@ export class ReportBuilderService {
 
   // Report Scheduling
   async createSchedule(scheduleData: any): Promise<ReportSchedule> {
-    const { data: { user } } = await this.supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await this.supabase.auth.getUser();
     if (!user) throw new Error('User not authenticated');
 
     const schedule = {
@@ -515,7 +572,7 @@ export class ReportBuilderService {
       created_by: user.id,
       run_count: 0,
       failure_count: 0,
-      next_run: this.calculateNextRun(scheduleData.schedule_config)
+      next_run: this.calculateNextRun(scheduleData.schedule_config),
     };
 
     const { data: newSchedule, error } = await this.supabase
@@ -542,7 +599,12 @@ export class ReportBuilderService {
   }
 
   // Analytics and Usage Tracking
-  async trackUsage(reportId: string, userId: string, actionType: string, duration = 0): Promise<void> {
+  async trackUsage(
+    reportId: string,
+    userId: string,
+    actionType: string,
+    duration = 0
+  ): Promise<void> {
     try {
       // Check if there's an existing record for today
       const today = new Date().toISOString().split('T')[0];
@@ -563,21 +625,21 @@ export class ReportBuilderService {
           .update({
             access_count: existing.access_count + 1,
             last_accessed: new Date().toISOString(),
-            usage_duration: existing.usage_duration + duration
+            usage_duration: existing.usage_duration + duration,
           })
           .eq('id', existing.id);
       } else {
         // Create new record
-        await this.supabase
-          .from('report_usage_analytics')
-          .insert([{
+        await this.supabase.from('report_usage_analytics').insert([
+          {
             report_id: reportId,
             user_id: userId,
             action_type: actionType,
             access_count: 1,
             usage_duration: duration,
-            session_data: {}
-          }]);
+            session_data: {},
+          },
+        ]);
       }
     } catch (error) {
       // Silently fail usage tracking to not affect main functionality
@@ -593,13 +655,18 @@ export class ReportBuilderService {
       .order('created_at', { ascending: false })
       .limit(100);
 
-    if (usageError) throw new Error(`Failed to fetch usage analytics: ${usageError.message}`);
+    if (usageError)
+      throw new Error(`Failed to fetch usage analytics: ${usageError.message}`);
 
     // Calculate performance metrics
-    const totalViews = usageStats?.reduce((sum, stat) => sum + stat.access_count, 0) || 0;
-    const uniqueUsers = new Set(usageStats?.map(stat => stat.user_id) || []).size;
-    const avgDuration = usageStats?.length ? 
-      usageStats.reduce((sum, stat) => sum + stat.usage_duration, 0) / usageStats.length : 0;
+    const totalViews =
+      usageStats?.reduce((sum, stat) => sum + stat.access_count, 0) || 0;
+    const uniqueUsers = new Set(usageStats?.map((stat) => stat.user_id) || [])
+      .size;
+    const avgDuration = usageStats?.length
+      ? usageStats.reduce((sum, stat) => sum + stat.usage_duration, 0) /
+        usageStats.length
+      : 0;
 
     return {
       usage_stats: usageStats || [],
@@ -607,14 +674,14 @@ export class ReportBuilderService {
         average_generation_time: 0, // Would be calculated from actual generation times
         cache_hit_rate: 0.85, // Would be calculated from cache statistics
         error_rate: 0.02, // Would be calculated from error logs
-        data_freshness: 0.95 // Would be calculated from data source freshness
+        data_freshness: 0.95, // Would be calculated from data source freshness
       },
       user_engagement: {
         total_views: totalViews,
         unique_users: uniqueUsers,
         average_session_duration: avgDuration,
-        bounce_rate: 0.15 // Would be calculated from session data
-      }
+        bounce_rate: 0.15, // Would be calculated from session data
+      },
     };
   }
 
@@ -643,13 +710,20 @@ export class ReportBuilderService {
 
     // Set the time
     const [hours, minutes] = scheduleConfig.time.split(':');
-    nextRun.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+    nextRun.setHours(
+      Number.parseInt(hours, 10),
+      Number.parseInt(minutes, 10),
+      0,
+      0
+    );
 
     return nextRun.toISOString();
   }
 
   async searchReports(query: string, filters?: any): Promise<CustomReport[]> {
-    const { data: { user } } = await this.supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await this.supabase.auth.getUser();
     if (!user) throw new Error('User not authenticated');
 
     let dbQuery = this.supabase
@@ -672,7 +746,9 @@ export class ReportBuilderService {
   }
 
   async getRecentReports(limit = 5): Promise<CustomReport[]> {
-    const { data: { user } } = await this.supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await this.supabase.auth.getUser();
     if (!user) throw new Error('User not authenticated');
 
     const { data: reports, error } = await this.supabase
@@ -682,13 +758,16 @@ export class ReportBuilderService {
       .order('updated_at', { ascending: false })
       .limit(limit);
 
-    if (error) throw new Error(`Failed to fetch recent reports: ${error.message}`);
+    if (error)
+      throw new Error(`Failed to fetch recent reports: ${error.message}`);
 
     return reports || [];
   }
 
   async getFavoriteReports(): Promise<CustomReport[]> {
-    const { data: { user } } = await this.supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await this.supabase.auth.getUser();
     if (!user) throw new Error('User not authenticated');
 
     // This would require a user_favorites table to track favorite reports
@@ -702,15 +781,16 @@ export class ReportBuilderService {
 
     if (!analytics?.length) return [];
 
-    const reportIds = analytics.map(a => a.report_id);
-    
+    const reportIds = analytics.map((a) => a.report_id);
+
     const { data: reports, error } = await this.supabase
       .from('custom_reports')
       .select('*')
       .in('id', reportIds)
       .or(`user_id.eq.${user.id},is_public.eq.true`);
 
-    if (error) throw new Error(`Failed to fetch favorite reports: ${error.message}`);
+    if (error)
+      throw new Error(`Failed to fetch favorite reports: ${error.message}`);
 
     return reports || [];
   }

@@ -2,15 +2,12 @@
 // Story 5.5: Brazilian electronic invoice generation and management
 
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { 
-  nfeDocumentSchema,
-  nfeGenerationRequestSchema,
-  serviceItemSchema,
+import {
   customerInfoSchema,
   type NFEDocument,
   type NFEGenerationRequest,
-  type ServiceItem,
-  type CustomerInfo
+  nfeDocumentSchema,
+  nfeGenerationRequestSchema,
 } from '@/lib/types/brazilian-tax';
 import { brazilianTaxEngine } from './tax-engine';
 
@@ -23,25 +20,33 @@ export class NFEIntegrationService {
     try {
       // Validate request
       const validatedRequest = nfeGenerationRequestSchema.parse(request);
-      
+
       // Get next NFe number
-      const nextNumber = await this.getNextNFENumber(validatedRequest.clinic_id);
-      
+      const nextNumber = await this.getNextNFENumber(
+        validatedRequest.clinic_id
+      );
+
       // Calculate taxes for services
       const taxCalculations = await Promise.all(
-        validatedRequest.services.map(service => 
+        validatedRequest.services.map((service) =>
           this.taxEngine.calculateTaxes({
             clinic_id: validatedRequest.clinic_id,
             valor_base: service.valor_total,
             tipo_servico: service.descricao,
-            codigo_servico: service.codigo_servico
+            codigo_servico: service.codigo_servico,
           })
         )
       );
 
       // Build NFe document
-      const totalValue = validatedRequest.services.reduce((sum, service) => sum + service.valor_total, 0);
-      const totalTaxes = taxCalculations.reduce((sum, calc) => sum + calc.total_taxes, 0);
+      const totalValue = validatedRequest.services.reduce(
+        (sum, service) => sum + service.valor_total,
+        0
+      );
+      const _totalTaxes = taxCalculations.reduce(
+        (sum, calc) => sum + calc.total_taxes,
+        0
+      );
 
       const nfeDocument: NFEDocument = {
         clinic_id: validatedRequest.clinic_id,
@@ -50,13 +55,27 @@ export class NFEIntegrationService {
         serie_nfe: 1,
         tipo_documento: 'nfe',
         modelo_documento: '55',
-        natureza_operacao: validatedRequest.natureza_operacao || 'Prestação de Serviços de Saúde',
+        natureza_operacao:
+          validatedRequest.natureza_operacao ||
+          'Prestação de Serviços de Saúde',
         valor_total: totalValue,
         valor_base_calculo: totalValue,
-        valor_icms: taxCalculations.reduce((sum, calc) => sum + calc.tax_breakdown.icms, 0),
-        valor_iss: taxCalculations.reduce((sum, calc) => sum + calc.tax_breakdown.iss, 0),
-        valor_pis: taxCalculations.reduce((sum, calc) => sum + calc.tax_breakdown.pis, 0),
-        valor_cofins: taxCalculations.reduce((sum, calc) => sum + calc.tax_breakdown.cofins, 0),
+        valor_icms: taxCalculations.reduce(
+          (sum, calc) => sum + calc.tax_breakdown.icms,
+          0
+        ),
+        valor_iss: taxCalculations.reduce(
+          (sum, calc) => sum + calc.tax_breakdown.iss,
+          0
+        ),
+        valor_pis: taxCalculations.reduce(
+          (sum, calc) => sum + calc.tax_breakdown.pis,
+          0
+        ),
+        valor_cofins: taxCalculations.reduce(
+          (sum, calc) => sum + calc.tax_breakdown.cofins,
+          0
+        ),
         cliente_cnpj_cpf: validatedRequest.customer.cnpj_cpf,
         cliente_nome: validatedRequest.customer.nome,
         cliente_endereco: validatedRequest.customer.endereco,
@@ -67,7 +86,7 @@ export class NFEIntegrationService {
         protocolo_autorizacao: undefined,
         xml_nfe: undefined,
         created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       };
 
       // Validate NFe document
@@ -121,7 +140,7 @@ export class NFEIntegrationService {
     const timestamp = Date.now().toString();
     const clinicHash = clinicId.replace(/-/g, '').substring(0, 8);
     const paddedNumber = nfeNumber.toString().padStart(9, '0');
-    
+
     return `${timestamp}${clinicHash}${paddedNumber}`;
   }
 
@@ -155,14 +174,14 @@ export class NFEIntegrationService {
 
       // For demo purposes, we'll simulate authorization
       const protocol = `${Date.now()}${Math.random().toString(36).substr(2, 5)}`;
-      
+
       // Update NFe status
       const { error: updateError } = await this.supabase
         .from('nfe_documents')
         .update({
           status: 'authorized',
           protocolo_autorizacao: protocol,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', nfeId);
 
@@ -173,19 +192,23 @@ export class NFEIntegrationService {
       return {
         success: true,
         protocol,
-        message: 'NFe authorized successfully'
+        message: 'NFe authorized successfully',
       };
     } catch (error) {
       console.error('NFe authorization error:', error);
       return {
         success: false,
-        message: error instanceof Error ? error.message : 'Authorization failed'
+        message:
+          error instanceof Error ? error.message : 'Authorization failed',
       };
     }
   }
 
   // Cancel NFe
-  async cancelNFE(nfeId: string, reason: string): Promise<{
+  async cancelNFE(
+    nfeId: string,
+    reason: string
+  ): Promise<{
     success: boolean;
     message: string;
   }> {
@@ -206,14 +229,14 @@ export class NFEIntegrationService {
       }
 
       // In a real implementation, this would submit cancellation to SEFAZ
-      
+
       // Update NFe status
       const { error: updateError } = await this.supabase
         .from('nfe_documents')
         .update({
           status: 'cancelled',
           observacoes: `${nfe.observacoes || ''}\nCancelada: ${reason}`,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', nfeId);
 
@@ -223,13 +246,13 @@ export class NFEIntegrationService {
 
       return {
         success: true,
-        message: 'NFe cancelled successfully'
+        message: 'NFe cancelled successfully',
       };
     } catch (error) {
       console.error('NFe cancellation error:', error);
       return {
         success: false,
-        message: error instanceof Error ? error.message : 'Cancellation failed'
+        message: error instanceof Error ? error.message : 'Cancellation failed',
       };
     }
   }
@@ -310,7 +333,7 @@ export class NFEIntegrationService {
 
       return {
         documents: (data || []) as NFEDocument[],
-        total: count || 0
+        total: count || 0,
       };
     } catch (error) {
       console.error('NFe list error:', error);
@@ -348,30 +371,39 @@ export class NFEIntegrationService {
 
       const documents = data || [];
       const totalDocuments = documents.length;
-      const totalValue = documents.reduce((sum, doc) => sum + (doc.valor_total || 0), 0);
+      const totalValue = documents.reduce(
+        (sum, doc) => sum + (doc.valor_total || 0),
+        0
+      );
 
       // Group by status
-      const byStatus = documents.reduce((acc, doc) => {
-        acc[doc.status] = (acc[doc.status] || 0) + 1;
-        return acc;
-      }, {} as Record<string, number>);
+      const byStatus = documents.reduce(
+        (acc, doc) => {
+          acc[doc.status] = (acc[doc.status] || 0) + 1;
+          return acc;
+        },
+        {} as Record<string, number>
+      );
 
       // Group by month
-      const byMonth = documents.reduce((acc, doc) => {
-        const month = doc.created_at.substring(0, 7); // YYYY-MM
-        const existing = acc.find(item => item.month === month);
-        if (existing) {
-          existing.count += 1;
-          existing.value += doc.valor_total || 0;
-        } else {
-          acc.push({
-            month,
-            count: 1,
-            value: doc.valor_total || 0
-          });
-        }
-        return acc;
-      }, [] as Array<{ month: string; count: number; value: number; }>);
+      const byMonth = documents.reduce(
+        (acc, doc) => {
+          const month = doc.created_at.substring(0, 7); // YYYY-MM
+          const existing = acc.find((item) => item.month === month);
+          if (existing) {
+            existing.count += 1;
+            existing.value += doc.valor_total || 0;
+          } else {
+            acc.push({
+              month,
+              count: 1,
+              value: doc.valor_total || 0,
+            });
+          }
+          return acc;
+        },
+        [] as Array<{ month: string; count: number; value: number }>
+      );
 
       // Sort by month
       byMonth.sort((a, b) => a.month.localeCompare(b.month));
@@ -380,7 +412,7 @@ export class NFEIntegrationService {
         total_documents: totalDocuments,
         total_value: totalValue,
         by_status: byStatus,
-        by_month: byMonth
+        by_month: byMonth,
       };
     } catch (error) {
       console.error('NFe statistics error:', error);
@@ -410,12 +442,16 @@ export class NFEIntegrationService {
       for (const service of request.services) {
         const calculatedTotal = service.quantidade * service.valor_unitario;
         if (Math.abs(calculatedTotal - service.valor_total) > 0.01) {
-          errors.push(`Service "${service.descricao}": total value doesn't match quantity × unit value`);
+          errors.push(
+            `Service "${service.descricao}": total value doesn't match quantity × unit value`
+          );
         }
       }
 
       // Check tax configuration
-      const taxValidation = await this.taxEngine.validateTaxSetup(request.clinic_id);
+      const taxValidation = await this.taxEngine.validateTaxSetup(
+        request.clinic_id
+      );
       if (!taxValidation.isValid) {
         errors.push(...taxValidation.errors);
       }
@@ -431,14 +467,14 @@ export class NFEIntegrationService {
       return {
         isValid: errors.length === 0,
         errors,
-        warnings
+        warnings,
       };
     } catch (error: any) {
       console.error('NFe validation error:', error);
       return {
         isValid: false,
         errors: [`Validation failed: ${error.message}`],
-        warnings
+        warnings,
       };
     }
   }

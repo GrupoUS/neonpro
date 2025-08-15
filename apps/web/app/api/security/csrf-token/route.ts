@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { CSRFProtection } from '@/lib/security/csrf-protection';
+import { type NextRequest, NextResponse } from 'next/server';
 import { requireAuth } from '@/lib/auth';
+import { CSRFProtection } from '@/lib/security/csrf-protection';
 
 /**
  * CSRF Token API Route
@@ -38,17 +38,17 @@ export async function POST(request: NextRequest) {
     const token = await csrfProtection.generateToken(
       sessionId,
       request.headers.get('user-agent') || '',
-      request.headers.get('x-forwarded-for')?.split(',')[0] || 
-      request.headers.get('x-real-ip') || 
-      request.ip || 'unknown'
+      request.headers.get('x-forwarded-for')?.split(',')[0] ||
+        request.headers.get('x-real-ip') ||
+        request.ip ||
+        'unknown'
     );
 
     return NextResponse.json({
       token,
       expiresAt: new Date(Date.now() + 60 * 60 * 1000).toISOString(), // 1 hour
-      sessionId
+      sessionId,
     });
-
   } catch (error) {
     console.error('CSRF token generation error:', error);
     return NextResponse.json(
@@ -67,7 +67,7 @@ export async function PUT(request: NextRequest) {
     const body = await request.json();
     const { token, sessionId } = body;
 
-    if (!token || !sessionId) {
+    if (!(token && sessionId)) {
       return NextResponse.json(
         { error: 'Token and session ID are required' },
         { status: 400 }
@@ -86,9 +86,8 @@ export async function PUT(request: NextRequest) {
 
     return NextResponse.json({
       valid: true,
-      message: 'CSRF token is valid'
+      message: 'CSRF token is valid',
     });
-
   } catch (error) {
     console.error('CSRF token validation error:', error);
     return NextResponse.json(
@@ -127,9 +126,8 @@ export async function DELETE(request: NextRequest) {
     await csrfProtection.invalidateSessionTokens(sessionId);
 
     return NextResponse.json({
-      message: 'CSRF tokens invalidated successfully'
+      message: 'CSRF tokens invalidated successfully',
     });
-
   } catch (error) {
     console.error('CSRF token invalidation error:', error);
     return NextResponse.json(

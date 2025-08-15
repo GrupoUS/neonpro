@@ -1,158 +1,145 @@
 /**
  * Forecasting System Module Exports
  * Epic 11 - Story 11.1: Main entry point for demand forecasting system
- * 
+ *
  * Consolidated exports for:
  * - Core forecasting engine and utilities
  * - Model management and training system
  * - Resource allocation optimizer
  * - Type definitions and configurations
  * - API interfaces and helpers
- * 
+ *
  * BMAD METHOD + VOIDBEAST V6.0 ENHANCED - Quality ≥9.8/10
  */
 
+// Configuration Management
+export {
+  API_CONFIG,
+  ConfigManager,
+  configManager,
+  DATABASE_CONFIG,
+  ENVIRONMENT_CONFIGS,
+  EXTERNAL_FACTOR_CONFIGS,
+  FEATURE_FLAGS,
+  FORECASTING_CONFIG,
+  MODEL_CONFIGS,
+  MODEL_TRAINING_CONFIG,
+  PERFORMANCE_CONFIG,
+  RESOURCE_CONFIG,
+  SECURITY_CONFIG,
+} from './config';
 // Core Forecasting Engine
 export {
   DemandForecastingEngine,
   demandForecastingEngine,
-  ForecastingUtils
+  ForecastingUtils,
 } from './demand-forecasting';
-
 // Model Management System
 export {
   ForecastModelManager,
-  forecastModelManager
+  forecastModelManager,
 } from './forecast-models';
-
 // Resource Allocation Optimizer
 export {
   ResourceAllocationOptimizer,
-  resourceAllocationOptimizer
+  resourceAllocationOptimizer,
 } from './resource-allocation';
-
-// Configuration Management
-export {
-  ConfigManager,
-  configManager,
-  FORECASTING_CONFIG,
-  RESOURCE_CONFIG,
-  MODEL_TRAINING_CONFIG,
-  MODEL_CONFIGS,
-  EXTERNAL_FACTOR_CONFIGS,
-  PERFORMANCE_CONFIG,
-  DATABASE_CONFIG,
-  API_CONFIG,
-  SECURITY_CONFIG,
-  ENVIRONMENT_CONFIGS,
-  FEATURE_FLAGS
-} from './config';
 
 // Type Definitions
 export type {
+  AllocationAlert,
+  AllocationConstraint,
+  AllocationMetrics,
+  AllocationPlan,
+  AllocationPlanRequest,
+  AllocationPlanResponse,
+  AllocationPlansTable,
+  BatchForecastRequest,
+  BatchForecastResponse,
+  ClinicId,
+  ComponentStatus,
+  CostOptimizationReport,
+  Currency,
+  DateString,
+  DemandFactorsTable,
   // Core forecasting types
   DemandForecast,
-  ExternalFactor,
-  ForecastModel,
-  ForecastValidationMetrics,
+  // Database schema types
+  DemandForecastsTable,
   DemandPattern,
-  ResourceAllocation,
-  ForecastAlert,
-  ServiceDemandData,
-  ForecastingOptions,
-  
-  // Model management types
-  ModelTrainingConfig,
-  ModelPerformanceMetrics,
-  ModelComparisonResult,
-  ModelTrainingJob,
-  HyperparameterSpace,
-  
-  // Resource allocation types
-  StaffAllocation,
+  EconomicIndicators,
   EquipmentAllocation,
-  RoomAllocation,
-  InventoryAllocation,
-  TimeWindow,
-  AllocationConstraint,
-  OptimizationObjective,
-  AllocationPlan,
-  AllocationAlert,
-  AllocationMetrics,
-  
+  EquipmentId,
+  // Integration types
+  ExternalAPIResponse,
+  ExternalFactor,
+  FilterParams,
+  // Analytics and reporting types
+  ForecastAccuracyReport,
+  ForecastAlert,
+  ForecastAlertsTable,
+  // Utility types
+  ForecastingEntityId,
+  ForecastingError,
+  // Event and notification types
+  ForecastingEvent,
+  ForecastingOptions,
+  // Configuration types
+  ForecastingSystemConfig,
+  ForecastModel,
+  ForecastModelsTable,
   // API types
   ForecastRequest,
   ForecastResponse,
-  BatchForecastRequest,
-  BatchForecastResponse,
-  AllocationPlanRequest,
-  AllocationPlanResponse,
+  ForecastValidationMetrics,
+  HealthTrends,
+  HyperparameterSpace,
+  InventoryAllocation,
+  InventoryItemId,
+  ModelComparisonResult,
+  ModelId,
+  ModelPerformanceMetrics,
+  ModelPerformanceMetricsTable,
+  // Model management types
+  ModelTrainingConfig,
+  ModelTrainingDefaults,
+  ModelTrainingJob,
+  ModelTrainingJobsTable,
   ModelTrainingRequest,
   ModelTrainingResponse,
-  
-  // Database schema types
-  DemandForecastsTable,
-  ForecastModelsTable,
-  ModelTrainingJobsTable,
-  AllocationPlansTable,
-  ForecastAlertsTable,
-  DemandFactorsTable,
-  ModelPerformanceMetricsTable,
-  
-  // Configuration types
-  ForecastingSystemConfig,
+  NotificationSubscription,
+  OptimizationObjective,
+  PaginatedResponse,
+  PaginationParams,
+  Percentage,
+  ResourceAllocation,
   ResourceOptimizationConfig,
-  ModelTrainingDefaults,
-  
+  ResourceUtilizationReport,
+  RoomAllocation,
+  RoomId,
+  Score,
+  ServiceDemandData,
+  ServiceId,
+  // Resource allocation types
+  StaffAllocation,
+  StaffId,
+  SystemHealthStatus,
+  TimeWindow,
   // Validation and error types
   ValidationError,
-  ForecastingError,
-  SystemHealthStatus,
-  ComponentStatus,
-  
-  // Analytics and reporting types
-  ForecastAccuracyReport,
-  ResourceUtilizationReport,
-  CostOptimizationReport,
-  
-  // Event and notification types
-  ForecastingEvent,
-  NotificationSubscription,
-  
-  // Integration types
-  ExternalAPIResponse,
   WeatherData,
-  EconomicIndicators,
-  HealthTrends,
-  
-  // Utility types
-  ForecastingEntityId,
-  ClinicId,
-  ServiceId,
-  ModelId,
-  StaffId,
-  EquipmentId,
-  RoomId,
-  InventoryItemId,
-  DateString,
-  Percentage,
-  Score,
-  Currency,
-  PaginationParams,
-  PaginatedResponse,
-  FilterParams
 } from './types';
 
 // Constants
 export {
-  FORECAST_TYPES,
-  MODEL_TYPES,
   ALERT_TYPES,
-  SEVERITY_LEVELS,
+  FORECAST_TYPES,
+  JOB_STATUSES,
+  MODEL_TYPES,
   OPTIMIZATION_OBJECTIVES,
-  RESOURCE_TYPES,
   PLAN_STATUSES,
-  JOB_STATUSES
+  RESOURCE_TYPES,
+  SEVERITY_LEVELS,
 } from './types';
 
 /**
@@ -184,12 +171,11 @@ export class ForecastingSystemAPI {
       await Promise.all([
         this.engine.initialize(clinicId),
         this.modelManager.initialize(clinicId),
-        this.resourceOptimizer.initialize(clinicId)
+        this.resourceOptimizer.initialize(clinicId),
       ]);
 
       this.initialized = true;
       console.log(`Forecasting system initialized for clinic ${clinicId}`);
-
     } catch (error) {
       console.error('Failed to initialize forecasting system:', error);
       throw new Error('Forecasting system initialization failed');
@@ -225,15 +211,14 @@ export class ForecastingSystemAPI {
           processing_time_ms: processingTime,
           model_used: forecast.model_version,
           confidence_level: forecast.confidence_level,
-          data_points_used: 0 // Would be calculated from actual data
-        }
+          data_points_used: 0, // Would be calculated from actual data
+        },
       };
-
     } catch (error) {
       console.error('Failed to generate forecast:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -241,7 +226,9 @@ export class ForecastingSystemAPI {
   /**
    * Generate batch forecasts
    */
-  async generateBatchForecasts(request: BatchForecastRequest): Promise<BatchForecastResponse> {
+  async generateBatchForecasts(
+    request: BatchForecastRequest
+  ): Promise<BatchForecastResponse> {
     try {
       if (!this.initialized) {
         await this.initialize(request.clinic_id);
@@ -249,7 +236,11 @@ export class ForecastingSystemAPI {
 
       const startTime = Date.now();
       const forecasts: DemandForecast[] = [];
-      const errors: Array<{ service_id?: string; forecast_type: string; error: string }> = [];
+      const errors: Array<{
+        service_id?: string;
+        forecast_type: string;
+        error: string;
+      }> = [];
 
       // Generate forecasts in parallel
       const forecastPromises = request.forecasts.map(async (forecastConfig) => {
@@ -269,8 +260,8 @@ export class ForecastingSystemAPI {
             error: {
               service_id: forecastConfig.service_id,
               forecast_type: forecastConfig.forecast_type,
-              error: error instanceof Error ? error.message : 'Unknown error'
-            }
+              error: error instanceof Error ? error.message : 'Unknown error',
+            },
           };
         }
       });
@@ -278,7 +269,7 @@ export class ForecastingSystemAPI {
       const results = await Promise.all(forecastPromises);
 
       // Separate successful forecasts from errors
-      results.forEach(result => {
+      results.forEach((result) => {
         if (result.success && 'forecast' in result) {
           forecasts.push(result.forecast);
         } else if (!result.success && 'error' in result) {
@@ -296,18 +287,19 @@ export class ForecastingSystemAPI {
           total_forecasts: request.forecasts.length,
           successful_forecasts: forecasts.length,
           failed_forecasts: errors.length,
-          processing_time_ms: processingTime
-        }
+          processing_time_ms: processingTime,
+        },
       };
-
     } catch (error) {
       console.error('Failed to generate batch forecasts:', error);
       return {
         success: false,
-        errors: [{
-          forecast_type: 'all',
-          error: error instanceof Error ? error.message : 'Unknown error'
-        }]
+        errors: [
+          {
+            forecast_type: 'all',
+            error: error instanceof Error ? error.message : 'Unknown error',
+          },
+        ],
       };
     }
   }
@@ -315,7 +307,9 @@ export class ForecastingSystemAPI {
   /**
    * Generate comprehensive allocation plan
    */
-  async generateAllocationPlan(request: AllocationPlanRequest): Promise<AllocationPlanResponse> {
+  async generateAllocationPlan(
+    request: AllocationPlanRequest
+  ): Promise<AllocationPlanResponse> {
     try {
       if (!this.initialized) {
         await this.initialize(request.clinic_id);
@@ -339,7 +333,7 @@ export class ForecastingSystemAPI {
         forecasts,
         {
           start: new Date(request.planning_period.start_date),
-          end: new Date(request.planning_period.end_date)
+          end: new Date(request.planning_period.end_date),
         },
         request.objectives
       );
@@ -353,15 +347,14 @@ export class ForecastingSystemAPI {
           processing_time_ms: processingTime,
           forecasts_used: forecasts.length,
           optimization_score: plan.efficiency_score,
-          constraint_violations: 0 // Would be calculated from actual validation
-        }
+          constraint_violations: 0, // Would be calculated from actual validation
+        },
       };
-
     } catch (error) {
       console.error('Failed to generate allocation plan:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -369,7 +362,9 @@ export class ForecastingSystemAPI {
   /**
    * Train new model
    */
-  async trainModel(request: ModelTrainingRequest): Promise<ModelTrainingResponse> {
+  async trainModel(
+    request: ModelTrainingRequest
+  ): Promise<ModelTrainingResponse> {
     try {
       if (!this.initialized) {
         await this.initialize(request.clinic_id);
@@ -385,16 +380,18 @@ export class ForecastingSystemAPI {
         success: true,
         data: {
           job_id: jobId,
-          estimated_completion_time: new Date(Date.now() + 30 * 60 * 1000).toISOString(), // 30 minutes
-          training_config: request.config || this.getDefaultTrainingConfig(request.model_type)
-        }
+          estimated_completion_time: new Date(
+            Date.now() + 30 * 60 * 1000
+          ).toISOString(), // 30 minutes
+          training_config:
+            request.config || this.getDefaultTrainingConfig(request.model_type),
+        },
       };
-
     } catch (error) {
       console.error('Failed to start model training:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -409,19 +406,21 @@ export class ForecastingSystemAPI {
   /**
    * Get system health status
    */
-  async getSystemHealth(clinicId: string): Promise<SystemHealthStatus> {
+  async getSystemHealth(_clinicId: string): Promise<SystemHealthStatus> {
     try {
       // Check component health
       const components = {
-        forecasting_engine: await this.checkComponentHealth('forecasting_engine'),
+        forecasting_engine:
+          await this.checkComponentHealth('forecasting_engine'),
         model_manager: await this.checkComponentHealth('model_manager'),
-        resource_optimizer: await this.checkComponentHealth('resource_optimizer'),
+        resource_optimizer:
+          await this.checkComponentHealth('resource_optimizer'),
         database: await this.checkComponentHealth('database'),
-        external_apis: await this.checkComponentHealth('external_apis')
+        external_apis: await this.checkComponentHealth('external_apis'),
       };
 
       // Determine overall status
-      const componentStatuses = Object.values(components).map(c => c.status);
+      const componentStatuses = Object.values(components).map((c) => c.status);
       let overallStatus: SystemHealthStatus['overall_status'] = 'healthy';
 
       if (componentStatuses.includes('critical')) {
@@ -436,9 +435,8 @@ export class ForecastingSystemAPI {
         overall_status: overallStatus,
         components,
         last_check: new Date().toISOString(),
-        next_check: new Date(Date.now() + 60 * 1000).toISOString() // Next check in 1 minute
+        next_check: new Date(Date.now() + 60 * 1000).toISOString(), // Next check in 1 minute
       };
-
     } catch (error) {
       console.error('Failed to get system health:', error);
       return {
@@ -448,10 +446,10 @@ export class ForecastingSystemAPI {
           model_manager: { status: 'offline' },
           resource_optimizer: { status: 'offline' },
           database: { status: 'offline' },
-          external_apis: { status: 'offline' }
+          external_apis: { status: 'offline' },
         },
         last_check: new Date().toISOString(),
-        next_check: new Date(Date.now() + 60 * 1000).toISOString()
+        next_check: new Date(Date.now() + 60 * 1000).toISOString(),
       };
     }
   }
@@ -459,7 +457,9 @@ export class ForecastingSystemAPI {
   /**
    * Helper method to get default training configuration
    */
-  private getDefaultTrainingConfig(modelType: ForecastModel['model_type']): ModelTrainingConfig {
+  private getDefaultTrainingConfig(
+    modelType: ForecastModel['model_type']
+  ): ModelTrainingConfig {
     return {
       model_type: modelType,
       training_params: {
@@ -470,7 +470,7 @@ export class ForecastingSystemAPI {
         early_stopping: true,
         max_epochs: 100,
         learning_rate: 0.001,
-        regularization: 0.01
+        regularization: 0.01,
       },
       feature_config: {
         include_seasonality: true,
@@ -478,41 +478,42 @@ export class ForecastingSystemAPI {
         include_external_factors: true,
         include_holidays: true,
         lag_features: [1, 7, 30],
-        rolling_features: [7, 14, 30]
+        rolling_features: [7, 14, 30],
       },
       optimization_config: {
         metric: 'mape',
         minimize: true,
         patience: 10,
-        min_delta: 0.001
-      }
+        min_delta: 0.001,
+      },
     };
   }
 
   /**
    * Helper method to check component health
    */
-  private async checkComponentHealth(component: string): Promise<ComponentStatus> {
+  private async checkComponentHealth(
+    _component: string
+  ): Promise<ComponentStatus> {
     try {
       const startTime = Date.now();
-      
+
       // Simulate component health check
-      await new Promise(resolve => setTimeout(resolve, 10));
-      
+      await new Promise((resolve) => setTimeout(resolve, 10));
+
       const responseTime = Date.now() - startTime;
 
       return {
         status: 'healthy',
         response_time_ms: responseTime,
         error_rate: 0,
-        uptime_percentage: 99.9
+        uptime_percentage: 99.9,
       };
-
     } catch (error) {
       return {
         status: 'critical',
         last_error: error instanceof Error ? error.message : 'Unknown error',
-        uptime_percentage: 0
+        uptime_percentage: 0,
       };
     }
   }
@@ -531,7 +532,7 @@ export const ForecastingHelpers = {
   async quickForecast(
     clinicId: string,
     serviceId: string,
-    days: number = 30
+    days = 30
   ): Promise<DemandForecast | null> {
     try {
       const endDate = new Date();
@@ -543,11 +544,10 @@ export const ForecastingHelpers = {
         service_id: serviceId,
         forecast_type: 'service_demand',
         start_date: startDate.toISOString(),
-        end_date: endDate.toISOString()
+        end_date: endDate.toISOString(),
       });
 
       return response.success ? response.data || null : null;
-
     } catch (error) {
       console.error('Quick forecast failed:', error);
       return null;
@@ -559,7 +559,7 @@ export const ForecastingHelpers = {
    */
   async quickAllocation(
     clinicId: string,
-    days: number = 30
+    days = 30
   ): Promise<AllocationPlan | null> {
     try {
       const startDate = new Date();
@@ -570,13 +570,12 @@ export const ForecastingHelpers = {
         clinic_id: clinicId,
         planning_period: {
           start_date: startDate.toISOString(),
-          end_date: endDate.toISOString()
+          end_date: endDate.toISOString(),
         },
-        include_forecasts: true
+        include_forecasts: true,
       });
 
       return response.success ? response.data || null : null;
-
     } catch (error) {
       console.error('Quick allocation failed:', error);
       return null;
@@ -590,10 +589,10 @@ export const ForecastingHelpers = {
     try {
       const health = await forecastingSystemAPI.getSystemHealth(clinicId);
       return health.overall_status === 'healthy';
-    } catch (error) {
+    } catch (_error) {
       return false;
     }
-  }
+  },
 };
 
 // Export default

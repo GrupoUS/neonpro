@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { StripeWebhookHandler } from '@/lib/services/subscription-service';
 
 // Disable body parser for webhooks
@@ -32,11 +32,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ received: true }, { status: 200 });
   } catch (error: any) {
     console.error('Stripe webhook error:', error);
-    
+
     return NextResponse.json(
-      { 
+      {
         error: 'Webhook handler failed',
-        message: error.message 
+        message: error.message,
       },
       { status: 400 }
     );

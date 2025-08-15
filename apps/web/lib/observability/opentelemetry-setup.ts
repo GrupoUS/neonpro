@@ -1,6 +1,6 @@
 /**
  * 🔭 OpenTelemetry Integration (Opcional)
- * 
+ *
  * Setup minimalista de OpenTelemetry para observability avançada
  * Ativa apenas se ENABLE_OTEL=true no ambiente
  */
@@ -26,21 +26,27 @@ export class SimpleTelemetry {
    * 🚀 Initialize telemetry (only if enabled)
    */
   static async initialize(): Promise<void> {
-    if (!this.config.enabled || telemetryInitialized) {
+    if (!SimpleTelemetry.config.enabled || telemetryInitialized) {
       return;
     }
 
     try {
       // Dynamic import to avoid loading when disabled
       const { NodeSDK } = await import('@opentelemetry/sdk-node');
-      const { getNodeAutoInstrumentations } = await import('@opentelemetry/auto-instrumentations-node');
-      const { OTLPTraceExporter } = await import('@opentelemetry/exporter-otlp-http');
-      
+      const { getNodeAutoInstrumentations } = await import(
+        '@opentelemetry/auto-instrumentations-node'
+      );
+      const { OTLPTraceExporter } = await import(
+        '@opentelemetry/exporter-otlp-http'
+      );
+
       const sdk = new NodeSDK({
-        serviceName: this.config.serviceName,
-        environment: this.config.environment,
-        traceExporter: this.config.exporterEndpoint 
-          ? new OTLPTraceExporter({ url: this.config.exporterEndpoint })
+        serviceName: SimpleTelemetry.config.serviceName,
+        environment: SimpleTelemetry.config.environment,
+        traceExporter: SimpleTelemetry.config.exporterEndpoint
+          ? new OTLPTraceExporter({
+              url: SimpleTelemetry.config.exporterEndpoint,
+            })
           : undefined,
         instrumentations: [
           getNodeAutoInstrumentations({
@@ -53,9 +59,8 @@ export class SimpleTelemetry {
 
       sdk.start();
       telemetryInitialized = true;
-      
-      console.log('📡 OpenTelemetry initialized successfully');
 
+      console.log('📡 OpenTelemetry initialized successfully');
     } catch (error) {
       console.warn('⚠️ OpenTelemetry initialization failed:', error);
       // Don't fail the app if telemetry fails
@@ -66,13 +71,13 @@ export class SimpleTelemetry {
    * 📊 Simple trace creation (fallback to console if not enabled)
    */
   static createTrace(name: string, fn: () => Promise<any>): Promise<any> {
-    if (!this.config.enabled) {
+    if (!SimpleTelemetry.config.enabled) {
       // Fallback: just execute function
       return fn();
     }
 
     const startTime = Date.now();
-    
+
     return fn()
       .then((result) => {
         const duration = Date.now() - startTime;
@@ -90,8 +95,8 @@ export class SimpleTelemetry {
    * 📈 Add custom attribute (no-op if disabled)
    */
   static addAttribute(key: string, value: string | number | boolean): void {
-    if (!this.config.enabled) return;
-    
+    if (!SimpleTelemetry.config.enabled) return;
+
     // Simple logging fallback
     console.log(`📋 Attribute: ${key} = ${value}`);
   }
@@ -100,6 +105,6 @@ export class SimpleTelemetry {
    * ⚙️ Get current configuration
    */
   static getConfig(): TelemetryConfig {
-    return { ...this.config };
+    return { ...SimpleTelemetry.config };
   }
 }

@@ -1,7 +1,7 @@
 /**
  * NeonPro Healthcare RBAC - Core Permissions System
  * AUTH-02 Implementation - Healthcare-Specific Role-Based Access Control
- * 
+ *
  * Features:
  * - Hierarchical role structure with inheritance
  * - Healthcare-specific permissions with CFM compliance
@@ -28,10 +28,16 @@ import { z } from 'zod';
 export const PermissionSchema = z.object({
   id: z.string(),
   resource: z.string(), // patient, procedure, license, equipment, etc.
-  action: z.string(),   // read, write, create, delete, perform, validate, etc.
-  scope: z.string(),    // own, clinic, franchise, specialty, all, etc.
+  action: z.string(), // read, write, create, delete, perform, validate, etc.
+  scope: z.string(), // own, clinic, franchise, specialty, all, etc.
   description: z.string(),
-  category: z.enum(['clinical', 'administrative', 'compliance', 'system', 'emergency']),
+  category: z.enum([
+    'clinical',
+    'administrative',
+    'compliance',
+    'system',
+    'emergency',
+  ]),
   requires_license: z.boolean().default(false),
   requires_specialty: z.array(z.string()).default([]),
   cfm_compliance: z.boolean().default(false),
@@ -39,7 +45,7 @@ export const PermissionSchema = z.object({
   anvisa_controlled: z.boolean().default(false),
   emergency_override: z.boolean().default(false),
   created_at: z.date().default(() => new Date()),
-  updated_at: z.date().default(() => new Date())
+  updated_at: z.date().default(() => new Date()),
 });
 
 export type Permission = z.infer<typeof PermissionSchema>;
@@ -51,50 +57,50 @@ export enum HealthcareRole {
   // System Roles
   SUPER_ADMIN = 'super_admin',
   SYSTEM_ADMIN = 'system_admin',
-  
+
   // Clinical Leadership
   MEDICAL_DIRECTOR = 'medical_director',
   CLINICAL_COORDINATOR = 'clinical_coordinator',
-  
+
   // Healthcare Professionals (CFM Licensed)
   DOCTOR_SPECIALIST = 'doctor_specialist',
   DOCTOR_GENERAL = 'doctor_general',
   RESIDENT_DOCTOR = 'resident_doctor',
-  
+
   // Nursing Professionals
   NURSE_MANAGER = 'nurse_manager',
   REGISTERED_NURSE = 'registered_nurse',
   NURSING_TECHNICIAN = 'nursing_technician',
-  
+
   // Allied Health Professionals
   PHYSIOTHERAPIST = 'physiotherapist',
   PSYCHOLOGIST = 'psychologist',
   NUTRITIONIST = 'nutritionist',
   PHARMACIST = 'pharmacist',
-  
+
   // Technical Staff
   RADIOLOGY_TECHNICIAN = 'radiology_technician',
   LAB_TECHNICIAN = 'lab_technician',
   EQUIPMENT_TECHNICIAN = 'equipment_technician',
-  
+
   // Administrative Staff
   ADMIN_MANAGER = 'admin_manager',
   RECEPTIONIST = 'receptionist',
   BILLING_SPECIALIST = 'billing_specialist',
   SECRETARY = 'secretary',
-  
+
   // Compliance & Audit
   COMPLIANCE_OFFICER = 'compliance_officer',
   AUDITOR = 'auditor',
   QUALITY_MANAGER = 'quality_manager',
-  
+
   // Patient & Family
   PATIENT = 'patient',
   PATIENT_FAMILY = 'patient_family',
-  
+
   // External
   GUEST = 'guest',
-  VENDOR = 'vendor'
+  VENDOR = 'vendor',
 }
 
 /**
@@ -120,26 +126,26 @@ export enum MedicalSpecialty {
   PULMONOLOGY = 'pulmonology',
   RHEUMATOLOGY = 'rheumatology',
   UROLOGY = 'urology',
-  
+
   // Surgical Specialties
   GENERAL_SURGERY = 'general_surgery',
   CARDIAC_SURGERY = 'cardiac_surgery',
   NEUROSURGERY = 'neurosurgery',
   PLASTIC_SURGERY = 'plastic_surgery',
   VASCULAR_SURGERY = 'vascular_surgery',
-  
+
   // Support Specialties
   ANESTHESIOLOGY = 'anesthesiology',
   PATHOLOGY = 'pathology',
   RADIOLOGY = 'radiology',
   EMERGENCY_MEDICINE = 'emergency_medicine',
   INTENSIVE_CARE = 'intensive_care',
-  
+
   // Allied Health
   PHYSIOTHERAPY = 'physiotherapy',
   PSYCHOLOGY = 'psychology',
   NUTRITION = 'nutrition',
-  PHARMACY = 'pharmacy'
+  PHARMACY = 'pharmacy',
 }
 
 // ============================================================================
@@ -165,7 +171,7 @@ export const HEALTHCARE_PERMISSIONS: Record<string, Permission> = {
     requires_specialty: [],
     anvisa_controlled: false,
     created_at: new Date(),
-    updated_at: new Date()
+    updated_at: new Date(),
   },
 
   'patient.read.clinic': {
@@ -182,7 +188,7 @@ export const HEALTHCARE_PERMISSIONS: Record<string, Permission> = {
     requires_specialty: [],
     anvisa_controlled: false,
     created_at: new Date(),
-    updated_at: new Date()
+    updated_at: new Date(),
   },
 
   'patient.write.own': {
@@ -199,7 +205,7 @@ export const HEALTHCARE_PERMISSIONS: Record<string, Permission> = {
     requires_specialty: [],
     anvisa_controlled: false,
     created_at: new Date(),
-    updated_at: new Date()
+    updated_at: new Date(),
   },
 
   'patient.create.clinic': {
@@ -216,7 +222,7 @@ export const HEALTHCARE_PERMISSIONS: Record<string, Permission> = {
     requires_specialty: [],
     anvisa_controlled: false,
     created_at: new Date(),
-    updated_at: new Date()
+    updated_at: new Date(),
   },
 
   // ===== CLINICAL PROCEDURES =====
@@ -234,7 +240,7 @@ export const HEALTHCARE_PERMISSIONS: Record<string, Permission> = {
     requires_specialty: [MedicalSpecialty.GENERAL_PRACTICE],
     anvisa_controlled: false,
     created_at: new Date(),
-    updated_at: new Date()
+    updated_at: new Date(),
   },
 
   'procedure.perform.specialty': {
@@ -251,7 +257,7 @@ export const HEALTHCARE_PERMISSIONS: Record<string, Permission> = {
     requires_specialty: [], // Will be validated based on user's specialty
     anvisa_controlled: false,
     created_at: new Date(),
-    updated_at: new Date()
+    updated_at: new Date(),
   },
 
   'procedure.authorize.complex': {
@@ -268,7 +274,7 @@ export const HEALTHCARE_PERMISSIONS: Record<string, Permission> = {
     requires_specialty: [], // Medical Director level
     anvisa_controlled: false,
     created_at: new Date(),
-    updated_at: new Date()
+    updated_at: new Date(),
   },
 
   // ===== PRESCRIPTION MANAGEMENT =====
@@ -286,7 +292,7 @@ export const HEALTHCARE_PERMISSIONS: Record<string, Permission> = {
     requires_specialty: [],
     anvisa_controlled: false,
     created_at: new Date(),
-    updated_at: new Date()
+    updated_at: new Date(),
   },
 
   'prescription.create.controlled': {
@@ -303,7 +309,7 @@ export const HEALTHCARE_PERMISSIONS: Record<string, Permission> = {
     requires_specialty: [],
     anvisa_controlled: true,
     created_at: new Date(),
-    updated_at: new Date()
+    updated_at: new Date(),
   },
 
   // ===== MEDICAL LICENSE VALIDATION =====
@@ -321,7 +327,7 @@ export const HEALTHCARE_PERMISSIONS: Record<string, Permission> = {
     requires_specialty: [],
     anvisa_controlled: false,
     created_at: new Date(),
-    updated_at: new Date()
+    updated_at: new Date(),
   },
 
   'license.monitor.expiration': {
@@ -338,7 +344,7 @@ export const HEALTHCARE_PERMISSIONS: Record<string, Permission> = {
     requires_specialty: [],
     anvisa_controlled: false,
     created_at: new Date(),
-    updated_at: new Date()
+    updated_at: new Date(),
   },
 
   // ===== EQUIPMENT & ANVISA COMPLIANCE =====
@@ -356,7 +362,7 @@ export const HEALTHCARE_PERMISSIONS: Record<string, Permission> = {
     requires_specialty: [],
     anvisa_controlled: true,
     created_at: new Date(),
-    updated_at: new Date()
+    updated_at: new Date(),
   },
 
   'equipment.operate.advanced': {
@@ -373,7 +379,7 @@ export const HEALTHCARE_PERMISSIONS: Record<string, Permission> = {
     requires_specialty: [],
     anvisa_controlled: true,
     created_at: new Date(),
-    updated_at: new Date()
+    updated_at: new Date(),
   },
 
   // ===== ADMINISTRATIVE PERMISSIONS =====
@@ -391,7 +397,7 @@ export const HEALTHCARE_PERMISSIONS: Record<string, Permission> = {
     requires_specialty: [],
     anvisa_controlled: false,
     created_at: new Date(),
-    updated_at: new Date()
+    updated_at: new Date(),
   },
 
   'scheduling.manage.clinic': {
@@ -408,7 +414,7 @@ export const HEALTHCARE_PERMISSIONS: Record<string, Permission> = {
     requires_specialty: [],
     anvisa_controlled: false,
     created_at: new Date(),
-    updated_at: new Date()
+    updated_at: new Date(),
   },
 
   'billing.process.standard': {
@@ -425,7 +431,7 @@ export const HEALTHCARE_PERMISSIONS: Record<string, Permission> = {
     requires_specialty: [],
     anvisa_controlled: false,
     created_at: new Date(),
-    updated_at: new Date()
+    updated_at: new Date(),
   },
 
   // ===== COMPLIANCE & AUDIT =====
@@ -443,7 +449,7 @@ export const HEALTHCARE_PERMISSIONS: Record<string, Permission> = {
     requires_specialty: [],
     anvisa_controlled: false,
     created_at: new Date(),
-    updated_at: new Date()
+    updated_at: new Date(),
   },
 
   'compliance.report.cfm': {
@@ -460,7 +466,7 @@ export const HEALTHCARE_PERMISSIONS: Record<string, Permission> = {
     requires_specialty: [],
     anvisa_controlled: false,
     created_at: new Date(),
-    updated_at: new Date()
+    updated_at: new Date(),
   },
 
   'compliance.report.lgpd': {
@@ -477,7 +483,7 @@ export const HEALTHCARE_PERMISSIONS: Record<string, Permission> = {
     requires_specialty: [],
     anvisa_controlled: false,
     created_at: new Date(),
-    updated_at: new Date()
+    updated_at: new Date(),
   },
 
   // ===== EMERGENCY PERMISSIONS =====
@@ -495,7 +501,7 @@ export const HEALTHCARE_PERMISSIONS: Record<string, Permission> = {
     requires_specialty: [],
     anvisa_controlled: false,
     created_at: new Date(),
-    updated_at: new Date()
+    updated_at: new Date(),
   },
 
   'emergency.access.all': {
@@ -512,7 +518,7 @@ export const HEALTHCARE_PERMISSIONS: Record<string, Permission> = {
     requires_specialty: [],
     anvisa_controlled: false,
     created_at: new Date(),
-    updated_at: new Date()
+    updated_at: new Date(),
   },
 
   // ===== SYSTEM ADMINISTRATION =====
@@ -530,7 +536,7 @@ export const HEALTHCARE_PERMISSIONS: Record<string, Permission> = {
     requires_specialty: [],
     anvisa_controlled: false,
     created_at: new Date(),
-    updated_at: new Date()
+    updated_at: new Date(),
   },
 
   'system.configure.clinic': {
@@ -547,8 +553,8 @@ export const HEALTHCARE_PERMISSIONS: Record<string, Permission> = {
     requires_specialty: [],
     anvisa_controlled: false,
     created_at: new Date(),
-    updated_at: new Date()
-  }
+    updated_at: new Date(),
+  },
 };
 
 // ============================================================================
@@ -569,7 +575,7 @@ export function getPermissionsByCategory(
   category: Permission['category']
 ): Permission[] {
   return Object.values(HEALTHCARE_PERMISSIONS).filter(
-    permission => permission.category === category
+    (permission) => permission.category === category
   );
 }
 
@@ -578,7 +584,7 @@ export function getPermissionsByCategory(
  */
 export function getLicenseRequiredPermissions(): Permission[] {
   return Object.values(HEALTHCARE_PERMISSIONS).filter(
-    permission => permission.requires_license
+    (permission) => permission.requires_license
   );
 }
 
@@ -587,7 +593,7 @@ export function getLicenseRequiredPermissions(): Permission[] {
  */
 export function getCFMCompliancePermissions(): Permission[] {
   return Object.values(HEALTHCARE_PERMISSIONS).filter(
-    permission => permission.cfm_compliance
+    (permission) => permission.cfm_compliance
   );
 }
 
@@ -596,7 +602,7 @@ export function getCFMCompliancePermissions(): Permission[] {
  */
 export function getLGPDSensitivePermissions(): Permission[] {
   return Object.values(HEALTHCARE_PERMISSIONS).filter(
-    permission => permission.lgpd_sensitive
+    (permission) => permission.lgpd_sensitive
   );
 }
 
@@ -605,7 +611,7 @@ export function getLGPDSensitivePermissions(): Permission[] {
  */
 export function getANVISAControlledPermissions(): Permission[] {
   return Object.values(HEALTHCARE_PERMISSIONS).filter(
-    permission => permission.anvisa_controlled
+    (permission) => permission.anvisa_controlled
   );
 }
 
@@ -614,7 +620,7 @@ export function getANVISAControlledPermissions(): Permission[] {
  */
 export function getEmergencyOverridePermissions(): Permission[] {
   return Object.values(HEALTHCARE_PERMISSIONS).filter(
-    permission => permission.emergency_override
+    (permission) => permission.emergency_override
   );
 }
 
@@ -629,11 +635,11 @@ export function permissionRequiresSpecialty(
   if (!permission || permission.requires_specialty.length === 0) {
     return false;
   }
-  
+
   if (!specialty) {
     return true; // Requires specialty but none provided
   }
-  
+
   return permission.requires_specialty.includes(specialty);
 }
 
@@ -642,7 +648,7 @@ export function permissionRequiresSpecialty(
  */
 export function validatePermissionFormat(permission: string): boolean {
   const parts = permission.split('.');
-  return parts.length === 3 && parts.every(part => part.length > 0);
+  return parts.length === 3 && parts.every((part) => part.length > 0);
 }
 
 /**
@@ -656,7 +662,7 @@ export function parsePermission(permission: string): {
   if (!validatePermissionFormat(permission)) {
     return null;
   }
-  
+
   const [resource, action, scope] = permission.split('.');
   return { resource, action, scope };
 }
@@ -673,11 +679,11 @@ export function getAllPermissionIds(): string[] {
  */
 export function getPermissionsCountByCategory(): Record<string, number> {
   const counts: Record<string, number> = {};
-  
-  Object.values(HEALTHCARE_PERMISSIONS).forEach(permission => {
+
+  Object.values(HEALTHCARE_PERMISSIONS).forEach((permission) => {
     counts[permission.category] = (counts[permission.category] || 0) + 1;
   });
-  
+
   return counts;
 }
 

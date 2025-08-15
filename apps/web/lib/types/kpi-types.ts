@@ -6,7 +6,11 @@
 export interface FinancialKPI {
   id: string;
   kpi_name: string;
-  kpi_category: 'revenue' | 'profitability' | 'operational' | 'financial_health';
+  kpi_category:
+    | 'revenue'
+    | 'profitability'
+    | 'operational'
+    | 'financial_health';
   current_value: number;
   target_value?: number;
   previous_value?: number;
@@ -229,7 +233,11 @@ export interface KPIBenchmark {
 
 // Real-time Updates
 export interface KPIUpdateEvent {
-  type: 'kpi_update' | 'alert_triggered' | 'threshold_breach' | 'dashboard_refresh';
+  type:
+    | 'kpi_update'
+    | 'alert_triggered'
+    | 'threshold_breach'
+    | 'dashboard_refresh';
   kpi_id?: string;
   dashboard_id?: string;
   alert_id?: string;
@@ -250,7 +258,11 @@ export interface OfflineKPIData {
 export interface KPIInsight {
   id: string;
   kpi_id: string;
-  insight_type: 'trend_change' | 'anomaly_detected' | 'target_achievement' | 'correlation_found';
+  insight_type:
+    | 'trend_change'
+    | 'anomaly_detected'
+    | 'target_achievement'
+    | 'correlation_found';
   title: string;
   description: string;
   severity: 'info' | 'warning' | 'critical';

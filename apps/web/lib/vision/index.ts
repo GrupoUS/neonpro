@@ -2,140 +2,123 @@
  * Vision Analysis System - Main Export Index
  * Centralized exports for NeonPro Computer Vision System
  * Epic 10 - Story 10.1: Automated Before/After Analysis
- * 
+ *
  * VOIDBEAST V4.0 APEX ENHANCED - Quality ≥9.5/10
  */
 
 // Configuration
 export {
-  VISION_CONFIG,
-  TREATMENT_TYPES,
   ANALYSIS_STATUS,
   ERROR_CODES,
+  getEnvironmentConfig,
   QUALITY_THRESHOLDS,
+  TREATMENT_TYPES,
+  VISION_CONFIG,
   validateVoidBeastCompliance,
-  getEnvironmentConfig
 } from './config';
-
+// Hooks
+// Re-export default hooks object
+export {
+  default as VisionHooks,
+  useAnalysisExport,
+  useAnalysisHistory,
+  useAnnotations,
+  useDebounce,
+  useImageUpload,
+  useIntersectionObserver,
+  useLocalStorage,
+  useMeasurements,
+  usePerformanceMonitoring,
+  useVisionAnalysis,
+} from './hooks';
 // Types
 export type {
-  // Base Types
-  TreatmentType,
-  AnalysisStatus,
-  ErrorCode,
-  
-  // Image Types
-  ImageData,
-  ImageMetadata,
-  ImageProcessingOptions,
-  
+  AnalysisError,
+  // Event Types
+  AnalysisEvent,
+  AnalysisOptions,
+  AnalysisProgress,
+  AnalysisQualityMetrics,
+  // API Types
+  AnalysisRequest,
+  AnalysisResponse,
   // Analysis Types
   AnalysisResult,
-  VisionAnalysisData,
-  ChangeMetrics,
-  OverallAssessment,
-  TreatmentSpecificMetrics,
-  
-  // Measurement Types
-  MeasurementData,
-  MeasurementType,
-  ObjectiveMeasurement,
-  CalibrationData,
-  StandardizedMetrics,
-  MetricSet,
-  NormalizedScores,
-  MeasurementQualityAssurance,
-  
+  AnalysisStatus,
   // Annotation Types
   AnnotationData,
   AnnotationType,
+  BoundingBox,
+  CalibrationData,
+  ChangeMetrics,
   Coordinates,
-  RegionOfInterest,
-  
-  // Performance Types
-  ProcessingMetrics,
-  QualityMetrics,
+  ErrorCode,
+  ExportMetadata,
+  // Export Types
+  ExportOptions,
+  ExportResult,
+  FilterOptions,
+  // Image Types
+  ImageData,
+  ImageMetadata,
+  ImageProcessingConfig,
+  ImageProcessingOptions,
   ImageQualityMetrics,
-  AnalysisQualityMetrics,
+  // Measurement Types
+  MeasurementData,
+  MeasurementQualityAssurance,
   MeasurementQualityMetrics,
-  VoidBeastCompliance,
-  
+  MeasurementType,
+  MetricSet,
+  ModelConfig,
   // Model Types
   ModelConfiguration,
   ModelMetadata,
   ModelPrediction,
-  BoundingBox,
-  
-  // Export Types
-  ExportOptions,
-  ExportResult,
-  ExportMetadata,
-  
-  // API Types
-  AnalysisRequest,
-  AnalysisOptions,
-  AnalysisResponse,
-  AnalysisProgress,
-  AnalysisError,
-  
+  MonitoringConfig,
+  NormalizedScores,
+  ObjectiveMeasurement,
+  OverallAssessment,
+  PaginatedResponse,
+  // Utility Types
+  PaginationOptions,
+  PerformanceConfig,
+  // Performance Types
+  ProcessingMetrics,
+  QualityMetrics,
+  RegionOfInterest,
+  SecurityConfig,
+  SortOptions,
+  StandardizedMetrics,
+  StorageConfig,
+  // Configuration Types
+  SystemConfiguration,
+  TreatmentSpecificMetrics,
+  // Base Types
+  TreatmentType,
+  ValidationError,
+  // Validation Types
+  ValidationResult,
+  ValidationWarning,
+  VisionAnalysisData,
   // Database Types
   VisionAnalysisTable,
   VisionExportLogsTable,
   VisionPerformanceLogsTable,
-  
-  // Utility Types
-  PaginationOptions,
-  PaginatedResponse,
-  FilterOptions,
-  SortOptions,
-  
-  // Event Types
-  AnalysisEvent,
-  
-  // Validation Types
-  ValidationResult,
-  ValidationError,
-  ValidationWarning,
-  
-  // Configuration Types
-  SystemConfiguration,
-  PerformanceConfig,
-  ImageProcessingConfig,
-  ModelConfig,
-  StorageConfig,
-  SecurityConfig,
-  MonitoringConfig
+  VoidBeastCompliance,
 } from './types';
-
 // Utilities
 export {
-  VisionUtils,
-  ImageUtils,
   AnalysisUtils,
-  MeasurementUtils,
   AnnotationUtils,
-  PerformanceUtils,
-  ExportUtils,
   DateUtils,
-  ErrorUtils
+  ErrorUtils,
+  ExportUtils,
+  ImageUtils,
+  MeasurementUtils,
+  PerformanceUtils,
+  VisionUtils,
 } from './utils';
-
-// Hooks
-export {
-  useVisionAnalysis,
-  useImageUpload,
-  useAnalysisExport,
-  useAnnotations,
-  useMeasurements,
-  useAnalysisHistory,
-  usePerformanceMonitoring,
-  useLocalStorage,
-  useDebounce,
-  useIntersectionObserver
-} from './hooks';
-
-// Re-export default hooks object
-export { default as VisionHooks } from './hooks';
 
 /**
  * Main Vision System Class
@@ -144,18 +127,18 @@ export { default as VisionHooks } from './hooks';
 export class VisionSystem {
   private static instance: VisionSystem;
   private config: typeof VISION_CONFIG;
-  
+
   private constructor() {
     this.config = VISION_CONFIG;
   }
-  
+
   public static getInstance(): VisionSystem {
     if (!VisionSystem.instance) {
       VisionSystem.instance = new VisionSystem();
     }
     return VisionSystem.instance;
   }
-  
+
   /**
    * Initialize the vision system
    */
@@ -166,24 +149,23 @@ export class VisionSystem {
       if (!compliance.isCompliant) {
         console.warn('VoidBeast compliance issues:', compliance.issues);
       }
-      
+
       // Log initialization
       console.log('NeonPro Vision System initialized successfully');
       console.log('Configuration:', this.config);
-      
     } catch (error) {
       console.error('Failed to initialize Vision System:', error);
       throw error;
     }
   }
-  
+
   /**
    * Get system configuration
    */
   public getConfig() {
     return this.config;
   }
-  
+
   /**
    * Validate system health
    */
@@ -193,60 +175,60 @@ export class VisionSystem {
     performance: any;
   }> {
     const issues: string[] = [];
-    
+
     try {
       // Check API endpoints
       const endpoints = [
         '/api/vision/analyze',
         '/api/vision/upload',
-        '/api/vision/export'
+        '/api/vision/export',
       ];
-      
+
       for (const endpoint of endpoints) {
         try {
           const response = await fetch(endpoint, { method: 'HEAD' });
           if (!response.ok && response.status !== 405) {
             issues.push(`Endpoint ${endpoint} not responding`);
           }
-        } catch (error) {
+        } catch (_error) {
           issues.push(`Endpoint ${endpoint} unreachable`);
         }
       }
-      
+
       // Check browser capabilities
-      if (!window.File || !window.FileReader || !window.FormData) {
+      if (!(window.File && window.FileReader && window.FormData)) {
         issues.push('Browser lacks required file handling capabilities');
       }
-      
+
       if (!window.HTMLCanvasElement) {
         issues.push('Browser lacks canvas support');
       }
-      
+
       // Check memory
       const memoryInfo = VisionUtils.Performance.getMemoryUsage();
-      if (memoryInfo && memoryInfo.used > 100) { // 100MB threshold
+      if (memoryInfo && memoryInfo.used > 100) {
+        // 100MB threshold
         issues.push('High memory usage detected');
       }
-      
+
       return {
         healthy: issues.length === 0,
         issues,
         performance: {
           memory: memoryInfo,
-          timestamp: new Date().toISOString()
-        }
+          timestamp: new Date().toISOString(),
+        },
       };
-      
     } catch (error) {
       issues.push(`Health check failed: ${error}`);
       return {
         healthy: false,
         issues,
-        performance: null
+        performance: null,
       };
     }
   }
-  
+
   /**
    * Get system statistics
    */
@@ -261,15 +243,15 @@ export class VisionSystem {
         measurements: true,
         annotations: true,
         export: true,
-        performanceMonitoring: true
+        performanceMonitoring: true,
       },
       supportedFormats: this.config.IMAGE_PROCESSING.SUPPORTED_FORMATS,
       maxImageSize: this.config.IMAGE_PROCESSING.MAX_IMAGE_SIZE_MB,
       processingTimeout: this.config.PERFORMANCE.MAX_PROCESSING_TIME_MS,
       qualityThresholds: {
         accuracy: this.config.PERFORMANCE.TARGET_ACCURACY,
-        confidence: this.config.PERFORMANCE.MIN_CONFIDENCE_THRESHOLD
-      }
+        confidence: this.config.PERFORMANCE.MIN_CONFIDENCE_THRESHOLD,
+      },
     };
   }
 }
@@ -302,7 +284,7 @@ export const VERSION = {
   patch: 0,
   build: Date.now(),
   string: '1.0.0',
-  codename: 'VoidBeast V4.0 Apex Enhanced'
+  codename: 'VoidBeast V4.0 Apex Enhanced',
 };
 
 /**
@@ -318,7 +300,7 @@ export const FEATURE_FLAGS = {
   OFFLINE_MODE: false, // Future feature
   MOBILE_OPTIMIZATION: true,
   ACCESSIBILITY_FEATURES: true,
-  PERFORMANCE_PROFILING: true
+  PERFORMANCE_PROFILING: true,
 };
 
 /**
@@ -326,15 +308,15 @@ export const FEATURE_FLAGS = {
  */
 export const SYSTEM_CONSTANTS = {
   MAX_CONCURRENT_ANALYSES: 3,
-  DEFAULT_CACHE_TTL: 300000, // 5 minutes
+  DEFAULT_CACHE_TTL: 300_000, // 5 minutes
   MAX_HISTORY_ITEMS: 100,
-  AUTO_SAVE_INTERVAL: 30000, // 30 seconds
+  AUTO_SAVE_INTERVAL: 30_000, // 30 seconds
   PERFORMANCE_SAMPLE_RATE: 0.1, // 10% sampling
   ERROR_RETRY_ATTEMPTS: 3,
-  NETWORK_TIMEOUT: 30000, // 30 seconds
+  NETWORK_TIMEOUT: 30_000, // 30 seconds
   IMAGE_PREVIEW_SIZE: 200, // pixels
   THUMBNAIL_QUALITY: 0.8,
-  EXPORT_BATCH_SIZE: 10
+  EXPORT_BATCH_SIZE: 10,
 };
 
 /**
@@ -348,13 +330,14 @@ export const SYSTEM_EVENTS = {
   EXPORT_GENERATED: 'vision:export:generated',
   PERFORMANCE_WARNING: 'vision:performance:warning',
   QUALITY_THRESHOLD_EXCEEDED: 'vision:quality:threshold_exceeded',
-  SYSTEM_ERROR: 'vision:system:error'
+  SYSTEM_ERROR: 'vision:system:error',
 } as const;
 
 /**
  * Type for system events
  */
-export type SystemEventType = typeof SYSTEM_EVENTS[keyof typeof SYSTEM_EVENTS];
+export type SystemEventType =
+  (typeof SYSTEM_EVENTS)[keyof typeof SYSTEM_EVENTS];
 
 /**
  * System event interface
@@ -373,14 +356,14 @@ export interface SystemEvent {
 export const handleVisionSystemError = (error: any, context?: string) => {
   const errorMessage = VisionUtils.Error.getUserFriendlyMessage(error);
   const isRecoverable = VisionUtils.Error.isRecoverableError(error);
-  
+
   console.error(`Vision System Error${context ? ` (${context})` : ''}:`, {
     message: errorMessage,
     recoverable: isRecoverable,
     error,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
-  
+
   // Emit system event
   if (typeof window !== 'undefined' && window.dispatchEvent) {
     const event = new CustomEvent(SYSTEM_EVENTS.SYSTEM_ERROR, {
@@ -391,17 +374,17 @@ export const handleVisionSystemError = (error: any, context?: string) => {
           message: errorMessage,
           recoverable: isRecoverable,
           context,
-          error: error.message || error
-        }
-      }
+          error: error.message || error,
+        },
+      },
     });
     window.dispatchEvent(event);
   }
-  
+
   return {
     message: errorMessage,
     recoverable: isRecoverable,
-    context
+    context,
   };
 };
 
@@ -411,37 +394,37 @@ export const handleVisionSystemError = (error: any, context?: string) => {
 export const monitorVisionPerformance = (operation: string) => {
   const timer = VisionUtils.Performance.createTimer();
   timer.start();
-  
+
   return {
     end: () => {
       const duration = timer.stop();
       const memoryUsage = VisionUtils.Performance.getMemoryUsage();
-      
+
       const metrics = {
         operation,
         duration,
         memory: memoryUsage,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
-      
+
       // Log performance warning if needed
       if (duration > VISION_CONFIG.PERFORMANCE.MAX_PROCESSING_TIME_MS) {
         console.warn(`Performance warning: ${operation} took ${duration}ms`);
-        
+
         // Emit performance warning event
         if (typeof window !== 'undefined' && window.dispatchEvent) {
           const event = new CustomEvent(SYSTEM_EVENTS.PERFORMANCE_WARNING, {
             detail: {
               type: SYSTEM_EVENTS.PERFORMANCE_WARNING,
               timestamp: new Date().toISOString(),
-              data: metrics
-            }
+              data: metrics,
+            },
           });
           window.dispatchEvent(event);
         }
       }
-      
+
       return metrics;
-    }
+    },
   };
 };

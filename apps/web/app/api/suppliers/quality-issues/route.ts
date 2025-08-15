@@ -3,9 +3,9 @@
 // Epic 6 - Story 6.3: Comprehensive supplier management with performance tracking
 // =====================================================================================
 
+import { type NextRequest, NextResponse } from 'next/server';
 import { SupplierManagementService } from '@/app/lib/services/supplier-management-service';
 import { createQualityIssueSchema } from '@/app/lib/validations/suppliers';
-import { NextRequest, NextResponse } from 'next/server';
 
 const supplierService = new SupplierManagementService();
 
@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const clinicId = searchParams.get('clinic_id');
-    
+
     if (!clinicId) {
       return NextResponse.json(
         { error: 'clinic_id é obrigatório' },
@@ -51,7 +51,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const issue = await supplierService.createQualityIssue(validationResult.data);
+    const issue = await supplierService.createQualityIssue(
+      validationResult.data
+    );
 
     return NextResponse.json(issue, { status: 201 });
   } catch (error) {

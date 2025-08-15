@@ -5,7 +5,13 @@
 export interface KnowledgeSource {
   id: string;
   source_name: string;
-  source_type: 'database' | 'journal' | 'guideline' | 'drug_db' | 'classification' | 'research';
+  source_type:
+    | 'database'
+    | 'journal'
+    | 'guideline'
+    | 'drug_db'
+    | 'classification'
+    | 'research';
   api_endpoint?: string;
   access_credentials?: Record<string, any>;
   last_sync?: string;
@@ -19,7 +25,14 @@ export interface KnowledgeSource {
 
 export interface MedicalKnowledge {
   id: string;
-  knowledge_type: 'guideline' | 'research' | 'drug_info' | 'diagnosis' | 'treatment' | 'protocol' | 'reference';
+  knowledge_type:
+    | 'guideline'
+    | 'research'
+    | 'drug_info'
+    | 'diagnosis'
+    | 'treatment'
+    | 'protocol'
+    | 'reference';
   title: string;
   content_data: Record<string, any>; // Structured medical content
   source_id?: string;
@@ -54,7 +67,12 @@ export interface ValidationResult {
   knowledge_source_id?: string;
   knowledge_reference_id?: string;
   evidence_level?: string;
-  validation_status: 'validated' | 'conflicted' | 'unsupported' | 'pending' | 'requires_review';
+  validation_status:
+    | 'validated'
+    | 'conflicted'
+    | 'unsupported'
+    | 'pending'
+    | 'requires_review';
   confidence_score?: number;
   validation_notes?: string;
   validation_date: string;
@@ -197,7 +215,11 @@ export interface EvidenceValidationRequest {
 
 export interface EvidenceValidationResponse {
   validation_id: string;
-  overall_status: 'validated' | 'conflicted' | 'unsupported' | 'requires_review';
+  overall_status:
+    | 'validated'
+    | 'conflicted'
+    | 'unsupported'
+    | 'requires_review';
   confidence_score: number;
   evidence_sources: {
     source_id: string;
@@ -364,7 +386,25 @@ export type InteractionType = DrugInteraction['interaction_type'];
 export type GuidelineStatus = MedicalGuideline['status'];
 
 // Utility types
-export type CreateKnowledgeSource = Omit<KnowledgeSource, 'id' | 'created_at' | 'updated_at'>;
-export type UpdateKnowledgeSource = Partial<Pick<KnowledgeSource, 'source_name' | 'api_endpoint' | 'sync_frequency' | 'status' | 'configuration'>>;
-export type CreateMedicalKnowledge = Omit<MedicalKnowledge, 'id' | 'created_at' | 'updated_at'>;
-export type CreateValidationResult = Omit<ValidationResult, 'id' | 'validation_date'>;
+export type CreateKnowledgeSource = Omit<
+  KnowledgeSource,
+  'id' | 'created_at' | 'updated_at'
+>;
+export type UpdateKnowledgeSource = Partial<
+  Pick<
+    KnowledgeSource,
+    | 'source_name'
+    | 'api_endpoint'
+    | 'sync_frequency'
+    | 'status'
+    | 'configuration'
+  >
+>;
+export type CreateMedicalKnowledge = Omit<
+  MedicalKnowledge,
+  'id' | 'created_at' | 'updated_at'
+>;
+export type CreateValidationResult = Omit<
+  ValidationResult,
+  'id' | 'validation_date'
+>;

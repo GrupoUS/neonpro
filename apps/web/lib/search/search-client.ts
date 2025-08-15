@@ -1,7 +1,11 @@
 // lib/search/search-client.ts
-"use client";
+'use client';
 
-import { GlobalSearchStats, SearchQuery, SearchResponse } from './unified-search';
+import type {
+  GlobalSearchStats,
+  SearchQuery,
+  SearchResponse,
+} from './unified-search';
 
 export class SearchClient {
   /**
@@ -11,56 +15,59 @@ export class SearchClient {
     try {
       const searchParams = new URLSearchParams();
       searchParams.set('q', query.term);
-      
+
       if (query.filters?.types) {
         searchParams.set('types', query.filters.types.join(','));
       }
-      
+
       if (query.filters?.dateRange) {
-        searchParams.set('dateFrom', query.filters.dateRange.start.toISOString());
+        searchParams.set(
+          'dateFrom',
+          query.filters.dateRange.start.toISOString()
+        );
         searchParams.set('dateTo', query.filters.dateRange.end.toISOString());
       }
-      
+
       if (query.filters?.patientId) {
         searchParams.set('patientId', query.filters.patientId);
       }
-      
+
       if (query.options?.limit) {
         searchParams.set('limit', query.options.limit.toString());
       }
-      
+
       if (query.options?.offset) {
         searchParams.set('offset', query.options.offset.toString());
       }
-      
+
       if (query.options?.sortBy) {
         searchParams.set('sortBy', query.options.sortBy);
       }
-      
+
       if (query.options?.sortOrder) {
         searchParams.set('sortOrder', query.options.sortOrder);
       }
-      
+
       if (query.options?.fuzzy) {
         searchParams.set('fuzzy', 'true');
       }
-      
+
       if (query.options?.highlight) {
         searchParams.set('highlight', 'true');
       }
 
       const response = await fetch(`/api/search?${searchParams.toString()}`);
-      
+
       if (!response.ok) {
         throw new Error('Erro na busca');
       }
-      
+
       const result = await response.json();
-      
+
       if (!result.success) {
         throw new Error(result.error || 'Erro na busca');
       }
-      
+
       return result.data;
     } catch (error) {
       console.error('Erro no cliente de busca:', error);
@@ -86,8 +93,8 @@ export class SearchClient {
         },
         body: JSON.stringify({
           action: 'advanced_search',
-          criteria
-        })
+          criteria,
+        }),
       });
 
       if (!response.ok) {
@@ -95,11 +102,11 @@ export class SearchClient {
       }
 
       const result = await response.json();
-      
+
       if (!result.success) {
         throw new Error(result.error || 'Erro na busca avançada');
       }
-      
+
       return result.data;
     } catch (error) {
       console.error('Erro na busca avançada:', error);
@@ -110,7 +117,11 @@ export class SearchClient {
   /**
    * Salva uma busca através da API
    */
-  async saveSearch(name: string, query: SearchQuery, userId: string): Promise<string> {
+  async saveSearch(
+    name: string,
+    query: SearchQuery,
+    userId: string
+  ): Promise<string> {
     try {
       const response = await fetch('/api/search', {
         method: 'POST',
@@ -121,8 +132,8 @@ export class SearchClient {
           action: 'save_search',
           name,
           query,
-          userId
-        })
+          userId,
+        }),
       });
 
       if (!response.ok) {
@@ -130,11 +141,11 @@ export class SearchClient {
       }
 
       const result = await response.json();
-      
+
       if (!result.success) {
         throw new Error(result.error || 'Erro ao salvar busca');
       }
-      
+
       return result.data.id;
     } catch (error) {
       console.error('Erro ao salvar busca:', error);
@@ -145,7 +156,7 @@ export class SearchClient {
   /**
    * Obtém estatísticas através da API
    */
-  async getStatistics(timeframe: string = '30days'): Promise<GlobalSearchStats> {
+  async getStatistics(timeframe = '30days'): Promise<GlobalSearchStats> {
     try {
       const response = await fetch('/api/search', {
         method: 'POST',
@@ -154,8 +165,8 @@ export class SearchClient {
         },
         body: JSON.stringify({
           action: 'get_statistics',
-          timeframe
-        })
+          timeframe,
+        }),
       });
 
       if (!response.ok) {
@@ -163,11 +174,11 @@ export class SearchClient {
       }
 
       const result = await response.json();
-      
+
       if (!result.success) {
         throw new Error(result.error || 'Erro ao obter estatísticas');
       }
-      
+
       return result.data;
     } catch (error) {
       console.error('Erro ao obter estatísticas:', error);

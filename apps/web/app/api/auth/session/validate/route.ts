@@ -3,14 +3,14 @@
  * Validates current session and returns security information
  */
 
-import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import { type NextRequest, NextResponse } from 'next/server';
 import { SessionManager } from '@/lib/auth/session-manager';
 import { createClient } from '@/lib/supabase/server';
 import {
-  SessionValidationResult,
   SecurityEventType,
-  SecuritySeverity
+  SecuritySeverity,
+  type SessionValidationResult,
 } from '@/types/session';
 
 // Initialize session manager
@@ -25,9 +25,11 @@ async function getSessionManager() {
       enableDeviceTracking: true,
       enableSecurityMonitoring: true,
       enableSuspiciousActivityDetection: true,
-      sessionCleanupInterval: 300000, // 5 minutes
+      sessionCleanupInterval: 300_000, // 5 minutes
       securityEventRetention: 30 * 24 * 60 * 60 * 1000, // 30 days
-      encryptionKey: process.env.SESSION_ENCRYPTION_KEY || 'default-key-change-in-production'
+      encryptionKey:
+        process.env.SESSION_ENCRYPTION_KEY ||
+        'default-key-change-in-production',
     });
   }
   return sessionManager;
@@ -37,25 +39,29 @@ export async function POST(request: NextRequest) {
   try {
     const cookieStore = cookies();
     const sessionToken = cookieStore.get('session-token')?.value;
-    
+
     if (!sessionToken) {
-      return NextResponse.json({
-        valid: false,
-        errors: ['No session token found'],
-        security_score: 0
-      } as SessionValidationResult, { status: 401 });
+      return NextResponse.json(
+        {
+          valid: false,
+          errors: ['No session token found'],
+          security_score: 0,
+        } as SessionValidationResult,
+        { status: 401 }
+      );
     }
 
     const manager = await getSessionManager();
-    const clientIP = request.headers.get('x-forwarded-for') || 
-                    request.headers.get('x-real-ip') || 
-                    '127.0.0.1';
+    const clientIP =
+      request.headers.get('x-forwarded-for') ||
+      request.headers.get('x-real-ip') ||
+      '127.0.0.1';
     const userAgent = request.headers.get('user-agent') || 'Unknown';
 
     // Validate session
     const validation = await manager.validateSession(sessionToken, {
       ip_address: clientIP,
-      user_agent: userAgent
+      user_agent: userAgent,
     });
 
     if (!validation.valid) {
@@ -69,8 +75,8 @@ export async function POST(request: NextRequest) {
         user_agent: userAgent,
         metadata: {
           validation_errors: validation.errors,
-          timestamp: new Date().toISOString()
-        }
+          timestamp: new Date().toISOString(),
+        },
       });
 
       return NextResponse.json(validation, { status: 401 });
@@ -79,11 +85,14 @@ export async function POST(request: NextRequest) {
     // Get session details
     const session = await manager.getSession(sessionToken);
     if (!session) {
-      return NextResponse.json({
-        valid: false,
-        errors: ['Session not found'],
-        security_score: 0
-      } as SessionValidationResult, { status: 404 });
+      return NextResponse.json(
+        {
+          valid: false,
+          errors: ['Session not found'],
+          security_score: 0,
+        } as SessionValidationResult,
+        { status: 404 }
+      );
     }
 
     // Update last activity
@@ -91,11 +100,11 @@ export async function POST(request: NextRequest) {
 
     // Check for security warnings
     const warnings: string[] = [];
-    
+
     // Check for IP address changes
     if (session.ip_address !== clientIP) {
       warnings.push('IP address has changed since session creation');
-      
+
       // Log IP change event
       await manager.logSecurityEvent({
         session_id: sessionToken,
@@ -107,15 +116,15 @@ export async function POST(request: NextRequest) {
         metadata: {
           old_ip: session.ip_address,
           new_ip: clientIP,
-          timestamp: new Date().toISOString()
-        }
+          timestamp: new Date().toISOString(),
+        },
       });
     }
 
     // Check for user agent changes
     if (session.user_agent !== userAgent) {
       warnings.push('Browser or device information has changed');
-      
+
       // Log user agent change event
       await manager.logSecurityEvent({
         session_id: sessionToken,
@@ -127,23 +136,27 @@ export async function POST(request: NextRequest) {
         metadata: {
           old_user_agent: session.user_agent,
           new_user_agent: userAgent,
-          timestamp: new Date().toISOString()
-        }
+          timestamp: new Date().toISOString(),
+        },
       });
     }
 
     // Check session age
     const sessionAge = Date.now() - new Date(session.created_at).getTime();
     const hoursOld = sessionAge / (1000 * 60 * 60);
-    
+
     if (hoursOld > 24) {
       warnings.push('Session is older than 24 hours');
     }
 
     // Check for concurrent sessions
-    const activeSessions = await manager.getActiveSessionsForUser(session.user_id);
+    const activeSessions = await manager.getActiveSessionsForUser(
+      session.user_id
+    );
     if (activeSessions.length > 3) {
-      warnings.push(`Multiple active sessions detected (${activeSessions.length})`);
+      warnings.push(
+        `Multiple active sessions detected (${activeSessions.length})`
+      );
     }
 
     // Calculate security score
@@ -163,32 +176,34 @@ export async function POST(request: NextRequest) {
       metadata: {
         security_score: securityScore,
         warnings_count: warnings.length,
-        timestamp: new Date().toISOString()
-      }
+        timestamp: new Date().toISOString(),
+      },
     });
 
     const result: SessionValidationResult = {
       valid: true,
-      session: session,
+      session,
       warnings: warnings.length > 0 ? warnings : undefined,
-      security_score: securityScore
+      security_score: securityScore,
     };
 
     return NextResponse.json(result);
-
   } catch (error) {
     console.error('Session validation error:', error);
-    
-    return NextResponse.json({
-      valid: false,
-      errors: ['Internal server error during session validation'],
-      security_score: 0
-    } as SessionValidationResult, { status: 500 });
+
+    return NextResponse.json(
+      {
+        valid: false,
+        errors: ['Internal server error during session validation'],
+        security_score: 0,
+      } as SessionValidationResult,
+      { status: 500 }
+    );
   }
 }
 
 // Handle preflight requests
-export async function OPTIONS(request: NextRequest) {
+export async function OPTIONS(_request: NextRequest) {
   return new NextResponse(null, {
     status: 200,
     headers: {

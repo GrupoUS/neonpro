@@ -4,9 +4,9 @@
  * Part of Story 3.1 - Task 6: System Integration & Search
  */
 
-import { Patient } from '@/types/patient';
-import { supabase } from '@/lib/supabase/client';
 import { logger } from '@/lib/logger';
+import { supabase } from '@/lib/supabase/client';
+import type { Patient } from '@/types/patient';
 
 export interface SearchFilters {
   name?: string;
@@ -63,30 +63,34 @@ export class AdvancedPatientSearch {
   static async searchPatients(
     query: string,
     filters: SearchFilters = {},
-    page: number = 1,
-    perPage: number = 20
+    page = 1,
+    perPage = 20
   ): Promise<SearchResult> {
     const startTime = Date.now();
-    
+
     try {
       // Build the search query
-      let searchQuery = supabase
-        .from('patients')
-        .select(`
+      let searchQuery = supabase.from('patients').select(
+        `
           *,
           patient_profiles_extended(*),
           patient_photos(count),
           appointments(count)
-        `, { count: 'exact' });
+        `,
+        { count: 'exact' }
+      );
 
       // Apply text search with AI-powered fuzzy matching
       if (query.trim()) {
-        const searchTerms = this.processSearchQuery(query);
-        searchQuery = this.applyTextSearch(searchQuery, searchTerms);
+        const searchTerms = AdvancedPatientSearch.processSearchQuery(query);
+        searchQuery = AdvancedPatientSearch.applyTextSearch(
+          searchQuery,
+          searchTerms
+        );
       }
 
       // Apply filters
-      searchQuery = this.applyFilters(searchQuery, filters);
+      searchQuery = AdvancedPatientSearch.applyFilters(searchQuery, filters);
 
       // Apply pagination
       const offset = (page - 1) * perPage;
@@ -99,7 +103,10 @@ export class AdvancedPatientSearch {
       if (error) throw error;
 
       // Generate AI suggestions
-      const suggestions = await this.generateSearchSuggestions(query, filters);
+      const suggestions = await AdvancedPatientSearch.generateSearchSuggestions(
+        query,
+        filters
+      );
 
       const searchTime = Date.now() - startTime;
 
@@ -111,7 +118,7 @@ export class AdvancedPatientSearch {
         total_pages: Math.ceil((count || 0) / perPage),
         search_time_ms: searchTime,
         suggestions,
-        applied_filters: filters
+        applied_filters: filters,
       };
     } catch (error) {
       logger.error('Error in patient search:', error);
@@ -159,10 +166,15 @@ export class AdvancedPatientSearch {
   ): Promise<PatientSegment> {
     try {
       // Count patients matching criteria
-      const searchResult = await this.searchPatients('', criteria, 1, 1);
-      
+      const searchResult = await AdvancedPatientSearch.searchPatients(
+        '',
+        criteria,
+        1,
+        1
+      );
+
       // Calculate segment statistics
-      const stats = await this.calculateSegmentStats(criteria);
+      const stats = await AdvancedPatientSearch.calculateSegmentStats(criteria);
 
       const segment: PatientSegment = {
         id: `segment_${Date.now()}`,
@@ -172,17 +184,17 @@ export class AdvancedPatientSearch {
         patient_count: searchResult.total_count,
         avg_satisfaction: stats.avg_satisfaction,
         avg_risk_score: stats.avg_risk_score,
-        last_updated: new Date().toISOString()
+        last_updated: new Date().toISOString(),
       };
 
       // Save segment to database
-      const { error } = await supabase
-        .from('patient_segments')
-        .insert(segment);
+      const { error } = await supabase.from('patient_segments').insert(segment);
 
       if (error) throw error;
 
-      logger.info(`Created patient segment: ${name} with ${segment.patient_count} patients`);
+      logger.info(
+        `Created patient segment: ${name} with ${segment.patient_count} patients`
+      );
       return segment;
     } catch (error) {
       logger.error('Error creating patient segment:', error);
@@ -198,12 +210,13 @@ export class AdvancedPatientSearch {
       {
         id: 'high_risk',
         name: 'High Risk Patients',
-        description: 'Patients with high health risk scores requiring special attention',
+        description:
+          'Patients with high health risk scores requiring special attention',
         criteria: { risk_level: 'high' },
         patient_count: 0,
         avg_satisfaction: 0,
         avg_risk_score: 0,
-        last_updated: new Date().toISOString()
+        last_updated: new Date().toISOString(),
       },
       {
         id: 'new_patients',
@@ -211,14 +224,16 @@ export class AdvancedPatientSearch {
         description: 'Recently registered patients requiring onboarding',
         criteria: {
           registration_date_range: {
-            start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
-            end: new Date().toISOString()
-          }
+            start: new Date(
+              Date.now() - 30 * 24 * 60 * 60 * 1000
+            ).toISOString(),
+            end: new Date().toISOString(),
+          },
         },
         patient_count: 0,
         avg_satisfaction: 0,
         avg_risk_score: 0,
-        last_updated: new Date().toISOString()
+        last_updated: new Date().toISOString(),
       },
       {
         id: 'inactive_patients',
@@ -227,23 +242,30 @@ export class AdvancedPatientSearch {
         criteria: {
           last_appointment_range: {
             start: '2020-01-01',
-            end: new Date(Date.now() - 180 * 24 * 60 * 60 * 1000).toISOString()
-          }
+            end: new Date(Date.now() - 180 * 24 * 60 * 60 * 1000).toISOString(),
+          },
         },
         patient_count: 0,
         avg_satisfaction: 0,
         avg_risk_score: 0,
-        last_updated: new Date().toISOString()
-      }
+        last_updated: new Date().toISOString(),
+      },
     ];
 
     // Update counts for each segment
     for (const segment of segments) {
       try {
-        const result = await this.searchPatients('', segment.criteria, 1, 1);
+        const result = await AdvancedPatientSearch.searchPatients(
+          '',
+          segment.criteria,
+          1,
+          1
+        );
         segment.patient_count = result.total_count;
-        
-        const stats = await this.calculateSegmentStats(segment.criteria);
+
+        const stats = await AdvancedPatientSearch.calculateSegmentStats(
+          segment.criteria
+        );
         segment.avg_satisfaction = stats.avg_satisfaction;
         segment.avg_risk_score = stats.avg_risk_score;
       } catch (error) {
@@ -260,21 +282,24 @@ export class AdvancedPatientSearch {
   private static processSearchQuery(query: string): string[] {
     // Remove special characters and split into terms
     const cleanQuery = query.replace(/[^a-zA-Z0-9\s]/g, ' ');
-    const terms = cleanQuery.toLowerCase().split(/\s+/).filter(term => term.length > 1);
-    
+    const terms = cleanQuery
+      .toLowerCase()
+      .split(/\s+/)
+      .filter((term) => term.length > 1);
+
     // Add fuzzy matching variations
     const expandedTerms: string[] = [];
-    
-    terms.forEach(term => {
+
+    terms.forEach((term) => {
       expandedTerms.push(term);
-      
+
       // Add partial matches for names
       if (term.length > 3) {
         expandedTerms.push(`${term}%`);
         expandedTerms.push(`%${term}`);
       }
     });
-    
+
     return expandedTerms;
   }
 
@@ -283,11 +308,14 @@ export class AdvancedPatientSearch {
    */
   private static applyTextSearch(query: any, searchTerms: string[]) {
     if (searchTerms.length === 0) return query;
-    
-    const searchConditions = searchTerms.map(term => 
-      `name.ilike.%${term}%,email.ilike.%${term}%,phone.ilike.%${term}%`
-    ).join(',');
-    
+
+    const searchConditions = searchTerms
+      .map(
+        (term) =>
+          `name.ilike.%${term}%,email.ilike.%${term}%,phone.ilike.%${term}%`
+      )
+      .join(',');
+
     return query.or(searchConditions);
   }
 
@@ -298,39 +326,39 @@ export class AdvancedPatientSearch {
     if (filters.name) {
       query = query.ilike('name', `%${filters.name}%`);
     }
-    
+
     if (filters.email) {
       query = query.ilike('email', `%${filters.email}%`);
     }
-    
+
     if (filters.phone) {
       query = query.ilike('phone', `%${filters.phone}%`);
     }
-    
+
     if (filters.gender) {
       query = query.eq('gender', filters.gender);
     }
-    
+
     if (filters.city) {
       query = query.ilike('city', `%${filters.city}%`);
     }
-    
+
     if (filters.age_range) {
       const currentYear = new Date().getFullYear();
       const maxBirthYear = currentYear - filters.age_range.min;
       const minBirthYear = currentYear - filters.age_range.max;
-      
+
       query = query
         .gte('date_of_birth', `${minBirthYear}-01-01`)
         .lte('date_of_birth', `${maxBirthYear}-12-31`);
     }
-    
+
     if (filters.registration_date_range) {
       query = query
         .gte('created_at', filters.registration_date_range.start)
         .lte('created_at', filters.registration_date_range.end);
     }
-    
+
     if (filters.has_photo !== undefined) {
       if (filters.has_photo) {
         query = query.not('patient_photos', 'is', null);
@@ -338,7 +366,7 @@ export class AdvancedPatientSearch {
         query = query.is('patient_photos', null);
       }
     }
-    
+
     return query;
   }
 
@@ -347,10 +375,10 @@ export class AdvancedPatientSearch {
    */
   private static async generateSearchSuggestions(
     query: string,
-    filters: SearchFilters
+    _filters: SearchFilters
   ): Promise<SearchSuggestion[]> {
     const suggestions: SearchSuggestion[] = [];
-    
+
     try {
       // Get popular search terms
       const { data: popularNames } = await supabase
@@ -358,38 +386,37 @@ export class AdvancedPatientSearch {
         .select('name')
         .ilike('name', `%${query}%`)
         .limit(5);
-      
-      popularNames?.forEach(patient => {
+
+      popularNames?.forEach((patient) => {
         suggestions.push({
           type: 'patient',
           value: patient.name,
           label: `Patient: ${patient.name}`,
           count: 1,
-          relevance_score: 0.9
+          relevance_score: 0.9,
         });
       });
-      
+
       // Get service suggestions
       const { data: services } = await supabase
         .from('services')
         .select('name, id')
         .ilike('name', `%${query}%`)
         .limit(3);
-      
-      services?.forEach(service => {
+
+      services?.forEach((service) => {
         suggestions.push({
           type: 'service',
           value: service.id,
           label: `Service: ${service.name}`,
           count: 1,
-          relevance_score: 0.7
+          relevance_score: 0.7,
         });
       });
-      
     } catch (error) {
       logger.error('Error generating search suggestions:', error);
     }
-    
+
     return suggestions.sort((a, b) => b.relevance_score - a.relevance_score);
   }
 
@@ -398,18 +425,19 @@ export class AdvancedPatientSearch {
    */
   private static async calculateSegmentStats(criteria: SearchFilters) {
     try {
-      const { data: stats } = await supabase
-        .rpc('calculate_segment_stats', { filter_criteria: criteria });
-      
+      const { data: stats } = await supabase.rpc('calculate_segment_stats', {
+        filter_criteria: criteria,
+      });
+
       return {
         avg_satisfaction: stats?.avg_satisfaction || 0,
-        avg_risk_score: stats?.avg_risk_score || 0
+        avg_risk_score: stats?.avg_risk_score || 0,
       };
     } catch (error) {
       logger.error('Error calculating segment stats:', error);
       return {
         avg_satisfaction: 0,
-        avg_risk_score: 0
+        avg_risk_score: 0,
       };
     }
   }

@@ -2,12 +2,12 @@
 // Story 6.1 - Task 2: Recurring Payment System
 // Main subscription management endpoints
 
-import { NextRequest, NextResponse } from 'next/server';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { subscriptionManager } from '@/lib/payments/recurring/subscription-manager';
 import { logger } from '@/lib/utils/logger';
-import { z } from 'zod';
 
 // Validation Schemas
 const createSubscriptionSchema = z.object({
@@ -16,35 +16,37 @@ const createSubscriptionSchema = z.object({
   payment_method_id: z.string().optional(),
   trial_days: z.number().min(0).max(365).optional(),
   metadata: z.record(z.any()).optional(),
-  proration_behavior: z.enum(['create_prorations', 'none']).optional()
+  proration_behavior: z.enum(['create_prorations', 'none']).optional(),
 });
 
 const updateSubscriptionSchema = z.object({
   plan_id: z.string().uuid().optional(),
   cancel_at_period_end: z.boolean().optional(),
   metadata: z.record(z.any()).optional(),
-  proration_behavior: z.enum(['create_prorations', 'none', 'always_invoice']).optional()
+  proration_behavior: z
+    .enum(['create_prorations', 'none', 'always_invoice'])
+    .optional(),
 });
 
 // GET /api/subscriptions - List subscriptions
 export async function GET(request: NextRequest) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
     const customerId = searchParams.get('customer_id');
     const status = searchParams.get('status');
     const planId = searchParams.get('plan_id');
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '10');
+    const page = Number.parseInt(searchParams.get('page') || '1', 10);
+    const limit = Number.parseInt(searchParams.get('limit') || '10', 10);
 
     // Build query
     let query = supabase
@@ -90,8 +92,8 @@ export async function GET(request: NextRequest) {
         page,
         limit,
         total: totalCount || 0,
-        pages: Math.ceil((totalCount || 0) / limit)
-      }
+        pages: Math.ceil((totalCount || 0) / limit),
+      },
     });
   } catch (error) {
     logger.error('Error in GET /api/subscriptions:', error);
@@ -106,24 +108,24 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
-    
+
     // Validate request body
     const validationResult = createSubscriptionSchema.safeParse(body);
     if (!validationResult.success) {
       return NextResponse.json(
-        { 
+        {
           error: 'Invalid request data',
-          details: validationResult.error.errors
+          details: validationResult.error.errors,
         },
         { status: 400 }
       );
@@ -160,22 +162,25 @@ export async function POST(request: NextRequest) {
     }
 
     // Create subscription
-    const subscription = await subscriptionManager.createSubscription(subscriptionData);
+    const subscription =
+      await subscriptionManager.createSubscription(subscriptionData);
 
-    logger.info(`Subscription created: ${subscription.id} for customer: ${subscriptionData.customer_id}`);
+    logger.info(
+      `Subscription created: ${subscription.id} for customer: ${subscriptionData.customer_id}`
+    );
 
-    return NextResponse.json({
-      data: subscription,
-      message: 'Subscription created successfully'
-    }, { status: 201 });
+    return NextResponse.json(
+      {
+        data: subscription,
+        message: 'Subscription created successfully',
+      },
+      { status: 201 }
+    );
   } catch (error) {
     logger.error('Error in POST /api/subscriptions:', error);
-    
+
     if (error instanceof Error) {
-      return NextResponse.json(
-        { error: error.message },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: error.message }, { status: 400 });
     }
 
     return NextResponse.json(
@@ -189,13 +194,13 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Check if user is admin
@@ -205,7 +210,7 @@ export async function PUT(request: NextRequest) {
       .eq('user_id', user.id)
       .single();
 
-    if (!userProfile || !['admin', 'owner'].includes(userProfile.role)) {
+    if (!(userProfile && ['admin', 'owner'].includes(userProfile.role))) {
       return NextResponse.json(
         { error: 'Insufficient permissions' },
         { status: 403 }
@@ -215,7 +220,7 @@ export async function PUT(request: NextRequest) {
     const body = await request.json();
     const { subscription_ids, updates } = body;
 
-    if (!Array.isArray(subscription_ids) || !updates) {
+    if (!(Array.isArray(subscription_ids) && updates)) {
       return NextResponse.json(
         { error: 'Invalid request data' },
         { status: 400 }
@@ -226,9 +231,9 @@ export async function PUT(request: NextRequest) {
     const validationResult = updateSubscriptionSchema.safeParse(updates);
     if (!validationResult.success) {
       return NextResponse.json(
-        { 
+        {
           error: 'Invalid update data',
-          details: validationResult.error.errors
+          details: validationResult.error.errors,
         },
         { status: 400 }
       );
@@ -240,23 +245,24 @@ export async function PUT(request: NextRequest) {
     // Update each subscription
     for (const subscriptionId of subscription_ids) {
       try {
-        const updatedSubscription = await subscriptionManager.updateSubscription(
-          subscriptionId,
-          validationResult.data
-        );
+        const updatedSubscription =
+          await subscriptionManager.updateSubscription(
+            subscriptionId,
+            validationResult.data
+          );
         results.push(updatedSubscription);
       } catch (error) {
         errors.push({
           subscription_id: subscriptionId,
-          error: error instanceof Error ? error.message : 'Unknown error'
+          error: error instanceof Error ? error.message : 'Unknown error',
         });
       }
     }
 
     return NextResponse.json({
       data: results,
-      errors: errors,
-      message: `Updated ${results.length} subscriptions, ${errors.length} errors`
+      errors,
+      message: `Updated ${results.length} subscriptions, ${errors.length} errors`,
     });
   } catch (error) {
     logger.error('Error in PUT /api/subscriptions:', error);
@@ -271,13 +277,13 @@ export async function PUT(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Check if user is admin
@@ -287,7 +293,7 @@ export async function DELETE(request: NextRequest) {
       .eq('user_id', user.id)
       .single();
 
-    if (!userProfile || !['admin', 'owner'].includes(userProfile.role)) {
+    if (!(userProfile && ['admin', 'owner'].includes(userProfile.role))) {
       return NextResponse.json(
         { error: 'Insufficient permissions' },
         { status: 403 }
@@ -310,23 +316,24 @@ export async function DELETE(request: NextRequest) {
     // Cancel each subscription
     for (const subscriptionId of subscription_ids) {
       try {
-        const canceledSubscription = await subscriptionManager.cancelSubscription(
-          subscriptionId,
-          immediate
-        );
+        const canceledSubscription =
+          await subscriptionManager.cancelSubscription(
+            subscriptionId,
+            immediate
+          );
         results.push(canceledSubscription);
       } catch (error) {
         errors.push({
           subscription_id: subscriptionId,
-          error: error instanceof Error ? error.message : 'Unknown error'
+          error: error instanceof Error ? error.message : 'Unknown error',
         });
       }
     }
 
     return NextResponse.json({
       data: results,
-      errors: errors,
-      message: `Canceled ${results.length} subscriptions, ${errors.length} errors`
+      errors,
+      message: `Canceled ${results.length} subscriptions, ${errors.length} errors`,
     });
   } catch (error) {
     logger.error('Error in DELETE /api/subscriptions:', error);

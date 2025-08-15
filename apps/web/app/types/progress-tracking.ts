@@ -27,13 +27,21 @@ export interface ProgressMilestone {
   id: string;
   patient_id: string;
   tracking_id?: string;
-  milestone_type: 'significant_improvement' | 'target_achieved' | 'concern_detected' | 'treatment_complete';
+  milestone_type:
+    | 'significant_improvement'
+    | 'target_achieved'
+    | 'concern_detected'
+    | 'treatment_complete';
   milestone_name: string;
   achievement_date: string;
   progress_data: Record<string, any>; // Milestone-specific data
   threshold_criteria: Record<string, any>; // Criteria that triggered milestone
   achievement_score: number; // 0-100
-  validation_status: 'detected' | 'confirmed' | 'false_positive' | 'manually_added';
+  validation_status:
+    | 'detected'
+    | 'confirmed'
+    | 'false_positive'
+    | 'manually_added';
   validated_by?: string;
   validation_notes?: string;
   alert_sent: boolean;
@@ -48,7 +56,10 @@ export interface ProgressPrediction {
   id: string;
   patient_id: string;
   tracking_id?: string;
-  prediction_type: 'outcome_forecast' | 'timeline_prediction' | 'risk_assessment';
+  prediction_type:
+    | 'outcome_forecast'
+    | 'timeline_prediction'
+    | 'risk_assessment';
   predicted_outcome: Record<string, any>; // Predicted results and timeline
   confidence_level: number; // 0-100
   prediction_date: string;
@@ -89,7 +100,10 @@ export interface MultiSessionAnalysis {
   analysis_name: string;
   session_ids: string[]; // Array of session IDs being compared
   tracking_ids: string[]; // Array of progress tracking IDs
-  comparison_type: 'timeline_progression' | 'treatment_effectiveness' | 'side_by_side';
+  comparison_type:
+    | 'timeline_progression'
+    | 'treatment_effectiveness'
+    | 'side_by_side';
   analysis_period: string; // PostgreSQL interval as string
   progression_score: number; // 0-100
   trend_direction: 'improving' | 'stable' | 'declining' | 'mixed';
@@ -107,7 +121,11 @@ export interface ProgressAlert {
   patient_id: string;
   tracking_id?: string;
   milestone_id?: string;
-  alert_type: 'milestone_achieved' | 'concern_detected' | 'threshold_exceeded' | 'prediction_update';
+  alert_type:
+    | 'milestone_achieved'
+    | 'concern_detected'
+    | 'threshold_exceeded'
+    | 'prediction_update';
   alert_priority: 'low' | 'medium' | 'high' | 'urgent';
   alert_title: string;
   alert_message: string;
@@ -374,7 +392,13 @@ export interface MultiSessionAnalysisResponse {
 
 // Error types
 export interface ProgressTrackingError {
-  code: 'INVALID_PROGRESS_SCORE' | 'INVALID_CONFIDENCE' | 'INVALID_MEASUREMENT_DATA' | 'BASELINE_NOT_FOUND' | 'INSUFFICIENT_DATA' | 'VALIDATION_FAILED';
+  code:
+    | 'INVALID_PROGRESS_SCORE'
+    | 'INVALID_CONFIDENCE'
+    | 'INVALID_MEASUREMENT_DATA'
+    | 'BASELINE_NOT_FOUND'
+    | 'INSUFFICIENT_DATA'
+    | 'VALIDATION_FAILED';
   message: string;
   field?: string;
   details?: Record<string, any>;

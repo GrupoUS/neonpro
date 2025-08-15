@@ -3,7 +3,7 @@
 // Database query optimization and performance monitoring
 
 import { createClient } from '@supabase/supabase-js';
-import { stockAlertCache, cacheMetrics } from './cache';
+import { cacheMetrics, stockAlertCache } from './cache';
 
 // =====================================================
 // CONFIGURATION
@@ -12,19 +12,19 @@ import { stockAlertCache, cacheMetrics } from './cache';
 const DB_CONFIG = {
   // Connection pooling
   maxConnections: 20,
-  idleTimeout: 60000, // 1 minute
-  
+  idleTimeout: 60_000, // 1 minute
+
   // Query timeouts
-  queryTimeout: 30000, // 30 seconds
-  transactionTimeout: 60000, // 1 minute
-  
+  queryTimeout: 30_000, // 30 seconds
+  transactionTimeout: 60_000, // 1 minute
+
   // Batch processing
   maxBatchSize: 1000,
   defaultBatchSize: 100,
-  
+
   // Performance monitoring
   slowQueryThreshold: 1000, // 1 second
-  enableQueryLogging: process.env.NODE_ENV === 'development'
+  enableQueryLogging: process.env.NODE_ENV === 'development',
 } as const;
 
 // =====================================================
@@ -45,7 +45,7 @@ class QueryPerformanceMonitor {
 
   logQuery(metrics: QueryMetrics): void {
     this.metrics.push(metrics);
-    
+
     // Keep only recent metrics
     if (this.metrics.length > this.maxMetrics) {
       this.metrics = this.metrics.slice(-this.maxMetrics);
@@ -56,7 +56,7 @@ class QueryPerformanceMonitor {
       console.warn('Slow query detected:', {
         query: metrics.query.substring(0, 100),
         duration: `${metrics.duration}ms`,
-        rows: metrics.rows
+        rows: metrics.rows,
       });
     }
 
@@ -66,14 +66,14 @@ class QueryPerformanceMonitor {
         query: metrics.query.substring(0, 100),
         duration: `${metrics.duration}ms`,
         rows: metrics.rows,
-        cached: metrics.cached
+        cached: metrics.cached,
       });
     }
   }
 
   getSlowQueries(threshold?: number): QueryMetrics[] {
     const limit = threshold || DB_CONFIG.slowQueryThreshold;
-    return this.metrics.filter(m => m.duration > limit);
+    return this.metrics.filter((m) => m.duration > limit);
   }
 
   getAverageQueryTime(): number {
@@ -84,7 +84,7 @@ class QueryPerformanceMonitor {
 
   getCacheHitRate(): number {
     if (this.metrics.length === 0) return 0;
-    const cached = this.metrics.filter(m => m.cached).length;
+    const cached = this.metrics.filter((m) => m.cached).length;
     return cached / this.metrics.length;
   }
 }
@@ -111,10 +111,10 @@ export class OptimizedQueryBuilder {
     cacheKey: string,
     selectQuery: string,
     filters: Record<string, any> = {},
-    cacheTtl: number = 300
+    cacheTtl = 300
   ): Promise<{ data: T[] | null; fromCache: boolean }> {
     const startTime = Date.now();
-    
+
     // Try cache first
     const cached = await stockAlertCache.cache.get<T[]>(cacheKey);
     if (cached) {
@@ -124,7 +124,7 @@ export class OptimizedQueryBuilder {
         duration: Date.now() - startTime,
         rows: cached.length,
         cached: true,
-        timestamp: new Date()
+        timestamp: new Date(),
       });
       return { data: cached, fromCache: true };
     }
@@ -133,7 +133,7 @@ export class OptimizedQueryBuilder {
 
     // Build and execute query
     let query = this.supabase.from(this.tableName).select(selectQuery);
-    
+
     // Apply filters
     for (const [key, value] of Object.entries(filters)) {
       if (Array.isArray(value)) {
@@ -155,7 +155,7 @@ export class OptimizedQueryBuilder {
       duration,
       rows: data?.length || 0,
       cached: false,
-      timestamp: new Date()
+      timestamp: new Date(),
     });
 
     // Cache the result
@@ -179,7 +179,7 @@ export class OptimizedQueryBuilder {
 
     for (let i = 0; i < records.length; i += batchSize) {
       const batch = records.slice(i, i + batchSize);
-      
+
       try {
         const { data, error } = await this.supabase
           .from(this.tableName)
@@ -201,7 +201,7 @@ export class OptimizedQueryBuilder {
       duration: Date.now() - startTime,
       rows: results.length,
       cached: false,
-      timestamp: new Date()
+      timestamp: new Date(),
     });
 
     return { data: results, errors };
@@ -220,7 +220,7 @@ export class OptimizedQueryBuilder {
       max?: string[];
     },
     filters: Record<string, any> = {},
-    cacheTtl: number = 600
+    cacheTtl = 600
   ): Promise<any> {
     const startTime = Date.now();
 
@@ -234,7 +234,9 @@ export class OptimizedQueryBuilder {
     const results: any = {};
 
     if (aggregations.count) {
-      let query = this.supabase.from(this.tableName).select('*', { count: 'exact', head: true });
+      let query = this.supabase
+        .from(this.tableName)
+        .select('*', { count: 'exact', head: true });
       for (const [key, value] of Object.entries(filters)) {
         query = query.eq(key, value);
       }
@@ -250,7 +252,7 @@ export class OptimizedQueryBuilder {
       duration: Date.now() - startTime,
       rows: 1,
       cached: false,
-      timestamp: new Date()
+      timestamp: new Date(),
     });
 
     // Cache the result
@@ -268,10 +270,12 @@ export class StockAlertQueries {
   private supabase: any;
 
   constructor(supabaseClient?: any) {
-    this.supabase = supabaseClient || createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
+    this.supabase =
+      supabaseClient ||
+      createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      );
   }
 
   /**
@@ -279,7 +283,10 @@ export class StockAlertQueries {
    */
   async getAlertConfigs(clinicId: string): Promise<any[]> {
     const cacheKey = `alert-configs:${clinicId}`;
-    const builder = new OptimizedQueryBuilder(this.supabase, 'stock_alert_configs');
+    const builder = new OptimizedQueryBuilder(
+      this.supabase,
+      'stock_alert_configs'
+    );
 
     const { data } = await builder.cachedSelect(
       cacheKey,
@@ -309,12 +316,12 @@ export class StockAlertQueries {
   /**
    * Get active alerts with optimized filtering
    */
-  async getActiveAlerts(clinicId: string, limit: number = 50): Promise<any[]> {
-    const cacheKey = `active-alerts:${clinicId}:${limit}`;
-    
+  async getActiveAlerts(clinicId: string, limit = 50): Promise<any[]> {
+    const _cacheKey = `active-alerts:${clinicId}:${limit}`;
+
     const startTime = Date.now();
     const cached = await stockAlertCache.getActiveAlerts(clinicId);
-    
+
     if (cached) {
       return cached.slice(0, limit);
     }
@@ -347,7 +354,7 @@ export class StockAlertQueries {
       duration: Date.now() - startTime,
       rows: data?.length || 0,
       cached: false,
-      timestamp: new Date()
+      timestamp: new Date(),
     });
 
     // Cache the result
@@ -361,9 +368,9 @@ export class StockAlertQueries {
   /**
    * Get dashboard data with optimized aggregations
    */
-  async getDashboardData(clinicId: string, days: number = 30): Promise<any> {
-    const cacheKey = `dashboard:${clinicId}:${days}d`;
-    
+  async getDashboardData(clinicId: string, days = 30): Promise<any> {
+    const _cacheKey = `dashboard:${clinicId}:${days}d`;
+
     const cached = await stockAlertCache.getDashboardData(clinicId, `${days}d`);
     if (cached) {
       return cached;
@@ -375,11 +382,7 @@ export class StockAlertQueries {
     startDate.setDate(endDate.getDate() - days);
 
     // Execute multiple optimized queries in parallel
-    const [
-      productsResult,
-      alertsResult,
-      metricsResult
-    ] = await Promise.all([
+    const [productsResult, alertsResult, metricsResult] = await Promise.all([
       this.supabase
         .from('products')
         .select(`
@@ -410,7 +413,7 @@ export class StockAlertQueries {
         .select('*')
         .eq('clinic_id', clinicId)
         .gte('metric_date', startDate.toISOString().split('T')[0])
-        .order('metric_date', { ascending: false })
+        .order('metric_date', { ascending: false }),
     ]);
 
     // Process and combine results
@@ -419,15 +422,18 @@ export class StockAlertQueries {
       alerts: alertsResult.data || [],
       metrics: metricsResult.data || [],
       lastUpdated: new Date(),
-      period: { start: startDate, end: endDate, days }
+      period: { start: startDate, end: endDate, days },
     };
 
     queryMonitor.logQuery({
       query: 'Dashboard data aggregation',
       duration: Date.now() - startTime,
-      rows: (dashboardData.products.length + dashboardData.alerts.length + dashboardData.metrics.length),
+      rows:
+        dashboardData.products.length +
+        dashboardData.alerts.length +
+        dashboardData.metrics.length,
       cached: false,
-      timestamp: new Date()
+      timestamp: new Date(),
     });
 
     // Cache the result
@@ -475,18 +481,18 @@ export class StockAlertQueries {
   /**
    * Bulk alert evaluation with optimization
    */
-  async bulkEvaluateAlerts(clinicId: string, batchSize: number = 100): Promise<any[]> {
+  async bulkEvaluateAlerts(clinicId: string, batchSize = 100): Promise<any[]> {
     const startTime = Date.now();
-    
+
     // Get all active configurations
     const configs = await this.getAlertConfigs(clinicId);
-    
+
     if (configs.length === 0) {
       return [];
     }
 
     const results: any[] = [];
-    
+
     // Process in batches to avoid memory issues
     for (let i = 0; i < configs.length; i += batchSize) {
       const batch = configs.slice(i, i + batchSize);
@@ -499,7 +505,7 @@ export class StockAlertQueries {
       duration: Date.now() - startTime,
       rows: results.length,
       cached: false,
-      timestamp: new Date()
+      timestamp: new Date(),
     });
 
     return results;
@@ -541,10 +547,13 @@ export class StockAlertQueries {
       case 'expiring':
         if (product.expiration_date) {
           const daysUntilExpiration = Math.ceil(
-            (new Date(product.expiration_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+            (new Date(product.expiration_date).getTime() - Date.now()) /
+              (1000 * 60 * 60 * 24)
           );
           currentValue = daysUntilExpiration;
-          shouldAlert = daysUntilExpiration <= config.threshold_value && daysUntilExpiration > 0;
+          shouldAlert =
+            daysUntilExpiration <= config.threshold_value &&
+            daysUntilExpiration > 0;
           message = `Produto ${product.name} vence em ${daysUntilExpiration} dias`;
         }
         break;
@@ -578,8 +587,8 @@ export class StockAlertQueries {
       status: 'active',
       metadata: {
         productName: product.name,
-        evaluatedAt: new Date().toISOString()
-      }
+        evaluatedAt: new Date().toISOString(),
+      },
     };
   }
 }
@@ -617,17 +626,14 @@ export class DatabaseHealthMonitor {
 
       // Test query performance
       const queryStart = Date.now();
-      await this.supabase
-        .from('stock_alert_configs')
-        .select('id')
-        .limit(10);
+      await this.supabase.from('stock_alert_configs').select('id').limit(10);
       const queryTime = Date.now() - queryStart;
 
       const metrics = {
         connectionTime,
         queryTime,
         cacheHitRate: queryMonitor.getCacheHitRate(),
-        averageQueryTime: queryMonitor.getAverageQueryTime()
+        averageQueryTime: queryMonitor.getAverageQueryTime(),
       };
 
       let status: 'healthy' | 'degraded' | 'unhealthy' = 'healthy';
@@ -636,21 +642,20 @@ export class DatabaseHealthMonitor {
         status = 'degraded';
       }
 
-      if (connectionTime > 5000 || queryTime > 10000) {
+      if (connectionTime > 5000 || queryTime > 10_000) {
         status = 'unhealthy';
       }
 
       return { status, metrics };
-
-    } catch (error) {
+    } catch (_error) {
       return {
         status: 'unhealthy',
         metrics: {
           connectionTime: Date.now() - startTime,
           queryTime: 0,
           cacheHitRate: 0,
-          averageQueryTime: 0
-        }
+          averageQueryTime: 0,
+        },
       };
     }
   }

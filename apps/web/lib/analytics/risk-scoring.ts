@@ -5,7 +5,7 @@
 
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import type { Database } from '@/types/database';
-import type { RiskFactor, RiskFactorCategory, NoShowPattern } from './no-show-prediction';
+import type { RiskFactor, RiskFactorCategory } from './no-show-prediction';
 
 // Risk scoring configuration
 export interface RiskScoringConfig {
@@ -31,14 +31,14 @@ export interface PatientRiskProfile {
   riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
   confidence: number;
   lastUpdated: Date;
-  
+
   // Detailed risk breakdowns
   historicalRisk: number;
   behavioralRisk: number;
   demographicRisk: number;
   communicationRisk: number;
   contextualRisk: number;
-  
+
   // Risk trends
   riskTrend: 'IMPROVING' | 'STABLE' | 'DETERIORATING';
   trendConfidence: number;
@@ -47,16 +47,16 @@ export interface PatientRiskProfile {
     riskScore: number;
     appointmentCount: number;
   }>;
-  
+
   // Intervention history
   interventionHistory: InterventionOutcome[];
   interventionEffectiveness: Record<string, number>;
-  
+
   // Predictive factors
   topRiskFactors: RiskFactor[];
   protectiveFactors: RiskFactor[];
   seasonalPatterns: Record<string, number>;
-  
+
   // Recommendations
   recommendedInterventions: string[];
   appointmentRecommendations: AppointmentRecommendation[];
@@ -76,7 +76,12 @@ export interface InterventionOutcome {
 
 // Appointment recommendations based on risk analysis
 export interface AppointmentRecommendation {
-  type: 'TIME_SLOT' | 'DAY_OF_WEEK' | 'ADVANCE_BOOKING' | 'REMINDER_SCHEDULE' | 'PROVIDER_MATCH';
+  type:
+    | 'TIME_SLOT'
+    | 'DAY_OF_WEEK'
+    | 'ADVANCE_BOOKING'
+    | 'REMINDER_SCHEDULE'
+    | 'PROVIDER_MATCH';
   recommendation: string;
   expectedImpact: number;
   confidence: number;
@@ -103,24 +108,24 @@ export class RiskScoringEngine {
   constructor() {
     this.config = {
       weights: {
-        [RiskFactorCategory.PATIENT_HISTORY]: 0.30,
-        [RiskFactorCategory.APPOINTMENT_CHARACTERISTICS]: 0.20,
-        [RiskFactorCategory.DEMOGRAPHICS]: 0.20,
+        [RiskFactorCategory.PATIENT_HISTORY]: 0.3,
+        [RiskFactorCategory.APPOINTMENT_CHARACTERISTICS]: 0.2,
+        [RiskFactorCategory.DEMOGRAPHICS]: 0.2,
         [RiskFactorCategory.EXTERNAL_FACTORS]: 0.15,
-        [RiskFactorCategory.COMMUNICATION_PATTERNS]: 0.15
+        [RiskFactorCategory.COMMUNICATION_PATTERNS]: 0.15,
       },
       thresholds: {
         low: 25,
         medium: 50,
         high: 75,
-        critical: 90
+        critical: 90,
       },
       decayFactors: {
         timeDecay: 0.95, // 5% decay per month
-        seasonalDecay: 0.90, // 10% decay per year
-        behaviorDecay: 0.98 // 2% decay per month
+        seasonalDecay: 0.9, // 10% decay per year
+        behaviorDecay: 0.98, // 2% decay per month
       },
-      minimumDataPoints: 3
+      minimumDataPoints: 3,
     };
   }
 
@@ -134,19 +139,23 @@ export class RiskScoringEngine {
         appointmentHistory,
         demographicData,
         communicationHistory,
-        interventionHistory
+        interventionHistory,
       ] = await Promise.all([
         this.getPatientAppointmentHistory(patientId),
         this.getPatientDemographics(patientId),
         this.getCommunicationHistory(patientId),
-        this.getInterventionHistory(patientId)
+        this.getInterventionHistory(patientId),
       ]);
 
       // Calculate individual risk components
-      const historicalRisk = await this.calculateHistoricalRisk(appointmentHistory);
-      const behavioralRisk = await this.calculateBehavioralRisk(appointmentHistory);
-      const demographicRisk = await this.calculateDemographicRisk(demographicData);
-      const communicationRisk = await this.calculateCommunicationRisk(communicationHistory);
+      const historicalRisk =
+        await this.calculateHistoricalRisk(appointmentHistory);
+      const behavioralRisk =
+        await this.calculateBehavioralRisk(appointmentHistory);
+      const demographicRisk =
+        await this.calculateDemographicRisk(demographicData);
+      const communicationRisk =
+        await this.calculateCommunicationRisk(communicationHistory);
       const contextualRisk = await this.calculateContextualRisk(patientId);
 
       // Calculate overall risk score
@@ -155,11 +164,11 @@ export class RiskScoringEngine {
         behavioralRisk,
         demographicRisk,
         communicationRisk,
-        contextualRisk
+        contextualRisk,
       });
 
       // Analyze risk trends
-      const { riskTrend, trendConfidence, monthlyHistory } = 
+      const { riskTrend, trendConfidence, monthlyHistory } =
         await this.analyzeRiskTrends(appointmentHistory);
 
       // Identify key risk and protective factors
@@ -167,18 +176,25 @@ export class RiskScoringEngine {
       const protectiveFactors = await this.identifyProtectiveFactors(patientId);
 
       // Analyze intervention effectiveness
-      const interventionEffectiveness = this.analyzeInterventionEffectiveness(interventionHistory);
+      const interventionEffectiveness =
+        this.analyzeInterventionEffectiveness(interventionHistory);
 
       // Generate recommendations
-      const recommendedInterventions = await this.generateInterventionRecommendations(
-        overallRiskScore, topRiskFactors
-      );
-      const appointmentRecommendations = await this.generateAppointmentRecommendations(
-        patientId, appointmentHistory
-      );
+      const recommendedInterventions =
+        await this.generateInterventionRecommendations(
+          overallRiskScore,
+          topRiskFactors
+        );
+      const appointmentRecommendations =
+        await this.generateAppointmentRecommendations(
+          patientId,
+          appointmentHistory
+        );
 
       // Calculate confidence score
-      const confidence = this.calculateConfidenceScore(appointmentHistory.length);
+      const confidence = this.calculateConfidenceScore(
+        appointmentHistory.length
+      );
 
       return {
         patientId,
@@ -186,28 +202,28 @@ export class RiskScoringEngine {
         riskLevel: this.getRiskLevel(overallRiskScore),
         confidence,
         lastUpdated: new Date(),
-        
+
         historicalRisk,
         behavioralRisk,
         demographicRisk,
         communicationRisk,
         contextualRisk,
-        
+
         riskTrend,
         trendConfidence,
         monthlyRiskHistory: monthlyHistory,
-        
+
         interventionHistory,
         interventionEffectiveness,
-        
+
         topRiskFactors,
         protectiveFactors,
-        seasonalPatterns: await this.calculateSeasonalPatterns(appointmentHistory),
-        
-        recommendedInterventions,
-        appointmentRecommendations
-      };
+        seasonalPatterns:
+          await this.calculateSeasonalPatterns(appointmentHistory),
 
+        recommendedInterventions,
+        appointmentRecommendations,
+      };
     } catch (error) {
       console.error('Error generating risk profile:', error);
       throw new Error('Failed to generate patient risk profile');
@@ -217,30 +233,41 @@ export class RiskScoringEngine {
   /**
    * Calculate historical risk based on appointment history
    */
-  private async calculateHistoricalRisk(appointmentHistory: any[]): Promise<number> {
+  private async calculateHistoricalRisk(
+    appointmentHistory: any[]
+  ): Promise<number> {
     if (appointmentHistory.length < this.config.minimumDataPoints) {
       return 50; // Default medium risk for insufficient data
     }
 
-    const noShows = appointmentHistory.filter(apt => apt.status === 'NO_SHOW');
-    const cancellations = appointmentHistory.filter(apt => apt.status === 'CANCELLED');
-    const lateArrival = appointmentHistory.filter(apt => apt.late_arrival === true);
+    const noShows = appointmentHistory.filter(
+      (apt) => apt.status === 'NO_SHOW'
+    );
+    const cancellations = appointmentHistory.filter(
+      (apt) => apt.status === 'CANCELLED'
+    );
+    const lateArrival = appointmentHistory.filter(
+      (apt) => apt.late_arrival === true
+    );
 
     // Calculate base metrics
-    const noShowRate = noShows.length / appointmentHistory.length;
-    const cancellationRate = cancellations.length / appointmentHistory.length;
+    const _noShowRate = noShows.length / appointmentHistory.length;
+    const _cancellationRate = cancellations.length / appointmentHistory.length;
     const lateRate = lateArrival.length / appointmentHistory.length;
 
     // Apply time decay to give more weight to recent appointments
     const weightedNoShowRate = this.applyTimeDecay(noShows, appointmentHistory);
-    const weightedCancellationRate = this.applyTimeDecay(cancellations, appointmentHistory);
+    const weightedCancellationRate = this.applyTimeDecay(
+      cancellations,
+      appointmentHistory
+    );
 
     // Calculate risk score (0-100)
     let riskScore = 0;
     riskScore += weightedNoShowRate * 60; // No-shows are highest risk
     riskScore += weightedCancellationRate * 20; // Cancellations are moderate risk
     riskScore += lateRate * 15; // Late arrivals are low risk
-    
+
     // Pattern analysis bonus/penalty
     const patternPenalty = this.analyzePatterns(appointmentHistory);
     riskScore += patternPenalty;
@@ -251,7 +278,9 @@ export class RiskScoringEngine {
   /**
    * Calculate behavioral risk based on appointment patterns
    */
-  private async calculateBehavioralRisk(appointmentHistory: any[]): Promise<number> {
+  private async calculateBehavioralRisk(
+    appointmentHistory: any[]
+  ): Promise<number> {
     if (appointmentHistory.length === 0) return 50;
 
     let riskScore = 0;
@@ -262,13 +291,16 @@ export class RiskScoringEngine {
     riskScore += bookingPatterns.inconsistentTiming * 15;
 
     // Analyze rescheduling behavior
-    const reschedulingRate = appointmentHistory.filter(apt => 
-      apt.reschedule_count && apt.reschedule_count > 0
-    ).length / appointmentHistory.length;
+    const reschedulingRate =
+      appointmentHistory.filter(
+        (apt) => apt.reschedule_count && apt.reschedule_count > 0
+      ).length / appointmentHistory.length;
     riskScore += reschedulingRate * 25;
 
     // Communication responsiveness
-    const communicationScore = await this.getCommunicationScore(appointmentHistory[0]?.patient_id);
+    const communicationScore = await this.getCommunicationScore(
+      appointmentHistory[0]?.patient_id
+    );
     riskScore += (1 - communicationScore) * 20;
 
     // Appointment frequency patterns
@@ -281,7 +313,9 @@ export class RiskScoringEngine {
   /**
    * Calculate demographic risk factors
    */
-  private async calculateDemographicRisk(demographicData: DemographicRiskFactors): Promise<number> {
+  private async calculateDemographicRisk(
+    demographicData: DemographicRiskFactors
+  ): Promise<number> {
     let riskScore = 0;
 
     // Age group risk
@@ -289,16 +323,18 @@ export class RiskScoringEngine {
     riskScore += ageRisk * 15;
 
     // Distance from clinic
-    const distanceRisk = Math.min(demographicData.distanceFromClinic / 50, 1) * 20;
+    const distanceRisk =
+      Math.min(demographicData.distanceFromClinic / 50, 1) * 20;
     riskScore += distanceRisk;
 
     // Transportation access
-    const transportRisk = {
-      'EXCELLENT': 0,
-      'GOOD': 5,
-      'LIMITED': 15,
-      'POOR': 25
-    }[demographicData.transportationAccess] || 10;
+    const transportRisk =
+      {
+        EXCELLENT: 0,
+        GOOD: 5,
+        LIMITED: 15,
+        POOR: 25,
+      }[demographicData.transportationAccess] || 10;
     riskScore += transportRisk;
 
     // Language barriers
@@ -307,12 +343,13 @@ export class RiskScoringEngine {
     }
 
     // Family support
-    const supportRisk = {
-      'HIGH': 0,
-      'MEDIUM': 5,
-      'LOW': 15,
-      'UNKNOWN': 8
-    }[demographicData.familySupport] || 8;
+    const supportRisk =
+      {
+        HIGH: 0,
+        MEDIUM: 5,
+        LOW: 15,
+        UNKNOWN: 8,
+      }[demographicData.familySupport] || 8;
     riskScore += supportRisk;
 
     // Employment and insurance factors
@@ -329,20 +366,26 @@ export class RiskScoringEngine {
   /**
    * Calculate communication risk based on response patterns
    */
-  private async calculateCommunicationRisk(communicationHistory: any[]): Promise<number> {
+  private async calculateCommunicationRisk(
+    communicationHistory: any[]
+  ): Promise<number> {
     if (communicationHistory.length === 0) return 30; // Default low-medium risk
 
-    const responses = communicationHistory.filter(comm => comm.response_received);
+    const responses = communicationHistory.filter(
+      (comm) => comm.response_received
+    );
     const responseRate = responses.length / communicationHistory.length;
 
     // Calculate average response time
     const responseTimes = responses
-      .filter(r => r.response_time_minutes)
-      .map(r => r.response_time_minutes);
-    
-    const avgResponseTime = responseTimes.length > 0 
-      ? responseTimes.reduce((sum, time) => sum + time, 0) / responseTimes.length 
-      : 1440; // Default 24 hours
+      .filter((r) => r.response_time_minutes)
+      .map((r) => r.response_time_minutes);
+
+    const avgResponseTime =
+      responseTimes.length > 0
+        ? responseTimes.reduce((sum, time) => sum + time, 0) /
+          responseTimes.length
+        : 1440; // Default 24 hours
 
     // Risk calculation
     let riskScore = 0;
@@ -350,7 +393,8 @@ export class RiskScoringEngine {
     riskScore += Math.min(avgResponseTime / 60, 48) * 0.5; // Slow response increases risk
 
     // Preferred communication channel effectiveness
-    const channelEffectiveness = this.analyzeChannelEffectiveness(communicationHistory);
+    const channelEffectiveness =
+      this.analyzeChannelEffectiveness(communicationHistory);
     riskScore += (1 - channelEffectiveness) * 20;
 
     return Math.min(Math.max(riskScore, 0), 100);
@@ -359,7 +403,7 @@ export class RiskScoringEngine {
   /**
    * Calculate contextual risk based on current circumstances
    */
-  private async calculateContextualRisk(patientId: string): Promise<number> {
+  private async calculateContextualRisk(_patientId: string): Promise<number> {
     // This would integrate with current patient status, health conditions, etc.
     // For now, returning a base contextual risk
     return 25; // Base contextual risk
@@ -375,12 +419,17 @@ export class RiskScoringEngine {
     communicationRisk: number;
     contextualRisk: number;
   }): number {
-    const weightedScore = 
-      components.historicalRisk * this.config.weights[RiskFactorCategory.PATIENT_HISTORY] +
-      components.behavioralRisk * this.config.weights[RiskFactorCategory.APPOINTMENT_CHARACTERISTICS] +
-      components.demographicRisk * this.config.weights[RiskFactorCategory.DEMOGRAPHICS] +
-      components.communicationRisk * this.config.weights[RiskFactorCategory.COMMUNICATION_PATTERNS] +
-      components.contextualRisk * this.config.weights[RiskFactorCategory.EXTERNAL_FACTORS];
+    const weightedScore =
+      components.historicalRisk *
+        this.config.weights[RiskFactorCategory.PATIENT_HISTORY] +
+      components.behavioralRisk *
+        this.config.weights[RiskFactorCategory.APPOINTMENT_CHARACTERISTICS] +
+      components.demographicRisk *
+        this.config.weights[RiskFactorCategory.DEMOGRAPHICS] +
+      components.communicationRisk *
+        this.config.weights[RiskFactorCategory.COMMUNICATION_PATTERNS] +
+      components.contextualRisk *
+        this.config.weights[RiskFactorCategory.EXTERNAL_FACTORS];
 
     return Math.round(weightedScore);
   }
@@ -391,30 +440,39 @@ export class RiskScoringEngine {
   private async analyzeRiskTrends(appointmentHistory: any[]): Promise<{
     riskTrend: 'IMPROVING' | 'STABLE' | 'DETERIORATING';
     trendConfidence: number;
-    monthlyHistory: Array<{ month: string; riskScore: number; appointmentCount: number; }>;
+    monthlyHistory: Array<{
+      month: string;
+      riskScore: number;
+      appointmentCount: number;
+    }>;
   }> {
     if (appointmentHistory.length < 6) {
       return {
         riskTrend: 'STABLE',
         trendConfidence: 0.5,
-        monthlyHistory: []
+        monthlyHistory: [],
       };
     }
 
     // Group appointments by month
-    const monthlyGroups = appointmentHistory.reduce((groups, apt) => {
-      const month = new Date(apt.scheduled_date).toISOString().substring(0, 7);
-      if (!groups[month]) groups[month] = [];
-      groups[month].push(apt);
-      return groups;
-    }, {} as Record<string, any[]>);
+    const monthlyGroups = appointmentHistory.reduce(
+      (groups, apt) => {
+        const month = new Date(apt.scheduled_date)
+          .toISOString()
+          .substring(0, 7);
+        if (!groups[month]) groups[month] = [];
+        groups[month].push(apt);
+        return groups;
+      },
+      {} as Record<string, any[]>
+    );
 
     // Calculate monthly risk scores
     const monthlyHistory = Object.entries(monthlyGroups)
       .map(([month, appointments]) => ({
         month,
         riskScore: this.calculateMonthlyRiskScore(appointments),
-        appointmentCount: appointments.length
+        appointmentCount: appointments.length,
       }))
       .sort((a, b) => a.month.localeCompare(b.month));
 
@@ -424,15 +482,17 @@ export class RiskScoringEngine {
       return {
         riskTrend: 'STABLE',
         trendConfidence: 0.6,
-        monthlyHistory
+        monthlyHistory,
       };
     }
 
     const firstHalf = recentMonths.slice(0, 3);
     const secondHalf = recentMonths.slice(-3);
 
-    const firstAvg = firstHalf.reduce((sum, m) => sum + m.riskScore, 0) / firstHalf.length;
-    const secondAvg = secondHalf.reduce((sum, m) => sum + m.riskScore, 0) / secondHalf.length;
+    const firstAvg =
+      firstHalf.reduce((sum, m) => sum + m.riskScore, 0) / firstHalf.length;
+    const secondAvg =
+      secondHalf.reduce((sum, m) => sum + m.riskScore, 0) / secondHalf.length;
 
     const trendDifference = secondAvg - firstAvg;
     const trendConfidence = Math.min(recentMonths.length / 6, 1);
@@ -449,14 +509,16 @@ export class RiskScoringEngine {
     return {
       riskTrend,
       trendConfidence,
-      monthlyHistory
+      monthlyHistory,
     };
   }
 
   /**
    * Identify top risk factors for the patient
    */
-  private async identifyTopRiskFactors(patientId: string): Promise<RiskFactor[]> {
+  private async identifyTopRiskFactors(
+    _patientId: string
+  ): Promise<RiskFactor[]> {
     // This would analyze all factors and return the most significant ones
     // Placeholder implementation
     return [
@@ -466,26 +528,28 @@ export class RiskScoringEngine {
         value: 0.35,
         weight: 0.25,
         contribution: 35,
-        description: 'Patient has 35% historical no-show rate'
-      }
+        description: 'Patient has 35% historical no-show rate',
+      },
     ];
   }
 
   /**
    * Identify protective factors that reduce risk
    */
-  private async identifyProtectiveFactors(patientId: string): Promise<RiskFactor[]> {
+  private async identifyProtectiveFactors(
+    _patientId: string
+  ): Promise<RiskFactor[]> {
     // This would identify factors that positively influence attendance
     // Placeholder implementation
     return [
       {
         category: RiskFactorCategory.COMMUNICATION_PATTERNS,
         factorName: 'High Response Rate',
-        value: 0.90,
+        value: 0.9,
         weight: 0.15,
         contribution: -10,
-        description: 'Patient consistently responds to communications'
-      }
+        description: 'Patient consistently responds to communications',
+      },
     ];
   }
 
@@ -494,7 +558,7 @@ export class RiskScoringEngine {
    */
   private async generateInterventionRecommendations(
     riskScore: number,
-    riskFactors: RiskFactor[]
+    _riskFactors: RiskFactor[]
   ): Promise<string[]> {
     const recommendations: string[] = [];
 
@@ -518,7 +582,7 @@ export class RiskScoringEngine {
    * Generate appointment recommendations
    */
   private async generateAppointmentRecommendations(
-    patientId: string,
+    _patientId: string,
     appointmentHistory: any[]
   ): Promise<AppointmentRecommendation[]> {
     const recommendations: AppointmentRecommendation[] = [];
@@ -531,18 +595,19 @@ export class RiskScoringEngine {
         recommendation: `Schedule appointments around ${timePreferences.preferredTime}`,
         expectedImpact: 15,
         confidence: timePreferences.confidence,
-        reasoning: 'Based on historical attendance patterns'
+        reasoning: 'Based on historical attendance patterns',
       });
     }
 
     // Analyze booking advance time
-    const optimalAdvanceTime = this.calculateOptimalAdvanceTime(appointmentHistory);
+    const optimalAdvanceTime =
+      this.calculateOptimalAdvanceTime(appointmentHistory);
     recommendations.push({
       type: 'ADVANCE_BOOKING',
       recommendation: `Book appointments ${optimalAdvanceTime} days in advance`,
       expectedImpact: 10,
       confidence: 0.8,
-      reasoning: 'Optimal balance between planning and commitment'
+      reasoning: 'Optimal balance between planning and commitment',
     });
 
     return recommendations;
@@ -554,22 +619,28 @@ export class RiskScoringEngine {
 
     const now = new Date();
     let weightedSum = 0;
-    let totalWeight = 0;
+    let _totalWeight = 0;
 
-    events.forEach(event => {
+    events.forEach((event) => {
       const eventDate = new Date(event.scheduled_date);
-      const monthsAgo = Math.max(0, (now.getTime() - eventDate.getTime()) / (1000 * 60 * 60 * 24 * 30));
-      const weight = Math.pow(this.config.decayFactors.timeDecay, monthsAgo);
-      
+      const monthsAgo = Math.max(
+        0,
+        (now.getTime() - eventDate.getTime()) / (1000 * 60 * 60 * 24 * 30)
+      );
+      const weight = this.config.decayFactors.timeDecay ** monthsAgo;
+
       weightedSum += weight;
-      totalWeight += weight;
+      _totalWeight += weight;
     });
 
-    const totalEvents = allEvents.length;
+    const _totalEvents = allEvents.length;
     const totalEventWeight = allEvents.reduce((sum, event) => {
       const eventDate = new Date(event.scheduled_date);
-      const monthsAgo = Math.max(0, (now.getTime() - eventDate.getTime()) / (1000 * 60 * 60 * 24 * 30));
-      return sum + Math.pow(this.config.decayFactors.timeDecay, monthsAgo);
+      const monthsAgo = Math.max(
+        0,
+        (now.getTime() - eventDate.getTime()) / (1000 * 60 * 60 * 24 * 30)
+      );
+      return sum + this.config.decayFactors.timeDecay ** monthsAgo;
     }, 0);
 
     return totalEventWeight > 0 ? weightedSum / totalEventWeight : 0;
@@ -582,10 +653,14 @@ export class RiskScoringEngine {
     // Consecutive no-shows
     let consecutiveNoShows = 0;
     let maxConsecutive = 0;
-    
+
     appointmentHistory
-      .sort((a, b) => new Date(b.scheduled_date).getTime() - new Date(a.scheduled_date).getTime())
-      .forEach(apt => {
+      .sort(
+        (a, b) =>
+          new Date(b.scheduled_date).getTime() -
+          new Date(a.scheduled_date).getTime()
+      )
+      .forEach((apt) => {
         if (apt.status === 'NO_SHOW') {
           consecutiveNoShows++;
           maxConsecutive = Math.max(maxConsecutive, consecutiveNoShows);
@@ -604,42 +679,50 @@ export class RiskScoringEngine {
     inconsistentTiming: number;
   } {
     const bookings = appointmentHistory
-      .filter(apt => apt.created_at && apt.scheduled_date)
-      .map(apt => {
+      .filter((apt) => apt.created_at && apt.scheduled_date)
+      .map((apt) => {
         const booking = new Date(apt.created_at);
         const appointment = new Date(apt.scheduled_date);
-        return (appointment.getTime() - booking.getTime()) / (1000 * 60 * 60 * 24);
+        return (
+          (appointment.getTime() - booking.getTime()) / (1000 * 60 * 60 * 24)
+        );
       });
 
-    const lastMinuteBookings = bookings.filter(days => days < 1).length / bookings.length;
-    
+    const lastMinuteBookings =
+      bookings.filter((days) => days < 1).length / bookings.length;
+
     // Calculate timing consistency
-    const avgBookingTime = bookings.reduce((sum, days) => sum + days, 0) / bookings.length;
-    const variance = bookings.reduce((sum, days) => sum + Math.pow(days - avgBookingTime, 2), 0) / bookings.length;
+    const avgBookingTime =
+      bookings.reduce((sum, days) => sum + days, 0) / bookings.length;
+    const variance =
+      bookings.reduce((sum, days) => sum + (days - avgBookingTime) ** 2, 0) /
+      bookings.length;
     const inconsistentTiming = Math.min(variance / 100, 1); // Normalize variance
 
     return {
       lastMinuteBookings,
-      inconsistentTiming
+      inconsistentTiming,
     };
   }
 
   private analyzeAppointmentFrequency(appointmentHistory: any[]): number {
     // Analyze gaps between appointments
     const dates = appointmentHistory
-      .map(apt => new Date(apt.scheduled_date))
+      .map((apt) => new Date(apt.scheduled_date))
       .sort((a, b) => a.getTime() - b.getTime());
 
     if (dates.length < 2) return 0;
 
     const gaps = [];
     for (let i = 1; i < dates.length; i++) {
-      const gap = (dates[i].getTime() - dates[i-1].getTime()) / (1000 * 60 * 60 * 24);
+      const gap =
+        (dates[i].getTime() - dates[i - 1].getTime()) / (1000 * 60 * 60 * 24);
       gaps.push(gap);
     }
 
     const avgGap = gaps.reduce((sum, gap) => sum + gap, 0) / gaps.length;
-    const variance = gaps.reduce((sum, gap) => sum + Math.pow(gap - avgGap, 2), 0) / gaps.length;
+    const variance =
+      gaps.reduce((sum, gap) => sum + (gap - avgGap) ** 2, 0) / gaps.length;
 
     // Higher variance indicates inconsistent scheduling patterns
     return Math.min(Math.sqrt(variance) / 30, 1); // Normalize
@@ -652,7 +735,7 @@ export class RiskScoringEngine {
       '36-45': 0.4,
       '46-55': 0.3,
       '56-65': 0.2,
-      '65+': 0.1
+      '65+': 0.1,
     };
     return riskMap[ageGroup] || 0.5;
   }
@@ -660,31 +743,40 @@ export class RiskScoringEngine {
   private analyzeChannelEffectiveness(communicationHistory: any[]): number {
     if (communicationHistory.length === 0) return 0.5;
 
-    const channels = communicationHistory.reduce((acc, comm) => {
-      if (!acc[comm.channel]) {
-        acc[comm.channel] = { sent: 0, responded: 0 };
-      }
-      acc[comm.channel].sent++;
-      if (comm.response_received) {
-        acc[comm.channel].responded++;
-      }
-      return acc;
-    }, {} as Record<string, { sent: number; responded: number; }>);
+    const channels = communicationHistory.reduce(
+      (acc, comm) => {
+        if (!acc[comm.channel]) {
+          acc[comm.channel] = { sent: 0, responded: 0 };
+        }
+        acc[comm.channel].sent++;
+        if (comm.response_received) {
+          acc[comm.channel].responded++;
+        }
+        return acc;
+      },
+      {} as Record<string, { sent: number; responded: number }>
+    );
 
-    const channelRates = Object.values(channels).map(ch => ch.responded / ch.sent);
+    const channelRates = Object.values(channels).map(
+      (ch) => ch.responded / ch.sent
+    );
     return channelRates.length > 0 ? Math.max(...channelRates) : 0.5;
   }
 
   private calculateMonthlyRiskScore(appointments: any[]): number {
-    const noShows = appointments.filter(apt => apt.status === 'NO_SHOW').length;
+    const noShows = appointments.filter(
+      (apt) => apt.status === 'NO_SHOW'
+    ).length;
     const total = appointments.length;
     return total > 0 ? (noShows / total) * 100 : 0;
   }
 
-  private analyzeInterventionEffectiveness(interventionHistory: InterventionOutcome[]): Record<string, number> {
+  private analyzeInterventionEffectiveness(
+    interventionHistory: InterventionOutcome[]
+  ): Record<string, number> {
     const effectiveness: Record<string, number> = {};
 
-    interventionHistory.forEach(intervention => {
+    interventionHistory.forEach((intervention) => {
       if (!effectiveness[intervention.type]) {
         effectiveness[intervention.type] = 0;
       }
@@ -692,8 +784,8 @@ export class RiskScoringEngine {
     });
 
     // Average the effectiveness scores
-    Object.keys(effectiveness).forEach(type => {
-      const count = interventionHistory.filter(i => i.type === type).length;
+    Object.keys(effectiveness).forEach((type) => {
+      const count = interventionHistory.filter((i) => i.type === type).length;
       effectiveness[type] = effectiveness[type] / count;
     });
 
@@ -705,20 +797,24 @@ export class RiskScoringEngine {
     confidence: number;
   } {
     const timeSlots = appointmentHistory
-      .filter(apt => apt.status === 'ATTENDED')
-      .map(apt => new Date(apt.scheduled_date).getHours());
+      .filter((apt) => apt.status === 'ATTENDED')
+      .map((apt) => new Date(apt.scheduled_date).getHours());
 
     if (timeSlots.length === 0) {
       return { preferredTime: '10:00', confidence: 0 };
     }
 
-    const timeCounts = timeSlots.reduce((acc, hour) => {
-      acc[hour] = (acc[hour] || 0) + 1;
-      return acc;
-    }, {} as Record<number, number>);
+    const timeCounts = timeSlots.reduce(
+      (acc, hour) => {
+        acc[hour] = (acc[hour] || 0) + 1;
+        return acc;
+      },
+      {} as Record<number, number>
+    );
 
-    const [mostFrequentHour, count] = Object.entries(timeCounts)
-      .sort(([,a], [,b]) => b - a)[0];
+    const [mostFrequentHour, count] = Object.entries(timeCounts).sort(
+      ([, a], [, b]) => b - a
+    )[0];
 
     const confidence = count / timeSlots.length;
     const preferredTime = `${mostFrequentHour}:00`;
@@ -728,28 +824,37 @@ export class RiskScoringEngine {
 
   private calculateOptimalAdvanceTime(appointmentHistory: any[]): number {
     const advanceTimes = appointmentHistory
-      .filter(apt => apt.created_at && apt.scheduled_date && apt.status === 'ATTENDED')
-      .map(apt => {
+      .filter(
+        (apt) =>
+          apt.created_at && apt.scheduled_date && apt.status === 'ATTENDED'
+      )
+      .map((apt) => {
         const booking = new Date(apt.created_at);
         const appointment = new Date(apt.scheduled_date);
-        return Math.round((appointment.getTime() - booking.getTime()) / (1000 * 60 * 60 * 24));
+        return Math.round(
+          (appointment.getTime() - booking.getTime()) / (1000 * 60 * 60 * 24)
+        );
       });
 
     if (advanceTimes.length === 0) return 7; // Default to 1 week
 
     // Find the most common advance time for attended appointments
-    const timeFrequency = advanceTimes.reduce((acc, time) => {
-      acc[time] = (acc[time] || 0) + 1;
-      return acc;
-    }, {} as Record<number, number>);
+    const timeFrequency = advanceTimes.reduce(
+      (acc, time) => {
+        acc[time] = (acc[time] || 0) + 1;
+        return acc;
+      },
+      {} as Record<number, number>
+    );
 
-    const [optimalTime] = Object.entries(timeFrequency)
-      .sort(([,a], [,b]) => b - a)[0];
+    const [optimalTime] = Object.entries(timeFrequency).sort(
+      ([, a], [, b]) => b - a
+    )[0];
 
-    return parseInt(optimalTime);
+    return Number.parseInt(optimalTime, 10);
   }
 
-  private async getCommunicationScore(patientId: string): Promise<number> {
+  private async getCommunicationScore(_patientId: string): Promise<number> {
     // Placeholder for communication score calculation
     return 0.75;
   }
@@ -758,24 +863,31 @@ export class RiskScoringEngine {
     if (appointmentCount < this.config.minimumDataPoints) {
       return 0.5;
     }
-    
+
     // Confidence increases with more data points, plateaus at 20 appointments
     const maxConfidence = 0.95;
     const minConfidence = 0.6;
     const optimalDataPoints = 20;
-    
-    const confidenceIncrease = Math.min(appointmentCount / optimalDataPoints, 1);
+
+    const confidenceIncrease = Math.min(
+      appointmentCount / optimalDataPoints,
+      1
+    );
     return minConfidence + (maxConfidence - minConfidence) * confidenceIncrease;
   }
 
-  private getRiskLevel(riskScore: number): 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' {
+  private getRiskLevel(
+    riskScore: number
+  ): 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' {
     if (riskScore >= this.config.thresholds.critical) return 'CRITICAL';
     if (riskScore >= this.config.thresholds.high) return 'HIGH';
     if (riskScore >= this.config.thresholds.medium) return 'MEDIUM';
     return 'LOW';
   }
 
-  private async getPatientAppointmentHistory(patientId: string): Promise<any[]> {
+  private async getPatientAppointmentHistory(
+    patientId: string
+  ): Promise<any[]> {
     const { data } = await this.supabase
       .from('appointments')
       .select('*')
@@ -785,7 +897,9 @@ export class RiskScoringEngine {
     return data || [];
   }
 
-  private async getPatientDemographics(patientId: string): Promise<DemographicRiskFactors> {
+  private async getPatientDemographics(
+    _patientId: string
+  ): Promise<DemographicRiskFactors> {
     // Placeholder implementation
     return {
       ageGroup: '26-35',
@@ -795,27 +909,31 @@ export class RiskScoringEngine {
       languageBarriers: false,
       familySupport: 'MEDIUM',
       employmentStatus: 'EMPLOYED',
-      insuranceType: 'PRIVATE'
+      insuranceType: 'PRIVATE',
     };
   }
 
-  private async getCommunicationHistory(patientId: string): Promise<any[]> {
+  private async getCommunicationHistory(_patientId: string): Promise<any[]> {
     // Placeholder implementation
     return [];
   }
 
-  private async getInterventionHistory(patientId: string): Promise<InterventionOutcome[]> {
+  private async getInterventionHistory(
+    _patientId: string
+  ): Promise<InterventionOutcome[]> {
     // Placeholder implementation
     return [];
   }
 
-  private async calculateSeasonalPatterns(appointmentHistory: any[]): Promise<Record<string, number>> {
+  private async calculateSeasonalPatterns(
+    _appointmentHistory: any[]
+  ): Promise<Record<string, number>> {
     // Placeholder implementation
     return {
-      'spring': 0.15,
-      'summer': 0.25,
-      'autumn': 0.20,
-      'winter': 0.30
+      spring: 0.15,
+      summer: 0.25,
+      autumn: 0.2,
+      winter: 0.3,
     };
   }
 
@@ -827,7 +945,9 @@ export class RiskScoringEngine {
     appointmentOutcome: 'ATTENDED' | 'NO_SHOW' | 'CANCELLED' | 'RESCHEDULED'
   ): Promise<void> {
     // Implementation for updating risk profile based on new data
-    console.log(`Updating risk profile for patient ${patientId} with outcome: ${appointmentOutcome}`);
+    console.log(
+      `Updating risk profile for patient ${patientId} with outcome: ${appointmentOutcome}`
+    );
   }
 
   /**
@@ -858,7 +978,7 @@ export function getRiskLevelColor(level: string): string {
     LOW: 'text-green-600',
     MEDIUM: 'text-yellow-600',
     HIGH: 'text-orange-600',
-    CRITICAL: 'text-red-600'
+    CRITICAL: 'text-red-600',
   };
   return colors[level as keyof typeof colors] || 'text-gray-600';
 }
@@ -867,7 +987,7 @@ export function getRiskTrendIcon(trend: string): string {
   const icons = {
     IMPROVING: '↗️',
     STABLE: '→',
-    DETERIORATING: '↘️'
+    DETERIORATING: '↘️',
   };
   return icons[trend as keyof typeof icons] || '→';
 }

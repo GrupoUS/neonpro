@@ -10,8 +10,20 @@ import { z } from 'zod';
 
 export type MessageStatus = 'draft' | 'sent' | 'delivered' | 'read' | 'failed';
 export type MessagePriority = 'low' | 'normal' | 'high' | 'urgent';
-export type CommunicationChannel = 'sms' | 'email' | 'portal' | 'whatsapp' | 'internal';
-export type MessageType = 'text' | 'appointment' | 'reminder' | 'alert' | 'document' | 'image' | 'form';
+export type CommunicationChannel =
+  | 'sms'
+  | 'email'
+  | 'portal'
+  | 'whatsapp'
+  | 'internal';
+export type MessageType =
+  | 'text'
+  | 'appointment'
+  | 'reminder'
+  | 'alert'
+  | 'document'
+  | 'image'
+  | 'form';
 export type ConversationStatus = 'active' | 'archived' | 'blocked';
 
 // ============================================================================
@@ -158,17 +170,17 @@ export interface MessageTemplate {
   updated_at: string;
 }
 
-export type TemplateCategory = 
-  | 'appointment' 
-  | 'reminder' 
-  | 'follow_up' 
-  | 'confirmation' 
-  | 'cancellation' 
-  | 'test_results' 
-  | 'medication' 
-  | 'billing' 
-  | 'marketing' 
-  | 'emergency' 
+export type TemplateCategory =
+  | 'appointment'
+  | 'reminder'
+  | 'follow_up'
+  | 'confirmation'
+  | 'cancellation'
+  | 'test_results'
+  | 'medication'
+  | 'billing'
+  | 'marketing'
+  | 'emergency'
   | 'general';
 
 export interface TemplateVariable {
@@ -199,18 +211,38 @@ export interface AutomationRule {
 }
 
 export interface AutomationTrigger {
-  type: 'appointment_created' | 'appointment_reminder' | 'treatment_completed' | 'no_show' | 'birthday' | 'manual' | 'time_based';
+  type:
+    | 'appointment_created'
+    | 'appointment_reminder'
+    | 'treatment_completed'
+    | 'no_show'
+    | 'birthday'
+    | 'manual'
+    | 'time_based';
   config: Record<string, any>;
 }
 
 export interface AutomationCondition {
   field: string;
-  operator: 'equals' | 'not_equals' | 'contains' | 'greater_than' | 'less_than' | 'in' | 'not_in';
+  operator:
+    | 'equals'
+    | 'not_equals'
+    | 'contains'
+    | 'greater_than'
+    | 'less_than'
+    | 'in'
+    | 'not_in';
   value: string | number | boolean | string[];
 }
 
 export interface AutomationAction {
-  type: 'send_message' | 'create_task' | 'update_patient' | 'send_email' | 'send_sms' | 'create_appointment';
+  type:
+    | 'send_message'
+    | 'create_task'
+    | 'update_patient'
+    | 'send_email'
+    | 'send_sms'
+    | 'create_appointment';
   template_id?: string;
   channel?: CommunicationChannel;
   delay_minutes?: number;
@@ -258,7 +290,13 @@ export interface CommunicationCampaign {
 }
 
 export type CampaignType = 'one_time' | 'recurring' | 'triggered' | 'drip';
-export type CampaignStatus = 'draft' | 'scheduled' | 'running' | 'completed' | 'cancelled' | 'paused';
+export type CampaignStatus =
+  | 'draft'
+  | 'scheduled'
+  | 'running'
+  | 'completed'
+  | 'cancelled'
+  | 'paused';
 
 export interface CampaignAudience {
   include_criteria: AudienceCriteria[];
@@ -415,7 +453,15 @@ export const MessageSchema = z.object({
   sender_id: z.string().uuid(),
   sender_type: z.enum(['patient', 'staff']),
   recipient_ids: z.array(z.string().uuid()),
-  type: z.enum(['text', 'appointment', 'reminder', 'alert', 'document', 'image', 'form']),
+  type: z.enum([
+    'text',
+    'appointment',
+    'reminder',
+    'alert',
+    'document',
+    'image',
+    'form',
+  ]),
   channel: z.enum(['sms', 'email', 'portal', 'whatsapp', 'internal']),
   subject: z.string().optional(),
   content: z.string().min(1, 'Message content is required'),
@@ -427,20 +473,42 @@ export const MessageSchema = z.object({
 export const MessageTemplateSchema = z.object({
   name: z.string().min(1, 'Template name is required'),
   description: z.string().optional(),
-  category: z.enum(['appointment', 'reminder', 'follow_up', 'confirmation', 'cancellation', 'test_results', 'medication', 'billing', 'marketing', 'emergency', 'general']),
-  type: z.enum(['text', 'appointment', 'reminder', 'alert', 'document', 'image', 'form']),
+  category: z.enum([
+    'appointment',
+    'reminder',
+    'follow_up',
+    'confirmation',
+    'cancellation',
+    'test_results',
+    'medication',
+    'billing',
+    'marketing',
+    'emergency',
+    'general',
+  ]),
+  type: z.enum([
+    'text',
+    'appointment',
+    'reminder',
+    'alert',
+    'document',
+    'image',
+    'form',
+  ]),
   channel: z.array(z.enum(['sms', 'email', 'portal', 'whatsapp', 'internal'])),
   subject_template: z.string().min(1, 'Subject template is required'),
   content_template: z.string().min(1, 'Content template is required'),
-  variables: z.array(z.object({
-    name: z.string(),
-    description: z.string(),
-    type: z.enum(['text', 'number', 'date', 'boolean', 'list']),
-    required: z.boolean(),
-    default_value: z.string().optional(),
-    validation_pattern: z.string().optional(),
-    options: z.array(z.string()).optional(),
-  })),
+  variables: z.array(
+    z.object({
+      name: z.string(),
+      description: z.string(),
+      type: z.enum(['text', 'number', 'date', 'boolean', 'list']),
+      required: z.boolean(),
+      default_value: z.string().optional(),
+      validation_pattern: z.string().optional(),
+      options: z.array(z.string()).optional(),
+    })
+  ),
   is_active: z.boolean().default(true),
 });
 
@@ -467,23 +535,33 @@ export const CommunicationCampaignSchema = z.object({
   channel: z.enum(['sms', 'email', 'portal', 'whatsapp', 'internal']),
   scheduled_at: z.string().optional(),
   target_audience: z.object({
-    include_criteria: z.array(z.object({
-      field: z.string(),
-      operator: z.string(),
-      value: z.any(),
-    })),
-    exclude_criteria: z.array(z.object({
-      field: z.string(),
-      operator: z.string(),
-      value: z.any(),
-    })),
+    include_criteria: z.array(
+      z.object({
+        field: z.string(),
+        operator: z.string(),
+        value: z.any(),
+      })
+    ),
+    exclude_criteria: z.array(
+      z.object({
+        field: z.string(),
+        operator: z.string(),
+        value: z.any(),
+      })
+    ),
     patient_ids: z.array(z.string().uuid()).optional(),
   }),
 });
 
 export const QuickResponseSchema = z.object({
   name: z.string().min(1, 'Quick response name is required'),
-  shortcut: z.string().min(1, 'Shortcut is required').regex(/^\/\w+$/, 'Shortcut must start with / and contain only letters, numbers, and underscores'),
+  shortcut: z
+    .string()
+    .min(1, 'Shortcut is required')
+    .regex(
+      /^\/\w+$/,
+      'Shortcut must start with / and contain only letters, numbers, and underscores'
+    ),
   content: z.string().min(1, 'Content is required'),
   category: z.string().min(1, 'Category is required'),
   channel: z.array(z.enum(['sms', 'email', 'portal', 'whatsapp', 'internal'])),
@@ -493,8 +571,12 @@ export const QuickResponseSchema = z.object({
 export const CommunicationPreferencesSchema = z.object({
   patient_id: z.string().uuid(),
   preferred_channel: z.enum(['sms', 'email', 'portal', 'whatsapp', 'internal']),
-  preferred_time_start: z.string().regex(/^\d{2}:\d{2}$/, 'Time must be in HH:MM format'),
-  preferred_time_end: z.string().regex(/^\d{2}:\d{2}$/, 'Time must be in HH:MM format'),
+  preferred_time_start: z
+    .string()
+    .regex(/^\d{2}:\d{2}$/, 'Time must be in HH:MM format'),
+  preferred_time_end: z
+    .string()
+    .regex(/^\d{2}:\d{2}$/, 'Time must be in HH:MM format'),
   timezone: z.string(),
   language: z.string(),
   quiet_hours_enabled: z.boolean(),
@@ -504,7 +586,9 @@ export const CommunicationPreferencesSchema = z.object({
   appointment_reminders: z.object({
     enabled: z.boolean(),
     advance_days: z.array(z.number().min(0).max(30)),
-    channels: z.array(z.enum(['sms', 'email', 'portal', 'whatsapp', 'internal'])),
+    channels: z.array(
+      z.enum(['sms', 'email', 'portal', 'whatsapp', 'internal'])
+    ),
   }),
   follow_up_preferences: z.object({
     enabled: z.boolean(),
@@ -622,7 +706,7 @@ export interface CommunicationError {
   permanent?: boolean;
 }
 
-export type CommunicationErrorCode = 
+export type CommunicationErrorCode =
   | 'INVALID_RECIPIENT'
   | 'CONSENT_REQUIRED'
   | 'RATE_LIMIT_EXCEEDED'

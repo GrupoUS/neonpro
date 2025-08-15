@@ -1,6 +1,6 @@
 // KPI Dashboard Validation Schemas
 // Description: Zod validation schemas for KPI dashboard types and API requests
-// Author: Dev Agent  
+// Author: Dev Agent
 // Date: 2025-01-26
 
 import { z } from 'zod';
@@ -9,12 +9,19 @@ import { z } from 'zod';
 export const FinancialKPISchema = z.object({
   id: z.string().uuid().optional(),
   kpi_name: z.string().min(1).max(100),
-  kpi_category: z.enum(['revenue', 'profitability', 'operational', 'financial_health']),
+  kpi_category: z.enum([
+    'revenue',
+    'profitability',
+    'operational',
+    'financial_health',
+  ]),
   current_value: z.number(),
   target_value: z.number().optional(),
   previous_value: z.number().optional(),
   variance_percent: z.number().optional(),
-  trend_direction: z.enum(['increasing', 'decreasing', 'stable']).default('stable'),
+  trend_direction: z
+    .enum(['increasing', 'decreasing', 'stable'])
+    .default('stable'),
   calculation_formula: z.string().optional(),
   data_sources: z.record(z.any()).optional(),
   last_updated: z.string().optional(),
@@ -59,31 +66,41 @@ export const DashboardWidgetSchema = z.object({
     comparison_enabled: z.boolean().optional(),
     drill_down_enabled: z.boolean().optional(),
     color_scheme: z.string().optional(),
-    display_format: z.enum(['currency', 'percentage', 'number', 'ratio']).optional(),
+    display_format: z
+      .enum(['currency', 'percentage', 'number', 'ratio'])
+      .optional(),
   }),
-  style: z.object({
-    background_color: z.string().optional(),
-    border_color: z.string().optional(),
-    text_color: z.string().optional(),
-  }).optional(),
+  style: z
+    .object({
+      background_color: z.string().optional(),
+      border_color: z.string().optional(),
+      text_color: z.string().optional(),
+    })
+    .optional(),
 });
 
 // Dashboard Filters Schema
 export const DashboardFiltersSchema = z.object({
-  time_period: z.object({
-    start_date: z.string(),
-    end_date: z.string(),
-    preset: z.enum(['today', 'week', 'month', 'quarter', 'year', 'custom']).optional(),
-  }).optional(),
+  time_period: z
+    .object({
+      start_date: z.string(),
+      end_date: z.string(),
+      preset: z
+        .enum(['today', 'week', 'month', 'quarter', 'year', 'custom'])
+        .optional(),
+    })
+    .optional(),
   service_types: z.array(z.string()).optional(),
   providers: z.array(z.string()).optional(),
   locations: z.array(z.string()).optional(),
   patient_segments: z.array(z.string()).optional(),
-  comparison_period: z.object({
-    type: z.enum(['previous_period', 'year_over_year', 'custom']),
-    start_date: z.string().optional(),
-    end_date: z.string().optional(),
-  }).optional(),
+  comparison_period: z
+    .object({
+      type: z.enum(['previous_period', 'year_over_year', 'custom']),
+      start_date: z.string().optional(),
+      end_date: z.string().optional(),
+    })
+    .optional(),
 });
 
 // Dashboard Layout Schema
@@ -91,7 +108,9 @@ export const DashboardLayoutSchema = z.object({
   id: z.string().uuid().optional(),
   user_id: z.string().uuid(),
   layout_name: z.string().min(1).max(100),
-  layout_type: z.enum(['kpi_dashboard', 'executive_summary', 'detailed_analysis']).default('kpi_dashboard'),
+  layout_type: z
+    .enum(['kpi_dashboard', 'executive_summary', 'detailed_analysis'])
+    .default('kpi_dashboard'),
   widget_configuration: z.array(DashboardWidgetSchema),
   grid_layout: z.object({
     cols: z.number().positive(),
@@ -211,11 +230,12 @@ export const CreateDashboardRequestSchema = DashboardLayoutSchema.omit({
   updated_at: true,
 });
 
-export const UpdateDashboardRequestSchema = DashboardLayoutSchema.partial().omit({
-  id: true,
-  created_at: true,
-  updated_at: true,
-});
+export const UpdateDashboardRequestSchema =
+  DashboardLayoutSchema.partial().omit({
+    id: true,
+    created_at: true,
+    updated_at: true,
+  });
 
 export const CreateThresholdRequestSchema = KPIThresholdSchema.omit({
   id: true,
@@ -231,10 +251,12 @@ export const UpdateThresholdRequestSchema = KPIThresholdSchema.partial().omit({
 
 // Bulk Operations Schemas
 export const BulkKPIUpdateSchema = z.object({
-  updates: z.array(z.object({
-    id: z.string().uuid(),
-    data: UpdateKPIRequestSchema,
-  })),
+  updates: z.array(
+    z.object({
+      id: z.string().uuid(),
+      data: UpdateKPIRequestSchema,
+    })
+  ),
   force_calculation: z.boolean().default(false),
 });
 
@@ -246,9 +268,13 @@ export const BulkThresholdUpdateSchema = z.object({
 
 // Query Parameters Schemas
 export const KPIListQuerySchema = z.object({
-  category: z.enum(['revenue', 'profitability', 'operational', 'financial_health']).optional(),
+  category: z
+    .enum(['revenue', 'profitability', 'operational', 'financial_health'])
+    .optional(),
   search: z.string().optional(),
-  sort_by: z.enum(['kpi_name', 'current_value', 'variance_percent', 'last_updated']).default('kpi_name'),
+  sort_by: z
+    .enum(['kpi_name', 'current_value', 'variance_percent', 'last_updated'])
+    .default('kpi_name'),
   sort_order: z.enum(['asc', 'desc']).default('asc'),
   page: z.number().positive().default(1),
   limit: z.number().positive().max(100).default(20),
@@ -257,10 +283,14 @@ export const KPIListQuerySchema = z.object({
 });
 
 export const DashboardListQuerySchema = z.object({
-  layout_type: z.enum(['kpi_dashboard', 'executive_summary', 'detailed_analysis']).optional(),
+  layout_type: z
+    .enum(['kpi_dashboard', 'executive_summary', 'detailed_analysis'])
+    .optional(),
   is_shared: z.boolean().optional(),
   search: z.string().optional(),
-  sort_by: z.enum(['layout_name', 'created_at', 'updated_at']).default('layout_name'),
+  sort_by: z
+    .enum(['layout_name', 'created_at', 'updated_at'])
+    .default('layout_name'),
   sort_order: z.enum(['asc', 'desc']).default('asc'),
   page: z.number().positive().default(1),
   limit: z.number().positive().max(50).default(10),
@@ -268,11 +298,15 @@ export const DashboardListQuerySchema = z.object({
 
 export const AlertListQuerySchema = z.object({
   kpi_id: z.string().uuid().optional(),
-  alert_type: z.enum(['warning', 'critical', 'improvement', 'target_achieved']).optional(),
+  alert_type: z
+    .enum(['warning', 'critical', 'improvement', 'target_achieved'])
+    .optional(),
   is_acknowledged: z.boolean().optional(),
   date_from: z.string().optional(),
   date_to: z.string().optional(),
-  sort_by: z.enum(['created_at', 'alert_type', 'alert_value']).default('created_at'),
+  sort_by: z
+    .enum(['created_at', 'alert_type', 'alert_value'])
+    .default('created_at'),
   sort_order: z.enum(['asc', 'desc']).default('desc'),
   page: z.number().positive().default(1),
   limit: z.number().positive().max(100).default(20),
@@ -293,7 +327,11 @@ export type KPIThresholdInput = z.infer<typeof KPIThresholdSchema>;
 export type DashboardLayoutInput = z.infer<typeof DashboardLayoutSchema>;
 export type DashboardWidgetInput = z.infer<typeof DashboardWidgetSchema>;
 export type KPIDrillPathInput = z.infer<typeof KPIDrillPathSchema>;
-export type KPICalculationRequestInput = z.infer<typeof KPICalculationRequestSchema>;
+export type KPICalculationRequestInput = z.infer<
+  typeof KPICalculationRequestSchema
+>;
 export type DrillDownRequestInput = z.infer<typeof DrillDownRequestSchema>;
 export type KPIAlertInput = z.infer<typeof KPIAlertSchema>;
-export type DashboardPerformanceInput = z.infer<typeof DashboardPerformanceSchema>;
+export type DashboardPerformanceInput = z.infer<
+  typeof DashboardPerformanceSchema
+>;

@@ -1,13 +1,12 @@
 /**
  * LGPD Consent Automation Manager
  * Story 1.5: LGPD Compliance Automation
- * 
+ *
  * This module provides comprehensive automated consent management for LGPD compliance
  * throughout the authentication system with granular permission tracking.
  */
 
 import { createClient } from '@/app/utils/supabase/client';
-import { Database } from '@/types/database';
 import { SecurityAuditLogger } from '@/lib/auth/security-audit-logger';
 import { logger } from '@/lib/logger';
 
@@ -22,7 +21,7 @@ export enum LGPDDataType {
   COMMUNICATION = 'communication',
   ANALYTICS = 'analytics',
   MARKETING = 'marketing',
-  THIRD_PARTY_SHARING = 'third_party_sharing'
+  THIRD_PARTY_SHARING = 'third_party_sharing',
 }
 
 /**
@@ -35,7 +34,7 @@ export enum LGPDPurpose {
   CONSENT = 'consent',
   VITAL_INTEREST = 'vital_interest',
   PUBLIC_INTEREST = 'public_interest',
-  CONTRACT_PERFORMANCE = 'contract_performance'
+  CONTRACT_PERFORMANCE = 'contract_performance',
 }
 
 /**
@@ -94,7 +93,6 @@ export interface ConsentAnalytics {
 export class ConsentAutomationManager {
   private supabase;
   private auditLogger: SecurityAuditLogger;
-  private currentVersion = '1.0.0';
 
   constructor() {
     this.supabase = createClient();
@@ -112,8 +110,10 @@ export class ConsentAutomationManager {
     try {
       const consentRecords: ConsentRecord[] = [];
       const timestamp = new Date();
-      const expiresAt = request.expirationDays 
-        ? new Date(timestamp.getTime() + request.expirationDays * 24 * 60 * 60 * 1000)
+      const expiresAt = request.expirationDays
+        ? new Date(
+            timestamp.getTime() + request.expirationDays * 24 * 60 * 60 * 1000
+          )
         : undefined;
 
       // Create consent records for each data type and purpose combination
@@ -133,7 +133,7 @@ export class ConsentAutomationManager {
             updatedAt: timestamp,
             ipAddress,
             userAgent,
-            metadata: request.metadata
+            metadata: request.metadata,
           };
 
           const { data, error } = await this.supabase
@@ -144,7 +144,9 @@ export class ConsentAutomationManager {
 
           if (error) {
             logger.error('Error creating consent record:', error);
-            throw new Error(`Failed to create consent record: ${error.message}`);
+            throw new Error(
+              `Failed to create consent record: ${error.message}`
+            );
           }
 
           consentRecords.push(data);
@@ -158,18 +160,19 @@ export class ConsentAutomationManager {
               dataType,
               purpose,
               version: request.version,
-              expiresAt: expiresAt?.toISOString()
+              expiresAt: expiresAt?.toISOString(),
             },
             ipAddress,
             userAgent,
-            severity: 'info'
+            severity: 'info',
           });
         }
       }
 
-      logger.info(`Collected ${consentRecords.length} consent records for user ${request.userId}`);
+      logger.info(
+        `Collected ${consentRecords.length} consent records for user ${request.userId}`
+      );
       return consentRecords;
-
     } catch (error) {
       logger.error('Error in collectConsent:', error);
       throw error;
@@ -197,7 +200,7 @@ export class ConsentAutomationManager {
           consentGiven: false,
           withdrawnAt,
           updatedAt: withdrawnAt,
-          metadata: { withdrawalReason: reason }
+          metadata: { withdrawalReason: reason },
         })
         .eq('userId', userId)
         .eq('clinicId', clinicId)
@@ -213,7 +216,9 @@ export class ConsentAutomationManager {
       }
 
       if (!data || data.length === 0) {
-        logger.warn(`No active consent found for withdrawal: ${userId}, ${dataType}, ${purpose}`);
+        logger.warn(
+          `No active consent found for withdrawal: ${userId}, ${dataType}, ${purpose}`
+        );
         return false;
       }
 
@@ -226,19 +231,20 @@ export class ConsentAutomationManager {
           dataType,
           purpose,
           reason,
-          recordsAffected: data.length
+          recordsAffected: data.length,
         },
         ipAddress,
         userAgent,
-        severity: 'info'
+        severity: 'info',
       });
 
       // Trigger data processing stop for withdrawn consent
       await this.triggerDataProcessingStop(userId, clinicId, dataType, purpose);
 
-      logger.info(`Consent withdrawn for user ${userId}: ${dataType}/${purpose}`);
+      logger.info(
+        `Consent withdrawn for user ${userId}: ${dataType}/${purpose}`
+      );
       return true;
-
     } catch (error) {
       logger.error('Error in withdrawConsent:', error);
       throw error;
@@ -274,7 +280,6 @@ export class ConsentAutomationManager {
       }
 
       return data && data.length > 0;
-
     } catch (error) {
       logger.error('Error in hasValidConsent:', error);
       return false;
@@ -287,7 +292,7 @@ export class ConsentAutomationManager {
   async getUserConsents(
     userId: string,
     clinicId: string,
-    activeOnly: boolean = false
+    activeOnly = false
   ): Promise<ConsentRecord[]> {
     try {
       let query = this.supabase
@@ -303,7 +308,9 @@ export class ConsentAutomationManager {
           .or(`expiresAt.is.null,expiresAt.gt.${new Date().toISOString()}`);
       }
 
-      const { data, error } = await query.order('createdAt', { ascending: false });
+      const { data, error } = await query.order('createdAt', {
+        ascending: false,
+      });
 
       if (error) {
         logger.error('Error fetching user consents:', error);
@@ -311,7 +318,6 @@ export class ConsentAutomationManager {
       }
 
       return data || [];
-
     } catch (error) {
       logger.error('Error in getUserConsents:', error);
       throw error;
@@ -326,19 +332,27 @@ export class ConsentAutomationManager {
     clinicId: string,
     newVersion: string,
     newConsentText: string,
-    forceRecollection: boolean = false
+    forceRecollection = false
   ): Promise<boolean> {
     try {
-      const currentConsents = await this.getUserConsents(userId, clinicId, true);
-      
+      const currentConsents = await this.getUserConsents(
+        userId,
+        clinicId,
+        true
+      );
+
       if (currentConsents.length === 0) {
         logger.info(`No active consents found for user ${userId} to update`);
         return true;
       }
 
       // Check if version update requires re-collection
-      const requiresRecollection = forceRecollection || 
-        this.versionRequiresRecollection(currentConsents[0].consentVersion, newVersion);
+      const requiresRecollection =
+        forceRecollection ||
+        this.versionRequiresRecollection(
+          currentConsents[0].consentVersion,
+          newVersion
+        );
 
       if (requiresRecollection) {
         // Mark current consents as requiring re-collection
@@ -348,12 +362,12 @@ export class ConsentAutomationManager {
             .update({
               consentGiven: false,
               updatedAt: new Date(),
-              metadata: { 
+              metadata: {
                 ...consent.metadata,
                 versionUpdateRequired: true,
                 newVersion,
-                requiresRecollection: true
-              }
+                requiresRecollection: true,
+              },
             })
             .eq('id', consent.id);
         }
@@ -366,9 +380,9 @@ export class ConsentAutomationManager {
           details: {
             oldVersion: currentConsents[0].consentVersion,
             newVersion,
-            consentsAffected: currentConsents.length
+            consentsAffected: currentConsents.length,
           },
-          severity: 'info'
+          severity: 'info',
         });
 
         return false; // Indicates re-collection needed
@@ -381,14 +395,15 @@ export class ConsentAutomationManager {
           .update({
             consentVersion: newVersion,
             consentText: newConsentText,
-            updatedAt: new Date()
+            updatedAt: new Date(),
           })
           .eq('id', consent.id);
       }
 
-      logger.info(`Updated consent version for user ${userId} to ${newVersion}`);
+      logger.info(
+        `Updated consent version for user ${userId} to ${newVersion}`
+      );
       return true;
-
     } catch (error) {
       logger.error('Error in updateConsentVersion:', error);
       throw error;
@@ -424,39 +439,50 @@ export class ConsentAutomationManager {
       }
 
       const now = new Date();
-      const activeConsents = allConsents?.filter(c => 
-        c.consentGiven && 
-        !c.withdrawnAt && 
-        (!c.expiresAt || new Date(c.expiresAt) > now)
-      ) || [];
-      
-      const withdrawnConsents = allConsents?.filter(c => c.withdrawnAt) || [];
-      const expiredConsents = allConsents?.filter(c => 
-        c.expiresAt && new Date(c.expiresAt) <= now
-      ) || [];
+      const activeConsents =
+        allConsents?.filter(
+          (c) =>
+            c.consentGiven &&
+            !c.withdrawnAt &&
+            (!c.expiresAt || new Date(c.expiresAt) > now)
+        ) || [];
+
+      const withdrawnConsents = allConsents?.filter((c) => c.withdrawnAt) || [];
+      const expiredConsents =
+        allConsents?.filter(
+          (c) => c.expiresAt && new Date(c.expiresAt) <= now
+        ) || [];
 
       // Group by data type
       const consentsByDataType = {} as Record<LGPDDataType, number>;
-      Object.values(LGPDDataType).forEach(type => {
-        consentsByDataType[type] = activeConsents.filter(c => c.dataType === type).length;
+      Object.values(LGPDDataType).forEach((type) => {
+        consentsByDataType[type] = activeConsents.filter(
+          (c) => c.dataType === type
+        ).length;
       });
 
       // Group by purpose
       const consentsByPurpose = {} as Record<LGPDPurpose, number>;
-      Object.values(LGPDPurpose).forEach(purpose => {
-        consentsByPurpose[purpose] = activeConsents.filter(c => c.purpose === purpose).length;
+      Object.values(LGPDPurpose).forEach((purpose) => {
+        consentsByPurpose[purpose] = activeConsents.filter(
+          (c) => c.purpose === purpose
+        ).length;
       });
 
       // Recent withdrawals (last 30 days)
       const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
       const recentWithdrawals = withdrawnConsents
-        .filter(c => c.withdrawnAt && new Date(c.withdrawnAt) > thirtyDaysAgo)
+        .filter((c) => c.withdrawnAt && new Date(c.withdrawnAt) > thirtyDaysAgo)
         .slice(0, 10);
 
       // Expiring consents (next 30 days)
-      const thirtyDaysFromNow = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+      const thirtyDaysFromNow = new Date(
+        now.getTime() + 30 * 24 * 60 * 60 * 1000
+      );
       const expiringConsents = activeConsents
-        .filter(c => c.expiresAt && new Date(c.expiresAt) <= thirtyDaysFromNow)
+        .filter(
+          (c) => c.expiresAt && new Date(c.expiresAt) <= thirtyDaysFromNow
+        )
         .slice(0, 10);
 
       return {
@@ -467,9 +493,8 @@ export class ConsentAutomationManager {
         consentsByDataType,
         consentsByPurpose,
         recentWithdrawals,
-        expiringConsents
+        expiringConsents,
       };
-
     } catch (error) {
       logger.error('Error in getConsentAnalytics:', error);
       throw error;
@@ -486,7 +511,7 @@ export class ConsentAutomationManager {
         .update({
           consentGiven: false,
           updatedAt: new Date(),
-          metadata: { expiredAutomatically: true }
+          metadata: { expiredAutomatically: true },
         })
         .lt('expiresAt', new Date().toISOString())
         .eq('consentGiven', true)
@@ -504,10 +529,10 @@ export class ConsentAutomationManager {
       }
 
       const cleanedCount = data?.length || 0;
-      
+
       if (cleanedCount > 0) {
         logger.info(`Cleaned up ${cleanedCount} expired consents`);
-        
+
         // Log cleanup for audit
         await this.auditLogger.logSecurityEvent({
           userId: 'system',
@@ -515,14 +540,13 @@ export class ConsentAutomationManager {
           resource: 'lgpd_consent',
           details: {
             cleanedCount,
-            clinicId: clinicId || 'all'
+            clinicId: clinicId || 'all',
           },
-          severity: 'info'
+          severity: 'info',
         });
       }
 
       return cleanedCount;
-
     } catch (error) {
       logger.error('Error in cleanupExpiredConsents:', error);
       throw error;
@@ -535,12 +559,13 @@ export class ConsentAutomationManager {
   private getLegalBasisForPurpose(purpose: LGPDPurpose): string {
     const legalBasisMap = {
       [LGPDPurpose.SERVICE_PROVISION]: 'Art. 7º, V - execução de contrato',
-      [LGPDPurpose.LEGAL_OBLIGATION]: 'Art. 7º, II - cumprimento de obrigação legal',
+      [LGPDPurpose.LEGAL_OBLIGATION]:
+        'Art. 7º, II - cumprimento de obrigação legal',
       [LGPDPurpose.LEGITIMATE_INTEREST]: 'Art. 7º, IX - interesse legítimo',
       [LGPDPurpose.CONSENT]: 'Art. 7º, I - consentimento',
       [LGPDPurpose.VITAL_INTEREST]: 'Art. 7º, IV - proteção da vida',
       [LGPDPurpose.PUBLIC_INTEREST]: 'Art. 7º, III - interesse público',
-      [LGPDPurpose.CONTRACT_PERFORMANCE]: 'Art. 7º, V - execução de contrato'
+      [LGPDPurpose.CONTRACT_PERFORMANCE]: 'Art. 7º, V - execução de contrato',
     };
 
     return legalBasisMap[purpose] || 'Art. 7º, I - consentimento';
@@ -549,7 +574,10 @@ export class ConsentAutomationManager {
   /**
    * Check if version change requires consent re-collection
    */
-  private versionRequiresRecollection(oldVersion: string, newVersion: string): boolean {
+  private versionRequiresRecollection(
+    oldVersion: string,
+    newVersion: string
+  ): boolean {
     // Simple version comparison - in production, implement semantic versioning
     const oldParts = oldVersion.split('.').map(Number);
     const newParts = newVersion.split('.').map(Number);
@@ -587,13 +615,14 @@ export class ConsentAutomationManager {
           dataType,
           purpose,
           clinicId,
-          stopReason: 'consent_withdrawn'
+          stopReason: 'consent_withdrawn',
         },
-        severity: 'warning'
+        severity: 'warning',
       });
 
-      logger.info(`Data processing stop triggered for ${userId}: ${dataType}/${purpose}`);
-
+      logger.info(
+        `Data processing stop triggered for ${userId}: ${dataType}/${purpose}`
+      );
     } catch (error) {
       logger.error('Error triggering data processing stop:', error);
     }

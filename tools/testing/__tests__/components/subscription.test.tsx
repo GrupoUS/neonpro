@@ -1,56 +1,56 @@
 /**
  * Subscription Components Unit Tests
  * Tests UI components for subscription system
- * 
+ *
  * @description Comprehensive component tests using React Testing Library,
  *              covering all subscription UI components and interactions
  * @version 1.0.0
  * @created 2025-07-22
  */
 
-import { describe, it, expect, jest, beforeEach } from '@jest/globals'
-import { screen, fireEvent, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import {
-  renderWithProviders,
-  createMockSubscription,
-  createMockUserProfile,
-} from '../utils/testUtils'
+import { beforeEach, describe, expect, it, jest } from '@jest/globals';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { renderWithProviders } from '../utils/testUtils';
 
 // Mock subscription components (to be imported when they exist)
-const MockSubscriptionStatusCard = ({ variant = 'default' }: { variant?: string }) => (
+const MockSubscriptionStatusCard = ({
+  variant = 'default',
+}: {
+  variant?: string;
+}) => (
   <div data-testid="subscription-status-card" data-variant={variant}>
     <h3>Subscription Status</h3>
     <p>Premium Plan - Active</p>
     <button>Upgrade</button>
   </div>
-)
+);
 
-const MockFeatureGate = ({ 
-  feature, 
+const MockFeatureGate = ({
+  feature,
   children,
-  fallback 
-}: { 
-  feature: string
-  children: React.ReactNode
-  fallback?: React.ReactNode 
+  fallback,
+}: {
+  feature: string;
+  children: React.ReactNode;
+  fallback?: React.ReactNode;
 }) => (
-  <div data-testid="feature-gate" data-feature={feature}>
+  <div data-feature={feature} data-testid="feature-gate">
     {children}
     {fallback}
   </div>
-)
+);
 
 // ============================================================================
 // Component Tests
 // ============================================================================
 
 describe('Subscription Components', () => {
-  const user = userEvent.setup()
+  const user = userEvent.setup();
 
   beforeEach(() => {
-    jest.clearAllMocks()
-  })
+    jest.clearAllMocks();
+  });
 
   // ============================================================================
   // Status Card Tests
@@ -58,38 +58,42 @@ describe('Subscription Components', () => {
 
   describe('SubscriptionStatusCard', () => {
     it('should render status card with correct information', () => {
-      renderWithProviders(<MockSubscriptionStatusCard />)
-      
-      expect(screen.getByTestId('subscription-status-card')).toBeInTheDocument()
-      expect(screen.getByText('Subscription Status')).toBeInTheDocument()
-      expect(screen.getByText('Premium Plan - Active')).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: 'Upgrade' })).toBeInTheDocument()
-    })
+      renderWithProviders(<MockSubscriptionStatusCard />);
+
+      expect(
+        screen.getByTestId('subscription-status-card')
+      ).toBeInTheDocument();
+      expect(screen.getByText('Subscription Status')).toBeInTheDocument();
+      expect(screen.getByText('Premium Plan - Active')).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: 'Upgrade' })
+      ).toBeInTheDocument();
+    });
 
     it('should handle different variants correctly', () => {
-      renderWithProviders(<MockSubscriptionStatusCard variant="compact" />)
-      
-      const card = screen.getByTestId('subscription-status-card')
-      expect(card).toHaveAttribute('data-variant', 'compact')
-    })
+      renderWithProviders(<MockSubscriptionStatusCard variant="compact" />);
+
+      const card = screen.getByTestId('subscription-status-card');
+      expect(card).toHaveAttribute('data-variant', 'compact');
+    });
 
     it('should handle click events on upgrade button', async () => {
-      const mockClick = jest.fn()
-      
+      const mockClick = jest.fn();
+
       renderWithProviders(
         <div>
-          <button onClick={mockClick} data-testid="upgrade-button">
+          <button data-testid="upgrade-button" onClick={mockClick}>
             Upgrade Plan
           </button>
         </div>
-      )
-      
-      const upgradeButton = screen.getByTestId('upgrade-button')
-      await user.click(upgradeButton)
-      
-      expect(mockClick).toHaveBeenCalledTimes(1)
-    })
-  })
+      );
+
+      const upgradeButton = screen.getByTestId('upgrade-button');
+      await user.click(upgradeButton);
+
+      expect(mockClick).toHaveBeenCalledTimes(1);
+    });
+  });
 
   // ============================================================================
   // Feature Gate Tests
@@ -101,37 +105,43 @@ describe('Subscription Components', () => {
         <MockFeatureGate feature="premium-analytics">
           <div data-testid="premium-content">Premium Analytics Dashboard</div>
         </MockFeatureGate>
-      )
-      
-      expect(screen.getByTestId('feature-gate')).toBeInTheDocument()
-      expect(screen.getByTestId('premium-content')).toBeInTheDocument()
-      expect(screen.getByText('Premium Analytics Dashboard')).toBeInTheDocument()
-    })
+      );
+
+      expect(screen.getByTestId('feature-gate')).toBeInTheDocument();
+      expect(screen.getByTestId('premium-content')).toBeInTheDocument();
+      expect(
+        screen.getByText('Premium Analytics Dashboard')
+      ).toBeInTheDocument();
+    });
 
     it('should render fallback for restricted features', () => {
       renderWithProviders(
-        <MockFeatureGate 
-          feature="enterprise-only" 
-          fallback={<div data-testid="upgrade-prompt">Upgrade to access this feature</div>}
+        <MockFeatureGate
+          fallback={
+            <div data-testid="upgrade-prompt">
+              Upgrade to access this feature
+            </div>
+          }
+          feature="enterprise-only"
         >
           <div data-testid="restricted-content">Enterprise Feature</div>
         </MockFeatureGate>
-      )
-      
-      expect(screen.getByTestId('feature-gate')).toBeInTheDocument()
-    })
+      );
+
+      expect(screen.getByTestId('feature-gate')).toBeInTheDocument();
+    });
 
     it('should pass correct feature attribute', () => {
       renderWithProviders(
         <MockFeatureGate feature="advanced-reports">
           <div>Advanced Reports</div>
         </MockFeatureGate>
-      )
-      
-      const gate = screen.getByTestId('feature-gate')
-      expect(gate).toHaveAttribute('data-feature', 'advanced-reports')
-    })
-  })
+      );
+
+      const gate = screen.getByTestId('feature-gate');
+      expect(gate).toHaveAttribute('data-feature', 'advanced-reports');
+    });
+  });
 
   // ============================================================================
   // Notification Tests
@@ -144,13 +154,17 @@ describe('Subscription Components', () => {
           <p>Your subscription expires in 7 days</p>
           <button>Renew Now</button>
         </div>
-      )
-      
-      renderWithProviders(mockNotification)
-      
-      expect(screen.getByTestId('subscription-notification')).toBeInTheDocument()
-      expect(screen.getByRole('alert')).toBeInTheDocument()
-      expect(screen.getByText('Your subscription expires in 7 days')).toBeInTheDocument()
-    })
-  })
-})
+      );
+
+      renderWithProviders(mockNotification);
+
+      expect(
+        screen.getByTestId('subscription-notification')
+      ).toBeInTheDocument();
+      expect(screen.getByRole('alert')).toBeInTheDocument();
+      expect(
+        screen.getByText('Your subscription expires in 7 days')
+      ).toBeInTheDocument();
+    });
+  });
+});

@@ -1,44 +1,65 @@
 {
-	"name": "neonpro-monorepo",
-	"version": "2.0.0",
-	"private": true,
-	"description": "NeonPro - Sistema de Gestão para Clínicas de Estética (Monorepo)",
-	"packageManager": "pnpm@8.15.0",
-	"scripts": {
-		"dev": "turbo dev",
-		"build": "turbo build",
-		"lint": "turbo lint",
-		"type-check": "turbo type-check",
-		"test": "turbo test",
-		"clean": "turbo clean",
-		"dev:web": "turbo dev --filter=@neonpro/web",
-		"build:web": "turbo build --filter=@neonpro/web",
-		"prepare": "husky || true"
-	},
-	"devDependencies": {
-		"@types/node": "^22.10.2",
-		"husky": "^9.1.7",
-		"turbo": "^2.4.4",
-		"typescript": "^5.7.2"
-	},
-	"engines": {
-		"node": ">=18.17.0",
-		"pnpm": ">=8.0.0"
-	},
-	"keywords": [
-		"clinic-management",
-		"healthcare",
-		"monorepo",
-		"nextjs",
-		"supabase"
-	],
-	"dependencies": {
-		"@supabase/auth-helpers-nextjs": "^0.10.0",
-		"@supabase/ssr": "^0.6.1",
-		"@supabase/supabase-js": "^2.55.0",
-		"@types/jest": "^30.0.0",
-		"dotenv": "^17.2.1",
-		"jest": "^30.0.5",
-		"ts-jest": "^29.4.1"
-	}
+  "name": "neonpro-monorepo",
+  "version": "2.0.0",
+  "private": true,
+  "description": "NeonPro - Sistema de Gestão para Clínicas de Estética (Monorepo)",
+  "packageManager": "pnpm@8.15.0",
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "type-check": "turbo type-check",
+    "test": "jest --config=tools/testing/jest.config.ts",
+    "test:all": "turbo test",
+    "test:unit": "jest --config=tools/testing/jest.config.ts --selectProjects=\"Unit Tests\"",
+    "test:integration": "jest --config=tools/testing/jest.config.ts --selectProjects=\"Integration Tests\"",
+    "test:performance": "jest --config=tools/testing/jest.config.ts --selectProjects=\"Performance Tests\"",
+    "test:security": "jest --config=tools/testing/jest.config.ts --selectProjects=\"Security Tests\"",
+    "test:auth": "jest --config=tools/testing/jest.config.ts --selectProjects=\"Authentication Tests\"",
+    "test:accessibility": "jest --config=tools/testing/jest.config.ts --selectProjects=\"Accessibility Tests\"",
+    "test:watch": "jest --config=tools/testing/jest.config.ts --watch",
+    "test:coverage": "jest --config=tools/testing/jest.config.ts --coverage",
+    "test:verbose": "jest --config=tools/testing/jest.config.ts --verbose",
+    "clean": "turbo clean",
+    "dev:web": "turbo dev --filter=@neonpro/web",
+    "build:web": "turbo build --filter=@neonpro/web",
+    "prepare": "husky",
+    "format": "biome format --write .",
+    "format:check": "biome check .",
+    "lint:biome": "biome lint .",
+    "lint:biome:fix": "biome lint --write .",
+    "check": "biome check .",
+    "check:fix": "biome check --write .",
+    "ci": "biome ci ."
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.2.0",
+    "@types/node": "^22.10.2",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.5",
+    "prettier": "^3.6.2",
+    "turbo": "^2.4.4",
+    "typescript": "^5.7.2",
+    "ultracite": "^5.1.5"
+  },
+  "engines": {
+    "node": ">=18.17.0",
+    "pnpm": ">=8.0.0"
+  },
+  "keywords": [
+    "clinic-management",
+    "healthcare",
+    "monorepo",
+    "nextjs",
+    "supabase"
+  ],
+  "dependencies": {
+    "@supabase/auth-helpers-nextjs": "^0.10.0",
+    "@supabase/ssr": "^0.6.1",
+    "@supabase/supabase-js": "^2.55.0",
+    "@types/jest": "^30.0.0",
+    "dotenv": "^17.2.1",
+    "jest": "^30.0.5",
+    "ts-jest": "^29.4.1"
+  }
 }

@@ -1,8 +1,8 @@
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { createClient } from '@/app/utils/supabase/server';
 import { PatientInsightsEngine } from '@/lib/ai/patient-insights';
 import { ProfileManager } from '@/lib/patients/profile-manager';
-import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
 
 // Initialize services
 const profileManager = new ProfileManager();
@@ -10,36 +10,46 @@ const patientInsights = new PatientInsightsEngine();
 
 // Validation schema for updates
 const UpdateProfileSchema = z.object({
-  demographics: z.object({
-    name: z.string().optional(),
-    phone: z.string().optional(),
-    email: z.string().email().optional(),
-    address: z.string().optional()
-  }).optional(),
-  medical_history: z.object({
-    allergies: z.array(z.string()).optional(),
-    conditions: z.array(z.string()).optional(),
-    medications: z.array(z.string()).optional(),
-    surgeries: z.array(z.string()).optional()
-  }).optional(),
-  preferences: z.object({
-    language: z.string().optional(),
-    timezone: z.string().optional(),
-    communication_method: z.enum(['email', 'sms', 'phone', 'in_app']).optional(),
-    appointment_reminders: z.boolean().optional()
-  }).optional(),
-  emergency_contact: z.object({
-    name: z.string().optional(),
-    relationship: z.string().optional(),
-    phone: z.string().optional()
-  }).optional()
+  demographics: z
+    .object({
+      name: z.string().optional(),
+      phone: z.string().optional(),
+      email: z.string().email().optional(),
+      address: z.string().optional(),
+    })
+    .optional(),
+  medical_history: z
+    .object({
+      allergies: z.array(z.string()).optional(),
+      conditions: z.array(z.string()).optional(),
+      medications: z.array(z.string()).optional(),
+      surgeries: z.array(z.string()).optional(),
+    })
+    .optional(),
+  preferences: z
+    .object({
+      language: z.string().optional(),
+      timezone: z.string().optional(),
+      communication_method: z
+        .enum(['email', 'sms', 'phone', 'in_app'])
+        .optional(),
+      appointment_reminders: z.boolean().optional(),
+    })
+    .optional(),
+  emergency_contact: z
+    .object({
+      name: z.string().optional(),
+      relationship: z.string().optional(),
+      phone: z.string().optional(),
+    })
+    .optional(),
 });
 
 /**
  * GET /api/patients/profile/[id] - Get specific patient profile
  */
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
@@ -47,7 +57,9 @@ export async function GET(
     const { id: patientId } = await params;
 
     // Verify authentication
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -60,17 +72,20 @@ export async function GET(
 
     // Generate AI insights for the profile
     try {
-      const riskAssessment = await patientInsights.generateRiskAssessment(patientId);
-      const behaviorAnalysis = await patientInsights.analyzeBehaviorPatterns(patientId);
-      const recommendations = await patientInsights.generateTreatmentRecommendations(patientId);
-      
+      const riskAssessment =
+        await patientInsights.generateRiskAssessment(patientId);
+      const behaviorAnalysis =
+        await patientInsights.analyzeBehaviorPatterns(patientId);
+      const recommendations =
+        await patientInsights.generateTreatmentRecommendations(patientId);
+
       const profileWithInsights = {
         ...profile,
         ai_insights: {
           risk_assessment: riskAssessment,
           behavior_analysis: behaviorAnalysis,
-          recommendations: recommendations.slice(0, 3) // Top 3 recommendations
-        }
+          recommendations: recommendations.slice(0, 3), // Top 3 recommendations
+        },
       };
 
       return NextResponse.json(profileWithInsights);
@@ -100,7 +115,9 @@ export async function PUT(
     const { id: patientId } = await params;
 
     // Verify authentication
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -108,7 +125,7 @@ export async function PUT(
     // Parse and validate request body
     const body = await request.json();
     const validation = UpdateProfileSchema.safeParse(body);
-    
+
     if (!validation.success) {
       return NextResponse.json(
         { error: 'Invalid request data', details: validation.error.issues },
@@ -123,20 +140,25 @@ export async function PUT(
     }
 
     // Update profile
-    const updatedProfile = await profileManager.updatePatientProfile(patientId, validation.data);
-    
+    const updatedProfile = await profileManager.updatePatientProfile(
+      patientId,
+      validation.data
+    );
+
     // Generate updated AI insights
     try {
-      const riskAssessment = await patientInsights.generateRiskAssessment(patientId);
-      const behaviorAnalysis = await patientInsights.analyzeBehaviorPatterns(patientId);
-      
+      const riskAssessment =
+        await patientInsights.generateRiskAssessment(patientId);
+      const behaviorAnalysis =
+        await patientInsights.analyzeBehaviorPatterns(patientId);
+
       const profileWithInsights = {
         ...updatedProfile,
         ai_insights: {
           risk_assessment: riskAssessment,
           behavior_analysis: behaviorAnalysis,
-          last_updated: new Date().toISOString()
-        }
+          last_updated: new Date().toISOString(),
+        },
       };
 
       return NextResponse.json(profileWithInsights);
@@ -158,7 +180,7 @@ export async function PUT(
  * DELETE /api/patients/profile/[id] - Archive patient profile
  */
 export async function DELETE(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
@@ -166,7 +188,9 @@ export async function DELETE(
     const { id: patientId } = await params;
 
     // Verify authentication
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -180,9 +204,9 @@ export async function DELETE(
     // Archive patient (soft delete)
     await profileManager.archivePatient(patientId);
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       message: 'Patient profile archived successfully',
-      archived_at: new Date().toISOString()
+      archived_at: new Date().toISOString(),
     });
   } catch (error) {
     console.error('Error archiving patient profile:', error);

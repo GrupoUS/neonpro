@@ -9,19 +9,19 @@ import { taxCalculationRequestSchema } from '@/lib/validations/brazilian-tax';
 export async function POST(request: Request) {
   try {
     const supabase = createClient();
-    
+
     // Check authentication
-    const { data: { session }, error: authError } = await supabase.auth.getSession();
+    const {
+      data: { session },
+      error: authError,
+    } = await supabase.auth.getSession();
     if (authError || !session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Parse request body
     const body = await request.json();
-    
+
     // Validate request data
     const validatedData = taxCalculationRequestSchema.parse(body);
 
@@ -52,7 +52,7 @@ export async function POST(request: Request) {
         taxes: taxResult.taxes,
         total_amount: taxResult.totalAmount,
         calculation_metadata: taxResult,
-        created_by: session.user.id
+        created_by: session.user.id,
       })
       .select()
       .single();
@@ -69,13 +69,12 @@ export async function POST(request: Request) {
       success: true,
       data: {
         calculation_id: calculationRecord.id,
-        ...taxResult
-      }
+        ...taxResult,
+      },
     });
-
   } catch (error) {
     console.error('Tax calculation error:', error);
-    
+
     if (error instanceof Error && error.name === 'ZodError') {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.message },

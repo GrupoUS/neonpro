@@ -1,7 +1,7 @@
 /**
  * AI Duration Prediction Engine - Core ML Service
  * Story 2.1: AI Duration Prediction Engine
- * 
+ *
  * Implements intelligent appointment duration prediction using machine learning
  * with A/B testing, professional efficiency tracking, and continuous learning.
  */
@@ -57,13 +57,13 @@ export class AIDurationPredictionService {
   private auditLogger: AuditLogger;
 
   private readonly BASELINE_DURATIONS: Record<string, number> = {
-    'consultation': 30,
-    'cleaning': 45,
-    'treatment': 60,
-    'surgery': 120,
-    'checkup': 20,
-    'emergency': 90,
-    'follow_up': 25
+    consultation: 30,
+    cleaning: 45,
+    treatment: 60,
+    surgery: 120,
+    checkup: 20,
+    emergency: 90,
+    follow_up: 25,
   };
 
   constructor() {
@@ -87,7 +87,7 @@ export class AIDurationPredictionService {
 
       // Calculate base duration
       const baseDuration = this.getBaseDuration(features.treatmentType);
-      
+
       // Apply professional efficiency factor
       const efficiencyFactor = await this.getProfessionalEfficiencyFactor(
         features.professionalId,
@@ -122,8 +122,8 @@ export class AIDurationPredictionService {
           complexityMultiplier,
           temporalFactor,
           treatmentType: features.treatmentType,
-          professionalId: features.professionalId
-        }
+          professionalId: features.professionalId,
+        },
       };
 
       // Store prediction in database
@@ -133,15 +133,19 @@ export class AIDurationPredictionService {
       await this.auditLogger.logInfo('ai_duration_prediction', {
         appointmentId,
         prediction,
-        features
+        features,
       });
 
       return prediction;
     } catch (error) {
-      await this.auditLogger.logError('ai_duration_prediction_failed', error as Error, {
-        appointmentId,
-        features
-      });
+      await this.auditLogger.logError(
+        'ai_duration_prediction_failed',
+        error as Error,
+        {
+          appointmentId,
+          features,
+        }
+      );
       throw error;
     }
   }
@@ -173,17 +177,19 @@ export class AIDurationPredictionService {
       }
 
       // Calculate accuracy
-      const accuracyScore = 1.0 - Math.min(
-        Math.abs(prediction.predicted_duration - actualDuration) / 
-        Math.max(prediction.predicted_duration, actualDuration),
-        1.0
-      );
+      const accuracyScore =
+        1.0 -
+        Math.min(
+          Math.abs(prediction.predicted_duration - actualDuration) /
+            Math.max(prediction.predicted_duration, actualDuration),
+          1.0
+        );
 
       const result: PredictionFeedback = {
         appointmentId,
         actualDuration,
         accuracyScore,
-        predictionError: prediction.predicted_duration - actualDuration
+        predictionError: prediction.predicted_duration - actualDuration,
       };
 
       // Update prediction feedback
@@ -196,7 +202,7 @@ export class AIDurationPredictionService {
           accuracy_score: accuracyScore,
           prediction_error: prediction.predicted_duration - actualDuration,
           feedback_notes: feedbackNotes,
-          completion_status: 'completed'
+          completion_status: 'completed',
         });
 
       if (feedbackError) {
@@ -208,15 +214,19 @@ export class AIDurationPredictionService {
         appointmentId,
         predictedDuration: prediction.predicted_duration,
         actualDuration,
-        accuracyScore
+        accuracyScore,
       });
 
       return result;
     } catch (error) {
-      await this.auditLogger.logError('ai_prediction_feedback_failed', error as Error, {
-        appointmentId,
-        actualDuration
-      });
+      await this.auditLogger.logError(
+        'ai_prediction_feedback_failed',
+        error as Error,
+        {
+          appointmentId,
+          actualDuration,
+        }
+      );
       throw error;
     }
   }
@@ -224,7 +234,9 @@ export class AIDurationPredictionService {
   /**
    * Get prediction for appointment
    */
-  async getPredictionForAppointment(appointmentId: string): Promise<DurationPrediction | null> {
+  async getPredictionForAppointment(
+    appointmentId: string
+  ): Promise<DurationPrediction | null> {
     const { data, error } = await this.supabase
       .from('ml_duration_predictions')
       .select('*')
@@ -240,7 +252,7 @@ export class AIDurationPredictionService {
       predictedDuration: data.predicted_duration,
       confidenceScore: data.confidence_score,
       modelVersion: data.model_version,
-      predictionFactors: data.prediction_factors || {}
+      predictionFactors: data.prediction_factors || {},
     };
   }
 
@@ -261,12 +273,16 @@ export class AIDurationPredictionService {
         professionalId,
         averageDuration: data.avg_duration_minutes,
         efficiencyRating: data.efficiency_rating,
-        totalAppointments: data.total_appointments
+        totalAppointments: data.total_appointments,
       };
     } catch (error) {
-      await this.auditLogger.logError('professional_efficiency_metrics_failed', error as Error, {
-        professionalId
-      });
+      await this.auditLogger.logError(
+        'professional_efficiency_metrics_failed',
+        error as Error,
+        {
+          professionalId,
+        }
+      );
       return null;
     }
   }
@@ -285,7 +301,7 @@ export class AIDurationPredictionService {
 
     return {
       version: data.model_version,
-      confidenceThreshold: data.confidence_threshold || 0.7
+      confidenceThreshold: data.confidence_threshold || 0.7,
     };
   }
 
@@ -295,7 +311,7 @@ export class AIDurationPredictionService {
 
   private async getProfessionalEfficiencyFactor(
     professionalId: string,
-    treatmentType: string
+    _treatmentType: string
   ): Promise<number> {
     try {
       const { data } = await this.supabase
@@ -347,21 +363,28 @@ export class AIDurationPredictionService {
     let factor = 1.0;
 
     // Time of day impact
-    if (features.timeOfDay === 'morning') factor *= 0.95; // More efficient
+    if (features.timeOfDay === 'morning')
+      factor *= 0.95; // More efficient
     else if (features.timeOfDay === 'evening') factor *= 1.1; // Less efficient
 
     // Day of week impact
-    if (features.dayOfWeek === 1) factor *= 1.05; // Monday rush
+    if (features.dayOfWeek === 1)
+      factor *= 1.05; // Monday rush
     else if (features.dayOfWeek === 5) factor *= 1.02; // Friday wind-down
 
     return factor;
   }
 
-  private calculateConfidenceScore(features: PredictionFeatures, threshold: number): number {
+  private calculateConfidenceScore(
+    features: PredictionFeatures,
+    _threshold: number
+  ): number {
     let confidence = 0.8; // Base confidence
 
     // More complete features = higher confidence
-    const featureCount = Object.values(features).filter(v => v !== undefined && v !== null).length;
+    const featureCount = Object.values(features).filter(
+      (v) => v !== undefined && v !== null
+    ).length;
     confidence += (featureCount - 4) * 0.02; // Boost for each additional feature
 
     // Historical data availability
@@ -370,7 +393,10 @@ export class AIDurationPredictionService {
     return Math.min(Math.max(confidence, 0.1), 1.0);
   }
 
-  private async storePrediction(appointmentId: string, prediction: DurationPrediction) {
+  private async storePrediction(
+    appointmentId: string,
+    prediction: DurationPrediction
+  ) {
     const { error } = await this.supabase
       .from('ml_duration_predictions')
       .insert({
@@ -379,7 +405,7 @@ export class AIDurationPredictionService {
         confidence_score: prediction.confidenceScore,
         model_version: prediction.modelVersion,
         prediction_factors: prediction.predictionFactors,
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
       });
 
     if (error) {
@@ -417,7 +443,7 @@ export class AIABTestingService {
         return {
           userId,
           testGroup: existing.test_group,
-          assignedAt: existing.assigned_at
+          assignedAt: existing.assigned_at,
         };
       }
 
@@ -430,7 +456,7 @@ export class AIABTestingService {
         .insert({
           user_id: userId,
           test_group: testGroup,
-          assigned_at: new Date().toISOString()
+          assigned_at: new Date().toISOString(),
         })
         .select()
         .single();
@@ -440,12 +466,16 @@ export class AIABTestingService {
       return {
         userId,
         testGroup: data.test_group,
-        assignedAt: data.assigned_at
+        assignedAt: data.assigned_at,
       };
     } catch (error) {
-      await this.auditLogger.logError('ab_test_assignment_failed', error as Error, {
-        userId
-      });
+      await this.auditLogger.logError(
+        'ab_test_assignment_failed',
+        error as Error,
+        {
+          userId,
+        }
+      );
       throw error;
     }
   }
@@ -469,8 +499,12 @@ export class AIABTestingService {
 
       if (error) throw error;
 
-      const controlGroup = data.filter(d => d.test_group === 'control').length;
-      const treatmentGroup = data.filter(d => d.test_group === 'treatment').length;
+      const controlGroup = data.filter(
+        (d) => d.test_group === 'control'
+      ).length;
+      const treatmentGroup = data.filter(
+        (d) => d.test_group === 'treatment'
+      ).length;
       const totalParticipants = data.length;
 
       return {
@@ -479,15 +513,18 @@ export class AIABTestingService {
         treatmentGroup,
         conversionRate: {
           control: 0.85, // Mock data
-          treatment: 0.92 // Mock data
+          treatment: 0.92, // Mock data
         },
         confidenceInterval: {
           lower: 0.02,
-          upper: 0.12
-        }
+          upper: 0.12,
+        },
       };
     } catch (error) {
-      await this.auditLogger.logError('ab_test_statistics_failed', error as Error);
+      await this.auditLogger.logError(
+        'ab_test_statistics_failed',
+        error as Error
+      );
       throw error;
     }
   }
@@ -499,7 +536,7 @@ export class AIABTestingService {
     let hash = 0;
     for (let i = 0; i < userId.length; i++) {
       const char = userId.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash; // Convert to 32-bit integer
     }
     return Math.abs(hash);
@@ -554,7 +591,7 @@ export class ModelPerformanceService {
           feature_importance: modelMetrics.featureImportance,
           hyperparameters: modelMetrics.hyperparameters,
           is_active: true,
-          deployed_at: new Date().toISOString()
+          deployed_at: new Date().toISOString(),
         })
         .select()
         .single();
@@ -564,12 +601,16 @@ export class ModelPerformanceService {
       return {
         success: true,
         modelVersion: modelMetrics.modelVersion,
-        deploymentTimestamp: data.deployed_at
+        deploymentTimestamp: data.deployed_at,
       };
     } catch (error) {
-      await this.auditLogger.logError('model_deployment_failed', error as Error, {
-        modelVersion: modelMetrics.modelVersion
-      });
+      await this.auditLogger.logError(
+        'model_deployment_failed',
+        error as Error,
+        {
+          modelVersion: modelMetrics.modelVersion,
+        }
+      );
       throw error;
     }
   }
@@ -595,10 +636,13 @@ export class ModelPerformanceService {
         confidenceThreshold: data.confidence_threshold,
         featureImportance: data.feature_importance,
         hyperparameters: data.hyperparameters,
-        deployedAt: data.deployed_at
+        deployedAt: data.deployed_at,
       };
     } catch (error) {
-      await this.auditLogger.logError('model_metrics_retrieval_failed', error as Error);
+      await this.auditLogger.logError(
+        'model_metrics_retrieval_failed',
+        error as Error
+      );
       throw error;
     }
   }
@@ -615,16 +659,19 @@ export class ModelPerformanceService {
     try {
       // Get current model
       const currentModel = await this.getCurrentModelMetrics();
-      
+
       // Calculate updated metrics
-      const updatedAccuracy = (currentModel.accuracyPercentage + feedbackData.predictionAccuracy * 100) / 2;
-      
+      const updatedAccuracy =
+        (currentModel.accuracyPercentage +
+          feedbackData.predictionAccuracy * 100) /
+        2;
+
       // Update model performance
       const { data, error } = await this.supabase
         .from('ml_model_performance')
         .update({
           accuracy_percentage: updatedAccuracy,
-          last_updated: new Date().toISOString()
+          last_updated: new Date().toISOString(),
         })
         .eq('is_active', true)
         .select()
@@ -637,11 +684,14 @@ export class ModelPerformanceService {
         updatedMetrics: {
           modelVersion: data.model_version,
           accuracyPercentage: data.accuracy_percentage,
-          lastUpdated: data.last_updated
-        }
+          lastUpdated: data.last_updated,
+        },
       };
     } catch (error) {
-      await this.auditLogger.logError('performance_metrics_update_failed', error as Error);
+      await this.auditLogger.logError(
+        'performance_metrics_update_failed',
+        error as Error
+      );
       throw error;
     }
   }

@@ -2,9 +2,9 @@
  * =====================================================================================
  * PREDICTIVE CASH FLOW API - MODELS ENDPOINT
  * =====================================================================================
- * 
+ *
  * API for managing prediction models and model performance tracking.
- * 
+ *
  * Epic: 5 - Advanced Financial Intelligence
  * Story: 5.2 - Predictive Cash Flow Analysis
  * Author: VoidBeast V4.0 BMad Method Integration
@@ -12,15 +12,21 @@
  * =====================================================================================
  */
 
-import { NextRequest, NextResponse } from 'next/server';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import type { Database } from '@/lib/database.types';
 
 const getModelsSchema = z.object({
-  active: z.string().optional().transform(val => val === 'true'),
-  productionReady: z.string().optional().transform(val => val === 'true'),
+  active: z
+    .string()
+    .optional()
+    .transform((val) => val === 'true'),
+  productionReady: z
+    .string()
+    .optional()
+    .transform((val) => val === 'true'),
 });
 
 export async function GET(request: NextRequest) {
@@ -65,9 +71,11 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json({ models: models || [] });
-
   } catch (error) {
-    console.error('Error in GET /api/financial/predictive-cash-flow/models:', error);
+    console.error(
+      'Error in GET /api/financial/predictive-cash-flow/models:',
+      error
+    );
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

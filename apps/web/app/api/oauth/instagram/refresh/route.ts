@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
 import { InstagramOAuthHandler } from '@/lib/oauth/platforms/instagram-handler';
 import { TokenEncryptionService } from '@/lib/oauth/token-encryption';
@@ -12,9 +12,11 @@ import { TokenEncryptionService } from '@/lib/oauth/token-encryption';
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Verify user authentication
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session) {
       return NextResponse.json(
         { error: 'Authentication required' },
@@ -23,7 +25,7 @@ export async function POST(request: NextRequest) {
     }
 
     const { accountId } = await request.json();
-    
+
     if (!accountId) {
       return NextResponse.json(
         { error: 'Account ID is required' },
@@ -50,14 +52,17 @@ export async function POST(request: NextRequest) {
 
     // Decrypt current tokens
     const encryptedAccessToken = JSON.parse(account.encrypted_access_token);
-    const currentAccessToken = TokenEncryptionService.decryptToken(encryptedAccessToken);
+    const currentAccessToken =
+      TokenEncryptionService.decryptToken(encryptedAccessToken);
 
     // Initialize Instagram handler and refresh tokens
     const instagramHandler = new InstagramOAuthHandler();
     const newTokens = await instagramHandler.refreshTokens(currentAccessToken);
 
     // Encrypt new tokens
-    const newEncryptedAccessToken = TokenEncryptionService.encryptToken(newTokens.accessToken);
+    const newEncryptedAccessToken = TokenEncryptionService.encryptToken(
+      newTokens.accessToken
+    );
 
     // Update account with new tokens
     const { error: updateError } = await supabase
@@ -65,7 +70,7 @@ export async function POST(request: NextRequest) {
       .update({
         encrypted_access_token: JSON.stringify(newEncryptedAccessToken),
         token_expires_at: newTokens.expiresAt.toISOString(),
-        last_sync_at: new Date().toISOString()
+        last_sync_at: new Date().toISOString(),
       })
       .eq('id', accountId);
 
@@ -74,34 +79,31 @@ export async function POST(request: NextRequest) {
     }
 
     // Log token refresh activity
-    await supabase
-      .from('activity_logs')
-      .insert({
-        user_id: session.user.id,
-        clinic_id: account.clinic_id,
-        action: 'social_media_token_refreshed',
-        entity_type: 'social_media_account',
-        entity_id: accountId,
-        details: {
-          platform: 'instagram',
-          username: account.platform_username,
-          expires_at: newTokens.expiresAt.toISOString()
-        }
-      });
+    await supabase.from('activity_logs').insert({
+      user_id: session.user.id,
+      clinic_id: account.clinic_id,
+      action: 'social_media_token_refreshed',
+      entity_type: 'social_media_account',
+      entity_id: accountId,
+      details: {
+        platform: 'instagram',
+        username: account.platform_username,
+        expires_at: newTokens.expiresAt.toISOString(),
+      },
+    });
 
     return NextResponse.json({
       success: true,
       message: 'Instagram tokens refreshed successfully',
-      expiresAt: newTokens.expiresAt.toISOString()
+      expiresAt: newTokens.expiresAt.toISOString(),
     });
-
   } catch (error) {
     console.error('Instagram token refresh error:', error);
-    
+
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to refresh Instagram tokens',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );
@@ -114,9 +116,11 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Verify user authentication
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session) {
       return NextResponse.json(
         { error: 'Authentication required' },
@@ -126,7 +130,7 @@ export async function GET(request: NextRequest) {
 
     const searchParams = request.nextUrl.searchParams;
     const accountId = searchParams.get('accountId');
-    
+
     if (!accountId) {
       return NextResponse.json(
         { error: 'Account ID is required' },
@@ -154,22 +158,21 @@ export async function GET(request: NextRequest) {
     const expiresAt = new Date(account.token_expires_at);
     const now = new Date();
     const twentyFourHours = 24 * 60 * 60 * 1000;
-    const needsRefresh = (expiresAt.getTime() - now.getTime()) < twentyFourHours;
+    const needsRefresh = expiresAt.getTime() - now.getTime() < twentyFourHours;
 
     return NextResponse.json({
       needsRefresh,
       expiresAt: expiresAt.toISOString(),
       username: account.platform_username,
-      timeUntilExpiry: expiresAt.getTime() - now.getTime()
+      timeUntilExpiry: expiresAt.getTime() - now.getTime(),
     });
-
   } catch (error) {
     console.error('Instagram token check error:', error);
-    
+
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to check Instagram token status',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );

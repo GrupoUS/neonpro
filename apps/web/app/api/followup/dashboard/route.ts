@@ -2,24 +2,24 @@
 // Epic 7.3: Treatment Follow-up Automation
 // Author: VoidBeast Agent
 
+import { type NextRequest, NextResponse } from 'next/server';
 import { treatmentFollowupService } from '@/app/lib/services/treatment-followup-service';
-import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const stats = await treatmentFollowupService.getDashboardStats();
 
     return NextResponse.json({
       success: true,
-      data: stats
+      data: stats,
     });
   } catch (error) {
     console.error('Error fetching dashboard stats:', error);
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: 'Failed to fetch dashboard stats',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );

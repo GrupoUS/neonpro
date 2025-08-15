@@ -16,18 +16,20 @@ const CACHE_TTL = {
   DASHBOARD: 300, // 5 minutes for dashboard data
   ALERTS: 60, // 1 minute for active alerts
   REPORTS: 1800, // 30 minutes for reports
-  CONFIGS: 900 // 15 minutes for configurations
+  CONFIGS: 900, // 15 minutes for configurations
 } as const;
 
 const CACHE_KEYS = {
   ALERT_CONFIGS: (clinicId: string) => `alerts:configs:${clinicId}`,
   ACTIVE_ALERTS: (clinicId: string) => `alerts:active:${clinicId}`,
-  DASHBOARD_DATA: (clinicId: string, period: string) => `dashboard:${clinicId}:${period}`,
+  DASHBOARD_DATA: (clinicId: string, period: string) =>
+    `dashboard:${clinicId}:${period}`,
   PRODUCT_STOCK: (productId: string) => `stock:product:${productId}`,
   CLINIC_PRODUCTS: (clinicId: string) => `products:clinic:${clinicId}`,
   REPORT_DATA: (reportId: string) => `report:${reportId}`,
-  USER_PERMISSIONS: (userId: string, clinicId: string) => `permissions:${userId}:${clinicId}`,
-  NOTIFICATION_QUEUE: (clinicId: string) => `notifications:queue:${clinicId}`
+  USER_PERMISSIONS: (userId: string, clinicId: string) =>
+    `permissions:${userId}:${clinicId}`,
+  NOTIFICATION_QUEUE: (clinicId: string) => `notifications:queue:${clinicId}`,
 } as const;
 
 // =====================================================
@@ -37,7 +39,10 @@ const CACHE_KEYS = {
 let redisClient: Redis | null = null;
 
 function getRedisClient(): Redis | null {
-  if (process.env.NODE_ENV === 'development' && !process.env.UPSTASH_REDIS_REST_URL) {
+  if (
+    process.env.NODE_ENV === 'development' &&
+    !process.env.UPSTASH_REDIS_REST_URL
+  ) {
     // In development without Redis, use in-memory cache
     return null;
   }
@@ -45,7 +50,7 @@ function getRedisClient(): Redis | null {
   if (!redisClient && process.env.UPSTASH_REDIS_REST_URL) {
     redisClient = new Redis({
       url: process.env.UPSTASH_REDIS_REST_URL,
-      token: process.env.UPSTASH_REDIS_REST_TOKEN
+      token: process.env.UPSTASH_REDIS_REST_TOKEN,
     });
   }
 
@@ -71,13 +76,13 @@ class InMemoryCache {
       this.cleanup();
     }
 
-    const expiry = Date.now() + (ttlSeconds * 1000);
+    const expiry = Date.now() + ttlSeconds * 1000;
     this.cache.set(key, { data: value, expiry });
   }
 
   get<T>(key: string): T | null {
     const entry = this.cache.get(key);
-    
+
     if (!entry) {
       return null;
     }
@@ -124,7 +129,11 @@ export class CacheManager {
   /**
    * Set a value in cache with TTL
    */
-  async set<T>(key: string, value: T, ttlSeconds: number = CACHE_TTL.MEDIUM): Promise<void> {
+  async set<T>(
+    key: string,
+    value: T,
+    ttlSeconds: number = CACHE_TTL.MEDIUM
+  ): Promise<void> {
     try {
       const serializedValue = JSON.stringify(value);
 
@@ -224,16 +233,15 @@ export class CacheManager {
   /**
    * Increment a counter in cache
    */
-  async increment(key: string, amount: number = 1): Promise<number> {
+  async increment(key: string, amount = 1): Promise<number> {
     try {
       if (this.redis) {
         return await this.redis.incrby(key, amount);
-      } else {
-        const current = inMemoryCache.get<number>(key) || 0;
-        const newValue = current + amount;
-        inMemoryCache.set(key, newValue, CACHE_TTL.LONG);
-        return newValue;
       }
+      const current = inMemoryCache.get<number>(key) || 0;
+      const newValue = current + amount;
+      inMemoryCache.set(key, newValue, CACHE_TTL.LONG);
+      return newValue;
     } catch (error) {
       console.error('Cache increment error:', error);
       return 0;
@@ -260,15 +268,14 @@ export class CacheManager {
   /**
    * Get items from a list
    */
-  async listGet(key: string, start: number = 0, end: number = -1): Promise<any[]> {
+  async listGet(key: string, start = 0, end = -1): Promise<any[]> {
     try {
       if (this.redis) {
         const items = await this.redis.lrange(key, start, end);
-        return items.map(item => JSON.parse(item));
-      } else {
-        const list = inMemoryCache.get<any[]>(key) || [];
-        return list.slice(start, end === -1 ? undefined : end + 1);
+        return items.map((item) => JSON.parse(item));
       }
+      const list = inMemoryCache.get<any[]>(key) || [];
+      return list.slice(start, end === -1 ? undefined : end + 1);
     } catch (error) {
       console.error('Cache list get error:', error);
       return [];
@@ -293,7 +300,11 @@ export class StockAlertCache {
   }
 
   async setAlertConfigs(clinicId: string, configs: any[]): Promise<void> {
-    await this.cache.set(CACHE_KEYS.ALERT_CONFIGS(clinicId), configs, CACHE_TTL.CONFIGS);
+    await this.cache.set(
+      CACHE_KEYS.ALERT_CONFIGS(clinicId),
+      configs,
+      CACHE_TTL.CONFIGS
+    );
   }
 
   async invalidateAlertConfigs(clinicId: string): Promise<void> {
@@ -306,7 +317,11 @@ export class StockAlertCache {
   }
 
   async setActiveAlerts(clinicId: string, alerts: any[]): Promise<void> {
-    await this.cache.set(CACHE_KEYS.ACTIVE_ALERTS(clinicId), alerts, CACHE_TTL.ALERTS);
+    await this.cache.set(
+      CACHE_KEYS.ACTIVE_ALERTS(clinicId),
+      alerts,
+      CACHE_TTL.ALERTS
+    );
   }
 
   async invalidateActiveAlerts(clinicId: string): Promise<void> {
@@ -314,12 +329,23 @@ export class StockAlertCache {
   }
 
   // Dashboard Data
-  async getDashboardData(clinicId: string, period: string): Promise<any | null> {
+  async getDashboardData(
+    clinicId: string,
+    period: string
+  ): Promise<any | null> {
     return this.cache.get(CACHE_KEYS.DASHBOARD_DATA(clinicId, period));
   }
 
-  async setDashboardData(clinicId: string, period: string, data: any): Promise<void> {
-    await this.cache.set(CACHE_KEYS.DASHBOARD_DATA(clinicId, period), data, CACHE_TTL.DASHBOARD);
+  async setDashboardData(
+    clinicId: string,
+    period: string,
+    data: any
+  ): Promise<void> {
+    await this.cache.set(
+      CACHE_KEYS.DASHBOARD_DATA(clinicId, period),
+      data,
+      CACHE_TTL.DASHBOARD
+    );
   }
 
   async invalidateDashboardData(clinicId: string): Promise<void> {
@@ -332,7 +358,11 @@ export class StockAlertCache {
   }
 
   async setProductStock(productId: string, stock: any): Promise<void> {
-    await this.cache.set(CACHE_KEYS.PRODUCT_STOCK(productId), stock, CACHE_TTL.SHORT);
+    await this.cache.set(
+      CACHE_KEYS.PRODUCT_STOCK(productId),
+      stock,
+      CACHE_TTL.SHORT
+    );
   }
 
   async invalidateProductStock(productId: string): Promise<void> {
@@ -345,7 +375,11 @@ export class StockAlertCache {
   }
 
   async setClinicProducts(clinicId: string, products: any[]): Promise<void> {
-    await this.cache.set(CACHE_KEYS.CLINIC_PRODUCTS(clinicId), products, CACHE_TTL.MEDIUM);
+    await this.cache.set(
+      CACHE_KEYS.CLINIC_PRODUCTS(clinicId),
+      products,
+      CACHE_TTL.MEDIUM
+    );
   }
 
   async invalidateClinicProducts(clinicId: string): Promise<void> {
@@ -358,16 +392,27 @@ export class StockAlertCache {
   }
 
   async setReportData(reportId: string, data: any): Promise<void> {
-    await this.cache.set(CACHE_KEYS.REPORT_DATA(reportId), data, CACHE_TTL.REPORTS);
+    await this.cache.set(
+      CACHE_KEYS.REPORT_DATA(reportId),
+      data,
+      CACHE_TTL.REPORTS
+    );
   }
 
   // Notification Queue
   async addNotification(clinicId: string, notification: any): Promise<void> {
-    await this.cache.listPush(CACHE_KEYS.NOTIFICATION_QUEUE(clinicId), notification);
+    await this.cache.listPush(
+      CACHE_KEYS.NOTIFICATION_QUEUE(clinicId),
+      notification
+    );
   }
 
-  async getNotifications(clinicId: string, limit: number = 10): Promise<any[]> {
-    return this.cache.listGet(CACHE_KEYS.NOTIFICATION_QUEUE(clinicId), 0, limit - 1);
+  async getNotifications(clinicId: string, limit = 10): Promise<any[]> {
+    return this.cache.listGet(
+      CACHE_KEYS.NOTIFICATION_QUEUE(clinicId),
+      0,
+      limit - 1
+    );
   }
 
   // Bulk invalidation for data changes
@@ -376,7 +421,7 @@ export class StockAlertCache {
       this.invalidateAlertConfigs(clinicId),
       this.invalidateActiveAlerts(clinicId),
       this.invalidateDashboardData(clinicId),
-      this.invalidateClinicProducts(clinicId)
+      this.invalidateClinicProducts(clinicId),
     ]);
   }
 }
@@ -403,10 +448,10 @@ export class CacheMetrics {
   }
 
   async getHitRate(key: string): Promise<number> {
-    const hits = await this.cache.get<number>(`metrics:hits:${key}`) || 0;
-    const misses = await this.cache.get<number>(`metrics:misses:${key}`) || 0;
+    const hits = (await this.cache.get<number>(`metrics:hits:${key}`)) || 0;
+    const misses = (await this.cache.get<number>(`metrics:misses:${key}`)) || 0;
     const total = hits + misses;
-    
+
     return total > 0 ? hits / total : 0;
   }
 }

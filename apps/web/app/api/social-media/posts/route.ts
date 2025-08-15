@@ -1,13 +1,13 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { createClient } from '@/app/utils/supabase/server';
 
 /**
  * Social Media Posts API Route
- * 
+ *
  * Handles CRUD operations for social media posts
  * Supports scheduling, publishing, and content management
- * 
+ *
  * Research-backed implementation following:
  * - Instagram Content Publishing API guidelines
  * - Facebook Pages API posting patterns
@@ -26,7 +26,7 @@ const createPostSchema = z.object({
   post_settings: z.record(z.any()).default({}),
   scheduled_time: z.string().datetime().optional(),
   targeting_settings: z.record(z.any()).default({}),
-  campaign_tag: z.string().max(255).optional()
+  campaign_tag: z.string().max(255).optional(),
 });
 
 const updatePostSchema = z.object({
@@ -38,7 +38,9 @@ const updatePostSchema = z.object({
   scheduled_time: z.string().datetime().optional(),
   targeting_settings: z.record(z.any()).optional(),
   campaign_tag: z.string().max(255).optional(),
-  status: z.enum(['draft', 'scheduled', 'published', 'failed', 'deleted']).optional()
+  status: z
+    .enum(['draft', 'scheduled', 'published', 'failed', 'deleted'])
+    .optional(),
 });
 
 type CreatePostData = z.infer<typeof createPostSchema>;
@@ -46,16 +48,18 @@ type UpdatePostData = z.infer<typeof updatePostSchema>;
 
 /**
  * GET /api/social-media/posts
- * 
+ *
  * Retrieves social media posts for the user's clinic
  * Supports filtering by account, status, date range, and campaign
  */
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Verify authentication
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session) {
       return NextResponse.json(
         { error: 'Authentication required' },
@@ -85,8 +89,11 @@ export async function GET(request: NextRequest) {
     const campaignTag = searchParams.get('campaign_tag');
     const fromDate = searchParams.get('from_date');
     const toDate = searchParams.get('to_date');
-    const limit = Math.min(parseInt(searchParams.get('limit') || '50'), 100);
-    const offset = parseInt(searchParams.get('offset') || '0');
+    const limit = Math.min(
+      Number.parseInt(searchParams.get('limit') || '50', 10),
+      100
+    );
+    const offset = Number.parseInt(searchParams.get('offset') || '0', 10);
 
     // Build query
     let query = supabase
@@ -150,7 +157,11 @@ export async function GET(request: NextRequest) {
       query = query.lte('created_at', toDate);
     }
 
-    const { data: posts, error, count } = await query
+    const {
+      data: posts,
+      error,
+      count,
+    } = await query
       .order('created_at', { ascending: false })
       .range(offset, offset + limit - 1);
 
@@ -167,9 +178,8 @@ export async function GET(request: NextRequest) {
       data: posts,
       total: count || posts?.length || 0,
       limit,
-      offset
+      offset,
     });
-
   } catch (error) {
     console.error('Social media posts GET error:', error);
     return NextResponse.json(
@@ -181,16 +191,18 @@ export async function GET(request: NextRequest) {
 
 /**
  * POST /api/social-media/posts
- * 
+ *
  * Creates a new social media post
  * Supports both immediate publishing and scheduling
  */
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Verify authentication
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session) {
       return NextResponse.json(
         { error: 'Authentication required' },
@@ -248,7 +260,10 @@ export async function POST(request: NextRequest) {
 
     if (!contentValidation.valid) {
       return NextResponse.json(
-        { error: 'Post content validation failed', details: contentValidation.errors },
+        {
+          error: 'Post content validation failed',
+          details: contentValidation.errors,
+        },
         { status: 400 }
       );
     }
@@ -272,7 +287,7 @@ export async function POST(request: NextRequest) {
       ...validatedData,
       clinic_id: profile.clinic_id,
       status: postStatus,
-      created_by: session.user.id
+      created_by: session.user.id,
     };
 
     const { data: newPost, error } = await supabase
@@ -311,17 +326,20 @@ export async function POST(request: NextRequest) {
     // TODO: If not scheduled, trigger immediate publishing logic
     // TODO: If scheduled, add to background job queue
 
-    return NextResponse.json({
-      success: true,
-      data: newPost,
-      message: postStatus === 'scheduled' 
-        ? 'Post scheduled successfully' 
-        : 'Post created successfully'
-    }, { status: 201 });
-
+    return NextResponse.json(
+      {
+        success: true,
+        data: newPost,
+        message:
+          postStatus === 'scheduled'
+            ? 'Post scheduled successfully'
+            : 'Post created successfully',
+      },
+      { status: 201 }
+    );
   } catch (error) {
     console.error('Social media posts POST error:', error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },
@@ -365,8 +383,8 @@ function validatePostContent(
       break;
 
     case 'facebook':
-      // Facebook specific validation  
-      if (content.length > 63206) {
+      // Facebook specific validation
+      if (content.length > 63_206) {
         errors.push('Facebook post content cannot exceed 63,206 characters');
       }
       break;
@@ -401,6 +419,6 @@ function validatePostContent(
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }

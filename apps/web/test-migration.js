@@ -1,5 +1,5 @@
-const http = require('http');
-const https = require('https');
+const http = require('node:http');
+const https = require('node:https');
 
 // Configurações de teste
 const BASE_URL = 'http://localhost:3000';
@@ -13,12 +13,12 @@ function makeRequest(url, method = 'GET', data = null) {
       hostname: urlObj.hostname,
       port: urlObj.port || (urlObj.protocol === 'https:' ? 443 : 80),
       path: urlObj.pathname + urlObj.search,
-      method: method,
+      method,
       timeout: TIMEOUT,
       headers: {
         'Content-Type': 'application/json',
-        'User-Agent': 'NeonPro-Test-Script'
-      }
+        'User-Agent': 'NeonPro-Test-Script',
+      },
     };
 
     if (data && method !== 'GET') {
@@ -36,7 +36,7 @@ function makeRequest(url, method = 'GET', data = null) {
         resolve({
           statusCode: res.statusCode,
           headers: res.headers,
-          body: body
+          body,
         });
       });
     });
@@ -63,14 +63,13 @@ async function testEndpoint(name, url, expectedStatus = 200) {
   try {
     console.log(`🧪 Testando ${name}...`);
     const response = await makeRequest(url);
-    
+
     if (response.statusCode === expectedStatus) {
       console.log(`✅ ${name} - OK (${response.statusCode})`);
       return true;
-    } else {
-      console.log(`❌ ${name} - FALHOU (${response.statusCode})`);
-      return false;
     }
+    console.log(`❌ ${name} - FALHOU (${response.statusCode})`);
+    return false;
   } catch (error) {
     console.log(`❌ ${name} - ERRO: ${error.message}`);
     return false;
@@ -82,23 +81,24 @@ async function testApiWithData(name, url, method, data, expectedStatus = 200) {
   try {
     console.log(`🧪 Testando ${name}...`);
     const response = await makeRequest(url, method, data);
-    
+
     if (response.statusCode === expectedStatus) {
       console.log(`✅ ${name} - OK (${response.statusCode})`);
       if (response.body) {
         try {
           const jsonData = JSON.parse(response.body);
-          console.log(`📊 Dados retornados: ${JSON.stringify(jsonData, null, 2).substring(0, 200)}...`);
-        } catch (e) {
-          console.log(`📄 Resposta HTML/texto recebida`);
+          console.log(
+            `📊 Dados retornados: ${JSON.stringify(jsonData, null, 2).substring(0, 200)}...`
+          );
+        } catch (_e) {
+          console.log('📄 Resposta HTML/texto recebida');
         }
       }
       return true;
-    } else {
-      console.log(`❌ ${name} - FALHOU (${response.statusCode})`);
-      console.log(`📄 Resposta: ${response.body.substring(0, 200)}...`);
-      return false;
     }
+    console.log(`❌ ${name} - FALHOU (${response.statusCode})`);
+    console.log(`📄 Resposta: ${response.body.substring(0, 200)}...`);
+    return false;
   } catch (error) {
     console.log(`❌ ${name} - ERRO: ${error.message}`);
     return false;
@@ -121,32 +121,52 @@ async function runTests() {
   results.push(await testEndpoint('Página de Tenants', `${BASE_URL}/tenants`));
 
   // Teste 3: API - Listar Tenants (GET)
-  results.push(await testApiWithData('API - Listar Tenants', `${BASE_URL}/api/tenants`, 'GET'));
+  results.push(
+    await testApiWithData(
+      'API - Listar Tenants',
+      `${BASE_URL}/api/tenants`,
+      'GET'
+    )
+  );
 
   // Teste 4: API - Criar Tenant (POST)
   const newTenant = {
     name: 'Teste Clínica',
-    slug: 'teste-clinica-' + Date.now(),
+    slug: `teste-clinica-${Date.now()}`,
     description: 'Clínica de teste criada automaticamente',
-    contact_email: 'teste@clinica.com'
+    contact_email: 'teste@clinica.com',
   };
-  results.push(await testApiWithData('API - Criar Tenant', `${BASE_URL}/api/tenants`, 'POST', newTenant, 201));
+  results.push(
+    await testApiWithData(
+      'API - Criar Tenant',
+      `${BASE_URL}/api/tenants`,
+      'POST',
+      newTenant,
+      201
+    )
+  );
 
   // Teste 5: Verificar se CSS está carregando
-  results.push(await testEndpoint('CSS Global', `${BASE_URL}/_next/static/css/app/layout.css`, 200));
+  results.push(
+    await testEndpoint(
+      'CSS Global',
+      `${BASE_URL}/_next/static/css/app/layout.css`,
+      200
+    )
+  );
 
   // Resumo dos testes
   console.log('');
   console.log('📊 ========================================');
   console.log('📊 RESUMO DOS TESTES');
   console.log('📊 ========================================');
-  
-  const passed = results.filter(r => r).length;
+
+  const passed = results.filter((r) => r).length;
   const total = results.length;
-  
+
   console.log(`✅ Testes aprovados: ${passed}/${total}`);
   console.log(`❌ Testes falharam: ${total - passed}/${total}`);
-  
+
   if (passed === total) {
     console.log('');
     console.log('🎉 TODOS OS TESTES PASSARAM!');
@@ -159,9 +179,11 @@ async function runTests() {
   } else {
     console.log('');
     console.log('⚠️ ALGUNS TESTES FALHARAM');
-    console.log('⚠️ Verifique se o servidor está rodando e as configurações estão corretas');
+    console.log(
+      '⚠️ Verifique se o servidor está rodando e as configurações estão corretas'
+    );
   }
-  
+
   console.log('');
 }
 

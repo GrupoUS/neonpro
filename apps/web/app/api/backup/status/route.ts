@@ -3,7 +3,7 @@
  * Story 1.8: Sistema de Backup e Recovery
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { BackupManager } from '@/lib/backup/backup-manager';
 import { createClient } from '@/lib/supabase/server';
 
@@ -16,7 +16,9 @@ const backupManager = new BackupManager();
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
     if (!user) {
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });

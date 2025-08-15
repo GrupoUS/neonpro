@@ -5,7 +5,6 @@
 
 import { Twilio } from 'twilio';
 import { NOTIFICATION_CONFIG } from './config';
-import { z } from 'zod';
 
 const client = new Twilio(
   process.env.TWILIO_ACCOUNT_SID,
@@ -40,8 +39,10 @@ export class SMSService {
   async send(payload: SMSPayload): Promise<SMSResult> {
     try {
       // Validate required environment variables
-      if (!process.env.TWILIO_ACCOUNT_SID || !process.env.TWILIO_AUTH_TOKEN) {
-        throw new Error('Twilio credentials are required (TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)');
+      if (!(process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN)) {
+        throw new Error(
+          'Twilio credentials are required (TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)'
+        );
       }
 
       if (!process.env.TWILIO_PHONE_NUMBER) {
@@ -55,7 +56,11 @@ export class SMSService {
       }
 
       // Generate SMS content based on type
-      const messageContent = this.generateSMSContent(payload.type, payload.content, payload.templateData);
+      const messageContent = this.generateSMSContent(
+        payload.type,
+        payload.content,
+        payload.templateData
+      );
 
       // Send SMS via Twilio
       const message = await client.messages.create({
@@ -67,7 +72,7 @@ export class SMSService {
         provideFeedback: true, // Enable delivery status callbacks
         statusCallback: `${process.env.NEXTAUTH_URL}/api/webhooks/sms-status`,
         // Optional: Set message validity period (max 4 days for SMS)
-        validityPeriod: this.config.validityPeriod || 1440 // 24 hours in minutes
+        validityPeriod: this.config.validityPeriod || 1440, // 24 hours in minutes
       });
 
       return {
@@ -75,15 +80,14 @@ export class SMSService {
         notificationId: message.sid,
         messageId: message.sid,
         channel: 'sms',
-        deliveredAt: new Date()
+        deliveredAt: new Date(),
       };
-
     } catch (error) {
       console.error('SMS sending error:', error);
       return {
         success: false,
         channel: 'sms',
-        error: error instanceof Error ? error.message : 'Failed to send SMS'
+        error: error instanceof Error ? error.message : 'Failed to send SMS',
       };
     }
   }
@@ -95,59 +99,65 @@ export class SMSService {
     try {
       // Remove all non-digit characters
       const cleaned = phone.replace(/\D/g, '');
-      
+
       // Handle Brazilian phone numbers
       if (cleaned.length === 11 && cleaned.startsWith('55')) {
         // Already has country code
         return `+${cleaned}`;
-      } else if (cleaned.length === 10 || cleaned.length === 11) {
+      }
+      if (cleaned.length === 10 || cleaned.length === 11) {
         // Add Brazilian country code
         return `+55${cleaned}`;
-      } else if (cleaned.length === 13 && cleaned.startsWith('55')) {
+      }
+      if (cleaned.length === 13 && cleaned.startsWith('55')) {
         // Already formatted correctly
         return `+${cleaned}`;
       }
-      
+
       // For international numbers, assume they're correctly formatted
       if (cleaned.length > 11) {
         return `+${cleaned}`;
       }
-      
+
       return null;
     } catch (error) {
       console.error('Phone number validation error:', error);
       return null;
     }
-  }  /**
+  } /**
    * Generate SMS content based on notification type and template data
    */
-  private generateSMSContent(type: string, baseContent: string, templateData?: any): string {
+  private generateSMSContent(
+    type: string,
+    baseContent: string,
+    templateData?: any
+  ): string {
     try {
       // SMS templates optimized for healthcare (160-320 characters)
       const templates = {
-        'appointment_reminder': (data: any) => 
+        appointment_reminder: (data: any) =>
           `🏥 ${data?.clinicName || 'NeonPro'}: Lembrete de consulta para ${data?.patientName} em ${data?.appointmentDate} às ${data?.appointmentTime}. Para cancelar/reagendar: ${data?.clinicPhone}. STOP para cancelar msgs.`,
-        
-        'appointment_confirmation': (data: any) =>
+
+        appointment_confirmation: (data: any) =>
           `✅ ${data?.clinicName || 'NeonPro'}: Consulta confirmada para ${data?.patientName} em ${data?.appointmentDate} às ${data?.appointmentTime}. Local: ${data?.clinicAddress}. Chegue 15min antes.`,
-        
-        'appointment_cancellation': (data: any) =>
+
+        appointment_cancellation: (data: any) =>
           `❌ ${data?.clinicName || 'NeonPro'}: Consulta cancelada para ${data?.patientName} em ${data?.appointmentDate} às ${data?.appointmentTime}. Para reagendar: ${data?.clinicPhone}.`,
-        
-        'reschedule_request': (data: any) =>
+
+        reschedule_request: (data: any) =>
           `📅 ${data?.clinicName || 'NeonPro'}: Solicitação de reagendamento para ${data?.patientName}. Nova data disponível: ${data?.newDate}. Confirme: ${data?.confirmationLink}`,
-        
-        'treatment_reminder': (data: any) =>
+
+        treatment_reminder: (data: any) =>
           `💊 ${data?.clinicName || 'NeonPro'}: Lembrete de tratamento para ${data?.patientName}. ${data?.treatmentName} - Próxima sessão: ${data?.nextAppointment}.`,
-        
-        'follow_up_reminder': (data: any) =>
+
+        follow_up_reminder: (data: any) =>
           `👨‍⚕️ ${data?.clinicName || 'NeonPro'}: Acompanhamento pós-tratamento para ${data?.patientName}. Agende consulta de retorno: ${data?.clinicPhone}.`,
-        
-        'emergency_alert': (data: any) =>
+
+        emergency_alert: (data: any) =>
           `🚨 ${data?.clinicName || 'NeonPro'} - URGENTE: ${data?.message}. Contato: ${data?.contactInfo}. ${data?.patientName}`,
-        
-        'billing_reminder': (data: any) =>
-          `💳 ${data?.clinicName || 'NeonPro'}: Cobrança de R$ ${data?.amountDue} vence em ${data?.dueDate}. Pague online: ${data?.paymentLink}`
+
+        billing_reminder: (data: any) =>
+          `💳 ${data?.clinicName || 'NeonPro'}: Cobrança de R$ ${data?.amountDue} vence em ${data?.dueDate}. Pague online: ${data?.paymentLink}`,
       };
 
       const template = templates[type as keyof typeof templates];
@@ -156,15 +166,14 @@ export class SMSService {
       }
 
       // Fallback to base content with character limit
-      return baseContent.length > 320 ? 
-        `${baseContent.substring(0, 317)}...` : 
-        baseContent;
-
+      return baseContent.length > 320
+        ? `${baseContent.substring(0, 317)}...`
+        : baseContent;
     } catch (error) {
       console.error('Error generating SMS content:', error);
-      return baseContent.length > 160 ? 
-        `${baseContent.substring(0, 157)}...` : 
-        baseContent;
+      return baseContent.length > 160
+        ? `${baseContent.substring(0, 157)}...`
+        : baseContent;
     }
   }
 
@@ -177,60 +186,39 @@ export class SMSService {
     error?: string;
   } | null> {
     try {
-      if (!process.env.TWILIO_ACCOUNT_SID || !process.env.TWILIO_AUTH_TOKEN) {
+      if (!(process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN)) {
         return null;
       }
 
       const message = await client.messages(messageId).fetch();
-      
+
       // Map Twilio status to our status enum
-      const statusMap: Record<string, 'pending' | 'sent' | 'delivered' | 'failed' | 'cancelled'> = {
-        'queued': 'pending',
-        'sending': 'pending',
-        'sent': 'sent',
-        'received': 'delivered',
-        'delivered': 'delivered',
-        'undelivered': 'failed',
-        'failed': 'failed',
-        'cancelled': 'cancelled'
+      const statusMap: Record<
+        string,
+        'pending' | 'sent' | 'delivered' | 'failed' | 'cancelled'
+      > = {
+        queued: 'pending',
+        sending: 'pending',
+        sent: 'sent',
+        received: 'delivered',
+        delivered: 'delivered',
+        undelivered: 'failed',
+        failed: 'failed',
+        cancelled: 'cancelled',
       };
 
       return {
         status: statusMap[message.status] || 'failed',
-        deliveredAt: message.dateUpdated ? new Date(message.dateUpdated) : undefined,
-        error: message.errorCode ? `${message.errorCode}: ${message.errorMessage}` : undefined
+        deliveredAt: message.dateUpdated
+          ? new Date(message.dateUpdated)
+          : undefined,
+        error: message.errorCode
+          ? `${message.errorCode}: ${message.errorMessage}`
+          : undefined,
       };
-
     } catch (error) {
       console.error('Error getting SMS delivery status:', error);
       return null;
-    }
-  }
-
-  /**
-   * Validate SMS template data for specific notification type
-   */
-  private validateSMSTemplate(type: string, data: any): boolean {
-    try {
-      const requiredFields: Record<string, string[]> = {
-        'appointment_reminder': ['patientName', 'appointmentDate', 'appointmentTime', 'clinicPhone'],
-        'appointment_confirmation': ['patientName', 'appointmentDate', 'appointmentTime', 'clinicAddress'],
-        'appointment_cancellation': ['patientName', 'appointmentDate', 'appointmentTime', 'clinicPhone'],
-        'reschedule_request': ['patientName', 'newDate', 'confirmationLink'],
-        'treatment_reminder': ['patientName', 'treatmentName', 'nextAppointment'],
-        'follow_up_reminder': ['patientName', 'clinicPhone'],
-        'emergency_alert': ['message', 'contactInfo', 'patientName'],
-        'billing_reminder': ['patientName', 'amountDue', 'dueDate', 'paymentLink']
-      };
-
-      const required = requiredFields[type];
-      if (!required) return true; // No validation for unknown types
-
-      return required.every(field => data && data[field]);
-      
-    } catch (error) {
-      console.error('SMS template validation error:', error);
-      return false;
     }
   }
 
@@ -239,21 +227,21 @@ export class SMSService {
    */
   async sendBulk(payloads: SMSPayload[]): Promise<SMSResult[]> {
     const results: SMSResult[] = [];
-    
+
     // Process in batches to avoid rate limiting
     const batchSize = 10; // Twilio's recommended batch size
-    
+
     for (let i = 0; i < payloads.length; i += batchSize) {
       const batch = payloads.slice(i, i + batchSize);
-      const batchPromises = batch.map(payload => this.send(payload));
-      
+      const batchPromises = batch.map((payload) => this.send(payload));
+
       try {
         const batchResults = await Promise.all(batchPromises);
         results.push(...batchResults);
-        
+
         // Add delay between batches to respect rate limits
         if (i + batchSize < payloads.length) {
-          await new Promise(resolve => setTimeout(resolve, 1000)); // 1 second delay
+          await new Promise((resolve) => setTimeout(resolve, 1000)); // 1 second delay
         }
       } catch (error) {
         console.error('Bulk SMS batch error:', error);
@@ -262,12 +250,12 @@ export class SMSService {
           results.push({
             success: false,
             channel: 'sms',
-            error: 'Batch processing failed'
+            error: 'Batch processing failed',
           });
         });
       }
     }
-    
+
     return results;
   }
 }

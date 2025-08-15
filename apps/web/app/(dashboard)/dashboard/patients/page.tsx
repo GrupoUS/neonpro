@@ -1,68 +1,63 @@
-"use client";
+'use client';
 
-import React, { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from 'framer-motion';
 import {
-  User,
+  Activity,
+  AlertCircle,
   Calendar,
-  Phone,
+  CalendarPlus,
+  ChevronRight,
+  Clock,
+  Edit,
+  Eye,
+  FileText,
+  Filter,
+  Heart,
   Mail,
   MapPin,
-  FileText,
-  Activity,
-  Clock,
-  Search,
-  Filter,
+  MessageSquare,
+  MoreHorizontal,
+  Phone,
   Plus,
-  Edit,
-  Trash2,
-  Eye,
-  ChevronDown,
-  X,
-  Check,
-  AlertCircle,
-  Heart,
+  Search,
+  Settings,
   Stethoscope,
   Syringe,
-  Camera,
-  Download,
-  Upload,
-  Star,
-  MessageSquare,
-  Bell,
-  Settings,
-  MoreHorizontal,
-  ChevronRight,
+  Trash2,
+  User,
   UserPlus,
-  CalendarPlus,
-  FileImage,
-  Zap,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Separator } from "@/components/ui/separator";
-import { Progress } from "@/components/ui/progress";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from 'lucide-react';
+import type React from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { cn } from "@/lib/utils";
+} from '@/components/ui/dialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Separator } from '@/components/ui/separator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Textarea } from '@/components/ui/textarea';
+import { cn } from '@/lib/utils';
 
 // Types
 interface Patient {
@@ -73,7 +68,7 @@ interface Patient {
   dateOfBirth: string;
   address: string;
   avatar?: string;
-  status: "active" | "inactive" | "pending";
+  status: 'active' | 'inactive' | 'pending';
   lastVisit: string;
   nextAppointment?: string;
   medicalHistory: MedicalRecord[];
@@ -89,7 +84,7 @@ interface Patient {
     policyNumber: string;
   };
   preferences: {
-    communication: "email" | "phone" | "sms";
+    communication: 'email' | 'phone' | 'sms';
     language: string;
   };
 }
@@ -97,7 +92,7 @@ interface Patient {
 interface MedicalRecord {
   id: string;
   date: string;
-  type: "consultation" | "procedure" | "follow-up" | "emergency";
+  type: 'consultation' | 'procedure' | 'follow-up' | 'emergency';
   title: string;
   description: string;
   doctor: string;
@@ -110,7 +105,7 @@ interface Treatment {
   id: string;
   name: string;
   date: string;
-  status: "completed" | "in-progress" | "scheduled" | "cancelled";
+  status: 'completed' | 'in-progress' | 'scheduled' | 'cancelled';
   cost: number;
   description: string;
   beforePhotos?: string[];
@@ -125,152 +120,156 @@ interface Appointment {
   date: string;
   time: string;
   type: string;
-  status: "scheduled" | "completed" | "cancelled" | "no-show";
+  status: 'scheduled' | 'completed' | 'cancelled' | 'no-show';
   notes?: string;
 }
 
 // Sample data
 const samplePatients: Patient[] = [
   {
-    id: "1",
-    name: "Sarah Johnson",
-    email: "sarah.johnson@email.com",
-    phone: "+1 (555) 123-4567",
-    dateOfBirth: "1985-03-15",
-    address: "123 Main St, Beverly Hills, CA 90210",
-    avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face",
-    status: "active",
-    lastVisit: "2025-01-15",
-    nextAppointment: "2025-02-20",
-    notes: "Prefers morning appointments. Sensitive to certain skincare products.",
+    id: '1',
+    name: 'Sarah Johnson',
+    email: 'sarah.johnson@email.com',
+    phone: '+1 (555) 123-4567',
+    dateOfBirth: '1985-03-15',
+    address: '123 Main St, Beverly Hills, CA 90210',
+    avatar:
+      'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face',
+    status: 'active',
+    lastVisit: '2025-01-15',
+    nextAppointment: '2025-02-20',
+    notes:
+      'Prefers morning appointments. Sensitive to certain skincare products.',
     emergencyContact: {
-      name: "John Johnson",
-      phone: "+1 (555) 123-4568",
-      relationship: "Spouse"
+      name: 'John Johnson',
+      phone: '+1 (555) 123-4568',
+      relationship: 'Spouse',
     },
     insurance: {
-      provider: "HealthCare Plus",
-      policyNumber: "HC123456789"
+      provider: 'HealthCare Plus',
+      policyNumber: 'HC123456789',
     },
     preferences: {
-      communication: "email",
-      language: "English"
+      communication: 'email',
+      language: 'English',
     },
     medicalHistory: [
       {
-        id: "mr1",
-        date: "2025-01-15",
-        type: "consultation",
-        title: "Initial Consultation",
-        description: "Discussed facial rejuvenation options and skin assessment",
-        doctor: "Dr. Smith",
-        medications: ["Retinol cream", "Vitamin C serum"],
-        allergies: ["Latex"]
-      }
+        id: 'mr1',
+        date: '2025-01-15',
+        type: 'consultation',
+        title: 'Initial Consultation',
+        description:
+          'Discussed facial rejuvenation options and skin assessment',
+        doctor: 'Dr. Smith',
+        medications: ['Retinol cream', 'Vitamin C serum'],
+        allergies: ['Latex'],
+      },
     ],
     treatments: [
       {
-        id: "t1",
-        name: "Botox Treatment",
-        date: "2025-01-20",
-        status: "completed",
+        id: 't1',
+        name: 'Botox Treatment',
+        date: '2025-01-20',
+        status: 'completed',
         cost: 450,
         description: "Forehead and crow's feet treatment",
-        notes: "Patient responded well to treatment",
-        followUpDate: "2025-04-20"
-      }
-    ]
+        notes: 'Patient responded well to treatment',
+        followUpDate: '2025-04-20',
+      },
+    ],
   },
   {
-    id: "2",
-    name: "Michael Chen",
-    email: "michael.chen@email.com",
-    phone: "+1 (555) 234-5678",
-    dateOfBirth: "1978-07-22",
-    address: "456 Oak Ave, Los Angeles, CA 90028",
-    status: "active",
-    lastVisit: "2025-01-10",
-    notes: "Regular client, prefers Dr. Williams",
+    id: '2',
+    name: 'Michael Chen',
+    email: 'michael.chen@email.com',
+    phone: '+1 (555) 234-5678',
+    dateOfBirth: '1978-07-22',
+    address: '456 Oak Ave, Los Angeles, CA 90028',
+    status: 'active',
+    lastVisit: '2025-01-10',
+    notes: 'Regular client, prefers Dr. Williams',
     emergencyContact: {
-      name: "Lisa Chen",
-      phone: "+1 (555) 234-5679",
-      relationship: "Wife"
+      name: 'Lisa Chen',
+      phone: '+1 (555) 234-5679',
+      relationship: 'Wife',
     },
     insurance: {
-      provider: "MediCare Pro",
-      policyNumber: "MP987654321"
+      provider: 'MediCare Pro',
+      policyNumber: 'MP987654321',
     },
     preferences: {
-      communication: "phone",
-      language: "English"
+      communication: 'phone',
+      language: 'English',
     },
     medicalHistory: [],
-    treatments: []
+    treatments: [],
   },
   {
-    id: "3",
-    name: "Emma Rodriguez",
-    email: "emma.rodriguez@email.com", 
-    phone: "+1 (555) 345-6789",
-    dateOfBirth: "1990-11-08",
-    address: "789 Pine St, Santa Monica, CA 90401",
-    avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face",
-    status: "pending",
-    lastVisit: "2025-01-05",
-    nextAppointment: "2025-02-15",
-    notes: "New patient, interested in anti-aging treatments",
+    id: '3',
+    name: 'Emma Rodriguez',
+    email: 'emma.rodriguez@email.com',
+    phone: '+1 (555) 345-6789',
+    dateOfBirth: '1990-11-08',
+    address: '789 Pine St, Santa Monica, CA 90401',
+    avatar:
+      'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
+    status: 'pending',
+    lastVisit: '2025-01-05',
+    nextAppointment: '2025-02-15',
+    notes: 'New patient, interested in anti-aging treatments',
     emergencyContact: {
-      name: "Carlos Rodriguez",
-      phone: "+1 (555) 345-6790",
-      relationship: "Brother"
+      name: 'Carlos Rodriguez',
+      phone: '+1 (555) 345-6790',
+      relationship: 'Brother',
     },
     insurance: {
-      provider: "Blue Cross",
-      policyNumber: "BC456789123"
+      provider: 'Blue Cross',
+      policyNumber: 'BC456789123',
     },
     preferences: {
-      communication: "sms",
-      language: "Spanish"
+      communication: 'sms',
+      language: 'Spanish',
     },
     medicalHistory: [],
-    treatments: []
-  }
+    treatments: [],
+  },
 ];
 
 const sampleAppointments: Appointment[] = [
   {
-    id: "a1",
-    patientId: "1",
-    date: "2025-02-20",
-    time: "10:00 AM",
-    type: "Follow-up",
-    status: "scheduled"
+    id: 'a1',
+    patientId: '1',
+    date: '2025-02-20',
+    time: '10:00 AM',
+    type: 'Follow-up',
+    status: 'scheduled',
   },
   {
-    id: "a2", 
-    patientId: "2",
-    date: "2025-02-22",
-    time: "2:00 PM",
-    type: "Consultation",
-    status: "scheduled"
+    id: 'a2',
+    patientId: '2',
+    date: '2025-02-22',
+    time: '2:00 PM',
+    type: 'Consultation',
+    status: 'scheduled',
   },
   {
-    id: "a3",
-    patientId: "3", 
-    date: "2025-02-15",
-    time: "11:00 AM",
-    type: "Initial Consultation",
-    status: "scheduled"
-  }
+    id: 'a3',
+    patientId: '3',
+    date: '2025-02-15',
+    time: '11:00 AM',
+    type: 'Initial Consultation',
+    status: 'scheduled',
+  },
 ];
 
 // Animated height component
-const AnimateChangeInHeight: React.FC<{
+const _AnimateChangeInHeight: React.FC<{
   children: React.ReactNode;
   className?: string;
 }> = ({ children, className }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const [height, setHeight] = useState<number | "auto">("auto");
+  const [height, setHeight] = useState<number | 'auto'>('auto');
 
   useEffect(() => {
     if (containerRef.current) {
@@ -289,25 +288,26 @@ const AnimateChangeInHeight: React.FC<{
 
   return (
     <motion.div
-      className={cn(className, "overflow-hidden")}
-      style={{ height }}
       animate={{ height }}
-      transition={{ duration: 0.1, damping: 0.2, ease: "easeIn" }}
+      className={cn(className, 'overflow-hidden')}
+      style={{ height }}
+      transition={{ duration: 0.1, damping: 0.2, ease: 'easeIn' }}
     >
       <div ref={containerRef}>{children}</div>
     </motion.div>
   );
-};// Main component
+}; // Main component
 export default function PatientsPage() {
-  const [patients, setPatients] = useState<Patient[]>(samplePatients);
-  const [filteredPatients, setFilteredPatients] = useState<Patient[]>(samplePatients);
+  const [patients, _setPatients] = useState<Patient[]>(samplePatients);
+  const [filteredPatients, setFilteredPatients] =
+    useState<Patient[]>(samplePatients);
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
-  const [isPatientDialogOpen, setIsPatientDialogOpen] = useState(false);
+  const [_isPatientDialogOpen, _setIsPatientDialogOpen] = useState(false);
   const [isNewPatientDialogOpen, setIsNewPatientDialogOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [activeTab, setActiveTab] = useState("overview");
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [activeTab, setActiveTab] = useState('overview');
 
   // Search and filter functionality
   useEffect(() => {
@@ -322,7 +322,7 @@ export default function PatientsPage() {
       );
     }
 
-    if (statusFilter !== "all") {
+    if (statusFilter !== 'all') {
       filtered = filtered.filter((patient) => patient.status === statusFilter);
     }
 
@@ -331,22 +331,22 @@ export default function PatientsPage() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "active":
-        return "bg-emerald-100 text-emerald-800 border-emerald-200";
-      case "inactive":
-        return "bg-slate-100 text-slate-800 border-slate-200";
-      case "pending":
-        return "bg-amber-100 text-amber-800 border-amber-200";
+      case 'active':
+        return 'bg-emerald-100 text-emerald-800 border-emerald-200';
+      case 'inactive':
+        return 'bg-slate-100 text-slate-800 border-slate-200';
+      case 'pending':
+        return 'bg-amber-100 text-amber-800 border-amber-200';
       default:
-        return "bg-slate-100 text-slate-800 border-slate-200";
+        return 'bg-slate-100 text-slate-800 border-slate-200';
     }
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
     });
   };
 
@@ -355,7 +355,10 @@ export default function PatientsPage() {
     const birth = new Date(dateOfBirth);
     let age = today.getFullYear() - birth.getFullYear();
     const monthDiff = today.getMonth() - birth.getMonth();
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birth.getDate())
+    ) {
       age--;
     }
     return age;
@@ -363,76 +366,82 @@ export default function PatientsPage() {
 
   const getTreatmentStatusColor = (status: string) => {
     switch (status) {
-      case "completed":
-        return "bg-emerald-100 text-emerald-800";
-      case "in-progress":
-        return "bg-blue-100 text-blue-800";
-      case "scheduled":
-        return "bg-amber-100 text-amber-800";
-      case "cancelled":
-        return "bg-red-100 text-red-800";
+      case 'completed':
+        return 'bg-emerald-100 text-emerald-800';
+      case 'in-progress':
+        return 'bg-blue-100 text-blue-800';
+      case 'scheduled':
+        return 'bg-amber-100 text-amber-800';
+      case 'cancelled':
+        return 'bg-red-100 text-red-800';
       default:
-        return "bg-slate-100 text-slate-800";
+        return 'bg-slate-100 text-slate-800';
     }
   };
 
   const PatientCard = ({ patient }: { patient: Patient }) => (
     <motion.div
-      layout
-      initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
+      initial={{ opacity: 0, y: 20 }}
+      layout
       transition={{ duration: 0.2 }}
     >
-      <Card className="hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/20 group">
+      <Card className="group border-border/50 transition-all duration-300 hover:border-primary/20 hover:shadow-lg">
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between">
             <div className="flex items-center space-x-3">
-              <Avatar className="w-12 h-12 border-2 border-primary/10">
-                <AvatarImage src={patient.avatar} alt={patient.name} />
-                <AvatarFallback className="bg-primary/5 text-primary font-medium">
-                  {patient.name.split(" ").map(n => n[0]).join("")}
+              <Avatar className="h-12 w-12 border-2 border-primary/10">
+                <AvatarImage alt={patient.name} src={patient.avatar} />
+                <AvatarFallback className="bg-primary/5 font-medium text-primary">
+                  {patient.name
+                    .split(' ')
+                    .map((n) => n[0])
+                    .join('')}
                 </AvatarFallback>
               </Avatar>
               <div>
-                <h3 className="font-semibold text-lg text-foreground group-hover:text-primary transition-colors">
+                <h3 className="font-semibold text-foreground text-lg transition-colors group-hover:text-primary">
                   {patient.name}
                 </h3>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   Age {calculateAge(patient.dateOfBirth)}
                 </p>
               </div>
             </div>
             <div className="flex items-center space-x-2">
-              <Badge variant="outline" className={getStatusColor(patient.status)}>
+              <Badge
+                className={getStatusColor(patient.status)}
+                variant="outline"
+              >
                 {patient.status}
               </Badge>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="w-8 h-8 p-0">
-                    <MoreHorizontal className="w-4 h-4" />
+                  <Button className="h-8 w-8 p-0" size="sm" variant="ghost">
+                    <MoreHorizontal className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem onClick={() => setSelectedPatient(patient)}>
-                    <Eye className="w-4 h-4 mr-2" />
+                    <Eye className="mr-2 h-4 w-4" />
                     View Details
                   </DropdownMenuItem>
                   <DropdownMenuItem>
-                    <Edit className="w-4 h-4 mr-2" />
+                    <Edit className="mr-2 h-4 w-4" />
                     Edit Patient
                   </DropdownMenuItem>
                   <DropdownMenuItem>
-                    <CalendarPlus className="w-4 h-4 mr-2" />
+                    <CalendarPlus className="mr-2 h-4 w-4" />
                     Schedule Appointment
                   </DropdownMenuItem>
                   <DropdownMenuItem>
-                    <MessageSquare className="w-4 h-4 mr-2" />
+                    <MessageSquare className="mr-2 h-4 w-4" />
                     Send Message
                   </DropdownMenuItem>
                   <Separator />
                   <DropdownMenuItem className="text-destructive">
-                    <Trash2 className="w-4 h-4 mr-2" />
+                    <Trash2 className="mr-2 h-4 w-4" />
                     Delete Patient
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -442,34 +451,34 @@ export default function PatientsPage() {
         </CardHeader>
         <CardContent className="pt-0">
           <div className="space-y-3">
-            <div className="flex items-center text-sm text-muted-foreground">
-              <Mail className="w-4 h-4 mr-2 text-primary" />
+            <div className="flex items-center text-muted-foreground text-sm">
+              <Mail className="mr-2 h-4 w-4 text-primary" />
               {patient.email}
             </div>
-            <div className="flex items-center text-sm text-muted-foreground">
-              <Phone className="w-4 h-4 mr-2 text-primary" />
+            <div className="flex items-center text-muted-foreground text-sm">
+              <Phone className="mr-2 h-4 w-4 text-primary" />
               {patient.phone}
             </div>
-            <div className="flex items-center text-sm text-muted-foreground">
-              <Clock className="w-4 h-4 mr-2 text-primary" />
+            <div className="flex items-center text-muted-foreground text-sm">
+              <Clock className="mr-2 h-4 w-4 text-primary" />
               Last visit: {formatDate(patient.lastVisit)}
             </div>
             {patient.nextAppointment && (
-              <div className="flex items-center text-sm text-emerald-600">
-                <Calendar className="w-4 h-4 mr-2" />
+              <div className="flex items-center text-emerald-600 text-sm">
+                <Calendar className="mr-2 h-4 w-4" />
                 Next: {formatDate(patient.nextAppointment)}
               </div>
             )}
           </div>
-          <div className="mt-4 pt-3 border-t border-border/50">
+          <div className="mt-4 border-border/50 border-t pt-3">
             <Button
-              variant="outline"
-              size="sm"
-              className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
+              className="w-full transition-colors group-hover:bg-primary group-hover:text-primary-foreground"
               onClick={() => setSelectedPatient(patient)}
+              size="sm"
+              variant="outline"
             >
               View Details
-              <ChevronRight className="w-4 h-4 ml-2" />
+              <ChevronRight className="ml-2 h-4 w-4" />
             </Button>
           </div>
         </CardContent>
@@ -479,76 +488,86 @@ export default function PatientsPage() {
 
   const PatientListItem = ({ patient }: { patient: Patient }) => (
     <motion.div
-      layout
-      initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 20 }}
+      initial={{ opacity: 0, x: -20 }}
+      layout
       transition={{ duration: 0.2 }}
     >
-      <Card className="hover:shadow-md transition-all duration-300 border-border/50 hover:border-primary/20">
+      <Card className="border-border/50 transition-all duration-300 hover:border-primary/20 hover:shadow-md">
         <CardContent className="p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <Avatar className="w-10 h-10 border-2 border-primary/10">
-                <AvatarImage src={patient.avatar} alt={patient.name} />
-                <AvatarFallback className="bg-primary/5 text-primary font-medium">
-                  {patient.name.split(" ").map(n => n[0]).join("")}
+              <Avatar className="h-10 w-10 border-2 border-primary/10">
+                <AvatarImage alt={patient.name} src={patient.avatar} />
+                <AvatarFallback className="bg-primary/5 font-medium text-primary">
+                  {patient.name
+                    .split(' ')
+                    .map((n) => n[0])
+                    .join('')}
                 </AvatarFallback>
               </Avatar>
               <div>
                 <h3 className="font-medium text-foreground">{patient.name}</h3>
-                <p className="text-sm text-muted-foreground">Age {calculateAge(patient.dateOfBirth)}</p>
+                <p className="text-muted-foreground text-sm">
+                  Age {calculateAge(patient.dateOfBirth)}
+                </p>
               </div>
             </div>
-            <div className="hidden md:flex items-center space-x-6">
+            <div className="hidden items-center space-x-6 md:flex">
               <div className="text-sm">
                 <p className="text-muted-foreground">{patient.email}</p>
                 <p className="text-muted-foreground">{patient.phone}</p>
               </div>
-              <div className="text-sm text-center">
+              <div className="text-center text-sm">
                 <p className="text-muted-foreground">Last visit</p>
                 <p className="font-medium">{formatDate(patient.lastVisit)}</p>
               </div>
               {patient.nextAppointment && (
-                <div className="text-sm text-center">
+                <div className="text-center text-sm">
                   <p className="text-muted-foreground">Next appointment</p>
-                  <p className="font-medium text-emerald-600">{formatDate(patient.nextAppointment)}</p>
+                  <p className="font-medium text-emerald-600">
+                    {formatDate(patient.nextAppointment)}
+                  </p>
                 </div>
               )}
-              <Badge variant="outline" className={getStatusColor(patient.status)}>
+              <Badge
+                className={getStatusColor(patient.status)}
+                variant="outline"
+              >
                 {patient.status}
               </Badge>
             </div>
             <div className="flex items-center space-x-2">
               <Button
-                variant="outline"
-                size="sm"
                 onClick={() => setSelectedPatient(patient)}
+                size="sm"
+                variant="outline"
               >
                 View
               </Button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="w-8 h-8 p-0">
-                    <MoreHorizontal className="w-4 h-4" />
+                  <Button className="h-8 w-8 p-0" size="sm" variant="ghost">
+                    <MoreHorizontal className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem>
-                    <Edit className="w-4 h-4 mr-2" />
+                    <Edit className="mr-2 h-4 w-4" />
                     Edit Patient
                   </DropdownMenuItem>
                   <DropdownMenuItem>
-                    <CalendarPlus className="w-4 h-4 mr-2" />
+                    <CalendarPlus className="mr-2 h-4 w-4" />
                     Schedule Appointment
                   </DropdownMenuItem>
                   <DropdownMenuItem>
-                    <MessageSquare className="w-4 h-4 mr-2" />
+                    <MessageSquare className="mr-2 h-4 w-4" />
                     Send Message
                   </DropdownMenuItem>
                   <Separator />
                   <DropdownMenuItem className="text-destructive">
-                    <Trash2 className="w-4 h-4 mr-2" />
+                    <Trash2 className="mr-2 h-4 w-4" />
                     Delete Patient
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -558,7 +577,8 @@ export default function PatientsPage() {
         </CardContent>
       </Card>
     </motion.div>
-  );  const PatientDetailsDialog = () => {
+  );
+  const PatientDetailsDialog = () => {
     if (!selectedPatient) return null;
 
     const patientAppointments = sampleAppointments.filter(
@@ -566,20 +586,34 @@ export default function PatientsPage() {
     );
 
     return (
-      <Dialog open={!!selectedPatient} onOpenChange={() => setSelectedPatient(null)}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <Dialog
+        onOpenChange={() => setSelectedPatient(null)}
+        open={!!selectedPatient}
+      >
+        <DialogContent className="max-h-[90vh] max-w-4xl overflow-y-auto">
           <DialogHeader>
             <div className="flex items-center space-x-4">
-              <Avatar className="w-16 h-16 border-2 border-primary/20">
-                <AvatarImage src={selectedPatient.avatar} alt={selectedPatient.name} />
-                <AvatarFallback className="bg-primary/10 text-primary font-medium text-lg">
-                  {selectedPatient.name.split(" ").map(n => n[0]).join("")}
+              <Avatar className="h-16 w-16 border-2 border-primary/20">
+                <AvatarImage
+                  alt={selectedPatient.name}
+                  src={selectedPatient.avatar}
+                />
+                <AvatarFallback className="bg-primary/10 font-medium text-lg text-primary">
+                  {selectedPatient.name
+                    .split(' ')
+                    .map((n) => n[0])
+                    .join('')}
                 </AvatarFallback>
               </Avatar>
               <div>
-                <DialogTitle className="text-2xl">{selectedPatient.name}</DialogTitle>
-                <div className="flex items-center space-x-3 mt-1">
-                  <Badge variant="outline" className={getStatusColor(selectedPatient.status)}>
+                <DialogTitle className="text-2xl">
+                  {selectedPatient.name}
+                </DialogTitle>
+                <div className="mt-1 flex items-center space-x-3">
+                  <Badge
+                    className={getStatusColor(selectedPatient.status)}
+                    variant="outline"
+                  >
                     {selectedPatient.status}
                   </Badge>
                   <span className="text-muted-foreground">
@@ -590,7 +624,7 @@ export default function PatientsPage() {
             </div>
           </DialogHeader>
 
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-6">
+          <Tabs className="mt-6" onValueChange={setActiveTab} value={activeTab}>
             <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="overview">Overview</TabsTrigger>
               <TabsTrigger value="medical">Medical History</TabsTrigger>
@@ -598,33 +632,33 @@ export default function PatientsPage() {
               <TabsTrigger value="appointments">Appointments</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="overview" className="mt-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <TabsContent className="mt-6" value="overview">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 {/* Personal Information */}
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center">
-                      <User className="w-5 h-5 mr-2 text-primary" />
+                      <User className="mr-2 h-5 w-5 text-primary" />
                       Personal Information
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="flex items-center">
-                      <Mail className="w-4 h-4 mr-3 text-muted-foreground" />
+                      <Mail className="mr-3 h-4 w-4 text-muted-foreground" />
                       <span className="text-sm">{selectedPatient.email}</span>
                     </div>
                     <div className="flex items-center">
-                      <Phone className="w-4 h-4 mr-3 text-muted-foreground" />
+                      <Phone className="mr-3 h-4 w-4 text-muted-foreground" />
                       <span className="text-sm">{selectedPatient.phone}</span>
                     </div>
                     <div className="flex items-center">
-                      <Calendar className="w-4 h-4 mr-3 text-muted-foreground" />
+                      <Calendar className="mr-3 h-4 w-4 text-muted-foreground" />
                       <span className="text-sm">
                         Born {formatDate(selectedPatient.dateOfBirth)}
                       </span>
                     </div>
                     <div className="flex items-start">
-                      <MapPin className="w-4 h-4 mr-3 mt-0.5 text-muted-foreground" />
+                      <MapPin className="mt-0.5 mr-3 h-4 w-4 text-muted-foreground" />
                       <span className="text-sm">{selectedPatient.address}</span>
                     </div>
                   </CardContent>
@@ -634,20 +668,24 @@ export default function PatientsPage() {
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center">
-                      <AlertCircle className="w-5 h-5 mr-2 text-primary" />
+                      <AlertCircle className="mr-2 h-5 w-5 text-primary" />
                       Emergency Contact
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
                     <div>
-                      <p className="font-medium">{selectedPatient.emergencyContact.name}</p>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="font-medium">
+                        {selectedPatient.emergencyContact.name}
+                      </p>
+                      <p className="text-muted-foreground text-sm">
                         {selectedPatient.emergencyContact.relationship}
                       </p>
                     </div>
                     <div className="flex items-center">
-                      <Phone className="w-4 h-4 mr-3 text-muted-foreground" />
-                      <span className="text-sm">{selectedPatient.emergencyContact.phone}</span>
+                      <Phone className="mr-3 h-4 w-4 text-muted-foreground" />
+                      <span className="text-sm">
+                        {selectedPatient.emergencyContact.phone}
+                      </span>
                     </div>
                   </CardContent>
                 </Card>
@@ -656,14 +694,16 @@ export default function PatientsPage() {
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center">
-                      <FileText className="w-5 h-5 mr-2 text-primary" />
+                      <FileText className="mr-2 h-5 w-5 text-primary" />
                       Insurance
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
                     <div>
-                      <p className="font-medium">{selectedPatient.insurance.provider}</p>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="font-medium">
+                        {selectedPatient.insurance.provider}
+                      </p>
+                      <p className="text-muted-foreground text-sm">
                         Policy: {selectedPatient.insurance.policyNumber}
                       </p>
                     </div>
@@ -674,20 +714,20 @@ export default function PatientsPage() {
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center">
-                      <Settings className="w-5 h-5 mr-2 text-primary" />
+                      <Settings className="mr-2 h-5 w-5 text-primary" />
                       Preferences
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
                     <div>
-                      <p className="text-sm font-medium">Communication</p>
-                      <p className="text-sm text-muted-foreground capitalize">
+                      <p className="font-medium text-sm">Communication</p>
+                      <p className="text-muted-foreground text-sm capitalize">
                         {selectedPatient.preferences.communication}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm font-medium">Language</p>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="font-medium text-sm">Language</p>
+                      <p className="text-muted-foreground text-sm">
                         {selectedPatient.preferences.language}
                       </p>
                     </div>
@@ -699,19 +739,19 @@ export default function PatientsPage() {
               <Card className="mt-6">
                 <CardHeader>
                   <CardTitle className="flex items-center">
-                    <FileText className="w-5 h-5 mr-2 text-primary" />
+                    <FileText className="mr-2 h-5 w-5 text-primary" />
                     Notes
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-muted-foreground">
-                    {selectedPatient.notes || "No notes available."}
+                  <p className="text-muted-foreground text-sm">
+                    {selectedPatient.notes || 'No notes available.'}
                   </p>
                 </CardContent>
               </Card>
             </TabsContent>
 
-            <TabsContent value="medical" className="mt-6">
+            <TabsContent className="mt-6" value="medical">
               <div className="space-y-4">
                 {selectedPatient.medicalHistory.length > 0 ? (
                   selectedPatient.medicalHistory.map((record) => (
@@ -719,39 +759,42 @@ export default function PatientsPage() {
                       <CardHeader>
                         <div className="flex items-start justify-between">
                           <div>
-                            <CardTitle className="text-lg">{record.title}</CardTitle>
-                            <p className="text-sm text-muted-foreground">
+                            <CardTitle className="text-lg">
+                              {record.title}
+                            </CardTitle>
+                            <p className="text-muted-foreground text-sm">
                               {formatDate(record.date)} • Dr. {record.doctor}
                             </p>
                           </div>
-                          <Badge variant="outline" className="capitalize">
+                          <Badge className="capitalize" variant="outline">
                             {record.type}
                           </Badge>
                         </div>
                       </CardHeader>
                       <CardContent>
-                        <p className="text-sm mb-4">{record.description}</p>
-                        
-                        {record.medications && record.medications.length > 0 && (
-                          <div className="mb-4">
-                            <h4 className="font-medium text-sm mb-2 flex items-center">
-                              <Syringe className="w-4 h-4 mr-2 text-primary" />
-                              Medications
-                            </h4>
-                            <div className="flex flex-wrap gap-2">
-                              {record.medications.map((med, index) => (
-                                <Badge key={index} variant="secondary">
-                                  {med}
-                                </Badge>
-                              ))}
+                        <p className="mb-4 text-sm">{record.description}</p>
+
+                        {record.medications &&
+                          record.medications.length > 0 && (
+                            <div className="mb-4">
+                              <h4 className="mb-2 flex items-center font-medium text-sm">
+                                <Syringe className="mr-2 h-4 w-4 text-primary" />
+                                Medications
+                              </h4>
+                              <div className="flex flex-wrap gap-2">
+                                {record.medications.map((med, index) => (
+                                  <Badge key={index} variant="secondary">
+                                    {med}
+                                  </Badge>
+                                ))}
+                              </div>
                             </div>
-                          </div>
-                        )}
+                          )}
 
                         {record.allergies && record.allergies.length > 0 && (
                           <div>
-                            <h4 className="font-medium text-sm mb-2 flex items-center">
-                              <AlertCircle className="w-4 h-4 mr-2 text-destructive" />
+                            <h4 className="mb-2 flex items-center font-medium text-sm">
+                              <AlertCircle className="mr-2 h-4 w-4 text-destructive" />
                               Allergies
                             </h4>
                             <div className="flex flex-wrap gap-2">
@@ -768,16 +811,18 @@ export default function PatientsPage() {
                   ))
                 ) : (
                   <Card>
-                    <CardContent className="text-center py-8">
-                      <Stethoscope className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-                      <p className="text-muted-foreground">No medical history recorded yet.</p>
+                    <CardContent className="py-8 text-center">
+                      <Stethoscope className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
+                      <p className="text-muted-foreground">
+                        No medical history recorded yet.
+                      </p>
                     </CardContent>
                   </Card>
                 )}
               </div>
             </TabsContent>
 
-            <TabsContent value="treatments" className="mt-6">
+            <TabsContent className="mt-6" value="treatments">
               <div className="space-y-4">
                 {selectedPatient.treatments.length > 0 ? (
                   selectedPatient.treatments.map((treatment) => (
@@ -785,34 +830,42 @@ export default function PatientsPage() {
                       <CardHeader>
                         <div className="flex items-start justify-between">
                           <div>
-                            <CardTitle className="text-lg">{treatment.name}</CardTitle>
-                            <p className="text-sm text-muted-foreground">
+                            <CardTitle className="text-lg">
+                              {treatment.name}
+                            </CardTitle>
+                            <p className="text-muted-foreground text-sm">
                               {formatDate(treatment.date)} • ${treatment.cost}
                             </p>
                           </div>
-                          <Badge 
-                            variant="outline" 
-                            className={getTreatmentStatusColor(treatment.status)}
+                          <Badge
+                            className={getTreatmentStatusColor(
+                              treatment.status
+                            )}
+                            variant="outline"
                           >
                             {treatment.status}
                           </Badge>
                         </div>
                       </CardHeader>
                       <CardContent>
-                        <p className="text-sm mb-4">{treatment.description}</p>
+                        <p className="mb-4 text-sm">{treatment.description}</p>
                         {treatment.notes && (
                           <div className="mb-4">
-                            <h4 className="font-medium text-sm mb-2">Notes</h4>
-                            <p className="text-sm text-muted-foreground">{treatment.notes}</p>
+                            <h4 className="mb-2 font-medium text-sm">Notes</h4>
+                            <p className="text-muted-foreground text-sm">
+                              {treatment.notes}
+                            </p>
                           </div>
                         )}
                         {treatment.followUpDate && (
                           <div>
-                            <h4 className="font-medium text-sm mb-2 flex items-center">
-                              <Calendar className="w-4 h-4 mr-2 text-primary" />
+                            <h4 className="mb-2 flex items-center font-medium text-sm">
+                              <Calendar className="mr-2 h-4 w-4 text-primary" />
                               Follow-up Date
                             </h4>
-                            <p className="text-sm">{formatDate(treatment.followUpDate)}</p>
+                            <p className="text-sm">
+                              {formatDate(treatment.followUpDate)}
+                            </p>
                           </div>
                         )}
                       </CardContent>
@@ -820,16 +873,18 @@ export default function PatientsPage() {
                   ))
                 ) : (
                   <Card>
-                    <CardContent className="text-center py-8">
-                      <Heart className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-                      <p className="text-muted-foreground">No treatments recorded yet.</p>
+                    <CardContent className="py-8 text-center">
+                      <Heart className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
+                      <p className="text-muted-foreground">
+                        No treatments recorded yet.
+                      </p>
                     </CardContent>
                   </Card>
                 )}
               </div>
             </TabsContent>
 
-            <TabsContent value="appointments" className="mt-6">
+            <TabsContent className="mt-6" value="appointments">
               <div className="space-y-4">
                 {patientAppointments.length > 0 ? (
                   patientAppointments.map((appointment) => (
@@ -837,24 +892,31 @@ export default function PatientsPage() {
                       <CardContent className="p-4">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-4">
-                            <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-primary/10">
-                              <Calendar className="w-6 h-6 text-primary" />
+                            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
+                              <Calendar className="h-6 w-6 text-primary" />
                             </div>
                             <div>
-                              <h3 className="font-medium">{appointment.type}</h3>
-                              <p className="text-sm text-muted-foreground">
-                                {formatDate(appointment.date)} at {appointment.time}
+                              <h3 className="font-medium">
+                                {appointment.type}
+                              </h3>
+                              <p className="text-muted-foreground text-sm">
+                                {formatDate(appointment.date)} at{' '}
+                                {appointment.time}
                               </p>
                             </div>
                           </div>
-                          <Badge 
-                            variant="outline"
+                          <Badge
                             className={cn(
-                              appointment.status === "scheduled" && "bg-blue-100 text-blue-800",
-                              appointment.status === "completed" && "bg-emerald-100 text-emerald-800",
-                              appointment.status === "cancelled" && "bg-red-100 text-red-800",
-                              appointment.status === "no-show" && "bg-orange-100 text-orange-800"
+                              appointment.status === 'scheduled' &&
+                                'bg-blue-100 text-blue-800',
+                              appointment.status === 'completed' &&
+                                'bg-emerald-100 text-emerald-800',
+                              appointment.status === 'cancelled' &&
+                                'bg-red-100 text-red-800',
+                              appointment.status === 'no-show' &&
+                                'bg-orange-100 text-orange-800'
                             )}
+                            variant="outline"
                           >
                             {appointment.status}
                           </Badge>
@@ -864,9 +926,11 @@ export default function PatientsPage() {
                   ))
                 ) : (
                   <Card>
-                    <CardContent className="text-center py-8">
-                      <Calendar className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-                      <p className="text-muted-foreground">No appointments scheduled.</p>
+                    <CardContent className="py-8 text-center">
+                      <Calendar className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
+                      <p className="text-muted-foreground">
+                        No appointments scheduled.
+                      </p>
                     </CardContent>
                   </Card>
                 )}
@@ -876,17 +940,21 @@ export default function PatientsPage() {
         </DialogContent>
       </Dialog>
     );
-  };  const NewPatientDialog = () => (
-    <Dialog open={isNewPatientDialogOpen} onOpenChange={setIsNewPatientDialogOpen}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+  };
+  const NewPatientDialog = () => (
+    <Dialog
+      onOpenChange={setIsNewPatientDialogOpen}
+      open={isNewPatientDialogOpen}
+    >
+      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center">
-            <UserPlus className="w-5 h-5 mr-2 text-primary" />
+            <UserPlus className="mr-2 h-5 w-5 text-primary" />
             Add New Patient
           </DialogTitle>
         </DialogHeader>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+
+        <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
             <Label htmlFor="firstName">First Name</Label>
             <Input id="firstName" placeholder="Enter first name" />
@@ -897,7 +965,7 @@ export default function PatientsPage() {
           </div>
           <div>
             <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" placeholder="Enter email address" />
+            <Input id="email" placeholder="Enter email address" type="email" />
           </div>
           <div>
             <Label htmlFor="phone">Phone</Label>
@@ -926,24 +994,22 @@ export default function PatientsPage() {
           </div>
           <div className="md:col-span-2">
             <Label htmlFor="notes">Notes</Label>
-            <Textarea 
-              id="notes" 
+            <Textarea
+              id="notes"
               placeholder="Enter any additional notes..."
               rows={3}
             />
           </div>
         </div>
-        
-        <div className="flex justify-end space-x-3 mt-6">
-          <Button 
-            variant="outline" 
+
+        <div className="mt-6 flex justify-end space-x-3">
+          <Button
             onClick={() => setIsNewPatientDialogOpen(false)}
+            variant="outline"
           >
             Cancel
           </Button>
-          <Button>
-            Add Patient
-          </Button>
+          <Button>Add Patient</Button>
         </div>
       </DialogContent>
     </Dialog>
@@ -954,36 +1020,42 @@ export default function PatientsPage() {
       {/* Header */}
       <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">Patients</h1>
+          <h1 className="font-bold text-3xl text-foreground tracking-tight">
+            Patients
+          </h1>
           <p className="text-muted-foreground">
             Manage your patient database and medical records
           </p>
         </div>
         <div className="flex items-center space-x-3">
           <Button
+            onClick={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}
             variant="outline"
-            onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}
           >
-            {viewMode === "grid" ? "List View" : "Grid View"}
+            {viewMode === 'grid' ? 'List View' : 'Grid View'}
           </Button>
           <Button onClick={() => setIsNewPatientDialogOpen(true)}>
-            <Plus className="w-4 h-4 mr-2" />
+            <Plus className="mr-2 h-4 w-4" />
             Add Patient
           </Button>
         </div>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Patients</p>
-                <p className="text-3xl font-bold text-foreground">{patients.length}</p>
+                <p className="font-medium text-muted-foreground text-sm">
+                  Total Patients
+                </p>
+                <p className="font-bold text-3xl text-foreground">
+                  {patients.length}
+                </p>
               </div>
-              <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-primary/10">
-                <User className="w-6 h-6 text-primary" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
+                <User className="h-6 w-6 text-primary" />
               </div>
             </div>
           </CardContent>
@@ -992,13 +1064,15 @@ export default function PatientsPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Active Patients</p>
-                <p className="text-3xl font-bold text-emerald-600">
-                  {patients.filter(p => p.status === "active").length}
+                <p className="font-medium text-muted-foreground text-sm">
+                  Active Patients
+                </p>
+                <p className="font-bold text-3xl text-emerald-600">
+                  {patients.filter((p) => p.status === 'active').length}
                 </p>
               </div>
-              <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-emerald-100">
-                <Activity className="w-6 h-6 text-emerald-600" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-emerald-100">
+                <Activity className="h-6 w-6 text-emerald-600" />
               </div>
             </div>
           </CardContent>
@@ -1007,13 +1081,15 @@ export default function PatientsPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Pending</p>
-                <p className="text-3xl font-bold text-amber-600">
-                  {patients.filter(p => p.status === "pending").length}
+                <p className="font-medium text-muted-foreground text-sm">
+                  Pending
+                </p>
+                <p className="font-bold text-3xl text-amber-600">
+                  {patients.filter((p) => p.status === 'pending').length}
                 </p>
               </div>
-              <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-amber-100">
-                <Clock className="w-6 h-6 text-amber-600" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-amber-100">
+                <Clock className="h-6 w-6 text-amber-600" />
               </div>
             </div>
           </CardContent>
@@ -1022,18 +1098,24 @@ export default function PatientsPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">This Month</p>
-                <p className="text-3xl font-bold text-blue-600">
-                  {patients.filter(p => {
-                    const lastVisit = new Date(p.lastVisit);
-                    const thisMonth = new Date();
-                    return lastVisit.getMonth() === thisMonth.getMonth() && 
-                           lastVisit.getFullYear() === thisMonth.getFullYear();
-                  }).length}
+                <p className="font-medium text-muted-foreground text-sm">
+                  This Month
+                </p>
+                <p className="font-bold text-3xl text-blue-600">
+                  {
+                    patients.filter((p) => {
+                      const lastVisit = new Date(p.lastVisit);
+                      const thisMonth = new Date();
+                      return (
+                        lastVisit.getMonth() === thisMonth.getMonth() &&
+                        lastVisit.getFullYear() === thisMonth.getFullYear()
+                      );
+                    }).length
+                  }
                 </p>
               </div>
-              <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-blue-100">
-                <Calendar className="w-6 h-6 text-blue-600" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100">
+                <Calendar className="h-6 w-6 text-blue-600" />
               </div>
             </div>
           </CardContent>
@@ -1043,18 +1125,18 @@ export default function PatientsPage() {
       {/* Search and Filters */}
       <Card>
         <CardContent className="p-6">
-          <div className="flex flex-col space-y-4 md:flex-row md:items-center md:space-y-0 md:space-x-4">
+          <div className="flex flex-col space-y-4 md:flex-row md:items-center md:space-x-4 md:space-y-0">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Search className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 transform text-muted-foreground" />
               <Input
+                className="pl-10"
+                onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search patients by name, email, or phone..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
               />
             </div>
             <div className="flex items-center space-x-3">
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <Select onValueChange={setStatusFilter} value={statusFilter}>
                 <SelectTrigger className="w-32">
                   <SelectValue />
                 </SelectTrigger>
@@ -1065,8 +1147,8 @@ export default function PatientsPage() {
                   <SelectItem value="pending">Pending</SelectItem>
                 </SelectContent>
               </Select>
-              <Button variant="outline" size="sm">
-                <Filter className="w-4 h-4 mr-2" />
+              <Button size="sm" variant="outline">
+                <Filter className="mr-2 h-4 w-4" />
                 More Filters
               </Button>
             </div>
@@ -1077,14 +1159,14 @@ export default function PatientsPage() {
       {/* Patients Grid/List */}
       <AnimatePresence mode="wait">
         <motion.div
-          key={viewMode}
-          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 0, y: 20 }}
+          key={viewMode}
           transition={{ duration: 0.2 }}
         >
-          {viewMode === "grid" ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {viewMode === 'grid' ? (
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
               <AnimatePresence>
                 {filteredPatients.map((patient) => (
                   <PatientCard key={patient.id} patient={patient} />
@@ -1106,17 +1188,17 @@ export default function PatientsPage() {
       {/* Empty State */}
       {filteredPatients.length === 0 && (
         <Card>
-          <CardContent className="text-center py-12">
-            <User className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-            <h3 className="text-lg font-medium mb-2">No patients found</h3>
-            <p className="text-muted-foreground mb-4">
-              {searchTerm || statusFilter !== "all"
-                ? "Try adjusting your search or filters."
-                : "Get started by adding your first patient."}
+          <CardContent className="py-12 text-center">
+            <User className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
+            <h3 className="mb-2 font-medium text-lg">No patients found</h3>
+            <p className="mb-4 text-muted-foreground">
+              {searchTerm || statusFilter !== 'all'
+                ? 'Try adjusting your search or filters.'
+                : 'Get started by adding your first patient.'}
             </p>
-            {!searchTerm && statusFilter === "all" && (
+            {!searchTerm && statusFilter === 'all' && (
               <Button onClick={() => setIsNewPatientDialogOpen(true)}>
-                <Plus className="w-4 h-4 mr-2" />
+                <Plus className="mr-2 h-4 w-4" />
                 Add Your First Patient
               </Button>
             )}

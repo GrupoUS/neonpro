@@ -1,9 +1,9 @@
 // Report Templates API Route
 // Story 8.2: Custom Report Builder (Drag-Drop Interface)
 
+import { type NextRequest, NextResponse } from 'next/server';
 import { ReportBuilderService } from '@/app/lib/services/report-builder';
 import { CreateReportTemplateRequest } from '@/app/lib/validations/report-builder';
-import { NextRequest, NextResponse } from 'next/server';
 
 const reportService = new ReportBuilderService();
 
@@ -11,28 +11,35 @@ const reportService = new ReportBuilderService();
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get('page') || '1');
-    const perPage = parseInt(searchParams.get('per_page') || '10');
+    const page = Number.parseInt(searchParams.get('page') || '1', 10);
+    const perPage = Number.parseInt(searchParams.get('per_page') || '10', 10);
     const search = searchParams.get('search') || undefined;
     const category = searchParams.get('category') || undefined;
 
     const filters = {
       search,
-      category
+      category,
     };
 
-    const result = await reportService.getReportTemplates(page, perPage, filters);
+    const result = await reportService.getReportTemplates(
+      page,
+      perPage,
+      filters
+    );
 
     return NextResponse.json({
       success: true,
-      data: result
+      data: result,
     });
   } catch (error) {
     console.error('Error fetching report templates:', error);
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to fetch report templates'
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Failed to fetch report templates',
       },
       { status: 500 }
     );
@@ -51,24 +58,32 @@ export async function POST(request: NextRequest) {
         {
           success: false,
           error: 'Invalid request data',
-          details: validationResult.error.errors
+          details: validationResult.error.errors,
         },
         { status: 400 }
       );
     }
 
-    const template = await reportService.createReportTemplate(validationResult.data);
+    const template = await reportService.createReportTemplate(
+      validationResult.data
+    );
 
-    return NextResponse.json({
-      success: true,
-      data: template
-    }, { status: 201 });
+    return NextResponse.json(
+      {
+        success: true,
+        data: template,
+      },
+      { status: 201 }
+    );
   } catch (error) {
     console.error('Error creating report template:', error);
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to create report template'
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Failed to create report template',
       },
       { status: 500 }
     );

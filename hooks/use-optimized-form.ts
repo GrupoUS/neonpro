@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { z } from 'zod';
 
 // =====================================================================================
@@ -88,7 +88,7 @@ export function useOptimizedForm<T extends FormValues>(
     enableReinitialize = false,
     onSubmit,
     onValidationError,
-    debounceMs = 300
+    debounceMs = 300,
   } = options;
 
   // =====================================================================================
@@ -103,7 +103,7 @@ export function useOptimizedForm<T extends FormValues>(
     isValidating: false,
     isValid: true,
     isDirty: false,
-    submitCount: 0
+    submitCount: 0,
   }));
 
   const initialValuesRef = useRef(initialValues);
@@ -114,12 +114,12 @@ export function useOptimizedForm<T extends FormValues>(
   useEffect(() => {
     if (enableReinitialize && initialValues !== initialValuesRef.current) {
       initialValuesRef.current = initialValues;
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
         values: { ...initialValues },
         errors: {},
         touched: {},
-        isDirty: false
+        isDirty: false,
       }));
     }
   }, [initialValues, enableReinitialize]);
@@ -138,22 +138,25 @@ export function useOptimizedForm<T extends FormValues>(
   // VALIDATION FUNCTIONS
   // =====================================================================================
 
-  const validateField = useCallback(async (field: keyof T): Promise<string | undefined> => {
-    if (!validationSchema) return undefined;
+  const validateField = useCallback(
+    async (field: keyof T): Promise<string | undefined> => {
+      if (!validationSchema) return;
 
-    try {
-      const fieldSchema = validationSchema.shape?.[field as string];
-      if (!fieldSchema) return undefined;
+      try {
+        const fieldSchema = validationSchema.shape?.[field as string];
+        if (!fieldSchema) return;
 
-      await fieldSchema.parseAsync(state.values[field]);
-      return undefined;
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        return error.errors[0]?.message || 'Validation error';
+        await fieldSchema.parseAsync(state.values[field]);
+        return;
+      } catch (error) {
+        if (error instanceof z.ZodError) {
+          return error.errors[0]?.message || 'Validation error';
+        }
+        return 'Validation error';
       }
-      return 'Validation error';
-    }
-  }, [validationSchema, state.values]);
+    },
+    [validationSchema, state.values]
+  );
 
   const validateForm = useCallback(async (): Promise<FormErrors> => {
     if (!validationSchema) return {};
@@ -164,7 +167,7 @@ export function useOptimizedForm<T extends FormValues>(
     } catch (error) {
       if (error instanceof z.ZodError) {
         const errors: FormErrors = {};
-        error.errors.forEach(err => {
+        error.errors.forEach((err) => {
           const path = err.path.join('.');
           if (!errors[path]) {
             errors[path] = err.message;
@@ -176,251 +179,290 @@ export function useOptimizedForm<T extends FormValues>(
     }
   }, [validationSchema, state.values]);
 
-  const debouncedValidation = useCallback((field?: keyof T) => {
-    if (validationTimeoutRef.current) {
-      clearTimeout(validationTimeoutRef.current);
-    }
+  const debouncedValidation = useCallback(
+    (field?: keyof T) => {
+      if (validationTimeoutRef.current) {
+        clearTimeout(validationTimeoutRef.current);
+      }
 
-    validationTimeoutRef.current = setTimeout(async () => {
-      if (!mountedRef.current) return;
+      validationTimeoutRef.current = setTimeout(async () => {
+        if (!mountedRef.current) return;
 
-      setState(prev => ({ ...prev, isValidating: true }));
+        setState((prev) => ({ ...prev, isValidating: true }));
 
-      try {
-        if (field) {
-          const error = await validateField(field);
-          if (mountedRef.current) {
-            setState(prev => ({
-              ...prev,
-              errors: { ...prev.errors, [field]: error },
-              isValidating: false
-            }));
-          }
-        } else {
-          const errors = await validateForm();
-          if (mountedRef.current) {
-            setState(prev => ({
-              ...prev,
-              errors,
-              isValid: Object.keys(errors).length === 0,
-              isValidating: false
-            }));
-            
-            if (Object.keys(errors).length > 0) {
-              onValidationError?.(errors);
+        try {
+          if (field) {
+            const error = await validateField(field);
+            if (mountedRef.current) {
+              setState((prev) => ({
+                ...prev,
+                errors: { ...prev.errors, [field]: error },
+                isValidating: false,
+              }));
+            }
+          } else {
+            const errors = await validateForm();
+            if (mountedRef.current) {
+              setState((prev) => ({
+                ...prev,
+                errors,
+                isValid: Object.keys(errors).length === 0,
+                isValidating: false,
+              }));
+
+              if (Object.keys(errors).length > 0) {
+                onValidationError?.(errors);
+              }
             }
           }
+        } catch (_error) {
+          if (mountedRef.current) {
+            setState((prev) => ({ ...prev, isValidating: false }));
+          }
         }
-      } catch (error) {
-        if (mountedRef.current) {
-          setState(prev => ({ ...prev, isValidating: false }));
-        }
-      }
-    }, debounceMs);
-  }, [validateField, validateForm, debounceMs, onValidationError]);
+      }, debounceMs);
+    },
+    [validateField, validateForm, debounceMs, onValidationError]
+  );
 
   // =====================================================================================
   // FORM HELPERS
   // =====================================================================================
 
-  const setFieldValue = useCallback((field: keyof T, value: FieldValue) => {
-    setState(prev => {
-      const newValues = { ...prev.values, [field]: value };
-      const isDirty = JSON.stringify(newValues) !== JSON.stringify(initialValuesRef.current);
-      
-      return {
+  const setFieldValue = useCallback(
+    (field: keyof T, value: FieldValue) => {
+      setState((prev) => {
+        const newValues = { ...prev.values, [field]: value };
+        const isDirty =
+          JSON.stringify(newValues) !==
+          JSON.stringify(initialValuesRef.current);
+
+        return {
+          ...prev,
+          values: newValues,
+          isDirty,
+        };
+      });
+
+      // Trigger validation based on mode
+      if (validationMode === 'onChange' || validationMode === 'all') {
+        debouncedValidation(field);
+      }
+    },
+    [validationMode, debouncedValidation]
+  );
+
+  const setFieldError = useCallback(
+    (field: keyof T, error: string | undefined) => {
+      setState((prev) => ({
         ...prev,
-        values: newValues,
-        isDirty
-      };
-    });
+        errors: { ...prev.errors, [field]: error },
+      }));
+    },
+    []
+  );
 
-    // Trigger validation based on mode
-    if (validationMode === 'onChange' || validationMode === 'all') {
-      debouncedValidation(field);
-    }
-  }, [validationMode, debouncedValidation]);
-
-  const setFieldError = useCallback((field: keyof T, error: string | undefined) => {
-    setState(prev => ({
-      ...prev,
-      errors: { ...prev.errors, [field]: error }
-    }));
-  }, []);
-
-  const setFieldTouched = useCallback((field: keyof T, touched: boolean) => {
-    setState(prev => ({
-      ...prev,
-      touched: { ...prev.touched, [field]: touched }
-    }));
-
-    // Trigger validation on blur if field is touched
-    if (touched && (validationMode === 'onBlur' || validationMode === 'all')) {
-      debouncedValidation(field);
-    }
-  }, [validationMode, debouncedValidation]);
-
-  const setValues = useCallback((values: Partial<T>) => {
-    setState(prev => {
-      const newValues = { ...prev.values, ...values };
-      const isDirty = JSON.stringify(newValues) !== JSON.stringify(initialValuesRef.current);
-      
-      return {
+  const setFieldTouched = useCallback(
+    (field: keyof T, touched: boolean) => {
+      setState((prev) => ({
         ...prev,
-        values: newValues,
-        isDirty
-      };
-    });
+        touched: { ...prev.touched, [field]: touched },
+      }));
 
-    if (validationMode === 'onChange' || validationMode === 'all') {
-      debouncedValidation();
-    }
-  }, [validationMode, debouncedValidation]);
+      // Trigger validation on blur if field is touched
+      if (
+        touched &&
+        (validationMode === 'onBlur' || validationMode === 'all')
+      ) {
+        debouncedValidation(field);
+      }
+    },
+    [validationMode, debouncedValidation]
+  );
+
+  const setValues = useCallback(
+    (values: Partial<T>) => {
+      setState((prev) => {
+        const newValues = { ...prev.values, ...values };
+        const isDirty =
+          JSON.stringify(newValues) !==
+          JSON.stringify(initialValuesRef.current);
+
+        return {
+          ...prev,
+          values: newValues,
+          isDirty,
+        };
+      });
+
+      if (validationMode === 'onChange' || validationMode === 'all') {
+        debouncedValidation();
+      }
+    },
+    [validationMode, debouncedValidation]
+  );
 
   const setErrors = useCallback((errors: Partial<FormErrors>) => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
-      errors: { ...prev.errors, ...errors }
+      errors: { ...prev.errors, ...errors },
     }));
   }, []);
 
   const setTouched = useCallback((touched: Partial<FormTouched>) => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
-      touched: { ...prev.touched, ...touched }
+      touched: { ...prev.touched, ...touched },
     }));
   }, []);
 
-  const resetForm = useCallback((newValues?: Partial<T>) => {
-    const resetValues = newValues ? { ...initialValues, ...newValues } : initialValues;
-    
-    setState({
-      values: resetValues,
-      errors: {},
-      touched: {},
-      isSubmitting: false,
-      isValidating: false,
-      isValid: true,
-      isDirty: false,
-      submitCount: 0
-    });
+  const resetForm = useCallback(
+    (newValues?: Partial<T>) => {
+      const resetValues = newValues
+        ? { ...initialValues, ...newValues }
+        : initialValues;
 
-    if (newValues) {
-      initialValuesRef.current = resetValues;
-    }
-  }, [initialValues]);
+      setState({
+        values: resetValues,
+        errors: {},
+        touched: {},
+        isSubmitting: false,
+        isValidating: false,
+        isValid: true,
+        isDirty: false,
+        submitCount: 0,
+      });
+
+      if (newValues) {
+        initialValuesRef.current = resetValues;
+      }
+    },
+    [initialValues]
+  );
 
   const setSubmitting = useCallback((isSubmitting: boolean) => {
-    setState(prev => ({ ...prev, isSubmitting }));
+    setState((prev) => ({ ...prev, isSubmitting }));
   }, []);
 
   // =====================================================================================
   // FIELD HELPERS
   // =====================================================================================
 
-  const getFieldProps = useCallback((field: keyof T): FormField => {
-    return {
-      value: state.values[field],
-      error: state.errors[field],
-      touched: state.touched[field] || false,
-      dirty: state.values[field] !== initialValuesRef.current[field]
-    };
-  }, [state.values, state.errors, state.touched]);
+  const getFieldProps = useCallback(
+    (field: keyof T): FormField => {
+      return {
+        value: state.values[field],
+        error: state.errors[field],
+        touched: state.touched[field],
+        dirty: state.values[field] !== initialValuesRef.current[field],
+      };
+    },
+    [state.values, state.errors, state.touched]
+  );
 
-  const getFieldHelpers = useCallback((field: keyof T): FormFieldHelpers => {
-    return {
-      onChange: (value: FieldValue) => setFieldValue(field, value),
-      onBlur: () => setFieldTouched(field, true),
-      onFocus: () => {
-        // Clear field error on focus if needed
-        if (state.errors[field]) {
-          setFieldError(field, undefined);
-        }
-      }
-    };
-  }, [setFieldValue, setFieldTouched, setFieldError, state.errors]);
+  const getFieldHelpers = useCallback(
+    (field: keyof T): FormFieldHelpers => {
+      return {
+        onChange: (value: FieldValue) => setFieldValue(field, value),
+        onBlur: () => setFieldTouched(field, true),
+        onFocus: () => {
+          // Clear field error on focus if needed
+          if (state.errors[field]) {
+            setFieldError(field, undefined);
+          }
+        },
+      };
+    },
+    [setFieldValue, setFieldTouched, setFieldError, state.errors]
+  );
 
   // =====================================================================================
   // FORM SUBMISSION
   // =====================================================================================
 
-  const handleSubmit = useCallback(async (e?: React.FormEvent) => {
-    e?.preventDefault();
+  const handleSubmit = useCallback(
+    async (e?: React.FormEvent) => {
+      e?.preventDefault();
 
-    setState(prev => ({
-      ...prev,
-      isSubmitting: true,
-      submitCount: prev.submitCount + 1
-    }));
-
-    try {
-      // Validate form before submission
-      const errors = await validateForm();
-      
-      if (Object.keys(errors).length > 0) {
-        setState(prev => ({
-          ...prev,
-          errors,
-          isValid: false,
-          isSubmitting: false
-        }));
-        onValidationError?.(errors);
-        return;
-      }
-
-      // Mark all fields as touched
-      const allTouched = Object.keys(state.values).reduce((acc, key) => {
-        acc[key] = true;
-        return acc;
-      }, {} as FormTouched);
-
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
-        touched: allTouched,
-        errors: {},
-        isValid: true
+        isSubmitting: true,
+        submitCount: prev.submitCount + 1,
       }));
 
-      // Call onSubmit handler
-      if (onSubmit) {
-        await onSubmit(state.values as T, helpers);
+      try {
+        // Validate form before submission
+        const errors = await validateForm();
+
+        if (Object.keys(errors).length > 0) {
+          setState((prev) => ({
+            ...prev,
+            errors,
+            isValid: false,
+            isSubmitting: false,
+          }));
+          onValidationError?.(errors);
+          return;
+        }
+
+        // Mark all fields as touched
+        const allTouched = Object.keys(state.values).reduce((acc, key) => {
+          acc[key] = true;
+          return acc;
+        }, {} as FormTouched);
+
+        setState((prev) => ({
+          ...prev,
+          touched: allTouched,
+          errors: {},
+          isValid: true,
+        }));
+
+        // Call onSubmit handler
+        if (onSubmit) {
+          await onSubmit(state.values as T, helpers);
+        }
+      } catch (error) {
+        console.error('Form submission error:', error);
+      } finally {
+        if (mountedRef.current) {
+          setState((prev) => ({ ...prev, isSubmitting: false }));
+        }
       }
-    } catch (error) {
-      console.error('Form submission error:', error);
-    } finally {
-      if (mountedRef.current) {
-        setState(prev => ({ ...prev, isSubmitting: false }));
-      }
-    }
-  }, [state.values, validateForm, onValidationError, onSubmit]);
+    },
+    [state.values, validateForm, onValidationError, onSubmit]
+  );
 
   // =====================================================================================
   // HELPERS OBJECT
   // =====================================================================================
 
-  const helpers: FormHelpers<T> = useMemo(() => ({
-    setFieldValue,
-    setFieldError,
-    setFieldTouched,
-    setValues,
-    setErrors,
-    setTouched,
-    resetForm,
-    validateField,
-    validateForm,
-    setSubmitting
-  }), [
-    setFieldValue,
-    setFieldError,
-    setFieldTouched,
-    setValues,
-    setErrors,
-    setTouched,
-    resetForm,
-    validateField,
-    validateForm,
-    setSubmitting
-  ]);
+  const helpers: FormHelpers<T> = useMemo(
+    () => ({
+      setFieldValue,
+      setFieldError,
+      setFieldTouched,
+      setValues,
+      setErrors,
+      setTouched,
+      resetForm,
+      validateField,
+      validateForm,
+      setSubmitting,
+    }),
+    [
+      setFieldValue,
+      setFieldError,
+      setFieldTouched,
+      setValues,
+      setErrors,
+      setTouched,
+      resetForm,
+      validateField,
+      validateForm,
+      setSubmitting,
+    ]
+  );
 
   // =====================================================================================
   // INITIAL VALIDATION
@@ -448,7 +490,7 @@ export function useOptimizedForm<T extends FormValues>(
     getFieldProps,
     getFieldHelpers,
     handleSubmit,
-    helpers
+    helpers,
   };
 }
 
@@ -464,14 +506,14 @@ export function usePatientForm(initialValues: any) {
     phone: z.string().min(10, 'Telefone deve ter pelo menos 10 dígitos'),
     birthDate: z.date().optional(),
     cpf: z.string().min(11, 'CPF inválido').optional().or(z.literal('')),
-    address: z.string().optional()
+    address: z.string().optional(),
   });
 
   return useOptimizedForm({
     initialValues,
     validationSchema: patientSchema,
     validationMode: 'onBlur',
-    debounceMs: 300
+    debounceMs: 300,
   });
 }
 
@@ -483,14 +525,14 @@ export function useAppointmentForm(initialValues: any) {
     serviceId: z.string().min(1, 'Serviço é obrigatório'),
     date: z.date({ required_error: 'Data é obrigatória' }),
     time: z.string().min(1, 'Horário é obrigatório'),
-    notes: z.string().optional()
+    notes: z.string().optional(),
   });
 
   return useOptimizedForm({
     initialValues,
     validationSchema: appointmentSchema,
     validationMode: 'onBlur',
-    debounceMs: 500
+    debounceMs: 500,
   });
 }
 

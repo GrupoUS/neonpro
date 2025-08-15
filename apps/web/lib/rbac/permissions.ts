@@ -4,7 +4,7 @@ export enum Permission {
   WRITE_PATIENTS = 'write:patients',
   READ_REPORTS = 'read:reports',
   WRITE_REPORTS = 'write:reports',
-  ADMIN_ACCESS = 'admin:access'
+  ADMIN_ACCESS = 'admin:access',
 }
 
 export interface Role {
@@ -14,12 +14,15 @@ export interface Role {
 }
 
 export class PermissionsService {
-  static checkPermission(userRoles: string[], requiredPermission: Permission): boolean {
+  static checkPermission(
+    _userRoles: string[],
+    _requiredPermission: Permission
+  ): boolean {
     // Mock implementation for build
     return true;
   }
 
-  static getUserPermissions(userId: string): Permission[] {
+  static getUserPermissions(_userId: string): Permission[] {
     // Mock implementation for build
     return Object.values(Permission);
   }

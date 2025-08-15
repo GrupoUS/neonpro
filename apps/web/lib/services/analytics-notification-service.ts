@@ -1,14 +1,14 @@
-import { createClient } from '@supabase/supabase-js'
-import { broadcastToChannel, broadcastToUser } from '@/app/api/websocket/route'
+import { createClient } from '@supabase/supabase-js';
+import { broadcastToChannel, broadcastToUser } from '@/app/api/websocket/route';
 
 // Initialize Supabase client
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+);
 
 // Analytics & Trial notification types
-export type AnalyticsNotificationType = 
+export type AnalyticsNotificationType =
   | 'trial_started'
   | 'trial_ending'
   | 'trial_expired'
@@ -24,105 +24,117 @@ export type AnalyticsNotificationType =
   | 'revenue_milestone'
   | 'user_milestone'
   | 'conversion_alert'
-  | 'churn_alert'
+  | 'churn_alert';
 
 export interface AnalyticsNotificationData {
-  id?: string
-  type: AnalyticsNotificationType
-  title: string
-  message: string
-  userId: string
-  data?: Record<string, any>
-  priority: 'low' | 'medium' | 'high' | 'urgent'
-  channels: ('database' | 'websocket' | 'email' | 'push')[] 
-  scheduledFor?: Date
-  expiresAt?: Date
-  metadata?: Record<string, any>
-  clinicId?: string
+  id?: string;
+  type: AnalyticsNotificationType;
+  title: string;
+  message: string;
+  userId: string;
+  data?: Record<string, any>;
+  priority: 'low' | 'medium' | 'high' | 'urgent';
+  channels: ('database' | 'websocket' | 'email' | 'push')[];
+  scheduledFor?: Date;
+  expiresAt?: Date;
+  metadata?: Record<string, any>;
+  clinicId?: string;
 }
 
 export interface AnalyticsNotificationTemplate {
-  type: AnalyticsNotificationType
-  title: string
-  message: string
-  priority: 'low' | 'medium' | 'high' | 'urgent'
-  channels: ('database' | 'websocket' | 'email' | 'push')[]
-  variables?: string[]
+  type: AnalyticsNotificationType;
+  title: string;
+  message: string;
+  priority: 'low' | 'medium' | 'high' | 'urgent';
+  channels: ('database' | 'websocket' | 'email' | 'push')[];
+  variables?: string[];
 }
 
 // Analytics notification templates
-const ANALYTICS_NOTIFICATION_TEMPLATES: Record<AnalyticsNotificationType, AnalyticsNotificationTemplate> = {
+const ANALYTICS_NOTIFICATION_TEMPLATES: Record<
+  AnalyticsNotificationType,
+  AnalyticsNotificationTemplate
+> = {
   trial_started: {
     type: 'trial_started',
     title: 'Trial Iniciado com Sucesso',
-    message: 'Seu trial {{trialType}} foi iniciado e expira em {{endDate}}. Aproveite todos os recursos premium!',
+    message:
+      'Seu trial {{trialType}} foi iniciado e expira em {{endDate}}. Aproveite todos os recursos premium!',
     priority: 'medium',
     channels: ['database', 'websocket', 'email'],
-    variables: ['trialType', 'endDate']
+    variables: ['trialType', 'endDate'],
   },
   trial_ending: {
     type: 'trial_ending',
     title: 'Trial Terminando em Breve',
-    message: 'Seu trial {{trialType}} expira em {{daysLeft}} dias. Faça upgrade agora para continuar aproveitando os recursos premium.',
+    message:
+      'Seu trial {{trialType}} expira em {{daysLeft}} dias. Faça upgrade agora para continuar aproveitando os recursos premium.',
     priority: 'high',
     channels: ['database', 'websocket', 'email', 'push'],
-    variables: ['trialType', 'daysLeft']
+    variables: ['trialType', 'daysLeft'],
   },
   trial_expired: {
     type: 'trial_expired',
     title: 'Trial Expirado',
-    message: 'Seu trial {{trialType}} expirou. Faça upgrade para um plano pago para restaurar o acesso aos recursos premium.',
+    message:
+      'Seu trial {{trialType}} expirou. Faça upgrade para um plano pago para restaurar o acesso aos recursos premium.',
     priority: 'urgent',
     channels: ['database', 'websocket', 'email'],
-    variables: ['trialType']
+    variables: ['trialType'],
   },
   trial_converted: {
     type: 'trial_converted',
     title: 'Bem-vindo ao Premium!',
-    message: 'Parabéns! Seu trial foi convertido com sucesso para uma assinatura {{subscriptionTier}}.',
+    message:
+      'Parabéns! Seu trial foi convertido com sucesso para uma assinatura {{subscriptionTier}}.',
     priority: 'medium',
     channels: ['database', 'websocket', 'email'],
-    variables: ['subscriptionTier']
+    variables: ['subscriptionTier'],
   },
   subscription_created: {
     type: 'subscription_created',
     title: 'Assinatura Ativada',
-    message: 'Sua assinatura {{subscriptionTier}} foi ativada. Bem-vindo aos recursos premium!',
+    message:
+      'Sua assinatura {{subscriptionTier}} foi ativada. Bem-vindo aos recursos premium!',
     priority: 'medium',
     channels: ['database', 'websocket', 'email'],
-    variables: ['subscriptionTier']
+    variables: ['subscriptionTier'],
   },
   subscription_updated: {
     type: 'subscription_updated',
     title: 'Assinatura Atualizada',
-    message: 'Sua assinatura foi atualizada para {{newTier}}. As mudanças entram em vigor imediatamente.',
+    message:
+      'Sua assinatura foi atualizada para {{newTier}}. As mudanças entram em vigor imediatamente.',
     priority: 'medium',
     channels: ['database', 'websocket', 'email'],
-    variables: ['newTier']
+    variables: ['newTier'],
   },
   subscription_cancelled: {
     type: 'subscription_cancelled',
     title: 'Assinatura Cancelada',
-    message: 'Sua assinatura foi cancelada. Você manterá o acesso até {{endDate}}.',
+    message:
+      'Sua assinatura foi cancelada. Você manterá o acesso até {{endDate}}.',
     priority: 'high',
     channels: ['database', 'websocket', 'email'],
-    variables: ['endDate']
+    variables: ['endDate'],
   },
   payment_successful: {
     type: 'payment_successful',
     title: 'Pagamento Realizado com Sucesso',
-    message: 'Seu pagamento de {{amount}} foi processado com sucesso. Obrigado!',
+    message:
+      'Seu pagamento de {{amount}} foi processado com sucesso. Obrigado!',
     priority: 'low',
     channels: ['database', 'websocket'],
-    variables: ['amount']
+    variables: ['amount'],
   },
   payment_failed: {
     type: 'payment_failed',
     title: 'Falha no Pagamento',
-    message: 'Seu pagamento de {{amount}} não pôde ser processado. Por favor, atualize seu método de pagamento.',
+    message:
+      'Seu pagamento de {{amount}} não pôde ser processado. Por favor, atualize seu método de pagamento.',
     priority: 'urgent',
     channels: ['database', 'websocket', 'email'],
-    variables: ['amount']
+    variables: ['amount'],
   },
   analytics_milestone: {
     type: 'analytics_milestone',
@@ -130,7 +142,7 @@ const ANALYTICS_NOTIFICATION_TEMPLATES: Record<AnalyticsNotificationType, Analyt
     message: 'Parabéns! Você alcançou {{milestone}}. {{details}}',
     priority: 'medium',
     channels: ['database', 'websocket'],
-    variables: ['milestone', 'details']
+    variables: ['milestone', 'details'],
   },
   system_alert: {
     type: 'system_alert',
@@ -138,7 +150,7 @@ const ANALYTICS_NOTIFICATION_TEMPLATES: Record<AnalyticsNotificationType, Analyt
     message: '{{alertMessage}}',
     priority: 'high',
     channels: ['database', 'websocket', 'email'],
-    variables: ['alertMessage']
+    variables: ['alertMessage'],
   },
   campaign_update: {
     type: 'campaign_update',
@@ -146,7 +158,7 @@ const ANALYTICS_NOTIFICATION_TEMPLATES: Record<AnalyticsNotificationType, Analyt
     message: 'Campanha "{{campaignName}}" foi {{action}}. {{details}}',
     priority: 'medium',
     channels: ['database', 'websocket'],
-    variables: ['campaignName', 'action', 'details']
+    variables: ['campaignName', 'action', 'details'],
   },
   revenue_milestone: {
     type: 'revenue_milestone',
@@ -154,15 +166,16 @@ const ANALYTICS_NOTIFICATION_TEMPLATES: Record<AnalyticsNotificationType, Analyt
     message: 'Parabéns! Sua receita atingiu {{amount}} este mês. {{details}}',
     priority: 'medium',
     channels: ['database', 'websocket', 'email'],
-    variables: ['amount', 'details']
+    variables: ['amount', 'details'],
   },
   user_milestone: {
     type: 'user_milestone',
     title: 'Marco de Usuários Alcançado!',
-    message: 'Incrível! Você agora tem {{userCount}} usuários ativos. {{details}}',
+    message:
+      'Incrível! Você agora tem {{userCount}} usuários ativos. {{details}}',
     priority: 'medium',
     channels: ['database', 'websocket'],
-    variables: ['userCount', 'details']
+    variables: ['userCount', 'details'],
   },
   conversion_alert: {
     type: 'conversion_alert',
@@ -170,7 +183,7 @@ const ANALYTICS_NOTIFICATION_TEMPLATES: Record<AnalyticsNotificationType, Analyt
     message: 'Taxa de conversão {{trend}} para {{rate}}%. {{recommendation}}',
     priority: 'high',
     channels: ['database', 'websocket', 'email'],
-    variables: ['trend', 'rate', 'recommendation']
+    variables: ['trend', 'rate', 'recommendation'],
   },
   churn_alert: {
     type: 'churn_alert',
@@ -178,9 +191,9 @@ const ANALYTICS_NOTIFICATION_TEMPLATES: Record<AnalyticsNotificationType, Analyt
     message: 'Taxa de churn {{trend}} para {{rate}}%. {{actionRequired}}',
     priority: 'urgent',
     channels: ['database', 'websocket', 'email'],
-    variables: ['trend', 'rate', 'actionRequired']
-  }
-}
+    variables: ['trend', 'rate', 'actionRequired'],
+  },
+};
 
 export class AnalyticsNotificationService {
   /**
@@ -193,15 +206,21 @@ export class AnalyticsNotificationService {
     overrides: Partial<AnalyticsNotificationData> = {}
   ): Promise<string | null> {
     try {
-      const template = ANALYTICS_NOTIFICATION_TEMPLATES[type]
+      const template = ANALYTICS_NOTIFICATION_TEMPLATES[type];
       if (!template) {
-        throw new Error(`Unknown notification type: ${type}`)
+        throw new Error(`Unknown notification type: ${type}`);
       }
-      
+
       // Replace variables in title and message
-      const title = this.replaceVariables(template.title, variables)
-      const message = this.replaceVariables(template.message, variables)
-      
+      const title = AnalyticsNotificationService.replaceVariables(
+        template.title,
+        variables
+      );
+      const message = AnalyticsNotificationService.replaceVariables(
+        template.message,
+        variables
+      );
+
       const notificationData: AnalyticsNotificationData = {
         type,
         title,
@@ -213,61 +232,70 @@ export class AnalyticsNotificationService {
         scheduledFor: overrides.scheduledFor,
         expiresAt: overrides.expiresAt,
         metadata: overrides.metadata,
-        clinicId: overrides.clinicId
-      }
-      
-      return await this.processNotification(notificationData)
+        clinicId: overrides.clinicId,
+      };
+
+      return await AnalyticsNotificationService.processNotification(
+        notificationData
+      );
     } catch (error) {
-      console.error('Error sending analytics notification:', error)
-      return null
+      console.error('Error sending analytics notification:', error);
+      return null;
     }
   }
-  
+
   /**
    * Send a custom analytics notification
    */
-  static async sendCustomNotification(data: AnalyticsNotificationData): Promise<string | null> {
+  static async sendCustomNotification(
+    data: AnalyticsNotificationData
+  ): Promise<string | null> {
     try {
-      return await this.processNotification(data)
+      return await AnalyticsNotificationService.processNotification(data);
     } catch (error) {
-      console.error('Error sending custom analytics notification:', error)
-      return null
+      console.error('Error sending custom analytics notification:', error);
+      return null;
     }
   }
-  
+
   /**
    * Process notification through different channels
    */
-  private static async processNotification(data: AnalyticsNotificationData): Promise<string | null> {
-    const notificationId = await this.saveToDatabase(data)
-    
+  private static async processNotification(
+    data: AnalyticsNotificationData
+  ): Promise<string | null> {
+    const notificationId =
+      await AnalyticsNotificationService.saveToDatabase(data);
+
     if (!notificationId) {
-      return null
+      return null;
     }
-    
+
     // Process each channel
-    const promises = data.channels.map(channel => {
+    const promises = data.channels.map((channel) => {
       switch (channel) {
         case 'websocket':
-          return this.sendWebSocketNotification(data)
+          return AnalyticsNotificationService.sendWebSocketNotification(data);
         case 'email':
-          return this.sendEmailNotification(data)
+          return AnalyticsNotificationService.sendEmailNotification(data);
         case 'push':
-          return this.sendPushNotification(data)
+          return AnalyticsNotificationService.sendPushNotification(data);
         default:
-          return Promise.resolve()
+          return Promise.resolve();
       }
-    })
-    
-    await Promise.allSettled(promises)
-    
-    return notificationId
+    });
+
+    await Promise.allSettled(promises);
+
+    return notificationId;
   }
-  
+
   /**
    * Save notification to database
    */
-  private static async saveToDatabase(data: AnalyticsNotificationData): Promise<string | null> {
+  private static async saveToDatabase(
+    data: AnalyticsNotificationData
+  ): Promise<string | null> {
     try {
       const { data: notification, error } = await supabase
         .from('analytics_notifications')
@@ -284,27 +312,29 @@ export class AnalyticsNotificationService {
           expires_at: data.expiresAt?.toISOString(),
           metadata: data.metadata || {},
           status: 'sent',
-          created_at: new Date().toISOString()
+          created_at: new Date().toISOString(),
         })
         .select('id')
-        .single()
-      
+        .single();
+
       if (error) {
-        console.error('Database save error:', error)
-        return null
+        console.error('Database save error:', error);
+        return null;
       }
-      
-      return notification.id
+
+      return notification.id;
     } catch (error) {
-      console.error('Error saving analytics notification to database:', error)
-      return null
+      console.error('Error saving analytics notification to database:', error);
+      return null;
     }
   }
-  
+
   /**
    * Send WebSocket notification
    */
-  private static async sendWebSocketNotification(data: AnalyticsNotificationData): Promise<void> {
+  private static async sendWebSocketNotification(
+    data: AnalyticsNotificationData
+  ): Promise<void> {
     try {
       const wsMessage = {
         type: 'analytics_notification',
@@ -315,89 +345,96 @@ export class AnalyticsNotificationService {
           message: data.message,
           priority: data.priority,
           data: data.data,
-          timestamp: new Date().toISOString()
-        }
-      }
-      
+          timestamp: new Date().toISOString(),
+        },
+      };
+
       // Send to specific user
-      broadcastToUser(data.userId, wsMessage)
-      
+      broadcastToUser(data.userId, wsMessage);
+
       // Also broadcast to analytics channel for admin monitoring
       if (data.priority === 'urgent' || data.priority === 'high') {
         broadcastToChannel('analytics', {
           type: 'user_analytics_notification',
           userId: data.userId,
           clinicId: data.clinicId,
-          notification: wsMessage.notification
-        })
+          notification: wsMessage.notification,
+        });
       }
     } catch (error) {
-      console.error('WebSocket analytics notification error:', error)
+      console.error('WebSocket analytics notification error:', error);
     }
   }
-  
+
   /**
    * Send email notification
    */
-  private static async sendEmailNotification(data: AnalyticsNotificationData): Promise<void> {
+  private static async sendEmailNotification(
+    data: AnalyticsNotificationData
+  ): Promise<void> {
     try {
       // Get user email and preferences
       const { data: user, error } = await supabase
         .from('users')
         .select('email, email_preferences, analytics_email_preferences')
         .eq('id', data.userId)
-        .single()
-      
+        .single();
+
       if (error || !user) {
-        console.error('User not found for analytics email notification:', error)
-        return
+        console.error(
+          'User not found for analytics email notification:',
+          error
+        );
+        return;
       }
-      
+
       // Check analytics email preferences
-      const analyticsEmailPrefs = user.analytics_email_preferences || {}
+      const analyticsEmailPrefs = user.analytics_email_preferences || {};
       if (analyticsEmailPrefs[data.type] === false) {
-        console.log(`Analytics email notifications disabled for ${data.type} by user ${data.userId}`)
-        return
+        console.log(
+          `Analytics email notifications disabled for ${data.type} by user ${data.userId}`
+        );
+        return;
       }
-      
+
       // Queue email for sending
-      await supabase
-        .from('email_queue')
-        .insert({
-          to_email: user.email,
-          subject: data.title,
-          body: data.message,
-          template_type: `analytics_${data.type}`,
-          template_data: data.data || {},
-          priority: data.priority,
-          category: 'analytics',
-          scheduled_for: data.scheduledFor?.toISOString() || new Date().toISOString()
-        })
-      
+      await supabase.from('email_queue').insert({
+        to_email: user.email,
+        subject: data.title,
+        body: data.message,
+        template_type: `analytics_${data.type}`,
+        template_data: data.data || {},
+        priority: data.priority,
+        category: 'analytics',
+        scheduled_for:
+          data.scheduledFor?.toISOString() || new Date().toISOString(),
+      });
     } catch (error) {
-      console.error('Analytics email notification error:', error)
+      console.error('Analytics email notification error:', error);
     }
   }
-  
+
   /**
    * Send push notification
    */
-  private static async sendPushNotification(data: AnalyticsNotificationData): Promise<void> {
+  private static async sendPushNotification(
+    data: AnalyticsNotificationData
+  ): Promise<void> {
     try {
       // Get user's push tokens
       const { data: tokens, error } = await supabase
         .from('push_tokens')
         .select('token, platform')
         .eq('user_id', data.userId)
-        .eq('active', true)
-      
+        .eq('active', true);
+
       if (error || !tokens || tokens.length === 0) {
-        console.log(`No push tokens found for user ${data.userId}`)
-        return
+        console.log(`No push tokens found for user ${data.userId}`);
+        return;
       }
-      
+
       // Queue push notifications
-      const pushJobs = tokens.map(tokenData => ({
+      const pushJobs = tokens.map((tokenData) => ({
         token: tokenData.token,
         platform: tokenData.platform,
         title: data.title,
@@ -405,59 +442,63 @@ export class AnalyticsNotificationService {
         data: data.data || {},
         priority: data.priority,
         category: 'analytics',
-        scheduled_for: data.scheduledFor?.toISOString() || new Date().toISOString()
-      }))
-      
-      await supabase
-        .from('push_queue')
-        .insert(pushJobs)
-      
+        scheduled_for:
+          data.scheduledFor?.toISOString() || new Date().toISOString(),
+      }));
+
+      await supabase.from('push_queue').insert(pushJobs);
     } catch (error) {
-      console.error('Analytics push notification error:', error)
+      console.error('Analytics push notification error:', error);
     }
   }
-  
+
   /**
    * Replace variables in template strings
    */
-  private static replaceVariables(template: string, variables: Record<string, any>): string {
+  private static replaceVariables(
+    template: string,
+    variables: Record<string, any>
+  ): string {
     return template.replace(/\{\{(\w+)\}\}/g, (match, key) => {
-      return variables[key]?.toString() || match
-    })
+      return variables[key]?.toString() || match;
+    });
   }
-  
+
   /**
    * Mark analytics notification as read
    */
-  static async markAsRead(notificationId: string, userId: string): Promise<boolean> {
+  static async markAsRead(
+    notificationId: string,
+    userId: string
+  ): Promise<boolean> {
     try {
       const { error } = await supabase
         .from('analytics_notifications')
-        .update({ 
+        .update({
           read_at: new Date().toISOString(),
-          status: 'read'
+          status: 'read',
         })
         .eq('id', notificationId)
-        .eq('user_id', userId)
-      
-      return !error
+        .eq('user_id', userId);
+
+      return !error;
     } catch (error) {
-      console.error('Error marking analytics notification as read:', error)
-      return false
+      console.error('Error marking analytics notification as read:', error);
+      return false;
     }
   }
-  
+
   /**
    * Get user analytics notifications
    */
   static async getUserNotifications(
     userId: string,
     options: {
-      limit?: number
-      offset?: number
-      unreadOnly?: boolean
-      types?: AnalyticsNotificationType[]
-      clinicId?: string
+      limit?: number;
+      offset?: number;
+      unreadOnly?: boolean;
+      types?: AnalyticsNotificationType[];
+      clinicId?: string;
     } = {}
   ) {
     try {
@@ -465,210 +506,224 @@ export class AnalyticsNotificationService {
         .from('analytics_notifications')
         .select('*')
         .eq('user_id', userId)
-        .order('created_at', { ascending: false })
-      
+        .order('created_at', { ascending: false });
+
       if (options.clinicId) {
-        query = query.eq('clinic_id', options.clinicId)
+        query = query.eq('clinic_id', options.clinicId);
       }
-      
+
       if (options.unreadOnly) {
-        query = query.is('read_at', null)
+        query = query.is('read_at', null);
       }
-      
+
       if (options.types && options.types.length > 0) {
-        query = query.in('type', options.types)
+        query = query.in('type', options.types);
       }
-      
+
       if (options.limit) {
-        query = query.limit(options.limit)
+        query = query.limit(options.limit);
       }
-      
+
       if (options.offset) {
-        query = query.range(options.offset, options.offset + (options.limit || 10) - 1)
+        query = query.range(
+          options.offset,
+          options.offset + (options.limit || 10) - 1
+        );
       }
-      
-      const { data, error } = await query
-      
+
+      const { data, error } = await query;
+
       if (error) {
-        console.error('Error fetching analytics notifications:', error)
-        return null
+        console.error('Error fetching analytics notifications:', error);
+        return null;
       }
-      
-      return data
+
+      return data;
     } catch (error) {
-      console.error('Error in getUserNotifications:', error)
-      return null
+      console.error('Error in getUserNotifications:', error);
+      return null;
     }
   }
-  
+
   /**
    * Get unread analytics notification count
    */
-  static async getUnreadCount(userId: string, clinicId?: string): Promise<number> {
+  static async getUnreadCount(
+    userId: string,
+    clinicId?: string
+  ): Promise<number> {
     try {
       let query = supabase
         .from('analytics_notifications')
         .select('*', { count: 'exact', head: true })
         .eq('user_id', userId)
-        .is('read_at', null)
-      
+        .is('read_at', null);
+
       if (clinicId) {
-        query = query.eq('clinic_id', clinicId)
+        query = query.eq('clinic_id', clinicId);
       }
-      
-      const { count, error } = await query
-      
+
+      const { count, error } = await query;
+
       if (error) {
-        console.error('Error getting unread analytics count:', error)
-        return 0
+        console.error('Error getting unread analytics count:', error);
+        return 0;
       }
-      
-      return count || 0
+
+      return count || 0;
     } catch (error) {
-      console.error('Error in getUnreadCount:', error)
-      return 0
+      console.error('Error in getUnreadCount:', error);
+      return 0;
     }
   }
-  
+
   /**
    * Send trial milestone notifications
    */
   static async sendTrialMilestoneNotification(
     userId: string,
     trialData: {
-      type: string
-      daysLeft: number
-      endDate: string
-      conversionRate?: number
+      type: string;
+      daysLeft: number;
+      endDate: string;
+      conversionRate?: number;
     },
     clinicId?: string
   ): Promise<void> {
     try {
-      let notificationType: AnalyticsNotificationType
-      
+      let notificationType: AnalyticsNotificationType;
+
       if (trialData.daysLeft <= 0) {
-        notificationType = 'trial_expired'
+        notificationType = 'trial_expired';
       } else if (trialData.daysLeft <= 3) {
-        notificationType = 'trial_ending'
+        notificationType = 'trial_ending';
       } else {
-        return // No notification needed
+        return; // No notification needed
       }
-      
-      await this.sendNotification(
+
+      await AnalyticsNotificationService.sendNotification(
         notificationType,
         userId,
         {
           trialType: trialData.type,
           daysLeft: trialData.daysLeft.toString(),
-          endDate: trialData.endDate
+          endDate: trialData.endDate,
         },
         { clinicId }
-      )
+      );
     } catch (error) {
-      console.error('Error sending trial milestone notification:', error)
+      console.error('Error sending trial milestone notification:', error);
     }
   }
-  
+
   /**
    * Send analytics milestone notifications
    */
   static async sendAnalyticsMilestone(
     userId: string,
     milestone: {
-      type: 'revenue' | 'users' | 'conversion' | 'churn'
-      value: number
-      previousValue?: number
-      target?: number
+      type: 'revenue' | 'users' | 'conversion' | 'churn';
+      value: number;
+      previousValue?: number;
+      target?: number;
     },
     clinicId?: string
   ): Promise<void> {
     try {
-      let notificationType: AnalyticsNotificationType
-      let variables: Record<string, any> = {}
-      
+      let notificationType: AnalyticsNotificationType;
+      let variables: Record<string, any> = {};
+
       switch (milestone.type) {
         case 'revenue':
-          notificationType = 'revenue_milestone'
+          notificationType = 'revenue_milestone';
           variables = {
             amount: `R$ ${milestone.value.toLocaleString('pt-BR')}`,
-            details: milestone.target 
+            details: milestone.target
               ? `Meta: R$ ${milestone.target.toLocaleString('pt-BR')}`
-              : 'Continue assim!'
-          }
-          break
-          
+              : 'Continue assim!',
+          };
+          break;
+
         case 'users':
-          notificationType = 'user_milestone'
+          notificationType = 'user_milestone';
           variables = {
             userCount: milestone.value.toString(),
-            details: 'Seu negócio está crescendo!'
-          }
-          break
-          
-        case 'conversion':
-          notificationType = 'conversion_alert'
-          const trend = milestone.previousValue 
-            ? (milestone.value > milestone.previousValue ? 'aumentou' : 'diminuiu')
-            : 'está em'
+            details: 'Seu negócio está crescendo!',
+          };
+          break;
+
+        case 'conversion': {
+          notificationType = 'conversion_alert';
+          const trend = milestone.previousValue
+            ? milestone.value > milestone.previousValue
+              ? 'aumentou'
+              : 'diminuiu'
+            : 'está em';
           variables = {
             trend,
             rate: milestone.value.toFixed(1),
-            recommendation: milestone.value < 5 
-              ? 'Considere otimizar suas campanhas de conversão.'
-              : 'Excelente performance!'
-          }
-          break
-          
-        case 'churn':
-          notificationType = 'churn_alert'
-          const churnTrend = milestone.previousValue 
-            ? (milestone.value > milestone.previousValue ? 'aumentou' : 'diminuiu')
-            : 'está em'
+            recommendation:
+              milestone.value < 5
+                ? 'Considere otimizar suas campanhas de conversão.'
+                : 'Excelente performance!',
+          };
+          break;
+        }
+
+        case 'churn': {
+          notificationType = 'churn_alert';
+          const churnTrend = milestone.previousValue
+            ? milestone.value > milestone.previousValue
+              ? 'aumentou'
+              : 'diminuiu'
+            : 'está em';
           variables = {
             trend: churnTrend,
             rate: milestone.value.toFixed(1),
-            actionRequired: milestone.value > 10 
-              ? 'Ação imediata necessária para reduzir o churn.'
-              : 'Continue monitorando.'
-          }
-          break
-          
+            actionRequired:
+              milestone.value > 10
+                ? 'Ação imediata necessária para reduzir o churn.'
+                : 'Continue monitorando.',
+          };
+          break;
+        }
+
         default:
-          return
+          return;
       }
-      
-      await this.sendNotification(
+
+      await AnalyticsNotificationService.sendNotification(
         notificationType,
         userId,
         variables,
         { clinicId }
-      )
+      );
     } catch (error) {
-      console.error('Error sending analytics milestone notification:', error)
+      console.error('Error sending analytics milestone notification:', error);
     }
   }
-  
+
   /**
    * Clean up old analytics notifications
    */
-  static async cleanupOldNotifications(daysOld: number = 30): Promise<void> {
+  static async cleanupOldNotifications(daysOld = 30): Promise<void> {
     try {
-      const cutoffDate = new Date()
-      cutoffDate.setDate(cutoffDate.getDate() - daysOld)
-      
+      const cutoffDate = new Date();
+      cutoffDate.setDate(cutoffDate.getDate() - daysOld);
+
       const { error } = await supabase
         .from('analytics_notifications')
         .delete()
-        .lt('created_at', cutoffDate.toISOString())
-      
+        .lt('created_at', cutoffDate.toISOString());
+
       if (error) {
-        console.error('Error cleaning up old analytics notifications:', error)
+        console.error('Error cleaning up old analytics notifications:', error);
       }
     } catch (error) {
-      console.error('Error in cleanupOldNotifications:', error)
+      console.error('Error in cleanupOldNotifications:', error);
     }
   }
 }
 
 // Export singleton instance
-export const analyticsNotificationService = new AnalyticsNotificationService()
+export const analyticsNotificationService = new AnalyticsNotificationService();

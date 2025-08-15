@@ -3,73 +3,73 @@
 // Story 1.4: Session Management & Security
 // =====================================================
 
-import { SupabaseClient } from '@supabase/supabase-js'
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 // Types
 export interface CleanupConfig {
   // Session cleanup settings
-  expiredSessionRetentionDays: number
-  inactiveSessionRetentionDays: number
-  
+  expiredSessionRetentionDays: number;
+  inactiveSessionRetentionDays: number;
+
   // Activity log cleanup settings
-  activityLogRetentionDays: number
-  
+  activityLogRetentionDays: number;
+
   // Security event cleanup settings
-  securityEventRetentionDays: number
-  resolvedEventRetentionDays: number
-  
+  securityEventRetentionDays: number;
+  resolvedEventRetentionDays: number;
+
   // Audit log cleanup settings
-  auditLogRetentionDays: number
-  
+  auditLogRetentionDays: number;
+
   // Notification cleanup settings
-  notificationRetentionDays: number
-  readNotificationRetentionDays: number
-  
+  notificationRetentionDays: number;
+  readNotificationRetentionDays: number;
+
   // Device cleanup settings
-  inactiveDeviceRetentionDays: number
-  
+  inactiveDeviceRetentionDays: number;
+
   // Batch processing settings
-  batchSize: number
-  maxExecutionTimeMs: number
+  batchSize: number;
+  maxExecutionTimeMs: number;
 }
 
 export interface CleanupResult {
-  operation: string
-  recordsProcessed: number
-  recordsDeleted: number
-  executionTimeMs: number
-  success: boolean
-  error?: string
+  operation: string;
+  recordsProcessed: number;
+  recordsDeleted: number;
+  executionTimeMs: number;
+  success: boolean;
+  error?: string;
 }
 
 export interface CleanupSummary {
-  totalOperations: number
-  totalRecordsProcessed: number
-  totalRecordsDeleted: number
-  totalExecutionTimeMs: number
-  successfulOperations: number
-  failedOperations: number
-  results: CleanupResult[]
-  startTime: Date
-  endTime: Date
+  totalOperations: number;
+  totalRecordsProcessed: number;
+  totalRecordsDeleted: number;
+  totalExecutionTimeMs: number;
+  successfulOperations: number;
+  failedOperations: number;
+  results: CleanupResult[];
+  startTime: Date;
+  endTime: Date;
 }
 
 export interface CleanupStats {
-  lastCleanupRun: Date | null
-  nextScheduledRun: Date | null
-  totalCleanupRuns: number
-  averageExecutionTimeMs: number
-  totalRecordsDeleted: number
-  cleanupHistory: CleanupSummary[]
+  lastCleanupRun: Date | null;
+  nextScheduledRun: Date | null;
+  totalCleanupRuns: number;
+  averageExecutionTimeMs: number;
+  totalRecordsDeleted: number;
+  cleanupHistory: CleanupSummary[];
 }
 
 // Data Cleanup Service
 export class DataCleanupService {
-  private supabase: SupabaseClient
-  private config: CleanupConfig
+  private supabase: SupabaseClient;
+  private config: CleanupConfig;
 
   constructor(supabase: SupabaseClient, config?: Partial<CleanupConfig>) {
-    this.supabase = supabase
+    this.supabase = supabase;
     this.config = {
       // Default configuration
       expiredSessionRetentionDays: 7,
@@ -82,9 +82,9 @@ export class DataCleanupService {
       readNotificationRetentionDays: 7,
       inactiveDeviceRetentionDays: 180,
       batchSize: 1000,
-      maxExecutionTimeMs: 300000, // 5 minutes
-      ...config
-    }
+      maxExecutionTimeMs: 300_000, // 5 minutes
+      ...config,
+    };
   }
 
   // =====================================================
@@ -95,57 +95,63 @@ export class DataCleanupService {
    * Run complete data cleanup process
    */
   async runFullCleanup(): Promise<CleanupSummary> {
-    const startTime = new Date()
-    const results: CleanupResult[] = []
+    const startTime = new Date();
+    const results: CleanupResult[] = [];
 
-    console.log('Starting full data cleanup process...')
+    console.log('Starting full data cleanup process...');
 
     try {
       // 1. Clean expired sessions
-      results.push(await this.cleanExpiredSessions())
-      
-      // 2. Clean inactive sessions
-      results.push(await this.cleanInactiveSessions())
-      
-      // 3. Clean old activity logs
-      results.push(await this.cleanActivityLogs())
-      
-      // 4. Clean old security events
-      results.push(await this.cleanSecurityEvents())
-      
-      // 5. Clean old audit logs
-      results.push(await this.cleanAuditLogs())
-      
-      // 6. Clean old notifications
-      results.push(await this.cleanNotifications())
-      
-      // 7. Clean inactive devices
-      results.push(await this.cleanInactiveDevices())
-      
-      // 8. Optimize database
-      results.push(await this.optimizeDatabase())
+      results.push(await this.cleanExpiredSessions());
 
-      const endTime = new Date()
+      // 2. Clean inactive sessions
+      results.push(await this.cleanInactiveSessions());
+
+      // 3. Clean old activity logs
+      results.push(await this.cleanActivityLogs());
+
+      // 4. Clean old security events
+      results.push(await this.cleanSecurityEvents());
+
+      // 5. Clean old audit logs
+      results.push(await this.cleanAuditLogs());
+
+      // 6. Clean old notifications
+      results.push(await this.cleanNotifications());
+
+      // 7. Clean inactive devices
+      results.push(await this.cleanInactiveDevices());
+
+      // 8. Optimize database
+      results.push(await this.optimizeDatabase());
+
+      const endTime = new Date();
       const summary: CleanupSummary = {
         totalOperations: results.length,
-        totalRecordsProcessed: results.reduce((sum, r) => sum + r.recordsProcessed, 0),
-        totalRecordsDeleted: results.reduce((sum, r) => sum + r.recordsDeleted, 0),
+        totalRecordsProcessed: results.reduce(
+          (sum, r) => sum + r.recordsProcessed,
+          0
+        ),
+        totalRecordsDeleted: results.reduce(
+          (sum, r) => sum + r.recordsDeleted,
+          0
+        ),
         totalExecutionTimeMs: endTime.getTime() - startTime.getTime(),
-        successfulOperations: results.filter(r => r.success).length,
-        failedOperations: results.filter(r => !r.success).length,
+        successfulOperations: results.filter((r) => r.success).length,
+        failedOperations: results.filter((r) => !r.success).length,
         results,
         startTime,
-        endTime
-      }
+        endTime,
+      };
 
       // Log cleanup summary
-      await this.logCleanupSummary(summary)
+      await this.logCleanupSummary(summary);
 
-      console.log('Full data cleanup completed:', summary)
-      return summary
+      console.log('Full data cleanup completed:', summary);
+      return summary;
     } catch (error) {
-      console.error('Full cleanup error:', error)
-      throw error
+      console.error('Full cleanup error:', error);
+      throw error;
     }
   }
 
@@ -153,61 +159,67 @@ export class DataCleanupService {
    * Run targeted cleanup for specific data type
    */
   async runTargetedCleanup(operations: string[]): Promise<CleanupSummary> {
-    const startTime = new Date()
-    const results: CleanupResult[] = []
+    const startTime = new Date();
+    const results: CleanupResult[] = [];
 
-    console.log('Starting targeted cleanup for:', operations)
+    console.log('Starting targeted cleanup for:', operations);
 
     try {
       for (const operation of operations) {
         switch (operation) {
           case 'expired_sessions':
-            results.push(await this.cleanExpiredSessions())
-            break
+            results.push(await this.cleanExpiredSessions());
+            break;
           case 'inactive_sessions':
-            results.push(await this.cleanInactiveSessions())
-            break
+            results.push(await this.cleanInactiveSessions());
+            break;
           case 'activity_logs':
-            results.push(await this.cleanActivityLogs())
-            break
+            results.push(await this.cleanActivityLogs());
+            break;
           case 'security_events':
-            results.push(await this.cleanSecurityEvents())
-            break
+            results.push(await this.cleanSecurityEvents());
+            break;
           case 'audit_logs':
-            results.push(await this.cleanAuditLogs())
-            break
+            results.push(await this.cleanAuditLogs());
+            break;
           case 'notifications':
-            results.push(await this.cleanNotifications())
-            break
+            results.push(await this.cleanNotifications());
+            break;
           case 'inactive_devices':
-            results.push(await this.cleanInactiveDevices())
-            break
+            results.push(await this.cleanInactiveDevices());
+            break;
           case 'optimize_database':
-            results.push(await this.optimizeDatabase())
-            break
+            results.push(await this.optimizeDatabase());
+            break;
           default:
-            console.warn(`Unknown cleanup operation: ${operation}`)
+            console.warn(`Unknown cleanup operation: ${operation}`);
         }
       }
 
-      const endTime = new Date()
+      const endTime = new Date();
       const summary: CleanupSummary = {
         totalOperations: results.length,
-        totalRecordsProcessed: results.reduce((sum, r) => sum + r.recordsProcessed, 0),
-        totalRecordsDeleted: results.reduce((sum, r) => sum + r.recordsDeleted, 0),
+        totalRecordsProcessed: results.reduce(
+          (sum, r) => sum + r.recordsProcessed,
+          0
+        ),
+        totalRecordsDeleted: results.reduce(
+          (sum, r) => sum + r.recordsDeleted,
+          0
+        ),
         totalExecutionTimeMs: endTime.getTime() - startTime.getTime(),
-        successfulOperations: results.filter(r => r.success).length,
-        failedOperations: results.filter(r => !r.success).length,
+        successfulOperations: results.filter((r) => r.success).length,
+        failedOperations: results.filter((r) => !r.success).length,
         results,
         startTime,
-        endTime
-      }
+        endTime,
+      };
 
-      console.log('Targeted cleanup completed:', summary)
-      return summary
+      console.log('Targeted cleanup completed:', summary);
+      return summary;
     } catch (error) {
-      console.error('Targeted cleanup error:', error)
-      throw error
+      console.error('Targeted cleanup error:', error);
+      throw error;
     }
   }
 
@@ -219,24 +231,25 @@ export class DataCleanupService {
    * Clean expired sessions
    */
   async cleanExpiredSessions(): Promise<CleanupResult> {
-    const startTime = Date.now()
-    const operation = 'expired_sessions'
-    
+    const startTime = Date.now();
+    const operation = 'expired_sessions';
+
     try {
-      console.log('Cleaning expired sessions...')
-      
+      console.log('Cleaning expired sessions...');
+
       const cutoffDate = new Date(
-        Date.now() - this.config.expiredSessionRetentionDays * 24 * 60 * 60 * 1000
-      )
+        Date.now() -
+          this.config.expiredSessionRetentionDays * 24 * 60 * 60 * 1000
+      );
 
       // First, get count of records to be deleted
       const { count: recordsToDelete } = await this.supabase
         .from('user_sessions')
         .select('*', { count: 'exact', head: true })
-        .lt('expires_at', cutoffDate.toISOString())
+        .lt('expires_at', cutoffDate.toISOString());
 
-      let totalDeleted = 0
-      let processed = 0
+      let totalDeleted = 0;
+      let processed = 0;
 
       if (recordsToDelete && recordsToDelete > 0) {
         // Delete in batches
@@ -245,56 +258,60 @@ export class DataCleanupService {
             .from('user_sessions')
             .select('id')
             .lt('expires_at', cutoffDate.toISOString())
-            .limit(this.config.batchSize)
+            .limit(this.config.batchSize);
 
           if (!sessionsToDelete || sessionsToDelete.length === 0) {
-            break
+            break;
           }
 
-          const sessionIds = sessionsToDelete.map(s => s.id)
-          
+          const sessionIds = sessionsToDelete.map((s) => s.id);
+
           // Delete related activity logs first
           await this.supabase
             .from('session_activities')
             .delete()
-            .in('session_id', sessionIds)
+            .in('session_id', sessionIds);
 
           // Delete sessions
           const { error } = await this.supabase
             .from('user_sessions')
             .delete()
-            .in('id', sessionIds)
+            .in('id', sessionIds);
 
           if (error) {
-            throw new Error(`Failed to delete expired sessions: ${error.message}`)
+            throw new Error(
+              `Failed to delete expired sessions: ${error.message}`
+            );
           }
 
-          totalDeleted += sessionsToDelete.length
-          processed += sessionsToDelete.length
+          totalDeleted += sessionsToDelete.length;
+          processed += sessionsToDelete.length;
 
-          console.log(`Deleted ${totalDeleted}/${recordsToDelete} expired sessions`)
+          console.log(
+            `Deleted ${totalDeleted}/${recordsToDelete} expired sessions`
+          );
         }
       }
 
-      const executionTime = Date.now() - startTime
-      
+      const executionTime = Date.now() - startTime;
+
       return {
         operation,
         recordsProcessed: recordsToDelete || 0,
         recordsDeleted: totalDeleted,
         executionTimeMs: executionTime,
-        success: true
-      }
+        success: true,
+      };
     } catch (error) {
-      console.error('Clean expired sessions error:', error)
+      console.error('Clean expired sessions error:', error);
       return {
         operation,
         recordsProcessed: 0,
         recordsDeleted: 0,
         executionTimeMs: Date.now() - startTime,
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
-      }
+        error: error instanceof Error ? error.message : 'Unknown error',
+      };
     }
   }
 
@@ -302,25 +319,26 @@ export class DataCleanupService {
    * Clean inactive sessions
    */
   async cleanInactiveSessions(): Promise<CleanupResult> {
-    const startTime = Date.now()
-    const operation = 'inactive_sessions'
-    
+    const startTime = Date.now();
+    const operation = 'inactive_sessions';
+
     try {
-      console.log('Cleaning inactive sessions...')
-      
+      console.log('Cleaning inactive sessions...');
+
       const cutoffDate = new Date(
-        Date.now() - this.config.inactiveSessionRetentionDays * 24 * 60 * 60 * 1000
-      )
+        Date.now() -
+          this.config.inactiveSessionRetentionDays * 24 * 60 * 60 * 1000
+      );
 
       // Get sessions that haven't been active for the specified period
       const { count: recordsToDelete } = await this.supabase
         .from('user_sessions')
         .select('*', { count: 'exact', head: true })
         .lt('last_activity_at', cutoffDate.toISOString())
-        .eq('is_active', false)
+        .eq('is_active', false);
 
-      let totalDeleted = 0
-      let processed = 0
+      let totalDeleted = 0;
+      let processed = 0;
 
       if (recordsToDelete && recordsToDelete > 0) {
         while (processed < recordsToDelete) {
@@ -329,56 +347,60 @@ export class DataCleanupService {
             .select('id')
             .lt('last_activity_at', cutoffDate.toISOString())
             .eq('is_active', false)
-            .limit(this.config.batchSize)
+            .limit(this.config.batchSize);
 
           if (!sessionsToDelete || sessionsToDelete.length === 0) {
-            break
+            break;
           }
 
-          const sessionIds = sessionsToDelete.map(s => s.id)
-          
+          const sessionIds = sessionsToDelete.map((s) => s.id);
+
           // Delete related activity logs
           await this.supabase
             .from('session_activities')
             .delete()
-            .in('session_id', sessionIds)
+            .in('session_id', sessionIds);
 
           // Delete sessions
           const { error } = await this.supabase
             .from('user_sessions')
             .delete()
-            .in('id', sessionIds)
+            .in('id', sessionIds);
 
           if (error) {
-            throw new Error(`Failed to delete inactive sessions: ${error.message}`)
+            throw new Error(
+              `Failed to delete inactive sessions: ${error.message}`
+            );
           }
 
-          totalDeleted += sessionsToDelete.length
-          processed += sessionsToDelete.length
+          totalDeleted += sessionsToDelete.length;
+          processed += sessionsToDelete.length;
 
-          console.log(`Deleted ${totalDeleted}/${recordsToDelete} inactive sessions`)
+          console.log(
+            `Deleted ${totalDeleted}/${recordsToDelete} inactive sessions`
+          );
         }
       }
 
-      const executionTime = Date.now() - startTime
-      
+      const executionTime = Date.now() - startTime;
+
       return {
         operation,
         recordsProcessed: recordsToDelete || 0,
         recordsDeleted: totalDeleted,
         executionTimeMs: executionTime,
-        success: true
-      }
+        success: true,
+      };
     } catch (error) {
-      console.error('Clean inactive sessions error:', error)
+      console.error('Clean inactive sessions error:', error);
       return {
         operation,
         recordsProcessed: 0,
         recordsDeleted: 0,
         executionTimeMs: Date.now() - startTime,
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
-      }
+        error: error instanceof Error ? error.message : 'Unknown error',
+      };
     }
   }
 
@@ -386,23 +408,23 @@ export class DataCleanupService {
    * Clean old activity logs
    */
   async cleanActivityLogs(): Promise<CleanupResult> {
-    const startTime = Date.now()
-    const operation = 'activity_logs'
-    
+    const startTime = Date.now();
+    const operation = 'activity_logs';
+
     try {
-      console.log('Cleaning old activity logs...')
-      
+      console.log('Cleaning old activity logs...');
+
       const cutoffDate = new Date(
         Date.now() - this.config.activityLogRetentionDays * 24 * 60 * 60 * 1000
-      )
+      );
 
       const { count: recordsToDelete } = await this.supabase
         .from('session_activities')
         .select('*', { count: 'exact', head: true })
-        .lt('created_at', cutoffDate.toISOString())
+        .lt('created_at', cutoffDate.toISOString());
 
-      let totalDeleted = 0
-      let processed = 0
+      let totalDeleted = 0;
+      let processed = 0;
 
       if (recordsToDelete && recordsToDelete > 0) {
         while (processed < recordsToDelete) {
@@ -410,43 +432,45 @@ export class DataCleanupService {
             .from('session_activities')
             .delete()
             .lt('created_at', cutoffDate.toISOString())
-            .limit(this.config.batchSize)
+            .limit(this.config.batchSize);
 
           if (error) {
-            throw new Error(`Failed to delete activity logs: ${error.message}`)
+            throw new Error(`Failed to delete activity logs: ${error.message}`);
           }
 
-          const deletedCount = count || 0
-          totalDeleted += deletedCount
-          processed += this.config.batchSize
+          const deletedCount = count || 0;
+          totalDeleted += deletedCount;
+          processed += this.config.batchSize;
 
           if (deletedCount === 0) {
-            break
+            break;
           }
 
-          console.log(`Deleted ${totalDeleted}/${recordsToDelete} activity logs`)
+          console.log(
+            `Deleted ${totalDeleted}/${recordsToDelete} activity logs`
+          );
         }
       }
 
-      const executionTime = Date.now() - startTime
-      
+      const executionTime = Date.now() - startTime;
+
       return {
         operation,
         recordsProcessed: recordsToDelete || 0,
         recordsDeleted: totalDeleted,
         executionTimeMs: executionTime,
-        success: true
-      }
+        success: true,
+      };
     } catch (error) {
-      console.error('Clean activity logs error:', error)
+      console.error('Clean activity logs error:', error);
       return {
         operation,
         recordsProcessed: 0,
         recordsDeleted: 0,
         executionTimeMs: Date.now() - startTime,
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
-      }
+        error: error instanceof Error ? error.message : 'Unknown error',
+      };
     }
   }
 
@@ -454,54 +478,56 @@ export class DataCleanupService {
    * Clean old security events
    */
   async cleanSecurityEvents(): Promise<CleanupResult> {
-    const startTime = Date.now()
-    const operation = 'security_events'
-    
+    const startTime = Date.now();
+    const operation = 'security_events';
+
     try {
-      console.log('Cleaning old security events...')
-      
+      console.log('Cleaning old security events...');
+
       const resolvedCutoffDate = new Date(
-        Date.now() - this.config.resolvedEventRetentionDays * 24 * 60 * 60 * 1000
-      )
-      
+        Date.now() -
+          this.config.resolvedEventRetentionDays * 24 * 60 * 60 * 1000
+      );
+
       const unresolvedCutoffDate = new Date(
-        Date.now() - this.config.securityEventRetentionDays * 24 * 60 * 60 * 1000
-      )
+        Date.now() -
+          this.config.securityEventRetentionDays * 24 * 60 * 60 * 1000
+      );
 
       // Delete resolved events older than retention period
       const { count: resolvedCount } = await this.supabase
         .from('session_security_events')
         .delete()
         .eq('resolved', true)
-        .lt('created_at', resolvedCutoffDate.toISOString())
+        .lt('created_at', resolvedCutoffDate.toISOString());
 
       // Delete very old unresolved events (these might be false positives)
       const { count: unresolvedCount } = await this.supabase
         .from('session_security_events')
         .delete()
         .eq('resolved', false)
-        .lt('created_at', unresolvedCutoffDate.toISOString())
+        .lt('created_at', unresolvedCutoffDate.toISOString());
 
-      const totalDeleted = (resolvedCount || 0) + (unresolvedCount || 0)
-      const executionTime = Date.now() - startTime
-      
+      const totalDeleted = (resolvedCount || 0) + (unresolvedCount || 0);
+      const executionTime = Date.now() - startTime;
+
       return {
         operation,
         recordsProcessed: totalDeleted,
         recordsDeleted: totalDeleted,
         executionTimeMs: executionTime,
-        success: true
-      }
+        success: true,
+      };
     } catch (error) {
-      console.error('Clean security events error:', error)
+      console.error('Clean security events error:', error);
       return {
         operation,
         recordsProcessed: 0,
         recordsDeleted: 0,
         executionTimeMs: Date.now() - startTime,
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
-      }
+        error: error instanceof Error ? error.message : 'Unknown error',
+      };
     }
   }
 
@@ -509,40 +535,40 @@ export class DataCleanupService {
    * Clean old audit logs
    */
   async cleanAuditLogs(): Promise<CleanupResult> {
-    const startTime = Date.now()
-    const operation = 'audit_logs'
-    
+    const startTime = Date.now();
+    const operation = 'audit_logs';
+
     try {
-      console.log('Cleaning old audit logs...')
-      
+      console.log('Cleaning old audit logs...');
+
       const cutoffDate = new Date(
         Date.now() - this.config.auditLogRetentionDays * 24 * 60 * 60 * 1000
-      )
+      );
 
       const { count: recordsDeleted } = await this.supabase
         .from('session_audit_logs')
         .delete()
-        .lt('created_at', cutoffDate.toISOString())
+        .lt('created_at', cutoffDate.toISOString());
 
-      const executionTime = Date.now() - startTime
-      
+      const executionTime = Date.now() - startTime;
+
       return {
         operation,
         recordsProcessed: recordsDeleted || 0,
         recordsDeleted: recordsDeleted || 0,
         executionTimeMs: executionTime,
-        success: true
-      }
+        success: true,
+      };
     } catch (error) {
-      console.error('Clean audit logs error:', error)
+      console.error('Clean audit logs error:', error);
       return {
         operation,
         recordsProcessed: 0,
         recordsDeleted: 0,
         executionTimeMs: Date.now() - startTime,
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
-      }
+        error: error instanceof Error ? error.message : 'Unknown error',
+      };
     }
   }
 
@@ -550,54 +576,55 @@ export class DataCleanupService {
    * Clean old notifications
    */
   async cleanNotifications(): Promise<CleanupResult> {
-    const startTime = Date.now()
-    const operation = 'notifications'
-    
+    const startTime = Date.now();
+    const operation = 'notifications';
+
     try {
-      console.log('Cleaning old notifications...')
-      
+      console.log('Cleaning old notifications...');
+
       const readCutoffDate = new Date(
-        Date.now() - this.config.readNotificationRetentionDays * 24 * 60 * 60 * 1000
-      )
-      
+        Date.now() -
+          this.config.readNotificationRetentionDays * 24 * 60 * 60 * 1000
+      );
+
       const unreadCutoffDate = new Date(
         Date.now() - this.config.notificationRetentionDays * 24 * 60 * 60 * 1000
-      )
+      );
 
       // Delete read notifications older than retention period
       const { count: readCount } = await this.supabase
         .from('session_notifications')
         .delete()
         .not('read_at', 'is', null)
-        .lt('created_at', readCutoffDate.toISOString())
+        .lt('created_at', readCutoffDate.toISOString());
 
       // Delete old unread notifications
       const { count: unreadCount } = await this.supabase
         .from('session_notifications')
         .delete()
         .is('read_at', null)
-        .lt('created_at', unreadCutoffDate.toISOString())
+        .lt('created_at', unreadCutoffDate.toISOString());
 
-      const totalDeleted = (readCount || 0) + (unreadCount || 0)
-      const executionTime = Date.now() - startTime
-      
+      const totalDeleted = (readCount || 0) + (unreadCount || 0);
+      const executionTime = Date.now() - startTime;
+
       return {
         operation,
         recordsProcessed: totalDeleted,
         recordsDeleted: totalDeleted,
         executionTimeMs: executionTime,
-        success: true
-      }
+        success: true,
+      };
     } catch (error) {
-      console.error('Clean notifications error:', error)
+      console.error('Clean notifications error:', error);
       return {
         operation,
         recordsProcessed: 0,
         recordsDeleted: 0,
         executionTimeMs: Date.now() - startTime,
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
-      }
+        error: error instanceof Error ? error.message : 'Unknown error',
+      };
     }
   }
 
@@ -605,41 +632,42 @@ export class DataCleanupService {
    * Clean inactive devices
    */
   async cleanInactiveDevices(): Promise<CleanupResult> {
-    const startTime = Date.now()
-    const operation = 'inactive_devices'
-    
+    const startTime = Date.now();
+    const operation = 'inactive_devices';
+
     try {
-      console.log('Cleaning inactive devices...')
-      
+      console.log('Cleaning inactive devices...');
+
       const cutoffDate = new Date(
-        Date.now() - this.config.inactiveDeviceRetentionDays * 24 * 60 * 60 * 1000
-      )
+        Date.now() -
+          this.config.inactiveDeviceRetentionDays * 24 * 60 * 60 * 1000
+      );
 
       const { count: recordsDeleted } = await this.supabase
         .from('user_devices')
         .delete()
         .lt('last_used_at', cutoffDate.toISOString())
-        .eq('is_trusted', false)
+        .eq('is_trusted', false);
 
-      const executionTime = Date.now() - startTime
-      
+      const executionTime = Date.now() - startTime;
+
       return {
         operation,
         recordsProcessed: recordsDeleted || 0,
         recordsDeleted: recordsDeleted || 0,
         executionTimeMs: executionTime,
-        success: true
-      }
+        success: true,
+      };
     } catch (error) {
-      console.error('Clean inactive devices error:', error)
+      console.error('Clean inactive devices error:', error);
       return {
         operation,
         recordsProcessed: 0,
         recordsDeleted: 0,
         executionTimeMs: Date.now() - startTime,
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
-      }
+        error: error instanceof Error ? error.message : 'Unknown error',
+      };
     }
   }
 
@@ -647,37 +675,37 @@ export class DataCleanupService {
    * Optimize database (vacuum, reindex, etc.)
    */
   async optimizeDatabase(): Promise<CleanupResult> {
-    const startTime = Date.now()
-    const operation = 'optimize_database'
-    
+    const startTime = Date.now();
+    const operation = 'optimize_database';
+
     try {
-      console.log('Optimizing database...')
-      
+      console.log('Optimizing database...');
+
       // In a real implementation, this would run database optimization commands
       // For PostgreSQL: VACUUM, REINDEX, ANALYZE
       // This is a placeholder as Supabase handles most optimization automatically
-      
-      await new Promise(resolve => setTimeout(resolve, 1000)) // Simulate optimization
-      
-      const executionTime = Date.now() - startTime
-      
+
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate optimization
+
+      const executionTime = Date.now() - startTime;
+
       return {
         operation,
         recordsProcessed: 0,
         recordsDeleted: 0,
         executionTimeMs: executionTime,
-        success: true
-      }
+        success: true,
+      };
     } catch (error) {
-      console.error('Optimize database error:', error)
+      console.error('Optimize database error:', error);
       return {
         operation,
         recordsProcessed: 0,
         recordsDeleted: 0,
         executionTimeMs: Date.now() - startTime,
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
-      }
+        error: error instanceof Error ? error.message : 'Unknown error',
+      };
     }
   }
 
@@ -689,15 +717,15 @@ export class DataCleanupService {
    * Update cleanup configuration
    */
   updateConfig(newConfig: Partial<CleanupConfig>): void {
-    this.config = { ...this.config, ...newConfig }
-    console.log('Cleanup configuration updated:', this.config)
+    this.config = { ...this.config, ...newConfig };
+    console.log('Cleanup configuration updated:', this.config);
   }
 
   /**
    * Get current configuration
    */
   getConfig(): CleanupConfig {
-    return { ...this.config }
+    return { ...this.config };
   }
 
   /**
@@ -711,34 +739,41 @@ export class DataCleanupService {
         .select('*')
         .eq('action', 'data_cleanup')
         .order('created_at', { ascending: false })
-        .limit(10)
+        .limit(10);
 
-      const cleanupHistory: CleanupSummary[] = cleanupLogs?.map(log => {
-        const details = log.details as any
-        return {
-          totalOperations: details.totalOperations || 0,
-          totalRecordsProcessed: details.totalRecordsProcessed || 0,
-          totalRecordsDeleted: details.totalRecordsDeleted || 0,
-          totalExecutionTimeMs: details.totalExecutionTimeMs || 0,
-          successfulOperations: details.successfulOperations || 0,
-          failedOperations: details.failedOperations || 0,
-          results: details.results || [],
-          startTime: new Date(log.created_at),
-          endTime: new Date(log.created_at)
-        }
-      }) || []
+      const cleanupHistory: CleanupSummary[] =
+        cleanupLogs?.map((log) => {
+          const details = log.details as any;
+          return {
+            totalOperations: details.totalOperations || 0,
+            totalRecordsProcessed: details.totalRecordsProcessed || 0,
+            totalRecordsDeleted: details.totalRecordsDeleted || 0,
+            totalExecutionTimeMs: details.totalExecutionTimeMs || 0,
+            successfulOperations: details.successfulOperations || 0,
+            failedOperations: details.failedOperations || 0,
+            results: details.results || [],
+            startTime: new Date(log.created_at),
+            endTime: new Date(log.created_at),
+          };
+        }) || [];
 
-      const lastCleanupRun = cleanupHistory.length > 0 ? cleanupHistory[0].startTime : null
-      const totalCleanupRuns = cleanupHistory.length
-      const averageExecutionTimeMs = totalCleanupRuns > 0 
-        ? cleanupHistory.reduce((sum, h) => sum + h.totalExecutionTimeMs, 0) / totalCleanupRuns
-        : 0
-      const totalRecordsDeleted = cleanupHistory.reduce((sum, h) => sum + h.totalRecordsDeleted, 0)
+      const lastCleanupRun =
+        cleanupHistory.length > 0 ? cleanupHistory[0].startTime : null;
+      const totalCleanupRuns = cleanupHistory.length;
+      const averageExecutionTimeMs =
+        totalCleanupRuns > 0
+          ? cleanupHistory.reduce((sum, h) => sum + h.totalExecutionTimeMs, 0) /
+            totalCleanupRuns
+          : 0;
+      const totalRecordsDeleted = cleanupHistory.reduce(
+        (sum, h) => sum + h.totalRecordsDeleted,
+        0
+      );
 
       // Calculate next scheduled run (daily at 2 AM)
-      const nextScheduledRun = new Date()
-      nextScheduledRun.setDate(nextScheduledRun.getDate() + 1)
-      nextScheduledRun.setHours(2, 0, 0, 0)
+      const nextScheduledRun = new Date();
+      nextScheduledRun.setDate(nextScheduledRun.getDate() + 1);
+      nextScheduledRun.setHours(2, 0, 0, 0);
 
       return {
         lastCleanupRun,
@@ -746,18 +781,18 @@ export class DataCleanupService {
         totalCleanupRuns,
         averageExecutionTimeMs,
         totalRecordsDeleted,
-        cleanupHistory
-      }
+        cleanupHistory,
+      };
     } catch (error) {
-      console.error('Get cleanup stats error:', error)
+      console.error('Get cleanup stats error:', error);
       return {
         lastCleanupRun: null,
         nextScheduledRun: null,
         totalCleanupRuns: 0,
         averageExecutionTimeMs: 0,
         totalRecordsDeleted: 0,
-        cleanupHistory: []
-      }
+        cleanupHistory: [],
+      };
     }
   }
 
@@ -765,55 +800,82 @@ export class DataCleanupService {
    * Estimate cleanup impact
    */
   async estimateCleanupImpact(): Promise<{
-    expiredSessions: number
-    inactiveSessions: number
-    oldActivityLogs: number
-    oldSecurityEvents: number
-    oldAuditLogs: number
-    oldNotifications: number
-    inactiveDevices: number
-    totalRecordsToDelete: number
+    expiredSessions: number;
+    inactiveSessions: number;
+    oldActivityLogs: number;
+    oldSecurityEvents: number;
+    oldAuditLogs: number;
+    oldNotifications: number;
+    inactiveDevices: number;
+    totalRecordsToDelete: number;
   }> {
     try {
       const expiredSessionsCutoff = new Date(
-        Date.now() - this.config.expiredSessionRetentionDays * 24 * 60 * 60 * 1000
-      )
+        Date.now() -
+          this.config.expiredSessionRetentionDays * 24 * 60 * 60 * 1000
+      );
       const inactiveSessionsCutoff = new Date(
-        Date.now() - this.config.inactiveSessionRetentionDays * 24 * 60 * 60 * 1000
-      )
+        Date.now() -
+          this.config.inactiveSessionRetentionDays * 24 * 60 * 60 * 1000
+      );
       const activityLogsCutoff = new Date(
         Date.now() - this.config.activityLogRetentionDays * 24 * 60 * 60 * 1000
-      )
+      );
       const securityEventsCutoff = new Date(
-        Date.now() - this.config.securityEventRetentionDays * 24 * 60 * 60 * 1000
-      )
+        Date.now() -
+          this.config.securityEventRetentionDays * 24 * 60 * 60 * 1000
+      );
       const auditLogsCutoff = new Date(
         Date.now() - this.config.auditLogRetentionDays * 24 * 60 * 60 * 1000
-      )
+      );
       const notificationsCutoff = new Date(
         Date.now() - this.config.notificationRetentionDays * 24 * 60 * 60 * 1000
-      )
+      );
       const devicesCutoff = new Date(
-        Date.now() - this.config.inactiveDeviceRetentionDays * 24 * 60 * 60 * 1000
-      )
+        Date.now() -
+          this.config.inactiveDeviceRetentionDays * 24 * 60 * 60 * 1000
+      );
 
-      const [expiredSessions, inactiveSessions, oldActivityLogs, oldSecurityEvents, 
-             oldAuditLogs, oldNotifications, inactiveDevices] = await Promise.all([
-        this.supabase.from('user_sessions').select('*', { count: 'exact', head: true })
+      const [
+        expiredSessions,
+        inactiveSessions,
+        oldActivityLogs,
+        oldSecurityEvents,
+        oldAuditLogs,
+        oldNotifications,
+        inactiveDevices,
+      ] = await Promise.all([
+        this.supabase
+          .from('user_sessions')
+          .select('*', { count: 'exact', head: true })
           .lt('expires_at', expiredSessionsCutoff.toISOString()),
-        this.supabase.from('user_sessions').select('*', { count: 'exact', head: true })
-          .lt('last_activity_at', inactiveSessionsCutoff.toISOString()).eq('is_active', false),
-        this.supabase.from('session_activities').select('*', { count: 'exact', head: true })
+        this.supabase
+          .from('user_sessions')
+          .select('*', { count: 'exact', head: true })
+          .lt('last_activity_at', inactiveSessionsCutoff.toISOString())
+          .eq('is_active', false),
+        this.supabase
+          .from('session_activities')
+          .select('*', { count: 'exact', head: true })
           .lt('created_at', activityLogsCutoff.toISOString()),
-        this.supabase.from('session_security_events').select('*', { count: 'exact', head: true })
+        this.supabase
+          .from('session_security_events')
+          .select('*', { count: 'exact', head: true })
           .lt('created_at', securityEventsCutoff.toISOString()),
-        this.supabase.from('session_audit_logs').select('*', { count: 'exact', head: true })
+        this.supabase
+          .from('session_audit_logs')
+          .select('*', { count: 'exact', head: true })
           .lt('created_at', auditLogsCutoff.toISOString()),
-        this.supabase.from('session_notifications').select('*', { count: 'exact', head: true })
+        this.supabase
+          .from('session_notifications')
+          .select('*', { count: 'exact', head: true })
           .lt('created_at', notificationsCutoff.toISOString()),
-        this.supabase.from('user_devices').select('*', { count: 'exact', head: true })
-          .lt('last_used_at', devicesCutoff.toISOString()).eq('is_trusted', false)
-      ])
+        this.supabase
+          .from('user_devices')
+          .select('*', { count: 'exact', head: true })
+          .lt('last_used_at', devicesCutoff.toISOString())
+          .eq('is_trusted', false),
+      ]);
 
       const counts = {
         expiredSessions: expiredSessions.count || 0,
@@ -823,14 +885,16 @@ export class DataCleanupService {
         oldAuditLogs: oldAuditLogs.count || 0,
         oldNotifications: oldNotifications.count || 0,
         inactiveDevices: inactiveDevices.count || 0,
-        totalRecordsToDelete: 0
-      }
+        totalRecordsToDelete: 0,
+      };
 
-      counts.totalRecordsToDelete = Object.values(counts).reduce((sum, count) => sum + count, 0) - counts.totalRecordsToDelete
+      counts.totalRecordsToDelete =
+        Object.values(counts).reduce((sum, count) => sum + count, 0) -
+        counts.totalRecordsToDelete;
 
-      return counts
+      return counts;
     } catch (error) {
-      console.error('Estimate cleanup impact error:', error)
+      console.error('Estimate cleanup impact error:', error);
       return {
         expiredSessions: 0,
         inactiveSessions: 0,
@@ -839,8 +903,8 @@ export class DataCleanupService {
         oldAuditLogs: 0,
         oldNotifications: 0,
         inactiveDevices: 0,
-        totalRecordsToDelete: 0
-      }
+        totalRecordsToDelete: 0,
+      };
     }
   }
 
@@ -853,29 +917,27 @@ export class DataCleanupService {
    */
   private async logCleanupSummary(summary: CleanupSummary): Promise<void> {
     try {
-      await this.supabase
-        .from('session_audit_logs')
-        .insert({
-          user_id: null, // System operation
-          action: 'data_cleanup',
-          resource_type: 'system',
-          resource_id: null,
-          details: {
-            totalOperations: summary.totalOperations,
-            totalRecordsProcessed: summary.totalRecordsProcessed,
-            totalRecordsDeleted: summary.totalRecordsDeleted,
-            totalExecutionTimeMs: summary.totalExecutionTimeMs,
-            successfulOperations: summary.successfulOperations,
-            failedOperations: summary.failedOperations,
-            results: summary.results
-          },
-          ip_address: null,
-          user_agent: 'DataCleanupService'
-        })
+      await this.supabase.from('session_audit_logs').insert({
+        user_id: null, // System operation
+        action: 'data_cleanup',
+        resource_type: 'system',
+        resource_id: null,
+        details: {
+          totalOperations: summary.totalOperations,
+          totalRecordsProcessed: summary.totalRecordsProcessed,
+          totalRecordsDeleted: summary.totalRecordsDeleted,
+          totalExecutionTimeMs: summary.totalExecutionTimeMs,
+          successfulOperations: summary.successfulOperations,
+          failedOperations: summary.failedOperations,
+          results: summary.results,
+        },
+        ip_address: null,
+        user_agent: 'DataCleanupService',
+      });
     } catch (error) {
-      console.error('Log cleanup summary error:', error)
+      console.error('Log cleanup summary error:', error);
     }
   }
 }
 
-export default DataCleanupService
+export default DataCleanupService;

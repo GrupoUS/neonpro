@@ -1,14 +1,25 @@
 /**
  * Cash Flow Monitoring Engine
  * Real-time financial analytics and monitoring system for NeonPro
- * 
+ *
  * @author BMad Method Implementation
  * @version 1.0.0
  * @created August 14, 2025
  */
 
+import {
+  endOfDay,
+  endOfMonth,
+  endOfWeek,
+  format,
+  startOfDay,
+  startOfMonth,
+  startOfWeek,
+  subDays,
+  subMonths,
+  subWeeks,
+} from 'date-fns';
 import { supabase } from '@/lib/supabase/client';
-import { format, subDays, subWeeks, subMonths, startOfDay, endOfDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from 'date-fns';
 
 export interface CashFlowData {
   id: string;
@@ -77,7 +88,10 @@ export class CashFlowMonitoringEngine {
   /**
    * Calculate cash flow summary for specified period
    */
-  async getCashFlowSummary(period: 'daily' | 'weekly' | 'monthly', date?: Date): Promise<CashFlowSummary> {
+  async getCashFlowSummary(
+    period: 'daily' | 'weekly' | 'monthly',
+    date?: Date
+  ): Promise<CashFlowSummary> {
     const targetDate = date || new Date();
     let startDate: Date;
     let endDate: Date;
@@ -116,18 +130,24 @@ export class CashFlowMonitoringEngine {
     }
 
     const transactions = data || [];
-    const income = transactions.filter(t => t.type === 'income');
-    const expenses = transactions.filter(t => t.type === 'expense');
+    const income = transactions.filter((t) => t.type === 'income');
+    const expenses = transactions.filter((t) => t.type === 'expense');
 
     const totalIncome = income.reduce((sum, t) => sum + t.amount, 0);
     const totalExpense = expenses.reduce((sum, t) => sum + t.amount, 0);
     const netFlow = totalIncome - totalExpense;
 
     // Calculate growth rate by comparing with previous period
-    const previousPeriodSummary = await this.getPreviousPeriodSummary(period, targetDate);
-    const growthRate = previousPeriodSummary.net_flow === 0 
-      ? 0 
-      : ((netFlow - previousPeriodSummary.net_flow) / Math.abs(previousPeriodSummary.net_flow)) * 100;
+    const previousPeriodSummary = await this.getPreviousPeriodSummary(
+      period,
+      targetDate
+    );
+    const growthRate =
+      previousPeriodSummary.net_flow === 0
+        ? 0
+        : ((netFlow - previousPeriodSummary.net_flow) /
+            Math.abs(previousPeriodSummary.net_flow)) *
+          100;
 
     return {
       period: periodLabel,
@@ -135,17 +155,20 @@ export class CashFlowMonitoringEngine {
       total_expense: totalExpense,
       net_flow: netFlow,
       transaction_count: transactions.length,
-      average_transaction: transactions.length > 0 ? (totalIncome + totalExpense) / transactions.length : 0,
-      growth_rate: growthRate
+      average_transaction:
+        transactions.length > 0
+          ? (totalIncome + totalExpense) / transactions.length
+          : 0,
+      growth_rate: growthRate,
     };
   }
 
   /**
    * Get cash flow trend data for visualization
    */
-  async getCashFlowTrend(days: number = 30): Promise<CashFlowSummary[]> {
+  async getCashFlowTrend(days = 30): Promise<CashFlowSummary[]> {
     const trends: CashFlowSummary[] = [];
-    
+
     for (let i = days - 1; i >= 0; i--) {
       const date = subDays(new Date(), i);
       const summary = await this.getCashFlowSummary('daily', date);
@@ -158,27 +181,35 @@ export class CashFlowMonitoringEngine {
   /**
    * Predict cash flow for future periods using historical data
    */
-  async predictCashFlow(days: number = 30): Promise<CashFlowPrediction[]> {
+  async predictCashFlow(days = 30): Promise<CashFlowPrediction[]> {
     // Get historical data for pattern analysis
     const historicalData = await this.getCashFlowTrend(90);
-    
+
     const predictions: CashFlowPrediction[] = [];
-    
+
     for (let i = 1; i <= days; i++) {
       const futureDate = new Date();
       futureDate.setDate(futureDate.getDate() + i);
 
       // Simple trend-based prediction (can be enhanced with ML models)
-      const recentAvgIncome = this.calculateRecentAverage(historicalData, 'total_income', 14);
-      const recentAvgExpense = this.calculateRecentAverage(historicalData, 'total_expense', 14);
-      
+      const recentAvgIncome = this.calculateRecentAverage(
+        historicalData,
+        'total_income',
+        14
+      );
+      const recentAvgExpense = this.calculateRecentAverage(
+        historicalData,
+        'total_expense',
+        14
+      );
+
       // Apply seasonal and weekly patterns
       const seasonalFactor = this.getSeasonalFactor(futureDate);
       const weeklyFactor = this.getWeeklyFactor(futureDate);
-      
+
       const predictedIncome = recentAvgIncome * seasonalFactor * weeklyFactor;
       const predictedExpense = recentAvgExpense * seasonalFactor;
-      
+
       // Calculate confidence level based on historical variance
       const confidenceLevel = this.calculateConfidenceLevel(historicalData, i);
 
@@ -188,7 +219,7 @@ export class CashFlowMonitoringEngine {
         predicted_expense: Math.round(predictedExpense),
         predicted_net_flow: Math.round(predictedIncome - predictedExpense),
         confidence_level: confidenceLevel,
-        factors: this.getPredictionFactors(seasonalFactor, weeklyFactor)
+        factors: this.getPredictionFactors(seasonalFactor, weeklyFactor),
       });
     }
 
@@ -204,15 +235,13 @@ export class CashFlowMonitoringEngine {
     negative_flow_days?: number;
   }): Promise<void> {
     // Store alert configuration in database
-    const { error } = await supabase
-      .from('financial_alert_settings')
-      .upsert({
-        clinic_id: this.clinicId,
-        low_balance_threshold: thresholds.low_balance,
-        high_expense_daily_threshold: thresholds.high_expense_daily,
-        negative_flow_days_threshold: thresholds.negative_flow_days,
-        updated_at: new Date().toISOString()
-      });
+    const { error } = await supabase.from('financial_alert_settings').upsert({
+      clinic_id: this.clinicId,
+      low_balance_threshold: thresholds.low_balance,
+      high_expense_daily_threshold: thresholds.high_expense_daily,
+      negative_flow_days_threshold: thresholds.negative_flow_days,
+      updated_at: new Date().toISOString(),
+    });
 
     if (error) {
       throw new Error(`Failed to setup cash flow alerts: ${error.message}`);
@@ -230,20 +259,38 @@ export class CashFlowMonitoringEngine {
     const weekTrend = await this.getCashFlowTrend(7);
 
     // Check for low balance
-    if (alertSettings.low_balance_threshold && today.net_flow < alertSettings.low_balance_threshold) {
-      await this.triggerAlert('LOW_BALANCE', `Daily net flow (${today.net_flow}) is below threshold`);
+    if (
+      alertSettings.low_balance_threshold &&
+      today.net_flow < alertSettings.low_balance_threshold
+    ) {
+      await this.triggerAlert(
+        'LOW_BALANCE',
+        `Daily net flow (${today.net_flow}) is below threshold`
+      );
     }
 
     // Check for high daily expenses
-    if (alertSettings.high_expense_daily_threshold && today.total_expense > alertSettings.high_expense_daily_threshold) {
-      await this.triggerAlert('HIGH_EXPENSES', `Daily expenses (${today.total_expense}) exceed threshold`);
+    if (
+      alertSettings.high_expense_daily_threshold &&
+      today.total_expense > alertSettings.high_expense_daily_threshold
+    ) {
+      await this.triggerAlert(
+        'HIGH_EXPENSES',
+        `Daily expenses (${today.total_expense}) exceed threshold`
+      );
     }
 
     // Check for consecutive negative flow days
     if (alertSettings.negative_flow_days_threshold) {
-      const consecutiveNegativeDays = this.countConsecutiveNegativeDays(weekTrend);
-      if (consecutiveNegativeDays >= alertSettings.negative_flow_days_threshold) {
-        await this.triggerAlert('NEGATIVE_FLOW_STREAK', `${consecutiveNegativeDays} consecutive days of negative cash flow`);
+      const consecutiveNegativeDays =
+        this.countConsecutiveNegativeDays(weekTrend);
+      if (
+        consecutiveNegativeDays >= alertSettings.negative_flow_days_threshold
+      ) {
+        await this.triggerAlert(
+          'NEGATIVE_FLOW_STREAK',
+          `${consecutiveNegativeDays} consecutive days of negative cash flow`
+        );
       }
     }
   }
@@ -264,11 +311,14 @@ export class CashFlowMonitoringEngine {
       payment_method: transaction.payment_method,
       status: transaction.status,
       created_at: new Date(transaction.created_at),
-      updated_at: new Date(transaction.updated_at)
+      updated_at: new Date(transaction.updated_at),
     };
   }
 
-  private async getPreviousPeriodSummary(period: 'daily' | 'weekly' | 'monthly', currentDate: Date): Promise<CashFlowSummary> {
+  private async getPreviousPeriodSummary(
+    period: 'daily' | 'weekly' | 'monthly',
+    currentDate: Date
+  ): Promise<CashFlowSummary> {
     let previousDate: Date;
 
     switch (period) {
@@ -288,16 +338,25 @@ export class CashFlowMonitoringEngine {
     return await this.getCashFlowSummary(period, previousDate);
   }
 
-  private calculateRecentAverage(data: CashFlowSummary[], field: keyof CashFlowSummary, days: number): number {
+  private calculateRecentAverage(
+    data: CashFlowSummary[],
+    field: keyof CashFlowSummary,
+    days: number
+  ): number {
     const recentData = data.slice(-days);
-    const sum = recentData.reduce((total, item) => total + (Number(item[field]) || 0), 0);
+    const sum = recentData.reduce(
+      (total, item) => total + (Number(item[field]) || 0),
+      0
+    );
     return sum / recentData.length;
   }
 
   private getSeasonalFactor(date: Date): number {
     // Simplified seasonal adjustment - can be enhanced with historical analysis
     const month = date.getMonth();
-    const seasonalFactors = [0.9, 0.85, 0.95, 1.0, 1.05, 1.1, 1.15, 1.1, 1.05, 1.0, 0.95, 1.2]; // December boost
+    const seasonalFactors = [
+      0.9, 0.85, 0.95, 1.0, 1.05, 1.1, 1.15, 1.1, 1.05, 1.0, 0.95, 1.2,
+    ]; // December boost
     return seasonalFactors[month];
   }
 
@@ -308,30 +367,37 @@ export class CashFlowMonitoringEngine {
     return weeklyFactors[dayOfWeek];
   }
 
-  private calculateConfidenceLevel(data: CashFlowSummary[], daysAhead: number): number {
+  private calculateConfidenceLevel(
+    data: CashFlowSummary[],
+    daysAhead: number
+  ): number {
     // Confidence decreases with time and increases with data consistency
     const baseConfidence = 0.95;
-    const timeDecay = Math.max(0.5, 1 - (daysAhead * 0.02));
-    const dataVariance = this.calculateVariance(data.map(d => d.net_flow));
-    const varianceFactor = Math.max(0.6, 1 - (dataVariance / 100000)); // Adjust based on variance
-    
-    return Math.round((baseConfidence * timeDecay * varianceFactor) * 100) / 100;
+    const timeDecay = Math.max(0.5, 1 - daysAhead * 0.02);
+    const dataVariance = this.calculateVariance(data.map((d) => d.net_flow));
+    const varianceFactor = Math.max(0.6, 1 - dataVariance / 100_000); // Adjust based on variance
+
+    return Math.round(baseConfidence * timeDecay * varianceFactor * 100) / 100;
   }
 
   private calculateVariance(values: number[]): number {
     const mean = values.reduce((sum, val) => sum + val, 0) / values.length;
-    const variance = values.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / values.length;
+    const variance =
+      values.reduce((sum, val) => sum + (val - mean) ** 2, 0) / values.length;
     return variance;
   }
 
-  private getPredictionFactors(seasonalFactor: number, weeklyFactor: number): string[] {
+  private getPredictionFactors(
+    seasonalFactor: number,
+    weeklyFactor: number
+  ): string[] {
     const factors: string[] = [];
-    
+
     if (seasonalFactor > 1.05) factors.push('High seasonal demand');
     if (seasonalFactor < 0.95) factors.push('Low seasonal period');
     if (weeklyFactor > 1.2) factors.push('Peak weekday');
     if (weeklyFactor < 0.8) factors.push('Weekend period');
-    
+
     return factors;
   }
 
@@ -342,7 +408,8 @@ export class CashFlowMonitoringEngine {
       .eq('clinic_id', this.clinicId)
       .single();
 
-    if (error && error.code !== 'PGRST116') { // PGRST116 is "not found"
+    if (error && error.code !== 'PGRST116') {
+      // PGRST116 is "not found"
       throw new Error(`Failed to fetch alert settings: ${error.message}`);
     }
 
@@ -351,34 +418,35 @@ export class CashFlowMonitoringEngine {
 
   private async triggerAlert(type: string, message: string): Promise<void> {
     // Insert alert into database
-    await supabase
-      .from('financial_alerts')
-      .insert({
-        clinic_id: this.clinicId,
-        alert_type: type,
-        message: message,
-        severity: this.getAlertSeverity(type),
-        status: 'active',
-        created_at: new Date().toISOString()
-      });
+    await supabase.from('financial_alerts').insert({
+      clinic_id: this.clinicId,
+      alert_type: type,
+      message,
+      severity: this.getAlertSeverity(type),
+      status: 'active',
+      created_at: new Date().toISOString(),
+    });
 
     // TODO: Implement notification sending (email, SMS, push)
     console.log(`FINANCIAL ALERT [${type}]: ${message}`);
   }
 
-  private getAlertSeverity(type: string): 'low' | 'medium' | 'high' | 'critical' {
-    const severityMap: Record<string, 'low' | 'medium' | 'high' | 'critical'> = {
-      'LOW_BALANCE': 'high',
-      'HIGH_EXPENSES': 'medium',
-      'NEGATIVE_FLOW_STREAK': 'critical'
-    };
-    
+  private getAlertSeverity(
+    type: string
+  ): 'low' | 'medium' | 'high' | 'critical' {
+    const severityMap: Record<string, 'low' | 'medium' | 'high' | 'critical'> =
+      {
+        LOW_BALANCE: 'high',
+        HIGH_EXPENSES: 'medium',
+        NEGATIVE_FLOW_STREAK: 'critical',
+      };
+
     return severityMap[type] || 'medium';
   }
 
   private countConsecutiveNegativeDays(trends: CashFlowSummary[]): number {
     let count = 0;
-    
+
     // Count from the end backwards
     for (let i = trends.length - 1; i >= 0; i--) {
       if (trends[i].net_flow < 0) {
@@ -387,7 +455,7 @@ export class CashFlowMonitoringEngine {
         break;
       }
     }
-    
+
     return count;
   }
 }

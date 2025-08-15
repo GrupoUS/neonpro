@@ -1,20 +1,23 @@
 // SSO Providers Route
 // Story 1.3: SSO Integration - Available Providers API
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { ssoManager } from '@/lib/auth/sso/sso-manager';
 import { logger } from '@/lib/logger';
-import { z } from 'zod';
 
 const providersQuerySchema = z.object({
   domain: z.string().optional(),
-  enabled_only: z.string().transform(val => val === 'true').optional(),
+  enabled_only: z
+    .string()
+    .transform((val) => val === 'true')
+    .optional(),
 });
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    
+
     // Validate query parameters
     const validationResult = providersQuerySchema.safeParse({
       domain: searchParams.get('domain'),
@@ -26,9 +29,9 @@ export async function GET(request: NextRequest) {
         errors: validationResult.error.errors,
         params: Object.fromEntries(searchParams.entries()),
       });
-      
+
       return NextResponse.json(
-        { 
+        {
           error: 'INVALID_PARAMETERS',
           message: 'Invalid request parameters',
           details: validationResult.error.errors,
@@ -44,7 +47,7 @@ export async function GET(request: NextRequest) {
     if (domain) {
       // Get providers for specific domain
       providers = ssoManager.getProvidersByDomain(domain);
-      
+
       logger.info('SSO providers: Retrieved providers for domain', {
         domain,
         providerCount: providers.length,
@@ -52,7 +55,7 @@ export async function GET(request: NextRequest) {
     } else {
       // Get all available providers
       providers = ssoManager.getAvailableProviders();
-      
+
       logger.info('SSO providers: Retrieved all providers', {
         providerCount: providers.length,
       });
@@ -60,11 +63,11 @@ export async function GET(request: NextRequest) {
 
     // Filter by enabled status if requested
     if (enabled_only) {
-      providers = providers.filter(provider => provider.config.enabled);
+      providers = providers.filter((provider) => provider.config.enabled);
     }
 
     // Transform providers for public API (remove sensitive config)
-    const publicProviders = providers.map(provider => ({
+    const publicProviders = providers.map((provider) => ({
       id: provider.id,
       name: provider.name,
       type: provider.type,
@@ -81,10 +84,13 @@ export async function GET(request: NextRequest) {
         supportsPKCE: provider.config.supportsPKCE,
       },
       // Only include scopes that are safe to expose
-      scopes: provider.config.scopes?.filter(scope => 
-        !scope.includes('admin') && 
-        !scope.includes('write') && 
-        !scope.includes('delete')
+      scopes: provider.config.scopes?.filter(
+        (scope) =>
+          !(
+            scope.includes('admin') ||
+            scope.includes('write') ||
+            scope.includes('delete')
+          )
       ),
     }));
 
@@ -92,7 +98,7 @@ export async function GET(request: NextRequest) {
       providers: publicProviders,
       total: publicProviders.length,
       domain: domain || null,
-      enabledOnly: enabled_only || false,
+      enabledOnly: enabled_only,
     });
   } catch (error) {
     logger.error('SSO providers: Failed to retrieve providers', {
@@ -104,7 +110,8 @@ export async function GET(request: NextRequest) {
       {
         error: 'PROVIDERS_FETCH_FAILED',
         message: 'Failed to retrieve SSO providers',
-        details: process.env.NODE_ENV === 'development' ? error.message : undefined,
+        details:
+          process.env.NODE_ENV === 'development' ? error.message : undefined,
       },
       { status: 500 }
     );

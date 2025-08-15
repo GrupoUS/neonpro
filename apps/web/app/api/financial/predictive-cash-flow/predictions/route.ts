@@ -2,15 +2,15 @@
  * =====================================================================================
  * PREDICTIVE CASH FLOW API - PREDICTIONS ENDPOINT
  * =====================================================================================
- * 
+ *
  * Comprehensive API for predictive cash flow operations.
  * Handles prediction generation, retrieval, and validation.
- * 
+ *
  * Epic: 5 - Advanced Financial Intelligence
  * Story: 5.2 - Predictive Cash Flow Analysis
  * Author: VoidBeast V4.0 BMad Method Integration
  * Created: 2025-01-27
- * 
+ *
  * Features:
  * - Generate AI-powered cash flow predictions
  * - Retrieve historical predictions with filtering
@@ -21,16 +21,13 @@
  * =====================================================================================
  */
 
-import { NextRequest, NextResponse } from 'next/server';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import PredictiveAnalyticsEngine from '@/lib/financial/predictive-analytics-engine';
-import {
-  createCashFlowPredictionSchema,
-  predictionPeriodTypeSchema,
-} from '@/lib/validations/predictive-cash-flow';
 import type { Database } from '@/lib/database.types';
+import PredictiveAnalyticsEngine from '@/lib/financial/predictive-analytics-engine';
+import { predictionPeriodTypeSchema } from '@/lib/validations/predictive-cash-flow';
 
 // =====================================================================================
 // REQUEST VALIDATION SCHEMAS
@@ -55,8 +52,14 @@ const validatePredictionSchema = z.object({
 const getPredictionsSchema = z.object({
   clinicId: z.string().uuid(),
   periodType: predictionPeriodTypeSchema.optional(),
-  startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
-  endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  startDate: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .optional(),
+  endDate: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .optional(),
   scenarioId: z.string().uuid().optional(),
   limit: z.string().regex(/^\d+$/).transform(Number).optional(),
   offset: z.string().regex(/^\d+$/).transform(Number).optional(),
@@ -89,7 +92,15 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const { clinicId, periodType, startDate, endDate, scenarioId, limit = 50, offset = 0 } = validation.data;
+    const {
+      clinicId,
+      periodType,
+      startDate,
+      endDate,
+      scenarioId,
+      limit = 50,
+      offset = 0,
+    } = validation.data;
 
     // Build query
     let query = supabase
@@ -152,9 +163,11 @@ export async function GET(request: NextRequest) {
         hasMore: (count || 0) > offset + limit,
       },
     });
-
   } catch (error) {
-    console.error('Error in GET /api/financial/predictive-cash-flow/predictions:', error);
+    console.error(
+      'Error in GET /api/financial/predictive-cash-flow/predictions:',
+      error
+    );
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -180,7 +193,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { clinicId, modelId, periodType, startDate, endDate, scenarioId } = validation.data;
+    const { clinicId, modelId, periodType, startDate, endDate, scenarioId } =
+      validation.data;
 
     // Verify clinic access
     const { data: user } = await supabase.auth.getUser();
@@ -205,7 +219,7 @@ export async function POST(request: NextRequest) {
     // Validate date range
     const start = new Date(startDate);
     const end = new Date(endDate);
-    
+
     if (start >= end) {
       return NextResponse.json(
         { error: 'Start date must be before end date' },
@@ -224,13 +238,14 @@ export async function POST(request: NextRequest) {
     const engine = new PredictiveAnalyticsEngine(supabase);
 
     // Generate prediction
-    const { data: prediction, error: predictionError } = await engine.generatePrediction(
-      clinicId,
-      periodType,
-      startDate,
-      endDate,
-      scenarioId
-    );
+    const { data: prediction, error: predictionError } =
+      await engine.generatePrediction(
+        clinicId,
+        periodType,
+        startDate,
+        endDate,
+        scenarioId
+      );
 
     if (predictionError || !prediction) {
       console.error('Error generating prediction:', predictionError);
@@ -260,31 +275,31 @@ export async function POST(request: NextRequest) {
     }
 
     // Log prediction generation for analytics
-    await supabase
-      .from('analytics_events')
-      .insert({
-        event_type: 'prediction_generated',
-        clinic_id: clinicId,
-        user_id: user.user.id,
-        metadata: {
-          prediction_id: prediction.id,
-          period_type: periodType,
-          model_id: modelId,
-          confidence_score: prediction.confidence_score,
-          date_range: { startDate, endDate },
-        },
-      });
+    await supabase.from('analytics_events').insert({
+      event_type: 'prediction_generated',
+      clinic_id: clinicId,
+      user_id: user.user.id,
+      metadata: {
+        prediction_id: prediction.id,
+        period_type: periodType,
+        model_id: modelId,
+        confidence_score: prediction.confidence_score,
+        date_range: { startDate, endDate },
+      },
+    });
 
     return NextResponse.json(
-      { 
+      {
         message: 'Prediction generated successfully',
         prediction: completePrediction || prediction,
       },
       { status: 201 }
     );
-
   } catch (error) {
-    console.error('Error in POST /api/financial/predictive-cash-flow/predictions:', error);
+    console.error(
+      'Error in POST /api/financial/predictive-cash-flow/predictions:',
+      error
+    );
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -310,7 +325,8 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    const { predictionId, actualInflow, actualOutflow, actualNet } = validation.data;
+    const { predictionId, actualInflow, actualOutflow, actualNet } =
+      validation.data;
 
     // Verify user authentication
     const { data: user } = await supabase.auth.getUser();
@@ -343,47 +359,40 @@ export async function PUT(request: NextRequest) {
       .single();
 
     if (clinicError || !clinic) {
-      return NextResponse.json(
-        { error: 'Access denied' },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: 'Access denied' }, { status: 403 });
     }
 
     // Initialize prediction engine and validate
     const engine = new PredictiveAnalyticsEngine(supabase);
-    const { accuracy, error: validationError } = await engine.validatePrediction(
-      predictionId,
-      actualInflow,
-      actualOutflow,
-      actualNet
-    );
+    const { accuracy, error: validationError } =
+      await engine.validatePrediction(
+        predictionId,
+        actualInflow,
+        actualOutflow,
+        actualNet
+      );
 
     if (validationError) {
       console.error('Error validating prediction:', validationError);
-      return NextResponse.json(
-        { error: validationError },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: validationError }, { status: 500 });
     }
 
     // Log validation event
-    await supabase
-      .from('analytics_events')
-      .insert({
-        event_type: 'prediction_validated',
-        clinic_id: prediction.clinic_id,
-        user_id: user.user.id,
-        metadata: {
-          prediction_id: predictionId,
-          accuracy_percentage: accuracy,
-          actual_values: { actualInflow, actualOutflow, actualNet },
-          predicted_values: {
-            inflow: prediction.predicted_inflow_amount,
-            outflow: prediction.predicted_outflow_amount,
-            net: prediction.predicted_net_amount,
-          },
+    await supabase.from('analytics_events').insert({
+      event_type: 'prediction_validated',
+      clinic_id: prediction.clinic_id,
+      user_id: user.user.id,
+      metadata: {
+        prediction_id: predictionId,
+        accuracy_percentage: accuracy,
+        actual_values: { actualInflow, actualOutflow, actualNet },
+        predicted_values: {
+          inflow: prediction.predicted_inflow_amount,
+          outflow: prediction.predicted_outflow_amount,
+          net: prediction.predicted_net_amount,
         },
-      });
+      },
+    });
 
     return NextResponse.json({
       message: 'Prediction validated successfully',
@@ -402,9 +411,11 @@ export async function PUT(request: NextRequest) {
         confidence: prediction.confidence_score,
       },
     });
-
   } catch (error) {
-    console.error('Error in PUT /api/financial/predictive-cash-flow/predictions:', error);
+    console.error(
+      'Error in PUT /api/financial/predictive-cash-flow/predictions:',
+      error
+    );
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -457,10 +468,7 @@ export async function DELETE(request: NextRequest) {
       .single();
 
     if (clinicError || !clinic) {
-      return NextResponse.json(
-        { error: 'Access denied' },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: 'Access denied' }, { status: 403 });
     }
 
     // Delete prediction (cascade will handle related records)
@@ -478,23 +486,23 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Log deletion event
-    await supabase
-      .from('analytics_events')
-      .insert({
-        event_type: 'prediction_deleted',
-        clinic_id: prediction.clinic_id,
-        user_id: user.user.id,
-        metadata: {
-          prediction_id: predictionId,
-        },
-      });
+    await supabase.from('analytics_events').insert({
+      event_type: 'prediction_deleted',
+      clinic_id: prediction.clinic_id,
+      user_id: user.user.id,
+      metadata: {
+        prediction_id: predictionId,
+      },
+    });
 
     return NextResponse.json({
       message: 'Prediction deleted successfully',
     });
-
   } catch (error) {
-    console.error('Error in DELETE /api/financial/predictive-cash-flow/predictions:', error);
+    console.error(
+      'Error in DELETE /api/financial/predictive-cash-flow/predictions:',
+      error
+    );
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

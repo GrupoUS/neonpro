@@ -1,6 +1,6 @@
 /**
  * Patient Portal Module
- * 
+ *
  * A comprehensive patient portal system for NeonPro that provides:
  * - Secure patient authentication and session management
  * - Dashboard with patient information and statistics
@@ -8,76 +8,77 @@
  * - Document upload and management
  * - Patient-staff communication system
  * - LGPD compliance and audit logging
- * 
+ *
  * @author NeonPro Development Team
  * @version 1.0.0
  */
 
-// Main portal class
-export { PatientPortal, PatientPortalConfig, PortalInitResult, PortalHealthCheck } from './patient-portal';
+// Appointment management
+export {
+  AppointmentConfig,
+  AppointmentManager,
+  BookingRequest,
+  BookingResult,
+  CancellationRequest,
+  RescheduleRequest,
+  TimeSlot,
+} from './appointments/appointment-manager';
 
 // Authentication and session management
 export {
-  SessionManager,
+  DeviceFingerprint,
+  SessionActivity,
   SessionConfig,
   SessionData,
+  SessionManager,
   SessionValidationResult,
-  DeviceFingerprint,
-  SessionActivity
 } from './auth/session-manager';
-
-// Dashboard functionality
-export {
-  PortalDashboard,
-  DashboardConfig,
-  PatientDashboardData,
-  AppointmentSummary,
-  TreatmentProgressSummary,
-  UploadSummary,
-  TaskSummary,
-  NotificationSummary,
-  DashboardStats,
-  PatientPreferences,
-  DashboardWidget
-} from './dashboard/portal-dashboard';
-
-// Appointment management
-export {
-  AppointmentManager,
-  AppointmentConfig,
-  TimeSlot,
-  BookingRequest,
-  BookingResult,
-  RescheduleRequest,
-  CancellationRequest
-} from './appointments/appointment-manager';
-
-// Upload management
-export {
-  UploadManager,
-  UploadConfig,
-  UploadRequest,
-  UploadResult,
-  UploadedFile,
-  UploadError,
-  ProcessingStatus,
-  UploadStats,
-  UploadActivity
-} from './uploads/upload-manager';
-
 // Communication system
 export {
-  CommunicationManager,
   CommunicationConfig,
-  Message,
-  MessageAttachment,
+  CommunicationManager,
+  CommunicationStats,
   Conversation,
+  Message,
+  MessageActivity,
+  MessageAttachment,
+  NotificationPreferences,
   SendMessageRequest,
   SendMessageResult,
-  NotificationPreferences,
-  CommunicationStats,
-  MessageActivity
 } from './communication/communication-manager';
+// Dashboard functionality
+export {
+  AppointmentSummary,
+  DashboardConfig,
+  DashboardStats,
+  DashboardWidget,
+  NotificationSummary,
+  PatientDashboardData,
+  PatientPreferences,
+  PortalDashboard,
+  TaskSummary,
+  TreatmentProgressSummary,
+  UploadSummary,
+} from './dashboard/portal-dashboard';
+// Main portal class
+export {
+  PatientPortal,
+  PatientPortalConfig,
+  PortalHealthCheck,
+  PortalInitResult,
+} from './patient-portal';
+// Upload management
+export {
+  ProcessingStatus,
+  UploadActivity,
+  UploadConfig,
+  UploadError,
+  UploadedFile,
+  UploadManager,
+  UploadRequest,
+  UploadResult,
+  UploadStats,
+} from './uploads/upload-manager';
 
 /**
  * Default configuration factory
@@ -92,7 +93,7 @@ export function createDefaultPortalConfig(): PatientPortalConfig {
       sessionCleanupInterval: 60 * 60 * 1000, // 1 hour
       deviceTrackingEnabled: true,
       geoLocationTracking: false,
-      activityLoggingEnabled: true
+      activityLoggingEnabled: true,
     },
     dashboard: {
       cacheEnabled: true,
@@ -100,7 +101,7 @@ export function createDefaultPortalConfig(): PatientPortalConfig {
       maxRecentItems: 10,
       enableRealTimeUpdates: true,
       showStatistics: true,
-      customWidgetsEnabled: true
+      customWidgetsEnabled: true,
     },
     appointments: {
       maxAdvanceBookingDays: 90,
@@ -109,7 +110,7 @@ export function createDefaultPortalConfig(): PatientPortalConfig {
       allowCancellation: true,
       autoConfirmationEnabled: false,
       reminderEnabled: true,
-      waitlistEnabled: true
+      waitlistEnabled: true,
     },
     uploads: {
       maxFileSize: 10 * 1024 * 1024, // 10MB
@@ -119,7 +120,7 @@ export function createDefaultPortalConfig(): PatientPortalConfig {
         'image/png',
         'image/gif',
         'application/msword',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
       ],
       maxFilesPerUpload: 5,
       virusScanEnabled: true,
@@ -127,7 +128,7 @@ export function createDefaultPortalConfig(): PatientPortalConfig {
       retentionDays: 2555, // 7 years
       encryptionEnabled: true,
       compressionEnabled: true,
-      thumbnailGeneration: true
+      thumbnailGeneration: true,
     },
     communication: {
       maxMessageLength: 5000,
@@ -142,8 +143,8 @@ export function createDefaultPortalConfig(): PatientPortalConfig {
         'image/jpeg',
         'image/png',
         'application/msword',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-      ]
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      ],
     },
     features: {
       appointmentBooking: true,
@@ -151,20 +152,20 @@ export function createDefaultPortalConfig(): PatientPortalConfig {
       messaging: true,
       treatmentTracking: true,
       billingAccess: true,
-      telehealth: false
+      telehealth: false,
     },
     security: {
       twoFactorRequired: false,
       sessionTimeout: 30 * 60 * 1000, // 30 minutes
       maxLoginAttempts: 5,
-      passwordComplexity: true
+      passwordComplexity: true,
     },
     ui: {
       theme: 'light',
       language: 'pt-BR',
       accessibility: true,
-      mobileOptimized: true
-    }
+      mobileOptimized: true,
+    },
   };
 }
 
@@ -177,7 +178,7 @@ export const PORTAL_FEATURES = {
   MESSAGING: 'messaging',
   TREATMENT_TRACKING: 'treatment_tracking',
   BILLING_ACCESS: 'billing_access',
-  TELEHEALTH: 'telehealth'
+  TELEHEALTH: 'telehealth',
 } as const;
 
 /**
@@ -186,7 +187,7 @@ export const PORTAL_FEATURES = {
 export const PORTAL_STATUS = {
   HEALTHY: 'healthy',
   DEGRADED: 'degraded',
-  UNHEALTHY: 'unhealthy'
+  UNHEALTHY: 'unhealthy',
 } as const;
 
 /**
@@ -196,5 +197,5 @@ export const SESSION_STATUS = {
   ACTIVE: 'active',
   EXPIRED: 'expired',
   TERMINATED: 'terminated',
-  SUSPENDED: 'suspended'
+  SUSPENDED: 'suspended',
 } as const;

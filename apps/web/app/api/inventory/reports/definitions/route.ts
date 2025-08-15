@@ -1,19 +1,18 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { inventoryReportsService } from '@/app/lib/services/inventory-reports-service';
 import type { ReportDefinition } from '@/app/lib/types/inventory-reports';
+import { createClient } from '@/app/utils/supabase/server';
 
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Verify authentication
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
@@ -26,19 +25,19 @@ export async function GET(request: NextRequest) {
       filters.is_active = searchParams.get('is_active') === 'true';
     }
 
-    const definitions = await inventoryReportsService.getReportDefinitions(filters);
+    const definitions =
+      await inventoryReportsService.getReportDefinitions(filters);
 
     return NextResponse.json({
       success: true,
       definitions,
     });
-
   } catch (error) {
     console.error('Error fetching report definitions:', error);
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to fetch report definitions',
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );
@@ -48,39 +47,40 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Verify authentication
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) {
-      return NextResponse.json(
-        { error: 'User not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
     const body = await request.json();
-    
+
     // Validate request body
     const validationResult = validateReportDefinition(body);
     if (!validationResult.isValid) {
       return NextResponse.json(
-        { 
+        {
           error: 'Invalid report definition',
-          details: validationResult.errors 
+          details: validationResult.errors,
         },
         { status: 400 }
       );
     }
 
-    const definitionData: Omit<ReportDefinition, 'id' | 'created_at' | 'updated_at'> = {
+    const definitionData: Omit<
+      ReportDefinition,
+      'id' | 'created_at' | 'updated_at'
+    > = {
       name: body.name,
       description: body.description || '',
       report_type: body.report_type,
@@ -90,19 +90,19 @@ export async function POST(request: NextRequest) {
       created_by: user.id,
     };
 
-    const savedDefinition = await inventoryReportsService.saveReportDefinition(definitionData);
+    const savedDefinition =
+      await inventoryReportsService.saveReportDefinition(definitionData);
 
     return NextResponse.json({
       success: true,
       definition: savedDefinition,
     });
-
   } catch (error) {
     console.error('Error creating report definition:', error);
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to create report definition',
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );
@@ -122,7 +122,11 @@ function validateReportDefinition(body: any): ValidationResult {
   const errors: string[] = [];
 
   // Check required fields
-  if (!body.name || typeof body.name !== 'string' || body.name.trim().length === 0) {
+  if (
+    !body.name ||
+    typeof body.name !== 'string' ||
+    body.name.trim().length === 0
+  ) {
     errors.push('Name is required and must be a non-empty string');
   }
 
@@ -137,15 +141,17 @@ function validateReportDefinition(body: any): ValidationResult {
   // Validate report type
   const validTypes = [
     'stock_movement',
-    'stock_valuation', 
+    'stock_valuation',
     'low_stock',
     'expiring_items',
     'transfers',
-    'location_performance'
+    'location_performance',
   ];
-  
+
   if (body.report_type && !validTypes.includes(body.report_type)) {
-    errors.push(`Invalid report type. Must be one of: ${validTypes.join(', ')}`);
+    errors.push(
+      `Invalid report type. Must be one of: ${validTypes.join(', ')}`
+    );
   }
 
   // Validate parameters structure
@@ -153,23 +159,33 @@ function validateReportDefinition(body: any): ValidationResult {
     if (!body.parameters.type) {
       errors.push('Parameters must include a type field');
     }
-    
+
     if (body.parameters.type !== body.report_type) {
       errors.push('Parameters type must match report_type');
     }
 
-    if (!body.parameters.filters || typeof body.parameters.filters !== 'object') {
+    if (
+      !body.parameters.filters ||
+      typeof body.parameters.filters !== 'object'
+    ) {
       errors.push('Parameters must include a filters object');
     }
   }
 
   // Validate schedule expression if provided (cron format)
-  if (body.schedule_expression && !isValidCronExpression(body.schedule_expression)) {
+  if (
+    body.schedule_expression &&
+    !isValidCronExpression(body.schedule_expression)
+  ) {
     errors.push('Invalid schedule expression. Must be a valid cron expression');
   }
 
   // Validate description length if provided
-  if (body.description && typeof body.description === 'string' && body.description.length > 500) {
+  if (
+    body.description &&
+    typeof body.description === 'string' &&
+    body.description.length > 500
+  ) {
     errors.push('Description must be 500 characters or less');
   }
 

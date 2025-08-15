@@ -1,4 +1,4 @@
-import { createClient } from "@/app/utils/supabase/server";
+import { createClient } from '@/app/utils/supabase/server';
 
 // Tipos temporários baseados na estrutura atual - substituir por tipos do Supabase quando disponível
 interface AccountsPayable {
@@ -24,7 +24,11 @@ interface Vendor {
 export interface NotificationConfig {
   id?: string;
   clinic_id: string;
-  notification_type: 'due_date_reminder' | 'overdue_payment' | 'approval_needed' | 'payment_completed';
+  notification_type:
+    | 'due_date_reminder'
+    | 'overdue_payment'
+    | 'approval_needed'
+    | 'payment_completed';
   days_before_due?: number; // Para lembretes de vencimento
   days_after_due?: number; // Para escalação de pagamentos em atraso
   enabled: boolean;
@@ -57,7 +61,12 @@ export interface DashboardAlert {
   id?: string;
   clinic_id: string;
   accounts_payable_id?: string;
-  alert_type: 'due_soon' | 'overdue' | 'approval_needed' | 'high_priority' | 'due_today';
+  alert_type:
+    | 'due_soon'
+    | 'overdue'
+    | 'approval_needed'
+    | 'high_priority'
+    | 'due_today';
   title: string;
   message: string;
   priority: 'low' | 'medium' | 'high' | 'urgent';
@@ -81,10 +90,6 @@ export interface PaymentReminder {
 export class NotificationService {
   private supabase: any;
 
-  constructor() {
-    // Usar createClient de forma assíncrona quando necessário
-  }
-
   private async getSupabaseClient() {
     if (!this.supabase) {
       this.supabase = await createClient();
@@ -93,7 +98,9 @@ export class NotificationService {
   }
 
   // Configuração de Notificações
-  async getNotificationConfigs(clinicId: string): Promise<NotificationConfig[]> {
+  async getNotificationConfigs(
+    clinicId: string
+  ): Promise<NotificationConfig[]> {
     // Mock implementation - substituir por query real quando tabela for criada
     return [
       {
@@ -122,7 +129,9 @@ export class NotificationService {
     ];
   }
 
-  async createNotificationConfig(config: Omit<NotificationConfig, 'id' | 'created_at' | 'updated_at'>): Promise<NotificationConfig> {
+  async createNotificationConfig(
+    config: Omit<NotificationConfig, 'id' | 'created_at' | 'updated_at'>
+  ): Promise<NotificationConfig> {
     // Mock implementation
     const newConfig: NotificationConfig = {
       ...config,
@@ -133,11 +142,16 @@ export class NotificationService {
     return newConfig;
   }
 
-  async updateNotificationConfig(id: string, config: Partial<NotificationConfig>): Promise<NotificationConfig> {
+  async updateNotificationConfig(
+    id: string,
+    config: Partial<NotificationConfig>
+  ): Promise<NotificationConfig> {
     // Mock implementation
-    const existingConfig = await this.getNotificationConfigs(config.clinic_id || '');
-    const configToUpdate = existingConfig.find(c => c.id === id);
-    
+    const existingConfig = await this.getNotificationConfigs(
+      config.clinic_id || ''
+    );
+    const configToUpdate = existingConfig.find((c) => c.id === id);
+
     if (!configToUpdate) {
       throw new Error('Configuration not found');
     }
@@ -150,10 +164,13 @@ export class NotificationService {
   }
 
   // Monitoramento de Vencimentos
-  async getDuePayments(clinicId: string, daysAhead: number = 7): Promise<PaymentReminder[]> {
+  async getDuePayments(
+    clinicId: string,
+    daysAhead = 7
+  ): Promise<PaymentReminder[]> {
     try {
       const supabase = await this.getSupabaseClient();
-      
+
       const { data: payables, error } = await supabase
         .from('accounts_payable')
         .select(`
@@ -162,7 +179,12 @@ export class NotificationService {
         `)
         .eq('clinic_id', clinicId)
         .in('status', ['pending', 'approved'])
-        .lte('due_date', new Date(Date.now() + daysAhead * 24 * 60 * 60 * 1000).toISOString().split('T')[0]);
+        .lte(
+          'due_date',
+          new Date(Date.now() + daysAhead * 24 * 60 * 60 * 1000)
+            .toISOString()
+            .split('T')[0]
+        );
 
       if (error) {
         console.error('Error fetching due payments:', error);
@@ -176,10 +198,10 @@ export class NotificationService {
       for (const payable of payables || []) {
         const dueDate = new Date(payable.due_date);
         dueDate.setHours(0, 0, 0, 0);
-        
+
         const timeDiff = dueDate.getTime() - today.getTime();
         const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
-        
+
         let alertType: 'due_soon' | 'due_today' | 'overdue' = 'due_soon';
         let priority: 'low' | 'medium' | 'high' | 'urgent' = 'low';
 
@@ -207,13 +229,16 @@ export class NotificationService {
       return reminders.sort((a, b) => {
         // Ordenar por prioridade (urgent > high > medium > low) e depois por data
         const priorityOrder = { urgent: 4, high: 3, medium: 2, low: 1 };
-        const priorityDiff = priorityOrder[b.priority] - priorityOrder[a.priority];
-        
-        if (priorityDiff !== 0) return priorityDiff;
-        
-        return new Date(a.accounts_payable.due_date).getTime() - new Date(b.accounts_payable.due_date).getTime();
-      });
+        const priorityDiff =
+          priorityOrder[b.priority] - priorityOrder[a.priority];
 
+        if (priorityDiff !== 0) return priorityDiff;
+
+        return (
+          new Date(a.accounts_payable.due_date).getTime() -
+          new Date(b.accounts_payable.due_date).getTime()
+        );
+      });
     } catch (error) {
       console.error('Error in getDuePayments:', error);
       return [];
@@ -221,16 +246,19 @@ export class NotificationService {
   }
 
   // Alertas do Dashboard
-  async getDashboardAlerts(clinicId: string, limit: number = 10): Promise<DashboardAlert[]> {
+  async getDashboardAlerts(
+    clinicId: string,
+    limit = 10
+  ): Promise<DashboardAlert[]> {
     // Mock implementation baseada em pagamentos próximos do vencimento
     const duePayments = await this.getDuePayments(clinicId, 7);
-    
+
     const alerts: DashboardAlert[] = [];
-    
+
     for (const reminder of duePayments.slice(0, limit)) {
-      let title: string = '';
-      let message: string = '';
-      
+      let title = '';
+      let message = '';
+
       if (reminder.alert_type === 'overdue') {
         title = `Pagamento em atraso - ${reminder.vendor.name}`;
         message = `Conta de R$ ${reminder.accounts_payable.amount} está ${reminder.days_overdue} dias em atraso`;
@@ -253,7 +281,9 @@ export class NotificationService {
         is_read: false,
         is_dismissed: false,
         action_url: `/dashboard/accounts-payable/payables?id=${reminder.accounts_payable.id}`,
-        expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+        expires_at: new Date(
+          Date.now() + 7 * 24 * 60 * 60 * 1000
+        ).toISOString(),
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       });
@@ -273,14 +303,16 @@ export class NotificationService {
   }
 
   // Fila de Notificações
-  async queueNotification(notification: Omit<NotificationQueue, 'id' | 'created_at' | 'updated_at'>): Promise<NotificationQueue> {
+  async queueNotification(
+    notification: Omit<NotificationQueue, 'id' | 'created_at' | 'updated_at'>
+  ): Promise<NotificationQueue> {
     const queuedNotification: NotificationQueue = {
       ...notification,
       id: `queue_${Date.now()}`,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
-    
+
     // Mock implementation - adicionar à fila quando tabela for criada
     console.log('Notification queued:', queuedNotification);
     return queuedNotification;
@@ -289,7 +321,7 @@ export class NotificationService {
   async processNotificationQueue(clinicId: string): Promise<void> {
     // Mock implementation - processar fila de notificações
     console.log(`Processing notification queue for clinic ${clinicId}`);
-    
+
     // 1. Buscar notificações pendentes
     // 2. Enviar emails
     // 3. Enviar SMS
@@ -300,14 +332,14 @@ export class NotificationService {
   // Sistema de Escalação
   async escalateOverduePayments(clinicId: string): Promise<void> {
     const overduePayments = await this.getDuePayments(clinicId, 0);
-    const overdue = overduePayments.filter(p => p.alert_type === 'overdue');
-    
+    const overdue = overduePayments.filter((p) => p.alert_type === 'overdue');
+
     for (const payment of overdue) {
       // Determinar nível de escalação baseado em dias de atraso
       let escalationLevel = 1;
       if (payment.days_overdue > 7) escalationLevel = 2;
       if (payment.days_overdue > 15) escalationLevel = 3;
-      
+
       // Criar notificação de escalação
       await this.queueNotification({
         clinic_id: clinicId,
@@ -317,13 +349,19 @@ export class NotificationService {
         status: 'pending',
         retry_count: 0,
       });
-      
-      console.log(`Escalated payment ${payment.accounts_payable.id} to level ${escalationLevel}`);
+
+      console.log(
+        `Escalated payment ${payment.accounts_payable.id} to level ${escalationLevel}`
+      );
     }
   }
 
   // Relatórios de Notificações
-  async getNotificationStats(clinicId: string, startDate: string, endDate: string) {
+  async getNotificationStats(
+    _clinicId: string,
+    _startDate: string,
+    _endDate: string
+  ) {
     // Mock implementation
     return {
       total_sent: 45,
@@ -353,7 +391,7 @@ export class NotificationService {
   calculateBusinessDays(startDate: Date, endDate: Date): number {
     let count = 0;
     const curDate = new Date(startDate);
-    
+
     while (curDate <= endDate) {
       const dayOfWeek = curDate.getDay();
       if (dayOfWeek !== 0 && dayOfWeek !== 6) {
@@ -361,7 +399,7 @@ export class NotificationService {
       }
       curDate.setDate(curDate.getDate() + 1);
     }
-    
+
     return count;
   }
 }

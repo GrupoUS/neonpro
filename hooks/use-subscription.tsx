@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import React, { createContext, useContext, useEffect, useState } from "react";
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { User } from '@supabase/auth-helpers-nextjs';
+import type { User } from '@supabase/auth-helpers-nextjs';
+import type React from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 
 interface SubscriptionData {
   id: string;
@@ -30,18 +30,18 @@ export function useSubscription() {
   useEffect(() => {
     async function fetchSubscription() {
       try {
-        const response = await fetch("/api/subscription/current");
+        const response = await fetch('/api/subscription/current');
         if (response.ok) {
           const data = await response.json();
           setSubscription(data);
         } else if (response.status === 401) {
-          setError("Não autorizado");
+          setError('Não autorizado');
         } else {
-          setError("Erro ao carregar assinatura");
+          setError('Erro ao carregar assinatura');
         }
       } catch (error) {
-        console.error("Error fetching subscription:", error);
-        setError("Erro de conexão");
+        console.error('Error fetching subscription:', error);
+        setError('Erro de conexão');
       } finally {
         setLoading(false);
       }
@@ -51,17 +51,17 @@ export function useSubscription() {
   }, []);
 
   const hasFeature = (feature: string): boolean => {
-    if (!subscription || !subscription.features) return false;
+    if (!(subscription && subscription.features)) return false;
     return subscription.features.includes(feature);
   };
 
   const canAddPatients = (currentPatientCount: number): boolean => {
-    if (!subscription || !subscription.max_patients) return true; // Unlimited
+    if (!(subscription && subscription.max_patients)) return true; // Unlimited
     return currentPatientCount < subscription.max_patients;
   };
 
   const canAddClinics = (currentClinicsCount: number): boolean => {
-    if (!subscription || !subscription.max_clinics) return true; // Unlimited
+    if (!(subscription && subscription.max_clinics)) return true; // Unlimited
     return currentClinicsCount < subscription.max_clinics;
   };
 
@@ -71,7 +71,7 @@ export function useSubscription() {
     const now = new Date();
     const periodEnd = new Date(subscription.current_period_end);
 
-    return subscription.status === "active" && periodEnd > now;
+    return subscription.status === 'active' && periodEnd > now;
   };
 
   const daysUntilRenewal = (): number => {
@@ -83,7 +83,7 @@ export function useSubscription() {
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   };
 
-  const isExpiringSoon = (days: number = 7): boolean => {
+  const isExpiringSoon = (days = 7): boolean => {
     return daysUntilRenewal() <= days && daysUntilRenewal() > 0;
   };
 
@@ -108,16 +108,20 @@ interface SubscriptionContextType {
   refreshSubscription: () => Promise<void>;
 }
 
-const SubscriptionContext = createContext<SubscriptionContextType | undefined>(undefined);
+const SubscriptionContext = createContext<SubscriptionContextType | undefined>(
+  undefined
+);
 
-export function SubscriptionProvider({ 
-  children, 
-  user 
-}: { 
+export function SubscriptionProvider({
+  children,
+  user,
+}: {
   children: React.ReactNode;
   user: User | null;
 }) {
-  const [subscription, setSubscription] = useState<SubscriptionData | null>(null);
+  const [subscription, setSubscription] = useState<SubscriptionData | null>(
+    null
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -131,19 +135,19 @@ export function SubscriptionProvider({
     try {
       setLoading(true);
       setError(null);
-      
-      const response = await fetch("/api/subscription/current");
+
+      const response = await fetch('/api/subscription/current');
       if (response.ok) {
         const data = await response.json();
         setSubscription(data);
       } else if (response.status === 401) {
-        setError("Não autorizado");
+        setError('Não autorizado');
       } else {
-        setError("Erro ao carregar assinatura");
+        setError('Erro ao carregar assinatura');
       }
     } catch (error) {
-      console.error("Error fetching subscription:", error);
-      setError("Erro de conexão");
+      console.error('Error fetching subscription:', error);
+      setError('Erro de conexão');
     } finally {
       setLoading(false);
     }
@@ -154,12 +158,12 @@ export function SubscriptionProvider({
   }, [user?.id]);
 
   return (
-    <SubscriptionContext.Provider 
-      value={{ 
-        subscription, 
-        loading, 
-        error, 
-        refreshSubscription 
+    <SubscriptionContext.Provider
+      value={{
+        subscription,
+        loading,
+        error,
+        refreshSubscription,
       }}
     >
       {children}
@@ -170,7 +174,9 @@ export function SubscriptionProvider({
 export function useSubscriptionContext() {
   const context = useContext(SubscriptionContext);
   if (context === undefined) {
-    throw new Error('useSubscriptionContext must be used within a SubscriptionProvider');
+    throw new Error(
+      'useSubscriptionContext must be used within a SubscriptionProvider'
+    );
   }
   return context;
 }

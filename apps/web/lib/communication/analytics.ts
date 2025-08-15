@@ -3,8 +3,7 @@
  * Story 2.3: Automated Communication System
  */
 
-import { createClient } from '@/app/utils/supabase/client';
-import { CommunicationAnalytics, CommunicationChannel, MessageType } from './types';
+import type { CommunicationChannel, MessageType } from './types';
 
 export interface CommunicationMetrics {
   total_sent: number;
@@ -70,30 +69,41 @@ export class CommunicationAnalytics {
   async trackEvent({
     logId,
     event,
-    metadata = {}
+    metadata = {},
   }: {
     logId: string;
-    event: 'sent' | 'delivered' | 'failed' | 'opened' | 'clicked' | 'replied' | 'bounced' | 'unsubscribed';
+    event:
+      | 'sent'
+      | 'delivered'
+      | 'failed'
+      | 'opened'
+      | 'clicked'
+      | 'replied'
+      | 'bounced'
+      | 'unsubscribed';
     metadata?: Record<string, any>;
   }): Promise<void> {
     try {
-      await supabase
-        .from('communication_events')
-        .insert({
-          communication_log_id: logId,
-          event_type: event,
-          metadata,
-          created_at: new Date()
-        });
+      await supabase.from('communication_events').insert({
+        communication_log_id: logId,
+        event_type: event,
+        metadata,
+        created_at: new Date(),
+      });
 
       // Update the communication log with latest status
       await supabase
         .from('communication_logs')
         .update({
-          status: event === 'failed' || event === 'bounced' ? 'failed' : 
-                 event === 'delivered' ? 'delivered' : 
-                 event === 'sent' ? 'sent' : 'delivered',
-          updated_at: new Date()
+          status:
+            event === 'failed' || event === 'bounced'
+              ? 'failed'
+              : event === 'delivered'
+                ? 'delivered'
+                : event === 'sent'
+                  ? 'sent'
+                  : 'delivered',
+          updated_at: new Date(),
         })
         .eq('id', logId);
     } catch (error) {
@@ -110,7 +120,7 @@ export class CommunicationAnalytics {
     startDate,
     endDate,
     channel,
-    messageType
+    messageType,
   }: {
     clinicId: string;
     startDate: Date;
@@ -155,7 +165,7 @@ export class CommunicationAnalytics {
     currentPeriodStart,
     currentPeriodEnd,
     previousPeriodStart,
-    previousPeriodEnd
+    previousPeriodEnd,
   }: {
     clinicId: string;
     currentPeriodStart: Date;
@@ -172,14 +182,14 @@ export class CommunicationAnalytics {
           clinicId,
           startDate: currentPeriodStart,
           endDate: currentPeriodEnd,
-          channel
+          channel,
         });
 
         const previousMetrics = await this.getMetrics({
           clinicId,
           startDate: previousPeriodStart,
           endDate: previousPeriodEnd,
-          channel
+          channel,
         });
 
         const changePercentage = this.calculateChangePercentage(
@@ -187,8 +197,12 @@ export class CommunicationAnalytics {
           previousMetrics.delivery_rate
         );
 
-        const trend = changePercentage > 5 ? 'up' : 
-                     changePercentage < -5 ? 'down' : 'stable';
+        const trend =
+          changePercentage > 5
+            ? 'up'
+            : changePercentage < -5
+              ? 'down'
+              : 'stable';
 
         performance.push({
           channel,
@@ -197,8 +211,8 @@ export class CommunicationAnalytics {
           period_comparison: {
             current_period: currentMetrics,
             previous_period: previousMetrics,
-            change_percentage: changePercentage
-          }
+            change_percentage: changePercentage,
+          },
         });
       }
 
@@ -241,7 +255,9 @@ export class CommunicationAnalytics {
       const channelBreakdown: ChannelPerformance[] = [];
 
       for (const channel of channels) {
-        const channelLogs = (logs || []).filter(log => log.channel === channel);
+        const channelLogs = (logs || []).filter(
+          (log) => log.channel === channel
+        );
         if (channelLogs.length > 0) {
           const metrics = this.calculateMetrics(channelLogs);
           channelBreakdown.push({
@@ -251,21 +267,28 @@ export class CommunicationAnalytics {
             period_comparison: {
               current_period: metrics,
               previous_period: metrics, // Placeholder
-              change_percentage: 0
-            }
+              change_percentage: 0,
+            },
           });
         }
       }
 
       // Calculate patient engagement metrics
-      const patientEngagement = await this.calculatePatientEngagement(campaignId);
+      const patientEngagement =
+        await this.calculatePatientEngagement(campaignId);
 
       // Calculate ROI (simplified)
-      const roi = this.calculateROI(overallMetrics.cost_total, patientEngagement.new_appointments);
+      const roi = this.calculateROI(
+        overallMetrics.cost_total,
+        patientEngagement.new_appointments
+      );
 
       // Calculate conversion rate
-      const conversionRate = overallMetrics.total_sent > 0 ? 
-        (patientEngagement.new_appointments / overallMetrics.total_sent) * 100 : 0;
+      const conversionRate =
+        overallMetrics.total_sent > 0
+          ? (patientEngagement.new_appointments / overallMetrics.total_sent) *
+            100
+          : 0;
 
       return {
         campaign_id: campaignId,
@@ -277,7 +300,7 @@ export class CommunicationAnalytics {
         channel_breakdown: channelBreakdown,
         roi,
         conversion_rate: conversionRate,
-        patient_engagement: patientEngagement
+        patient_engagement: patientEngagement,
       };
     } catch (error) {
       console.error('Error getting campaign analytics:', error);
@@ -288,7 +311,10 @@ export class CommunicationAnalytics {
   /**
    * Calculate patient engagement score
    */
-  async calculatePatientEngagementScore(patientId: string, clinicId: string): Promise<PatientEngagementScore> {
+  async calculatePatientEngagementScore(
+    patientId: string,
+    clinicId: string
+  ): Promise<PatientEngagementScore> {
     try {
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
@@ -322,7 +348,9 @@ export class CommunicationAnalytics {
 
       // Calculate factors
       const responseRate = this.calculateResponseRate(communications || []);
-      const appointmentAdherence = this.calculateAppointmentAdherence(appointments || []);
+      const appointmentAdherence = this.calculateAppointmentAdherence(
+        appointments || []
+      );
       const preferenceAlignment = this.calculatePreferenceAlignment(
         communications || [],
         preferences
@@ -331,10 +359,10 @@ export class CommunicationAnalytics {
 
       // Calculate overall score (weighted average)
       const score = Math.round(
-        (responseRate * 0.3) +
-        (appointmentAdherence * 0.4) +
-        (preferenceAlignment * 0.2) +
-        (recency * 0.1)
+        responseRate * 0.3 +
+          appointmentAdherence * 0.4 +
+          preferenceAlignment * 0.2 +
+          recency * 0.1
       );
 
       // Generate recommendations
@@ -342,7 +370,7 @@ export class CommunicationAnalytics {
         responseRate,
         appointmentAdherence,
         preferenceAlignment,
-        recency
+        recency,
       });
 
       return {
@@ -352,10 +380,10 @@ export class CommunicationAnalytics {
           response_rate: responseRate,
           appointment_adherence: appointmentAdherence,
           communication_preference_alignment: preferenceAlignment,
-          recency
+          recency,
         },
         recommendations,
-        last_calculated: new Date()
+        last_calculated: new Date(),
       };
     } catch (error) {
       console.error('Error calculating patient engagement score:', error);
@@ -370,20 +398,22 @@ export class CommunicationAnalytics {
     clinicId,
     startDate,
     endDate,
-    limit = 10
+    limit = 10,
   }: {
     clinicId: string;
     startDate: Date;
     endDate: Date;
     limit?: number;
-  }): Promise<Array<{
-    template_id: string;
-    template_name: string;
-    message_type: MessageType;
-    channel: CommunicationChannel;
-    metrics: CommunicationMetrics;
-    usage_count: number;
-  }>> {
+  }): Promise<
+    Array<{
+      template_id: string;
+      template_name: string;
+      message_type: MessageType;
+      channel: CommunicationChannel;
+      metrics: CommunicationMetrics;
+      usage_count: number;
+    }>
+  > {
     try {
       const { data: logs } = await supabase
         .from('communication_logs')
@@ -401,35 +431,43 @@ export class CommunicationAnalytics {
         .not('template_id', 'is', null);
 
       // Group by template
-      const templateGroups = (logs || []).reduce((acc, log) => {
-        const key = log.template_id;
-        if (!acc[key]) {
-          acc[key] = [];
-        }
-        acc[key].push(log);
-        return acc;
-      }, {} as Record<string, any[]>);
+      const templateGroups = (logs || []).reduce(
+        (acc, log) => {
+          const key = log.template_id;
+          if (!acc[key]) {
+            acc[key] = [];
+          }
+          acc[key].push(log);
+          return acc;
+        },
+        {} as Record<string, any[]>
+      );
 
       // Calculate metrics for each template
-      const templatePerformance = Object.entries(templateGroups).map(([templateId, templateLogs]) => {
-        const firstLog = templateLogs[0];
-        const metrics = this.calculateMetrics(templateLogs);
-        
-        return {
-          template_id: templateId,
-          template_name: firstLog.message_templates?.name || 'Unknown Template',
-          message_type: firstLog.message_type,
-          channel: firstLog.channel,
-          metrics,
-          usage_count: templateLogs.length
-        };
-      });
+      const templatePerformance = Object.entries(templateGroups).map(
+        ([templateId, templateLogs]) => {
+          const firstLog = templateLogs[0];
+          const metrics = this.calculateMetrics(templateLogs);
+
+          return {
+            template_id: templateId,
+            template_name:
+              firstLog.message_templates?.name || 'Unknown Template',
+            message_type: firstLog.message_type,
+            channel: firstLog.channel,
+            metrics,
+            usage_count: templateLogs.length,
+          };
+        }
+      );
 
       // Sort by delivery rate and usage count
       return templatePerformance
         .sort((a, b) => {
-          const scoreA = a.metrics.delivery_rate * 0.7 + (a.usage_count / 100) * 0.3;
-          const scoreB = b.metrics.delivery_rate * 0.7 + (b.usage_count / 100) * 0.3;
+          const scoreA =
+            a.metrics.delivery_rate * 0.7 + (a.usage_count / 100) * 0.3;
+          const scoreB =
+            b.metrics.delivery_rate * 0.7 + (b.usage_count / 100) * 0.3;
           return scoreB - scoreA;
         })
         .slice(0, limit);
@@ -462,13 +500,13 @@ export class CommunicationAnalytics {
       const currentMetrics = await this.getMetrics({
         clinicId,
         startDate: thirtyDaysAgo,
-        endDate: new Date()
+        endDate: new Date(),
       });
 
       const previousMetrics = await this.getMetrics({
         clinicId,
         startDate: sixtyDaysAgo,
-        endDate: thirtyDaysAgo
+        endDate: thirtyDaysAgo,
       });
 
       // Delivery rate insights
@@ -478,9 +516,13 @@ export class CommunicationAnalytics {
       );
 
       if (deliveryChange > 10) {
-        insights.push(`Delivery rate improved by ${deliveryChange.toFixed(1)}% this month`);
+        insights.push(
+          `Delivery rate improved by ${deliveryChange.toFixed(1)}% this month`
+        );
       } else if (deliveryChange < -10) {
-        insights.push(`Delivery rate decreased by ${Math.abs(deliveryChange).toFixed(1)}% this month`);
+        insights.push(
+          `Delivery rate decreased by ${Math.abs(deliveryChange).toFixed(1)}% this month`
+        );
         alerts.push('Delivery rate has significantly decreased');
         recommendations.push('Review message content and sending practices');
       }
@@ -494,7 +536,9 @@ export class CommunicationAnalytics {
 
         if (costChange > 20) {
           alerts.push('Communication costs have increased significantly');
-          recommendations.push('Consider optimizing message frequency and channel mix');
+          recommendations.push(
+            'Consider optimizing message frequency and channel mix'
+          );
         }
       }
 
@@ -505,22 +549,30 @@ export class CommunicationAnalytics {
       );
 
       if (volumeChange > 50) {
-        insights.push(`Message volume increased by ${volumeChange.toFixed(1)}%`);
+        insights.push(
+          `Message volume increased by ${volumeChange.toFixed(1)}%`
+        );
       }
 
       // Response rate insights
       if (currentMetrics.response_rate && currentMetrics.response_rate < 10) {
         alerts.push('Low patient response rate detected');
-        recommendations.push('Consider personalizing messages and optimizing send times');
+        recommendations.push(
+          'Consider personalizing messages and optimizing send times'
+        );
       }
 
       // General recommendations
       if (currentMetrics.delivery_rate < 90) {
-        recommendations.push('Improve delivery rate by cleaning contact lists and verifying phone numbers');
+        recommendations.push(
+          'Improve delivery rate by cleaning contact lists and verifying phone numbers'
+        );
       }
 
       if (currentMetrics.open_rate && currentMetrics.open_rate < 20) {
-        recommendations.push('Improve email subject lines to increase open rates');
+        recommendations.push(
+          'Improve email subject lines to increase open rates'
+        );
       }
 
       return { insights, recommendations, alerts };
@@ -533,26 +585,31 @@ export class CommunicationAnalytics {
   // Private helper methods
   private calculateMetrics(logs: any[]): CommunicationMetrics {
     const totalSent = logs.length;
-    const totalDelivered = logs.filter(log => 
+    const totalDelivered = logs.filter((log) =>
       log.communication_events?.some((e: any) => e.event_type === 'delivered')
     ).length;
-    const totalFailed = logs.filter(log => 
-      log.communication_events?.some((e: any) => ['failed', 'bounced'].includes(e.event_type))
+    const totalFailed = logs.filter((log) =>
+      log.communication_events?.some((e: any) =>
+        ['failed', 'bounced'].includes(e.event_type)
+      )
     ).length;
-    const totalOpened = logs.filter(log => 
+    const totalOpened = logs.filter((log) =>
       log.communication_events?.some((e: any) => e.event_type === 'opened')
     ).length;
-    const totalClicked = logs.filter(log => 
+    const totalClicked = logs.filter((log) =>
       log.communication_events?.some((e: any) => e.event_type === 'clicked')
     ).length;
-    const totalReplied = logs.filter(log => 
+    const totalReplied = logs.filter((log) =>
       log.communication_events?.some((e: any) => e.event_type === 'replied')
     ).length;
 
     const deliveryRate = totalSent > 0 ? (totalDelivered / totalSent) * 100 : 0;
-    const openRate = totalDelivered > 0 ? (totalOpened / totalDelivered) * 100 : undefined;
-    const clickRate = totalOpened > 0 ? (totalClicked / totalOpened) * 100 : undefined;
-    const responseRate = totalSent > 0 ? (totalReplied / totalSent) * 100 : undefined;
+    const openRate =
+      totalDelivered > 0 ? (totalOpened / totalDelivered) * 100 : undefined;
+    const clickRate =
+      totalOpened > 0 ? (totalClicked / totalOpened) * 100 : undefined;
+    const responseRate =
+      totalSent > 0 ? (totalReplied / totalSent) * 100 : undefined;
 
     const costTotal = logs.reduce((sum, log) => sum + (log.cost || 0), 0);
     const costPerMessage = totalSent > 0 ? costTotal / totalSent : 0;
@@ -569,7 +626,7 @@ export class CommunicationAnalytics {
       click_rate: clickRate,
       response_rate: responseRate,
       cost_total: costTotal,
-      cost_per_message: costPerMessage
+      cost_per_message: costPerMessage,
     };
   }
 
@@ -578,7 +635,7 @@ export class CommunicationAnalytics {
     return ((current - previous) / previous) * 100;
   }
 
-  private async calculatePatientEngagement(campaignId: string): Promise<{
+  private async calculatePatientEngagement(_campaignId: string): Promise<{
     new_appointments: number;
     confirmed_appointments: number;
     cancelled_appointments: number;
@@ -591,7 +648,7 @@ export class CommunicationAnalytics {
         new_appointments: 0,
         confirmed_appointments: 0,
         cancelled_appointments: 0,
-        no_shows_prevented: 0
+        no_shows_prevented: 0,
       };
     } catch (error) {
       console.error('Error calculating patient engagement:', error);
@@ -599,7 +656,7 @@ export class CommunicationAnalytics {
         new_appointments: 0,
         confirmed_appointments: 0,
         cancelled_appointments: 0,
-        no_shows_prevented: 0
+        no_shows_prevented: 0,
       };
     }
   }
@@ -614,56 +671,70 @@ export class CommunicationAnalytics {
 
   private calculateResponseRate(communications: any[]): number {
     if (communications.length === 0) return 0;
-    
-    const responses = communications.filter(comm => 
+
+    const responses = communications.filter((comm) =>
       comm.communication_events?.some((e: any) => e.event_type === 'replied')
     ).length;
-    
+
     return (responses / communications.length) * 100;
   }
 
   private calculateAppointmentAdherence(appointments: any[]): number {
     if (appointments.length === 0) return 100; // No data = perfect score
-    
-    const completed = appointments.filter(apt => 
-      apt.status === 'completed' && !apt.actual_no_show
+
+    const completed = appointments.filter(
+      (apt) => apt.status === 'completed' && !apt.actual_no_show
     ).length;
-    
+
     return (completed / appointments.length) * 100;
   }
 
-  private calculatePreferenceAlignment(communications: any[], preferences: any): number {
+  private calculatePreferenceAlignment(
+    communications: any[],
+    preferences: any
+  ): number {
     if (!preferences || communications.length === 0) return 50; // Neutral score
-    
-    const alignedCommunications = communications.filter(comm => {
-      if (preferences.preferred_channel && comm.channel === preferences.preferred_channel) {
+
+    const alignedCommunications = communications.filter((comm) => {
+      if (
+        preferences.preferred_channel &&
+        comm.channel === preferences.preferred_channel
+      ) {
         return true;
       }
-      if (preferences.preferred_time && this.isTimeAligned(comm.created_at, preferences.preferred_time)) {
+      if (
+        preferences.preferred_time &&
+        this.isTimeAligned(comm.created_at, preferences.preferred_time)
+      ) {
         return true;
       }
       return false;
     }).length;
-    
+
     return (alignedCommunications / communications.length) * 100;
   }
 
   private calculateRecencyScore(communications: any[]): number {
     if (communications.length === 0) return 0;
-    
+
     const now = new Date();
-    const mostRecent = new Date(Math.max(...communications.map(c => new Date(c.created_at).getTime())));
+    const mostRecent = new Date(
+      Math.max(...communications.map((c) => new Date(c.created_at).getTime()))
+    );
     const daysSinceLastCommunication = Math.floor(
       (now.getTime() - mostRecent.getTime()) / (1000 * 60 * 60 * 24)
     );
-    
+
     // Score decreases as days increase
-    return Math.max(0, 100 - (daysSinceLastCommunication * 5));
+    return Math.max(0, 100 - daysSinceLastCommunication * 5);
   }
 
-  private isTimeAligned(communicationTime: string, preferredTime: string): boolean {
+  private isTimeAligned(
+    communicationTime: string,
+    preferredTime: string
+  ): boolean {
     const commHour = new Date(communicationTime).getHours();
-    
+
     switch (preferredTime) {
       case 'morning':
         return commHour >= 8 && commHour < 12;
@@ -683,23 +754,29 @@ export class CommunicationAnalytics {
     recency: number;
   }): string[] {
     const recommendations: string[] = [];
-    
+
     if (factors.responseRate < 20) {
-      recommendations.push('Send more personalized messages to improve response rate');
+      recommendations.push(
+        'Send more personalized messages to improve response rate'
+      );
     }
-    
+
     if (factors.appointmentAdherence < 80) {
-      recommendations.push('Increase reminder frequency to improve appointment adherence');
+      recommendations.push(
+        'Increase reminder frequency to improve appointment adherence'
+      );
     }
-    
+
     if (factors.preferenceAlignment < 60) {
-      recommendations.push('Align communication timing and channels with patient preferences');
+      recommendations.push(
+        'Align communication timing and channels with patient preferences'
+      );
     }
-    
+
     if (factors.recency < 30) {
       recommendations.push('Re-engage patient with targeted communication');
     }
-    
+
     return recommendations;
   }
 }

@@ -1,7 +1,7 @@
 /**
  * NeonPro Consent Forms System
  * Story 2.2: Medical History & Records - Consent Form Integration
- * 
+ *
  * Sistema avançado de formulários de consentimento:
  * - Formulários dinâmicos e personalizáveis
  * - Integração com LGPD e privacidade
@@ -10,158 +10,162 @@
  * - Auditoria completa
  */
 
-import { createClient } from '@supabase/supabase-js'
-import crypto from 'crypto'
-import { AuditLogger } from '../audit/audit-logger'
-import { LGPDManager } from '../auth/lgpd/lgpd-manager'
-import { DigitalSignatureManager, SignatureType, SignerRole } from './digital-signature'
+import crypto from 'node:crypto';
+import { createClient } from '@supabase/supabase-js';
+import { AuditLogger } from '../audit/audit-logger';
+import { LGPDManager } from '../auth/lgpd/lgpd-manager';
+import {
+  DigitalSignatureManager,
+  SignatureType,
+  SignerRole,
+} from './digital-signature';
 
 // ============================================================================
 // TYPES & INTERFACES
 // ============================================================================
 
 export interface ConsentForm {
-  id: string
-  clinic_id: string
-  form_type: ConsentFormType
-  title: string
-  description?: string
-  version: string
-  language: string
-  content: FormContent
-  fields: FormField[]
-  validation_rules: ValidationRule[]
-  legal_basis: LegalBasis[]
-  retention_period: number // in days
-  is_active: boolean
-  is_required: boolean
-  created_by: string
-  created_at: string
-  updated_at: string
-  effective_from: string
-  effective_until?: string
+  id: string;
+  clinic_id: string;
+  form_type: ConsentFormType;
+  title: string;
+  description?: string;
+  version: string;
+  language: string;
+  content: FormContent;
+  fields: FormField[];
+  validation_rules: ValidationRule[];
+  legal_basis: LegalBasis[];
+  retention_period: number; // in days
+  is_active: boolean;
+  is_required: boolean;
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+  effective_from: string;
+  effective_until?: string;
 }
 
 export interface ConsentResponse {
-  id: string
-  form_id: string
-  patient_id: string
-  clinic_id: string
-  responses: FieldResponse[]
-  consent_given: boolean
-  consent_date: string
-  consent_method: ConsentMethod
-  ip_address?: string
-  user_agent?: string
-  geolocation?: GeolocationData
-  witness_id?: string
-  witness_name?: string
-  signature_id?: string
-  is_valid: boolean
-  expires_at?: string
-  withdrawn_at?: string
-  withdrawal_reason?: string
-  created_at: string
-  updated_at: string
+  id: string;
+  form_id: string;
+  patient_id: string;
+  clinic_id: string;
+  responses: FieldResponse[];
+  consent_given: boolean;
+  consent_date: string;
+  consent_method: ConsentMethod;
+  ip_address?: string;
+  user_agent?: string;
+  geolocation?: GeolocationData;
+  witness_id?: string;
+  witness_name?: string;
+  signature_id?: string;
+  is_valid: boolean;
+  expires_at?: string;
+  withdrawn_at?: string;
+  withdrawal_reason?: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface FormContent {
-  introduction: string
-  sections: FormSection[]
-  conclusion: string
-  legal_notice: string
-  privacy_policy_link?: string
-  contact_info: ContactInfo
+  introduction: string;
+  sections: FormSection[];
+  conclusion: string;
+  legal_notice: string;
+  privacy_policy_link?: string;
+  contact_info: ContactInfo;
 }
 
 export interface FormSection {
-  id: string
-  title: string
-  description?: string
-  content: string
-  order: number
-  is_required: boolean
-  conditional_logic?: ConditionalLogic
+  id: string;
+  title: string;
+  description?: string;
+  content: string;
+  order: number;
+  is_required: boolean;
+  conditional_logic?: ConditionalLogic;
 }
 
 export interface FormField {
-  id: string
-  section_id?: string
-  name: string
-  label: string
-  type: FieldType
-  description?: string
-  placeholder?: string
-  options?: FieldOption[]
-  validation: FieldValidation
-  is_required: boolean
-  order: number
-  conditional_logic?: ConditionalLogic
-  data_category: DataCategory
-  retention_period?: number
+  id: string;
+  section_id?: string;
+  name: string;
+  label: string;
+  type: FieldType;
+  description?: string;
+  placeholder?: string;
+  options?: FieldOption[];
+  validation: FieldValidation;
+  is_required: boolean;
+  order: number;
+  conditional_logic?: ConditionalLogic;
+  data_category: DataCategory;
+  retention_period?: number;
 }
 
 export interface FieldResponse {
-  field_id: string
-  field_name: string
-  value: any
-  data_category: DataCategory
-  consent_given: boolean
-  timestamp: string
+  field_id: string;
+  field_name: string;
+  value: any;
+  data_category: DataCategory;
+  consent_given: boolean;
+  timestamp: string;
 }
 
 export interface ValidationRule {
-  id: string
-  field_id: string
-  rule_type: ValidationType
-  parameters: Record<string, any>
-  error_message: string
+  id: string;
+  field_id: string;
+  rule_type: ValidationType;
+  parameters: Record<string, any>;
+  error_message: string;
 }
 
 export interface LegalBasis {
-  type: LegalBasisType
-  description: string
-  article_reference?: string
-  purpose: string
-  data_categories: DataCategory[]
+  type: LegalBasisType;
+  description: string;
+  article_reference?: string;
+  purpose: string;
+  data_categories: DataCategory[];
 }
 
 export interface ConditionalLogic {
-  condition: LogicCondition
-  action: LogicAction
-  target_fields?: string[]
+  condition: LogicCondition;
+  action: LogicAction;
+  target_fields?: string[];
 }
 
 export interface FieldOption {
-  value: string
-  label: string
-  description?: string
-  is_default?: boolean
+  value: string;
+  label: string;
+  description?: string;
+  is_default?: boolean;
 }
 
 export interface FieldValidation {
-  required?: boolean
-  min_length?: number
-  max_length?: number
-  pattern?: string
-  min_value?: number
-  max_value?: number
-  custom_validator?: string
+  required?: boolean;
+  min_length?: number;
+  max_length?: number;
+  pattern?: string;
+  min_value?: number;
+  max_value?: number;
+  custom_validator?: string;
 }
 
 export interface GeolocationData {
-  latitude: number
-  longitude: number
-  accuracy: number
-  timestamp: string
+  latitude: number;
+  longitude: number;
+  accuracy: number;
+  timestamp: string;
 }
 
 export interface ContactInfo {
-  clinic_name: string
-  address: string
-  phone: string
-  email: string
-  dpo_contact?: string
+  clinic_name: string;
+  address: string;
+  phone: string;
+  email: string;
+  dpo_contact?: string;
 }
 
 // Enums
@@ -175,7 +179,7 @@ export enum ConsentFormType {
   TELEMEDICINE = 'telemedicine',
   EMERGENCY_CONTACT = 'emergency_contact',
   MINOR_CONSENT = 'minor_consent',
-  CUSTOM = 'custom'
+  CUSTOM = 'custom',
 }
 
 export enum ConsentMethod {
@@ -184,7 +188,7 @@ export enum ConsentMethod {
   VERBAL_RECORDED = 'verbal_recorded',
   WRITTEN_PHYSICAL = 'written_physical',
   BIOMETRIC = 'biometric',
-  WITNESSED = 'witnessed'
+  WITNESSED = 'witnessed',
 }
 
 export enum FieldType {
@@ -201,7 +205,7 @@ export enum FieldType {
   MULTISELECT = 'multiselect',
   FILE_UPLOAD = 'file_upload',
   SIGNATURE = 'signature',
-  CONSENT_CHECKBOX = 'consent_checkbox'
+  CONSENT_CHECKBOX = 'consent_checkbox',
 }
 
 export enum DataCategory {
@@ -212,7 +216,7 @@ export enum DataCategory {
   CONTACT_DATA = 'contact_data',
   DEMOGRAPHIC_DATA = 'demographic_data',
   BEHAVIORAL_DATA = 'behavioral_data',
-  TECHNICAL_DATA = 'technical_data'
+  TECHNICAL_DATA = 'technical_data',
 }
 
 export enum LegalBasisType {
@@ -221,7 +225,7 @@ export enum LegalBasisType {
   LEGAL_OBLIGATION = 'legal_obligation',
   VITAL_INTERESTS = 'vital_interests',
   PUBLIC_TASK = 'public_task',
-  LEGITIMATE_INTERESTS = 'legitimate_interests'
+  LEGITIMATE_INTERESTS = 'legitimate_interests',
 }
 
 export enum ValidationType {
@@ -233,7 +237,7 @@ export enum ValidationType {
   PHONE = 'phone',
   DATE_RANGE = 'date_range',
   NUMERIC_RANGE = 'numeric_range',
-  CUSTOM = 'custom'
+  CUSTOM = 'custom',
 }
 
 export enum LogicCondition {
@@ -243,7 +247,7 @@ export enum LogicCondition {
   GREATER_THAN = 'greater_than',
   LESS_THAN = 'less_than',
   IS_EMPTY = 'is_empty',
-  IS_NOT_EMPTY = 'is_not_empty'
+  IS_NOT_EMPTY = 'is_not_empty',
 }
 
 export enum LogicAction {
@@ -251,16 +255,16 @@ export enum LogicAction {
   HIDE = 'hide',
   REQUIRE = 'require',
   DISABLE = 'disable',
-  SET_VALUE = 'set_value'
+  SET_VALUE = 'set_value',
 }
 
 export interface ConsentFormOptions {
-  includeSignature?: boolean
-  requireWitness?: boolean
-  enableGeolocation?: boolean
-  customValidation?: boolean
-  autoSave?: boolean
-  multiLanguage?: boolean
+  includeSignature?: boolean;
+  requireWitness?: boolean;
+  enableGeolocation?: boolean;
+  customValidation?: boolean;
+  autoSave?: boolean;
+  multiLanguage?: boolean;
 }
 
 // ============================================================================
@@ -268,19 +272,19 @@ export interface ConsentFormOptions {
 // ============================================================================
 
 export class ConsentFormsManager {
-  private supabase
-  private auditLogger: AuditLogger
-  private lgpdManager: LGPDManager
-  private signatureManager: DigitalSignatureManager
+  private supabase;
+  private auditLogger: AuditLogger;
+  private lgpdManager: LGPDManager;
+  private signatureManager: DigitalSignatureManager;
 
   constructor() {
     this.supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
-    )
-    this.auditLogger = new AuditLogger()
-    this.lgpdManager = new LGPDManager()
-    this.signatureManager = new DigitalSignatureManager()
+    );
+    this.auditLogger = new AuditLogger();
+    this.lgpdManager = new LGPDManager();
+    this.signatureManager = new DigitalSignatureManager();
   }
 
   // ========================================================================
@@ -293,21 +297,21 @@ export class ConsentFormsManager {
     createdBy: string
   ): Promise<{ success: boolean; data?: ConsentForm; error?: string }> {
     try {
-      const formId = crypto.randomUUID()
-      const now = new Date().toISOString()
+      const formId = crypto.randomUUID();
+      const now = new Date().toISOString();
 
       const form: ConsentForm = {
         ...formData,
         id: formId,
         clinic_id: clinicId,
         created_at: now,
-        updated_at: now
-      }
+        updated_at: now,
+      };
 
       // Validate form structure
-      const validation = await this.validateFormStructure(form)
+      const validation = await this.validateFormStructure(form);
       if (!validation.isValid) {
-        return { success: false, error: validation.error }
+        return { success: false, error: validation.error };
       }
 
       // Save to database
@@ -315,9 +319,9 @@ export class ConsentFormsManager {
         .from('consent_forms')
         .insert(form)
         .select()
-        .single()
+        .single();
 
-      if (error) throw error
+      if (error) throw error;
 
       // Log audit event
       await this.auditLogger.log({
@@ -329,17 +333,17 @@ export class ConsentFormsManager {
           clinic_id: clinicId,
           form_type: formData.form_type,
           version: formData.version,
-          fields_count: formData.fields.length
-        }
-      })
+          fields_count: formData.fields.length,
+        },
+      });
 
-      return { success: true, data }
+      return { success: true, data };
     } catch (error) {
-      console.error('Error creating consent form:', error)
+      console.error('Error creating consent form:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
-      }
+        error: error instanceof Error ? error.message : 'Unknown error',
+      };
     }
   }
 
@@ -352,54 +356,55 @@ export class ConsentFormsManager {
         .select('*')
         .eq('id', formId)
         .eq('is_active', true)
-        .single()
+        .single();
 
-      if (error) throw error
+      if (error) throw error;
       if (!data) {
-        return { success: false, error: 'Consent form not found' }
+        return { success: false, error: 'Consent form not found' };
       }
 
-      return { success: true, data }
+      return { success: true, data };
     } catch (error) {
-      console.error('Error getting consent form:', error)
+      console.error('Error getting consent form:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
-      }
+        error: error instanceof Error ? error.message : 'Unknown error',
+      };
     }
   }
 
   async getClinicConsentForms(
     clinicId: string,
     formType?: ConsentFormType,
-    activeOnly: boolean = true
+    activeOnly = true
   ): Promise<{ success: boolean; data?: ConsentForm[]; error?: string }> {
     try {
       let query = this.supabase
         .from('consent_forms')
         .select('*')
-        .eq('clinic_id', clinicId)
+        .eq('clinic_id', clinicId);
 
       if (activeOnly) {
-        query = query.eq('is_active', true)
+        query = query.eq('is_active', true);
       }
 
       if (formType) {
-        query = query.eq('form_type', formType)
+        query = query.eq('form_type', formType);
       }
 
-      const { data, error } = await query
-        .order('created_at', { ascending: false })
+      const { data, error } = await query.order('created_at', {
+        ascending: false,
+      });
 
-      if (error) throw error
+      if (error) throw error;
 
-      return { success: true, data: data || [] }
+      return { success: true, data: data || [] };
     } catch (error) {
-      console.error('Error getting clinic consent forms:', error)
+      console.error('Error getting clinic consent forms:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
-      }
+        error: error instanceof Error ? error.message : 'Unknown error',
+      };
     }
   }
 
@@ -410,19 +415,19 @@ export class ConsentFormsManager {
   ): Promise<{ success: boolean; data?: ConsentForm; error?: string }> {
     try {
       // Get current form
-      const currentForm = await this.getConsentForm(formId)
-      if (!currentForm.success || !currentForm.data) {
-        return { success: false, error: 'Consent form not found' }
+      const currentForm = await this.getConsentForm(formId);
+      if (!(currentForm.success && currentForm.data)) {
+        return { success: false, error: 'Consent form not found' };
       }
 
       const updatedData = {
         ...updates,
-        updated_at: new Date().toISOString()
-      }
+        updated_at: new Date().toISOString(),
+      };
 
       // If content is being updated, create new version
       if (updates.content || updates.fields) {
-        await this.createFormVersion(formId, currentForm.data, updatedBy)
+        await this.createFormVersion(formId, currentForm.data, updatedBy);
       }
 
       const { data, error } = await this.supabase
@@ -430,9 +435,9 @@ export class ConsentFormsManager {
         .update(updatedData)
         .eq('id', formId)
         .select()
-        .single()
+        .single();
 
-      if (error) throw error
+      if (error) throw error;
 
       // Log audit event
       await this.auditLogger.log({
@@ -442,17 +447,17 @@ export class ConsentFormsManager {
         resource_id: formId,
         details: {
           changes: Object.keys(updates),
-          version: data.version
-        }
-      })
+          version: data.version,
+        },
+      });
 
-      return { success: true, data }
+      return { success: true, data };
     } catch (error) {
-      console.error('Error updating consent form:', error)
+      console.error('Error updating consent form:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
-      }
+        error: error instanceof Error ? error.message : 'Unknown error',
+      };
     }
   }
 
@@ -466,38 +471,41 @@ export class ConsentFormsManager {
     responses: FieldResponse[],
     consentMethod: ConsentMethod,
     options?: {
-      witnessId?: string
-      witnessName?: string
-      ipAddress?: string
-      userAgent?: string
-      geolocation?: GeolocationData
-      requireSignature?: boolean
+      witnessId?: string;
+      witnessName?: string;
+      ipAddress?: string;
+      userAgent?: string;
+      geolocation?: GeolocationData;
+      requireSignature?: boolean;
     }
   ): Promise<{ success: boolean; data?: ConsentResponse; error?: string }> {
     try {
       // Get form
-      const formResult = await this.getConsentForm(formId)
-      if (!formResult.success || !formResult.data) {
-        return { success: false, error: 'Consent form not found' }
+      const formResult = await this.getConsentForm(formId);
+      if (!(formResult.success && formResult.data)) {
+        return { success: false, error: 'Consent form not found' };
       }
 
-      const form = formResult.data
-      const responseId = crypto.randomUUID()
-      const now = new Date().toISOString()
+      const form = formResult.data;
+      const responseId = crypto.randomUUID();
+      const now = new Date().toISOString();
 
       // Validate responses
-      const validation = await this.validateResponses(form, responses)
+      const validation = await this.validateResponses(form, responses);
       if (!validation.isValid) {
-        return { success: false, error: validation.error }
+        return { success: false, error: validation.error };
       }
 
       // Check if consent is given for required fields
-      const consentGiven = this.checkConsentGiven(form, responses)
+      const consentGiven = this.checkConsentGiven(form, responses);
 
       // Calculate expiration date
-      const expiresAt = form.retention_period > 0 ? 
-        new Date(Date.now() + form.retention_period * 24 * 60 * 60 * 1000).toISOString() : 
-        undefined
+      const expiresAt =
+        form.retention_period > 0
+          ? new Date(
+              Date.now() + form.retention_period * 24 * 60 * 60 * 1000
+            ).toISOString()
+          : undefined;
 
       const consentResponse: ConsentResponse = {
         id: responseId,
@@ -516,17 +524,17 @@ export class ConsentFormsManager {
         is_valid: true,
         expires_at: expiresAt,
         created_at: now,
-        updated_at: now
-      }
+        updated_at: now,
+      };
 
       // Save consent response
       const { data, error } = await this.supabase
         .from('consent_responses')
         .insert(consentResponse)
         .select()
-        .single()
+        .single();
 
-      if (error) throw error
+      if (error) throw error;
 
       // Create digital signature if required
       if (options?.requireSignature && consentGiven) {
@@ -539,23 +547,23 @@ export class ConsentFormsManager {
           {
             signatureType: SignatureType.ELECTRONIC_SIGNATURE,
             includeTimestamp: true,
-            includeGeolocation: !!options?.geolocation
+            includeGeolocation: !!options?.geolocation,
           }
-        )
+        );
 
         if (signatureResult.success && signatureResult.data) {
           // Update response with signature ID
           await this.supabase
             .from('consent_responses')
             .update({ signature_id: signatureResult.data.id })
-            .eq('id', responseId)
+            .eq('id', responseId);
 
-          consentResponse.signature_id = signatureResult.data.id
+          consentResponse.signature_id = signatureResult.data.id;
         }
       }
 
       // Update LGPD consent records
-      await this.updateLGPDConsent(patientId, form, responses, consentGiven)
+      await this.updateLGPDConsent(patientId, form, responses, consentGiven);
 
       // Log audit event
       await this.auditLogger.log({
@@ -568,24 +576,24 @@ export class ConsentFormsManager {
           form_type: form.form_type,
           consent_given: consentGiven,
           consent_method: consentMethod,
-          has_signature: !!consentResponse.signature_id
-        }
-      })
+          has_signature: !!consentResponse.signature_id,
+        },
+      });
 
-      return { success: true, data: consentResponse }
+      return { success: true, data: consentResponse };
     } catch (error) {
-      console.error('Error submitting consent response:', error)
+      console.error('Error submitting consent response:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
-      }
+        error: error instanceof Error ? error.message : 'Unknown error',
+      };
     }
   }
 
   async getPatientConsentResponses(
     patientId: string,
     formType?: ConsentFormType,
-    activeOnly: boolean = true
+    activeOnly = true
   ): Promise<{ success: boolean; data?: ConsentResponse[]; error?: string }> {
     try {
       let query = this.supabase
@@ -594,28 +602,29 @@ export class ConsentFormsManager {
           *,
           consent_form:consent_forms(*)
         `)
-        .eq('patient_id', patientId)
+        .eq('patient_id', patientId);
 
       if (activeOnly) {
-        query = query.is('withdrawn_at', null)
+        query = query.is('withdrawn_at', null);
       }
 
       if (formType) {
-        query = query.eq('consent_forms.form_type', formType)
+        query = query.eq('consent_forms.form_type', formType);
       }
 
-      const { data, error } = await query
-        .order('created_at', { ascending: false })
+      const { data, error } = await query.order('created_at', {
+        ascending: false,
+      });
 
-      if (error) throw error
+      if (error) throw error;
 
-      return { success: true, data: data || [] }
+      return { success: true, data: data || [] };
     } catch (error) {
-      console.error('Error getting patient consent responses:', error)
+      console.error('Error getting patient consent responses:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
-      }
+        error: error instanceof Error ? error.message : 'Unknown error',
+      };
     }
   }
 
@@ -625,7 +634,7 @@ export class ConsentFormsManager {
     reason: string
   ): Promise<{ success: boolean; error?: string }> {
     try {
-      const now = new Date().toISOString()
+      const now = new Date().toISOString();
 
       const { error } = await this.supabase
         .from('consent_responses')
@@ -633,15 +642,15 @@ export class ConsentFormsManager {
           withdrawn_at: now,
           withdrawal_reason: reason,
           is_valid: false,
-          updated_at: now
+          updated_at: now,
         })
         .eq('id', responseId)
-        .eq('patient_id', patientId)
+        .eq('patient_id', patientId);
 
-      if (error) throw error
+      if (error) throw error;
 
       // Update LGPD records
-      await this.lgpdManager.withdrawConsent(patientId, 'medical_data', reason)
+      await this.lgpdManager.withdrawConsent(patientId, 'medical_data', reason);
 
       // Log audit event
       await this.auditLogger.log({
@@ -651,17 +660,17 @@ export class ConsentFormsManager {
         resource_id: responseId,
         details: {
           reason,
-          withdrawn_at: now
-        }
-      })
+          withdrawn_at: now,
+        },
+      });
 
-      return { success: true }
+      return { success: true };
     } catch (error) {
-      console.error('Error withdrawing consent:', error)
+      console.error('Error withdrawing consent:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
-      }
+        error: error instanceof Error ? error.message : 'Unknown error',
+      };
     }
   }
 
@@ -671,17 +680,21 @@ export class ConsentFormsManager {
 
   async createFormTemplate(
     templateType: ConsentFormType,
-    language: string = 'pt-BR'
-  ): Promise<{ success: boolean; data?: Partial<ConsentForm>; error?: string }> {
+    language = 'pt-BR'
+  ): Promise<{
+    success: boolean;
+    data?: Partial<ConsentForm>;
+    error?: string;
+  }> {
     try {
-      const template = this.getFormTemplate(templateType, language)
-      return { success: true, data: template }
+      const template = this.getFormTemplate(templateType, language);
+      return { success: true, data: template };
     } catch (error) {
-      console.error('Error creating form template:', error)
+      console.error('Error creating form template:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
-      }
+        error: error instanceof Error ? error.message : 'Unknown error',
+      };
     }
   }
 
@@ -695,8 +708,8 @@ export class ConsentFormsManager {
       version: '1.0',
       is_active: true,
       is_required: true,
-      retention_period: 3650 // 10 years default
-    }
+      retention_period: 3650, // 10 years default
+    };
 
     switch (templateType) {
       case ConsentFormType.TREATMENT_CONSENT:
@@ -709,19 +722,24 @@ export class ConsentFormsManager {
           legal_basis: [
             {
               type: LegalBasisType.CONSENT,
-              description: 'Consentimento do titular para tratamento de dados de saúde',
+              description:
+                'Consentimento do titular para tratamento de dados de saúde',
               article_reference: 'Art. 7º, I e Art. 11º, I da LGPD',
               purpose: 'Prestação de cuidados médicos',
-              data_categories: [DataCategory.HEALTH_DATA, DataCategory.PERSONAL_DATA]
-            }
-          ]
-        }
+              data_categories: [
+                DataCategory.HEALTH_DATA,
+                DataCategory.PERSONAL_DATA,
+              ],
+            },
+          ],
+        };
 
       case ConsentFormType.DATA_PROCESSING:
         return {
           ...baseTemplate,
           title: 'Consentimento para Tratamento de Dados Pessoais',
-          description: 'Autorização para coleta e processamento de dados pessoais',
+          description:
+            'Autorização para coleta e processamento de dados pessoais',
           content: this.getDataProcessingContent(),
           fields: this.getDataProcessingFields(),
           legal_basis: [
@@ -730,16 +748,20 @@ export class ConsentFormsManager {
               description: 'Consentimento livre, informado e inequívoco',
               article_reference: 'Art. 7º, I da LGPD',
               purpose: 'Prestação de serviços médicos e administrativos',
-              data_categories: [DataCategory.PERSONAL_DATA, DataCategory.CONTACT_DATA]
-            }
-          ]
-        }
+              data_categories: [
+                DataCategory.PERSONAL_DATA,
+                DataCategory.CONTACT_DATA,
+              ],
+            },
+          ],
+        };
 
       case ConsentFormType.PHOTOGRAPHY:
         return {
           ...baseTemplate,
           title: 'Autorização para Uso de Imagem',
-          description: 'Consentimento para captura e uso de fotografias médicas',
+          description:
+            'Consentimento para captura e uso de fotografias médicas',
           content: this.getPhotographyContent(),
           fields: this.getPhotographyFields(),
           legal_basis: [
@@ -748,10 +770,13 @@ export class ConsentFormsManager {
               description: 'Consentimento específico para uso de imagem',
               article_reference: 'Art. 7º, I da LGPD e Art. 20 do CC',
               purpose: 'Documentação médica e acompanhamento de tratamento',
-              data_categories: [DataCategory.BIOMETRIC_DATA, DataCategory.HEALTH_DATA]
-            }
-          ]
-        }
+              data_categories: [
+                DataCategory.BIOMETRIC_DATA,
+                DataCategory.HEALTH_DATA,
+              ],
+            },
+          ],
+        };
 
       default:
         return {
@@ -765,10 +790,10 @@ export class ConsentFormsManager {
               type: LegalBasisType.CONSENT,
               description: 'Consentimento do titular',
               purpose: 'Conforme especificado no formulário',
-              data_categories: [DataCategory.PERSONAL_DATA]
-            }
-          ]
-        }
+              data_categories: [DataCategory.PERSONAL_DATA],
+            },
+          ],
+        };
     }
   }
 
@@ -778,40 +803,45 @@ export class ConsentFormsManager {
 
   private getTreatmentConsentContent(): FormContent {
     return {
-      introduction: 'Este documento tem por objetivo obter seu consentimento livre e esclarecido para a realização do tratamento médico proposto.',
+      introduction:
+        'Este documento tem por objetivo obter seu consentimento livre e esclarecido para a realização do tratamento médico proposto.',
       sections: [
         {
           id: 'treatment-info',
           title: 'Informações sobre o Tratamento',
-          content: 'Descrição detalhada do procedimento, riscos, benefícios e alternativas.',
+          content:
+            'Descrição detalhada do procedimento, riscos, benefícios e alternativas.',
           order: 1,
-          is_required: true
+          is_required: true,
         },
         {
           id: 'risks-benefits',
           title: 'Riscos e Benefícios',
-          content: 'Explicação dos possíveis riscos e benefícios do tratamento.',
+          content:
+            'Explicação dos possíveis riscos e benefícios do tratamento.',
           order: 2,
-          is_required: true
+          is_required: true,
         },
         {
           id: 'alternatives',
           title: 'Alternativas de Tratamento',
           content: 'Outras opções de tratamento disponíveis.',
           order: 3,
-          is_required: true
-        }
+          is_required: true,
+        },
       ],
-      conclusion: 'Declaro que recebi todas as informações necessárias e concordo com o tratamento proposto.',
-      legal_notice: 'Este consentimento está em conformidade com a LGPD e regulamentações médicas.',
+      conclusion:
+        'Declaro que recebi todas as informações necessárias e concordo com o tratamento proposto.',
+      legal_notice:
+        'Este consentimento está em conformidade com a LGPD e regulamentações médicas.',
       contact_info: {
         clinic_name: 'Clínica NeonPro',
         address: 'Endereço da clínica',
         phone: '(11) 9999-9999',
         email: 'contato@neonpro.com.br',
-        dpo_contact: 'dpo@neonpro.com.br'
-      }
-    }
+        dpo_contact: 'dpo@neonpro.com.br',
+      },
+    };
   }
 
   private getTreatmentConsentFields(): FormField[] {
@@ -824,7 +854,7 @@ export class ConsentFormsManager {
         validation: { required: true, min_length: 2 },
         is_required: true,
         order: 1,
-        data_category: DataCategory.PERSONAL_DATA
+        data_category: DataCategory.PERSONAL_DATA,
       },
       {
         id: 'treatment-understanding',
@@ -834,7 +864,7 @@ export class ConsentFormsManager {
         validation: { required: true },
         is_required: true,
         order: 2,
-        data_category: DataCategory.HEALTH_DATA
+        data_category: DataCategory.HEALTH_DATA,
       },
       {
         id: 'risks-understanding',
@@ -844,7 +874,7 @@ export class ConsentFormsManager {
         validation: { required: true },
         is_required: true,
         order: 3,
-        data_category: DataCategory.HEALTH_DATA
+        data_category: DataCategory.HEALTH_DATA,
       },
       {
         id: 'consent-signature',
@@ -854,55 +884,58 @@ export class ConsentFormsManager {
         validation: { required: true },
         is_required: true,
         order: 4,
-        data_category: DataCategory.BIOMETRIC_DATA
-      }
-    ]
+        data_category: DataCategory.BIOMETRIC_DATA,
+      },
+    ];
   }
 
   private getDataProcessingContent(): FormContent {
     return {
-      introduction: 'Solicitamos seu consentimento para o tratamento de seus dados pessoais conforme a Lei Geral de Proteção de Dados (LGPD).',
+      introduction:
+        'Solicitamos seu consentimento para o tratamento de seus dados pessoais conforme a Lei Geral de Proteção de Dados (LGPD).',
       sections: [
         {
           id: 'data-collection',
           title: 'Coleta de Dados',
           content: 'Informações sobre quais dados são coletados e como.',
           order: 1,
-          is_required: true
+          is_required: true,
         },
         {
           id: 'data-usage',
           title: 'Uso dos Dados',
           content: 'Como seus dados serão utilizados pela clínica.',
           order: 2,
-          is_required: true
+          is_required: true,
         },
         {
           id: 'data-sharing',
           title: 'Compartilhamento',
           content: 'Com quem seus dados podem ser compartilhados.',
           order: 3,
-          is_required: true
+          is_required: true,
         },
         {
           id: 'data-rights',
           title: 'Seus Direitos',
           content: 'Direitos do titular dos dados conforme a LGPD.',
           order: 4,
-          is_required: true
-        }
+          is_required: true,
+        },
       ],
-      conclusion: 'Ao concordar, você autoriza o tratamento de seus dados pessoais conforme descrito.',
-      legal_notice: 'Este consentimento está em conformidade com a LGPD (Lei 13.709/2018).',
+      conclusion:
+        'Ao concordar, você autoriza o tratamento de seus dados pessoais conforme descrito.',
+      legal_notice:
+        'Este consentimento está em conformidade com a LGPD (Lei 13.709/2018).',
       privacy_policy_link: 'https://neonpro.com.br/privacidade',
       contact_info: {
         clinic_name: 'Clínica NeonPro',
         address: 'Endereço da clínica',
         phone: '(11) 9999-9999',
         email: 'contato@neonpro.com.br',
-        dpo_contact: 'dpo@neonpro.com.br'
-      }
-    }
+        dpo_contact: 'dpo@neonpro.com.br',
+      },
+    };
   }
 
   private getDataProcessingFields(): FormField[] {
@@ -915,17 +948,18 @@ export class ConsentFormsManager {
         validation: { required: true },
         is_required: true,
         order: 1,
-        data_category: DataCategory.PERSONAL_DATA
+        data_category: DataCategory.PERSONAL_DATA,
       },
       {
         id: 'data-processing-consent',
         name: 'data_processing_consent',
-        label: 'Autorizo o processamento de meus dados para prestação de serviços',
+        label:
+          'Autorizo o processamento de meus dados para prestação de serviços',
         type: FieldType.CONSENT_CHECKBOX,
         validation: { required: true },
         is_required: true,
         order: 2,
-        data_category: DataCategory.PERSONAL_DATA
+        data_category: DataCategory.PERSONAL_DATA,
       },
       {
         id: 'marketing-consent',
@@ -935,39 +969,42 @@ export class ConsentFormsManager {
         validation: { required: false },
         is_required: false,
         order: 3,
-        data_category: DataCategory.CONTACT_DATA
-      }
-    ]
+        data_category: DataCategory.CONTACT_DATA,
+      },
+    ];
   }
 
   private getPhotographyContent(): FormContent {
     return {
-      introduction: 'Solicitamos sua autorização para captura e uso de fotografias para fins médicos.',
+      introduction:
+        'Solicitamos sua autorização para captura e uso de fotografias para fins médicos.',
       sections: [
         {
           id: 'photo-purpose',
           title: 'Finalidade das Fotografias',
-          content: 'As fotografias serão utilizadas para documentação médica e acompanhamento do tratamento.',
+          content:
+            'As fotografias serão utilizadas para documentação médica e acompanhamento do tratamento.',
           order: 1,
-          is_required: true
+          is_required: true,
         },
         {
           id: 'photo-storage',
           title: 'Armazenamento e Segurança',
           content: 'Como as imagens serão armazenadas e protegidas.',
           order: 2,
-          is_required: true
-        }
+          is_required: true,
+        },
       ],
       conclusion: 'Autorizo a captura e uso das fotografias conforme descrito.',
-      legal_notice: 'Esta autorização respeita seus direitos de imagem e privacidade.',
+      legal_notice:
+        'Esta autorização respeita seus direitos de imagem e privacidade.',
       contact_info: {
         clinic_name: 'Clínica NeonPro',
         address: 'Endereço da clínica',
         phone: '(11) 9999-9999',
-        email: 'contato@neonpro.com.br'
-      }
-    }
+        email: 'contato@neonpro.com.br',
+      },
+    };
   }
 
   private getPhotographyFields(): FormField[] {
@@ -980,7 +1017,7 @@ export class ConsentFormsManager {
         validation: { required: true },
         is_required: true,
         order: 1,
-        data_category: DataCategory.BIOMETRIC_DATA
+        data_category: DataCategory.BIOMETRIC_DATA,
       },
       {
         id: 'photo-usage',
@@ -990,9 +1027,9 @@ export class ConsentFormsManager {
         validation: { required: true },
         is_required: true,
         order: 2,
-        data_category: DataCategory.BIOMETRIC_DATA
-      }
-    ]
+        data_category: DataCategory.BIOMETRIC_DATA,
+      },
+    ];
   }
 
   private getGenericContent(): FormContent {
@@ -1000,14 +1037,15 @@ export class ConsentFormsManager {
       introduction: 'Formulário de consentimento personalizado.',
       sections: [],
       conclusion: 'Declaro meu consentimento conforme especificado.',
-      legal_notice: 'Este formulário está em conformidade com a legislação aplicável.',
+      legal_notice:
+        'Este formulário está em conformidade com a legislação aplicável.',
       contact_info: {
         clinic_name: 'Clínica NeonPro',
         address: 'Endereço da clínica',
         phone: '(11) 9999-9999',
-        email: 'contato@neonpro.com.br'
-      }
-    }
+        email: 'contato@neonpro.com.br',
+      },
+    };
   }
 
   private getGenericFields(): FormField[] {
@@ -1020,9 +1058,9 @@ export class ConsentFormsManager {
         validation: { required: true },
         is_required: true,
         order: 1,
-        data_category: DataCategory.PERSONAL_DATA
-      }
-    ]
+        data_category: DataCategory.PERSONAL_DATA,
+      },
+    ];
   }
 
   // ========================================================================
@@ -1034,28 +1072,34 @@ export class ConsentFormsManager {
   ): Promise<{ isValid: boolean; error?: string }> {
     try {
       // Check required fields
-      if (!form.title || !form.content || !form.fields) {
-        return { isValid: false, error: 'Missing required form fields' }
+      if (!(form.title && form.content && form.fields)) {
+        return { isValid: false, error: 'Missing required form fields' };
       }
 
       // Validate fields structure
       for (const field of form.fields) {
-        if (!field.name || !field.label || !field.type) {
-          return { isValid: false, error: `Invalid field structure: ${field.id}` }
+        if (!(field.name && field.label && field.type)) {
+          return {
+            isValid: false,
+            error: `Invalid field structure: ${field.id}`,
+          };
         }
       }
 
       // Validate legal basis
       if (!form.legal_basis || form.legal_basis.length === 0) {
-        return { isValid: false, error: 'At least one legal basis is required' }
+        return {
+          isValid: false,
+          error: 'At least one legal basis is required',
+        };
       }
 
-      return { isValid: true }
+      return { isValid: true };
     } catch (error) {
       return {
         isValid: false,
-        error: error instanceof Error ? error.message : 'Validation error'
-      }
+        error: error instanceof Error ? error.message : 'Validation error',
+      };
     }
   }
 
@@ -1065,26 +1109,30 @@ export class ConsentFormsManager {
   ): Promise<{ isValid: boolean; error?: string }> {
     try {
       // Check required fields
-      const requiredFields = form.fields.filter(f => f.is_required)
+      const requiredFields = form.fields.filter((f) => f.is_required);
       for (const field of requiredFields) {
-        const response = responses.find(r => r.field_id === field.id)
-        if (!response || !response.value) {
-          return { isValid: false, error: `Required field missing: ${field.label}` }
+        const response = responses.find((r) => r.field_id === field.id);
+        if (!(response && response.value)) {
+          return {
+            isValid: false,
+            error: `Required field missing: ${field.label}`,
+          };
         }
 
         // Validate field-specific rules
-        const validation = this.validateFieldResponse(field, response.value)
+        const validation = this.validateFieldResponse(field, response.value);
         if (!validation.isValid) {
-          return { isValid: false, error: validation.error }
+          return { isValid: false, error: validation.error };
         }
       }
 
-      return { isValid: true }
+      return { isValid: true };
     } catch (error) {
       return {
         isValid: false,
-        error: error instanceof Error ? error.message : 'Response validation error'
-      }
+        error:
+          error instanceof Error ? error.message : 'Response validation error',
+      };
     }
   }
 
@@ -1093,64 +1141,94 @@ export class ConsentFormsManager {
     value: any
   ): { isValid: boolean; error?: string } {
     try {
-      const validation = field.validation
+      const validation = field.validation;
 
       // Required check
       if (validation.required && (!value || value === '')) {
-        return { isValid: false, error: `${field.label} is required` }
+        return { isValid: false, error: `${field.label} is required` };
       }
 
       // Type-specific validation
       switch (field.type) {
-        case FieldType.EMAIL:
-          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        case FieldType.EMAIL: {
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
           if (value && !emailRegex.test(value)) {
-            return { isValid: false, error: `${field.label} must be a valid email` }
+            return {
+              isValid: false,
+              error: `${field.label} must be a valid email`,
+            };
           }
-          break
+          break;
+        }
 
-        case FieldType.PHONE:
-          const phoneRegex = /^\+?[1-9]\d{1,14}$/
+        case FieldType.PHONE: {
+          const phoneRegex = /^\+?[1-9]\d{1,14}$/;
           if (value && !phoneRegex.test(value.replace(/\s/g, ''))) {
-            return { isValid: false, error: `${field.label} must be a valid phone number` }
+            return {
+              isValid: false,
+              error: `${field.label} must be a valid phone number`,
+            };
           }
-          break
+          break;
+        }
 
         case FieldType.NUMBER:
-          if (value && isNaN(Number(value))) {
-            return { isValid: false, error: `${field.label} must be a number` }
+          if (value && Number.isNaN(Number(value))) {
+            return { isValid: false, error: `${field.label} must be a number` };
           }
-          if (validation.min_value !== undefined && Number(value) < validation.min_value) {
-            return { isValid: false, error: `${field.label} must be at least ${validation.min_value}` }
+          if (
+            validation.min_value !== undefined &&
+            Number(value) < validation.min_value
+          ) {
+            return {
+              isValid: false,
+              error: `${field.label} must be at least ${validation.min_value}`,
+            };
           }
-          if (validation.max_value !== undefined && Number(value) > validation.max_value) {
-            return { isValid: false, error: `${field.label} must be at most ${validation.max_value}` }
+          if (
+            validation.max_value !== undefined &&
+            Number(value) > validation.max_value
+          ) {
+            return {
+              isValid: false,
+              error: `${field.label} must be at most ${validation.max_value}`,
+            };
           }
-          break
+          break;
 
         case FieldType.TEXT:
         case FieldType.TEXTAREA:
           if (validation.min_length && value.length < validation.min_length) {
-            return { isValid: false, error: `${field.label} must be at least ${validation.min_length} characters` }
+            return {
+              isValid: false,
+              error: `${field.label} must be at least ${validation.min_length} characters`,
+            };
           }
           if (validation.max_length && value.length > validation.max_length) {
-            return { isValid: false, error: `${field.label} must be at most ${validation.max_length} characters` }
+            return {
+              isValid: false,
+              error: `${field.label} must be at most ${validation.max_length} characters`,
+            };
           }
           if (validation.pattern) {
-            const regex = new RegExp(validation.pattern)
+            const regex = new RegExp(validation.pattern);
             if (!regex.test(value)) {
-              return { isValid: false, error: `${field.label} format is invalid` }
+              return {
+                isValid: false,
+                error: `${field.label} format is invalid`,
+              };
             }
           }
-          break
+          break;
       }
 
-      return { isValid: true }
+      return { isValid: true };
     } catch (error) {
       return {
         isValid: false,
-        error: error instanceof Error ? error.message : 'Field validation error'
-      }
+        error:
+          error instanceof Error ? error.message : 'Field validation error',
+      };
     }
   }
 
@@ -1161,20 +1239,20 @@ export class ConsentFormsManager {
     try {
       // Check if all required consent fields are true
       const consentFields = form.fields.filter(
-        f => f.type === FieldType.CONSENT_CHECKBOX && f.is_required
-      )
+        (f) => f.type === FieldType.CONSENT_CHECKBOX && f.is_required
+      );
 
       for (const field of consentFields) {
-        const response = responses.find(r => r.field_id === field.id)
-        if (!response || !response.value || response.value !== true) {
-          return false
+        const response = responses.find((r) => r.field_id === field.id);
+        if (!(response && response.value) || response.value !== true) {
+          return false;
         }
       }
 
-      return true
+      return true;
     } catch (error) {
-      console.error('Error checking consent:', error)
-      return false
+      console.error('Error checking consent:', error);
+      return false;
     }
   }
 
@@ -1188,7 +1266,7 @@ export class ConsentFormsManager {
     updatedBy: string
   ): Promise<void> {
     try {
-      const versionId = crypto.randomUUID()
+      const versionId = crypto.randomUUID();
       const version = {
         id: versionId,
         form_id: formId,
@@ -1196,14 +1274,12 @@ export class ConsentFormsManager {
         content: currentForm.content,
         fields: currentForm.fields,
         created_by: updatedBy,
-        created_at: new Date().toISOString()
-      }
+        created_at: new Date().toISOString(),
+      };
 
-      await this.supabase
-        .from('consent_form_versions')
-        .insert(version)
+      await this.supabase.from('consent_form_versions').insert(version);
     } catch (error) {
-      console.error('Error creating form version:', error)
+      console.error('Error creating form version:', error);
     }
   }
 
@@ -1215,13 +1291,13 @@ export class ConsentFormsManager {
   ): Promise<void> {
     try {
       // Update LGPD consent for each data category
-      const dataCategories = new Set<string>()
-      
-      responses.forEach(response => {
+      const dataCategories = new Set<string>();
+
+      responses.forEach((response) => {
         if (response.consent_given) {
-          dataCategories.add(response.data_category)
+          dataCategories.add(response.data_category);
         }
-      })
+      });
 
       for (const category of dataCategories) {
         if (consentGiven) {
@@ -1230,11 +1306,11 @@ export class ConsentFormsManager {
             category,
             form.legal_basis[0]?.purpose || 'Medical services',
             form.retention_period
-          )
+          );
         }
       }
     } catch (error) {
-      console.error('Error updating LGPD consent:', error)
+      console.error('Error updating LGPD consent:', error);
     }
   }
 
@@ -1250,44 +1326,44 @@ export class ConsentFormsManager {
       let query = this.supabase
         .from('consent_responses')
         .select('form_id, consent_given, consent_method, created_at')
-        .eq('clinic_id', clinicId)
+        .eq('clinic_id', clinicId);
 
       if (period) {
         query = query
           .gte('created_at', period.from)
-          .lte('created_at', period.to)
+          .lte('created_at', period.to);
       }
 
-      const { data, error } = await query
+      const { data, error } = await query;
 
-      if (error) throw error
+      if (error) throw error;
 
       // Process statistics
       const stats = {
         total_responses: data?.length || 0,
-        consent_given: data?.filter(r => r.consent_given).length || 0,
-        consent_denied: data?.filter(r => !r.consent_given).length || 0,
+        consent_given: data?.filter((r) => r.consent_given).length || 0,
+        consent_denied: data?.filter((r) => !r.consent_given).length || 0,
         by_method: {} as Record<string, number>,
-        by_month: {} as Record<string, number>
-      }
+        by_month: {} as Record<string, number>,
+      };
 
-      data?.forEach(response => {
+      data?.forEach((response) => {
         // Count by method
-        stats.by_method[response.consent_method] = 
-          (stats.by_method[response.consent_method] || 0) + 1
-        
-        // Count by month
-        const month = new Date(response.created_at).toISOString().slice(0, 7)
-        stats.by_month[month] = (stats.by_month[month] || 0) + 1
-      })
+        stats.by_method[response.consent_method] =
+          (stats.by_method[response.consent_method] || 0) + 1;
 
-      return { success: true, data: stats }
+        // Count by month
+        const month = new Date(response.created_at).toISOString().slice(0, 7);
+        stats.by_month[month] = (stats.by_month[month] || 0) + 1;
+      });
+
+      return { success: true, data: stats };
     } catch (error) {
-      console.error('Error getting consent statistics:', error)
+      console.error('Error getting consent statistics:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
-      }
+        error: error instanceof Error ? error.message : 'Unknown error',
+      };
     }
   }
 }
@@ -1296,5 +1372,5 @@ export class ConsentFormsManager {
 // EXPORT DEFAULT INSTANCE
 // ============================================================================
 
-export const consentFormsManager = new ConsentFormsManager()
-export default consentFormsManager
+export const consentFormsManager = new ConsentFormsManager();
+export default consentFormsManager;

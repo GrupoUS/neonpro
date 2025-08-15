@@ -1,16 +1,20 @@
 /**
  * Waitlist Management API Route
  * Story 2.2: Intelligent conflict detection and resolution - Waitlist functionality
- * 
+ *
  * POST /api/scheduling/waitlist
  * Manages patient waitlist for appointment availability
  */
 
-import { NextRequest, NextResponse } from 'next/server';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
-import { WaitlistService, TimeSlot, UrgencyLevel } from '@/lib/scheduling/conflict-resolution';
+import { type NextRequest, NextResponse } from 'next/server';
 import { AuditLogger } from '@/lib/auth/audit/audit-logger';
+import {
+  type TimeSlot,
+  type UrgencyLevel,
+  WaitlistService,
+} from '@/lib/scheduling/conflict-resolution';
 
 interface WaitlistRequest {
   action: 'add' | 'process' | 'notify';
@@ -18,7 +22,7 @@ interface WaitlistRequest {
   treatmentType: string;
   preferredDateRange?: {
     start: string; // ISO string
-    end: string;   // ISO string
+    end: string; // ISO string
   };
   preferredTimeSlots?: TimeSlot[];
   urgencyLevel?: UrgencyLevel;
@@ -34,24 +38,24 @@ interface WaitlistRequest {
 
 export async function POST(request: NextRequest) {
   const auditLogger = new AuditLogger();
-  
+
   try {
     // Get user session
     const supabase = createRouteHandlerClient({ cookies });
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    const {
+      data: { session },
+      error: sessionError,
+    } = await supabase.auth.getSession();
 
     if (sessionError || !session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Parse request body
     const body: WaitlistRequest = await request.json();
-    
+
     // Validate required fields
-    if (!body.action || !body.patientId || !body.treatmentType) {
+    if (!(body.action && body.patientId && body.treatmentType)) {
       return NextResponse.json(
         { error: 'Missing required fields: action, patientId, treatmentType' },
         { status: 400 }
@@ -78,7 +82,7 @@ export async function POST(request: NextRequest) {
           body.treatmentType,
           {
             start: new Date(body.preferredDateRange.start),
-            end: new Date(body.preferredDateRange.end)
+            end: new Date(body.preferredDateRange.end),
           },
           body.preferredTimeSlots || [],
           body.urgencyLevel || 'normal',
@@ -92,16 +96,21 @@ export async function POST(request: NextRequest) {
             userId: session.user.id,
             waitlistEntryId: result.id,
             treatmentType: body.treatmentType,
-            urgencyLevel: body.urgencyLevel
+            urgencyLevel: body.urgencyLevel,
           }
         );
         break;
 
       case 'process':
         // Process waitlist for available slot
-        if (!body.availableStart || !body.availableEnd || !body.professionalId) {
+        if (
+          !(body.availableStart && body.availableEnd && body.professionalId)
+        ) {
           return NextResponse.json(
-            { error: 'availableStart, availableEnd, and professionalId are required for process action' },
+            {
+              error:
+                'availableStart, availableEnd, and professionalId are required for process action',
+            },
             { status: 400 }
           );
         }
@@ -115,21 +124,24 @@ export async function POST(request: NextRequest) {
 
         await auditLogger.logActivity(
           'waitlist_processed',
-          `Waitlist processed for available slot`,
+          'Waitlist processed for available slot',
           {
             userId: session.user.id,
             professionalId: body.professionalId,
             treatmentType: body.treatmentType,
-            matchesFound: result.length
+            matchesFound: result.length,
           }
         );
         break;
 
       case 'notify':
         // Send notifications to waitlist patients
-        if (!body.waitlistEntryId || !body.availableSlots) {
+        if (!(body.waitlistEntryId && body.availableSlots)) {
           return NextResponse.json(
-            { error: 'waitlistEntryId and availableSlots are required for notify action' },
+            {
+              error:
+                'waitlistEntryId and availableSlots are required for notify action',
+            },
             { status: 400 }
           );
         }
@@ -145,7 +157,7 @@ export async function POST(request: NextRequest) {
           {
             userId: session.user.id,
             waitlistEntryId: body.waitlistEntryId,
-            availableSlots: body.availableSlots.length
+            availableSlots: body.availableSlots.length,
           }
         );
         break;
@@ -164,19 +176,18 @@ export async function POST(request: NextRequest) {
       data: result,
       metadata: {
         timestamp: new Date().toISOString(),
-        apiVersion: '2.2.0'
-      }
+        apiVersion: '2.2.0',
+      },
     });
-
   } catch (error) {
     console.error('Waitlist management error:', error);
-    
+
     await auditLogger.logError('Waitlist management API failed', error);
 
     return NextResponse.json(
-      { 
+      {
         error: 'Internal server error during waitlist management',
-        details: process.env.NODE_ENV === 'development' ? error : undefined
+        details: process.env.NODE_ENV === 'development' ? error : undefined,
       },
       { status: 500 }
     );
@@ -186,24 +197,24 @@ export async function POST(request: NextRequest) {
 // GET handler for retrieving waitlist entries
 export async function GET(request: NextRequest) {
   const auditLogger = new AuditLogger();
-  
+
   try {
     // Get user session
     const supabase = createRouteHandlerClient({ cookies });
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    const {
+      data: { session },
+      error: sessionError,
+    } = await supabase.auth.getSession();
 
     if (sessionError || !session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Extract query parameters
     const url = new URL(request.url);
     const treatmentType = url.searchParams.get('treatmentType');
     const status = url.searchParams.get('status') || 'active';
-    const limit = parseInt(url.searchParams.get('limit') || '50');
+    const limit = Number.parseInt(url.searchParams.get('limit') || '50', 10);
 
     // Build query
     let query = supabase
@@ -231,7 +242,7 @@ export async function GET(request: NextRequest) {
         userId: session.user.id,
         treatmentType,
         status,
-        count: waitlistEntries.length
+        count: waitlistEntries.length,
       }
     );
 
@@ -241,19 +252,18 @@ export async function GET(request: NextRequest) {
       metadata: {
         count: waitlistEntries.length,
         timestamp: new Date().toISOString(),
-        apiVersion: '2.2.0'
-      }
+        apiVersion: '2.2.0',
+      },
     });
-
   } catch (error) {
     console.error('Waitlist retrieval error:', error);
-    
+
     await auditLogger.logError('Waitlist retrieval API failed', error);
 
     return NextResponse.json(
-      { 
+      {
         error: 'Internal server error during waitlist retrieval',
-        details: process.env.NODE_ENV === 'development' ? error : undefined
+        details: process.env.NODE_ENV === 'development' ? error : undefined,
       },
       { status: 500 }
     );
@@ -261,7 +271,7 @@ export async function GET(request: NextRequest) {
 }
 
 // Options handler for CORS
-export async function OPTIONS(request: NextRequest) {
+export async function OPTIONS(_request: NextRequest) {
   return new NextResponse(null, {
     status: 200,
     headers: {

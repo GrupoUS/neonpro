@@ -23,20 +23,20 @@ global.testUtils = {
   mockUser: {
     id: 'test-user-123',
     email: 'test@neonpro.clinic',
-    role: 'admin'
+    role: 'admin',
   },
   mockClinic: {
     id: 'clinic-123',
     name: 'Test Clinic',
-    cpf_cnpj: '12345678000199'
+    cpf_cnpj: '12345678000199',
   },
   mockTransaction: {
     id: 'txn-123',
-    amount: 1000.00,
+    amount: 1000.0,
     description: 'Test Transaction',
     date: new Date('2024-01-15'),
-    type: 'credit'
-  }
+    type: 'credit',
+  },
 };
 
 // Mock Supabase client
@@ -53,25 +53,25 @@ jest.mock('@supabase/supabase-js', () => ({
       order: jest.fn().mockReturnThis(),
       limit: jest.fn().mockReturnThis(),
       single: jest.fn().mockResolvedValue({ data: null, error: null }),
-      then: jest.fn().mockResolvedValue({ data: [], error: null })
+      then: jest.fn().mockResolvedValue({ data: [], error: null }),
     })),
     auth: {
-      getUser: jest.fn().mockResolvedValue({ 
-        data: { user: global.testUtils.mockUser }, 
-        error: null 
+      getUser: jest.fn().mockResolvedValue({
+        data: { user: global.testUtils.mockUser },
+        error: null,
       }),
       getSession: jest.fn().mockResolvedValue({
         data: { session: { user: global.testUtils.mockUser } },
-        error: null
-      })
+        error: null,
+      }),
     },
     storage: {
       from: jest.fn(() => ({
         upload: jest.fn().mockResolvedValue({ data: null, error: null }),
-        download: jest.fn().mockResolvedValue({ data: null, error: null })
-      }))
-    }
-  }))
+        download: jest.fn().mockResolvedValue({ data: null, error: null }),
+      })),
+    },
+  })),
 }));
 
 // Mock Next.js modules commonly used
@@ -79,46 +79,47 @@ jest.mock('next/navigation', () => ({
   useRouter: () => ({
     push: jest.fn(),
     replace: jest.fn(),
-    back: jest.fn()
+    back: jest.fn(),
   }),
   usePathname: () => '/test-path',
-  useSearchParams: () => new URLSearchParams()
+  useSearchParams: () => new URLSearchParams(),
 }));
 
 jest.mock('next/headers', () => ({
   cookies: () => ({
     get: jest.fn(),
     set: jest.fn(),
-    delete: jest.fn()
-  })
+    delete: jest.fn(),
+  }),
 }));
 
 // Extend Jest matchers for healthcare testing
 expect.extend({
   toBeHealthcareCompliant(received) {
-    const isCompliant = received && 
+    const isCompliant =
+      received &&
       typeof received.lgpdCompliant === 'boolean' &&
       typeof received.auditTrail === 'object' &&
       typeof received.dataClassification === 'string';
-    
+
     return {
       message: () => `expected ${received} to be healthcare compliant`,
-      pass: isCompliant
+      pass: isCompliant,
     };
   },
-  
+
   toHaveValidAuditTrail(received) {
-    const hasValidAudit = received &&
-      received.auditTrail &&
+    const hasValidAudit =
+      received?.auditTrail &&
       typeof received.auditTrail.userId === 'string' &&
       received.auditTrail.timestamp instanceof Date &&
       typeof received.auditTrail.action === 'string';
-      
+
     return {
       message: () => `expected ${received} to have valid audit trail`,
-      pass: hasValidAudit
+      pass: hasValidAudit,
     };
-  }
+  },
 });
 
 console.log('✅ NeonPro Reconciliation Test Environment Initialized');

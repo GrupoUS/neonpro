@@ -1,48 +1,165 @@
 /**
- * Jest Test Setup Configuration
- * Configures global test environment for subscription middleware testing
- * 
- * @description Comprehensive test setup with error handling, DOM matchers,
- *              and subscription system mocks
- * @version 1.0.0
- * @created 2025-07-22
+ * Global Test Setup Configuration
+ * NeonPro Testing Suite
  */
 
-import '@testing-library/jest-dom'
-import { configure } from '@testing-library/react'
-import { TextEncoder, TextDecoder } from 'util'
+import { config } from 'dotenv';
 
-// ============================================================================
-// Global Test Configuration
-// ============================================================================
+// Load environment variables for testing
+config({ path: '.env.test' });
+config({ path: '.env.local' });
+config({ path: '.env' });
 
-// Configure Testing Library behavior
-configure({
-  throwSuggestions: true,
-  testIdAttribute: 'data-testid',
-})
+// Global test timeout
+jest.setTimeout(30_000);
 
-// ============================================================================
-// Global Polyfills for Node.js Environment
-// ============================================================================
+// Mock console methods in test environment
+if (process.env.NODE_ENV === 'test') {
+  // Suppress console.log in tests unless explicitly needed
+  global.console = {
+    ...console,
+    log: jest.fn(),
+    debug: jest.fn(),
+    info: jest.fn(),
+    warn: jest.fn(),
+    error: jest.fn(),
+  };
+}
 
-// Fix for TextEncoder/TextDecoder in Node.js
-global.TextEncoder = TextEncoder
-global.TextDecoder = TextDecoder
+// Global test utilities
+global.testUtils = {
+  // Mock Supabase client
+  mockSupabaseClient: {
+    from: jest.fn(() => ({
+      select: jest.fn().mockReturnThis(),
+      insert: jest.fn().mockReturnThis(),
+      update: jest.fn().mockReturnThis(),
+      delete: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      single: jest.fn(),
+    })),
+    auth: {
+      getUser: jest.fn(),
+      signIn: jest.fn(),
+      signOut: jest.fn(),
+      onAuthStateChange: jest.fn(),
+    },
+  },
 
-// Mock fetch for testing environment
-global.fetch = jest.fn()
+  // Mock Next.js router
+  mockRouter: {
+    push: jest.fn(),
+    replace: jest.fn(),
+    back: jest.fn(),
+    pathname: '/',
+    query: {},
+    asPath: '/',
+  },
 
-// Mock ResizeObserver for UI components
-global.ResizeObserver = jest.fn().mockImplementation(() => ({
-  observe: jest.fn(),
-  unobserve: jest.fn(),
-  disconnect: jest.fn(),
-}))
+  // Test data factories
+  createMockUser: (overrides = {}) => ({
+    id: 'test-user-id',
+    email: 'test@example.com',
+    name: 'Test User',
+    role: 'user',
+    created_at: new Date().toISOString(),
+    ...overrides,
+  }),
 
-// Mock IntersectionObserver for UI components
-global.IntersectionObserver = jest.fn().mockImplementation(() => ({
-  observe: jest.fn(),
-  unobserve: jest.fn(),
-  disconnect: jest.fn(),
-}))
+  createMockPatient: (overrides = {}) => ({
+    id: 'test-patient-id',
+    name: 'Test Patient',
+    email: 'patient@example.com',
+    phone: '(11) 99999-9999',
+    cpf: '123.456.789-00',
+    birth_date: '1990-01-01',
+    created_at: new Date().toISOString(),
+    ...overrides,
+  }),
+
+  createMockAppointment: (overrides = {}) => ({
+    id: 'test-appointment-id',
+    patient_id: 'test-patient-id',
+    procedure_id: 'test-procedure-id',
+    scheduled_at: new Date(Date.now() + 86_400_000).toISOString(), // Tomorrow
+    status: 'scheduled',
+    notes: 'Test appointment',
+    created_at: new Date().toISOString(),
+    ...overrides,
+  }),
+
+  // Performance testing utilities
+  measurePerformance: async (fn: () => Promise<any>, label = 'Operation') => {
+    const start = performance.now();
+    const result = await fn();
+    const end = performance.now();
+    const duration = end - start;
+
+    console.log(`${label} took ${duration.toFixed(2)}ms`);
+
+    return { result, duration };
+  },
+
+  // Accessibility testing utilities
+  checkAccessibility: async (element: HTMLElement) => {
+    // Mock axe-core for accessibility testing
+    return {
+      violations: [],
+      passes: [],
+      incomplete: [],
+      inapplicable: [],
+    };
+  },
+
+  // Security testing utilities
+  testSQLInjection: (input: string) => {
+    const sqlPatterns = [
+      /('|(--)|(;)|(\|)|(\*)|(%))/i,
+      /(union|select|insert|delete|update|drop|create|alter|exec|execute)/i,
+    ];
+
+    return sqlPatterns.some((pattern) => pattern.test(input));
+  },
+
+  testXSS: (input: string) => {
+    const xssPatterns = [
+      /<script[^>]*>.*?<\/script>/gi,
+      /javascript:/gi,
+      /on\w+\s*=/gi,
+    ];
+
+    return xssPatterns.some((pattern) => pattern.test(input));
+  },
+};
+
+// Global type declarations
+declare global {
+  namespace NodeJS {
+    interface Global {
+      testUtils: typeof global.testUtils;
+    }
+  }
+
+  var testUtils: typeof global.testUtils;
+}
+
+// Setup and teardown hooks
+beforeAll(async () => {
+  // Global setup before all tests
+  console.log('🧪 Starting NeonPro Test Suite');
+});
+
+afterAll(async () => {
+  // Global cleanup after all tests
+  console.log('✅ NeonPro Test Suite Completed');
+});
+
+beforeEach(() => {
+  // Reset mocks before each test
+  jest.clearAllMocks();
+});
+
+afterEach(() => {
+  // Cleanup after each test
+  jest.restoreAllMocks();
+});

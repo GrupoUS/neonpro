@@ -1,38 +1,38 @@
 // app/lib/services/automated-before-after-analysis.ts
 // Backend service for Story 10.1: Automated Before/After Analysis
 
-import type {
-    AccuracyMetrics,
-    AccuracyValidationRequest,
-    AnalysisDashboardStats,
-    AnalysisEngineConfig,
-    AnalysisProgressResponse,
-    AnalysisReport,
-    AnalysisResultFilters,
-    AnalysisSessionFilters,
-    AnnotationCreateRequest,
-    BatchAnalysisRequest,
-    BeforeAfterPhotoPair,
-    ComparisonAnalysisRequest,
-    ComparisonAnalysisResponse,
-    CreateAnalysisSessionRequest,
-    CreatePhotoPairRequest,
-    GenerateReportRequest,
-    ImageAnalysisResult,
-    MeasurementMetric,
-    MLModelTraining,
-    ModelTrainingRequest,
-    PhotoAnalysisSession,
-    PhotoPairFilters,
-    ProcessingMetrics,
-    QualityMetrics,
-    QualityValidation,
-    ReportFilters,
-    StartAnalysisRequest,
-    TreatmentArea,
-    VisualAnnotation,
-} from '@/app/types/automated-before-after-analysis';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import type {
+  AccuracyMetrics,
+  AccuracyValidationRequest,
+  AnalysisDashboardStats,
+  AnalysisEngineConfig,
+  AnalysisProgressResponse,
+  AnalysisReport,
+  AnalysisResultFilters,
+  AnalysisSessionFilters,
+  AnnotationCreateRequest,
+  BatchAnalysisRequest,
+  BeforeAfterPhotoPair,
+  ComparisonAnalysisRequest,
+  ComparisonAnalysisResponse,
+  CreateAnalysisSessionRequest,
+  CreatePhotoPairRequest,
+  GenerateReportRequest,
+  ImageAnalysisResult,
+  MeasurementMetric,
+  MLModelTraining,
+  ModelTrainingRequest,
+  PhotoAnalysisSession,
+  PhotoPairFilters,
+  ProcessingMetrics,
+  QualityMetrics,
+  QualityValidation,
+  ReportFilters,
+  StartAnalysisRequest,
+  TreatmentArea,
+  VisualAnnotation,
+} from '@/app/types/automated-before-after-analysis';
 
 export class AutomatedBeforeAfterAnalysisService {
   private supabase;
@@ -53,7 +53,9 @@ export class AutomatedBeforeAfterAnalysisService {
     return data || [];
   }
 
-  async getAnalysisEngineConfig(id: string): Promise<AnalysisEngineConfig | null> {
+  async getAnalysisEngineConfig(
+    id: string
+  ): Promise<AnalysisEngineConfig | null> {
     const { data, error } = await this.supabase
       .from('analysis_engine_config')
       .select('*')
@@ -64,7 +66,9 @@ export class AutomatedBeforeAfterAnalysisService {
     return data;
   }
 
-  async createAnalysisEngineConfig(config: Partial<AnalysisEngineConfig>): Promise<AnalysisEngineConfig> {
+  async createAnalysisEngineConfig(
+    config: Partial<AnalysisEngineConfig>
+  ): Promise<AnalysisEngineConfig> {
     const { data, error } = await this.supabase
       .from('analysis_engine_config')
       .insert(config)
@@ -75,7 +79,10 @@ export class AutomatedBeforeAfterAnalysisService {
     return data;
   }
 
-  async updateAnalysisEngineConfig(id: string, updates: Partial<AnalysisEngineConfig>): Promise<AnalysisEngineConfig> {
+  async updateAnalysisEngineConfig(
+    id: string,
+    updates: Partial<AnalysisEngineConfig>
+  ): Promise<AnalysisEngineConfig> {
     const { data, error } = await this.supabase
       .from('analysis_engine_config')
       .update(updates)
@@ -88,10 +95,10 @@ export class AutomatedBeforeAfterAnalysisService {
   }
 
   // Photo Analysis Session Methods
-  async getAnalysisSessions(filters: AnalysisSessionFilters = {}): Promise<PhotoAnalysisSession[]> {
-    let query = this.supabase
-      .from('photo_analysis_sessions')
-      .select('*');
+  async getAnalysisSessions(
+    filters: AnalysisSessionFilters = {}
+  ): Promise<PhotoAnalysisSession[]> {
+    let query = this.supabase.from('photo_analysis_sessions').select('*');
 
     // Apply filters
     if (filters.patient_id) {
@@ -119,7 +126,9 @@ export class AutomatedBeforeAfterAnalysisService {
       query = query.eq('created_by', filters.created_by);
     }
 
-    const { data, error } = await query.order('created_at', { ascending: false });
+    const { data, error } = await query.order('created_at', {
+      ascending: false,
+    });
 
     if (error) throw error;
     return data || [];
@@ -136,9 +145,13 @@ export class AutomatedBeforeAfterAnalysisService {
     return data;
   }
 
-  async createAnalysisSession(request: CreateAnalysisSessionRequest): Promise<PhotoAnalysisSession> {
-    const { data: { user } } = await this.supabase.auth.getUser();
-    
+  async createAnalysisSession(
+    request: CreateAnalysisSessionRequest
+  ): Promise<PhotoAnalysisSession> {
+    const {
+      data: { user },
+    } = await this.supabase.auth.getUser();
+
     const sessionData = {
       ...request,
       created_by: user?.id,
@@ -154,7 +167,10 @@ export class AutomatedBeforeAfterAnalysisService {
     return data;
   }
 
-  async updateAnalysisSession(id: string, updates: Partial<PhotoAnalysisSession>): Promise<PhotoAnalysisSession> {
+  async updateAnalysisSession(
+    id: string,
+    updates: Partial<PhotoAnalysisSession>
+  ): Promise<PhotoAnalysisSession> {
     const { data, error } = await this.supabase
       .from('photo_analysis_sessions')
       .update(updates)
@@ -176,10 +192,10 @@ export class AutomatedBeforeAfterAnalysisService {
   }
 
   // Before/After Photo Pair Methods
-  async getPhotoPairs(filters: PhotoPairFilters = {}): Promise<BeforeAfterPhotoPair[]> {
-    let query = this.supabase
-      .from('before_after_photo_pairs')
-      .select('*');
+  async getPhotoPairs(
+    filters: PhotoPairFilters = {}
+  ): Promise<BeforeAfterPhotoPair[]> {
+    let query = this.supabase.from('before_after_photo_pairs').select('*');
 
     // Apply filters
     if (filters.session_id) {
@@ -204,7 +220,9 @@ export class AutomatedBeforeAfterAnalysisService {
       query = query.lte('time_between_days', filters.time_between_max);
     }
 
-    const { data, error } = await query.order('created_at', { ascending: false });
+    const { data, error } = await query.order('created_at', {
+      ascending: false,
+    });
 
     if (error) throw error;
     return data || [];
@@ -221,7 +239,9 @@ export class AutomatedBeforeAfterAnalysisService {
     return data;
   }
 
-  async createPhotoPair(request: CreatePhotoPairRequest): Promise<BeforeAfterPhotoPair> {
+  async createPhotoPair(
+    request: CreatePhotoPairRequest
+  ): Promise<BeforeAfterPhotoPair> {
     const { data, error } = await this.supabase
       .from('before_after_photo_pairs')
       .insert(request)
@@ -232,7 +252,10 @@ export class AutomatedBeforeAfterAnalysisService {
     return data;
   }
 
-  async updatePhotoPair(id: string, updates: Partial<BeforeAfterPhotoPair>): Promise<BeforeAfterPhotoPair> {
+  async updatePhotoPair(
+    id: string,
+    updates: Partial<BeforeAfterPhotoPair>
+  ): Promise<BeforeAfterPhotoPair> {
     const { data, error } = await this.supabase
       .from('before_after_photo_pairs')
       .update(updates)
@@ -254,10 +277,10 @@ export class AutomatedBeforeAfterAnalysisService {
   }
 
   // Image Analysis Result Methods
-  async getAnalysisResults(filters: AnalysisResultFilters = {}): Promise<ImageAnalysisResult[]> {
-    let query = this.supabase
-      .from('image_analysis_results')
-      .select('*');
+  async getAnalysisResults(
+    filters: AnalysisResultFilters = {}
+  ): Promise<ImageAnalysisResult[]> {
+    let query = this.supabase.from('image_analysis_results').select('*');
 
     // Apply filters
     if (filters.photo_pair_id) {
@@ -276,7 +299,9 @@ export class AutomatedBeforeAfterAnalysisService {
       query = query.lte('analysis_timestamp', filters.date_to);
     }
 
-    const { data, error } = await query.order('analysis_timestamp', { ascending: false });
+    const { data, error } = await query.order('analysis_timestamp', {
+      ascending: false,
+    });
 
     if (error) throw error;
     return data || [];
@@ -293,7 +318,9 @@ export class AutomatedBeforeAfterAnalysisService {
     return data;
   }
 
-  async createAnalysisResult(result: Partial<ImageAnalysisResult>): Promise<ImageAnalysisResult> {
+  async createAnalysisResult(
+    result: Partial<ImageAnalysisResult>
+  ): Promise<ImageAnalysisResult> {
     const { data, error } = await this.supabase
       .from('image_analysis_results')
       .insert(result)
@@ -327,7 +354,9 @@ export class AutomatedBeforeAfterAnalysisService {
     return data;
   }
 
-  async createMeasurementMetric(metric: Partial<MeasurementMetric>): Promise<MeasurementMetric> {
+  async createMeasurementMetric(
+    metric: Partial<MeasurementMetric>
+  ): Promise<MeasurementMetric> {
     const { data, error } = await this.supabase
       .from('measurement_metrics')
       .insert(metric)
@@ -338,7 +367,10 @@ export class AutomatedBeforeAfterAnalysisService {
     return data;
   }
 
-  async updateMeasurementMetric(id: string, updates: Partial<MeasurementMetric>): Promise<MeasurementMetric> {
+  async updateMeasurementMetric(
+    id: string,
+    updates: Partial<MeasurementMetric>
+  ): Promise<MeasurementMetric> {
     const { data, error } = await this.supabase
       .from('measurement_metrics')
       .update(updates)
@@ -373,7 +405,9 @@ export class AutomatedBeforeAfterAnalysisService {
     return data;
   }
 
-  async createTreatmentArea(area: Partial<TreatmentArea>): Promise<TreatmentArea> {
+  async createTreatmentArea(
+    area: Partial<TreatmentArea>
+  ): Promise<TreatmentArea> {
     const { data, error } = await this.supabase
       .from('treatment_areas')
       .insert(area)
@@ -384,7 +418,10 @@ export class AutomatedBeforeAfterAnalysisService {
     return data;
   }
 
-  async updateTreatmentArea(id: string, updates: Partial<TreatmentArea>): Promise<TreatmentArea> {
+  async updateTreatmentArea(
+    id: string,
+    updates: Partial<TreatmentArea>
+  ): Promise<TreatmentArea> {
     const { data, error } = await this.supabase
       .from('treatment_areas')
       .update(updates)
@@ -397,7 +434,9 @@ export class AutomatedBeforeAfterAnalysisService {
   }
 
   // Visual Annotations Methods
-  async getVisualAnnotations(analysisResultId: string): Promise<VisualAnnotation[]> {
+  async getVisualAnnotations(
+    analysisResultId: string
+  ): Promise<VisualAnnotation[]> {
     const { data, error } = await this.supabase
       .from('visual_annotations')
       .select('*')
@@ -409,7 +448,9 @@ export class AutomatedBeforeAfterAnalysisService {
     return data || [];
   }
 
-  async createVisualAnnotation(request: AnnotationCreateRequest): Promise<VisualAnnotation> {
+  async createVisualAnnotation(
+    request: AnnotationCreateRequest
+  ): Promise<VisualAnnotation> {
     const { data, error } = await this.supabase
       .from('visual_annotations')
       .insert(request)
@@ -420,7 +461,10 @@ export class AutomatedBeforeAfterAnalysisService {
     return data;
   }
 
-  async updateVisualAnnotation(id: string, updates: Partial<VisualAnnotation>): Promise<VisualAnnotation> {
+  async updateVisualAnnotation(
+    id: string,
+    updates: Partial<VisualAnnotation>
+  ): Promise<VisualAnnotation> {
     const { data, error } = await this.supabase
       .from('visual_annotations')
       .update(updates)
@@ -442,10 +486,10 @@ export class AutomatedBeforeAfterAnalysisService {
   }
 
   // Analysis Reports Methods
-  async getAnalysisReports(filters: ReportFilters = {}): Promise<AnalysisReport[]> {
-    let query = this.supabase
-      .from('analysis_reports')
-      .select('*');
+  async getAnalysisReports(
+    filters: ReportFilters = {}
+  ): Promise<AnalysisReport[]> {
+    let query = this.supabase.from('analysis_reports').select('*');
 
     // Apply filters
     if (filters.session_id) {
@@ -467,30 +511,44 @@ export class AutomatedBeforeAfterAnalysisService {
       query = query.eq('is_public', filters.is_public);
     }
 
-    const { data, error } = await query.order('generated_at', { ascending: false });
+    const { data, error } = await query.order('generated_at', {
+      ascending: false,
+    });
 
     if (error) throw error;
     return data || [];
   }
 
-  async generateReport(request: GenerateReportRequest): Promise<AnalysisReport> {
-    const { data: { user } } = await this.supabase.auth.getUser();
+  async generateReport(
+    request: GenerateReportRequest
+  ): Promise<AnalysisReport> {
+    const {
+      data: { user },
+    } = await this.supabase.auth.getUser();
 
     // Get session data for report generation
     const session = await this.getAnalysisSession(request.session_id);
     if (!session) throw new Error('Analysis session not found');
 
     // Get photo pairs for the session
-    const photoPairs = await this.getPhotoPairs({ session_id: request.session_id });
+    const photoPairs = await this.getPhotoPairs({
+      session_id: request.session_id,
+    });
 
     // Generate report data based on session and pairs
     const reportData = {
-      session: session,
+      session,
       photo_pairs: photoPairs,
       analysis_summary: {
         total_pairs: photoPairs.length,
-        analyzed_pairs: photoPairs.filter(p => p.analysis_status === 'analyzed').length,
-        average_improvement: photoPairs.reduce((acc, p) => acc + (p.improvement_percentage || 0), 0) / photoPairs.length,
+        analyzed_pairs: photoPairs.filter(
+          (p) => p.analysis_status === 'analyzed'
+        ).length,
+        average_improvement:
+          photoPairs.reduce(
+            (acc, p) => acc + (p.improvement_percentage || 0),
+            0
+          ) / photoPairs.length,
         overall_accuracy: session.accuracy_score,
         processing_time: session.processing_time_seconds,
       },
@@ -518,7 +576,9 @@ export class AutomatedBeforeAfterAnalysisService {
   }
 
   // Quality Validation Methods
-  async getQualityValidations(analysisResultId: string): Promise<QualityValidation[]> {
+  async getQualityValidations(
+    analysisResultId: string
+  ): Promise<QualityValidation[]> {
     const { data, error } = await this.supabase
       .from('quality_validations')
       .select('*')
@@ -529,8 +589,12 @@ export class AutomatedBeforeAfterAnalysisService {
     return data || [];
   }
 
-  async createQualityValidation(request: AccuracyValidationRequest): Promise<QualityValidation> {
-    const { data: { user } } = await this.supabase.auth.getUser();
+  async createQualityValidation(
+    request: AccuracyValidationRequest
+  ): Promise<QualityValidation> {
+    const {
+      data: { user },
+    } = await this.supabase.auth.getUser();
 
     const validationData = {
       ...request,
@@ -547,7 +611,10 @@ export class AutomatedBeforeAfterAnalysisService {
     return data;
   }
 
-  async updateQualityValidation(id: string, updates: Partial<QualityValidation>): Promise<QualityValidation> {
+  async updateQualityValidation(
+    id: string,
+    updates: Partial<QualityValidation>
+  ): Promise<QualityValidation> {
     const { data, error } = await this.supabase
       .from('quality_validations')
       .update(updates)
@@ -570,7 +637,9 @@ export class AutomatedBeforeAfterAnalysisService {
     return data || [];
   }
 
-  async createMLModelTraining(request: ModelTrainingRequest): Promise<MLModelTraining> {
+  async createMLModelTraining(
+    request: ModelTrainingRequest
+  ): Promise<MLModelTraining> {
     const trainingData = {
       ...request,
       training_start: new Date().toISOString(),
@@ -586,7 +655,10 @@ export class AutomatedBeforeAfterAnalysisService {
     return data;
   }
 
-  async updateMLModelTraining(id: string, updates: Partial<MLModelTraining>): Promise<MLModelTraining> {
+  async updateMLModelTraining(
+    id: string,
+    updates: Partial<MLModelTraining>
+  ): Promise<MLModelTraining> {
     const { data, error } = await this.supabase
       .from('ml_model_training')
       .update(updates)
@@ -599,7 +671,9 @@ export class AutomatedBeforeAfterAnalysisService {
   }
 
   // Analysis Operations
-  async startAnalysis(request: StartAnalysisRequest): Promise<AnalysisProgressResponse> {
+  async startAnalysis(
+    request: StartAnalysisRequest
+  ): Promise<AnalysisProgressResponse> {
     // Update session status to processing
     await this.updateAnalysisSession(request.session_id, {
       status: 'processing',
@@ -607,7 +681,9 @@ export class AutomatedBeforeAfterAnalysisService {
     });
 
     // Get photo pairs for analysis
-    const photoPairs = await this.getPhotoPairs({ session_id: request.session_id });
+    const photoPairs = await this.getPhotoPairs({
+      session_id: request.session_id,
+    });
 
     // Simulate analysis progress (in real implementation, this would trigger actual CV processing)
     const progressResponse: AnalysisProgressResponse = {
@@ -616,25 +692,34 @@ export class AutomatedBeforeAfterAnalysisService {
       progress_percentage: 0,
       processed_photos: 0,
       total_photos: photoPairs.length,
-      estimated_completion_time: new Date(Date.now() + 30000).toISOString(), // 30 seconds estimate
+      estimated_completion_time: new Date(Date.now() + 30_000).toISOString(), // 30 seconds estimate
       current_processing: photoPairs[0],
     };
 
     return progressResponse;
   }
 
-  async getAnalysisProgress(sessionId: string): Promise<AnalysisProgressResponse> {
+  async getAnalysisProgress(
+    sessionId: string
+  ): Promise<AnalysisProgressResponse> {
     const session = await this.getAnalysisSession(sessionId);
     if (!session) throw new Error('Analysis session not found');
 
     const photoPairs = await this.getPhotoPairs({ session_id: sessionId });
-    const processedPairs = photoPairs.filter(p => p.analysis_status === 'analyzed');
-    const currentProcessing = photoPairs.find(p => p.analysis_status === 'pending');
+    const processedPairs = photoPairs.filter(
+      (p) => p.analysis_status === 'analyzed'
+    );
+    const currentProcessing = photoPairs.find(
+      (p) => p.analysis_status === 'pending'
+    );
 
     const progressResponse: AnalysisProgressResponse = {
       session_id: sessionId,
       status: session.status,
-      progress_percentage: photoPairs.length > 0 ? (processedPairs.length / photoPairs.length) * 100 : 0,
+      progress_percentage:
+        photoPairs.length > 0
+          ? (processedPairs.length / photoPairs.length) * 100
+          : 0,
       processed_photos: processedPairs.length,
       total_photos: photoPairs.length,
       current_processing: currentProcessing,
@@ -643,7 +728,9 @@ export class AutomatedBeforeAfterAnalysisService {
     return progressResponse;
   }
 
-  async performComparisonAnalysis(request: ComparisonAnalysisRequest): Promise<ComparisonAnalysisResponse> {
+  async performComparisonAnalysis(
+    request: ComparisonAnalysisRequest
+  ): Promise<ComparisonAnalysisResponse> {
     const startTime = Date.now();
 
     // Get photo pair
@@ -694,17 +781,32 @@ export class AutomatedBeforeAfterAnalysisService {
 
   // Dashboard and Analytics Methods
   async getDashboardStats(): Promise<AnalysisDashboardStats> {
-    const [sessions, completedSessions, photoPairs, analyzedPairs, pendingValidations] = await Promise.all([
+    const [
+      sessions,
+      completedSessions,
+      photoPairs,
+      analyzedPairs,
+      pendingValidations,
+    ] = await Promise.all([
       this.getAnalysisSessions(),
       this.getAnalysisSessions({ status: 'completed' }),
       this.getPhotoPairs(),
       this.getPhotoPairs({ analysis_status: 'analyzed' }),
-      this.supabase.from('quality_validations').select('id').eq('validation_status', 'pending'),
+      this.supabase
+        .from('quality_validations')
+        .select('id')
+        .eq('validation_status', 'pending'),
     ]);
 
     const recentActivity = sessions.slice(0, 5);
-    const avgAccuracy = completedSessions.reduce((acc, s) => acc + (s.accuracy_score || 0), 0) / (completedSessions.length || 1);
-    const avgProcessingTime = completedSessions.reduce((acc, s) => acc + (s.processing_time_seconds || 0), 0) / (completedSessions.length || 1);
+    const avgAccuracy =
+      completedSessions.reduce((acc, s) => acc + (s.accuracy_score || 0), 0) /
+      (completedSessions.length || 1);
+    const avgProcessingTime =
+      completedSessions.reduce(
+        (acc, s) => acc + (s.processing_time_seconds || 0),
+        0
+      ) / (completedSessions.length || 1);
 
     return {
       total_sessions: sessions.length,
@@ -719,19 +821,23 @@ export class AutomatedBeforeAfterAnalysisService {
   }
 
   async getAccuracyMetrics(): Promise<AccuracyMetrics> {
-    const completedSessions = await this.getAnalysisSessions({ status: 'completed' });
-    const overallAccuracy = completedSessions.reduce((acc, s) => acc + (s.accuracy_score || 0), 0) / (completedSessions.length || 1);
+    const completedSessions = await this.getAnalysisSessions({
+      status: 'completed',
+    });
+    const overallAccuracy =
+      completedSessions.reduce((acc, s) => acc + (s.accuracy_score || 0), 0) /
+      (completedSessions.length || 1);
 
     // Mock implementation - in real system, would aggregate actual metrics
     return {
       overall_accuracy: overallAccuracy,
       accuracy_by_treatment_area: {
-        'facial_full': 95.2,
-        'body_abdomen': 93.8,
-        'facial_upper': 96.1,
+        facial_full: 95.2,
+        body_abdomen: 93.8,
+        facial_upper: 96.1,
       },
       accuracy_by_engine: {
-        'primary_cv_engine': overallAccuracy,
+        primary_cv_engine: overallAccuracy,
       },
       accuracy_trend: [
         { date: '2025-01-20', accuracy: 94.5 },
@@ -739,37 +845,49 @@ export class AutomatedBeforeAfterAnalysisService {
         { date: '2025-01-22', accuracy: overallAccuracy },
       ],
       confidence_distribution: {
-        'high': 75,
-        'medium': 20,
-        'low': 5,
+        high: 75,
+        medium: 20,
+        low: 5,
       },
     };
   }
 
   async getProcessingMetrics(): Promise<ProcessingMetrics> {
-    const completedSessions = await this.getAnalysisSessions({ status: 'completed' });
-    const avgProcessingTime = completedSessions.reduce((acc, s) => acc + (s.processing_time_seconds || 0), 0) / (completedSessions.length || 1);
-    
-    const pendingSessions = await this.getAnalysisSessions({ status: 'pending' });
-    const processingSessions = await this.getAnalysisSessions({ status: 'processing' });
+    const completedSessions = await this.getAnalysisSessions({
+      status: 'completed',
+    });
+    const avgProcessingTime =
+      completedSessions.reduce(
+        (acc, s) => acc + (s.processing_time_seconds || 0),
+        0
+      ) / (completedSessions.length || 1);
+
+    const pendingSessions = await this.getAnalysisSessions({
+      status: 'pending',
+    });
+    const processingSessions = await this.getAnalysisSessions({
+      status: 'processing',
+    });
 
     return {
       average_processing_time: avgProcessingTime * 1000, // Convert to ms
       processing_time_by_area: {
-        'facial_full': 25000,
-        'body_abdomen': 35000,
-        'facial_upper': 20000,
+        facial_full: 25_000,
+        body_abdomen: 35_000,
+        facial_upper: 20_000,
       },
       processing_time_trend: [
-        { date: '2025-01-20', time_ms: 28000 },
-        { date: '2025-01-21', time_ms: 26000 },
+        { date: '2025-01-20', time_ms: 28_000 },
+        { date: '2025-01-21', time_ms: 26_000 },
         { date: '2025-01-22', time_ms: avgProcessingTime * 1000 },
       ],
       queue_statistics: {
         pending: pendingSessions.length,
         processing: processingSessions.length,
-        completed_today: completedSessions.filter(s => 
-          new Date(s.completed_at || '').toDateString() === new Date().toDateString()
+        completed_today: completedSessions.filter(
+          (s) =>
+            new Date(s.completed_at || '').toDateString() ===
+            new Date().toDateString()
         ).length,
       },
     };
@@ -781,15 +899,15 @@ export class AutomatedBeforeAfterAnalysisService {
       validation_success_rate: 92.5,
       manual_review_rate: 7.5,
       accuracy_validation_results: {
-        'approved': 85,
-        'rejected': 8,
-        'needs_review': 7,
+        approved: 85,
+        rejected: 8,
+        needs_review: 7,
       },
       quality_score_distribution: {
-        'excellent': 60,
-        'good': 30,
-        'fair': 8,
-        'poor': 2,
+        excellent: 60,
+        good: 30,
+        fair: 8,
+        poor: 2,
       },
       improvement_validation: {
         accurate_predictions: 88,
@@ -800,12 +918,14 @@ export class AutomatedBeforeAfterAnalysisService {
   }
 
   // Batch Operations
-  async batchAnalysis(request: BatchAnalysisRequest): Promise<AnalysisProgressResponse[]> {
+  async batchAnalysis(
+    request: BatchAnalysisRequest
+  ): Promise<AnalysisProgressResponse[]> {
     const results = await Promise.all(
-      request.session_ids.map((sessionId: string) => 
-        this.startAnalysis({ 
-          session_id: sessionId, 
-          analysis_parameters: request.analysis_parameters 
+      request.session_ids.map((sessionId: string) =>
+        this.startAnalysis({
+          session_id: sessionId,
+          analysis_parameters: request.analysis_parameters,
         })
       )
     );
@@ -813,20 +933,22 @@ export class AutomatedBeforeAfterAnalysisService {
     return results;
   }
 
-  async batchUpdateSessions(sessionIds: string[], updates: Partial<PhotoAnalysisSession>): Promise<PhotoAnalysisSession[]> {
+  async batchUpdateSessions(
+    sessionIds: string[],
+    updates: Partial<PhotoAnalysisSession>
+  ): Promise<PhotoAnalysisSession[]> {
     const results = await Promise.all(
-      sessionIds.map(id => this.updateAnalysisSession(id, updates))
+      sessionIds.map((id) => this.updateAnalysisSession(id, updates))
     );
 
     return results;
   }
 
   async batchDeleteSessions(sessionIds: string[]): Promise<void> {
-    await Promise.all(
-      sessionIds.map(id => this.deleteAnalysisSession(id))
-    );
+    await Promise.all(sessionIds.map((id) => this.deleteAnalysisSession(id)));
   }
 }
 
 // Export singleton instance
-export const automatedBeforeAfterAnalysisService = new AutomatedBeforeAfterAnalysisService();
+export const automatedBeforeAfterAnalysisService =
+  new AutomatedBeforeAfterAnalysisService();

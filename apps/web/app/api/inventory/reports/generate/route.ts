@@ -1,35 +1,34 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { inventoryReportsService } from '@/app/lib/services/inventory-reports-service';
-import type { 
-  ReportParameters, 
-  ReportType,
+import type {
   ReportFilters,
-  ReportFormat 
+  ReportFormat,
+  ReportParameters,
+  ReportType,
 } from '@/app/lib/types/inventory-reports';
+import { createClient } from '@/app/utils/supabase/server';
 
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Verify authentication
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
-    
+
     // Validate request body
     const validationResult = validateGenerateReportRequest(body);
     if (!validationResult.isValid) {
       return NextResponse.json(
-        { 
+        {
           error: 'Invalid request parameters',
-          details: validationResult.errors 
+          details: validationResult.errors,
         },
         { status: 400 }
       );
@@ -42,7 +41,8 @@ export async function POST(request: NextRequest) {
     };
 
     // Generate the report
-    const reportResult = await inventoryReportsService.generateReport(parameters);
+    const reportResult =
+      await inventoryReportsService.generateReport(parameters);
 
     // Handle different output formats
     if (parameters.format === 'csv') {
@@ -50,10 +50,11 @@ export async function POST(request: NextRequest) {
       return new NextResponse(csvData, {
         headers: {
           'Content-Type': 'text/csv',
-          'Content-Disposition': `attachment; filename="${parameters.type}_report_${new Date().getTime()}.csv"`,
+          'Content-Disposition': `attachment; filename="${parameters.type}_report_${Date.now()}.csv"`,
         },
       });
-    } else if (parameters.format === 'excel') {
+    }
+    if (parameters.format === 'excel') {
       // Excel export would go here
       return NextResponse.json(
         { error: 'Excel format not yet implemented' },
@@ -66,13 +67,12 @@ export async function POST(request: NextRequest) {
       success: true,
       report: reportResult,
     });
-
   } catch (error) {
     console.error('Error generating inventory report:', error);
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to generate report',
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );
@@ -82,19 +82,18 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Verify authentication
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
     const reportType = searchParams.get('type') as ReportType;
-    
+
     if (!reportType) {
       return NextResponse.json(
         { error: 'Report type is required' },
@@ -104,7 +103,7 @@ export async function GET(request: NextRequest) {
 
     // Build filters from query parameters
     const filters: ReportFilters = {};
-    
+
     if (searchParams.get('start_date')) {
       filters.start_date = searchParams.get('start_date')!;
     }
@@ -127,7 +126,8 @@ export async function GET(request: NextRequest) {
       filters.movement_type = searchParams.get('movement_type') as any;
     }
     if (searchParams.get('include_zero_stock')) {
-      filters.include_zero_stock = searchParams.get('include_zero_stock') === 'true';
+      filters.include_zero_stock =
+        searchParams.get('include_zero_stock') === 'true';
     }
 
     const parameters: ReportParameters = {
@@ -137,19 +137,19 @@ export async function GET(request: NextRequest) {
     };
 
     // Generate the report
-    const reportResult = await inventoryReportsService.generateReport(parameters);
+    const reportResult =
+      await inventoryReportsService.generateReport(parameters);
 
     return NextResponse.json({
       success: true,
       report: reportResult,
     });
-
   } catch (error) {
     console.error('Error fetching inventory report:', error);
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to fetch report',
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );
@@ -176,15 +176,17 @@ function validateGenerateReportRequest(body: any): ValidationResult {
   // Validate report type
   const validTypes: ReportType[] = [
     'stock_movement',
-    'stock_valuation', 
+    'stock_valuation',
     'low_stock',
     'expiring_items',
     'transfers',
-    'location_performance'
+    'location_performance',
   ];
-  
+
   if (body.type && !validTypes.includes(body.type)) {
-    errors.push(`Invalid report type. Must be one of: ${validTypes.join(', ')}`);
+    errors.push(
+      `Invalid report type. Must be one of: ${validTypes.join(', ')}`
+    );
   }
 
   // Validate format if provided
@@ -202,11 +204,15 @@ function validateGenerateReportRequest(body: any): ValidationResult {
 
   // Validate date formats in filters
   if (body.filters?.start_date && !isValidDate(body.filters.start_date)) {
-    errors.push('Invalid start_date format. Use ISO 8601 format (YYYY-MM-DD or YYYY-MM-DDTHH:mm:ss)');
+    errors.push(
+      'Invalid start_date format. Use ISO 8601 format (YYYY-MM-DD or YYYY-MM-DDTHH:mm:ss)'
+    );
   }
 
   if (body.filters?.end_date && !isValidDate(body.filters.end_date)) {
-    errors.push('Invalid end_date format. Use ISO 8601 format (YYYY-MM-DD or YYYY-MM-DDTHH:mm:ss)');
+    errors.push(
+      'Invalid end_date format. Use ISO 8601 format (YYYY-MM-DD or YYYY-MM-DDTHH:mm:ss)'
+    );
   }
 
   // Validate UUID formats for IDs
@@ -230,11 +236,12 @@ function validateGenerateReportRequest(body: any): ValidationResult {
 
 function isValidDate(dateString: string): boolean {
   const date = new Date(dateString);
-  return !isNaN(date.getTime());
+  return !Number.isNaN(date.getTime());
 }
 
 function isValidUUID(uuid: string): boolean {
-  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  const uuidRegex =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
   return uuidRegex.test(uuid);
 }
 
@@ -242,29 +249,34 @@ function isValidUUID(uuid: string): boolean {
 // CSV CONVERSION HELPERS
 // =============================================================================
 
-function convertToCSV(data: any[], reportType: ReportType): string {
+function convertToCSV(data: any[], _reportType: ReportType): string {
   if (!data || data.length === 0) {
     return 'No data available\n';
   }
 
   // Get headers from first object
   const headers = Object.keys(data[0]);
-  
+
   // Create CSV content
   const csvContent = [
     // Header row
     headers.join(','),
     // Data rows
-    ...data.map(row => 
-      headers.map(header => {
-        const value = row[header];
-        // Handle values that might contain commas or quotes
-        if (typeof value === 'string' && (value.includes(',') || value.includes('"'))) {
-          return `"${value.replace(/"/g, '""')}"`;
-        }
-        return value !== null && value !== undefined ? value.toString() : '';
-      }).join(',')
-    )
+    ...data.map((row) =>
+      headers
+        .map((header) => {
+          const value = row[header];
+          // Handle values that might contain commas or quotes
+          if (
+            typeof value === 'string' &&
+            (value.includes(',') || value.includes('"'))
+          ) {
+            return `"${value.replace(/"/g, '""')}"`;
+          }
+          return value !== null && value !== undefined ? value.toString() : '';
+        })
+        .join(',')
+    ),
   ].join('\n');
 
   return csvContent;

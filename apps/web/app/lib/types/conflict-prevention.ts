@@ -3,7 +3,7 @@
 // Story 1.2: Advanced conflict detection types
 // =============================================
 
-import type { AppointmentWithRelations } from "./appointments";
+import type { AppointmentWithRelations } from './appointments';
 
 // Professional schedule interfaces
 export interface ProfessionalSchedule {
@@ -35,7 +35,7 @@ export interface ClinicHoliday {
   start_time?: string; // HH:MM format for partial day closures
   end_time?: string; // HH:MM format for partial day closures
   is_recurring: boolean;
-  recurrence_type?: "yearly" | "monthly" | "weekly";
+  recurrence_type?: 'yearly' | 'monthly' | 'weekly';
   is_active: boolean;
   created_at: string;
   updated_at: string;
@@ -61,20 +61,20 @@ export interface ServiceTypeRules {
 
 // Conflict detection types
 export type ConflictType =
-  | "PAST_APPOINTMENT"
-  | "NO_SCHEDULE"
-  | "OUTSIDE_WORKING_HOURS"
-  | "DURING_BREAK"
-  | "CLINIC_HOLIDAY"
-  | "SHORT_NOTICE"
-  | "TOO_FAR_AHEAD"
-  | "APPOINTMENT_OVERLAP"
-  | "PRE_BUFFER_CONFLICT"
-  | "POST_BUFFER_CONFLICT"
-  | "HOURLY_CAPACITY_EXCEEDED"
-  | "SERVICE_SIMULTANEOUS_NOT_ALLOWED";
+  | 'PAST_APPOINTMENT'
+  | 'NO_SCHEDULE'
+  | 'OUTSIDE_WORKING_HOURS'
+  | 'DURING_BREAK'
+  | 'CLINIC_HOLIDAY'
+  | 'SHORT_NOTICE'
+  | 'TOO_FAR_AHEAD'
+  | 'APPOINTMENT_OVERLAP'
+  | 'PRE_BUFFER_CONFLICT'
+  | 'POST_BUFFER_CONFLICT'
+  | 'HOURLY_CAPACITY_EXCEEDED'
+  | 'SERVICE_SIMULTANEOUS_NOT_ALLOWED';
 
-export type ConflictSeverity = "error" | "warning" | "info";
+export type ConflictSeverity = 'error' | 'warning' | 'info';
 
 export interface AppointmentConflict {
   type: ConflictType;
@@ -195,7 +195,7 @@ export interface HolidayConfig {
   start_time?: string;
   end_time?: string;
   is_recurring: boolean;
-  recurrence_type?: "yearly" | "monthly" | "weekly";
+  recurrence_type?: 'yearly' | 'monthly' | 'weekly';
 }
 
 // Availability checking types
@@ -214,7 +214,7 @@ export interface AvailabilitySlot {
   available: boolean;
   conflicts: number;
   capacity_remaining: number;
-  booking_urgency: "low" | "medium" | "high"; // Based on availability
+  booking_urgency: 'low' | 'medium' | 'high'; // Based on availability
 }
 
 export interface AvailabilityResponse {
@@ -305,7 +305,7 @@ export interface AppointmentWithConflictData extends AppointmentWithRelations {
   buffer_violations?: AppointmentConflict[];
   schedule_warnings?: AppointmentConflict[];
   alternative_suggestions?: AlternativeSlot[];
-  booking_urgency?: "low" | "medium" | "high";
+  booking_urgency?: 'low' | 'medium' | 'high';
   cancellation_impact?: {
     affects_other_appointments: boolean;
     notice_period_violation: boolean;
@@ -336,7 +336,7 @@ export interface HolidayConfig {
   start_time?: string;
   end_time?: string;
   is_recurring: boolean;
-  recurrence_type?: "yearly" | "monthly" | "weekly";
+  recurrence_type?: 'yearly' | 'monthly' | 'weekly';
 }
 
 // Service type rule interface (better naming)

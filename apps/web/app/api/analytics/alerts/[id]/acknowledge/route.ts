@@ -1,9 +1,9 @@
 // Alert Acknowledgment API
 // Description: Dedicated endpoint for alert acknowledgment
-// Author: Dev Agent  
+// Author: Dev Agent
 // Date: 2025-01-26
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
 
 interface RouteParams {
@@ -12,10 +12,10 @@ interface RouteParams {
   };
 }
 
-export async function PATCH(request: NextRequest, { params }: RouteParams) {
+export async function PATCH(_request: NextRequest, { params }: RouteParams) {
   try {
     const supabase = createClient();
-    
+
     // Get current user
     const {
       data: { user },
@@ -56,7 +56,6 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
       data: updatedAlert,
       message: 'Alert acknowledged successfully',
     });
-
   } catch (error) {
     console.error('Error acknowledging alert:', error);
     return NextResponse.json(

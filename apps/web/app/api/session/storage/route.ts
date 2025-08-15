@@ -1,18 +1,17 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
-import { cookies } from 'next/headers';
 
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Verificar autenticação
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Não autorizado' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
     const body = await request.json();
@@ -22,7 +21,7 @@ export async function POST(request: NextRequest) {
       const { token_type, encrypted_data, expires_at } = body;
 
       // Validar dados obrigatórios
-      if (!token_type || !encrypted_data) {
+      if (!(token_type && encrypted_data)) {
         return NextResponse.json(
           { error: 'Tipo de token e dados criptografados são obrigatórios' },
           { status: 400 }
@@ -36,9 +35,11 @@ export async function POST(request: NextRequest) {
           user_id: user.id,
           token_type,
           encrypted_data,
-          expires_at: expires_at || new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24h default
+          expires_at:
+            expires_at ||
+            new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24h default
           last_accessed: new Date().toISOString(),
-          is_active: true
+          is_active: true,
         })
         .select()
         .single();
@@ -54,7 +55,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: true,
         token_id: storedToken.id,
-        message: 'Token armazenado com segurança'
+        message: 'Token armazenado com segurança',
       });
     }
 
@@ -100,8 +101,8 @@ export async function POST(request: NextRequest) {
           token_type: token.token_type,
           encrypted_data: token.encrypted_data,
           expires_at: token.expires_at,
-          last_accessed: new Date().toISOString()
-        }
+          last_accessed: new Date().toISOString(),
+        },
       });
     }
 
@@ -110,9 +111,9 @@ export async function POST(request: NextRequest) {
 
       let query = supabase
         .from('secure_tokens')
-        .update({ 
+        .update({
           is_active: false,
-          revoked_at: new Date().toISOString()
+          revoked_at: new Date().toISOString(),
         })
         .eq('user_id', user.id);
 
@@ -139,7 +140,7 @@ export async function POST(request: NextRequest) {
 
       return NextResponse.json({
         success: true,
-        message: 'Token revogado com sucesso'
+        message: 'Token revogado com sucesso',
       });
     }
 
@@ -147,7 +148,6 @@ export async function POST(request: NextRequest) {
       { error: 'Ação não reconhecida' },
       { status: 400 }
     );
-
   } catch (error) {
     console.error('Erro no endpoint de armazenamento de token:', error);
     return NextResponse.json(
@@ -160,14 +160,14 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Verificar autenticação
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Não autorizado' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
@@ -177,7 +177,9 @@ export async function GET(request: NextRequest) {
     // Buscar tokens do usuário
     let query = supabase
       .from('secure_tokens')
-      .select('id, token_type, expires_at, last_accessed, is_active, created_at, revoked_at')
+      .select(
+        'id, token_type, expires_at, last_accessed, is_active, created_at, revoked_at'
+      )
       .eq('user_id', user.id);
 
     if (token_type) {
@@ -188,8 +190,10 @@ export async function GET(request: NextRequest) {
       query = query.gt('expires_at', new Date().toISOString());
     }
 
-    const { data: tokens, error: tokensError } = await query
-      .order('created_at', { ascending: false });
+    const { data: tokens, error: tokensError } = await query.order(
+      'created_at',
+      { ascending: false }
+    );
 
     if (tokensError) {
       console.error('Erro ao buscar tokens:', tokensError);
@@ -200,9 +204,12 @@ export async function GET(request: NextRequest) {
     }
 
     // Estatísticas de tokens
-    const active_tokens = tokens?.filter(t => t.is_active && new Date(t.expires_at) > new Date()).length || 0;
-    const expired_tokens = tokens?.filter(t => new Date(t.expires_at) <= new Date()).length || 0;
-    const revoked_tokens = tokens?.filter(t => !t.is_active).length || 0;
+    const active_tokens =
+      tokens?.filter((t) => t.is_active && new Date(t.expires_at) > new Date())
+        .length || 0;
+    const expired_tokens =
+      tokens?.filter((t) => new Date(t.expires_at) <= new Date()).length || 0;
+    const revoked_tokens = tokens?.filter((t) => !t.is_active).length || 0;
 
     return NextResponse.json({
       success: true,
@@ -211,10 +218,9 @@ export async function GET(request: NextRequest) {
         total: tokens?.length || 0,
         active: active_tokens,
         expired: expired_tokens,
-        revoked: revoked_tokens
-      }
+        revoked: revoked_tokens,
+      },
     });
-
   } catch (error) {
     console.error('Erro no endpoint de listagem de tokens:', error);
     return NextResponse.json(
@@ -227,14 +233,14 @@ export async function GET(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Verificar autenticação
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Não autorizado' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
@@ -244,9 +250,9 @@ export async function DELETE(request: NextRequest) {
       // Revogar todos os tokens ativos do usuário
       const { error: revokeError } = await supabase
         .from('secure_tokens')
-        .update({ 
+        .update({
           is_active: false,
-          revoked_at: new Date().toISOString()
+          revoked_at: new Date().toISOString(),
         })
         .eq('user_id', user.id)
         .eq('is_active', true);
@@ -261,7 +267,7 @@ export async function DELETE(request: NextRequest) {
 
       return NextResponse.json({
         success: true,
-        message: 'Todos os tokens foram revogados'
+        message: 'Todos os tokens foram revogados',
       });
     }
 
@@ -269,9 +275,9 @@ export async function DELETE(request: NextRequest) {
       // Limpar tokens expirados (apenas marcar como inativos)
       const { error: cleanupError } = await supabase
         .from('secure_tokens')
-        .update({ 
+        .update({
           is_active: false,
-          revoked_at: new Date().toISOString()
+          revoked_at: new Date().toISOString(),
         })
         .eq('user_id', user.id)
         .lt('expires_at', new Date().toISOString())
@@ -287,7 +293,7 @@ export async function DELETE(request: NextRequest) {
 
       return NextResponse.json({
         success: true,
-        message: 'Tokens expirados foram limpos'
+        message: 'Tokens expirados foram limpos',
       });
     }
 
@@ -295,7 +301,6 @@ export async function DELETE(request: NextRequest) {
       { error: 'Ação de exclusão não reconhecida' },
       { status: 400 }
     );
-
   } catch (error) {
     console.error('Erro no endpoint de exclusão de tokens:', error);
     return NextResponse.json(

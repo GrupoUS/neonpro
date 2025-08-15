@@ -4,13 +4,13 @@
  * Compliance: LGPD + device privacy + healthcare standards
  */
 
-import { 
-  NotificationChannel, 
-  NotificationProvider, 
-  NotificationResult,
-  NotificationMetadata,
+import type {
   HealthcareNotificationContext,
-  LGPDCompliantData 
+  LGPDCompliantData,
+  NotificationChannel,
+  NotificationMetadata,
+  NotificationProvider,
+  NotificationResult,
 } from '../types/notifications';
 
 // Push-specific types
@@ -136,14 +136,14 @@ class FCMPushProvider implements PushProvider {
 
   async sendPush(params: PushParams): Promise<NotificationResult> {
     const startTime = Date.now();
-    
+
     try {
       // Validate LGPD compliance
       await this.validateLGPDCompliance(params.metadata.lgpdConsent);
-      
+
       const accessToken = await this.getAccessToken();
-      const deviceTokens = Array.isArray(params.deviceTokens) 
-        ? params.deviceTokens 
+      const deviceTokens = Array.isArray(params.deviceTokens)
+        ? params.deviceTokens
         : [params.deviceTokens];
 
       // Prepare FCM payload
@@ -159,7 +159,9 @@ class FCMPushProvider implements PushProvider {
             ...params.data,
             // Healthcare context for compliance
             clinicId: params.metadata.clinicId,
-            ...(params.metadata.patientId && { patientId: params.metadata.patientId }),
+            ...(params.metadata.patientId && {
+              patientId: params.metadata.patientId,
+            }),
             notificationId: params.metadata.id,
           },
           android: {
@@ -189,7 +191,7 @@ class FCMPushProvider implements PushProvider {
             },
             headers: {
               'apns-priority': params.priority === 'high' ? '10' : '5',
-              'apns-expiration': params.ttl 
+              'apns-expiration': params.ttl
                 ? String(Math.floor(Date.now() / 1000) + params.ttl)
                 : '0',
             },
@@ -217,7 +219,7 @@ class FCMPushProvider implements PushProvider {
         {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${accessToken}`,
+            Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(fcmPayload),
@@ -228,7 +230,9 @@ class FCMPushProvider implements PushProvider {
       const duration = Date.now() - startTime;
 
       if (!response.ok) {
-        throw new Error(`FCM API error: ${responseData.error?.message || response.statusText}`);
+        throw new Error(
+          `FCM API error: ${responseData.error?.message || response.statusText}`
+        );
       }
 
       return {
@@ -244,10 +248,9 @@ class FCMPushProvider implements PushProvider {
           deviceCount: deviceTokens.length,
         },
       };
-
     } catch (error) {
       const duration = Date.now() - startTime;
-      
+
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -257,7 +260,7 @@ class FCMPushProvider implements PushProvider {
         metadata: {
           ...params.metadata,
           duration,
-          error: error,
+          error,
         },
       };
     }
@@ -266,12 +269,12 @@ class FCMPushProvider implements PushProvider {
   async sendBulkPush(params: BulkPushParams): Promise<NotificationResult[]> {
     const batchSize = params.batchSize || 500; // FCM limit
     const results: NotificationResult[] = [];
-    
+
     // Process in batches
     for (let i = 0; i < params.notifications.length; i += batchSize) {
       const batch = params.notifications.slice(i, i + batchSize);
-      
-      const batchPromises = batch.map(notification => 
+
+      const batchPromises = batch.map((notification) =>
         this.sendPush({
           deviceTokens: notification.deviceTokens,
           title: notification.title,
@@ -282,7 +285,7 @@ class FCMPushProvider implements PushProvider {
       );
 
       const batchResults = await Promise.allSettled(batchPromises);
-      
+
       batchResults.forEach((result, index) => {
         if (result.status === 'fulfilled') {
           results.push(result.value);
@@ -300,7 +303,7 @@ class FCMPushProvider implements PushProvider {
 
       // Rate limiting between batches
       if (i + batchSize < params.notifications.length) {
-        await new Promise(resolve => setTimeout(resolve, 500)); // 500ms delay
+        await new Promise((resolve) => setTimeout(resolve, 500)); // 500ms delay
       }
     }
 
@@ -311,7 +314,7 @@ class FCMPushProvider implements PushProvider {
     try {
       // Validate LGPD compliance for device registration
       await this.validateLGPDCompliance(params.lgpdConsent);
-      
+
       // Validate device token with FCM
       const isValid = await this.validateDevice(params.deviceToken);
       if (!isValid) {
@@ -321,7 +324,7 @@ class FCMPushProvider implements PushProvider {
       // Store device subscription in database
       // This would typically involve storing in Supabase
       // For now, we'll return success if validation passes
-      
+
       return true;
     } catch (error) {
       console.error(`[${this.id}] Device subscription failed:`, error);
@@ -329,11 +332,11 @@ class FCMPushProvider implements PushProvider {
     }
   }
 
-  async unsubscribeDevice(deviceToken: string): Promise<boolean> {
+  async unsubscribeDevice(_deviceToken: string): Promise<boolean> {
     try {
       // Remove device from topic subscriptions
       // This would typically involve database cleanup
-      
+
       return true;
     } catch (error) {
       console.error(`[${this.id}] Device unsubscription failed:`, error);
@@ -344,14 +347,14 @@ class FCMPushProvider implements PushProvider {
   async validateDevice(deviceToken: string): Promise<boolean> {
     try {
       const accessToken = await this.getAccessToken();
-      
+
       // Test send to validate token
       const response = await fetch(
         `https://fcm.googleapis.com/v1/projects/${this.config.projectId}/messages:send`,
         {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${accessToken}`,
+            Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
@@ -382,7 +385,7 @@ class FCMPushProvider implements PushProvider {
     try {
       // Create JWT for OAuth2
       const jwt = await this.createJWT();
-      
+
       // Exchange JWT for access token
       const response = await fetch('https://oauth2.googleapis.com/token', {
         method: 'POST',
@@ -396,14 +399,16 @@ class FCMPushProvider implements PushProvider {
       });
 
       const data = await response.json();
-      
+
       if (!response.ok) {
-        throw new Error(`OAuth2 error: ${data.error_description || response.statusText}`);
+        throw new Error(
+          `OAuth2 error: ${data.error_description || response.statusText}`
+        );
       }
 
       this.accessToken = data.access_token;
-      this.tokenExpiry = new Date(Date.now() + (data.expires_in * 1000) - 60000); // 1 min buffer
-      
+      this.tokenExpiry = new Date(Date.now() + data.expires_in * 1000 - 60_000); // 1 min buffer
+
       return this.accessToken;
     } catch (error) {
       throw new Error(`Failed to get access token: ${error}`);
@@ -430,25 +435,27 @@ class FCMPushProvider implements PushProvider {
     const encodedHeader = btoa(JSON.stringify(header));
     const encodedPayload = btoa(JSON.stringify(payload));
     const signature = await this.signJWT(`${encodedHeader}.${encodedPayload}`);
-    
+
     return `${encodedHeader}.${encodedPayload}.${signature}`;
   }
 
-  private async signJWT(data: string): Promise<string> {
+  private async signJWT(_data: string): Promise<string> {
     // Simplified JWT signing - in production use proper crypto library
     // This would typically use the private key to sign the data
     return btoa('signature'); // Placeholder
   }
 
-  private async validateLGPDCompliance(lgpdData: LGPDCompliantData): Promise<void> {
+  private async validateLGPDCompliance(
+    lgpdData: LGPDCompliantData
+  ): Promise<void> {
     if (!lgpdData.consentGiven) {
       throw new Error('LGPD: Push notification consent not provided');
     }
-    
+
     if (lgpdData.consentExpiry && new Date() > lgpdData.consentExpiry) {
       throw new Error('LGPD: Push notification consent expired');
     }
-    
+
     if (!lgpdData.purposes.includes('notifications')) {
       throw new Error('LGPD: Push notification purpose not authorized');
     }
@@ -461,7 +468,6 @@ class FCMPushProvider implements PushProvider {
  */
 class PushProviderFactory {
   private fcmProvider: FCMPushProvider;
-  private config: PushProviderConfig;
 
   constructor(config: PushProviderConfig) {
     this.config = config;
@@ -497,7 +503,7 @@ class PushProviderFactory {
       const provider = await this.getProvider();
       return await provider.sendBulkPush(params);
     } catch (error) {
-      return params.notifications.map(notification => ({
+      return params.notifications.map((notification) => ({
         success: false,
         error: error instanceof Error ? error.message : 'Push provider failed',
         providerId: 'push-factory',
@@ -530,12 +536,12 @@ class PushProviderFactory {
 }
 
 // Export types and implementations
-export type { 
-  PushProvider, 
-  PushParams, 
-  BulkPushParams, 
-  DeviceSubscriptionParams, 
-  DeviceInfo, 
-  PushProviderConfig 
+export type {
+  PushProvider,
+  PushParams,
+  BulkPushParams,
+  DeviceSubscriptionParams,
+  DeviceInfo,
+  PushProviderConfig,
 };
 export { FCMPushProvider, PushProviderFactory };

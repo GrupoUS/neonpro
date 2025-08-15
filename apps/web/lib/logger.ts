@@ -12,7 +12,11 @@ interface LogEntry {
 class Logger {
   private isDevelopment = process.env.NODE_ENV === 'development';
 
-  private formatMessage(level: LogLevel, message: string, context?: Record<string, any>): string {
+  private formatMessage(
+    level: LogLevel,
+    message: string,
+    context?: Record<string, any>
+  ): string {
     const timestamp = new Date().toISOString();
     const contextStr = context ? ` ${JSON.stringify(context)}` : '';
     return `[${timestamp}] ${level.toUpperCase()}: ${message}${contextStr}`;
@@ -28,11 +32,16 @@ class Logger {
     console.warn(formatted);
   }
 
-  error(message: string, error?: Error | unknown, context?: Record<string, any>): void {
-    const errorContext = error instanceof Error 
-      ? { ...context, error: error.message, stack: error.stack }
-      : { ...context, error };
-    
+  error(
+    message: string,
+    error?: Error | unknown,
+    context?: Record<string, any>
+  ): void {
+    const errorContext =
+      error instanceof Error
+        ? { ...context, error: error.message, stack: error.stack }
+        : { ...context, error };
+
     const formatted = this.formatMessage('error', message, errorContext);
     console.error(formatted);
   }
@@ -47,13 +56,16 @@ class Logger {
   // Create a child logger with additional context
   child(defaultContext: Record<string, any>) {
     return {
-      info: (message: string, context?: Record<string, any>) => 
+      info: (message: string, context?: Record<string, any>) =>
         this.info(message, { ...defaultContext, ...context }),
-      warn: (message: string, context?: Record<string, any>) => 
+      warn: (message: string, context?: Record<string, any>) =>
         this.warn(message, { ...defaultContext, ...context }),
-      error: (message: string, error?: Error | unknown, context?: Record<string, any>) => 
-        this.error(message, error, { ...defaultContext, ...context }),
-      debug: (message: string, context?: Record<string, any>) => 
+      error: (
+        message: string,
+        error?: Error | unknown,
+        context?: Record<string, any>
+      ) => this.error(message, error, { ...defaultContext, ...context }),
+      debug: (message: string, context?: Record<string, any>) =>
         this.debug(message, { ...defaultContext, ...context }),
     };
   }

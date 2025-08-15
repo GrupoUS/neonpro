@@ -1,116 +1,135 @@
-import React, { createContext, useContext } from 'react'
-import { formatHealthcareMessage, healthcareAriaLabels, LocalizationStrings, ptBRStrings } from './pt-br'
+import React, { createContext, useContext } from 'react';
+import {
+  formatHealthcareMessage,
+  healthcareAriaLabels,
+  type LocalizationStrings,
+  ptBRStrings,
+} from './pt-br';
 
 interface LocalizationContextValue {
-  strings: LocalizationStrings
-  locale: string
-  formatHealthcareMessage: typeof formatHealthcareMessage
-  healthcareAriaLabels: typeof healthcareAriaLabels
-  t: (key: string, params?: Record<string, any>) => string
+  strings: LocalizationStrings;
+  locale: string;
+  formatHealthcareMessage: typeof formatHealthcareMessage;
+  healthcareAriaLabels: typeof healthcareAriaLabels;
+  t: (key: string, params?: Record<string, any>) => string;
 }
 
-const LocalizationContext = createContext<LocalizationContextValue | undefined>(undefined)
+const LocalizationContext = createContext<LocalizationContextValue | undefined>(
+  undefined
+);
 
 interface LocalizationProviderProps {
-  children: React.ReactNode
-  locale?: string
+  children: React.ReactNode;
+  locale?: string;
 }
 
-export function LocalizationProvider({ 
-  children, 
-  locale = 'pt-BR' 
+export function LocalizationProvider({
+  children,
+  locale = 'pt-BR',
 }: LocalizationProviderProps) {
   // For now we only support PT-BR, but this structure allows for easy expansion
-  const strings = ptBRStrings
+  const strings = ptBRStrings;
 
   // Simple key-based translation function
   const t = (key: string, params?: Record<string, any>): string => {
     // Navigate nested object using dot notation
-    const keys = key.split('.')
-    let value: any = strings
-    
+    const keys = key.split('.');
+    let value: any = strings;
+
     for (const k of keys) {
       if (value && typeof value === 'object' && k in value) {
-        value = value[k]
+        value = value[k];
       } else {
-        console.warn(`Translation key not found: ${key}`)
-        return key // Return key if translation not found
+        console.warn(`Translation key not found: ${key}`);
+        return key; // Return key if translation not found
       }
     }
 
     if (typeof value === 'function' && params) {
       // Handle parameterized functions
       if (params.count !== undefined) {
-        return value(params.count)
-      } else if (params.field !== undefined) {
-        return value(params.field)
-      } else if (params.page !== undefined) {
-        return value(params.page)
-      } else if (params.patientName !== undefined) {
-        return value(params.patientName)
-      } else if (params.context !== undefined) {
-        return value(params.context)
-      } else if (params.dialogName !== undefined) {
-        return value(params.dialogName)
-      } else if (params.section !== undefined) {
-        return value(params.section)
-      } else if (params.column !== undefined && params.direction !== undefined) {
-        return value(params.column, params.direction)
-      } else if (params.query !== undefined) {
-        return value(params.count || 0, params.query)
-      } else if (params.current !== undefined && params.total !== undefined) {
-        return value(params.current, params.total)
-      } else if (params.option !== undefined) {
-        return value(params.option)
-      } else if (params.tab !== undefined) {
-        return value(params.tab)
-      } else if (params.minLength !== undefined) {
-        return value(params.minLength)
-      } else if (params.date !== undefined) {
-        return value(params.date)
+        return value(params.count);
+      }
+      if (params.field !== undefined) {
+        return value(params.field);
+      }
+      if (params.page !== undefined) {
+        return value(params.page);
+      }
+      if (params.patientName !== undefined) {
+        return value(params.patientName);
+      }
+      if (params.context !== undefined) {
+        return value(params.context);
+      }
+      if (params.dialogName !== undefined) {
+        return value(params.dialogName);
+      }
+      if (params.section !== undefined) {
+        return value(params.section);
+      }
+      if (params.column !== undefined && params.direction !== undefined) {
+        return value(params.column, params.direction);
+      }
+      if (params.query !== undefined) {
+        return value(params.count || 0, params.query);
+      }
+      if (params.current !== undefined && params.total !== undefined) {
+        return value(params.current, params.total);
+      }
+      if (params.option !== undefined) {
+        return value(params.option);
+      }
+      if (params.tab !== undefined) {
+        return value(params.tab);
+      }
+      if (params.minLength !== undefined) {
+        return value(params.minLength);
+      }
+      if (params.date !== undefined) {
+        return value(params.date);
       }
     }
 
     if (typeof value === 'string') {
-      return value
+      return value;
     }
 
-    console.warn(`Translation value is not a string or function: ${key}`)
-    return key
-  }
+    console.warn(`Translation value is not a string or function: ${key}`);
+    return key;
+  };
 
   const value: LocalizationContextValue = {
     strings,
     locale,
     formatHealthcareMessage,
     healthcareAriaLabels,
-    t
-  }
+    t,
+  };
 
-  return React.createElement(
-    LocalizationContext.Provider,
-    { value },
-    children
-  )
+  return React.createElement(LocalizationContext.Provider, { value }, children);
 }
 
 export function useLocalization() {
-  const context = useContext(LocalizationContext)
+  const context = useContext(LocalizationContext);
   if (context === undefined) {
-    throw new Error('useLocalization must be used within a LocalizationProvider')
+    throw new Error(
+      'useLocalization must be used within a LocalizationProvider'
+    );
   }
-  return context
+  return context;
 }
 
 // Convenience hooks for common use cases
 export function useTranslation() {
-  const { t } = useLocalization()
-  return t
+  const { t } = useLocalization();
+  return t;
 }
 
 export function useHealthcareTranslations() {
-  const { formatHealthcareMessage, healthcareAriaLabels, t } = useLocalization()
-  
+  const { formatHealthcareMessage, healthcareAriaLabels, t } =
+    useLocalization();
+
   return {
     formatMessage: formatHealthcareMessage,
     ariaLabels: healthcareAriaLabels,
@@ -126,14 +145,14 @@ export function useHealthcareTranslations() {
     allergy: t('healthcare.allergy'),
     diagnosis: t('healthcare.diagnosis'),
     medicalHistory: t('healthcare.medicalHistory'),
-    vitalSigns: t('healthcare.vitalSigns')
-  }
+    vitalSigns: t('healthcare.vitalSigns'),
+  };
 }
 
 // Form-specific translations hook
 export function useFormTranslations() {
-  const { t } = useLocalization()
-  
+  const { t } = useLocalization();
+
   return {
     required: t('forms.required'),
     optional: t('forms.optional'),
@@ -147,14 +166,14 @@ export function useFormTranslations() {
     fieldRequired: (field: string) => t('forms.fieldRequired', { field }),
     fieldOptional: (field: string) => t('forms.fieldOptional', { field }),
     formHasErrors: (count: number) => t('forms.formHasErrors', { count }),
-    pleaseCorrectErrors: t('forms.pleaseCorrectErrors')
-  }
+    pleaseCorrectErrors: t('forms.pleaseCorrectErrors'),
+  };
 }
 
 // Navigation-specific translations hook
 export function useNavigationTranslations() {
-  const { t } = useLocalization()
-  
+  const { t } = useLocalization();
+
   return {
     skipToMain: t('navigation.skipToMain'),
     skipToNavigation: t('navigation.skipToNavigation'),
@@ -162,60 +181,68 @@ export function useNavigationTranslations() {
     breadcrumbs: t('navigation.breadcrumbs'),
     previousPage: t('navigation.previousPage'),
     nextPage: t('navigation.nextPage'),
-    goToPage: (page: number) => t('navigation.goToPage', { page })
-  }
+    goToPage: (page: number) => t('navigation.goToPage', { page }),
+  };
 }
 
 // Accessibility-specific translations hook
 export function useAccessibilityTranslations() {
-  const { t } = useLocalization()
-  
+  const { t } = useLocalization();
+
   return {
-    openDialog: (dialogName: string) => t('accessibility.openDialog', { dialogName }),
+    openDialog: (dialogName: string) =>
+      t('accessibility.openDialog', { dialogName }),
     closeDialog: t('accessibility.closeDialog'),
-    expandSection: (section: string) => t('accessibility.expandSection', { section }),
-    collapseSection: (section: string) => t('accessibility.collapseSection', { section }),
-    sortColumn: (column: string, direction: 'ascending' | 'descending') => 
+    expandSection: (section: string) =>
+      t('accessibility.expandSection', { section }),
+    collapseSection: (section: string) =>
+      t('accessibility.collapseSection', { section }),
+    sortColumn: (column: string, direction: 'ascending' | 'descending') =>
       t('accessibility.sortColumn', { column, direction }),
-    filterResults: (count: number) => t('accessibility.filterResults', { count }),
-    searchResults: (count: number, query: string) => 
+    filterResults: (count: number) =>
+      t('accessibility.filterResults', { count }),
+    searchResults: (count: number, query: string) =>
       t('accessibility.searchResults', { count, query }),
-    pageOf: (current: number, total: number) => t('accessibility.pageOf', { current, total }),
-    selectedOption: (option: string) => t('accessibility.selectedOption', { option }),
+    pageOf: (current: number, total: number) =>
+      t('accessibility.pageOf', { current, total }),
+    selectedOption: (option: string) =>
+      t('accessibility.selectedOption', { option }),
     menuExpanded: t('accessibility.menuExpanded'),
     menuCollapsed: t('accessibility.menuCollapsed'),
-    tabSelected: (tab: string) => t('accessibility.tabSelected', { tab })
-  }
+    tabSelected: (tab: string) => t('accessibility.tabSelected', { tab }),
+  };
 }
 
 // Status announcements hook
 export function useStatusTranslations() {
-  const { t } = useLocalization()
-  
+  const { t } = useLocalization();
+
   return {
     loading: (context?: string) => t('status.loading', { context }),
-    loadingComplete: (context?: string) => t('status.loadingComplete', { context }),
+    loadingComplete: (context?: string) =>
+      t('status.loadingComplete', { context }),
     saving: (context?: string) => t('status.saving', { context }),
     saveComplete: (context?: string) => t('status.saveComplete', { context }),
     deleting: (context?: string) => t('status.deleting', { context }),
-    deleteComplete: (context?: string) => t('status.deleteComplete', { context }),
-    appointmentScheduled: (patientName?: string) => 
+    deleteComplete: (context?: string) =>
+      t('status.deleteComplete', { context }),
+    appointmentScheduled: (patientName?: string) =>
       t('status.appointmentScheduled', { patientName }),
-    appointmentCanceled: (patientName?: string) => 
+    appointmentCanceled: (patientName?: string) =>
       t('status.appointmentCanceled', { patientName }),
-    appointmentCompleted: (patientName?: string) => 
+    appointmentCompleted: (patientName?: string) =>
       t('status.appointmentCompleted', { patientName }),
     formSubmitted: t('status.formSubmitted'),
     formSubmissionError: t('status.formSubmissionError'),
     dataUpdated: t('status.dataUpdated'),
-    dataUpdateError: t('status.dataUpdateError')
-  }
+    dataUpdateError: t('status.dataUpdateError'),
+  };
 }
 
 // Date and time formatting hook
 export function useDateTimeTranslations() {
-  const { t, strings } = useLocalization()
-  
+  const { t, strings } = useLocalization();
+
   return {
     today: t('dateTime.today'),
     tomorrow: t('dateTime.tomorrow'),
@@ -229,14 +256,14 @@ export function useDateTimeTranslations() {
     formatDate: strings.dateTime.formatDate,
     formatTime: strings.dateTime.formatTime,
     formatDateTime: strings.dateTime.formatDateTime,
-    relativeTime: strings.dateTime.relativeTime
-  }
+    relativeTime: strings.dateTime.relativeTime,
+  };
 }
 
 // Error and success messages hook
 export function useMessageTranslations() {
-  const { t } = useLocalization()
-  
+  const { t } = useLocalization();
+
   return {
     // Errors
     generalError: t('errors.general'),
@@ -251,9 +278,10 @@ export function useMessageTranslations() {
     invalidPhone: t('errors.invalidPhone'),
     invalidDate: t('errors.invalidDate'),
     invalidTime: t('errors.invalidTime'),
-    passwordTooShort: (minLength: number) => t('errors.passwordTooShort', { minLength }),
+    passwordTooShort: (minLength: number) =>
+      t('errors.passwordTooShort', { minLength }),
     passwordMismatch: t('errors.passwordMismatch'),
-    
+
     // Success messages
     saved: t('success.saved'),
     updated: t('success.updated'),
@@ -262,14 +290,14 @@ export function useMessageTranslations() {
     sent: t('success.sent'),
     scheduled: t('success.scheduled'),
     canceled: t('success.canceled'),
-    completed: t('success.completed')
-  }
+    completed: t('success.completed'),
+  };
 }
 
 // Action labels hook
 export function useActionTranslations() {
-  const { t } = useLocalization()
-  
+  const { t } = useLocalization();
+
   return {
     edit: t('actions.edit'),
     delete: t('actions.delete'),
@@ -292,6 +320,6 @@ export function useActionTranslations() {
     schedule: t('actions.schedule'),
     reschedule: t('actions.reschedule'),
     viewDetails: t('actions.viewDetails'),
-    viewAll: t('actions.viewAll')
-  }
+    viewAll: t('actions.viewAll'),
+  };
 }

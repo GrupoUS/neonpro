@@ -45,11 +45,13 @@ export class AuditLogger {
   }
 
   // Core Audit Logging
-  async logAction(entry: Omit<AuditLogEntry, 'id' | 'timestamp'>): Promise<boolean> {
+  async logAction(
+    entry: Omit<AuditLogEntry, 'id' | 'timestamp'>
+  ): Promise<boolean> {
     try {
       const auditEntry: AuditLogEntry = {
         ...entry,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
 
       const { error } = await this.supabase
@@ -73,9 +75,9 @@ export class AuditLogger {
 
   // Patient Data Access Logging (LGPD Compliance)
   async logPatientDataAccess(
-    userId: string, 
-    userRole: string, 
-    patientId: string, 
+    userId: string,
+    userRole: string,
+    patientId: string,
     accessType: 'view' | 'edit' | 'delete' | 'export',
     ipAddress: string,
     userAgent: string,
@@ -94,8 +96,8 @@ export class AuditLogger {
       additional_metadata: {
         accessed_fields: accessedFields,
         data_subject_id: patientId,
-        processing_purpose: this.getProcessingPurpose(accessType)
-      }
+        processing_purpose: this.getProcessingPurpose(accessType),
+      },
     });
   }
 
@@ -121,8 +123,8 @@ export class AuditLogger {
       additional_metadata: {
         medical_details: details,
         cfm_license_validated: true,
-        digital_signature_required: true
-      }
+        digital_signature_required: true,
+      },
     });
   }
 
@@ -150,8 +152,8 @@ export class AuditLogger {
       additional_metadata: {
         product_details: details,
         patient_id: patientId,
-        regulatory_validation_required: true
-      }
+        regulatory_validation_required: true,
+      },
     });
   }
 
@@ -176,22 +178,20 @@ export class AuditLogger {
       risk_level: severity,
       additional_metadata: {
         event_description: description,
-        security_incident: severity === 'high' || severity === 'critical'
-      }
+        security_incident: severity === 'high' || severity === 'critical',
+      },
     });
   }
 
   // Compliance Event Logging
   async logComplianceEvent(event: ComplianceEvent): Promise<boolean> {
     try {
-      const { error } = await this.supabase
-        .from('compliance_events')
-        .insert({
-          ...event,
-          timestamp: new Date(),
-          resolved: false,
-          resolution_notes: null
-        });
+      const { error } = await this.supabase.from('compliance_events').insert({
+        ...event,
+        timestamp: new Date(),
+        resolved: false,
+        resolution_notes: null,
+      });
 
       if (error) {
         console.error('Failed to log compliance event:', error);
@@ -213,7 +213,12 @@ export class AuditLogger {
   // Data Subject Rights Logging (LGPD Article 18)
   async logDataSubjectRightsRequest(
     subjectId: string,
-    requestType: 'access' | 'rectification' | 'deletion' | 'portability' | 'consent_withdrawal',
+    requestType:
+      | 'access'
+      | 'rectification'
+      | 'deletion'
+      | 'portability'
+      | 'consent_withdrawal',
     requestDetails: Record<string, any>,
     processingStatus: 'received' | 'processing' | 'completed' | 'rejected'
   ): Promise<boolean> {
@@ -231,8 +236,8 @@ export class AuditLogger {
         request_details: requestDetails,
         processing_status: processingStatus,
         legal_basis: requestDetails.legal_basis,
-        response_deadline: this.calculateResponseDeadline(requestType)
-      }
+        response_deadline: this.calculateResponseDeadline(requestType),
+      },
     });
   }
 
@@ -257,27 +262,27 @@ export class AuditLogger {
       if (filters.user_id) {
         query = query.eq('user_id', filters.user_id);
       }
-      
+
       if (filters.resource_type) {
         query = query.eq('resource_type', filters.resource_type);
       }
-      
+
       if (filters.compliance_category) {
         query = query.eq('compliance_category', filters.compliance_category);
       }
-      
+
       if (filters.risk_level) {
         query = query.eq('risk_level', filters.risk_level);
       }
-      
+
       if (filters.start_date) {
         query = query.gte('timestamp', filters.start_date.toISOString());
       }
-      
+
       if (filters.end_date) {
         query = query.lte('timestamp', filters.end_date.toISOString());
       }
-      
+
       if (filters.limit) {
         query = query.limit(filters.limit);
       }
@@ -305,7 +310,7 @@ export class AuditLogger {
     try {
       const filters: any = {
         start_date: startDate,
-        end_date: endDate
+        end_date: endDate,
       };
 
       if (complianceFramework) {
@@ -321,35 +326,46 @@ export class AuditLogger {
         by_risk_level: this.groupBy(auditLogs, 'risk_level'),
         by_user_role: this.groupBy(auditLogs, 'user_role'),
         by_action_type: this.groupBy(auditLogs, 'action'),
-        unique_users: new Set(auditLogs.map(log => log.user_id)).size,
-        critical_events: auditLogs.filter(log => log.risk_level === 'critical').length
+        unique_users: new Set(auditLogs.map((log) => log.user_id)).size,
+        critical_events: auditLogs.filter(
+          (log) => log.risk_level === 'critical'
+        ).length,
       };
 
       // Compliance-specific metrics
-      const complianceMetrics = await this.calculateComplianceMetrics(auditLogs, complianceFramework);
+      const complianceMetrics = await this.calculateComplianceMetrics(
+        auditLogs,
+        complianceFramework
+      );
 
       return {
         period: {
           start: startDate,
-          end: endDate
+          end: endDate,
         },
         framework: complianceFramework || 'all',
         statistics: stats,
         compliance_metrics: complianceMetrics,
-        recommendations: this.generateAuditRecommendations(stats, complianceMetrics),
-        audit_logs_sample: auditLogs.slice(0, 10) // First 10 for reference
+        recommendations: this.generateAuditRecommendations(
+          stats,
+          complianceMetrics
+        ),
+        audit_logs_sample: auditLogs.slice(0, 10), // First 10 for reference
       };
     } catch (error) {
       console.error('Error generating compliance audit report:', error);
       return {
         error: error instanceof Error ? error.message : 'Unknown error',
-        success: false
+        success: false,
       };
     }
   }
 
   // Helper methods
-  private determineRiskLevel(accessType: string, userRole: string): 'low' | 'medium' | 'high' | 'critical' {
+  private determineRiskLevel(
+    accessType: string,
+    userRole: string
+  ): 'low' | 'medium' | 'high' | 'critical' {
     if (accessType === 'delete' || accessType === 'export') return 'critical';
     if (accessType === 'edit') return 'high';
     if (userRole === 'admin') return 'medium';
@@ -361,12 +377,12 @@ export class AuditLogger {
       view: 'Healthcare service delivery',
       edit: 'Patient record maintenance',
       delete: 'Data retention compliance',
-      export: 'Data portability request'
+      export: 'Data portability request',
     };
     return purposes[accessType] || 'General healthcare operations';
   }
 
-  private calculateResponseDeadline(requestType: string): Date {
+  private calculateResponseDeadline(_requestType: string): Date {
     const deadline = new Date();
     // LGPD Article 19: 15 days for most requests
     deadline.setDate(deadline.getDate() + 15);
@@ -375,7 +391,10 @@ export class AuditLogger {
 
   private async checkComplianceThresholds(entry: AuditLogEntry): Promise<void> {
     // Check for suspicious patterns
-    if (entry.risk_level === 'critical' || entry.compliance_category === 'security') {
+    if (
+      entry.risk_level === 'critical' ||
+      entry.compliance_category === 'security'
+    ) {
       // Could trigger immediate alerts or compliance workflows
       console.log('High-risk action detected:', entry.action);
     }
@@ -387,62 +406,94 @@ export class AuditLogger {
   }
 
   private groupBy<T>(array: T[], key: keyof T): Record<string, number> {
-    return array.reduce((groups, item) => {
-      const value = String(item[key]);
-      groups[value] = (groups[value] || 0) + 1;
-      return groups;
-    }, {} as Record<string, number>);
+    return array.reduce(
+      (groups, item) => {
+        const value = String(item[key]);
+        groups[value] = (groups[value] || 0) + 1;
+        return groups;
+      },
+      {} as Record<string, number>
+    );
   }
 
-  private async calculateComplianceMetrics(logs: AuditLogEntry[], framework?: string): Promise<any> {
+  private async calculateComplianceMetrics(
+    logs: AuditLogEntry[],
+    framework?: string
+  ): Promise<any> {
     const metrics: any = {};
 
     if (!framework || framework === 'lgpd') {
-      const lgpdLogs = logs.filter(log => log.compliance_category === 'lgpd');
+      const lgpdLogs = logs.filter((log) => log.compliance_category === 'lgpd');
       metrics.lgpd = {
-        patient_data_accesses: lgpdLogs.filter(log => log.action.includes('patient_data')).length,
-        data_subject_requests: lgpdLogs.filter(log => log.action.includes('lgpd_')).length,
-        consent_operations: lgpdLogs.filter(log => log.action.includes('consent')).length
+        patient_data_accesses: lgpdLogs.filter((log) =>
+          log.action.includes('patient_data')
+        ).length,
+        data_subject_requests: lgpdLogs.filter((log) =>
+          log.action.includes('lgpd_')
+        ).length,
+        consent_operations: lgpdLogs.filter((log) =>
+          log.action.includes('consent')
+        ).length,
       };
     }
 
     if (!framework || framework === 'cfm') {
-      const cfmLogs = logs.filter(log => log.compliance_category === 'cfm');
+      const cfmLogs = logs.filter((log) => log.compliance_category === 'cfm');
       metrics.cfm = {
-        medical_actions: cfmLogs.filter(log => log.action.includes('medical_')).length,
-        digital_signatures: cfmLogs.filter(log => log.action.includes('signature')).length,
-        telemedicine_sessions: cfmLogs.filter(log => log.action.includes('telemedicine')).length
+        medical_actions: cfmLogs.filter((log) =>
+          log.action.includes('medical_')
+        ).length,
+        digital_signatures: cfmLogs.filter((log) =>
+          log.action.includes('signature')
+        ).length,
+        telemedicine_sessions: cfmLogs.filter((log) =>
+          log.action.includes('telemedicine')
+        ).length,
       };
     }
 
     if (!framework || framework === 'anvisa') {
-      const anvisaLogs = logs.filter(log => log.compliance_category === 'anvisa');
+      const anvisaLogs = logs.filter(
+        (log) => log.compliance_category === 'anvisa'
+      );
       metrics.anvisa = {
-        product_usage: anvisaLogs.filter(log => log.action.includes('anvisa_')).length,
-        adverse_events: anvisaLogs.filter(log => log.action.includes('adverse')).length
+        product_usage: anvisaLogs.filter((log) =>
+          log.action.includes('anvisa_')
+        ).length,
+        adverse_events: anvisaLogs.filter((log) =>
+          log.action.includes('adverse')
+        ).length,
       };
     }
 
     return metrics;
   }
 
-  private generateAuditRecommendations(stats: any, metrics: any): string[] {
+  private generateAuditRecommendations(stats: any, _metrics: any): string[] {
     const recommendations = [];
 
     if (stats.critical_events > 0) {
-      recommendations.push(`Review ${stats.critical_events} critical events for compliance risks`);
+      recommendations.push(
+        `Review ${stats.critical_events} critical events for compliance risks`
+      );
     }
 
     if (stats.by_risk_level.high > stats.total_actions * 0.1) {
-      recommendations.push('High percentage of high-risk actions detected - review access controls');
+      recommendations.push(
+        'High percentage of high-risk actions detected - review access controls'
+      );
     }
 
     if (stats.unique_users < 5) {
-      recommendations.push('Limited user activity - ensure comprehensive audit coverage');
+      recommendations.push(
+        'Limited user activity - ensure comprehensive audit coverage'
+      );
     }
 
     if (recommendations.length === 0) {
-      recommendations.push('Audit activity appears normal - continue monitoring');
+      recommendations.push(
+        'Audit activity appears normal - continue monitoring'
+      );
     }
 
     return recommendations;

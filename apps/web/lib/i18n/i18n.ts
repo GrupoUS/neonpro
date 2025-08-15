@@ -1,7 +1,7 @@
 /**
  * NeonPro - Internationalization (i18n) System
  * Next.js 15 App Router compatible i18n with PT-BR healthcare localization
- * 
+ *
  * Features:
  * - Server-side dictionary loading
  * - Healthcare-specific translations
@@ -10,480 +10,480 @@
  * - Type-safe translation keys
  */
 
-export type Locale = 'pt-BR' | 'en-US'
+export type Locale = 'pt-BR' | 'en-US';
 
 // Supported locales configuration
-export const locales: Locale[] = ['pt-BR', 'en-US']
-export const defaultLocale: Locale = 'pt-BR'
+export const locales: Locale[] = ['pt-BR', 'en-US'];
+export const defaultLocale: Locale = 'pt-BR';
 
 // Dictionary type definitions for type safety
 export interface Dictionary {
   // Common UI elements
   common: {
-    loading: string
-    saving: string
-    save: string
-    cancel: string
-    edit: string
-    delete: string
-    confirm: string
-    success: string
-    error: string
-    warning: string
-    info: string
-    close: string
-    back: string
-    next: string
-    previous: string
-    search: string
-    filter: string
-    clear: string
-    select: string
-    required: string
-    optional: string
-    yes: string
-    no: string
-    unknown: string
-    notAvailable: string
-    noData: string
-    loadMore: string
-  }
+    loading: string;
+    saving: string;
+    save: string;
+    cancel: string;
+    edit: string;
+    delete: string;
+    confirm: string;
+    success: string;
+    error: string;
+    warning: string;
+    info: string;
+    close: string;
+    back: string;
+    next: string;
+    previous: string;
+    search: string;
+    filter: string;
+    clear: string;
+    select: string;
+    required: string;
+    optional: string;
+    yes: string;
+    no: string;
+    unknown: string;
+    notAvailable: string;
+    noData: string;
+    loadMore: string;
+  };
 
   // Authentication & User Management
   auth: {
-    login: string
-    logout: string
-    register: string
-    email: string
-    password: string
-    confirmPassword: string
-    forgotPassword: string
-    resetPassword: string
-    rememberMe: string
-    loginFailed: string
-    registrationSuccess: string
-    passwordResetSent: string
-    invalidCredentials: string
-    accountLocked: string
-    sessionExpired: string
-    welcomeBack: string
-    firstTimeLogin: string
-  }
+    login: string;
+    logout: string;
+    register: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+    forgotPassword: string;
+    resetPassword: string;
+    rememberMe: string;
+    loginFailed: string;
+    registrationSuccess: string;
+    passwordResetSent: string;
+    invalidCredentials: string;
+    accountLocked: string;
+    sessionExpired: string;
+    welcomeBack: string;
+    firstTimeLogin: string;
+  };
 
   // Patient Management
   patients: {
-    patient: string
-    patients: string
-    newPatient: string
-    patientProfile: string
-    personalInfo: string
-    contactInfo: string
-    medicalHistory: string
-    appointments: string
-    treatments: string
-    notes: string
-    status: string
-    active: string
-    inactive: string
-    firstName: string
-    lastName: string
-    fullName: string
-    dateOfBirth: string
-    gender: string
-    male: string
-    female: string
-    other: string
-    phone: string
-    mobile: string
-    landline: string
-    address: string
-    city: string
-    state: string
-    postalCode: string
-    country: string
-    cpf: string
-    rg: string
-    maritalStatus: string
-    occupation: string
-    emergencyContact: string
-    relationship: string
-    allergies: string
-    medications: string
-    medicalConditions: string
-    insuranceProvider: string
-    insuranceNumber: string
-  }
+    patient: string;
+    patients: string;
+    newPatient: string;
+    patientProfile: string;
+    personalInfo: string;
+    contactInfo: string;
+    medicalHistory: string;
+    appointments: string;
+    treatments: string;
+    notes: string;
+    status: string;
+    active: string;
+    inactive: string;
+    firstName: string;
+    lastName: string;
+    fullName: string;
+    dateOfBirth: string;
+    gender: string;
+    male: string;
+    female: string;
+    other: string;
+    phone: string;
+    mobile: string;
+    landline: string;
+    address: string;
+    city: string;
+    state: string;
+    postalCode: string;
+    country: string;
+    cpf: string;
+    rg: string;
+    maritalStatus: string;
+    occupation: string;
+    emergencyContact: string;
+    relationship: string;
+    allergies: string;
+    medications: string;
+    medicalConditions: string;
+    insuranceProvider: string;
+    insuranceNumber: string;
+  };
 
   // Appointments
   appointments: {
-    appointment: string
-    appointments: string
-    newAppointment: string
-    bookAppointment: string
-    scheduleAppointment: string
-    rescheduleAppointment: string
-    cancelAppointment: string
-    appointmentDetails: string
-    date: string
-    time: string
-    datetime: string
-    duration: string
-    service: string
-    provider: string
-    professional: string
-    clinic: string
-    room: string
-    status: string
-    scheduled: string
-    confirmed: string
-    inProgress: string
-    completed: string
-    cancelled: string
-    noShow: string
-    rescheduled: string
-    upcomingAppointments: string
-    pastAppointments: string
-    todayAppointments: string
-    availableSlots: string
-    noAvailableSlots: string
-    selectTimeSlot: string
-    appointmentNotes: string
-    patientNotes: string
-    clinicNotes: string
-    reason: string
-    symptoms: string
-    followUp: string
-    treatment: string
-    prescription: string
-    nextAppointment: string
-    reminder: string
-    confirmationSent: string
-    reminderSent: string
-  }
+    appointment: string;
+    appointments: string;
+    newAppointment: string;
+    bookAppointment: string;
+    scheduleAppointment: string;
+    rescheduleAppointment: string;
+    cancelAppointment: string;
+    appointmentDetails: string;
+    date: string;
+    time: string;
+    datetime: string;
+    duration: string;
+    service: string;
+    provider: string;
+    professional: string;
+    clinic: string;
+    room: string;
+    status: string;
+    scheduled: string;
+    confirmed: string;
+    inProgress: string;
+    completed: string;
+    cancelled: string;
+    noShow: string;
+    rescheduled: string;
+    upcomingAppointments: string;
+    pastAppointments: string;
+    todayAppointments: string;
+    availableSlots: string;
+    noAvailableSlots: string;
+    selectTimeSlot: string;
+    appointmentNotes: string;
+    patientNotes: string;
+    clinicNotes: string;
+    reason: string;
+    symptoms: string;
+    followUp: string;
+    treatment: string;
+    prescription: string;
+    nextAppointment: string;
+    reminder: string;
+    confirmationSent: string;
+    reminderSent: string;
+  };
 
   // Services
   services: {
-    service: string
-    services: string
-    category: string
-    categories: string
-    consultation: string
-    treatment: string
-    procedure: string
-    checkup: string
-    followUp: string
-    emergency: string
-    aesthetic: string
-    dermatology: string
-    cosmetology: string
-    laser: string
-    botox: string
-    filler: string
-    peeling: string
-    hydrafacial: string
-    cleaning: string
-    skinCare: string
-    antiAging: string
-    acne: string
-    pigmentation: string
-    rejuvenation: string
-    bodyTreatment: string
-    facialTreatment: string
-    specialtyServices: string
-    duration: string
-    price: string
-    description: string
-    benefits: string
-    contraindications: string
-    afterCare: string
-  }
+    service: string;
+    services: string;
+    category: string;
+    categories: string;
+    consultation: string;
+    treatment: string;
+    procedure: string;
+    checkup: string;
+    followUp: string;
+    emergency: string;
+    aesthetic: string;
+    dermatology: string;
+    cosmetology: string;
+    laser: string;
+    botox: string;
+    filler: string;
+    peeling: string;
+    hydrafacial: string;
+    cleaning: string;
+    skinCare: string;
+    antiAging: string;
+    acne: string;
+    pigmentation: string;
+    rejuvenation: string;
+    bodyTreatment: string;
+    facialTreatment: string;
+    specialtyServices: string;
+    duration: string;
+    price: string;
+    description: string;
+    benefits: string;
+    contraindications: string;
+    afterCare: string;
+  };
 
   // Professionals
   professionals: {
-    professional: string
-    professionals: string
-    doctor: string
-    dermatologist: string
-    aesthetician: string
-    nurse: string
-    therapist: string
-    coordinator: string
-    assistant: string
-    specialist: string
-    name: string
-    specialty: string
-    specialties: string
-    qualification: string
-    experience: string
-    bio: string
-    availability: string
-    schedule: string
-    rating: string
-    reviews: string
-    certifications: string
-    languages: string
-    contact: string
-  }
+    professional: string;
+    professionals: string;
+    doctor: string;
+    dermatologist: string;
+    aesthetician: string;
+    nurse: string;
+    therapist: string;
+    coordinator: string;
+    assistant: string;
+    specialist: string;
+    name: string;
+    specialty: string;
+    specialties: string;
+    qualification: string;
+    experience: string;
+    bio: string;
+    availability: string;
+    schedule: string;
+    rating: string;
+    reviews: string;
+    certifications: string;
+    languages: string;
+    contact: string;
+  };
 
   // Scheduling
   scheduling: {
-    schedule: string
-    calendar: string
-    availability: string
-    timeSlot: string
-    timeSlots: string
-    workingHours: string
-    breakTime: string
-    lunch: string
-    unavailable: string
-    holiday: string
-    vacation: string
-    sickLeave: string
-    personalTime: string
-    blocked: string
-    reserved: string
-    booked: string
-    free: string
-    busy: string
-    monday: string
-    tuesday: string
-    wednesday: string
-    thursday: string
-    friday: string
-    saturday: string
-    sunday: string
-    today: string
-    tomorrow: string
-    thisWeek: string
-    nextWeek: string
-    thisMonth: string
-    nextMonth: string
-    morning: string
-    afternoon: string
-    evening: string
-    night: string
-  }
+    schedule: string;
+    calendar: string;
+    availability: string;
+    timeSlot: string;
+    timeSlots: string;
+    workingHours: string;
+    breakTime: string;
+    lunch: string;
+    unavailable: string;
+    holiday: string;
+    vacation: string;
+    sickLeave: string;
+    personalTime: string;
+    blocked: string;
+    reserved: string;
+    booked: string;
+    free: string;
+    busy: string;
+    monday: string;
+    tuesday: string;
+    wednesday: string;
+    thursday: string;
+    friday: string;
+    saturday: string;
+    sunday: string;
+    today: string;
+    tomorrow: string;
+    thisWeek: string;
+    nextWeek: string;
+    thisMonth: string;
+    nextMonth: string;
+    morning: string;
+    afternoon: string;
+    evening: string;
+    night: string;
+  };
 
   // Financial
   financial: {
-    payment: string
-    billing: string
-    invoice: string
-    receipt: string
-    amount: string
-    total: string
-    subtotal: string
-    discount: string
-    tax: string
-    paid: string
-    pending: string
-    overdue: string
-    refund: string
-    cash: string
-    card: string
-    creditCard: string
-    debitCard: string
-    pix: string
-    bankTransfer: string
-    installments: string
-    paymentMethod: string
-    paymentStatus: string
-    paymentDate: string
-    dueDate: string
-    insurance: string
-    privatePayment: string
-    packageDeal: string
-    membership: string
-  }
+    payment: string;
+    billing: string;
+    invoice: string;
+    receipt: string;
+    amount: string;
+    total: string;
+    subtotal: string;
+    discount: string;
+    tax: string;
+    paid: string;
+    pending: string;
+    overdue: string;
+    refund: string;
+    cash: string;
+    card: string;
+    creditCard: string;
+    debitCard: string;
+    pix: string;
+    bankTransfer: string;
+    installments: string;
+    paymentMethod: string;
+    paymentStatus: string;
+    paymentDate: string;
+    dueDate: string;
+    insurance: string;
+    privatePayment: string;
+    packageDeal: string;
+    membership: string;
+  };
 
   // Notifications
   notifications: {
-    notification: string
-    notifications: string
-    alert: string
-    reminder: string
-    message: string
-    email: string
-    sms: string
-    whatsapp: string
-    push: string
-    appointmentReminder: string
-    appointmentConfirmation: string
-    appointmentCancellation: string
-    paymentReminder: string
-    promotionalMessage: string
-    systemUpdate: string
-    emergencyAlert: string
-    preferences: string
-    frequency: string
-    channels: string
-    doNotDisturb: string
-    unsubscribe: string
-  }
+    notification: string;
+    notifications: string;
+    alert: string;
+    reminder: string;
+    message: string;
+    email: string;
+    sms: string;
+    whatsapp: string;
+    push: string;
+    appointmentReminder: string;
+    appointmentConfirmation: string;
+    appointmentCancellation: string;
+    paymentReminder: string;
+    promotionalMessage: string;
+    systemUpdate: string;
+    emergencyAlert: string;
+    preferences: string;
+    frequency: string;
+    channels: string;
+    doNotDisturb: string;
+    unsubscribe: string;
+  };
 
   // Reports & Analytics
   reports: {
-    report: string
-    reports: string
-    analytics: string
-    dashboard: string
-    overview: string
-    summary: string
-    statistics: string
-    metrics: string
-    kpi: string
-    performance: string
-    revenue: string
-    patients: string
-    appointments: string
-    services: string
-    professionals: string
-    trends: string
-    comparison: string
-    period: string
-    dateRange: string
-    filter: string
-    export: string
-    print: string
-    share: string
-    download: string
-  }
+    report: string;
+    reports: string;
+    analytics: string;
+    dashboard: string;
+    overview: string;
+    summary: string;
+    statistics: string;
+    metrics: string;
+    kpi: string;
+    performance: string;
+    revenue: string;
+    patients: string;
+    appointments: string;
+    services: string;
+    professionals: string;
+    trends: string;
+    comparison: string;
+    period: string;
+    dateRange: string;
+    filter: string;
+    export: string;
+    print: string;
+    share: string;
+    download: string;
+  };
 
   // Settings
   settings: {
-    settings: string
-    preferences: string
-    configuration: string
-    profile: string
-    account: string
-    security: string
-    privacy: string
-    notifications: string
-    appearance: string
-    language: string
-    theme: string
-    darkMode: string
-    lightMode: string
-    systemMode: string
-    timezone: string
-    dateFormat: string
-    timeFormat: string
-    currency: string
-    units: string
-    accessibility: string
-    backup: string
-    sync: string
-    import: string
-    export: string
-  }
+    settings: string;
+    preferences: string;
+    configuration: string;
+    profile: string;
+    account: string;
+    security: string;
+    privacy: string;
+    notifications: string;
+    appearance: string;
+    language: string;
+    theme: string;
+    darkMode: string;
+    lightMode: string;
+    systemMode: string;
+    timezone: string;
+    dateFormat: string;
+    timeFormat: string;
+    currency: string;
+    units: string;
+    accessibility: string;
+    backup: string;
+    sync: string;
+    import: string;
+    export: string;
+  };
 
   // Accessibility
   accessibility: {
-    skipToContent: string
-    skipToNavigation: string
-    skipToSearch: string
-    screenReaderOnly: string
-    keyboardNavigation: string
-    highContrast: string
-    largeText: string
-    reduceMotion: string
-    focusIndicator: string
-    alternativeText: string
-    clickToExpand: string
-    clickToCollapse: string
-    openInNewWindow: string
-    downloadFile: string
-    playAudio: string
-    pauseAudio: string
-    playVideo: string
-    pauseVideo: string
-    fullScreen: string
-    exitFullScreen: string
-  }
+    skipToContent: string;
+    skipToNavigation: string;
+    skipToSearch: string;
+    screenReaderOnly: string;
+    keyboardNavigation: string;
+    highContrast: string;
+    largeText: string;
+    reduceMotion: string;
+    focusIndicator: string;
+    alternativeText: string;
+    clickToExpand: string;
+    clickToCollapse: string;
+    openInNewWindow: string;
+    downloadFile: string;
+    playAudio: string;
+    pauseAudio: string;
+    playVideo: string;
+    pauseVideo: string;
+    fullScreen: string;
+    exitFullScreen: string;
+  };
 
   // Error Messages
   errors: {
-    generalError: string
-    networkError: string
-    serverError: string
-    notFound: string
-    unauthorized: string
-    forbidden: string
-    sessionExpired: string
-    validationError: string
-    requiredField: string
-    invalidFormat: string
-    invalidEmail: string
-    invalidPhone: string
-    invalidCpf: string
-    invalidDate: string
-    dateInPast: string
-    dateInFuture: string
-    timeConflict: string
-    slotUnavailable: string
-    bookingFailed: string
-    cancellationFailed: string
-    paymentFailed: string
-    uploadFailed: string
-    downloadFailed: string
-    saveFailed: string
-    loadFailed: string
-    deleteConfirmation: string
-    unsavedChanges: string
-  }
+    generalError: string;
+    networkError: string;
+    serverError: string;
+    notFound: string;
+    unauthorized: string;
+    forbidden: string;
+    sessionExpired: string;
+    validationError: string;
+    requiredField: string;
+    invalidFormat: string;
+    invalidEmail: string;
+    invalidPhone: string;
+    invalidCpf: string;
+    invalidDate: string;
+    dateInPast: string;
+    dateInFuture: string;
+    timeConflict: string;
+    slotUnavailable: string;
+    bookingFailed: string;
+    cancellationFailed: string;
+    paymentFailed: string;
+    uploadFailed: string;
+    downloadFailed: string;
+    saveFailed: string;
+    loadFailed: string;
+    deleteConfirmation: string;
+    unsavedChanges: string;
+  };
 
   // Success Messages
   success: {
-    saved: string
-    deleted: string
-    updated: string
-    created: string
-    sent: string
-    uploaded: string
-    downloaded: string
-    completed: string
-    confirmed: string
-    cancelled: string
-    rescheduled: string
-    paymentReceived: string
-    appointmentBooked: string
-    appointmentConfirmed: string
-    reminderSent: string
-    profileUpdated: string
-    passwordChanged: string
-    settingsSaved: string
-    backupCreated: string
-    dataExported: string
-    syncCompleted: string
-  }
+    saved: string;
+    deleted: string;
+    updated: string;
+    created: string;
+    sent: string;
+    uploaded: string;
+    downloaded: string;
+    completed: string;
+    confirmed: string;
+    cancelled: string;
+    rescheduled: string;
+    paymentReceived: string;
+    appointmentBooked: string;
+    appointmentConfirmed: string;
+    reminderSent: string;
+    profileUpdated: string;
+    passwordChanged: string;
+    settingsSaved: string;
+    backupCreated: string;
+    dataExported: string;
+    syncCompleted: string;
+  };
 
   // LGPD & Privacy
   lgpd: {
-    dataProtection: string
-    privacyPolicy: string
-    termsOfService: string
-    consent: string
-    dataProcessing: string
-    dataRetention: string
-    dataPortability: string
-    rightToErasure: string
-    rightToCorrection: string
-    dataController: string
-    legalBasis: string
-    sensitiveData: string
-    healthData: string
-    consentGiven: string
-    consentRevoked: string
-    dataSubjectRights: string
-    contactDpo: string
-    dataProcessingPurpose: string
-    retentionPeriod: string
-    thirdPartyProcessing: string
-    emergencyContacts: string
-    explicitConsent: string
-    optionalData: string
-    mandatoryData: string
-  }
+    dataProtection: string;
+    privacyPolicy: string;
+    termsOfService: string;
+    consent: string;
+    dataProcessing: string;
+    dataRetention: string;
+    dataPortability: string;
+    rightToErasure: string;
+    rightToCorrection: string;
+    dataController: string;
+    legalBasis: string;
+    sensitiveData: string;
+    healthData: string;
+    consentGiven: string;
+    consentRevoked: string;
+    dataSubjectRights: string;
+    contactDpo: string;
+    dataProcessingPurpose: string;
+    retentionPeriod: string;
+    thirdPartyProcessing: string;
+    emergencyContacts: string;
+    explicitConsent: string;
+    optionalData: string;
+    mandatoryData: string;
+  };
 }
 
 // Brazilian Portuguese dictionary
@@ -939,64 +939,69 @@ const ptBRDictionary: Dictionary = {
     optionalData: 'Dados opcionais',
     mandatoryData: 'Dados obrigatórios',
   },
-}
+};
 
 // Dictionary cache for performance
-const dictionaryCache: Partial<Record<Locale, Dictionary>> = {}
+const dictionaryCache: Partial<Record<Locale, Dictionary>> = {};
 
 /**
  * Load dictionary for specified locale
  */
-export async function getDictionary(locale: Locale = defaultLocale): Promise<Dictionary> {
+export async function getDictionary(
+  locale: Locale = defaultLocale
+): Promise<Dictionary> {
   // Return cached dictionary if available
   if (dictionaryCache[locale]) {
-    return dictionaryCache[locale]!
+    return dictionaryCache[locale]!;
   }
 
-  let dictionary: Dictionary
+  let dictionary: Dictionary;
 
   switch (locale) {
     case 'pt-BR':
-      dictionary = ptBRDictionary
-      break
+      dictionary = ptBRDictionary;
+      break;
     case 'en-US':
       // English dictionary would be loaded here
       // For now, fallback to Portuguese
-      dictionary = ptBRDictionary
-      break
+      dictionary = ptBRDictionary;
+      break;
     default:
-      dictionary = ptBRDictionary
+      dictionary = ptBRDictionary;
   }
 
   // Cache the dictionary
-  dictionaryCache[locale] = dictionary
+  dictionaryCache[locale] = dictionary;
 
-  return dictionary
+  return dictionary;
 }
 
 /**
  * Get nested value from object using dot notation
  */
 function getNestedValue(obj: any, path: string): string {
-  return path.split('.').reduce((curr, key) => curr?.[key], obj) || path
+  return path.split('.').reduce((curr, key) => curr?.[key], obj) || path;
 }
 
 /**
  * Translation function with type safety
  */
 export function createTranslator(dictionary: Dictionary) {
-  return function t(key: string, params?: Record<string, string | number>): string {
-    let translation = getNestedValue(dictionary, key)
+  return function t(
+    key: string,
+    params?: Record<string, string | number>
+  ): string {
+    let translation = getNestedValue(dictionary, key);
 
     // Replace parameters in translation
     if (params) {
       Object.entries(params).forEach(([param, value]) => {
-        translation = translation.replace(`{{${param}}}`, String(value))
-      })
+        translation = translation.replace(`{{${param}}}`, String(value));
+      });
     }
 
-    return translation
-  }
+    return translation;
+  };
 }
 
 /**
@@ -1005,13 +1010,13 @@ export function createTranslator(dictionary: Dictionary) {
 export function formatCurrency(
   amount: number,
   locale: Locale = 'pt-BR',
-  currency: string = 'BRL'
+  currency = 'BRL'
 ): string {
   return new Intl.NumberFormat(locale, {
     style: 'currency',
     currency,
     minimumFractionDigits: 2,
-  }).format(amount)
+  }).format(amount);
 }
 
 /**
@@ -1026,9 +1031,12 @@ export function formatDate(
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
-  }
+  };
 
-  return new Intl.DateTimeFormat(locale, { ...defaultOptions, ...options }).format(date)
+  return new Intl.DateTimeFormat(locale, {
+    ...defaultOptions,
+    ...options,
+  }).format(date);
 }
 
 /**
@@ -1042,9 +1050,12 @@ export function formatTime(
   const defaultOptions: Intl.DateTimeFormatOptions = {
     hour: '2-digit',
     minute: '2-digit',
-  }
+  };
 
-  return new Intl.DateTimeFormat(locale, { ...defaultOptions, ...options }).format(date)
+  return new Intl.DateTimeFormat(locale, {
+    ...defaultOptions,
+    ...options,
+  }).format(date);
 }
 
 /**
@@ -1052,45 +1063,45 @@ export function formatTime(
  */
 export function formatPhoneNumber(phone: string): string {
   // Remove all non-digits
-  const digits = phone.replace(/\D/g, '')
+  const digits = phone.replace(/\D/g, '');
 
   // Brazilian mobile: (11) 99999-9999
   if (digits.length === 11) {
-    return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`
-  }
-  
-  // Brazilian landline: (11) 9999-9999
-  if (digits.length === 10) {
-    return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`
+    return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
   }
 
-  return phone
+  // Brazilian landline: (11) 9999-9999
+  if (digits.length === 10) {
+    return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
+  }
+
+  return phone;
 }
 
 /**
  * Format CPF for Brazilian format
  */
 export function formatCPF(cpf: string): string {
-  const digits = cpf.replace(/\D/g, '')
-  
+  const digits = cpf.replace(/\D/g, '');
+
   if (digits.length === 11) {
-    return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6, 9)}-${digits.slice(9)}`
+    return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6, 9)}-${digits.slice(9)}`;
   }
-  
-  return cpf
+
+  return cpf;
 }
 
 /**
  * Format postal code for Brazilian format
  */
 export function formatCEP(cep: string): string {
-  const digits = cep.replace(/\D/g, '')
-  
+  const digits = cep.replace(/\D/g, '');
+
   if (digits.length === 8) {
-    return `${digits.slice(0, 5)}-${digits.slice(5)}`
+    return `${digits.slice(0, 5)}-${digits.slice(5)}`;
   }
-  
-  return cep
+
+  return cep;
 }
 
 /**
@@ -1100,19 +1111,19 @@ export const HealthcareFormatters = {
   /**
    * Format appointment duration in minutes to human-readable format
    */
-  appointmentDuration: (minutes: number, dictionary: Dictionary): string => {
+  appointmentDuration: (minutes: number, _dictionary: Dictionary): string => {
     if (minutes < 60) {
-      return `${minutes} min`
+      return `${minutes} min`;
     }
-    
-    const hours = Math.floor(minutes / 60)
-    const remainingMinutes = minutes % 60
-    
+
+    const hours = Math.floor(minutes / 60);
+    const remainingMinutes = minutes % 60;
+
     if (remainingMinutes === 0) {
-      return `${hours}h`
+      return `${hours}h`;
     }
-    
-    return `${hours}h ${remainingMinutes}min`
+
+    return `${hours}h ${remainingMinutes}min`;
   },
 
   /**
@@ -1127,29 +1138,37 @@ export const HealthcareFormatters = {
       cancelled: dictionary.appointments.cancelled,
       noShow: dictionary.appointments.noShow,
       rescheduled: dictionary.appointments.rescheduled,
-    }
-    
-    return statusMap[status] || status
+    };
+
+    return statusMap[status] || status;
   },
 
   /**
    * Format professional name with title
    */
-  professionalName: (name: string, specialty?: string, dictionary?: Dictionary): string => {
-    if (!specialty) return name
-    
+  professionalName: (
+    name: string,
+    specialty?: string,
+    _dictionary?: Dictionary
+  ): string => {
+    if (!specialty) return name;
+
     // Add Dr./Dra. prefix for doctors
-    const doctorSpecialties = ['dermatologista', 'médico', 'doctor', 'dermatologist']
-    if (doctorSpecialties.some(spec => specialty.toLowerCase().includes(spec))) {
-      return `Dr(a). ${name}`
+    const doctorSpecialties = [
+      'dermatologista',
+      'médico',
+      'doctor',
+      'dermatologist',
+    ];
+    if (
+      doctorSpecialties.some((spec) => specialty.toLowerCase().includes(spec))
+    ) {
+      return `Dr(a). ${name}`;
     }
-    
-    return name
+
+    return name;
   },
-}
+};
 
 // Export all formatters and utilities
-export {
-    ptBRDictionary
-}
-
+export { ptBRDictionary };

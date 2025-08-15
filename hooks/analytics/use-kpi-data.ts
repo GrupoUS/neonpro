@@ -1,13 +1,13 @@
 // Hook para gerenciar dados KPI com cache e refresh automático
 // Integra com o KPI Engine para dados reais do Supabase
 
-import type {
-    DrillDownRequest,
-    DrillDownResult,
-    KPICalculationRequest,
-    KPICalculationResult
-} from '@/lib/types/kpi-types';
 import { useCallback, useEffect, useState } from 'react';
+import type {
+  DrillDownRequest,
+  DrillDownResult,
+  KPICalculationRequest,
+  KPICalculationResult,
+} from '@/lib/types/kpi-types';
 
 export interface UseKPIDataOptions {
   dateRange: string;
@@ -31,7 +31,12 @@ export function useKPIData(options: UseKPIDataOptions) {
     lastUpdated: null,
   });
 
-  const { dateRange, autoRefresh = true, refreshInterval = 30000, filters } = options;
+  const {
+    dateRange,
+    autoRefresh = true,
+    refreshInterval = 30_000,
+    filters,
+  } = options;
 
   const calculateDateRange = useCallback((range: string) => {
     const end = new Date();
@@ -64,11 +69,11 @@ export function useKPIData(options: UseKPIDataOptions) {
   }, []);
 
   const fetchKPIData = useCallback(async () => {
-    setState(prev => ({ ...prev, loading: true, error: null }));
+    setState((prev) => ({ ...prev, loading: true, error: null }));
 
     try {
       const timePeriod = calculateDateRange(dateRange);
-      
+
       const request: KPICalculationRequest = {
         time_period: timePeriod,
         force_recalculation: false,
@@ -97,10 +102,11 @@ export function useKPIData(options: UseKPIDataOptions) {
       });
     } catch (error) {
       console.error('Error fetching KPI data:', error);
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
         loading: false,
-        error: error instanceof Error ? error.message : 'Erro ao carregar dados KPI',
+        error:
+          error instanceof Error ? error.message : 'Erro ao carregar dados KPI',
       }));
     }
   }, [dateRange, filters, calculateDateRange]);
@@ -137,33 +143,40 @@ export function useDrillDownData() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const getDrillDownData = useCallback(async (request: DrillDownRequest): Promise<DrillDownResult | null> => {
-    setLoading(true);
-    setError(null);
+  const getDrillDownData = useCallback(
+    async (request: DrillDownRequest): Promise<DrillDownResult | null> => {
+      setLoading(true);
+      setError(null);
 
-    try {
-      const response = await fetch('/api/analytics/drill-down', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(request),
-      });
+      try {
+        const response = await fetch('/api/analytics/drill-down', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(request),
+        });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        setLoading(false);
+        return data;
+      } catch (error) {
+        console.error('Error fetching drill-down data:', error);
+        setError(
+          error instanceof Error
+            ? error.message
+            : 'Erro ao carregar análise detalhada'
+        );
+        setLoading(false);
+        return null;
       }
-
-      const data = await response.json();
-      setLoading(false);
-      return data;
-    } catch (error) {
-      console.error('Error fetching drill-down data:', error);
-      setError(error instanceof Error ? error.message : 'Erro ao carregar análise detalhada');
-      setLoading(false);
-      return null;
-    }
-  }, []);
+    },
+    []
+  );
 
   return {
     getDrillDownData,
@@ -184,7 +197,7 @@ export function useProfessionalMetrics(dateRange: string) {
 
     try {
       const timePeriod = calculateDateRange(dateRange);
-      
+
       const response = await fetch('/api/analytics/professional-metrics', {
         method: 'POST',
         headers: {
@@ -202,7 +215,11 @@ export function useProfessionalMetrics(dateRange: string) {
       setLoading(false);
     } catch (error) {
       console.error('Error fetching professional metrics:', error);
-      setError(error instanceof Error ? error.message : 'Erro ao carregar métricas profissionais');
+      setError(
+        error instanceof Error
+          ? error.message
+          : 'Erro ao carregar métricas profissionais'
+      );
       setLoading(false);
     }
   }, [dateRange]);

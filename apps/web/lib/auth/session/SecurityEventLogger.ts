@@ -1,30 +1,30 @@
 /**
  * Security Event Logger - Advanced Security Monitoring and Threat Detection
- * 
+ *
  * Comprehensive security event logging, pattern analysis, and threat detection
  * for the NeonPro session management system.
- * 
+ *
  * @version 1.0.0
  * @author NeonPro Development Team
  * @created 2024
  */
 
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { validateUUID, removeUndefined } from './utils';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import type {
+  AuthenticationResponse,
   SecurityConfig,
   SecurityEvent,
   SecurityEventType,
-  SecuritySeverity,
   SecurityPattern,
   SecurityReport,
+  SecuritySeverity,
   ThreatLevel,
-  AuthenticationResponse
 } from './types';
+import { removeUndefined, validateUUID } from './utils';
 
 /**
  * Security Event Logger Class
- * 
+ *
  * Core security monitoring operations:
  * - Event logging and categorization
  * - Pattern analysis and anomaly detection
@@ -40,7 +40,7 @@ export class SecurityEventLogger {
 
   constructor(config: SecurityConfig) {
     this.config = config;
-    
+
     this.supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -66,9 +66,9 @@ export class SecurityEventLogger {
           success: false,
           error: {
             code: 'INVALID_USER_ID',
-            message: 'Invalid user ID format'
+            message: 'Invalid user ID format',
           },
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       }
 
@@ -77,15 +77,20 @@ export class SecurityEventLogger {
           success: false,
           error: {
             code: 'INVALID_DEVICE_ID',
-            message: 'Invalid device ID format'
+            message: 'Invalid device ID format',
           },
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       }
 
       // Calculate risk score
-      const riskScore = await this.calculateRiskScore(type, severity, userId, details);
-      
+      const riskScore = await this.calculateRiskScore(
+        type,
+        severity,
+        userId,
+        details
+      );
+
       // Determine threat level
       const threatLevel = this.determineThreatLevel(riskScore, severity);
 
@@ -103,7 +108,7 @@ export class SecurityEventLogger {
         risk_score: riskScore,
         threat_level: threatLevel,
         resolved: false,
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
       });
 
       const { data, error } = await this.supabase
@@ -118,9 +123,9 @@ export class SecurityEventLogger {
           error: {
             code: 'EVENT_LOG_FAILED',
             message: 'Failed to log security event',
-            details: { error: error.message }
+            details: { error: error.message },
           },
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       }
 
@@ -137,18 +142,19 @@ export class SecurityEventLogger {
       return {
         success: true,
         data: securityEvent,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
-
     } catch (error) {
       return {
         success: false,
         error: {
           code: 'EVENT_LOG_ERROR',
           message: 'Error logging security event',
-          details: { error: error instanceof Error ? error.message : 'Unknown error' }
+          details: {
+            error: error instanceof Error ? error.message : 'Unknown error',
+          },
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -156,21 +162,26 @@ export class SecurityEventLogger {
   /**
    * Analyze security patterns for a user
    */
-  async analyzePatterns(userId: string, timeWindow: number = 24): Promise<AuthenticationResponse> {
+  async analyzePatterns(
+    userId: string,
+    timeWindow = 24
+  ): Promise<AuthenticationResponse> {
     try {
       if (!validateUUID(userId)) {
         return {
           success: false,
           error: {
             code: 'INVALID_USER_ID',
-            message: 'Invalid user ID format'
+            message: 'Invalid user ID format',
           },
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       }
 
-      const startTime = new Date(Date.now() - timeWindow * 60 * 60 * 1000).toISOString();
-      
+      const startTime = new Date(
+        Date.now() - timeWindow * 60 * 60 * 1000
+      ).toISOString();
+
       const { data: events, error } = await this.supabase
         .from('security_events')
         .select('*')
@@ -183,9 +194,9 @@ export class SecurityEventLogger {
           success: false,
           error: {
             code: 'PATTERN_ANALYSIS_FAILED',
-            message: 'Failed to analyze security patterns'
+            message: 'Failed to analyze security patterns',
           },
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       }
 
@@ -205,20 +216,21 @@ export class SecurityEventLogger {
           patterns,
           anomalies,
           riskAssessment,
-          analyzedAt: new Date().toISOString()
+          analyzedAt: new Date().toISOString(),
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
-
     } catch (error) {
       return {
         success: false,
         error: {
           code: 'PATTERN_ANALYSIS_ERROR',
           message: 'Error analyzing security patterns',
-          details: { error: error instanceof Error ? error.message : 'Unknown error' }
+          details: {
+            error: error instanceof Error ? error.message : 'Unknown error',
+          },
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -232,12 +244,10 @@ export class SecurityEventLogger {
     severity?: SecuritySeverity,
     startDate?: string,
     endDate?: string,
-    limit: number = 100
+    limit = 100
   ): Promise<AuthenticationResponse> {
     try {
-      let query = this.supabase
-        .from('security_events')
-        .select('*');
+      let query = this.supabase.from('security_events').select('*');
 
       if (userId) {
         if (!validateUUID(userId)) {
@@ -245,9 +255,9 @@ export class SecurityEventLogger {
             success: false,
             error: {
               code: 'INVALID_USER_ID',
-              message: 'Invalid user ID format'
+              message: 'Invalid user ID format',
             },
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
           };
         }
         query = query.eq('user_id', userId);
@@ -278,29 +288,32 @@ export class SecurityEventLogger {
           success: false,
           error: {
             code: 'GET_EVENTS_FAILED',
-            message: 'Failed to retrieve security events'
+            message: 'Failed to retrieve security events',
           },
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       }
 
-      const events = (data || []).map(row => this.convertToSecurityEvent(row));
+      const events = (data || []).map((row) =>
+        this.convertToSecurityEvent(row)
+      );
 
       return {
         success: true,
         data: events,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
-
     } catch (error) {
       return {
         success: false,
         error: {
           code: 'GET_EVENTS_ERROR',
           message: 'Error retrieving security events',
-          details: { error: error instanceof Error ? error.message : 'Unknown error' }
+          details: {
+            error: error instanceof Error ? error.message : 'Unknown error',
+          },
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -308,16 +321,20 @@ export class SecurityEventLogger {
   /**
    * Resolve a security event
    */
-  async resolveEvent(eventId: string, resolution: string, resolvedBy: string): Promise<AuthenticationResponse> {
+  async resolveEvent(
+    eventId: string,
+    resolution: string,
+    resolvedBy: string
+  ): Promise<AuthenticationResponse> {
     try {
       if (!validateUUID(eventId)) {
         return {
           success: false,
           error: {
             code: 'INVALID_EVENT_ID',
-            message: 'Invalid event ID format'
+            message: 'Invalid event ID format',
           },
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       }
 
@@ -327,7 +344,7 @@ export class SecurityEventLogger {
           resolved: true,
           resolution,
           resolved_by: resolvedBy,
-          resolved_at: new Date().toISOString()
+          resolved_at: new Date().toISOString(),
         })
         .eq('id', eventId)
         .select()
@@ -338,9 +355,9 @@ export class SecurityEventLogger {
           success: false,
           error: {
             code: 'EVENT_RESOLVE_FAILED',
-            message: 'Failed to resolve security event'
+            message: 'Failed to resolve security event',
           },
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       }
 
@@ -349,18 +366,19 @@ export class SecurityEventLogger {
       return {
         success: true,
         data: securityEvent,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
-
     } catch (error) {
       return {
         success: false,
         error: {
           code: 'EVENT_RESOLVE_ERROR',
           message: 'Error resolving security event',
-          details: { error: error instanceof Error ? error.message : 'Unknown error' }
+          details: {
+            error: error instanceof Error ? error.message : 'Unknown error',
+          },
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -390,23 +408,29 @@ export class SecurityEventLogger {
         throw new Error(`Failed to fetch events for report: ${error.message}`);
       }
 
-      const securityEvents = (events || []).map(row => this.convertToSecurityEvent(row));
+      const securityEvents = (events || []).map((row) =>
+        this.convertToSecurityEvent(row)
+      );
 
       // Generate statistics
       const totalEvents = securityEvents.length;
       const eventsBySeverity = this.groupEventsBySeverity(securityEvents);
       const eventsByType = this.groupEventsByType(securityEvents);
-      const threatLevelDistribution = this.getThreatLevelDistribution(securityEvents);
+      const threatLevelDistribution =
+        this.getThreatLevelDistribution(securityEvents);
       const topThreats = this.getTopThreats(securityEvents);
-      const resolvedEvents = securityEvents.filter(e => e.resolved).length;
+      const resolvedEvents = securityEvents.filter((e) => e.resolved).length;
       const unresolvedEvents = totalEvents - resolvedEvents;
       const averageRiskScore = this.calculateAverageRiskScore(securityEvents);
 
       // Identify trends
       const trends = this.identifySecurityTrends(securityEvents);
-      
+
       // Generate recommendations
-      const recommendations = this.generateSecurityRecommendations(securityEvents, trends);
+      const recommendations = this.generateSecurityRecommendations(
+        securityEvents,
+        trends
+      );
 
       return {
         reportId: crypto.randomUUID(),
@@ -418,7 +442,7 @@ export class SecurityEventLogger {
           resolvedEvents,
           unresolvedEvents,
           averageRiskScore,
-          highestThreatLevel: this.getHighestThreatLevel(securityEvents)
+          highestThreatLevel: this.getHighestThreatLevel(securityEvents),
         },
         eventsBySeverity,
         eventsByType,
@@ -426,22 +450,23 @@ export class SecurityEventLogger {
         topThreats,
         trends,
         recommendations,
-        generatedAt: new Date().toISOString()
+        generatedAt: new Date().toISOString(),
       };
-
     } catch (error) {
-      throw new Error(`Error generating security report: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Error generating security report: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
   /**
    * Clean up old security events
    */
-  async cleanupOldEvents(retentionDays: number = 90): Promise<AuthenticationResponse> {
+  async cleanupOldEvents(retentionDays = 90): Promise<AuthenticationResponse> {
     try {
       const cutoffDate = new Date();
       cutoffDate.setDate(cutoffDate.getDate() - retentionDays);
-      
+
       const { data, error } = await this.supabase
         .from('security_events')
         .delete()
@@ -453,9 +478,9 @@ export class SecurityEventLogger {
           success: false,
           error: {
             code: 'EVENT_CLEANUP_FAILED',
-            message: 'Failed to cleanup old security events'
+            message: 'Failed to cleanup old security events',
           },
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       }
 
@@ -464,20 +489,21 @@ export class SecurityEventLogger {
         data: {
           deletedCount: data?.length || 0,
           cutoffDate: cutoffDate.toISOString(),
-          cleanupDate: new Date().toISOString()
+          cleanupDate: new Date().toISOString(),
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
-
     } catch (error) {
       return {
         success: false,
         error: {
           code: 'EVENT_CLEANUP_ERROR',
           message: 'Error cleaning up old security events',
-          details: { error: error instanceof Error ? error.message : 'Unknown error' }
+          details: {
+            error: error instanceof Error ? error.message : 'Unknown error',
+          },
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -485,16 +511,18 @@ export class SecurityEventLogger {
   /**
    * Check for security violations
    */
-  async checkSecurityViolations(userId: string): Promise<AuthenticationResponse> {
+  async checkSecurityViolations(
+    userId: string
+  ): Promise<AuthenticationResponse> {
     try {
       if (!validateUUID(userId)) {
         return {
           success: false,
           error: {
             code: 'INVALID_USER_ID',
-            message: 'Invalid user ID format'
+            message: 'Invalid user ID format',
           },
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       }
 
@@ -505,8 +533,8 @@ export class SecurityEventLogger {
 
       // Check for excessive failed login attempts
       const failedLogins = await this.getRecentEventCount(
-        userId, 
-        'login_failed', 
+        userId,
+        'login_failed',
         new Date(now.getTime() - oneHour).toISOString()
       );
 
@@ -516,7 +544,7 @@ export class SecurityEventLogger {
           severity: 'high' as SecuritySeverity,
           count: failedLogins,
           threshold: this.config.maxFailedLogins,
-          timeWindow: '1 hour'
+          timeWindow: '1 hour',
         });
       }
 
@@ -533,7 +561,7 @@ export class SecurityEventLogger {
           severity: 'medium' as SecuritySeverity,
           count: suspiciousActivity,
           threshold: this.config.maxSuspiciousActivity,
-          timeWindow: '24 hours'
+          timeWindow: '24 hours',
         });
       }
 
@@ -550,7 +578,7 @@ export class SecurityEventLogger {
           severity: 'medium' as SecuritySeverity,
           count: concurrentSessions,
           threshold: 0,
-          timeWindow: '1 hour'
+          timeWindow: '1 hour',
         });
       }
 
@@ -560,20 +588,21 @@ export class SecurityEventLogger {
           userId,
           violations,
           violationCount: violations.length,
-          checkedAt: now.toISOString()
+          checkedAt: now.toISOString(),
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
-
     } catch (error) {
       return {
         success: false,
         error: {
           code: 'SECURITY_CHECK_ERROR',
           message: 'Error checking security violations',
-          details: { error: error instanceof Error ? error.message : 'Unknown error' }
+          details: {
+            error: error instanceof Error ? error.message : 'Unknown error',
+          },
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -591,34 +620,34 @@ export class SecurityEventLogger {
 
     // Base score by event type
     const typeScores: Record<SecurityEventType, number> = {
-      'login_success': 1,
-      'login_failed': 3,
-      'logout': 1,
-      'session_created': 1,
-      'session_expired': 2,
-      'device_registered': 2,
-      'device_trusted': 1,
-      'device_blocked': 5,
-      'suspicious_activity': 4,
-      'concurrent_session_violation': 3,
-      'security_breach': 8,
-      'unauthorized_access': 7,
-      'data_access': 2,
-      'permission_escalation': 6,
-      'account_locked': 4,
-      'password_changed': 2,
-      'email_changed': 3,
-      'profile_updated': 1
+      login_success: 1,
+      login_failed: 3,
+      logout: 1,
+      session_created: 1,
+      session_expired: 2,
+      device_registered: 2,
+      device_trusted: 1,
+      device_blocked: 5,
+      suspicious_activity: 4,
+      concurrent_session_violation: 3,
+      security_breach: 8,
+      unauthorized_access: 7,
+      data_access: 2,
+      permission_escalation: 6,
+      account_locked: 4,
+      password_changed: 2,
+      email_changed: 3,
+      profile_updated: 1,
     };
 
     baseScore = typeScores[type] || 1;
 
     // Severity multiplier
     const severityMultipliers: Record<SecuritySeverity, number> = {
-      'low': 1,
-      'medium': 1.5,
-      'high': 2.5,
-      'critical': 4
+      low: 1,
+      medium: 1.5,
+      high: 2.5,
+      critical: 4,
     };
 
     baseScore *= severityMultipliers[severity];
@@ -626,8 +655,8 @@ export class SecurityEventLogger {
     // Historical risk factor
     const userRiskScore = this.riskScores.get(userId) || 0;
     const historicalFactor = Math.min(userRiskScore / 100, 2); // Cap at 2x
-    
-    baseScore *= (1 + historicalFactor);
+
+    baseScore *= 1 + historicalFactor;
 
     // Context-specific adjustments
     if (details) {
@@ -641,7 +670,10 @@ export class SecurityEventLogger {
     return Math.round(baseScore * 10) / 10; // Round to 1 decimal
   }
 
-  private determineThreatLevel(riskScore: number, severity: SecuritySeverity): ThreatLevel {
+  private determineThreatLevel(
+    riskScore: number,
+    severity: SecuritySeverity
+  ): ThreatLevel {
     if (severity === 'critical' || riskScore >= 15) return 'critical';
     if (severity === 'high' || riskScore >= 10) return 'high';
     if (severity === 'medium' || riskScore >= 5) return 'medium';
@@ -659,7 +691,7 @@ export class SecurityEventLogger {
         {
           triggeredBy: event.id,
           originalEvent: event.type,
-          automatedResponse: true
+          automatedResponse: true,
         }
       );
 
@@ -668,25 +700,37 @@ export class SecurityEventLogger {
       // - Terminate sessions
       // - Send security alerts
       // - Escalate to security team
-      
     } catch (error) {
       console.error('Error triggering automated response:', error);
     }
   }
 
-  private async updatePatternAnalysis(userId: string, type: SecurityEventType, severity: SecuritySeverity): Promise<void> {
+  private async updatePatternAnalysis(
+    userId: string,
+    _type: SecurityEventType,
+    severity: SecuritySeverity
+  ): Promise<void> {
     try {
       const currentScore = this.riskScores.get(userId) || 0;
-      const increment = severity === 'critical' ? 5 : severity === 'high' ? 3 : severity === 'medium' ? 2 : 1;
-      
+      const increment =
+        severity === 'critical'
+          ? 5
+          : severity === 'high'
+            ? 3
+            : severity === 'medium'
+              ? 2
+              : 1;
+
       this.riskScores.set(userId, currentScore + increment);
-      
+
       // Decay risk scores over time (simple implementation)
-      setTimeout(() => {
-        const score = this.riskScores.get(userId) || 0;
-        this.riskScores.set(userId, Math.max(0, score - 1));
-      }, 24 * 60 * 60 * 1000); // 24 hours
-      
+      setTimeout(
+        () => {
+          const score = this.riskScores.get(userId) || 0;
+          this.riskScores.set(userId, Math.max(0, score - 1));
+        },
+        24 * 60 * 60 * 1000
+      ); // 24 hours
     } catch (error) {
       console.error('Error updating pattern analysis:', error);
     }
@@ -694,9 +738,9 @@ export class SecurityEventLogger {
 
   private detectPatterns(events: any[]): SecurityPattern[] {
     const patterns: SecurityPattern[] = [];
-    
+
     // Detect repeated failed logins
-    const failedLogins = events.filter(e => e.type === 'login_failed');
+    const failedLogins = events.filter((e) => e.type === 'login_failed');
     if (failedLogins.length >= 3) {
       patterns.push({
         type: 'repeated_failed_logins',
@@ -704,20 +748,23 @@ export class SecurityEventLogger {
         count: failedLogins.length,
         description: `${failedLogins.length} failed login attempts detected`,
         firstOccurrence: failedLogins[failedLogins.length - 1].created_at,
-        lastOccurrence: failedLogins[0].created_at
+        lastOccurrence: failedLogins[0].created_at,
       });
     }
 
     // Detect suspicious device registrations
-    const deviceRegistrations = events.filter(e => e.type === 'device_registered');
+    const deviceRegistrations = events.filter(
+      (e) => e.type === 'device_registered'
+    );
     if (deviceRegistrations.length >= 3) {
       patterns.push({
         type: 'multiple_device_registrations',
         severity: 'medium',
         count: deviceRegistrations.length,
         description: `${deviceRegistrations.length} new devices registered`,
-        firstOccurrence: deviceRegistrations[deviceRegistrations.length - 1].created_at,
-        lastOccurrence: deviceRegistrations[0].created_at
+        firstOccurrence:
+          deviceRegistrations[deviceRegistrations.length - 1].created_at,
+        lastOccurrence: deviceRegistrations[0].created_at,
       });
     }
 
@@ -726,9 +773,9 @@ export class SecurityEventLogger {
 
   private detectAnomalies(events: any[]): any[] {
     const anomalies = [];
-    
+
     // Detect unusual time patterns
-    const offHoursEvents = events.filter(e => {
+    const offHoursEvents = events.filter((e) => {
       const hour = new Date(e.created_at).getHours();
       return hour < 6 || hour > 22; // Outside 6 AM - 10 PM
     });
@@ -737,7 +784,7 @@ export class SecurityEventLogger {
       anomalies.push({
         type: 'unusual_time_pattern',
         description: 'High percentage of activity outside normal hours',
-        percentage: Math.round((offHoursEvents.length / events.length) * 100)
+        percentage: Math.round((offHoursEvents.length / events.length) * 100),
       });
     }
 
@@ -747,30 +794,41 @@ export class SecurityEventLogger {
   private assessUserRisk(userId: string, events: any[]): any {
     const riskFactors = [];
     const totalEvents = events.length;
-    
-    const highSeverityEvents = events.filter(e => e.severity === 'high' || e.severity === 'critical');
-    const highSeverityRatio = totalEvents > 0 ? highSeverityEvents.length / totalEvents : 0;
-    
+
+    const highSeverityEvents = events.filter(
+      (e) => e.severity === 'high' || e.severity === 'critical'
+    );
+    const highSeverityRatio =
+      totalEvents > 0 ? highSeverityEvents.length / totalEvents : 0;
+
     if (highSeverityRatio > 0.2) {
       riskFactors.push('High percentage of severe security events');
     }
-    
-    const failedLogins = events.filter(e => e.type === 'login_failed');
+
+    const failedLogins = events.filter((e) => e.type === 'login_failed');
     if (failedLogins.length > 5) {
       riskFactors.push('Excessive failed login attempts');
     }
-    
-    const riskLevel = riskFactors.length === 0 ? 'low' : 
-                     riskFactors.length <= 2 ? 'medium' : 'high';
-    
+
+    const riskLevel =
+      riskFactors.length === 0
+        ? 'low'
+        : riskFactors.length <= 2
+          ? 'medium'
+          : 'high';
+
     return {
       level: riskLevel,
       factors: riskFactors,
-      score: this.riskScores.get(userId) || 0
+      score: this.riskScores.get(userId) || 0,
     };
   }
 
-  private async getRecentEventCount(userId: string, type: SecurityEventType, since: string): Promise<number> {
+  private async getRecentEventCount(
+    userId: string,
+    type: SecurityEventType,
+    since: string
+  ): Promise<number> {
     try {
       const { data, error } = await this.supabase
         .from('security_events')
@@ -791,35 +849,56 @@ export class SecurityEventLogger {
     }
   }
 
-  private groupEventsBySeverity(events: SecurityEvent[]): Record<SecuritySeverity, number> {
-    return events.reduce((acc, event) => {
-      acc[event.severity] = (acc[event.severity] || 0) + 1;
-      return acc;
-    }, {} as Record<SecuritySeverity, number>);
+  private groupEventsBySeverity(
+    events: SecurityEvent[]
+  ): Record<SecuritySeverity, number> {
+    return events.reduce(
+      (acc, event) => {
+        acc[event.severity] = (acc[event.severity] || 0) + 1;
+        return acc;
+      },
+      {} as Record<SecuritySeverity, number>
+    );
   }
 
-  private groupEventsByType(events: SecurityEvent[]): Record<SecurityEventType, number> {
-    return events.reduce((acc, event) => {
-      acc[event.type] = (acc[event.type] || 0) + 1;
-      return acc;
-    }, {} as Record<SecurityEventType, number>);
+  private groupEventsByType(
+    events: SecurityEvent[]
+  ): Record<SecurityEventType, number> {
+    return events.reduce(
+      (acc, event) => {
+        acc[event.type] = (acc[event.type] || 0) + 1;
+        return acc;
+      },
+      {} as Record<SecurityEventType, number>
+    );
   }
 
-  private getThreatLevelDistribution(events: SecurityEvent[]): Record<ThreatLevel, number> {
-    return events.reduce((acc, event) => {
-      acc[event.threatLevel] = (acc[event.threatLevel] || 0) + 1;
-      return acc;
-    }, {} as Record<ThreatLevel, number>);
+  private getThreatLevelDistribution(
+    events: SecurityEvent[]
+  ): Record<ThreatLevel, number> {
+    return events.reduce(
+      (acc, event) => {
+        acc[event.threatLevel] = (acc[event.threatLevel] || 0) + 1;
+        return acc;
+      },
+      {} as Record<ThreatLevel, number>
+    );
   }
 
-  private getTopThreats(events: SecurityEvent[]): Array<{ type: SecurityEventType; count: number; severity: SecuritySeverity }> {
+  private getTopThreats(events: SecurityEvent[]): Array<{
+    type: SecurityEventType;
+    count: number;
+    severity: SecuritySeverity;
+  }> {
     const threatCounts = this.groupEventsByType(events);
-    
+
     return Object.entries(threatCounts)
       .map(([type, count]) => ({
         type: type as SecurityEventType,
         count,
-        severity: this.getMostCommonSeverity(events.filter(e => e.type === type))
+        severity: this.getMostCommonSeverity(
+          events.filter((e) => e.type === type)
+        ),
       }))
       .sort((a, b) => b.count - a.count)
       .slice(0, 5);
@@ -827,8 +906,11 @@ export class SecurityEventLogger {
 
   private getMostCommonSeverity(events: SecurityEvent[]): SecuritySeverity {
     const severityCounts = this.groupEventsBySeverity(events);
-    return Object.entries(severityCounts)
-      .sort(([,a], [,b]) => b - a)[0]?.[0] as SecuritySeverity || 'low';
+    return (
+      (Object.entries(severityCounts).sort(
+        ([, a], [, b]) => b - a
+      )[0]?.[0] as SecuritySeverity) || 'low'
+    );
   }
 
   private calculateAverageRiskScore(events: SecurityEvent[]): number {
@@ -839,77 +921,94 @@ export class SecurityEventLogger {
 
   private getHighestThreatLevel(events: SecurityEvent[]): ThreatLevel {
     const levels: ThreatLevel[] = ['low', 'medium', 'high', 'critical'];
-    
+
     for (let i = levels.length - 1; i >= 0; i--) {
-      if (events.some(e => e.threatLevel === levels[i])) {
+      if (events.some((e) => e.threatLevel === levels[i])) {
         return levels[i];
       }
     }
-    
+
     return 'low';
   }
 
   private identifySecurityTrends(events: SecurityEvent[]): any[] {
     // Simple trend analysis - could be enhanced with more sophisticated algorithms
     const trends = [];
-    
-    const recentEvents = events.filter(e => {
+
+    const recentEvents = events.filter((e) => {
       const eventDate = new Date(e.createdAt);
-      const daysDiff = (Date.now() - eventDate.getTime()) / (1000 * 60 * 60 * 24);
+      const daysDiff =
+        (Date.now() - eventDate.getTime()) / (1000 * 60 * 60 * 24);
       return daysDiff <= 7;
     });
-    
-    const olderEvents = events.filter(e => {
+
+    const olderEvents = events.filter((e) => {
       const eventDate = new Date(e.createdAt);
-      const daysDiff = (Date.now() - eventDate.getTime()) / (1000 * 60 * 60 * 24);
+      const daysDiff =
+        (Date.now() - eventDate.getTime()) / (1000 * 60 * 60 * 24);
       return daysDiff > 7 && daysDiff <= 14;
     });
-    
+
     const recentCount = recentEvents.length;
     const olderCount = olderEvents.length;
-    
+
     if (recentCount > olderCount * 1.5) {
       trends.push({
         type: 'increasing_activity',
         description: 'Security events are increasing',
-        change: `+${Math.round(((recentCount - olderCount) / olderCount) * 100)}%`
+        change: `+${Math.round(((recentCount - olderCount) / olderCount) * 100)}%`,
       });
     } else if (recentCount < olderCount * 0.5) {
       trends.push({
         type: 'decreasing_activity',
         description: 'Security events are decreasing',
-        change: `-${Math.round(((olderCount - recentCount) / olderCount) * 100)}%`
+        change: `-${Math.round(((olderCount - recentCount) / olderCount) * 100)}%`,
       });
     }
-    
+
     return trends;
   }
 
-  private generateSecurityRecommendations(events: SecurityEvent[], trends: any[]): string[] {
+  private generateSecurityRecommendations(
+    events: SecurityEvent[],
+    trends: any[]
+  ): string[] {
     const recommendations = [];
-    
-    const failedLogins = events.filter(e => e.type === 'login_failed').length;
+
+    const failedLogins = events.filter((e) => e.type === 'login_failed').length;
     if (failedLogins > 10) {
-      recommendations.push('Consider implementing additional authentication factors');
+      recommendations.push(
+        'Consider implementing additional authentication factors'
+      );
       recommendations.push('Review and strengthen password policies');
     }
-    
-    const suspiciousActivity = events.filter(e => e.type === 'suspicious_activity').length;
+
+    const suspiciousActivity = events.filter(
+      (e) => e.type === 'suspicious_activity'
+    ).length;
     if (suspiciousActivity > 5) {
       recommendations.push('Enhance device fingerprinting and detection');
       recommendations.push('Implement stricter device trust policies');
     }
-    
-    const increasingTrend = trends.find(t => t.type === 'increasing_activity');
+
+    const increasingTrend = trends.find(
+      (t) => t.type === 'increasing_activity'
+    );
     if (increasingTrend) {
-      recommendations.push('Monitor security events more closely due to increasing activity');
-      recommendations.push('Consider implementing automated response mechanisms');
+      recommendations.push(
+        'Monitor security events more closely due to increasing activity'
+      );
+      recommendations.push(
+        'Consider implementing automated response mechanisms'
+      );
     }
-    
+
     if (recommendations.length === 0) {
-      recommendations.push('Security posture appears stable - continue monitoring');
+      recommendations.push(
+        'Security posture appears stable - continue monitoring'
+      );
     }
-    
+
     return recommendations;
   }
 
@@ -929,7 +1028,7 @@ export class SecurityEventLogger {
       resolution: row.resolution,
       resolvedBy: row.resolved_by,
       resolvedAt: row.resolved_at,
-      createdAt: row.created_at
+      createdAt: row.created_at,
     };
   }
 }

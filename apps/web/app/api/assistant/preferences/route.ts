@@ -1,14 +1,17 @@
-import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/app/utils/supabase/server";
+import { type NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@/app/utils/supabase/server';
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Verificar autenticação
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Buscar preferências do usuário
@@ -18,9 +21,13 @@ export async function GET(request: NextRequest) {
       .eq('user_id', user.id)
       .single();
 
-    if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
+    if (error && error.code !== 'PGRST116') {
+      // PGRST116 = no rows returned
       console.error('Error fetching preferences:', error);
-      return NextResponse.json({ error: "Failed to fetch preferences" }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Failed to fetch preferences' },
+        { status: 500 }
+      );
     }
 
     // Se não existir, retornar preferências padrão
@@ -34,29 +41,32 @@ export async function GET(request: NextRequest) {
         voice_enabled: false,
         notifications_enabled: true,
         context_memory: true,
-        suggestions_enabled: true
+        suggestions_enabled: true,
       };
 
       return NextResponse.json({ preferences: defaultPreferences });
     }
 
     return NextResponse.json({ preferences });
-
   } catch (error) {
     console.error('Preferences API Error:', error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }
-}export async function POST(request: NextRequest) {
+}
+export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Verificar autenticação
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const {
@@ -68,20 +78,32 @@ export async function GET(request: NextRequest) {
       voice_enabled,
       notifications_enabled,
       context_memory,
-      suggestions_enabled
+      suggestions_enabled,
     } = await request.json();
 
     // Validações
     if (temperature !== undefined && (temperature < 0 || temperature > 2)) {
-      return NextResponse.json({ error: "Temperature must be between 0 and 2" }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Temperature must be between 0 and 2' },
+        { status: 400 }
+      );
     }
 
     if (max_tokens !== undefined && (max_tokens < 1 || max_tokens > 4000)) {
-      return NextResponse.json({ error: "Max tokens must be between 1 and 4000" }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Max tokens must be between 1 and 4000' },
+        { status: 400 }
+      );
     }
 
-    if (preferred_model && !['gpt4', 'claude', 'gpt35'].includes(preferred_model)) {
-      return NextResponse.json({ error: "Invalid preferred model" }, { status: 400 });
+    if (
+      preferred_model &&
+      !['gpt4', 'claude', 'gpt35'].includes(preferred_model)
+    ) {
+      return NextResponse.json(
+        { error: 'Invalid preferred model' },
+        { status: 400 }
+      );
     }
 
     // Preparar dados para inserção/atualização
@@ -95,29 +117,31 @@ export async function GET(request: NextRequest) {
       ...(voice_enabled !== undefined && { voice_enabled }),
       ...(notifications_enabled !== undefined && { notifications_enabled }),
       ...(context_memory !== undefined && { context_memory }),
-      ...(suggestions_enabled !== undefined && { suggestions_enabled })
+      ...(suggestions_enabled !== undefined && { suggestions_enabled }),
     };
 
     // Usar upsert para inserir ou atualizar
     const { data: preferences, error } = await supabase
       .from('assistant_preferences')
       .upsert(preferencesData, {
-        onConflict: 'user_id'
+        onConflict: 'user_id',
       })
       .select()
       .single();
 
     if (error) {
       console.error('Error saving preferences:', error);
-      return NextResponse.json({ error: "Failed to save preferences" }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Failed to save preferences' },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json({ preferences });
-
   } catch (error) {
     console.error('Save Preferences API Error:', error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }

@@ -1,10 +1,10 @@
 // Endpoint for Universal AI Chat (Epic 4 - Story 4.1)
 // app/api/ai/universal-chat/route.ts
 
-import { createNeonProAIChatEngine } from "@/app/lib/ai/chat-engine-v2";
-import { AIRequest, UniversalChatContext } from "@/app/lib/ai/types";
-import { createClient } from "@/app/utils/supabase/server";
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from 'next/server';
+import { createNeonProAIChatEngine } from '@/app/lib/ai/chat-engine-v2';
+import type { AIRequest, UniversalChatContext } from '@/app/lib/ai/types';
+import { createClient } from '@/app/utils/supabase/server';
 
 /**
  * POST /api/ai/universal-chat
@@ -12,15 +12,15 @@ import { NextRequest, NextResponse } from "next/server";
  */
 export async function POST(request: NextRequest) {
   try {
-    console.log("[AI-API] Universal chat request received");
+    console.log('[AI-API] Universal chat request received');
 
     // Parse request body
     const body = await request.json();
     const { message, context, sessionId } = body;
 
-    if (!message || typeof message !== "string") {
+    if (!message || typeof message !== 'string') {
       return NextResponse.json(
-        { error: "Message is required and must be a string" },
+        { error: 'Message is required and must be a string' },
         { status: 400 }
       );
     }
@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
 
     if (sessionError || !session) {
       return NextResponse.json(
-        { error: "Authentication required" },
+        { error: 'Authentication required' },
         { status: 401 }
       );
     }
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
     const aiRequest: AIRequest = {
       query: message,
       context: universalContext,
-      sessionId: session?.access_token || "anonymous",
+      sessionId: session?.access_token || 'anonymous',
       userId: session.user.id,
       clinicId: universalContext.clinic.id,
     };
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
     // Process chat request
     const response = await chatEngine.processChat(aiRequest);
 
-    console.log("[AI-API] Chat processed successfully");
+    console.log('[AI-API] Chat processed successfully');
 
     return NextResponse.json({
       success: true,
@@ -74,12 +74,12 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("[AI-API] Error processing chat:", error);
+    console.error('[AI-API] Error processing chat:', error);
 
     return NextResponse.json(
       {
-        error: "Internal server error",
-        message: error instanceof Error ? error.message : "Unknown error",
+        error: 'Internal server error',
+        message: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );
@@ -96,13 +96,13 @@ async function buildUniversalContext(
   try {
     // Get user profile and clinic info
     const { data: profile } = await supabase
-      .from("users")
-      .select("*, clinics(*)")
-      .eq("id", userId)
+      .from('users')
+      .select('*, clinics(*)')
+      .eq('id', userId)
       .single();
 
-    if (!profile || !profile.clinics) {
-      throw new Error("User profile or clinic not found");
+    if (!(profile && profile.clinics)) {
+      throw new Error('User profile or clinic not found');
     }
 
     const clinic = profile.clinics;
@@ -120,9 +120,9 @@ async function buildUniversalContext(
     return {
       user: {
         id: profile.id,
-        name: profile.full_name || "User",
-        role: profile.role || "user",
-        permissions: ["read_basic"],
+        name: profile.full_name || 'User',
+        role: profile.role || 'user',
+        permissions: ['read_basic'],
       },
 
       clinic: {
@@ -137,20 +137,20 @@ async function buildUniversalContext(
       businessIntelligence: biData,
     };
   } catch (error) {
-    console.error("[AI-API] Error building context:", error);
+    console.error('[AI-API] Error building context:', error);
 
     // Return basic context with mock data
     return {
       user: {
         id: userId,
-        name: "User",
-        role: "user",
-        permissions: ["read_basic"],
+        name: 'User',
+        role: 'user',
+        permissions: ['read_basic'],
       },
 
       clinic: {
-        id: "default",
-        name: "Default Clinic",
+        id: 'default',
+        name: 'Default Clinic',
         settings: {},
       },
 
@@ -162,7 +162,7 @@ async function buildUniversalContext(
           resolutionSuggestions: [],
         },
         utilization: {
-          professionalId: "default",
+          professionalId: 'default',
           utilizationRate: 0,
           appointmentsCount: 0,
           availableSlots: 0,
@@ -198,7 +198,7 @@ async function buildUniversalContext(
           averagePaymentDays: 0,
         },
         profitability: {
-          treatmentType: "default",
+          treatmentType: 'default',
           revenue: 0,
           costs: 0,
           margin: 0,
@@ -206,35 +206,35 @@ async function buildUniversalContext(
         },
         forecasting: {
           revenue: {
-            metric: "",
+            metric: '',
             currentValue: 0,
             predictedValue: 0,
             confidence: 0,
-            trend: "stable" as const,
+            trend: 'stable' as const,
             factors: [],
           },
           expenses: {
-            metric: "",
+            metric: '',
             currentValue: 0,
             predictedValue: 0,
             confidence: 0,
-            trend: "stable" as const,
+            trend: 'stable' as const,
             factors: [],
           },
           cashFlow: {
-            metric: "",
+            metric: '',
             currentValue: 0,
             predictedValue: 0,
             confidence: 0,
-            trend: "stable" as const,
+            trend: 'stable' as const,
             factors: [],
           },
           profitability: {
-            metric: "",
+            metric: '',
             currentValue: 0,
             predictedValue: 0,
             confidence: 0,
-            trend: "stable" as const,
+            trend: 'stable' as const,
             factors: [],
           },
         },
@@ -242,20 +242,20 @@ async function buildUniversalContext(
 
       clinical: {
         patientRecords: {
-          patientId: "",
+          patientId: '',
           personalInfo: {
-            id: "",
-            first_name: "",
-            last_name: "",
-            email: "",
-            phone: "",
-            date_of_birth: "",
-            gender: "",
-            address: "",
-            emergency_contact: "",
-            clinic_id: "",
-            created_at: "",
-            updated_at: "",
+            id: '',
+            first_name: '',
+            last_name: '',
+            email: '',
+            phone: '',
+            date_of_birth: '',
+            gender: '',
+            address: '',
+            emergency_contact: '',
+            clinic_id: '',
+            created_at: '',
+            updated_at: '',
           },
           medicalHistory: [],
           treatmentSessions: [],
@@ -270,7 +270,7 @@ async function buildUniversalContext(
           contraindications: {},
         },
         professionalPerformance: {
-          professionalId: "default",
+          professionalId: 'default',
           performanceScore: 0,
           patientSatisfaction: 0,
           treatmentSuccessRate: 0,
@@ -281,7 +281,7 @@ async function buildUniversalContext(
           cfmCompliance: true,
           anvisaCompliance: true,
           lgpdCompliance: true,
-          lastAuditDate: "",
+          lastAuditDate: '',
           complianceScore: 0,
           violations: [],
           recommendations: [],
@@ -302,7 +302,7 @@ async function buildUniversalContext(
           patientRetention: 0,
           servicePopularity: {},
           seasonalPatterns: [],
-          competitivePosition: "",
+          competitivePosition: '',
         },
         opportunities: {
           revenueOpportunities: [],
@@ -319,10 +319,10 @@ async function buildUniversalContext(
 async function buildAppointmentsContext(supabase: any, clinicId: string) {
   // Epic 1 - Appointment data
   const { data: appointments } = await supabase
-    .from("appointments")
-    .select("*")
-    .eq("clinic_id", clinicId)
-    .gte("start_time", new Date().toISOString())
+    .from('appointments')
+    .select('*')
+    .eq('clinic_id', clinicId)
+    .gte('start_time', new Date().toISOString())
     .limit(50);
 
   return {
@@ -333,7 +333,7 @@ async function buildAppointmentsContext(supabase: any, clinicId: string) {
       resolutionSuggestions: [],
     },
     utilization: {
-      professionalId: "default",
+      professionalId: 'default',
       utilizationRate: 0,
       appointmentsCount: 0,
       availableSlots: 0,
@@ -351,11 +351,11 @@ async function buildAppointmentsContext(supabase: any, clinicId: string) {
 async function buildFinancialContext(supabase: any, clinicId: string) {
   // Epic 2 - Financial data
   const { data: transactions } = await supabase
-    .from("financial_transactions")
-    .select("*")
-    .eq("clinic_id", clinicId)
+    .from('financial_transactions')
+    .select('*')
+    .eq('clinic_id', clinicId)
     .gte(
-      "created_at",
+      'created_at',
       new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
     )
     .limit(100);
@@ -382,7 +382,7 @@ async function buildFinancialContext(supabase: any, clinicId: string) {
       averagePaymentDays: 0,
     },
     profitability: {
-      treatmentType: "default",
+      treatmentType: 'default',
       revenue: 0,
       costs: 0,
       margin: 0,
@@ -390,36 +390,36 @@ async function buildFinancialContext(supabase: any, clinicId: string) {
     },
     forecasting: {
       revenue: {
-        metric: "monthly_revenue",
-        currentValue: 50000,
-        predictedValue: 55000,
+        metric: 'monthly_revenue',
+        currentValue: 50_000,
+        predictedValue: 55_000,
         confidence: 0.85,
-        trend: "increasing" as const,
-        factors: ["seasonal_increase", "new_services"],
+        trend: 'increasing' as const,
+        factors: ['seasonal_increase', 'new_services'],
       },
       expenses: {
-        metric: "monthly_expenses",
-        currentValue: 35000,
-        predictedValue: 36000,
+        metric: 'monthly_expenses',
+        currentValue: 35_000,
+        predictedValue: 36_000,
         confidence: 0.9,
-        trend: "stable" as const,
-        factors: ["fixed_costs", "inflation"],
+        trend: 'stable' as const,
+        factors: ['fixed_costs', 'inflation'],
       },
       cashFlow: {
-        metric: "net_cash_flow",
-        currentValue: 15000,
-        predictedValue: 19000,
+        metric: 'net_cash_flow',
+        currentValue: 15_000,
+        predictedValue: 19_000,
         confidence: 0.8,
-        trend: "increasing" as const,
-        factors: ["improved_efficiency"],
+        trend: 'increasing' as const,
+        factors: ['improved_efficiency'],
       },
       profitability: {
-        metric: "net_margin",
+        metric: 'net_margin',
         currentValue: 0.3,
         predictedValue: 0.34,
         confidence: 0.75,
-        trend: "increasing" as const,
-        factors: ["cost_optimization"],
+        trend: 'increasing' as const,
+        factors: ['cost_optimization'],
       },
     },
   };
@@ -428,27 +428,27 @@ async function buildFinancialContext(supabase: any, clinicId: string) {
 async function buildClinicalContext(supabase: any, clinicId: string) {
   // Epic 3 - Clinical data (with LGPD compliance)
   const { data: patients } = await supabase
-    .from("patients")
-    .select("id, first_name, created_at")
-    .eq("clinic_id", clinicId)
+    .from('patients')
+    .select('id, first_name, created_at')
+    .eq('clinic_id', clinicId)
     .limit(10);
 
   return {
     patientRecords: {
-      patientId: "anonymized",
+      patientId: 'anonymized',
       personalInfo: {
-        id: "anonymous",
-        first_name: "Patient",
-        last_name: "Data (Anonymized)",
-        email: "",
-        phone: "",
-        date_of_birth: "",
-        gender: "",
-        address: "",
-        emergency_contact: "",
-        clinic_id: "",
-        created_at: "",
-        updated_at: "",
+        id: 'anonymous',
+        first_name: 'Patient',
+        last_name: 'Data (Anonymized)',
+        email: '',
+        phone: '',
+        date_of_birth: '',
+        gender: '',
+        address: '',
+        emergency_contact: '',
+        clinic_id: '',
+        created_at: '',
+        updated_at: '',
       },
       medicalHistory: [],
       treatmentSessions: [],
@@ -463,7 +463,7 @@ async function buildClinicalContext(supabase: any, clinicId: string) {
       contraindications: {},
     },
     professionalPerformance: {
-      professionalId: "default",
+      professionalId: 'default',
       performanceScore: 0,
       patientSatisfaction: 0,
       treatmentSuccessRate: 0,
@@ -474,7 +474,7 @@ async function buildClinicalContext(supabase: any, clinicId: string) {
       cfmCompliance: true,
       anvisaCompliance: true,
       lgpdCompliance: true,
-      lastAuditDate: "",
+      lastAuditDate: '',
       complianceScore: 0,
       violations: [],
       recommendations: [],
@@ -483,8 +483,8 @@ async function buildClinicalContext(supabase: any, clinicId: string) {
 }
 
 async function buildBusinessIntelligenceContext(
-  supabase: any,
-  clinicId: string
+  _supabase: any,
+  _clinicId: string
 ) {
   // Cross-epic analytics
   return {
@@ -501,7 +501,7 @@ async function buildBusinessIntelligenceContext(
       patientRetention: 0,
       servicePopularity: {},
       seasonalPatterns: [],
-      competitivePosition: "",
+      competitivePosition: '',
     },
     opportunities: {
       revenueOpportunities: [],

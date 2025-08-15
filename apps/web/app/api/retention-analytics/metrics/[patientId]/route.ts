@@ -4,10 +4,10 @@
 // API endpoints for patient-specific retention metrics
 // =====================================================================================
 
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
-import { RetentionAnalyticsService } from '@/app/lib/services/retention-analytics-service';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { RetentionAnalyticsService } from '@/app/lib/services/retention-analytics-service';
+import { createClient } from '@/app/utils/supabase/server';
 
 // =====================================================================================
 // VALIDATION SCHEMAS
@@ -39,14 +39,14 @@ export async function GET(
     // Validate parameters
     const validation = PatientMetricsParamsSchema.safeParse({
       patientId: params.patientId,
-      clinicId
+      clinicId,
     });
 
     if (!validation.success) {
       return NextResponse.json(
-        { 
-          error: 'Invalid parameters', 
-          details: validation.error.issues 
+        {
+          error: 'Invalid parameters',
+          details: validation.error.issues,
         },
         { status: 400 }
       );
@@ -56,13 +56,13 @@ export async function GET(
 
     // Verify authentication
     const supabase = await createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Verify clinic access (user must belong to the clinic)
@@ -104,23 +104,22 @@ export async function GET(
     // Get retention metrics
     const retentionService = new RetentionAnalyticsService();
     const metrics = await retentionService.getPatientRetentionMetrics(
-      patientId, 
+      patientId,
       validatedClinicId
     );
 
     return NextResponse.json({
       success: true,
       data: metrics,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
-
   } catch (error) {
     console.error('Error getting patient retention metrics:', error);
-    
+
     return NextResponse.json(
-      { 
+      {
         error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );
@@ -138,18 +137,18 @@ export async function POST(
   try {
     // Parse request body
     const body = await request.json();
-    
+
     // Validate request data
     const validation = CalculateMetricsSchema.safeParse({
       patientId: params.patientId,
-      clinicId: body.clinicId
+      clinicId: body.clinicId,
     });
 
     if (!validation.success) {
       return NextResponse.json(
-        { 
-          error: 'Invalid request data', 
-          details: validation.error.issues 
+        {
+          error: 'Invalid request data',
+          details: validation.error.issues,
         },
         { status: 400 }
       );
@@ -159,13 +158,13 @@ export async function POST(
 
     // Verify authentication
     const supabase = await createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Verify clinic access
@@ -216,7 +215,7 @@ export async function POST(
     // Calculate retention metrics
     const retentionService = new RetentionAnalyticsService();
     const metrics = await retentionService.calculatePatientRetentionMetrics(
-      patientId, 
+      patientId,
       clinicId
     );
 
@@ -224,16 +223,15 @@ export async function POST(
       success: true,
       data: metrics,
       message: 'Retention metrics calculated successfully',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
-
   } catch (error) {
     console.error('Error calculating patient retention metrics:', error);
-    
+
     return NextResponse.json(
-      { 
+      {
         error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );

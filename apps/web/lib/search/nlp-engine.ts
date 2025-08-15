@@ -1,16 +1,23 @@
 /**
  * NLP Search Engine Core
- * 
+ *
  * Provides natural language processing capabilities for conversational patient search.
  * Supports intent detection, entity extraction, and query normalization.
- * 
+ *
  * @module nlp-engine
  * @version 1.0.0
  */
 
 // Types for search entities and intents
 export interface SearchEntity {
-  type: 'person' | 'condition' | 'procedure' | 'date' | 'age' | 'location' | 'specialty';
+  type:
+    | 'person'
+    | 'condition'
+    | 'procedure'
+    | 'date'
+    | 'age'
+    | 'location'
+    | 'specialty';
   value: string;
   confidence: number;
   startIndex: number;
@@ -43,14 +50,11 @@ export interface SearchContext {
 
 /**
  * Natural Language Processing Search Engine
- * 
+ *
  * Converts natural language queries into structured search parameters
  * and provides intelligent suggestions and context-aware results.
  */
 export class NLPSearchEngine {
-  private intentPatterns = new Map<string, SearchIntent>();
-  private entityPatterns = new Map<string, RegExp>();
-  private synonyms = new Map<string, string[]>();
   private stopWords = new Set<string>();
 
   constructor() {
@@ -64,23 +68,26 @@ export class NLPSearchEngine {
    * Process natural language query into structured search parameters
    */
   async processQuery(
-    query: string, 
+    query: string,
     context?: SearchContext
   ): Promise<NLPSearchQuery> {
     // Normalize the input query
     const normalizedQuery = this.normalizeQuery(query);
-    
+
     // Extract intent from the query
     const intent = this.extractIntent(normalizedQuery);
-    
+
     // Extract entities (names, conditions, dates, etc.)
     const entities = this.extractEntities(normalizedQuery);
-    
+
     // Convert entities to database filters
     const filters = this.entitiesToFilters(entities, context);
-    
+
     // Generate suggestions based on context
-    const suggestions = await this.generateSuggestions(normalizedQuery, context);
+    const suggestions = await this.generateSuggestions(
+      normalizedQuery,
+      context
+    );
 
     return {
       originalQuery: query,
@@ -88,7 +95,7 @@ export class NLPSearchEngine {
       intent,
       entities,
       filters,
-      suggestions
+      suggestions,
     };
   }
 
@@ -96,18 +103,20 @@ export class NLPSearchEngine {
    * Normalize query text for better processing
    */
   private normalizeQuery(query: string): string {
-    return query
-      .toLowerCase()
-      .trim()
-      // Remove extra whitespace
-      .replace(/\s+/g, ' ')
-      // Handle common contractions
-      .replace(/can't/g, 'cannot')
-      .replace(/won't/g, 'will not')
-      .replace(/n't/g, ' not')
-      // Remove punctuation except for important ones
-      .replace(/[^\w\s\-\.]/g, ' ')
-      .trim();
+    return (
+      query
+        .toLowerCase()
+        .trim()
+        // Remove extra whitespace
+        .replace(/\s+/g, ' ')
+        // Handle common contractions
+        .replace(/can't/g, 'cannot')
+        .replace(/won't/g, 'will not')
+        .replace(/n't/g, ' not')
+        // Remove punctuation except for important ones
+        .replace(/[^\w\s\-.]/g, ' ')
+        .trim()
+    );
   }
 
   /**
@@ -119,7 +128,7 @@ export class NLPSearchEngine {
       action: 'find',
       target: 'patient',
       confidence: 0.5,
-      modifiers: []
+      modifiers: [],
     };
 
     // Action detection patterns
@@ -128,7 +137,7 @@ export class NLPSearchEngine {
       list: /\b(list|show all|display|enumerate)\b/i,
       show: /\b(show|display|view|open)\b/i,
       filter: /\b(filter|where|with|having)\b/i,
-      count: /\b(count|how many|number of)\b/i
+      count: /\b(count|how many|number of)\b/i,
     };
 
     // Target detection patterns
@@ -137,7 +146,7 @@ export class NLPSearchEngine {
       appointment: /\b(appointment|booking|schedule|visit)\b/i,
       treatment: /\b(treatment|therapy|procedure|service)\b/i,
       procedure: /\b(procedure|operation|surgery|intervention)\b/i,
-      record: /\b(record|history|file|document)\b/i
+      record: /\b(record|history|file|document)\b/i,
     };
 
     // Detect action
@@ -164,7 +173,7 @@ export class NLPSearchEngine {
       urgent: /\b(urgent|emergency|critical|priority)\b/i,
       completed: /\b(completed|finished|done)\b/i,
       pending: /\b(pending|waiting|scheduled)\b/i,
-      cancelled: /\b(cancelled|canceled|aborted)\b/i
+      cancelled: /\b(cancelled|canceled|aborted)\b/i,
     };
 
     for (const [modifier, pattern] of Object.entries(modifierPatterns)) {
@@ -194,7 +203,7 @@ export class NLPSearchEngine {
           value: nameMatch[1],
           confidence: 0.7,
           startIndex: nameMatch.index,
-          endIndex: nameMatch.index + nameMatch[1].length
+          endIndex: nameMatch.index + nameMatch[1].length,
         });
       }
     }
@@ -205,7 +214,11 @@ export class NLPSearchEngine {
       { pattern: /\b(\d{4}-\d{1,2}-\d{1,2})\b/g, confidence: 0.9 },
       { pattern: /\b(today|yesterday|tomorrow)\b/g, confidence: 0.8 },
       { pattern: /\b(this week|last week|next week)\b/g, confidence: 0.7 },
-      { pattern: /\b(january|february|march|april|may|june|july|august|september|october|november|december)\s+\d{1,2}\b/gi, confidence: 0.8 }
+      {
+        pattern:
+          /\b(january|february|march|april|may|june|july|august|september|october|november|december)\s+\d{1,2}\b/gi,
+        confidence: 0.8,
+      },
     ];
 
     for (const { pattern, confidence } of datePatterns) {
@@ -216,7 +229,7 @@ export class NLPSearchEngine {
           value: dateMatch[1],
           confidence,
           startIndex: dateMatch.index,
-          endIndex: dateMatch.index + dateMatch[1].length
+          endIndex: dateMatch.index + dateMatch[1].length,
         });
       }
     }
@@ -230,15 +243,27 @@ export class NLPSearchEngine {
         value: ageMatch[1],
         confidence: 0.8,
         startIndex: ageMatch.index,
-        endIndex: ageMatch.index + ageMatch[0].length
+        endIndex: ageMatch.index + ageMatch[0].length,
       });
     }
 
     // Medical condition patterns (basic set)
     const conditionKeywords = [
-      'diabetes', 'hypertension', 'obesity', 'depression', 'anxiety',
-      'arthritis', 'asthma', 'allergies', 'migraine', 'insomnia',
-      'acne', 'eczema', 'psoriasis', 'dermatitis', 'rosacea'
+      'diabetes',
+      'hypertension',
+      'obesity',
+      'depression',
+      'anxiety',
+      'arthritis',
+      'asthma',
+      'allergies',
+      'migraine',
+      'insomnia',
+      'acne',
+      'eczema',
+      'psoriasis',
+      'dermatitis',
+      'rosacea',
     ];
 
     for (const condition of conditionKeywords) {
@@ -250,16 +275,27 @@ export class NLPSearchEngine {
           value: condition,
           confidence: 0.8,
           startIndex: conditionMatch.index,
-          endIndex: conditionMatch.index + condition.length
+          endIndex: conditionMatch.index + condition.length,
         });
       }
     }
 
     // Procedure patterns (aesthetic/beauty focused)
     const procedureKeywords = [
-      'botox', 'fillers', 'laser', 'peeling', 'facial', 'massage',
-      'microagulhamento', 'limpeza', 'hidratação', 'radiofrequência',
-      'criolipólise', 'depilação', 'toxina', 'preenchimento'
+      'botox',
+      'fillers',
+      'laser',
+      'peeling',
+      'facial',
+      'massage',
+      'microagulhamento',
+      'limpeza',
+      'hidratação',
+      'radiofrequência',
+      'criolipólise',
+      'depilação',
+      'toxina',
+      'preenchimento',
     ];
 
     for (const procedure of procedureKeywords) {
@@ -271,7 +307,7 @@ export class NLPSearchEngine {
           value: procedure,
           confidence: 0.8,
           startIndex: procedureMatch.index,
-          endIndex: procedureMatch.index + procedure.length
+          endIndex: procedureMatch.index + procedure.length,
         });
       }
     }
@@ -284,7 +320,7 @@ export class NLPSearchEngine {
    * Convert extracted entities to database filters
    */
   private entitiesToFilters(
-    entities: SearchEntity[], 
+    entities: SearchEntity[],
     context?: SearchContext
   ): Record<string, any> {
     const filters: Record<string, any> = {};
@@ -295,37 +331,47 @@ export class NLPSearchEngine {
           // Search in name fields
           filters.name = {
             contains: entity.value,
-            mode: 'insensitive'
+            mode: 'insensitive',
           };
           break;
 
-        case 'date':
+        case 'date': {
           // Parse and convert to date range
           const date = this.parseDate(entity.value);
           if (date) {
             filters.createdAt = {
-              gte: new Date(date.getFullYear(), date.getMonth(), date.getDate()),
-              lt: new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1)
+              gte: new Date(
+                date.getFullYear(),
+                date.getMonth(),
+                date.getDate()
+              ),
+              lt: new Date(
+                date.getFullYear(),
+                date.getMonth(),
+                date.getDate() + 1
+              ),
             };
           }
           break;
+        }
 
-        case 'age':
-          const age = parseInt(entity.value);
+        case 'age': {
+          const age = Number.parseInt(entity.value, 10);
           filters.birthDate = {
             gte: new Date(new Date().getFullYear() - age - 1, 0, 1),
-            lte: new Date(new Date().getFullYear() - age, 11, 31)
+            lte: new Date(new Date().getFullYear() - age, 11, 31),
           };
           break;
+        }
 
         case 'condition':
           filters.medicalHistory = {
             some: {
               condition: {
                 contains: entity.value,
-                mode: 'insensitive'
-              }
-            }
+                mode: 'insensitive',
+              },
+            },
           };
           break;
 
@@ -334,15 +380,15 @@ export class NLPSearchEngine {
             some: {
               procedureName: {
                 contains: entity.value,
-                mode: 'insensitive'
-              }
-            }
+                mode: 'insensitive',
+              },
+            },
           };
           break;
 
         case 'specialty':
           filters.preferredSpecialty = {
-            equals: entity.value
+            equals: entity.value,
           };
           break;
       }
@@ -360,7 +406,7 @@ export class NLPSearchEngine {
    * Generate search suggestions based on query and context
    */
   private async generateSuggestions(
-    query: string, 
+    query: string,
     context?: SearchContext
   ): Promise<string[]> {
     const suggestions: string[] = [];
@@ -368,7 +414,7 @@ export class NLPSearchEngine {
     // Add recent searches as suggestions
     if (context?.recentSearches) {
       const relevantSearches = context.recentSearches
-        .filter(search => search.toLowerCase().includes(query.toLowerCase()))
+        .filter((search) => search.toLowerCase().includes(query.toLowerCase()))
         .slice(0, 3);
       suggestions.push(...relevantSearches);
     }
@@ -380,13 +426,14 @@ export class NLPSearchEngine {
       'tratamentos de botox',
       'pacientes novos esta semana',
       'procedimentos pendentes',
-      'histórico de alergias'
+      'histórico de alergias',
     ];
 
     const relevantPatterns = commonPatterns
-      .filter(pattern => 
-        pattern.toLowerCase().includes(query.toLowerCase()) ||
-        query.toLowerCase().includes(pattern.toLowerCase())
+      .filter(
+        (pattern) =>
+          pattern.toLowerCase().includes(query.toLowerCase()) ||
+          query.toLowerCase().includes(pattern.toLowerCase())
       )
       .slice(0, 2);
 
@@ -401,7 +448,7 @@ export class NLPSearchEngine {
    */
   private parseDate(dateString: string): Date | null {
     const today = new Date();
-    
+
     // Handle relative dates
     switch (dateString.toLowerCase()) {
       case 'today':
@@ -410,23 +457,26 @@ export class NLPSearchEngine {
         return new Date(today.getTime() - 24 * 60 * 60 * 1000);
       case 'tomorrow':
         return new Date(today.getTime() + 24 * 60 * 60 * 1000);
-      case 'this week':
+      case 'this week': {
         const startOfWeek = new Date(today);
         startOfWeek.setDate(today.getDate() - today.getDay());
         return startOfWeek;
-      case 'last week':
+      }
+      case 'last week': {
         const lastWeek = new Date(today);
         lastWeek.setDate(today.getDate() - 7 - today.getDay());
         return lastWeek;
-      case 'next week':
+      }
+      case 'next week': {
         const nextWeek = new Date(today);
         nextWeek.setDate(today.getDate() + 7 - today.getDay());
         return nextWeek;
+      }
     }
 
     // Try to parse standard date formats
     const date = new Date(dateString);
-    return isNaN(date.getTime()) ? null : date;
+    return Number.isNaN(date.getTime()) ? null : date;
   }
 
   /**
@@ -434,13 +484,38 @@ export class NLPSearchEngine {
    */
   private isCommonWord(word: string): boolean {
     const commonWords = new Set([
-      'Today', 'Yesterday', 'Tomorrow', 'Monday', 'Tuesday', 'Wednesday', 
-      'Thursday', 'Friday', 'Saturday', 'Sunday', 'January', 'February',
-      'March', 'April', 'May', 'June', 'July', 'August', 'September',
-      'October', 'November', 'December', 'Patient', 'Doctor', 'Nurse',
-      'Treatment', 'Procedure', 'Appointment', 'Schedule', 'History'
+      'Today',
+      'Yesterday',
+      'Tomorrow',
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday',
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+      'Patient',
+      'Doctor',
+      'Nurse',
+      'Treatment',
+      'Procedure',
+      'Appointment',
+      'Schedule',
+      'History',
     ]);
-    
+
     return commonWords.has(word) || this.stopWords.has(word.toLowerCase());
   }
 
@@ -452,10 +527,14 @@ export class NLPSearchEngine {
     const result: SearchEntity[] = [];
 
     for (const entity of sorted) {
-      const hasOverlap = result.some(existing => 
-        (entity.startIndex >= existing.startIndex && entity.startIndex < existing.endIndex) ||
-        (entity.endIndex > existing.startIndex && entity.endIndex <= existing.endIndex) ||
-        (entity.startIndex <= existing.startIndex && entity.endIndex >= existing.endIndex)
+      const hasOverlap = result.some(
+        (existing) =>
+          (entity.startIndex >= existing.startIndex &&
+            entity.startIndex < existing.endIndex) ||
+          (entity.endIndex > existing.startIndex &&
+            entity.endIndex <= existing.endIndex) ||
+          (entity.startIndex <= existing.startIndex &&
+            entity.endIndex >= existing.endIndex)
       );
 
       if (!hasOverlap) {
@@ -492,7 +571,7 @@ export class NLPSearchEngine {
       ['tratamento', ['procedimento', 'terapia', 'serviço']],
       ['histórico', ['histórico médico', 'prontuário', 'ficha']],
       ['alergia', ['alergias', 'reação alérgica', 'sensibilidade']],
-      ['medicamento', ['remédio', 'medicação', 'fármaco']]
+      ['medicamento', ['remédio', 'medicação', 'fármaco']],
     ]);
   }
 
@@ -501,11 +580,55 @@ export class NLPSearchEngine {
    */
   private initializeStopWords(): void {
     this.stopWords = new Set([
-      'a', 'an', 'and', 'are', 'as', 'at', 'be', 'by', 'for', 'from',
-      'has', 'he', 'in', 'is', 'it', 'its', 'of', 'on', 'that', 'the',
-      'to', 'was', 'were', 'will', 'with', 'o', 'a', 'os', 'as', 'um',
-      'uma', 'de', 'do', 'da', 'dos', 'das', 'em', 'no', 'na', 'nos',
-      'nas', 'por', 'para', 'com', 'sem', 'sob', 'sobre', 'ante', 'após'
+      'a',
+      'an',
+      'and',
+      'are',
+      'as',
+      'at',
+      'be',
+      'by',
+      'for',
+      'from',
+      'has',
+      'he',
+      'in',
+      'is',
+      'it',
+      'its',
+      'of',
+      'on',
+      'that',
+      'the',
+      'to',
+      'was',
+      'were',
+      'will',
+      'with',
+      'o',
+      'a',
+      'os',
+      'as',
+      'um',
+      'uma',
+      'de',
+      'do',
+      'da',
+      'dos',
+      'das',
+      'em',
+      'no',
+      'na',
+      'nos',
+      'nas',
+      'por',
+      'para',
+      'com',
+      'sem',
+      'sob',
+      'sobre',
+      'ante',
+      'após',
     ]);
   }
 }

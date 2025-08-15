@@ -2,21 +2,20 @@
 // NeonPro - Epic 6 Story 6.2 Task 1: Patient Communication Center
 // API endpoint for managing message threads and conversations
 
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/utils/supabase/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { communicationService } from '@/lib/services/communication-service';
+import { createClient } from '@/utils/supabase/server';
 
 export async function GET(request: NextRequest) {
   try {
     // Verify authentication
     const supabase = await createClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
     if (!session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Parse query parameters
@@ -25,23 +24,25 @@ export async function GET(request: NextRequest) {
     const includeArchived = searchParams.get('include_archived') === 'true';
 
     // Get message threads using communication service
-    const threads = await communicationService.getMessageThreads(patientId, includeArchived);
+    const threads = await communicationService.getMessageThreads(
+      patientId,
+      includeArchived
+    );
 
     return NextResponse.json({
       success: true,
       data: {
         threads,
-        total: threads.length
-      }
+        total: threads.length,
+      },
     });
-
   } catch (error) {
     console.error('Error in get threads API:', error);
-    
+
     return NextResponse.json(
-      { 
+      {
         error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );
@@ -52,13 +53,12 @@ export async function POST(request: NextRequest) {
   try {
     // Verify authentication
     const supabase = await createClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
     if (!session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Parse request body
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
     const { patient_id, subject, priority = 'normal' } = body;
 
     // Validate required fields
-    if (!patient_id || !subject) {
+    if (!(patient_id && subject)) {
       return NextResponse.json(
         { error: 'Patient ID and subject are required' },
         { status: 400 }
@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
         status: 'active',
         priority,
         participants: [],
-        tags: []
+        tags: [],
       })
       .select()
       .single();
@@ -93,16 +93,15 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: thread
+      data: thread,
     });
-
   } catch (error) {
     console.error('Error in create thread API:', error);
-    
+
     return NextResponse.json(
-      { 
+      {
         error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );

@@ -1,7 +1,7 @@
 /**
  * Predictive Insights Engine
  * Story 3.2: AI-powered Risk Assessment + Insights Implementation
- * 
+ *
  * This module implements advanced predictive analytics and insights:
  * - Historical data analysis and trend detection
  * - Predictive risk modeling and forecasting
@@ -13,10 +13,10 @@
  * - Brazilian healthcare analytics compliance
  */
 
-import { createClient } from '@/lib/supabase/client'
+import { createClient } from '@/lib/supabase/client';
 
 // Insight Types
-type InsightType = 
+type InsightType =
   | 'risk_trend'
   | 'outcome_prediction'
   | 'resource_optimization'
@@ -26,369 +26,369 @@ type InsightType =
   | 'cost_analysis'
   | 'quality_improvement'
   | 'preventive_care'
-  | 'compliance_insight'
+  | 'compliance_insight';
 
 // Insight Priority
-type InsightPriority = 'low' | 'medium' | 'high' | 'critical'
+type InsightPriority = 'low' | 'medium' | 'high' | 'critical';
 
 // Insight Confidence
-type InsightConfidence = 'low' | 'medium' | 'high' | 'very_high'
+type InsightConfidence = 'low' | 'medium' | 'high' | 'very_high';
 
 // Time Horizon
-type TimeHorizon = 'immediate' | 'short_term' | 'medium_term' | 'long_term'
+type TimeHorizon = 'immediate' | 'short_term' | 'medium_term' | 'long_term';
 
 // Predictive Insight
 interface PredictiveInsight {
-  id: string
-  type: InsightType
-  priority: InsightPriority
-  confidence: InsightConfidence
-  timeHorizon: TimeHorizon
-  title: string
-  description: string
-  summary: string
+  id: string;
+  type: InsightType;
+  priority: InsightPriority;
+  confidence: InsightConfidence;
+  timeHorizon: TimeHorizon;
+  title: string;
+  description: string;
+  summary: string;
   details: {
-    patientId?: string
-    treatmentId?: string
-    populationSegment?: string
-    riskFactors?: string[]
+    patientId?: string;
+    treatmentId?: string;
+    populationSegment?: string;
+    riskFactors?: string[];
     predictedOutcome?: {
-      outcome: string
-      probability: number
-      timeframe: string
-      confidence: number
-    }
+      outcome: string;
+      probability: number;
+      timeframe: string;
+      confidence: number;
+    };
     recommendations?: {
-      action: string
-      priority: InsightPriority
-      expectedImpact: string
-      implementation: string
-      timeline: string
-      resources: string[]
-    }[]
+      action: string;
+      priority: InsightPriority;
+      expectedImpact: string;
+      implementation: string;
+      timeline: string;
+      resources: string[];
+    }[];
     metrics?: {
-      name: string
-      current: number
-      predicted: number
-      change: number
-      unit: string
-    }[]
+      name: string;
+      current: number;
+      predicted: number;
+      change: number;
+      unit: string;
+    }[];
     trends?: {
-      metric: string
-      direction: 'increasing' | 'decreasing' | 'stable'
-      rate: number
-      significance: number
-    }[]
+      metric: string;
+      direction: 'increasing' | 'decreasing' | 'stable';
+      rate: number;
+      significance: number;
+    }[];
     comparisons?: {
-      benchmark: string
-      current: number
-      target: number
-      percentile: number
-    }[]
-  }
+      benchmark: string;
+      current: number;
+      target: number;
+      percentile: number;
+    }[];
+  };
   evidence: {
-    dataPoints: number
-    timeRange: { start: Date; end: Date }
-    sources: string[]
-    methodology: string
-    limitations: string[]
-    validationScore: number
-  }
+    dataPoints: number;
+    timeRange: { start: Date; end: Date };
+    sources: string[];
+    methodology: string;
+    limitations: string[];
+    validationScore: number;
+  };
   actionable: {
-    immediate: string[]
-    shortTerm: string[]
-    longTerm: string[]
-    preventive: string[]
-  }
+    immediate: string[];
+    shortTerm: string[];
+    longTerm: string[];
+    preventive: string[];
+  };
   impact: {
     clinical: {
-      patientSafety: number
-      outcomeImprovement: number
-      complicationReduction: number
-    }
+      patientSafety: number;
+      outcomeImprovement: number;
+      complicationReduction: number;
+    };
     operational: {
-      efficiency: number
-      costReduction: number
-      resourceOptimization: number
-    }
+      efficiency: number;
+      costReduction: number;
+      resourceOptimization: number;
+    };
     financial: {
-      costSavings: number
-      revenueImpact: number
-      roi: number
-    }
-  }
+      costSavings: number;
+      revenueImpact: number;
+      roi: number;
+    };
+  };
   metadata: {
-    generatedAt: Date
-    validUntil: Date
-    lastUpdated: Date
-    version: string
-    algorithm: string
-    dataVersion: string
-  }
+    generatedAt: Date;
+    validUntil: Date;
+    lastUpdated: Date;
+    version: string;
+    algorithm: string;
+    dataVersion: string;
+  };
 }
 
 // Trend Analysis
 interface TrendAnalysis {
-  metric: string
-  timeframe: string
+  metric: string;
+  timeframe: string;
   dataPoints: {
-    timestamp: Date
-    value: number
-    confidence: number
-  }[]
+    timestamp: Date;
+    value: number;
+    confidence: number;
+  }[];
   trend: {
-    direction: 'increasing' | 'decreasing' | 'stable' | 'volatile'
-    slope: number
-    correlation: number
+    direction: 'increasing' | 'decreasing' | 'stable' | 'volatile';
+    slope: number;
+    correlation: number;
     seasonality?: {
-      detected: boolean
-      period: string
-      amplitude: number
-    }
+      detected: boolean;
+      period: string;
+      amplitude: number;
+    };
     changePoints?: {
-      timestamp: Date
-      significance: number
-      description: string
-    }[]
-  }
+      timestamp: Date;
+      significance: number;
+      description: string;
+    }[];
+  };
   forecast: {
     predictions: {
-      timestamp: Date
-      value: number
-      confidence: number
-      lowerBound: number
-      upperBound: number
-    }[]
+      timestamp: Date;
+      value: number;
+      confidence: number;
+      lowerBound: number;
+      upperBound: number;
+    }[];
     accuracy: {
-      mape: number // Mean Absolute Percentage Error
-      rmse: number // Root Mean Square Error
-      r2: number   // R-squared
-    }
-  }
+      mape: number; // Mean Absolute Percentage Error
+      rmse: number; // Root Mean Square Error
+      r2: number; // R-squared
+    };
+  };
   insights: {
-    summary: string
-    keyFindings: string[]
-    recommendations: string[]
-    risks: string[]
-    opportunities: string[]
-  }
+    summary: string;
+    keyFindings: string[];
+    recommendations: string[];
+    risks: string[];
+    opportunities: string[];
+  };
 }
 
 // Pattern Recognition
 interface PatternRecognition {
-  patternId: string
-  type: 'temporal' | 'demographic' | 'clinical' | 'behavioral' | 'operational'
-  name: string
-  description: string
-  frequency: number
-  confidence: number
-  significance: number
+  patternId: string;
+  type: 'temporal' | 'demographic' | 'clinical' | 'behavioral' | 'operational';
+  name: string;
+  description: string;
+  frequency: number;
+  confidence: number;
+  significance: number;
   characteristics: {
-    features: string[]
-    conditions: string[]
-    outcomes: string[]
-    timeframe: string
-  }
+    features: string[];
+    conditions: string[];
+    outcomes: string[];
+    timeframe: string;
+  };
   occurrences: {
-    patientId?: string
-    treatmentId?: string
-    timestamp: Date
-    context: any
-    outcome: string
-  }[]
+    patientId?: string;
+    treatmentId?: string;
+    timestamp: Date;
+    context: any;
+    outcome: string;
+  }[];
   predictions: {
-    nextOccurrence?: Date
-    probability: number
-    riskFactors: string[]
-    preventionStrategies: string[]
-  }
+    nextOccurrence?: Date;
+    probability: number;
+    riskFactors: string[];
+    preventionStrategies: string[];
+  };
   impact: {
-    clinical: string
-    operational: string
-    financial: string
-  }
+    clinical: string;
+    operational: string;
+    financial: string;
+  };
 }
 
 // Anomaly Detection
 interface AnomalyDetection {
-  anomalyId: string
-  type: 'statistical' | 'temporal' | 'contextual' | 'collective'
-  severity: 'low' | 'medium' | 'high' | 'critical'
-  detected: Date
-  metric: string
-  value: number
-  expectedRange: { min: number; max: number }
+  anomalyId: string;
+  type: 'statistical' | 'temporal' | 'contextual' | 'collective';
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  detected: Date;
+  metric: string;
+  value: number;
+  expectedRange: { min: number; max: number };
   deviation: {
-    absolute: number
-    relative: number
-    standardDeviations: number
-  }
+    absolute: number;
+    relative: number;
+    standardDeviations: number;
+  };
   context: {
-    patientId?: string
-    treatmentId?: string
-    timeframe: string
-    relatedMetrics: string[]
-    environmentalFactors: string[]
-  }
+    patientId?: string;
+    treatmentId?: string;
+    timeframe: string;
+    relatedMetrics: string[];
+    environmentalFactors: string[];
+  };
   investigation: {
-    possibleCauses: string[]
-    relatedAnomalies: string[]
-    historicalOccurrences: number
-    lastOccurrence?: Date
-  }
+    possibleCauses: string[];
+    relatedAnomalies: string[];
+    historicalOccurrences: number;
+    lastOccurrence?: Date;
+  };
   recommendations: {
-    immediate: string[]
-    investigation: string[]
-    prevention: string[]
-    monitoring: string[]
-  }
+    immediate: string[];
+    investigation: string[];
+    prevention: string[];
+    monitoring: string[];
+  };
 }
 
 // Population Health Insights
 interface PopulationHealthInsight {
-  populationId: string
+  populationId: string;
   segment: {
-    criteria: string[]
-    size: number
+    criteria: string[];
+    size: number;
     demographics: {
-      ageRange: { min: number; max: number }
-      genderDistribution: Record<string, number>
-      geographicDistribution: Record<string, number>
-      socioeconomicFactors: Record<string, number>
-    }
-  }
+      ageRange: { min: number; max: number };
+      genderDistribution: Record<string, number>;
+      geographicDistribution: Record<string, number>;
+      socioeconomicFactors: Record<string, number>;
+    };
+  };
   healthMetrics: {
-    metric: string
-    value: number
-    benchmark: number
-    percentile: number
-    trend: 'improving' | 'declining' | 'stable'
-  }[]
+    metric: string;
+    value: number;
+    benchmark: number;
+    percentile: number;
+    trend: 'improving' | 'declining' | 'stable';
+  }[];
   riskProfile: {
-    highRiskPercentage: number
+    highRiskPercentage: number;
     commonRiskFactors: {
-      factor: string
-      prevalence: number
-      impact: number
-    }[]
+      factor: string;
+      prevalence: number;
+      impact: number;
+    }[];
     emergingRisks: {
-      risk: string
-      trend: number
-      projection: number
-    }[]
-  }
+      risk: string;
+      trend: number;
+      projection: number;
+    }[];
+  };
   outcomes: {
-    treatmentSuccess: number
-    complicationRate: number
-    readmissionRate: number
-    satisfactionScore: number
-    costPerPatient: number
-  }
+    treatmentSuccess: number;
+    complicationRate: number;
+    readmissionRate: number;
+    satisfactionScore: number;
+    costPerPatient: number;
+  };
   interventions: {
     recommended: {
-      intervention: string
-      targetPopulation: number
-      expectedImpact: string
-      costEffectiveness: number
-      timeline: string
-    }[]
+      intervention: string;
+      targetPopulation: number;
+      expectedImpact: string;
+      costEffectiveness: number;
+      timeline: string;
+    }[];
     ongoing: {
-      intervention: string
-      participants: number
-      progress: string
-      effectiveness: number
-    }[]
-  }
+      intervention: string;
+      participants: number;
+      progress: string;
+      effectiveness: number;
+    }[];
+  };
   comparisons: {
     national: {
-      metric: string
-      ourValue: number
-      nationalAverage: number
-      ranking: number
-    }[]
+      metric: string;
+      ourValue: number;
+      nationalAverage: number;
+      ranking: number;
+    }[];
     regional: {
-      metric: string
-      ourValue: number
-      regionalAverage: number
-      ranking: number
-    }[]
+      metric: string;
+      ourValue: number;
+      regionalAverage: number;
+      ranking: number;
+    }[];
     similar: {
-      metric: string
-      ourValue: number
-      peerAverage: number
-      ranking: number
-    }[]
-  }
+      metric: string;
+      ourValue: number;
+      peerAverage: number;
+      ranking: number;
+    }[];
+  };
 }
 
 // Insights Configuration
 interface InsightsConfig {
-  enabled: boolean
+  enabled: boolean;
   updateFrequency: {
-    realTime: boolean
-    hourly: boolean
-    daily: boolean
-    weekly: boolean
-    monthly: boolean
-  }
+    realTime: boolean;
+    hourly: boolean;
+    daily: boolean;
+    weekly: boolean;
+    monthly: boolean;
+  };
   algorithms: {
     trendAnalysis: {
-      enabled: boolean
-      lookbackDays: number
-      forecastDays: number
-      confidenceThreshold: number
-    }
+      enabled: boolean;
+      lookbackDays: number;
+      forecastDays: number;
+      confidenceThreshold: number;
+    };
     patternRecognition: {
-      enabled: boolean
-      minOccurrences: number
-      confidenceThreshold: number
-      timeWindow: number
-    }
+      enabled: boolean;
+      minOccurrences: number;
+      confidenceThreshold: number;
+      timeWindow: number;
+    };
     anomalyDetection: {
-      enabled: boolean
-      sensitivity: number
-      methods: string[]
-      alertThreshold: number
-    }
+      enabled: boolean;
+      sensitivity: number;
+      methods: string[];
+      alertThreshold: number;
+    };
     populationHealth: {
-      enabled: boolean
-      segmentationCriteria: string[]
-      benchmarkSources: string[]
-      updateInterval: number
-    }
-  }
+      enabled: boolean;
+      segmentationCriteria: string[];
+      benchmarkSources: string[];
+      updateInterval: number;
+    };
+  };
   dataQuality: {
-    minimumDataPoints: number
-    completenessThreshold: number
-    freshnessThreshold: number
-    validationRules: string[]
-  }
+    minimumDataPoints: number;
+    completenessThreshold: number;
+    freshnessThreshold: number;
+    validationRules: string[];
+  };
   compliance: {
-    lgpd: boolean
-    cfm: boolean
-    anvisa: boolean
-    dataRetention: number
-    anonymization: boolean
-  }
+    lgpd: boolean;
+    cfm: boolean;
+    anvisa: boolean;
+    dataRetention: number;
+    anonymization: boolean;
+  };
 }
 
 class PredictiveInsightsEngine {
-  private supabase = createClient()
-  private config: InsightsConfig
-  private insights: Map<string, PredictiveInsight> = new Map()
-  private trends: Map<string, TrendAnalysis> = new Map()
-  private patterns: Map<string, PatternRecognition> = new Map()
-  private anomalies: Map<string, AnomalyDetection> = new Map()
-  private populationInsights: Map<string, PopulationHealthInsight> = new Map()
-  private isProcessing: boolean = false
-  private processingInterval?: NodeJS.Timeout
+  private supabase = createClient();
+  private config: InsightsConfig;
+  private insights: Map<string, PredictiveInsight> = new Map();
+  private trends: Map<string, TrendAnalysis> = new Map();
+  private patterns: Map<string, PatternRecognition> = new Map();
+  private anomalies: Map<string, AnomalyDetection> = new Map();
+  private populationInsights: Map<string, PopulationHealthInsight> = new Map();
+  private isProcessing = false;
+  private processingInterval?: NodeJS.Timeout;
 
   constructor(config?: Partial<InsightsConfig>) {
-    this.config = this.initializeConfig(config)
-    this.loadExistingInsights()
-    
+    this.config = this.initializeConfig(config);
+    this.loadExistingInsights();
+
     if (this.config.enabled) {
-      this.startInsightsProcessing()
+      this.startInsightsProcessing();
     }
   }
 
@@ -398,126 +398,160 @@ class PredictiveInsightsEngine {
   async generatePatientInsights(
     patientId: string,
     options?: {
-      includePopulation?: boolean
-      timeHorizon?: TimeHorizon
-      focusAreas?: InsightType[]
+      includePopulation?: boolean;
+      timeHorizon?: TimeHorizon;
+      focusAreas?: InsightType[];
     }
   ): Promise<PredictiveInsight[]> {
     try {
-      console.log(`Generating insights for patient ${patientId}`)
-      const insights: PredictiveInsight[] = []
+      console.log(`Generating insights for patient ${patientId}`);
+      const insights: PredictiveInsight[] = [];
 
       // Get patient data
-      const patientData = await this.getPatientData(patientId)
+      const patientData = await this.getPatientData(patientId);
       if (!patientData) {
-        throw new Error('Patient data not found')
+        throw new Error('Patient data not found');
       }
 
       // Risk trend analysis
       if (!options?.focusAreas || options.focusAreas.includes('risk_trend')) {
-        const riskTrendInsight = await this.generateRiskTrendInsight(patientId, patientData)
-        if (riskTrendInsight) insights.push(riskTrendInsight)
+        const riskTrendInsight = await this.generateRiskTrendInsight(
+          patientId,
+          patientData
+        );
+        if (riskTrendInsight) insights.push(riskTrendInsight);
       }
 
       // Outcome prediction
-      if (!options?.focusAreas || options.focusAreas.includes('outcome_prediction')) {
-        const outcomeInsight = await this.generateOutcomePredictionInsight(patientId, patientData)
-        if (outcomeInsight) insights.push(outcomeInsight)
+      if (
+        !options?.focusAreas ||
+        options.focusAreas.includes('outcome_prediction')
+      ) {
+        const outcomeInsight = await this.generateOutcomePredictionInsight(
+          patientId,
+          patientData
+        );
+        if (outcomeInsight) insights.push(outcomeInsight);
       }
 
       // Treatment recommendations
-      if (!options?.focusAreas || options.focusAreas.includes('treatment_recommendation')) {
-        const treatmentInsight = await this.generateTreatmentRecommendationInsight(patientId, patientData)
-        if (treatmentInsight) insights.push(treatmentInsight)
+      if (
+        !options?.focusAreas ||
+        options.focusAreas.includes('treatment_recommendation')
+      ) {
+        const treatmentInsight =
+          await this.generateTreatmentRecommendationInsight(
+            patientId,
+            patientData
+          );
+        if (treatmentInsight) insights.push(treatmentInsight);
       }
 
       // Preventive care insights
-      if (!options?.focusAreas || options.focusAreas.includes('preventive_care')) {
-        const preventiveInsight = await this.generatePreventiveCareInsight(patientId, patientData)
-        if (preventiveInsight) insights.push(preventiveInsight)
+      if (
+        !options?.focusAreas ||
+        options.focusAreas.includes('preventive_care')
+      ) {
+        const preventiveInsight = await this.generatePreventiveCareInsight(
+          patientId,
+          patientData
+        );
+        if (preventiveInsight) insights.push(preventiveInsight);
       }
 
       // Population comparison (if requested)
       if (options?.includePopulation) {
-        const populationInsight = await this.generatePopulationComparisonInsight(patientId, patientData)
-        if (populationInsight) insights.push(populationInsight)
+        const populationInsight =
+          await this.generatePopulationComparisonInsight(
+            patientId,
+            patientData
+          );
+        if (populationInsight) insights.push(populationInsight);
       }
 
       // Store insights
       for (const insight of insights) {
-        this.insights.set(insight.id, insight)
-        await this.storeInsight(insight)
+        this.insights.set(insight.id, insight);
+        await this.storeInsight(insight);
       }
 
-      console.log(`Generated ${insights.length} insights for patient ${patientId}`)
-      return insights
-
+      console.log(
+        `Generated ${insights.length} insights for patient ${patientId}`
+      );
+      return insights;
     } catch (error) {
-      console.error('Error generating patient insights:', error)
-      throw new Error('Failed to generate patient insights')
+      console.error('Error generating patient insights:', error);
+      throw new Error('Failed to generate patient insights');
     }
   }
 
   /**
    * Generate population health insights
    */
-  async generatePopulationInsights(
-    criteria?: {
-      ageRange?: { min: number; max: number }
-      gender?: string
-      conditions?: string[]
-      treatments?: string[]
-      timeframe?: { start: Date; end: Date }
-    }
-  ): Promise<PopulationHealthInsight> {
+  async generatePopulationInsights(criteria?: {
+    ageRange?: { min: number; max: number };
+    gender?: string;
+    conditions?: string[];
+    treatments?: string[];
+    timeframe?: { start: Date; end: Date };
+  }): Promise<PopulationHealthInsight> {
     try {
-      console.log('Generating population health insights')
+      console.log('Generating population health insights');
 
       // Get population data
-      const populationData = await this.getPopulationData(criteria)
-      
+      const populationData = await this.getPopulationData(criteria);
+
       // Generate population ID
-      const populationId = this.generatePopulationId(criteria)
+      const populationId = this.generatePopulationId(criteria);
 
       // Analyze population health metrics
-      const healthMetrics = await this.analyzePopulationHealthMetrics(populationData)
-      
+      const healthMetrics =
+        await this.analyzePopulationHealthMetrics(populationData);
+
       // Analyze risk profile
-      const riskProfile = await this.analyzePopulationRiskProfile(populationData)
-      
+      const riskProfile =
+        await this.analyzePopulationRiskProfile(populationData);
+
       // Analyze outcomes
-      const outcomes = await this.analyzePopulationOutcomes(populationData)
-      
+      const outcomes = await this.analyzePopulationOutcomes(populationData);
+
       // Generate intervention recommendations
-      const interventions = await this.generatePopulationInterventions(populationData, riskProfile)
-      
+      const interventions = await this.generatePopulationInterventions(
+        populationData,
+        riskProfile
+      );
+
       // Generate comparisons
-      const comparisons = await this.generatePopulationComparisons(populationData, healthMetrics)
+      const comparisons = await this.generatePopulationComparisons(
+        populationData,
+        healthMetrics
+      );
 
       const insight: PopulationHealthInsight = {
         populationId,
         segment: {
           criteria: this.formatCriteria(criteria),
           size: populationData.length,
-          demographics: this.analyzeDemographics(populationData)
+          demographics: this.analyzeDemographics(populationData),
         },
         healthMetrics,
         riskProfile,
         outcomes,
         interventions,
-        comparisons
-      }
+        comparisons,
+      };
 
       // Store insight
-      this.populationInsights.set(populationId, insight)
-      await this.storePopulationInsight(insight)
+      this.populationInsights.set(populationId, insight);
+      await this.storePopulationInsight(insight);
 
-      console.log(`Generated population insight for ${populationData.length} patients`)
-      return insight
-
+      console.log(
+        `Generated population insight for ${populationData.length} patients`
+      );
+      return insight;
     } catch (error) {
-      console.error('Error generating population insights:', error)
-      throw new Error('Failed to generate population insights')
+      console.error('Error generating population insights:', error);
+      throw new Error('Failed to generate population insights');
     }
   }
 
@@ -530,19 +564,23 @@ class PredictiveInsightsEngine {
     filters?: any
   ): Promise<TrendAnalysis> {
     try {
-      console.log(`Performing trend analysis for ${metric}`)
+      console.log(`Performing trend analysis for ${metric}`);
 
       // Get historical data
-      const historicalData = await this.getHistoricalData(metric, timeframe, filters)
-      
+      const historicalData = await this.getHistoricalData(
+        metric,
+        timeframe,
+        filters
+      );
+
       // Analyze trend
-      const trend = this.analyzeTrend(historicalData)
-      
+      const trend = this.analyzeTrend(historicalData);
+
       // Generate forecast
-      const forecast = await this.generateForecast(historicalData, trend)
-      
+      const forecast = await this.generateForecast(historicalData, trend);
+
       // Generate insights
-      const insights = this.generateTrendInsights(trend, forecast)
+      const insights = this.generateTrendInsights(trend, forecast);
 
       const analysis: TrendAnalysis = {
         metric,
@@ -550,20 +588,19 @@ class PredictiveInsightsEngine {
         dataPoints: historicalData,
         trend,
         forecast,
-        insights
-      }
+        insights,
+      };
 
       // Store analysis
-      const trendId = `${metric}_${timeframe}_${Date.now()}`
-      this.trends.set(trendId, analysis)
-      await this.storeTrendAnalysis(trendId, analysis)
+      const trendId = `${metric}_${timeframe}_${Date.now()}`;
+      this.trends.set(trendId, analysis);
+      await this.storeTrendAnalysis(trendId, analysis);
 
-      console.log(`Completed trend analysis for ${metric}`)
-      return analysis
-
+      console.log(`Completed trend analysis for ${metric}`);
+      return analysis;
     } catch (error) {
-      console.error('Error performing trend analysis:', error)
-      throw new Error('Failed to perform trend analysis')
+      console.error('Error performing trend analysis:', error);
+      throw new Error('Failed to perform trend analysis');
     }
   }
 
@@ -576,21 +613,28 @@ class PredictiveInsightsEngine {
     filters?: any
   ): Promise<PatternRecognition[]> {
     try {
-      console.log(`Detecting patterns in ${dataType}`)
-      const patterns: PatternRecognition[] = []
+      console.log(`Detecting patterns in ${dataType}`);
+      const patterns: PatternRecognition[] = [];
 
       // Get data for pattern analysis
-      const data = await this.getPatternAnalysisData(dataType, timeWindow, filters)
-      
+      const data = await this.getPatternAnalysisData(
+        dataType,
+        timeWindow,
+        filters
+      );
+
       // Apply pattern recognition algorithms
-      const detectedPatterns = await this.applyPatternRecognition(data)
-      
+      const detectedPatterns = await this.applyPatternRecognition(data);
+
       for (const pattern of detectedPatterns) {
         // Validate pattern significance
-        if (pattern.significance >= this.config.algorithms.patternRecognition.confidenceThreshold) {
+        if (
+          pattern.significance >=
+          this.config.algorithms.patternRecognition.confidenceThreshold
+        ) {
           // Generate predictions
-          const predictions = await this.generatePatternPredictions(pattern)
-          
+          const predictions = await this.generatePatternPredictions(pattern);
+
           const patternRecognition: PatternRecognition = {
             patternId: this.generatePatternId(),
             type: pattern.type,
@@ -602,21 +646,20 @@ class PredictiveInsightsEngine {
             characteristics: pattern.characteristics,
             occurrences: pattern.occurrences,
             predictions,
-            impact: pattern.impact
-          }
+            impact: pattern.impact,
+          };
 
-          patterns.push(patternRecognition)
-          this.patterns.set(patternRecognition.patternId, patternRecognition)
-          await this.storePattern(patternRecognition)
+          patterns.push(patternRecognition);
+          this.patterns.set(patternRecognition.patternId, patternRecognition);
+          await this.storePattern(patternRecognition);
         }
       }
 
-      console.log(`Detected ${patterns.length} significant patterns`)
-      return patterns
-
+      console.log(`Detected ${patterns.length} significant patterns`);
+      return patterns;
     } catch (error) {
-      console.error('Error detecting patterns:', error)
-      throw new Error('Failed to detect patterns')
+      console.error('Error detecting patterns:', error);
+      throw new Error('Failed to detect patterns');
     }
   }
 
@@ -629,21 +672,33 @@ class PredictiveInsightsEngine {
     context?: any
   ): Promise<AnomalyDetection[]> {
     try {
-      const anomalies: AnomalyDetection[] = []
+      const anomalies: AnomalyDetection[] = [];
 
       // Get baseline data
-      const baseline = await this.getBaselineData(metric, context)
-      
+      const baseline = await this.getBaselineData(metric, context);
+
       // Apply anomaly detection algorithms
-      const detectedAnomalies = await this.applyAnomalyDetection(metric, value, baseline, context)
-      
+      const detectedAnomalies = await this.applyAnomalyDetection(
+        metric,
+        value,
+        baseline,
+        context
+      );
+
       for (const anomaly of detectedAnomalies) {
-        if (anomaly.severity !== 'low' || anomaly.deviation.standardDeviations >= this.config.algorithms.anomalyDetection.alertThreshold) {
+        if (
+          anomaly.severity !== 'low' ||
+          anomaly.deviation.standardDeviations >=
+            this.config.algorithms.anomalyDetection.alertThreshold
+        ) {
           // Investigate anomaly
-          const investigation = await this.investigateAnomaly(anomaly)
-          
+          const investigation = await this.investigateAnomaly(anomaly);
+
           // Generate recommendations
-          const recommendations = this.generateAnomalyRecommendations(anomaly, investigation)
+          const recommendations = this.generateAnomalyRecommendations(
+            anomaly,
+            investigation
+          );
 
           const anomalyDetection: AnomalyDetection = {
             anomalyId: this.generateAnomalyId(),
@@ -656,20 +711,19 @@ class PredictiveInsightsEngine {
             deviation: anomaly.deviation,
             context: context || {},
             investigation,
-            recommendations
-          }
+            recommendations,
+          };
 
-          anomalies.push(anomalyDetection)
-          this.anomalies.set(anomalyDetection.anomalyId, anomalyDetection)
-          await this.storeAnomaly(anomalyDetection)
+          anomalies.push(anomalyDetection);
+          this.anomalies.set(anomalyDetection.anomalyId, anomalyDetection);
+          await this.storeAnomaly(anomalyDetection);
         }
       }
 
-      return anomalies
-
+      return anomalies;
     } catch (error) {
-      console.error('Error detecting anomalies:', error)
-      return []
+      console.error('Error detecting anomalies:', error);
+      return [];
     }
   }
 
@@ -687,28 +741,37 @@ class PredictiveInsightsEngine {
         .select('*')
         .eq('patient_id', patientId)
         .order('created_at', { ascending: true })
-        .limit(50)
+        .limit(50);
 
       if (!riskHistory || riskHistory.length < 3) {
-        return null // Not enough data for trend analysis
+        return null; // Not enough data for trend analysis
       }
 
       // Analyze risk trend
-      const riskScores = riskHistory.map(r => r.overall_risk_score)
-      const trend = this.calculateTrend(riskScores)
-      const forecast = this.forecastRisk(riskScores, 30) // 30-day forecast
+      const riskScores = riskHistory.map((r) => r.overall_risk_score);
+      const trend = this.calculateTrend(riskScores);
+      const forecast = this.forecastRisk(riskScores, 30); // 30-day forecast
 
       // Determine insight priority
-      const priority = this.determineRiskTrendPriority(trend, forecast)
-      
+      const priority = this.determineRiskTrendPriority(trend, forecast);
+
       // Generate recommendations
-      const recommendations = this.generateRiskTrendRecommendations(trend, forecast, patientData)
+      const recommendations = this.generateRiskTrendRecommendations(
+        trend,
+        forecast,
+        patientData
+      );
 
       return {
         id: this.generateInsightId(),
         type: 'risk_trend',
         priority,
-        confidence: trend.confidence > 0.8 ? 'high' : trend.confidence > 0.6 ? 'medium' : 'low',
+        confidence:
+          trend.confidence > 0.8
+            ? 'high'
+            : trend.confidence > 0.6
+              ? 'medium'
+              : 'low',
         timeHorizon: 'medium_term',
         title: `Risk Trend Analysis for Patient ${patientId}`,
         description: `Patient's risk level is ${trend.direction} with ${trend.confidence * 100}% confidence`,
@@ -720,7 +783,7 @@ class PredictiveInsightsEngine {
             outcome: forecast.direction,
             probability: forecast.confidence,
             timeframe: '30 days',
-            confidence: forecast.confidence
+            confidence: forecast.confidence,
           },
           recommendations,
           metrics: [
@@ -729,51 +792,60 @@ class PredictiveInsightsEngine {
               current: riskScores[riskScores.length - 1],
               predicted: forecast.value,
               change: forecast.value - riskScores[riskScores.length - 1],
-              unit: 'score'
-            }
+              unit: 'score',
+            },
           ],
           trends: [
             {
               metric: 'Risk Score',
               direction: trend.direction,
               rate: trend.slope,
-              significance: trend.significance
-            }
-          ]
+              significance: trend.significance,
+            },
+          ],
         },
         evidence: {
           dataPoints: riskHistory.length,
           timeRange: {
             start: new Date(riskHistory[0].created_at),
-            end: new Date(riskHistory[riskHistory.length - 1].created_at)
+            end: new Date(riskHistory[riskHistory.length - 1].created_at),
           },
           sources: ['risk_assessments'],
           methodology: 'Linear regression with confidence intervals',
-          limitations: ['Limited to historical data', 'External factors not considered'],
-          validationScore: trend.confidence
+          limitations: [
+            'Limited to historical data',
+            'External factors not considered',
+          ],
+          validationScore: trend.confidence,
         },
         actionable: {
-          immediate: recommendations.filter(r => r.priority === 'critical').map(r => r.action),
-          shortTerm: recommendations.filter(r => r.priority === 'high').map(r => r.action),
-          longTerm: recommendations.filter(r => r.priority === 'medium').map(r => r.action),
-          preventive: this.generatePreventiveActions(trend, patientData)
+          immediate: recommendations
+            .filter((r) => r.priority === 'critical')
+            .map((r) => r.action),
+          shortTerm: recommendations
+            .filter((r) => r.priority === 'high')
+            .map((r) => r.action),
+          longTerm: recommendations
+            .filter((r) => r.priority === 'medium')
+            .map((r) => r.action),
+          preventive: this.generatePreventiveActions(trend, patientData),
         },
         impact: {
           clinical: {
             patientSafety: this.calculatePatientSafetyImpact(trend),
             outcomeImprovement: this.calculateOutcomeImpact(trend),
-            complicationReduction: this.calculateComplicationReduction(trend)
+            complicationReduction: this.calculateComplicationReduction(trend),
           },
           operational: {
             efficiency: 0.15,
-            costReduction: 0.10,
-            resourceOptimization: 0.20
+            costReduction: 0.1,
+            resourceOptimization: 0.2,
           },
           financial: {
             costSavings: this.calculateCostSavings(trend),
             revenueImpact: 0,
-            roi: this.calculateROI(trend)
-          }
+            roi: this.calculateROI(trend),
+          },
         },
         metadata: {
           generatedAt: new Date(),
@@ -781,13 +853,12 @@ class PredictiveInsightsEngine {
           lastUpdated: new Date(),
           version: '1.0',
           algorithm: 'risk_trend_analysis_v1',
-          dataVersion: 'v1.0'
-        }
-      }
-
+          dataVersion: 'v1.0',
+        },
+      };
     } catch (error) {
-      console.error('Error generating risk trend insight:', error)
-      return null
+      console.error('Error generating risk trend insight:', error);
+      return null;
     }
   }
 
@@ -800,17 +871,17 @@ class PredictiveInsightsEngine {
   ): Promise<PredictiveInsight | null> {
     try {
       // Get similar patient outcomes
-      const similarPatients = await this.findSimilarPatients(patientData)
-      
+      const similarPatients = await this.findSimilarPatients(patientData);
+
       if (similarPatients.length < 10) {
-        return null // Not enough similar cases
+        return null; // Not enough similar cases
       }
 
       // Analyze outcomes
-      const outcomeAnalysis = this.analyzeOutcomes(similarPatients)
-      
+      const outcomeAnalysis = this.analyzeOutcomes(similarPatients);
+
       // Generate prediction
-      const prediction = this.predictOutcome(patientData, outcomeAnalysis)
+      const prediction = this.predictOutcome(patientData, outcomeAnalysis);
 
       return {
         id: this.generateInsightId(),
@@ -818,7 +889,7 @@ class PredictiveInsightsEngine {
         priority: prediction.risk === 'high' ? 'high' : 'medium',
         confidence: prediction.confidence > 0.8 ? 'high' : 'medium',
         timeHorizon: 'short_term',
-        title: `Treatment Outcome Prediction`,
+        title: 'Treatment Outcome Prediction',
         description: `Predicted ${prediction.outcome} with ${prediction.confidence * 100}% confidence`,
         summary: `Based on analysis of ${similarPatients.length} similar patients, the predicted outcome is ${prediction.outcome}`,
         details: {
@@ -827,7 +898,7 @@ class PredictiveInsightsEngine {
             outcome: prediction.outcome,
             probability: prediction.probability,
             timeframe: prediction.timeframe,
-            confidence: prediction.confidence
+            confidence: prediction.confidence,
           },
           recommendations: prediction.recommendations,
           comparisons: [
@@ -835,43 +906,52 @@ class PredictiveInsightsEngine {
               benchmark: 'Similar Patients',
               current: 0,
               target: prediction.probability,
-              percentile: prediction.percentile
-            }
-          ]
+              percentile: prediction.percentile,
+            },
+          ],
         },
         evidence: {
           dataPoints: similarPatients.length,
           timeRange: {
             start: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000), // 1 year
-            end: new Date()
+            end: new Date(),
           },
           sources: ['treatments', 'outcomes', 'patient_data'],
           methodology: 'Similarity-based outcome prediction',
-          limitations: ['Based on historical data', 'Individual variations possible'],
-          validationScore: prediction.confidence
+          limitations: [
+            'Based on historical data',
+            'Individual variations possible',
+          ],
+          validationScore: prediction.confidence,
         },
         actionable: {
-          immediate: prediction.recommendations.filter(r => r.priority === 'critical').map(r => r.action),
-          shortTerm: prediction.recommendations.filter(r => r.priority === 'high').map(r => r.action),
-          longTerm: prediction.recommendations.filter(r => r.priority === 'medium').map(r => r.action),
-          preventive: ['Monitor key indicators', 'Regular follow-ups']
+          immediate: prediction.recommendations
+            .filter((r) => r.priority === 'critical')
+            .map((r) => r.action),
+          shortTerm: prediction.recommendations
+            .filter((r) => r.priority === 'high')
+            .map((r) => r.action),
+          longTerm: prediction.recommendations
+            .filter((r) => r.priority === 'medium')
+            .map((r) => r.action),
+          preventive: ['Monitor key indicators', 'Regular follow-ups'],
         },
         impact: {
           clinical: {
             patientSafety: 0.25,
-            outcomeImprovement: 0.30,
-            complicationReduction: 0.20
+            outcomeImprovement: 0.3,
+            complicationReduction: 0.2,
           },
           operational: {
             efficiency: 0.15,
-            costReduction: 0.10,
-            resourceOptimization: 0.20
+            costReduction: 0.1,
+            resourceOptimization: 0.2,
           },
           financial: {
             costSavings: 5000,
             revenueImpact: 0,
-            roi: 2.5
-          }
+            roi: 2.5,
+          },
         },
         metadata: {
           generatedAt: new Date(),
@@ -879,13 +959,12 @@ class PredictiveInsightsEngine {
           lastUpdated: new Date(),
           version: '1.0',
           algorithm: 'outcome_prediction_v1',
-          dataVersion: 'v1.0'
-        }
-      }
-
+          dataVersion: 'v1.0',
+        },
+      };
     } catch (error) {
-      console.error('Error generating outcome prediction insight:', error)
-      return null
+      console.error('Error generating outcome prediction insight:', error);
+      return null;
     }
   }
 
@@ -898,17 +977,21 @@ class PredictiveInsightsEngine {
   ): Promise<PredictiveInsight | null> {
     try {
       // Analyze treatment options
-      const treatmentOptions = await this.analyzeTreatmentOptions(patientData)
-      
+      const treatmentOptions = await this.analyzeTreatmentOptions(patientData);
+
       if (treatmentOptions.length === 0) {
-        return null
+        return null;
       }
 
       // Rank treatments by effectiveness and safety
-      const rankedTreatments = this.rankTreatments(treatmentOptions, patientData)
-      
+      const rankedTreatments = this.rankTreatments(
+        treatmentOptions,
+        patientData
+      );
+
       // Generate recommendations
-      const recommendations = this.generateTreatmentRecommendations(rankedTreatments)
+      const recommendations =
+        this.generateTreatmentRecommendations(rankedTreatments);
 
       return {
         id: this.generateInsightId(),
@@ -916,53 +999,56 @@ class PredictiveInsightsEngine {
         priority: 'high',
         confidence: 'high',
         timeHorizon: 'immediate',
-        title: `Personalized Treatment Recommendations`,
+        title: 'Personalized Treatment Recommendations',
         description: `${rankedTreatments.length} treatment options analyzed and ranked`,
         summary: `Recommended treatment: ${rankedTreatments[0].name} with ${rankedTreatments[0].effectiveness}% effectiveness`,
         details: {
           patientId,
           recommendations,
-          metrics: rankedTreatments.map(t => ({
+          metrics: rankedTreatments.map((t) => ({
             name: t.name,
             current: 0,
             predicted: t.effectiveness,
             change: t.effectiveness,
-            unit: '%'
-          }))
+            unit: '%',
+          })),
         },
         evidence: {
           dataPoints: treatmentOptions.length,
           timeRange: {
             start: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000),
-            end: new Date()
+            end: new Date(),
           },
           sources: ['treatments', 'outcomes', 'clinical_guidelines'],
           methodology: 'Evidence-based treatment ranking',
-          limitations: ['Based on population data', 'Individual response may vary'],
-          validationScore: 0.85
+          limitations: [
+            'Based on population data',
+            'Individual response may vary',
+          ],
+          validationScore: 0.85,
         },
         actionable: {
           immediate: [`Consider ${rankedTreatments[0].name} as primary option`],
           shortTerm: [`Prepare for ${rankedTreatments[0].name} implementation`],
           longTerm: ['Monitor treatment response', 'Adjust as needed'],
-          preventive: ['Regular monitoring', 'Side effect prevention']
+          preventive: ['Regular monitoring', 'Side effect prevention'],
         },
         impact: {
           clinical: {
-            patientSafety: 0.30,
-            outcomeImprovement: 0.40,
-            complicationReduction: 0.25
+            patientSafety: 0.3,
+            outcomeImprovement: 0.4,
+            complicationReduction: 0.25,
           },
           operational: {
-            efficiency: 0.20,
+            efficiency: 0.2,
             costReduction: 0.15,
-            resourceOptimization: 0.25
+            resourceOptimization: 0.25,
           },
           financial: {
             costSavings: 8000,
             revenueImpact: 2000,
-            roi: 3.0
-          }
+            roi: 3.0,
+          },
         },
         metadata: {
           generatedAt: new Date(),
@@ -970,13 +1056,15 @@ class PredictiveInsightsEngine {
           lastUpdated: new Date(),
           version: '1.0',
           algorithm: 'treatment_recommendation_v1',
-          dataVersion: 'v1.0'
-        }
-      }
-
+          dataVersion: 'v1.0',
+        },
+      };
     } catch (error) {
-      console.error('Error generating treatment recommendation insight:', error)
-      return null
+      console.error(
+        'Error generating treatment recommendation insight:',
+        error
+      );
+      return null;
     }
   }
 
@@ -989,17 +1077,22 @@ class PredictiveInsightsEngine {
   ): Promise<PredictiveInsight | null> {
     try {
       // Analyze preventive care opportunities
-      const preventiveOpportunities = await this.analyzePreventiveCareOpportunities(patientData)
-      
+      const preventiveOpportunities =
+        await this.analyzePreventiveCareOpportunities(patientData);
+
       if (preventiveOpportunities.length === 0) {
-        return null
+        return null;
       }
 
       // Prioritize opportunities
-      const prioritizedOpportunities = this.prioritizePreventiveCare(preventiveOpportunities)
-      
+      const prioritizedOpportunities = this.prioritizePreventiveCare(
+        preventiveOpportunities
+      );
+
       // Generate recommendations
-      const recommendations = this.generatePreventiveCareRecommendations(prioritizedOpportunities)
+      const recommendations = this.generatePreventiveCareRecommendations(
+        prioritizedOpportunities
+      );
 
       return {
         id: this.generateInsightId(),
@@ -1007,53 +1100,64 @@ class PredictiveInsightsEngine {
         priority: 'medium',
         confidence: 'high',
         timeHorizon: 'long_term',
-        title: `Preventive Care Opportunities`,
+        title: 'Preventive Care Opportunities',
         description: `${prioritizedOpportunities.length} preventive care opportunities identified`,
         summary: `Top priority: ${prioritizedOpportunities[0].intervention} - ${prioritizedOpportunities[0].impact}% risk reduction`,
         details: {
           patientId,
           recommendations,
-          metrics: prioritizedOpportunities.map(o => ({
+          metrics: prioritizedOpportunities.map((o) => ({
             name: o.intervention,
             current: o.currentRisk,
             predicted: o.reducedRisk,
             change: o.currentRisk - o.reducedRisk,
-            unit: '%'
-          }))
+            unit: '%',
+          })),
         },
         evidence: {
           dataPoints: preventiveOpportunities.length,
           timeRange: {
             start: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000),
-            end: new Date()
+            end: new Date(),
           },
-          sources: ['clinical_guidelines', 'preventive_care_protocols', 'risk_factors'],
+          sources: [
+            'clinical_guidelines',
+            'preventive_care_protocols',
+            'risk_factors',
+          ],
           methodology: 'Evidence-based preventive care analysis',
-          limitations: ['Based on guidelines', 'Individual compliance may vary'],
-          validationScore: 0.80
+          limitations: [
+            'Based on guidelines',
+            'Individual compliance may vary',
+          ],
+          validationScore: 0.8,
         },
         actionable: {
           immediate: [],
-          shortTerm: recommendations.filter(r => r.timeline === 'short_term').map(r => r.action),
-          longTerm: recommendations.filter(r => r.timeline === 'long_term').map(r => r.action),
-          preventive: recommendations.map(r => r.action)
+          shortTerm: recommendations
+            .filter((r) => r.timeline === 'short_term')
+            .map((r) => r.action),
+          longTerm: recommendations
+            .filter((r) => r.timeline === 'long_term')
+            .map((r) => r.action),
+          preventive: recommendations.map((r) => r.action),
         },
         impact: {
           clinical: {
-            patientSafety: 0.20,
+            patientSafety: 0.2,
             outcomeImprovement: 0.25,
-            complicationReduction: 0.35
+            complicationReduction: 0.35,
           },
           operational: {
-            efficiency: 0.10,
-            costReduction: 0.20,
-            resourceOptimization: 0.15
+            efficiency: 0.1,
+            costReduction: 0.2,
+            resourceOptimization: 0.15,
           },
           financial: {
-            costSavings: 12000,
+            costSavings: 12_000,
             revenueImpact: -2000, // Investment in prevention
-            roi: 5.0
-          }
+            roi: 5.0,
+          },
         },
         metadata: {
           generatedAt: new Date(),
@@ -1061,13 +1165,12 @@ class PredictiveInsightsEngine {
           lastUpdated: new Date(),
           version: '1.0',
           algorithm: 'preventive_care_v1',
-          dataVersion: 'v1.0'
-        }
-      }
-
+          dataVersion: 'v1.0',
+        },
+      };
     } catch (error) {
-      console.error('Error generating preventive care insight:', error)
-      return null
+      console.error('Error generating preventive care insight:', error);
+      return null;
     }
   }
 
@@ -1075,112 +1178,125 @@ class PredictiveInsightsEngine {
    * Get insights by type and filters
    */
   getInsights(filters?: {
-    type?: InsightType
-    priority?: InsightPriority
-    confidence?: InsightConfidence
-    timeHorizon?: TimeHorizon
-    patientId?: string
-    validOnly?: boolean
+    type?: InsightType;
+    priority?: InsightPriority;
+    confidence?: InsightConfidence;
+    timeHorizon?: TimeHorizon;
+    patientId?: string;
+    validOnly?: boolean;
   }): PredictiveInsight[] {
-    let insights = Array.from(this.insights.values())
+    let insights = Array.from(this.insights.values());
 
     if (filters) {
-      if (filters.type) insights = insights.filter(i => i.type === filters.type)
-      if (filters.priority) insights = insights.filter(i => i.priority === filters.priority)
-      if (filters.confidence) insights = insights.filter(i => i.confidence === filters.confidence)
-      if (filters.timeHorizon) insights = insights.filter(i => i.timeHorizon === filters.timeHorizon)
-      if (filters.patientId) insights = insights.filter(i => i.details.patientId === filters.patientId)
+      if (filters.type)
+        insights = insights.filter((i) => i.type === filters.type);
+      if (filters.priority)
+        insights = insights.filter((i) => i.priority === filters.priority);
+      if (filters.confidence)
+        insights = insights.filter((i) => i.confidence === filters.confidence);
+      if (filters.timeHorizon)
+        insights = insights.filter(
+          (i) => i.timeHorizon === filters.timeHorizon
+        );
+      if (filters.patientId)
+        insights = insights.filter(
+          (i) => i.details.patientId === filters.patientId
+        );
       if (filters.validOnly) {
-        const now = new Date()
-        insights = insights.filter(i => i.metadata.validUntil > now)
+        const now = new Date();
+        insights = insights.filter((i) => i.metadata.validUntil > now);
       }
     }
 
     return insights.sort((a, b) => {
       // Sort by priority and generation time
-      const priorityOrder = { critical: 4, high: 3, medium: 2, low: 1 }
-      const aPriority = priorityOrder[a.priority]
-      const bPriority = priorityOrder[b.priority]
-      
-      if (aPriority !== bPriority) return bPriority - aPriority
-      return b.metadata.generatedAt.getTime() - a.metadata.generatedAt.getTime()
-    })
+      const priorityOrder = { critical: 4, high: 3, medium: 2, low: 1 };
+      const aPriority = priorityOrder[a.priority];
+      const bPriority = priorityOrder[b.priority];
+
+      if (aPriority !== bPriority) return bPriority - aPriority;
+      return (
+        b.metadata.generatedAt.getTime() - a.metadata.generatedAt.getTime()
+      );
+    });
   }
 
   /**
    * Get trend analyses
    */
   getTrendAnalyses(metric?: string): TrendAnalysis[] {
-    let analyses = Array.from(this.trends.values())
-    
+    let analyses = Array.from(this.trends.values());
+
     if (metric) {
-      analyses = analyses.filter(a => a.metric === metric)
+      analyses = analyses.filter((a) => a.metric === metric);
     }
-    
-    return analyses
+
+    return analyses;
   }
 
   /**
    * Get detected patterns
    */
   getPatterns(type?: PatternRecognition['type']): PatternRecognition[] {
-    let patterns = Array.from(this.patterns.values())
-    
+    let patterns = Array.from(this.patterns.values());
+
     if (type) {
-      patterns = patterns.filter(p => p.type === type)
+      patterns = patterns.filter((p) => p.type === type);
     }
-    
-    return patterns.sort((a, b) => b.significance - a.significance)
+
+    return patterns.sort((a, b) => b.significance - a.significance);
   }
 
   /**
    * Get detected anomalies
    */
   getAnomalies(severity?: AnomalyDetection['severity']): AnomalyDetection[] {
-    let anomalies = Array.from(this.anomalies.values())
-    
+    let anomalies = Array.from(this.anomalies.values());
+
     if (severity) {
-      anomalies = anomalies.filter(a => a.severity === severity)
+      anomalies = anomalies.filter((a) => a.severity === severity);
     }
-    
-    return anomalies.sort((a, b) => b.detected.getTime() - a.detected.getTime())
+
+    return anomalies.sort(
+      (a, b) => b.detected.getTime() - a.detected.getTime()
+    );
   }
 
   /**
    * Get population insights
    */
   getPopulationInsights(): PopulationHealthInsight[] {
-    return Array.from(this.populationInsights.values())
+    return Array.from(this.populationInsights.values());
   }
 
   /**
    * Start insights processing
    */
   private startInsightsProcessing(): void {
-    if (this.isProcessing) return
+    if (this.isProcessing) return;
 
-    this.isProcessing = true
-    console.log('Starting predictive insights processing')
+    this.isProcessing = true;
+    console.log('Starting predictive insights processing');
 
     // Set up periodic processing
     this.processingInterval = setInterval(
       () => this.performPeriodicProcessing(),
       60 * 60 * 1000 // Every hour
-    )
+    );
   }
 
   /**
    * Stop insights processing
    */
   stopInsightsProcessing(): void {
-    this.isProcessing = false
-    
+    this.isProcessing = false;
+
     if (this.processingInterval) {
-      clearInterval(this.processingInterval)
-      this.processingInterval = undefined
+      clearInterval(this.processingInterval);
+      this.processingInterval = undefined;
     }
 
-    console.log('Stopped predictive insights processing')
+    console.log('Stopped predictive insights processing');
   }
 
   /**
@@ -1188,28 +1304,27 @@ class PredictiveInsightsEngine {
    */
   private async performPeriodicProcessing(): Promise<void> {
     try {
-      console.log('Performing periodic insights processing')
+      console.log('Performing periodic insights processing');
 
       // Update trend analyses
       if (this.config.algorithms.trendAnalysis.enabled) {
-        await this.updateTrendAnalyses()
+        await this.updateTrendAnalyses();
       }
 
       // Detect new patterns
       if (this.config.algorithms.patternRecognition.enabled) {
-        await this.detectNewPatterns()
+        await this.detectNewPatterns();
       }
 
       // Update population insights
       if (this.config.algorithms.populationHealth.enabled) {
-        await this.updatePopulationInsights()
+        await this.updatePopulationInsights();
       }
 
       // Clean up expired insights
-      await this.cleanupExpiredInsights()
-
+      await this.cleanupExpiredInsights();
     } catch (error) {
-      console.error('Error in periodic insights processing:', error)
+      console.error('Error in periodic insights processing:', error);
     }
   }
 
@@ -1226,124 +1341,126 @@ class PredictiveInsightsEngine {
         medical_history(*)
       `)
       .eq('id', patientId)
-      .single()
-    
-    return data
+      .single();
+
+    return data;
   }
 
   private async getPopulationData(criteria?: any): Promise<any[]> {
-    let query = this.supabase
-      .from('patients')
-      .select(`
+    let query = this.supabase.from('patients').select(`
         *,
         treatments(*),
         risk_assessments(*)
-      `)
-    
+      `);
+
     if (criteria) {
       if (criteria.ageRange) {
         query = query
           .gte('age', criteria.ageRange.min)
-          .lte('age', criteria.ageRange.max)
+          .lte('age', criteria.ageRange.max);
       }
       if (criteria.gender) {
-        query = query.eq('gender', criteria.gender)
+        query = query.eq('gender', criteria.gender);
       }
       // Add more criteria as needed
     }
-    
-    const { data } = await query
-    return data || []
+
+    const { data } = await query;
+    return data || [];
   }
 
-  private async getHistoricalData(metric: string, timeframe: string, filters?: any): Promise<any[]> {
+  private async getHistoricalData(
+    _metric: string,
+    _timeframe: string,
+    _filters?: any
+  ): Promise<any[]> {
     // Implementation would fetch historical data based on metric and timeframe
-    return []
+    return [];
   }
 
   private calculateTrend(values: number[]): any {
     // Simple linear regression for trend calculation
-    const n = values.length
-    const x = Array.from({ length: n }, (_, i) => i)
-    const sumX = x.reduce((a, b) => a + b, 0)
-    const sumY = values.reduce((a, b) => a + b, 0)
-    const sumXY = x.reduce((sum, xi, i) => sum + xi * values[i], 0)
-    const sumXX = x.reduce((sum, xi) => sum + xi * xi, 0)
-    
-    const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX)
-    const intercept = (sumY - slope * sumX) / n
-    
+    const n = values.length;
+    const x = Array.from({ length: n }, (_, i) => i);
+    const sumX = x.reduce((a, b) => a + b, 0);
+    const sumY = values.reduce((a, b) => a + b, 0);
+    const sumXY = x.reduce((sum, xi, i) => sum + xi * values[i], 0);
+    const sumXX = x.reduce((sum, xi) => sum + xi * xi, 0);
+
+    const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+    const intercept = (sumY - slope * sumX) / n;
+
     // Calculate R-squared
-    const yMean = sumY / n
+    const yMean = sumY / n;
     const ssRes = values.reduce((sum, yi, i) => {
-      const predicted = slope * i + intercept
-      return sum + Math.pow(yi - predicted, 2)
-    }, 0)
-    const ssTot = values.reduce((sum, yi) => sum + Math.pow(yi - yMean, 2), 0)
-    const rSquared = 1 - (ssRes / ssTot)
-    
+      const predicted = slope * i + intercept;
+      return sum + (yi - predicted) ** 2;
+    }, 0);
+    const ssTot = values.reduce((sum, yi) => sum + (yi - yMean) ** 2, 0);
+    const rSquared = 1 - ssRes / ssTot;
+
     return {
-      direction: slope > 0.1 ? 'increasing' : slope < -0.1 ? 'decreasing' : 'stable',
+      direction:
+        slope > 0.1 ? 'increasing' : slope < -0.1 ? 'decreasing' : 'stable',
       slope,
       intercept,
       confidence: Math.max(0, rSquared),
-      significance: Math.abs(slope)
-    }
+      significance: Math.abs(slope),
+    };
   }
 
   private forecastRisk(values: number[], days: number): any {
-    const trend = this.calculateTrend(values)
-    const lastValue = values[values.length - 1]
-    const forecastValue = trend.slope * (values.length + days) + trend.intercept
-    
+    const trend = this.calculateTrend(values);
+    const _lastValue = values[values.length - 1];
+    const forecastValue =
+      trend.slope * (values.length + days) + trend.intercept;
+
     return {
       value: Math.max(0, Math.min(100, forecastValue)),
       confidence: trend.confidence,
-      direction: trend.direction
-    }
+      direction: trend.direction,
+    };
   }
 
   // Additional helper methods would be implemented here...
   private generateInsightId(): string {
-    return `insight_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+    return `insight_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 
   private generatePatternId(): string {
-    return `pattern_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+    return `pattern_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 
   private generateAnomalyId(): string {
-    return `anomaly_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+    return `anomaly_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 
   private generatePopulationId(criteria?: any): string {
-    const hash = criteria ? JSON.stringify(criteria) : 'all'
-    return `population_${Date.now()}_${hash.slice(0, 8)}`
+    const hash = criteria ? JSON.stringify(criteria) : 'all';
+    return `population_${Date.now()}_${hash.slice(0, 8)}`;
   }
 
   private async storeInsight(insight: PredictiveInsight): Promise<void> {
     try {
-      await this.supabase
-        .from('predictive_insights')
-        .insert({
-          id: insight.id,
-          type: insight.type,
-          priority: insight.priority,
-          confidence: insight.confidence,
-          time_horizon: insight.timeHorizon,
-          title: insight.title,
-          description: insight.description,
-          summary: insight.summary,
-          details: JSON.stringify(insight.details),
-          evidence: JSON.stringify(insight.evidence),
-          actionable: JSON.stringify(insight.actionable),
-          impact: JSON.stringify(insight.impact),
-          metadata: JSON.stringify(insight.metadata),
-          created_at: insight.metadata.generatedAt.toISOString(),
-          valid_until: insight.metadata.validUntil.toISOString()
-        })
+      await this.supabase.from('predictive_insights').insert({
+        id: insight.id,
+        type: insight.type,
+        priority: insight.priority,
+        confidence: insight.confidence,
+        time_horizon: insight.timeHorizon,
+        title: insight.title,
+        description: insight.description,
+        summary: insight.summary,
+        details: JSON.stringify(insight.details),
+        evidence: JSON.stringify(insight.evidence),
+        actionable: JSON.stringify(insight.actionable),
+        impact: JSON.stringify(insight.impact),
+        metadata: JSON.stringify(insight.metadata),
+        created_at: insight.metadata.generatedAt.toISOString(),
+        valid_until: insight.metadata.validUntil.toISOString(),
+      });
     } catch (error) {
-      console.error('Error storing insight:', error)
+      console.error('Error storing insight:', error);
     }
   }
 
@@ -1352,10 +1469,10 @@ class PredictiveInsightsEngine {
       const { data: insights } = await this.supabase
         .from('predictive_insights')
         .select('*')
-        .gt('valid_until', new Date().toISOString())
+        .gt('valid_until', new Date().toISOString());
 
       if (insights) {
-        insights.forEach(insightData => {
+        insights.forEach((insightData) => {
           const insight: PredictiveInsight = {
             id: insightData.id,
             type: insightData.type,
@@ -1369,13 +1486,13 @@ class PredictiveInsightsEngine {
             evidence: JSON.parse(insightData.evidence || '{}'),
             actionable: JSON.parse(insightData.actionable || '{}'),
             impact: JSON.parse(insightData.impact || '{}'),
-            metadata: JSON.parse(insightData.metadata || '{}')
-          }
-          this.insights.set(insight.id, insight)
-        })
+            metadata: JSON.parse(insightData.metadata || '{}'),
+          };
+          this.insights.set(insight.id, insight);
+        });
       }
     } catch (error) {
-      console.error('Error loading existing insights:', error)
+      console.error('Error loading existing insights:', error);
     }
   }
 
@@ -1387,97 +1504,201 @@ class PredictiveInsightsEngine {
         hourly: true,
         daily: true,
         weekly: true,
-        monthly: true
+        monthly: true,
       },
       algorithms: {
         trendAnalysis: {
           enabled: true,
           lookbackDays: 90,
           forecastDays: 30,
-          confidenceThreshold: 0.7
+          confidenceThreshold: 0.7,
         },
         patternRecognition: {
           enabled: true,
           minOccurrences: 5,
           confidenceThreshold: 0.8,
-          timeWindow: 365
+          timeWindow: 365,
         },
         anomalyDetection: {
           enabled: true,
           sensitivity: 0.8,
           methods: ['statistical', 'temporal', 'contextual'],
-          alertThreshold: 2.0
+          alertThreshold: 2.0,
         },
         populationHealth: {
           enabled: true,
           segmentationCriteria: ['age', 'gender', 'conditions'],
           benchmarkSources: ['national', 'regional', 'similar'],
-          updateInterval: 24
-        }
+          updateInterval: 24,
+        },
       },
       dataQuality: {
         minimumDataPoints: 10,
         completenessThreshold: 0.8,
         freshnessThreshold: 30,
-        validationRules: ['completeness', 'consistency', 'accuracy']
+        validationRules: ['completeness', 'consistency', 'accuracy'],
       },
       compliance: {
         lgpd: true,
         cfm: true,
         anvisa: true,
         dataRetention: 2555, // 7 years in days
-        anonymization: true
-      }
-    }
+        anonymization: true,
+      },
+    };
 
-    return { ...defaultConfig, ...config }
+    return { ...defaultConfig, ...config };
   }
 
   // Placeholder methods for complex algorithms
-  private async analyzePopulationHealthMetrics(data: any[]): Promise<any[]> { return [] }
-  private async analyzePopulationRiskProfile(data: any[]): Promise<any> { return {} }
-  private async analyzePopulationOutcomes(data: any[]): Promise<any> { return {} }
-  private async generatePopulationInterventions(data: any[], risk: any): Promise<any> { return {} }
-  private async generatePopulationComparisons(data: any[], metrics: any[]): Promise<any> { return {} }
-  private formatCriteria(criteria?: any): string[] { return [] }
-  private analyzeDemographics(data: any[]): any { return {} }
-  private analyzeTrend(data: any[]): any { return {} }
-  private async generateForecast(data: any[], trend: any): Promise<any> { return {} }
-  private generateTrendInsights(trend: any, forecast: any): any { return {} }
-  private async getPatternAnalysisData(type: string, window: number, filters?: any): Promise<any[]> { return [] }
-  private async applyPatternRecognition(data: any[]): Promise<any[]> { return [] }
-  private async generatePatternPredictions(pattern: any): Promise<any> { return {} }
-  private async getBaselineData(metric: string, context?: any): Promise<any> { return {} }
-  private async applyAnomalyDetection(metric: string, value: number, baseline: any, context?: any): Promise<any[]> { return [] }
-  private async investigateAnomaly(anomaly: any): Promise<any> { return {} }
-  private generateAnomalyRecommendations(anomaly: any, investigation: any): any { return {} }
-  private determineRiskTrendPriority(trend: any, forecast: any): InsightPriority { return 'medium' }
-  private generateRiskTrendRecommendations(trend: any, forecast: any, patient: any): any[] { return [] }
-  private generateRiskTrendSummary(trend: any, forecast: any): string { return '' }
-  private extractRiskFactors(history: any[]): string[] { return [] }
-  private generatePreventiveActions(trend: any, patient: any): string[] { return [] }
-  private calculatePatientSafetyImpact(trend: any): number { return 0.2 }
-  private calculateOutcomeImpact(trend: any): number { return 0.15 }
-  private calculateComplicationReduction(trend: any): number { return 0.1 }
-  private calculateCostSavings(trend: any): number { return 5000 }
-  private calculateROI(trend: any): number { return 2.0 }
-  private async findSimilarPatients(patient: any): Promise<any[]> { return [] }
-  private analyzeOutcomes(patients: any[]): any { return {} }
-  private predictOutcome(patient: any, analysis: any): any { return {} }
-  private async analyzeTreatmentOptions(patient: any): Promise<any[]> { return [] }
-  private rankTreatments(options: any[], patient: any): any[] { return [] }
-  private generateTreatmentRecommendations(treatments: any[]): any[] { return [] }
-  private async analyzePreventiveCareOpportunities(patient: any): Promise<any[]> { return [] }
-  private prioritizePreventiveCare(opportunities: any[]): any[] { return [] }
-  private generatePreventiveCareRecommendations(opportunities: any[]): any[] { return [] }
+  private async analyzePopulationHealthMetrics(_data: any[]): Promise<any[]> {
+    return [];
+  }
+  private async analyzePopulationRiskProfile(_data: any[]): Promise<any> {
+    return {};
+  }
+  private async analyzePopulationOutcomes(_data: any[]): Promise<any> {
+    return {};
+  }
+  private async generatePopulationInterventions(
+    _data: any[],
+    _risk: any
+  ): Promise<any> {
+    return {};
+  }
+  private async generatePopulationComparisons(
+    _data: any[],
+    _metrics: any[]
+  ): Promise<any> {
+    return {};
+  }
+  private formatCriteria(_criteria?: any): string[] {
+    return [];
+  }
+  private analyzeDemographics(_data: any[]): any {
+    return {};
+  }
+  private analyzeTrend(_data: any[]): any {
+    return {};
+  }
+  private async generateForecast(_data: any[], _trend: any): Promise<any> {
+    return {};
+  }
+  private generateTrendInsights(_trend: any, _forecast: any): any {
+    return {};
+  }
+  private async getPatternAnalysisData(
+    _type: string,
+    _window: number,
+    _filters?: any
+  ): Promise<any[]> {
+    return [];
+  }
+  private async applyPatternRecognition(_data: any[]): Promise<any[]> {
+    return [];
+  }
+  private async generatePatternPredictions(_pattern: any): Promise<any> {
+    return {};
+  }
+  private async getBaselineData(_metric: string, _context?: any): Promise<any> {
+    return {};
+  }
+  private async applyAnomalyDetection(
+    _metric: string,
+    _value: number,
+    _baseline: any,
+    _context?: any
+  ): Promise<any[]> {
+    return [];
+  }
+  private async investigateAnomaly(_anomaly: any): Promise<any> {
+    return {};
+  }
+  private generateAnomalyRecommendations(
+    _anomaly: any,
+    _investigation: any
+  ): any {
+    return {};
+  }
+  private determineRiskTrendPriority(
+    _trend: any,
+    _forecast: any
+  ): InsightPriority {
+    return 'medium';
+  }
+  private generateRiskTrendRecommendations(
+    _trend: any,
+    _forecast: any,
+    _patient: any
+  ): any[] {
+    return [];
+  }
+  private generateRiskTrendSummary(_trend: any, _forecast: any): string {
+    return '';
+  }
+  private extractRiskFactors(_history: any[]): string[] {
+    return [];
+  }
+  private generatePreventiveActions(_trend: any, _patient: any): string[] {
+    return [];
+  }
+  private calculatePatientSafetyImpact(_trend: any): number {
+    return 0.2;
+  }
+  private calculateOutcomeImpact(_trend: any): number {
+    return 0.15;
+  }
+  private calculateComplicationReduction(_trend: any): number {
+    return 0.1;
+  }
+  private calculateCostSavings(_trend: any): number {
+    return 5000;
+  }
+  private calculateROI(_trend: any): number {
+    return 2.0;
+  }
+  private async findSimilarPatients(_patient: any): Promise<any[]> {
+    return [];
+  }
+  private analyzeOutcomes(_patients: any[]): any {
+    return {};
+  }
+  private predictOutcome(_patient: any, _analysis: any): any {
+    return {};
+  }
+  private async analyzeTreatmentOptions(_patient: any): Promise<any[]> {
+    return [];
+  }
+  private rankTreatments(_options: any[], _patient: any): any[] {
+    return [];
+  }
+  private generateTreatmentRecommendations(_treatments: any[]): any[] {
+    return [];
+  }
+  private async analyzePreventiveCareOpportunities(
+    _patient: any
+  ): Promise<any[]> {
+    return [];
+  }
+  private prioritizePreventiveCare(_opportunities: any[]): any[] {
+    return [];
+  }
+  private generatePreventiveCareRecommendations(_opportunities: any[]): any[] {
+    return [];
+  }
   private async updateTrendAnalyses(): Promise<void> {}
   private async detectNewPatterns(): Promise<void> {}
   private async updatePopulationInsights(): Promise<void> {}
   private async cleanupExpiredInsights(): Promise<void> {}
-  private async storeTrendAnalysis(id: string, analysis: TrendAnalysis): Promise<void> {}
-  private async storePattern(pattern: PatternRecognition): Promise<void> {}
-  private async storeAnomaly(anomaly: AnomalyDetection): Promise<void> {}
-  private async storePopulationInsight(insight: PopulationHealthInsight): Promise<void> {}
+  private async storeTrendAnalysis(
+    _id: string,
+    _analysis: TrendAnalysis
+  ): Promise<void> {}
+  private async storePattern(_pattern: PatternRecognition): Promise<void> {}
+  private async storeAnomaly(_anomaly: AnomalyDetection): Promise<void> {}
+  private async storePopulationInsight(
+    _insight: PopulationHealthInsight
+  ): Promise<void> {}
 }
 
 export {
@@ -1491,5 +1712,5 @@ export {
   type InsightType,
   type InsightPriority,
   type InsightConfidence,
-  type TimeHorizon
-}
+  type TimeHorizon,
+};

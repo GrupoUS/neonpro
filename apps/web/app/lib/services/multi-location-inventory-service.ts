@@ -1,42 +1,41 @@
-import { createClient } from '@/app/utils/supabase/client';
-import type { 
-  InventoryItem, 
-  CreateInventoryItem, 
-  UpdateInventoryItem,
-  InventoryStock,
+import type {
+  CreateInventoryItem,
   CreateInventoryStock,
-  UpdateInventoryStock,
-  StockTransfer,
-  CreateStockTransfer,
-  UpdateStockTransfer,
-  StockTransaction,
   CreateStockTransaction,
+  CreateStockTransfer,
   InventoryFilters,
-  StockTransferFilters,
-  StockTransactionFilters,
+  InventoryItem,
+  InventoryMovementSummary,
+  InventoryStock,
   LocationStockSummary,
-  InventoryMovementSummary
+  StockTransaction,
+  StockTransactionFilters,
+  StockTransfer,
+  StockTransferFilters,
+  UpdateInventoryItem,
+  UpdateInventoryStock,
+  UpdateStockTransfer,
 } from '@/app/lib/types/inventory';
+import { createClient } from '@/app/utils/supabase/client';
 
 export class MultiLocationInventoryService {
   private supabase = createClient();
 
   // ===== INVENTORY ITEMS =====
-  
-  async getInventoryItems(filters: InventoryFilters = {}): Promise<InventoryItem[]> {
-    let query = this.supabase
-      .from('inventory_items')
-      .select('*')
-      .order('name');
+
+  async getInventoryItems(
+    filters: InventoryFilters = {}
+  ): Promise<InventoryItem[]> {
+    let query = this.supabase.from('inventory_items').select('*').order('name');
 
     if (filters.clinic_id) {
       query = query.eq('clinic_id', filters.clinic_id);
     }
-    
+
     if (filters.category) {
       query = query.eq('category', filters.category);
     }
-    
+
     if (filters.active_only !== false) {
       query = query.eq('is_active', true);
     }
@@ -52,7 +51,7 @@ export class MultiLocationInventoryService {
       .select('*')
       .eq('id', id)
       .single();
-    
+
     if (error) throw error;
     return data;
   }
@@ -63,7 +62,7 @@ export class MultiLocationInventoryService {
       .insert(item)
       .select()
       .single();
-    
+
     if (error) throw error;
     return data;
   }
@@ -76,7 +75,7 @@ export class MultiLocationInventoryService {
       .eq('id', id)
       .select()
       .single();
-    
+
     if (error) throw error;
     return data;
   }
@@ -86,13 +85,15 @@ export class MultiLocationInventoryService {
       .from('inventory_items')
       .delete()
       .eq('id', id);
-    
+
     if (error) throw error;
   }
 
   // ===== INVENTORY STOCK =====
-  
-  async getInventoryStock(filters: InventoryFilters = {}): Promise<InventoryStock[]> {
+
+  async getInventoryStock(
+    filters: InventoryFilters = {}
+  ): Promise<InventoryStock[]> {
     let query = this.supabase
       .from('inventory_stock')
       .select(`
@@ -106,21 +107,24 @@ export class MultiLocationInventoryService {
     if (filters.clinic_id) {
       query = query.eq('clinic_id', filters.clinic_id);
     }
-    
+
     if (filters.room_id) {
       query = query.eq('room_id', filters.room_id);
     }
-    
+
     if (filters.low_stock) {
-      query = query.lt('available_quantity', 'inventory_items.minimum_stock_alert');
+      query = query.lt(
+        'available_quantity',
+        'inventory_items.minimum_stock_alert'
+      );
     }
-    
+
     if (filters.expiring_soon) {
       const nextMonth = new Date();
       nextMonth.setMonth(nextMonth.getMonth() + 1);
       query = query.lte('expiry_date', nextMonth.toISOString().split('T')[0]);
     }
-    
+
     if (filters.batch_number) {
       query = query.eq('batch_number', filters.batch_number);
     }
@@ -130,7 +134,10 @@ export class MultiLocationInventoryService {
     return data || [];
   }
 
-  async getStockByLocation(clinic_id: string, room_id?: string): Promise<InventoryStock[]> {
+  async getStockByLocation(
+    clinic_id: string,
+    room_id?: string
+  ): Promise<InventoryStock[]> {
     return this.getInventoryStock({ clinic_id, room_id });
   }
 
@@ -150,12 +157,14 @@ export class MultiLocationInventoryService {
         room:rooms(id, name, description)
       `)
       .single();
-    
+
     if (error) throw error;
     return data;
   }
 
-  async createOrUpdateStock(stock: CreateInventoryStock): Promise<InventoryStock> {
+  async createOrUpdateStock(
+    stock: CreateInventoryStock
+  ): Promise<InventoryStock> {
     const { data, error } = await this.supabase
       .from('inventory_stock')
       .upsert(stock)
@@ -166,12 +175,14 @@ export class MultiLocationInventoryService {
         room:rooms(id, name, description)
       `)
       .single();
-    
+
     if (error) throw error;
     return data;
-  }  // ===== STOCK TRANSFERS =====
-  
-  async getStockTransfers(filters: StockTransferFilters = {}): Promise<StockTransfer[]> {
+  } // ===== STOCK TRANSFERS =====
+
+  async getStockTransfers(
+    filters: StockTransferFilters = {}
+  ): Promise<StockTransfer[]> {
     let query = this.supabase
       .from('stock_transfers')
       .select(`
@@ -186,21 +197,23 @@ export class MultiLocationInventoryService {
       .order('created_at', { ascending: false });
 
     if (filters.clinic_id) {
-      query = query.or(`from_clinic_id.eq.${filters.clinic_id},to_clinic_id.eq.${filters.clinic_id}`);
+      query = query.or(
+        `from_clinic_id.eq.${filters.clinic_id},to_clinic_id.eq.${filters.clinic_id}`
+      );
     }
-    
+
     if (filters.status) {
       query = query.eq('status', filters.status);
     }
-    
+
     if (filters.transfer_type) {
       query = query.eq('transfer_type', filters.transfer_type);
     }
-    
+
     if (filters.date_from) {
       query = query.gte('created_at', filters.date_from);
     }
-    
+
     if (filters.date_to) {
       query = query.lte('created_at', filters.date_to);
     }
@@ -210,7 +223,9 @@ export class MultiLocationInventoryService {
     return data || [];
   }
 
-  async createStockTransfer(transfer: CreateStockTransfer): Promise<StockTransfer> {
+  async createStockTransfer(
+    transfer: CreateStockTransfer
+  ): Promise<StockTransfer> {
     const { data, error } = await this.supabase
       .from('stock_transfers')
       .insert({
@@ -226,14 +241,16 @@ export class MultiLocationInventoryService {
         to_room:to_room_id(id, name)
       `)
       .single();
-    
+
     if (error) throw error;
     return data;
   }
 
-  async updateStockTransfer(transfer: UpdateStockTransfer): Promise<StockTransfer> {
+  async updateStockTransfer(
+    transfer: UpdateStockTransfer
+  ): Promise<StockTransfer> {
     const { id, ...updates } = transfer;
-    
+
     // Add timestamps based on status changes
     if (updates.status === 'approved' && !updates.approved_at) {
       updates.approved_at = new Date().toISOString();
@@ -258,14 +275,16 @@ export class MultiLocationInventoryService {
         to_room:to_room_id(id, name)
       `)
       .single();
-    
+
     if (error) throw error;
     return data;
   }
 
   // ===== STOCK TRANSACTIONS =====
-  
-  async getStockTransactions(filters: StockTransactionFilters = {}): Promise<StockTransaction[]> {
+
+  async getStockTransactions(
+    filters: StockTransactionFilters = {}
+  ): Promise<StockTransaction[]> {
     let query = this.supabase
       .from('stock_transactions')
       .select(`
@@ -280,23 +299,23 @@ export class MultiLocationInventoryService {
     if (filters.clinic_id) {
       query = query.eq('clinic_id', filters.clinic_id);
     }
-    
+
     if (filters.room_id) {
       query = query.eq('room_id', filters.room_id);
     }
-    
+
     if (filters.transaction_type) {
       query = query.eq('transaction_type', filters.transaction_type);
     }
-    
+
     if (filters.inventory_item_id) {
       query = query.eq('inventory_item_id', filters.inventory_item_id);
     }
-    
+
     if (filters.date_from) {
       query = query.gte('created_at', filters.date_from);
     }
-    
+
     if (filters.date_to) {
       query = query.lte('created_at', filters.date_to);
     }
@@ -306,7 +325,9 @@ export class MultiLocationInventoryService {
     return data || [];
   }
 
-  async createStockTransaction(transaction: CreateStockTransaction): Promise<StockTransaction> {
+  async createStockTransaction(
+    transaction: CreateStockTransaction
+  ): Promise<StockTransaction> {
     const { data, error } = await this.supabase
       .from('stock_transactions')
       .insert(transaction)
@@ -317,17 +338,18 @@ export class MultiLocationInventoryService {
         room:rooms(id, name)
       `)
       .single();
-    
+
     if (error) throw error;
     return data;
   }
 
   // ===== DASHBOARD & ANALYTICS =====
-  
-  async getLocationStockSummary(clinic_id?: string): Promise<LocationStockSummary[]> {
-    let query = this.supabase
-      .rpc('get_location_stock_summary');
-    
+
+  async getLocationStockSummary(
+    clinic_id?: string
+  ): Promise<LocationStockSummary[]> {
+    let query = this.supabase.rpc('get_location_stock_summary');
+
     if (clinic_id) {
       query = query.eq('clinic_id', clinic_id);
     }
@@ -338,53 +360,62 @@ export class MultiLocationInventoryService {
   }
 
   async getInventoryMovementSummary(
-    clinic_id?: string, 
-    days: number = 30
+    clinic_id?: string,
+    days = 30
   ): Promise<InventoryMovementSummary[]> {
     const fromDate = new Date();
     fromDate.setDate(fromDate.getDate() - days);
 
-    const { data, error } = await this.supabase
-      .rpc('get_inventory_movement_summary', {
+    const { data, error } = await this.supabase.rpc(
+      'get_inventory_movement_summary',
+      {
         clinic_filter: clinic_id,
         from_date: fromDate.toISOString(),
-        to_date: new Date().toISOString()
-      });
+        to_date: new Date().toISOString(),
+      }
+    );
 
     if (error) throw error;
     return data || [];
   }
 
   async getLowStockAlerts(clinic_id?: string): Promise<InventoryStock[]> {
-    return this.getInventoryStock({ 
-      clinic_id, 
-      low_stock: true 
+    return this.getInventoryStock({
+      clinic_id,
+      low_stock: true,
     });
   }
 
-  async getExpiringItems(clinic_id?: string, days: number = 30): Promise<InventoryStock[]> {
-    return this.getInventoryStock({ 
-      clinic_id, 
-      expiring_soon: true 
+  async getExpiringItems(
+    clinic_id?: string,
+    _days = 30
+  ): Promise<InventoryStock[]> {
+    return this.getInventoryStock({
+      clinic_id,
+      expiring_soon: true,
     });
   }
 
   // ===== BULK OPERATIONS =====
-  
-  async bulkUpdateStock(updates: UpdateInventoryStock[]): Promise<InventoryStock[]> {
+
+  async bulkUpdateStock(
+    updates: UpdateInventoryStock[]
+  ): Promise<InventoryStock[]> {
     const { data, error } = await this.supabase
       .from('inventory_stock')
-      .upsert(updates.map(update => ({
-        ...update,
-        last_counted_at: new Date().toISOString(),
-      })))
+      .upsert(
+        updates.map((update) => ({
+          ...update,
+          last_counted_at: new Date().toISOString(),
+        }))
+      )
       .select(`
         *,
         inventory_item:inventory_items(*),
         clinic:clinics(id, clinic_name, clinic_code),
         room:rooms(id, name, description)
       `);
-    
+
     if (error) throw error;
     return data || [];
   }
@@ -405,7 +436,8 @@ export class MultiLocationInventoryService {
       from_room_id,
       to_room_id,
       quantity,
-      transfer_type: from_clinic_id === to_clinic_id ? 'internal' : 'inter_clinic',
+      transfer_type:
+        from_clinic_id === to_clinic_id ? 'internal' : 'inter_clinic',
       notes,
       requested_by: (await this.supabase.auth.getUser()).data.user?.id || '',
     };

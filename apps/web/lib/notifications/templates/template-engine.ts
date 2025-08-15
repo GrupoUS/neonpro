@@ -1,6 +1,10 @@
 import { createClient } from '@supabase/supabase-js';
 import { AuditLogger } from '../../auth/audit/audit-logger';
-import { NotificationTemplate, NotificationTypeEnum, NotificationChannelEnum } from '../core/notification-manager';
+import type {
+  NotificationChannelEnum,
+  NotificationTemplate,
+  NotificationTypeEnum,
+} from '../core/notification-manager';
 
 export interface TemplateVariable {
   name: string;
@@ -76,7 +80,7 @@ export class TemplateEngine {
     context: TemplateRenderContext
   ): Promise<RenderedTemplate> {
     const startTime = Date.now();
-    
+
     try {
       // Obter template
       const template = await this.getTemplate(templateId);
@@ -90,13 +94,16 @@ export class TemplateEngine {
 
       // Obter variáveis do template
       const variables = await this.getTemplateVariables(templateId);
-      
+
       // Validar contexto
       await this.validateContext(context, variables);
 
       // Renderizar conteúdo
-      const renderedContent = await this.renderContent(template.content, context);
-      
+      const renderedContent = await this.renderContent(
+        template.content,
+        context
+      );
+
       // Renderizar subject se existir
       let renderedSubject: string | undefined;
       if (template.subject) {
@@ -104,14 +111,17 @@ export class TemplateEngine {
       }
 
       // Extrair variáveis utilizadas
-      const variablesUsed = this.extractUsedVariables(template.content, template.subject);
+      const variablesUsed = this.extractUsedVariables(
+        template.content,
+        template.subject
+      );
 
       const result: RenderedTemplate = {
         subject: renderedSubject,
         content: renderedContent,
         variables_used: variablesUsed,
         render_time_ms: Date.now() - startTime,
-        template_version: template.version
+        template_version: template.version,
       };
 
       // Log de auditoria
@@ -122,8 +132,8 @@ export class TemplateEngine {
         details: {
           render_time_ms: result.render_time_ms,
           variables_used: variablesUsed,
-          template_version: template.version
-        }
+          template_version: template.version,
+        },
       });
 
       return result;
@@ -134,10 +144,10 @@ export class TemplateEngine {
         resource_id: templateId,
         details: {
           error: (error as Error).message,
-          render_time_ms: Date.now() - startTime
-        }
+          render_time_ms: Date.now() - startTime,
+        },
       });
-      
+
       throw error;
     }
   }
@@ -189,7 +199,7 @@ export class TemplateEngine {
         .insert({
           ...template,
           created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .select()
         .single();
@@ -207,8 +217,8 @@ export class TemplateEngine {
         details: {
           name: template.name,
           type: template.type,
-          channel: template.channel
-        }
+          channel: template.channel,
+        },
       });
 
       return data;
@@ -222,7 +232,9 @@ export class TemplateEngine {
    */
   async updateTemplate(
     templateId: string,
-    updates: Partial<Omit<NotificationTemplate, 'id' | 'created_at' | 'created_by'>>
+    updates: Partial<
+      Omit<NotificationTemplate, 'id' | 'created_at' | 'created_by'>
+    >
   ): Promise<NotificationTemplate> {
     try {
       // Incrementar versão
@@ -236,7 +248,7 @@ export class TemplateEngine {
         .update({
           ...updates,
           version: currentTemplate.version + 1,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', templateId)
         .select()
@@ -246,7 +258,7 @@ export class TemplateEngine {
 
       // Atualizar cache
       this.templateCache.set(templateId, data);
-      
+
       // Limpar cache de variáveis
       this.variableCache.delete(templateId);
 
@@ -256,8 +268,8 @@ export class TemplateEngine {
         resource_id: templateId,
         details: {
           updates,
-          new_version: data.version
-        }
+          new_version: data.version,
+        },
       });
 
       return data;
@@ -339,7 +351,7 @@ export class TemplateEngine {
       await this.auditLogger.log({
         action: 'template_deleted',
         resource_type: 'notification_template',
-        resource_id: templateId
+        resource_id: templateId,
       });
     } catch (error) {
       throw new Error(`Erro ao deletar template: ${error}`);
@@ -363,20 +375,24 @@ export class TemplateEngine {
 
     // Validar sintaxe do template
     await this.validateTemplateSyntax(template.content);
-    
+
     if (template.subject) {
       await this.validateTemplateSyntax(template.subject);
     }
 
     // Extrair e validar variáveis
     const variables = this.extractVariables(template.content, template.subject);
-    
+
     // Verificar se todas as variáveis estão na lista permitida
     const allowedVariables = this.getAllowedVariables();
-    const invalidVariables = variables.filter(v => !allowedVariables.includes(v));
-    
+    const invalidVariables = variables.filter(
+      (v) => !allowedVariables.includes(v)
+    );
+
     if (invalidVariables.length > 0) {
-      throw new Error(`Variáveis inválidas encontradas: ${invalidVariables.join(', ')}`);
+      throw new Error(
+        `Variáveis inválidas encontradas: ${invalidVariables.join(', ')}`
+      );
     }
   }
 
@@ -392,7 +408,7 @@ export class TemplateEngine {
         id: 'sample-user-id',
         name: 'Maria Silva',
         email: 'maria.silva@email.com',
-        phone: '+5511999999999'
+        phone: '+5511999999999',
       },
       appointment: {
         id: 'sample-appointment-id',
@@ -400,41 +416,50 @@ export class TemplateEngine {
         time: '14:30',
         service: 'Limpeza de Pele',
         professional: 'Dr. João Santos',
-        location: 'Sala 1'
+        location: 'Sala 1',
       },
       payment: {
         id: 'sample-payment-id',
-        amount: 150.00,
+        amount: 150.0,
         currency: 'BRL',
-        due_date: new Date('2025-02-10')
+        due_date: new Date('2025-02-10'),
       },
       clinic: {
         name: 'Clínica Estética NeonPro',
         address: 'Rua das Flores, 123 - São Paulo/SP',
         phone: '+5511888888888',
         email: 'contato@neonpro.com.br',
-        website: 'https://neonpro.com.br'
-      }
+        website: 'https://neonpro.com.br',
+      },
     };
 
     const startTime = Date.now();
-    
+
     try {
-      const renderedContent = await this.renderContent(templateContent, sampleContext);
+      const renderedContent = await this.renderContent(
+        templateContent,
+        sampleContext
+      );
       let renderedSubject: string | undefined;
-      
+
       if (templateSubject) {
-        renderedSubject = await this.renderContent(templateSubject, sampleContext);
+        renderedSubject = await this.renderContent(
+          templateSubject,
+          sampleContext
+        );
       }
 
-      const variablesUsed = this.extractUsedVariables(templateContent, templateSubject);
+      const variablesUsed = this.extractUsedVariables(
+        templateContent,
+        templateSubject
+      );
 
       return {
         subject: renderedSubject,
         content: renderedContent,
         variables_used: variablesUsed,
         render_time_ms: Date.now() - startTime,
-        template_version: 1
+        template_version: 1,
       };
     } catch (error) {
       throw new Error(`Erro no preview do template: ${error}`);
@@ -450,42 +475,84 @@ export class TemplateEngine {
 
     // Substituir variáveis do usuário
     if (context.user) {
-      rendered = rendered.replace(/{{\s*user\.name\s*}}/g, context.user.name || '');
-      rendered = rendered.replace(/{{\s*user\.email\s*}}/g, context.user.email || '');
-      rendered = rendered.replace(/{{\s*user\.phone\s*}}/g, context.user.phone || '');
+      rendered = rendered.replace(
+        /{{\s*user\.name\s*}}/g,
+        context.user.name || ''
+      );
+      rendered = rendered.replace(
+        /{{\s*user\.email\s*}}/g,
+        context.user.email || ''
+      );
+      rendered = rendered.replace(
+        /{{\s*user\.phone\s*}}/g,
+        context.user.phone || ''
+      );
     }
 
     // Substituir variáveis do agendamento
     if (context.appointment) {
-      rendered = rendered.replace(/{{\s*appointment\.date\s*}}/g, 
-        context.appointment.date.toLocaleDateString('pt-BR'));
-      rendered = rendered.replace(/{{\s*appointment\.time\s*}}/g, context.appointment.time);
-      rendered = rendered.replace(/{{\s*appointment\.service\s*}}/g, context.appointment.service);
-      rendered = rendered.replace(/{{\s*appointment\.professional\s*}}/g, context.appointment.professional);
-      rendered = rendered.replace(/{{\s*appointment\.location\s*}}/g, context.appointment.location || '');
+      rendered = rendered.replace(
+        /{{\s*appointment\.date\s*}}/g,
+        context.appointment.date.toLocaleDateString('pt-BR')
+      );
+      rendered = rendered.replace(
+        /{{\s*appointment\.time\s*}}/g,
+        context.appointment.time
+      );
+      rendered = rendered.replace(
+        /{{\s*appointment\.service\s*}}/g,
+        context.appointment.service
+      );
+      rendered = rendered.replace(
+        /{{\s*appointment\.professional\s*}}/g,
+        context.appointment.professional
+      );
+      rendered = rendered.replace(
+        /{{\s*appointment\.location\s*}}/g,
+        context.appointment.location || ''
+      );
     }
 
     // Substituir variáveis de pagamento
     if (context.payment) {
-      rendered = rendered.replace(/{{\s*payment\.amount\s*}}/g, 
+      rendered = rendered.replace(
+        /{{\s*payment\.amount\s*}}/g,
         context.payment.amount.toLocaleString('pt-BR', {
           style: 'currency',
-          currency: context.payment.currency || 'BRL'
-        }));
-      
+          currency: context.payment.currency || 'BRL',
+        })
+      );
+
       if (context.payment.due_date) {
-        rendered = rendered.replace(/{{\s*payment\.due_date\s*}}/g, 
-          context.payment.due_date.toLocaleDateString('pt-BR'));
+        rendered = rendered.replace(
+          /{{\s*payment\.due_date\s*}}/g,
+          context.payment.due_date.toLocaleDateString('pt-BR')
+        );
       }
     }
 
     // Substituir variáveis da clínica
     if (context.clinic) {
-      rendered = rendered.replace(/{{\s*clinic\.name\s*}}/g, context.clinic.name);
-      rendered = rendered.replace(/{{\s*clinic\.address\s*}}/g, context.clinic.address);
-      rendered = rendered.replace(/{{\s*clinic\.phone\s*}}/g, context.clinic.phone);
-      rendered = rendered.replace(/{{\s*clinic\.email\s*}}/g, context.clinic.email);
-      rendered = rendered.replace(/{{\s*clinic\.website\s*}}/g, context.clinic.website || '');
+      rendered = rendered.replace(
+        /{{\s*clinic\.name\s*}}/g,
+        context.clinic.name
+      );
+      rendered = rendered.replace(
+        /{{\s*clinic\.address\s*}}/g,
+        context.clinic.address
+      );
+      rendered = rendered.replace(
+        /{{\s*clinic\.phone\s*}}/g,
+        context.clinic.phone
+      );
+      rendered = rendered.replace(
+        /{{\s*clinic\.email\s*}}/g,
+        context.clinic.email
+      );
+      rendered = rendered.replace(
+        /{{\s*clinic\.website\s*}}/g,
+        context.clinic.website || ''
+      );
     }
 
     // Substituir variáveis customizadas
@@ -498,9 +565,18 @@ export class TemplateEngine {
 
     // Substituir variáveis de data/hora atuais
     const now = new Date();
-    rendered = rendered.replace(/{{\s*current\.date\s*}}/g, now.toLocaleDateString('pt-BR'));
-    rendered = rendered.replace(/{{\s*current\.time\s*}}/g, now.toLocaleTimeString('pt-BR'));
-    rendered = rendered.replace(/{{\s*current\.year\s*}}/g, now.getFullYear().toString());
+    rendered = rendered.replace(
+      /{{\s*current\.date\s*}}/g,
+      now.toLocaleDateString('pt-BR')
+    );
+    rendered = rendered.replace(
+      /{{\s*current\.time\s*}}/g,
+      now.toLocaleTimeString('pt-BR')
+    );
+    rendered = rendered.replace(
+      /{{\s*current\.year\s*}}/g,
+      now.getFullYear().toString()
+    );
 
     return rendered;
   }
@@ -509,11 +585,11 @@ export class TemplateEngine {
     // Verificar se todas as variáveis estão bem formadas
     const variableRegex = /{{\s*([^}]+)\s*}}/g;
     const matches = content.match(variableRegex);
-    
+
     if (matches) {
       for (const match of matches) {
         const variable = match.replace(/[{}\s]/g, '');
-        
+
         // Verificar se a variável tem formato válido
         if (!/^[a-zA-Z][a-zA-Z0-9_.]*$/.test(variable)) {
           throw new Error(`Sintaxe de variável inválida: ${match}`);
@@ -525,13 +601,13 @@ export class TemplateEngine {
   private extractVariables(content: string, subject?: string): string[] {
     const variables = new Set<string>();
     const variableRegex = /{{\s*([^}]+)\s*}}/g;
-    
+
     // Extrair do conteúdo
     let match;
     while ((match = variableRegex.exec(content)) !== null) {
       variables.add(match[1].trim());
     }
-    
+
     // Extrair do subject se existir
     if (subject) {
       variableRegex.lastIndex = 0;
@@ -539,7 +615,7 @@ export class TemplateEngine {
         variables.add(match[1].trim());
       }
     }
-    
+
     return Array.from(variables);
   }
 
@@ -549,16 +625,30 @@ export class TemplateEngine {
 
   private getAllowedVariables(): string[] {
     return [
-      'user.name', 'user.email', 'user.phone',
-      'appointment.date', 'appointment.time', 'appointment.service', 
-      'appointment.professional', 'appointment.location',
-      'payment.amount', 'payment.due_date',
-      'clinic.name', 'clinic.address', 'clinic.phone', 'clinic.email', 'clinic.website',
-      'current.date', 'current.time', 'current.year'
+      'user.name',
+      'user.email',
+      'user.phone',
+      'appointment.date',
+      'appointment.time',
+      'appointment.service',
+      'appointment.professional',
+      'appointment.location',
+      'payment.amount',
+      'payment.due_date',
+      'clinic.name',
+      'clinic.address',
+      'clinic.phone',
+      'clinic.email',
+      'clinic.website',
+      'current.date',
+      'current.time',
+      'current.year',
     ];
   }
 
-  private async getTemplateVariables(templateId: string): Promise<TemplateVariable[]> {
+  private async getTemplateVariables(
+    templateId: string
+  ): Promise<TemplateVariable[]> {
     // Verificar cache
     if (this.variableCache.has(templateId)) {
       return this.variableCache.get(templateId)!;
@@ -571,26 +661,26 @@ export class TemplateEngine {
         name: 'user.name',
         type: 'string',
         required: true,
-        description: 'Nome do usuário'
+        description: 'Nome do usuário',
       },
       {
         name: 'user.email',
         type: 'string',
         required: false,
-        description: 'Email do usuário'
+        description: 'Email do usuário',
       },
       {
         name: 'appointment.date',
         type: 'date',
         required: false,
-        description: 'Data do agendamento'
+        description: 'Data do agendamento',
       },
       {
         name: 'clinic.name',
         type: 'string',
         required: false,
-        description: 'Nome da clínica'
-      }
+        description: 'Nome da clínica',
+      },
     ];
 
     this.variableCache.set(templateId, defaultVariables);
@@ -602,29 +692,32 @@ export class TemplateEngine {
     variables: TemplateVariable[]
   ): Promise<void> {
     // Verificar se todas as variáveis obrigatórias estão presentes
-    const requiredVariables = variables.filter(v => v.required);
-    
+    const requiredVariables = variables.filter((v) => v.required);
+
     for (const variable of requiredVariables) {
       const value = this.getVariableValue(context, variable.name);
-      
+
       if (value === undefined || value === null || value === '') {
         throw new Error(`Variável obrigatória ausente: ${variable.name}`);
       }
     }
   }
 
-  private getVariableValue(context: TemplateRenderContext, variableName: string): any {
+  private getVariableValue(
+    context: TemplateRenderContext,
+    variableName: string
+  ): any {
     const parts = variableName.split('.');
     let value: any = context;
-    
+
     for (const part of parts) {
       if (value && typeof value === 'object' && part in value) {
         value = value[part];
       } else {
-        return undefined;
+        return;
       }
     }
-    
+
     return value;
   }
 }

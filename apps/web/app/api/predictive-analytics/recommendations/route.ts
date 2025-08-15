@@ -1,5 +1,5 @@
+import { type NextRequest, NextResponse } from 'next/server';
 import { PredictiveAnalyticsService } from '@/app/lib/services/predictive-analytics';
-import { NextRequest, NextResponse } from 'next/server';
 
 const service = new PredictiveAnalyticsService();
 
@@ -8,7 +8,8 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const model_id = searchParams.get('model_id') || undefined;
 
-    const recommendations = await service.getOptimizationRecommendations(model_id);
+    const recommendations =
+      await service.getOptimizationRecommendations(model_id);
 
     return NextResponse.json(recommendations);
   } catch (error) {

@@ -1,9 +1,50 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import {
+  AlertTriangle,
+  Calendar,
+  CheckCircle,
+  Clock,
+  Database,
+  Download,
+  Eye,
+  Filter,
+  HardDrive,
+  MoreHorizontal,
+  RefreshCw,
+  Search,
+  Shield,
+  Trash2,
+  XCircle,
+} from 'lucide-react';
+import type React from 'react';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -21,42 +62,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import {
-  CheckCircle,
-  XCircle,
-  Clock,
-  Database,
-  HardDrive,
-  FileText,
-  MoreHorizontal,
-  Download,
-  Eye,
-  Trash2,
-  Calendar,
-  Filter,
-  Search,
-  RefreshCw,
-  AlertTriangle,
-  Shield,
-} from 'lucide-react';
-import { formatBytes, formatDuration, formatDate } from '@/lib/utils';
-import { toast } from 'sonner';
+import { formatBytes, formatDate, formatDuration } from '@/lib/utils';
 
 // Types
 interface BackupRecord {
@@ -102,7 +108,9 @@ const BackupHistory: React.FC = () => {
   const [backups, setBackups] = useState<BackupRecord[]>([]);
   const [filteredBackups, setFilteredBackups] = useState<BackupRecord[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedBackup, setSelectedBackup] = useState<BackupDetails | null>(null);
+  const [selectedBackup, setSelectedBackup] = useState<BackupDetails | null>(
+    null
+  );
   const [showDetails, setShowDetails] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -118,11 +126,11 @@ const BackupHistory: React.FC = () => {
 
   useEffect(() => {
     loadBackupHistory();
-  }, [currentPage]);
+  }, [loadBackupHistory]);
 
   useEffect(() => {
     applyFilters();
-  }, [backups, filters]);
+  }, [applyFilters]);
 
   const loadBackupHistory = async () => {
     try {
@@ -152,28 +160,33 @@ const BackupHistory: React.FC = () => {
     let filtered = [...backups];
 
     if (filters.status) {
-      filtered = filtered.filter(backup => backup.status === filters.status);
+      filtered = filtered.filter((backup) => backup.status === filters.status);
     }
 
     if (filters.type) {
-      filtered = filtered.filter(backup => backup.type === filters.type);
+      filtered = filtered.filter((backup) => backup.type === filters.type);
     }
 
     if (filters.dateFrom) {
       const fromDate = new Date(filters.dateFrom);
-      filtered = filtered.filter(backup => new Date(backup.start_time) >= fromDate);
+      filtered = filtered.filter(
+        (backup) => new Date(backup.start_time) >= fromDate
+      );
     }
 
     if (filters.dateTo) {
       const toDate = new Date(filters.dateTo);
-      filtered = filtered.filter(backup => new Date(backup.start_time) <= toDate);
+      filtered = filtered.filter(
+        (backup) => new Date(backup.start_time) <= toDate
+      );
     }
 
     if (filters.searchTerm) {
       const term = filters.searchTerm.toLowerCase();
-      filtered = filtered.filter(backup => 
-        backup.config_name.toLowerCase().includes(term) ||
-        backup.id.toLowerCase().includes(term)
+      filtered = filtered.filter(
+        (backup) =>
+          backup.config_name.toLowerCase().includes(term) ||
+          backup.id.toLowerCase().includes(term)
       );
     }
 
@@ -196,7 +209,7 @@ const BackupHistory: React.FC = () => {
     }
   };
 
-  const handleDownloadBackup = async (backupId: string) => {
+  const handleDownloadBackup = async (_backupId: string) => {
     try {
       toast.info('Iniciando download do backup...');
       // Implementar download do backup
@@ -233,7 +246,7 @@ const BackupHistory: React.FC = () => {
       case 'FAILED':
         return <XCircle className="h-4 w-4 text-red-500" />;
       case 'RUNNING':
-        return <RefreshCw className="h-4 w-4 text-blue-500 animate-spin" />;
+        return <RefreshCw className="h-4 w-4 animate-spin text-blue-500" />;
       case 'PENDING':
         return <Clock className="h-4 w-4 text-yellow-500" />;
       case 'CANCELLED':
@@ -273,15 +286,17 @@ const BackupHistory: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">Histórico de Backups</h2>
+          <h2 className="font-bold text-2xl">Histórico de Backups</h2>
           <p className="text-muted-foreground">
             Visualize e gerencie o histórico completo de backups
           </p>
         </div>
-        <Button onClick={loadBackupHistory} disabled={loading}>
-          <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+        <Button disabled={loading} onClick={loadBackupHistory}>
+          <RefreshCw
+            className={`mr-2 h-4 w-4 ${loading ? 'animate-spin' : ''}`}
+          />
           Atualizar
         </Button>
       </div>
@@ -290,22 +305,24 @@ const BackupHistory: React.FC = () => {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center">
-            <Filter className="h-5 w-5 mr-2" />
+            <Filter className="mr-2 h-5 w-5" />
             Filtros
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
             <div className="space-y-2">
               <Label htmlFor="search">Buscar</Label>
               <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute top-3 left-3 h-4 w-4 text-muted-foreground" />
                 <Input
+                  className="pl-9"
                   id="search"
+                  onChange={(e) =>
+                    setFilters({ ...filters, searchTerm: e.target.value })
+                  }
                   placeholder="Nome ou ID..."
                   value={filters.searchTerm}
-                  onChange={(e) => setFilters({ ...filters, searchTerm: e.target.value })}
-                  className="pl-9"
                 />
               </div>
             </div>
@@ -313,8 +330,10 @@ const BackupHistory: React.FC = () => {
             <div className="space-y-2">
               <Label>Status</Label>
               <Select
+                onValueChange={(value) =>
+                  setFilters({ ...filters, status: value })
+                }
                 value={filters.status}
-                onValueChange={(value) => setFilters({ ...filters, status: value })}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Todos" />
@@ -333,8 +352,10 @@ const BackupHistory: React.FC = () => {
             <div className="space-y-2">
               <Label>Tipo</Label>
               <Select
+                onValueChange={(value) =>
+                  setFilters({ ...filters, type: value })
+                }
                 value={filters.type}
-                onValueChange={(value) => setFilters({ ...filters, type: value })}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Todos" />
@@ -354,9 +375,11 @@ const BackupHistory: React.FC = () => {
               <Label htmlFor="dateFrom">Data Inicial</Label>
               <Input
                 id="dateFrom"
+                onChange={(e) =>
+                  setFilters({ ...filters, dateFrom: e.target.value })
+                }
                 type="date"
                 value={filters.dateFrom}
-                onChange={(e) => setFilters({ ...filters, dateFrom: e.target.value })}
               />
             </div>
 
@@ -364,9 +387,11 @@ const BackupHistory: React.FC = () => {
               <Label htmlFor="dateTo">Data Final</Label>
               <Input
                 id="dateTo"
+                onChange={(e) =>
+                  setFilters({ ...filters, dateTo: e.target.value })
+                }
                 type="date"
                 value={filters.dateTo}
-                onChange={(e) => setFilters({ ...filters, dateTo: e.target.value })}
               />
             </div>
           </div>
@@ -376,25 +401,21 @@ const BackupHistory: React.FC = () => {
       {/* Tabela de Histórico */}
       <Card>
         <CardHeader>
-          <CardTitle>
-            Backups ({filteredBackups.length})
-          </CardTitle>
+          <CardTitle>Backups ({filteredBackups.length})</CardTitle>
           <CardDescription>
             Histórico completo de operações de backup
           </CardDescription>
         </CardHeader>
         <CardContent>
           {loading ? (
-            <div className="text-center py-8">
-              <RefreshCw className="h-8 w-8 animate-spin mx-auto mb-2" />
+            <div className="py-8 text-center">
+              <RefreshCw className="mx-auto mb-2 h-8 w-8 animate-spin" />
               <p>Carregando histórico...</p>
             </div>
           ) : filteredBackups.length === 0 ? (
-            <div className="text-center py-8">
-              <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-              <p className="text-muted-foreground">
-                Nenhum backup encontrado
-              </p>
+            <div className="py-8 text-center">
+              <Calendar className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
+              <p className="text-muted-foreground">Nenhum backup encontrado</p>
             </div>
           ) : (
             <Table>
@@ -416,8 +437,10 @@ const BackupHistory: React.FC = () => {
                       <div className="flex items-center space-x-2">
                         {getTypeIcon(backup.type)}
                         <div>
-                          <div className="font-medium">{backup.config_name}</div>
-                          <div className="text-sm text-muted-foreground">
+                          <div className="font-medium">
+                            {backup.config_name}
+                          </div>
+                          <div className="text-muted-foreground text-sm">
                             {backup.id.slice(0, 8)}...
                           </div>
                         </div>
@@ -434,7 +457,7 @@ const BackupHistory: React.FC = () => {
                         </Badge>
                       </div>
                       {backup.status === 'FAILED' && backup.error_message && (
-                        <div className="text-xs text-red-500 mt-1 max-w-xs truncate">
+                        <div className="mt-1 max-w-xs truncate text-red-500 text-xs">
                           {backup.error_message}
                         </div>
                       )}
@@ -461,7 +484,7 @@ const BackupHistory: React.FC = () => {
                         <div>
                           <div>{formatBytes(backup.size)}</div>
                           {backup.compressed_size && (
-                            <div className="text-xs text-muted-foreground">
+                            <div className="text-muted-foreground text-xs">
                               Comprimido: {formatBytes(backup.compressed_size)}
                             </div>
                           )}
@@ -473,7 +496,7 @@ const BackupHistory: React.FC = () => {
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm">
+                          <Button size="sm" variant="ghost">
                             <MoreHorizontal className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
@@ -482,23 +505,23 @@ const BackupHistory: React.FC = () => {
                           <DropdownMenuItem
                             onClick={() => loadBackupDetails(backup.id)}
                           >
-                            <Eye className="h-4 w-4 mr-2" />
+                            <Eye className="mr-2 h-4 w-4" />
                             Ver Detalhes
                           </DropdownMenuItem>
                           {backup.status === 'COMPLETED' && (
                             <DropdownMenuItem
                               onClick={() => handleDownloadBackup(backup.id)}
                             >
-                              <Download className="h-4 w-4 mr-2" />
+                              <Download className="mr-2 h-4 w-4" />
                               Download
                             </DropdownMenuItem>
                           )}
                           <DropdownMenuSeparator />
                           <DropdownMenuItem
-                            onClick={() => handleDeleteBackup(backup.id)}
                             className="text-red-600"
+                            onClick={() => handleDeleteBackup(backup.id)}
                           >
-                            <Trash2 className="h-4 w-4 mr-2" />
+                            <Trash2 className="mr-2 h-4 w-4" />
                             Remover
                           </DropdownMenuItem>
                         </DropdownMenuContent>
@@ -516,9 +539,9 @@ const BackupHistory: React.FC = () => {
       {totalPages > 1 && (
         <div className="flex justify-center space-x-2">
           <Button
-            variant="outline"
-            onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
             disabled={currentPage === 1}
+            onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+            variant="outline"
           >
             Anterior
           </Button>
@@ -526,9 +549,11 @@ const BackupHistory: React.FC = () => {
             Página {currentPage} de {totalPages}
           </span>
           <Button
-            variant="outline"
-            onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
             disabled={currentPage === totalPages}
+            onClick={() =>
+              setCurrentPage(Math.min(totalPages, currentPage + 1))
+            }
+            variant="outline"
           >
             Próximo
           </Button>
@@ -536,7 +561,7 @@ const BackupHistory: React.FC = () => {
       )}
 
       {/* Dialog de Detalhes */}
-      <Dialog open={showDetails} onOpenChange={setShowDetails}>
+      <Dialog onOpenChange={setShowDetails} open={showDetails}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>Detalhes do Backup</DialogTitle>
@@ -548,34 +573,40 @@ const BackupHistory: React.FC = () => {
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-sm font-medium">ID</Label>
-                  <p className="text-sm text-muted-foreground">{selectedBackup.id}</p>
+                  <Label className="font-medium text-sm">ID</Label>
+                  <p className="text-muted-foreground text-sm">
+                    {selectedBackup.id}
+                  </p>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium">Configuração</Label>
-                  <p className="text-sm text-muted-foreground">{selectedBackup.config_name}</p>
+                  <Label className="font-medium text-sm">Configuração</Label>
+                  <p className="text-muted-foreground text-sm">
+                    {selectedBackup.config_name}
+                  </p>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium">Tipo</Label>
-                  <p className="text-sm text-muted-foreground">{selectedBackup.type}</p>
+                  <Label className="font-medium text-sm">Tipo</Label>
+                  <p className="text-muted-foreground text-sm">
+                    {selectedBackup.type}
+                  </p>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium">Status</Label>
+                  <Label className="font-medium text-sm">Status</Label>
                   <Badge variant={getStatusColor(selectedBackup.status) as any}>
                     {selectedBackup.status}
                   </Badge>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium">Início</Label>
-                  <p className="text-sm text-muted-foreground">
+                  <Label className="font-medium text-sm">Início</Label>
+                  <p className="text-muted-foreground text-sm">
                     {formatDate(new Date(selectedBackup.start_time))} às{' '}
                     {new Date(selectedBackup.start_time).toLocaleTimeString()}
                   </p>
                 </div>
                 {selectedBackup.end_time && (
                   <div>
-                    <Label className="text-sm font-medium">Fim</Label>
-                    <p className="text-sm text-muted-foreground">
+                    <Label className="font-medium text-sm">Fim</Label>
+                    <p className="text-muted-foreground text-sm">
                       {formatDate(new Date(selectedBackup.end_time))} às{' '}
                       {new Date(selectedBackup.end_time).toLocaleTimeString()}
                     </p>
@@ -583,20 +614,21 @@ const BackupHistory: React.FC = () => {
                 )}
                 {selectedBackup.duration && (
                   <div>
-                    <Label className="text-sm font-medium">Duração</Label>
-                    <p className="text-sm text-muted-foreground">
+                    <Label className="font-medium text-sm">Duração</Label>
+                    <p className="text-muted-foreground text-sm">
                       {formatDuration(selectedBackup.duration)}
                     </p>
                   </div>
                 )}
                 {selectedBackup.size && (
                   <div>
-                    <Label className="text-sm font-medium">Tamanho</Label>
-                    <p className="text-sm text-muted-foreground">
+                    <Label className="font-medium text-sm">Tamanho</Label>
+                    <p className="text-muted-foreground text-sm">
                       {formatBytes(selectedBackup.size)}
                       {selectedBackup.compressed_size && (
                         <span className="ml-2">
-                          (Comprimido: {formatBytes(selectedBackup.compressed_size)})
+                          (Comprimido:{' '}
+                          {formatBytes(selectedBackup.compressed_size)})
                         </span>
                       )}
                     </p>
@@ -604,8 +636,8 @@ const BackupHistory: React.FC = () => {
                 )}
                 {selectedBackup.file_count && (
                   <div>
-                    <Label className="text-sm font-medium">Arquivos</Label>
-                    <p className="text-sm text-muted-foreground">
+                    <Label className="font-medium text-sm">Arquivos</Label>
+                    <p className="text-muted-foreground text-sm">
                       {selectedBackup.file_count.toLocaleString()} arquivo(s)
                     </p>
                   </div>
@@ -623,8 +655,10 @@ const BackupHistory: React.FC = () => {
 
               {selectedBackup.storage_location && (
                 <div>
-                  <Label className="text-sm font-medium">Local de Armazenamento</Label>
-                  <p className="text-sm text-muted-foreground font-mono bg-muted p-2 rounded">
+                  <Label className="font-medium text-sm">
+                    Local de Armazenamento
+                  </Label>
+                  <p className="rounded bg-muted p-2 font-mono text-muted-foreground text-sm">
                     {selectedBackup.storage_location}
                   </p>
                 </div>
@@ -632,25 +666,36 @@ const BackupHistory: React.FC = () => {
 
               {selectedBackup.metrics && (
                 <div>
-                  <Label className="text-sm font-medium">Métricas</Label>
-                  <div className="grid grid-cols-3 gap-4 mt-2">
+                  <Label className="font-medium text-sm">Métricas</Label>
+                  <div className="mt-2 grid grid-cols-3 gap-4">
                     <div className="text-center">
-                      <p className="text-2xl font-bold text-blue-600">
-                        {(selectedBackup.metrics.compression_ratio * 100).toFixed(1)}%
+                      <p className="font-bold text-2xl text-blue-600">
+                        {(
+                          selectedBackup.metrics.compression_ratio * 100
+                        ).toFixed(1)}
+                        %
                       </p>
-                      <p className="text-xs text-muted-foreground">Compressão</p>
+                      <p className="text-muted-foreground text-xs">
+                        Compressão
+                      </p>
                     </div>
                     <div className="text-center">
-                      <p className="text-2xl font-bold text-green-600">
+                      <p className="font-bold text-2xl text-green-600">
                         {formatBytes(selectedBackup.metrics.transfer_speed)}/s
                       </p>
-                      <p className="text-xs text-muted-foreground">Velocidade</p>
+                      <p className="text-muted-foreground text-xs">
+                        Velocidade
+                      </p>
                     </div>
                     <div className="text-center">
-                      <p className="text-2xl font-bold text-purple-600">
-                        {selectedBackup.metrics.verification_status === 'PASSED' ? '✓' : '✗'}
+                      <p className="font-bold text-2xl text-purple-600">
+                        {selectedBackup.metrics.verification_status === 'PASSED'
+                          ? '✓'
+                          : '✗'}
                       </p>
-                      <p className="text-xs text-muted-foreground">Verificação</p>
+                      <p className="text-muted-foreground text-xs">
+                        Verificação
+                      </p>
                     </div>
                   </div>
                 </div>

@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
 import { InstagramOAuthHandler } from '@/lib/oauth/platforms/instagram-handler';
 import { TokenEncryptionService } from '@/lib/oauth/token-encryption';
-import { OAuthState } from '@/lib/oauth/types';
+import type { OAuthState } from '@/lib/oauth/types';
 
 /**
  * Instagram OAuth Authentication Initiation Endpoint
@@ -13,9 +13,11 @@ import { OAuthState } from '@/lib/oauth/types';
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Verify user authentication
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session) {
       return NextResponse.json(
         { error: 'Authentication required' },
@@ -25,7 +27,8 @@ export async function GET(request: NextRequest) {
 
     const { user } = session;
     const searchParams = request.nextUrl.searchParams;
-    const redirectTo = searchParams.get('redirect_to') || '/dashboard/social-media';
+    const redirectTo =
+      searchParams.get('redirect_to') || '/dashboard/social-media';
 
     // Get user's clinic context
     const { data: profile } = await supabase
@@ -48,12 +51,12 @@ export async function GET(request: NextRequest) {
       platform: 'instagram',
       nonce: TokenEncryptionService.generateSecureState(),
       createdAt: new Date(),
-      redirectTo
+      redirectTo,
     };
 
     // Initialize Instagram OAuth handler
     const instagramHandler = new InstagramOAuthHandler();
-    
+
     // Generate authorization URL
     const authUrl = instagramHandler.getAuthorizationUrl(state);
 
@@ -61,16 +64,15 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       authUrl,
-      state: state.nonce
+      state: state.nonce,
     });
-
   } catch (error) {
     console.error('Instagram OAuth initiation error:', error);
-    
+
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to initiate Instagram authentication',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );

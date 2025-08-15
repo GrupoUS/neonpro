@@ -1,24 +1,22 @@
 /**
  * NeonPro Backup Scheduler
  * Story 1.8: Sistema de Backup e Recovery
- * 
+ *
  * Serviço de agendamento para backups automáticos,
  * gerenciando cronogramas e execução de tarefas.
  */
 
-import cron from 'node-cron';
 import { createClient } from '@supabase/supabase-js';
-import { 
-  BackupConfig, 
-  BackupSchedule, 
-  ScheduleFrequency,
-  BackupStatus,
-  BackupPriority,
-  ApiResponse,
-  ScheduledTask,
-  TaskStatus
-} from './types';
+import cron from 'node-cron';
 import { auditLogger } from '../auth/audit/audit-logger';
+import {
+  type ApiResponse,
+  type BackupConfig,
+  type BackupSchedule,
+  type ScheduledTask,
+  ScheduleFrequency,
+  TaskStatus,
+} from './types';
 
 /**
  * Interface para tarefas agendadas
@@ -74,14 +72,16 @@ export class SchedulerService {
       }
 
       this.isInitialized = true;
-      console.log(`Scheduler inicializado com ${this.scheduledTasks.size} tarefas`);
+      console.log(
+        `Scheduler inicializado com ${this.scheduledTasks.size} tarefas`
+      );
 
       await auditLogger.log({
         action: 'SCHEDULER_INITIALIZED',
         entityType: 'SYSTEM',
         entityId: 'scheduler',
         details: { tasksCount: this.scheduledTasks.size },
-        userId: 'system'
+        userId: 'system',
       });
     } catch (error) {
       console.error('Erro ao inicializar scheduler:', error);
@@ -92,28 +92,37 @@ export class SchedulerService {
   /**
    * Agendar backup
    */
-  async scheduleBackup(config: BackupConfig): Promise<ApiResponse<ScheduledTask>> {
+  async scheduleBackup(
+    config: BackupConfig
+  ): Promise<ApiResponse<ScheduledTask>> {
     try {
       // Remover agendamento existente se houver
       await this.unscheduleBackup(config.id);
 
       // Converter schedule para cron expression
       const cronExpression = this.scheduleToCron(config.schedule);
-      
+
       if (!cron.validate(cronExpression)) {
         throw new Error(`Expressão cron inválida: ${cronExpression}`);
       }
 
       // Criar tarefa agendada
-      const task = cron.schedule(cronExpression, async () => {
-        await this.executeScheduledBackup(config.id);
-      }, {
-        scheduled: true,
-        timezone: config.schedule.timezone || 'America/Sao_Paulo'
-      });
+      const task = cron.schedule(
+        cronExpression,
+        async () => {
+          await this.executeScheduledBackup(config.id);
+        },
+        {
+          scheduled: true,
+          timezone: config.schedule.timezone || 'America/Sao_Paulo',
+        }
+      );
 
       // Calcular próxima execução
-      const nextRun = this.getNextRunTime(cronExpression, config.schedule.timezone);
+      const nextRun = this.getNextRunTime(
+        cronExpression,
+        config.schedule.timezone
+      );
 
       const scheduledTask: ScheduledBackupTask = {
         id: crypto.randomUUID(),
@@ -124,7 +133,7 @@ export class SchedulerService {
         nextRun,
         status: TaskStatus.SCHEDULED,
         retryCount: 0,
-        maxRetries: config.schedule.maxRetries || 3
+        maxRetries: config.schedule.maxRetries || 3,
       };
 
       this.scheduledTasks.set(config.id, scheduledTask);
@@ -136,12 +145,12 @@ export class SchedulerService {
         action: 'BACKUP_SCHEDULED',
         entityType: 'BACKUP_CONFIG',
         entityId: config.id,
-        details: { 
-          cronExpression, 
+        details: {
+          cronExpression,
           nextRun: nextRun.toISOString(),
-          frequency: config.schedule.frequency
+          frequency: config.schedule.frequency,
         },
-        userId: config.createdBy
+        userId: config.createdBy,
       });
 
       return {
@@ -155,11 +164,11 @@ export class SchedulerService {
           retryCount: 0,
           maxRetries: scheduledTask.maxRetries,
           createdAt: new Date(),
-          updatedAt: new Date()
+          updatedAt: new Date(),
         },
         message: 'Backup agendado com sucesso',
         timestamp: new Date(),
-        requestId: crypto.randomUUID()
+        requestId: crypto.randomUUID(),
       };
     } catch (error) {
       return this.handleError('Erro ao agendar backup', error);
@@ -169,19 +178,20 @@ export class SchedulerService {
   /**
    * Reagendar backup
    */
-  async rescheduleBackup(config: BackupConfig): Promise<ApiResponse<ScheduledTask>> {
+  async rescheduleBackup(
+    config: BackupConfig
+  ): Promise<ApiResponse<ScheduledTask>> {
     try {
       if (config.enabled) {
         return await this.scheduleBackup(config);
-      } else {
-        await this.unscheduleBackup(config.id);
-        return {
-          success: true,
-          message: 'Backup desabilitado',
-          timestamp: new Date(),
-          requestId: crypto.randomUUID()
-        };
       }
+      await this.unscheduleBackup(config.id);
+      return {
+        success: true,
+        message: 'Backup desabilitado',
+        timestamp: new Date(),
+        requestId: crypto.randomUUID(),
+      };
     } catch (error) {
       return this.handleError('Erro ao reagendar backup', error);
     }
@@ -192,15 +202,15 @@ export class SchedulerService {
    */
   async unscheduleBackup(configId: string): Promise<void> {
     const scheduledTask = this.scheduledTasks.get(configId);
-    
+
     if (scheduledTask) {
       // Parar tarefa cron
       scheduledTask.task.stop();
       scheduledTask.task.destroy();
-      
+
       // Remover do mapa
       this.scheduledTasks.delete(configId);
-      
+
       // Remover do banco
       await this.supabase
         .from('scheduled_tasks')
@@ -212,7 +222,7 @@ export class SchedulerService {
         entityType: 'BACKUP_CONFIG',
         entityId: configId,
         details: { taskId: scheduledTask.id },
-        userId: 'system'
+        userId: 'system',
       });
     }
   }
@@ -222,7 +232,7 @@ export class SchedulerService {
    */
   private async executeScheduledBackup(configId: string): Promise<void> {
     const scheduledTask = this.scheduledTasks.get(configId);
-    
+
     if (!scheduledTask) {
       console.error(`Tarefa agendada não encontrada: ${configId}`);
       return;
@@ -235,16 +245,19 @@ export class SchedulerService {
       await this.updateScheduledTask(scheduledTask);
 
       // Executar backup
-      const result = await this.backupManager.executeBackup(configId, 'scheduler');
-      
+      const result = await this.backupManager.executeBackup(
+        configId,
+        'scheduler'
+      );
+
       if (result.success) {
         // Sucesso
         scheduledTask.status = TaskStatus.COMPLETED;
         scheduledTask.retryCount = 0;
-        
+
         // Calcular próxima execução
         scheduledTask.nextRun = this.getNextRunTime(
-          scheduledTask.cronExpression, 
+          scheduledTask.cronExpression,
           scheduledTask.config.schedule.timezone
         );
 
@@ -253,7 +266,7 @@ export class SchedulerService {
           entityType: 'BACKUP',
           entityId: result.data?.id || 'unknown',
           details: { configId, scheduledTaskId: scheduledTask.id },
-          userId: 'scheduler'
+          userId: 'scheduler',
         });
       } else {
         throw new Error(result.error || 'Falha no backup');
@@ -262,16 +275,19 @@ export class SchedulerService {
       // Falha
       scheduledTask.status = TaskStatus.FAILED;
       scheduledTask.retryCount++;
-      
+
       console.error(`Erro no backup agendado ${configId}:`, error);
 
       // Verificar se deve tentar novamente
       if (scheduledTask.retryCount < scheduledTask.maxRetries) {
         // Agendar retry em 5 minutos
-        setTimeout(() => {
-          this.executeScheduledBackup(configId);
-        }, 5 * 60 * 1000);
-        
+        setTimeout(
+          () => {
+            this.executeScheduledBackup(configId);
+          },
+          5 * 60 * 1000
+        );
+
         scheduledTask.status = TaskStatus.RETRYING;
       }
 
@@ -279,12 +295,12 @@ export class SchedulerService {
         action: 'SCHEDULED_BACKUP_FAILED',
         entityType: 'BACKUP_CONFIG',
         entityId: configId,
-        details: { 
-          error: error.message, 
+        details: {
+          error: error.message,
           retryCount: scheduledTask.retryCount,
-          maxRetries: scheduledTask.maxRetries
+          maxRetries: scheduledTask.maxRetries,
         },
-        userId: 'scheduler'
+        userId: 'scheduler',
       });
     } finally {
       await this.updateScheduledTask(scheduledTask);
@@ -296,28 +312,30 @@ export class SchedulerService {
    */
   private scheduleToCron(schedule: BackupSchedule): string {
     const { frequency, time, dayOfWeek, dayOfMonth } = schedule;
-    
+
     // Extrair hora e minuto do time (formato HH:MM)
     const [hour, minute] = time.split(':').map(Number);
-    
+
     switch (frequency) {
       case ScheduleFrequency.HOURLY:
         return `${minute} * * * *`;
-        
+
       case ScheduleFrequency.DAILY:
         return `${minute} ${hour} * * *`;
-        
-      case ScheduleFrequency.WEEKLY:
+
+      case ScheduleFrequency.WEEKLY: {
         const day = dayOfWeek || 0; // 0 = domingo
         return `${minute} ${hour} * * ${day}`;
-        
-      case ScheduleFrequency.MONTHLY:
+      }
+
+      case ScheduleFrequency.MONTHLY: {
         const monthDay = dayOfMonth || 1;
         return `${minute} ${hour} ${monthDay} * *`;
-        
+      }
+
       case ScheduleFrequency.CUSTOM:
         return schedule.cronExpression || '0 2 * * *'; // Default: 2:00 AM diário
-        
+
       default:
         throw new Error(`Frequência não suportada: ${frequency}`);
     }
@@ -326,7 +344,7 @@ export class SchedulerService {
   /**
    * Obter próximo horário de execução
    */
-  private getNextRunTime(cronExpression: string, timezone?: string): Date {
+  private getNextRunTime(_cronExpression: string, _timezone?: string): Date {
     try {
       // Usar biblioteca cron-parser se disponível
       // const parser = require('cron-parser');
@@ -334,13 +352,13 @@ export class SchedulerService {
       //   tz: timezone || 'America/Sao_Paulo'
       // });
       // return interval.next().toDate();
-      
+
       // Fallback: calcular manualmente baseado na frequência
       const now = new Date();
       const tomorrow = new Date(now);
       tomorrow.setDate(tomorrow.getDate() + 1);
       tomorrow.setHours(2, 0, 0, 0); // 2:00 AM
-      
+
       return tomorrow;
     } catch (error) {
       console.error('Erro ao calcular próxima execução:', error);
@@ -366,12 +384,10 @@ export class SchedulerService {
       retryCount: task.retryCount,
       maxRetries: task.maxRetries,
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     };
 
-    await this.supabase
-      .from('scheduled_tasks')
-      .upsert(taskData);
+    await this.supabase.from('scheduled_tasks').upsert(taskData);
   }
 
   /**
@@ -385,7 +401,7 @@ export class SchedulerService {
         lastRun: task.lastRun?.toISOString(),
         status: task.status,
         retryCount: task.retryCount,
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
       })
       .eq('id', task.id);
   }
@@ -395,7 +411,7 @@ export class SchedulerService {
    */
   async listScheduledTasks(): Promise<ApiResponse<ScheduledTask[]>> {
     try {
-      const tasks = Array.from(this.scheduledTasks.values()).map(task => ({
+      const tasks = Array.from(this.scheduledTasks.values()).map((task) => ({
         id: task.id,
         configId: task.configId,
         cronExpression: task.cronExpression,
@@ -405,14 +421,14 @@ export class SchedulerService {
         retryCount: task.retryCount,
         maxRetries: task.maxRetries,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       }));
 
       return {
         success: true,
         data: tasks,
         timestamp: new Date(),
-        requestId: crypto.randomUUID()
+        requestId: crypto.randomUUID(),
       };
     } catch (error) {
       return this.handleError('Erro ao listar tarefas agendadas', error);
@@ -424,9 +440,9 @@ export class SchedulerService {
    */
   getTaskStatus(configId: string): ScheduledTask | null {
     const task = this.scheduledTasks.get(configId);
-    
+
     if (!task) return null;
-    
+
     return {
       id: task.id,
       configId: task.configId,
@@ -437,7 +453,7 @@ export class SchedulerService {
       retryCount: task.retryCount,
       maxRetries: task.maxRetries,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
   }
 
@@ -446,7 +462,7 @@ export class SchedulerService {
    */
   async pauseAllTasks(): Promise<ApiResponse> {
     try {
-      for (const [configId, task] of this.scheduledTasks) {
+      for (const [_configId, task] of this.scheduledTasks) {
         task.task.stop();
         task.status = TaskStatus.PAUSED;
         await this.updateScheduledTask(task);
@@ -457,14 +473,14 @@ export class SchedulerService {
         entityType: 'SYSTEM',
         entityId: 'scheduler',
         details: { tasksCount: this.scheduledTasks.size },
-        userId: 'system'
+        userId: 'system',
       });
 
       return {
         success: true,
         message: 'Todas as tarefas foram pausadas',
         timestamp: new Date(),
-        requestId: crypto.randomUUID()
+        requestId: crypto.randomUUID(),
       };
     } catch (error) {
       return this.handleError('Erro ao pausar tarefas', error);
@@ -476,7 +492,7 @@ export class SchedulerService {
    */
   async resumeAllTasks(): Promise<ApiResponse> {
     try {
-      for (const [configId, task] of this.scheduledTasks) {
+      for (const [_configId, task] of this.scheduledTasks) {
         task.task.start();
         task.status = TaskStatus.SCHEDULED;
         await this.updateScheduledTask(task);
@@ -487,14 +503,14 @@ export class SchedulerService {
         entityType: 'SYSTEM',
         entityId: 'scheduler',
         details: { tasksCount: this.scheduledTasks.size },
-        userId: 'system'
+        userId: 'system',
       });
 
       return {
         success: true,
         message: 'Todas as tarefas foram retomadas',
         timestamp: new Date(),
-        requestId: crypto.randomUUID()
+        requestId: crypto.randomUUID(),
       };
     } catch (error) {
       return this.handleError('Erro ao retomar tarefas', error);
@@ -506,11 +522,11 @@ export class SchedulerService {
    */
   async shutdown(): Promise<void> {
     try {
-      for (const [configId, task] of this.scheduledTasks) {
+      for (const [_configId, task] of this.scheduledTasks) {
         task.task.stop();
         task.task.destroy();
       }
-      
+
       this.scheduledTasks.clear();
       this.isInitialized = false;
 
@@ -519,7 +535,7 @@ export class SchedulerService {
         entityType: 'SYSTEM',
         entityId: 'scheduler',
         details: {},
-        userId: 'system'
+        userId: 'system',
       });
 
       console.log('Scheduler finalizado');
@@ -531,16 +547,19 @@ export class SchedulerService {
   /**
    * Executar backup imediatamente (fora do agendamento)
    */
-  async executeImmediateBackup(configId: string, userId: string): Promise<ApiResponse> {
+  async executeImmediateBackup(
+    configId: string,
+    userId: string
+  ): Promise<ApiResponse> {
     try {
       const result = await this.backupManager.executeBackup(configId, userId);
-      
+
       await auditLogger.log({
         action: 'IMMEDIATE_BACKUP_EXECUTED',
         entityType: 'BACKUP_CONFIG',
         entityId: configId,
         details: { success: result.success },
-        userId
+        userId,
       });
 
       return result;
@@ -555,13 +574,13 @@ export class SchedulerService {
   validateCronExpression(expression: string): ApiResponse<boolean> {
     try {
       const isValid = cron.validate(expression);
-      
+
       return {
         success: true,
         data: isValid,
         message: isValid ? 'Expressão cron válida' : 'Expressão cron inválida',
         timestamp: new Date(),
-        requestId: crypto.randomUUID()
+        requestId: crypto.randomUUID(),
       };
     } catch (error) {
       return {
@@ -570,7 +589,7 @@ export class SchedulerService {
         error: error.message,
         message: 'Erro ao validar expressão cron',
         timestamp: new Date(),
-        requestId: crypto.randomUUID()
+        requestId: crypto.randomUUID(),
       };
     }
   }
@@ -586,21 +605,22 @@ export class SchedulerService {
     nextExecution?: Date;
   } {
     const tasks = Array.from(this.scheduledTasks.values());
-    
+
     const stats = {
       totalTasks: tasks.length,
-      activeTasks: tasks.filter(t => t.status === TaskStatus.SCHEDULED).length,
-      pausedTasks: tasks.filter(t => t.status === TaskStatus.PAUSED).length,
-      failedTasks: tasks.filter(t => t.status === TaskStatus.FAILED).length,
-      nextExecution: undefined as Date | undefined
+      activeTasks: tasks.filter((t) => t.status === TaskStatus.SCHEDULED)
+        .length,
+      pausedTasks: tasks.filter((t) => t.status === TaskStatus.PAUSED).length,
+      failedTasks: tasks.filter((t) => t.status === TaskStatus.FAILED).length,
+      nextExecution: undefined as Date | undefined,
     };
 
     // Encontrar próxima execução
     const nextRuns = tasks
-      .filter(t => t.status === TaskStatus.SCHEDULED)
-      .map(t => t.nextRun)
+      .filter((t) => t.status === TaskStatus.SCHEDULED)
+      .map((t) => t.nextRun)
       .sort((a, b) => a.getTime() - b.getTime());
-    
+
     if (nextRuns.length > 0) {
       stats.nextExecution = nextRuns[0];
     }
@@ -615,7 +635,7 @@ export class SchedulerService {
       error: error.message || 'Erro interno do servidor',
       message,
       timestamp: new Date(),
-      requestId: crypto.randomUUID()
+      requestId: crypto.randomUUID(),
     };
   }
 }

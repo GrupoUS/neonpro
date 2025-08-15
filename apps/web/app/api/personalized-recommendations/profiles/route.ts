@@ -1,37 +1,38 @@
 // Story 9.2: Personalized Treatment Recommendations - API Profiles Route
 // Recommendation profiles API endpoint
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { personalizedRecommendationsService } from '../../../lib/services/personalized-recommendations';
 import {
-    createRecommendationProfileRequestSchema,
-    updateRecommendationProfileRequestSchema
+  createRecommendationProfileRequestSchema,
+  updateRecommendationProfileRequestSchema,
 } from '../../../lib/validations/personalized-recommendations';
-import {
-    CreateRecommendationProfileRequest,
-    UpdateRecommendationProfileRequest
+import type {
+  CreateRecommendationProfileRequest,
+  UpdateRecommendationProfileRequest,
 } from '../../../types/personalized-recommendations';
 
 // Get recommendation profiles
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    
+
     const query = {
       patient_id: searchParams.get('patient_id') || undefined,
       provider_id: searchParams.get('provider_id') || undefined,
       status: searchParams.get('status') || undefined,
-      limit: parseInt(searchParams.get('limit') || '10'),
-      offset: parseInt(searchParams.get('offset') || '0'),
+      limit: Number.parseInt(searchParams.get('limit') || '10', 10),
+      offset: Number.parseInt(searchParams.get('offset') || '0', 10),
       sort_by: searchParams.get('sort_by') || 'created_at',
-      sort_order: (searchParams.get('sort_order') as 'asc' | 'desc') || 'desc'
+      sort_order: (searchParams.get('sort_order') as 'asc' | 'desc') || 'desc',
     };
 
-    const profiles = await personalizedRecommendationsService.getProfiles(query);
-    
+    const profiles =
+      await personalizedRecommendationsService.getProfiles(query);
+
     return NextResponse.json({
       profiles,
-      success: true
+      success: true,
     });
   } catch (error) {
     console.error('Error fetching recommendation profiles:', error);
@@ -46,27 +47,33 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    
+
     // Validate request body
-    const validationResult = createRecommendationProfileRequestSchema.safeParse(body);
+    const validationResult =
+      createRecommendationProfileRequestSchema.safeParse(body);
     if (!validationResult.success) {
       return NextResponse.json(
-        { 
-          error: 'Invalid recommendation profile data', 
+        {
+          error: 'Invalid recommendation profile data',
           details: validationResult.error.issues,
-          success: false 
+          success: false,
         },
         { status: 400 }
       );
     }
 
-    const profileData: CreateRecommendationProfileRequest = validationResult.data;
-    const profile = await personalizedRecommendationsService.createProfile(profileData);
-    
-    return NextResponse.json({
-      profile,
-      success: true
-    }, { status: 201 });
+    const profileData: CreateRecommendationProfileRequest =
+      validationResult.data;
+    const profile =
+      await personalizedRecommendationsService.createProfile(profileData);
+
+    return NextResponse.json(
+      {
+        profile,
+        success: true,
+      },
+      { status: 201 }
+    );
   } catch (error) {
     console.error('Error creating recommendation profile:', error);
     return NextResponse.json(
@@ -80,33 +87,38 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json();
-    
+
     // Validate request body
-    const validationResult = updateRecommendationProfileRequestSchema.safeParse(body);
+    const validationResult =
+      updateRecommendationProfileRequestSchema.safeParse(body);
     if (!validationResult.success) {
       return NextResponse.json(
-        { 
-          error: 'Invalid recommendation profile update data', 
+        {
+          error: 'Invalid recommendation profile update data',
           details: validationResult.error.issues,
-          success: false 
+          success: false,
         },
         { status: 400 }
       );
     }
 
-    const { id, ...updateData }: UpdateRecommendationProfileRequest = validationResult.data;
-    const profile = await personalizedRecommendationsService.updateProfile(id, updateData);
-    
+    const { id, ...updateData }: UpdateRecommendationProfileRequest =
+      validationResult.data;
+    const profile = await personalizedRecommendationsService.updateProfile(
+      id,
+      updateData
+    );
+
     if (!profile) {
       return NextResponse.json(
         { error: 'Recommendation profile not found', success: false },
         { status: 404 }
       );
     }
-    
+
     return NextResponse.json({
       profile,
-      success: true
+      success: true,
     });
   } catch (error) {
     console.error('Error updating recommendation profile:', error);

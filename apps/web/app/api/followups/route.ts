@@ -5,35 +5,45 @@
 // POST /api/followups - Create new follow-up
 // =====================================================================================
 
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { treatmentFollowupService } from '@/app/lib/services/treatment-followup-service';
-import type { FollowupFilters, CreateFollowupData } from '@/app/types/treatment-followups';
+import type {
+  CreateFollowupData,
+  FollowupFilters,
+} from '@/app/types/treatment-followups';
+import { createClient } from '@/app/utils/supabase/server';
 
 export async function GET(request: NextRequest) {
   try {
     // Verify authentication
     const supabase = await createClient();
-    const { data: { session }, error: authError } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+      error: authError,
+    } = await supabase.auth.getSession();
+
     if (authError || !session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Parse query parameters
     const { searchParams } = new URL(request.url);
-    
+
     const filters: FollowupFilters = {};
-    
+
     // Extract filters from query params
     if (searchParams.get('status')) {
       filters.status = searchParams.get('status')?.split(',') as any[];
     }
     if (searchParams.get('followup_type')) {
-      filters.followup_type = searchParams.get('followup_type')?.split(',') as any[];
+      filters.followup_type = searchParams
+        .get('followup_type')
+        ?.split(',') as any[];
     }
     if (searchParams.get('communication_method')) {
-      filters.communication_method = searchParams.get('communication_method')?.split(',') as any[];
+      filters.communication_method = searchParams
+        .get('communication_method')
+        ?.split(',') as any[];
     }
     if (searchParams.get('priority')) {
       filters.priority = searchParams.get('priority')?.split(',') as any[];
@@ -57,10 +67,10 @@ export async function GET(request: NextRequest) {
       filters.automated = searchParams.get('automated') === 'true';
     }
     if (searchParams.get('limit')) {
-      filters.limit = parseInt(searchParams.get('limit')!);
+      filters.limit = Number.parseInt(searchParams.get('limit')!, 10);
     }
     if (searchParams.get('offset')) {
-      filters.offset = parseInt(searchParams.get('offset')!);
+      filters.offset = Number.parseInt(searchParams.get('offset')!, 10);
     }
 
     // Fetch follow-ups
@@ -69,13 +79,15 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       data: followups,
       count: followups.length,
-      filters
+      filters,
     });
-
   } catch (error) {
     console.error('API error in GET /api/followups:', error);
     return NextResponse.json(
-      { error: 'Internal server error', message: error instanceof Error ? error.message : 'Unknown error' },
+      {
+        error: 'Internal server error',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
       { status: 500 }
     );
   }
@@ -85,21 +97,33 @@ export async function POST(request: NextRequest) {
   try {
     // Verify authentication
     const supabase = await createClient();
-    const { data: { session }, error: authError } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+      error: authError,
+    } = await supabase.auth.getSession();
+
     if (authError || !session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Parse request body
     const body = await request.json();
-    
+
     // Validate required fields
-    const requiredFields = ['clinic_id', 'patient_id', 'followup_type', 'communication_method', 'scheduled_date'];
+    const requiredFields = [
+      'clinic_id',
+      'patient_id',
+      'followup_type',
+      'communication_method',
+      'scheduled_date',
+    ];
     for (const field of requiredFields) {
       if (!body[field]) {
         return NextResponse.json(
-          { error: 'Validation error', message: `Field '${field}' is required` },
+          {
+            error: 'Validation error',
+            message: `Field '${field}' is required`,
+          },
           { status: 400 }
         );
       }
@@ -109,21 +133,27 @@ export async function POST(request: NextRequest) {
     const followupData: CreateFollowupData = {
       ...body,
       scheduled_date: new Date(body.scheduled_date),
-      created_by: session.user.id
+      created_by: session.user.id,
     };
 
     // Create follow-up
-    const newFollowup = await treatmentFollowupService.createFollowup(followupData);
+    const newFollowup =
+      await treatmentFollowupService.createFollowup(followupData);
 
-    return NextResponse.json({
-      data: newFollowup,
-      message: 'Follow-up created successfully'
-    }, { status: 201 });
-
+    return NextResponse.json(
+      {
+        data: newFollowup,
+        message: 'Follow-up created successfully',
+      },
+      { status: 201 }
+    );
   } catch (error) {
     console.error('API error in POST /api/followups:', error);
     return NextResponse.json(
-      { error: 'Internal server error', message: error instanceof Error ? error.message : 'Unknown error' },
+      {
+        error: 'Internal server error',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
       { status: 500 }
     );
   }

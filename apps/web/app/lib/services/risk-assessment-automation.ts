@@ -1,28 +1,28 @@
 /**
  * Risk Assessment Automation Service
  * Story 9.4: Comprehensive automated risk assessment with medical validation
- * 
+ *
  * This service provides comprehensive risk assessment automation with medical validation,
  * including automated risk scoring, human-in-the-loop medical oversight, risk mitigation
  * strategies, and real-time alert management.
  */
 
 import type {
-    AssessmentContext,
-    CreateAlertRequest,
-    CreateMitigationRequest,
-    CreateRiskAssessmentRequest,
-    CreateValidationRequest,
-    RiskAlert,
-    RiskAssessment,
-    RiskCategories,
-    RiskDashboardData,
-    RiskFactors,
-    RiskLevel,
-    RiskMitigation,
-    RiskThreshold,
-    RiskValidation,
-    UpdateRiskAssessmentRequest
+  AssessmentContext,
+  CreateAlertRequest,
+  CreateMitigationRequest,
+  CreateRiskAssessmentRequest,
+  CreateValidationRequest,
+  RiskAlert,
+  RiskAssessment,
+  RiskCategories,
+  RiskDashboardData,
+  RiskFactors,
+  RiskLevel,
+  RiskMitigation,
+  RiskThreshold,
+  RiskValidation,
+  UpdateRiskAssessmentRequest,
 } from '@/app/types/risk-assessment-automation';
 import { createClient } from '@/app/utils/supabase/server';
 
@@ -36,27 +36,39 @@ export class RiskAssessmentService {
    */
 
   // Calculate comprehensive risk score
-  calculateRiskScore(factors: Partial<RiskFactors>, context: Partial<AssessmentContext>): number {
+  calculateRiskScore(
+    factors: Partial<RiskFactors>,
+    context: Partial<AssessmentContext>
+  ): number {
     let totalScore = 0;
-    let factorCount = 0;
+    let _factorCount = 0;
 
     // Medical risk scoring (weight: 0.4)
     if (factors.medical) {
       let medicalScore = 0;
       if (factors.medical.chronic_conditions?.length) {
-        medicalScore += Math.min(factors.medical.chronic_conditions.length * 10, 40);
+        medicalScore += Math.min(
+          factors.medical.chronic_conditions.length * 10,
+          40
+        );
       }
       if (factors.medical.allergies?.length) {
         medicalScore += Math.min(factors.medical.allergies.length * 5, 20);
       }
       if (factors.medical.contraindications?.length) {
-        medicalScore += Math.min(factors.medical.contraindications.length * 15, 50);
+        medicalScore += Math.min(
+          factors.medical.contraindications.length * 15,
+          50
+        );
       }
       if (factors.medical.previous_complications?.length) {
-        medicalScore += Math.min(factors.medical.previous_complications.length * 8, 30);
+        medicalScore += Math.min(
+          factors.medical.previous_complications.length * 8,
+          30
+        );
       }
       totalScore += Math.min(medicalScore, 100) * 0.4;
-      factorCount++;
+      _factorCount++;
     }
 
     // Procedural risk scoring (weight: 0.3)
@@ -69,13 +81,19 @@ export class RiskAssessmentService {
         proceduralScore += factors.procedural.anesthesia_risk * 10;
       }
       if (factors.procedural.equipment_factors?.length) {
-        proceduralScore += Math.min(factors.procedural.equipment_factors.length * 5, 25);
+        proceduralScore += Math.min(
+          factors.procedural.equipment_factors.length * 5,
+          25
+        );
       }
       if (factors.procedural.technique_risks?.length) {
-        proceduralScore += Math.min(factors.procedural.technique_risks.length * 7, 35);
+        proceduralScore += Math.min(
+          factors.procedural.technique_risks.length * 7,
+          35
+        );
       }
       totalScore += Math.min(proceduralScore, 100) * 0.3;
-      factorCount++;
+      _factorCount++;
     }
 
     // Patient-specific risk scoring (weight: 0.2)
@@ -94,10 +112,13 @@ export class RiskAssessmentService {
         patientScore += 20;
       }
       if (factors.patient_specific.mobility_limitations?.length) {
-        patientScore += Math.min(factors.patient_specific.mobility_limitations.length * 8, 25);
+        patientScore += Math.min(
+          factors.patient_specific.mobility_limitations.length * 8,
+          25
+        );
       }
       totalScore += Math.min(patientScore, 100) * 0.2;
-      factorCount++;
+      _factorCount++;
     }
 
     // Environmental risk scoring (weight: 0.1)
@@ -107,13 +128,17 @@ export class RiskAssessmentService {
         environmentalScore += (10 - factors.environmental.staff_experience) * 8;
       }
       if (factors.environmental.emergency_preparedness) {
-        environmentalScore += (10 - factors.environmental.emergency_preparedness) * 10;
+        environmentalScore +=
+          (10 - factors.environmental.emergency_preparedness) * 10;
       }
       if (factors.environmental.equipment_status?.length) {
-        environmentalScore += Math.min(factors.environmental.equipment_status.length * 10, 30);
+        environmentalScore += Math.min(
+          factors.environmental.equipment_status.length * 10,
+          30
+        );
       }
       totalScore += Math.min(environmentalScore, 100) * 0.1;
-      factorCount++;
+      _factorCount++;
     }
 
     // Context adjustments
@@ -148,10 +173,12 @@ export class RiskAssessmentService {
     if (factors.medical) {
       let score = 0;
       const medicalFactors: string[] = [];
-      
+
       if (factors.medical.chronic_conditions?.length) {
         score += factors.medical.chronic_conditions.length * 10;
-        medicalFactors.push(`${factors.medical.chronic_conditions.length} chronic conditions`);
+        medicalFactors.push(
+          `${factors.medical.chronic_conditions.length} chronic conditions`
+        );
       }
       if (factors.medical.allergies?.length) {
         score += factors.medical.allergies.length * 5;
@@ -159,9 +186,11 @@ export class RiskAssessmentService {
       }
       if (factors.medical.contraindications?.length) {
         score += factors.medical.contraindications.length * 15;
-        medicalFactors.push(`${factors.medical.contraindications.length} contraindications`);
+        medicalFactors.push(
+          `${factors.medical.contraindications.length} contraindications`
+        );
       }
-      
+
       categories.medical = {
         score: Math.min(score, 100),
         factors: medicalFactors,
@@ -186,9 +215,14 @@ export class RiskAssessmentService {
    * CRUD Operations for Risk Assessments
    */
 
-  async createRiskAssessment(data: CreateRiskAssessmentRequest): Promise<RiskAssessment> {
+  async createRiskAssessment(
+    data: CreateRiskAssessmentRequest
+  ): Promise<RiskAssessment> {
     const supabase = await this.getSupabase();
-    const riskScore = this.calculateRiskScore(data.risk_factors || {}, data.assessment_context || {});
+    const riskScore = this.calculateRiskScore(
+      data.risk_factors || {},
+      data.assessment_context || {}
+    );
     const riskLevel = this.determineRiskLevel(riskScore);
     const riskCategories = this.generateRiskCategories(data.risk_factors || {});
 
@@ -221,7 +255,8 @@ export class RiskAssessmentService {
       .select()
       .single();
 
-    if (error) throw new Error(`Failed to create risk assessment: ${error.message}`);
+    if (error)
+      throw new Error(`Failed to create risk assessment: ${error.message}`);
 
     // Generate automatic alerts if high risk
     if (riskLevel === 'critical' || riskLevel === 'high') {
@@ -233,9 +268,15 @@ export class RiskAssessmentService {
         severity_level: riskLevel === 'critical' ? 'critical' : 'high',
         alert_title: `${riskLevel.toUpperCase()} Risk Assessment Alert`,
         alert_message: `Patient has been assessed with ${riskLevel} risk (score: ${riskScore}). Medical validation required.`,
-        alert_details: { risk_score: riskScore, risk_categories: riskCategories },
+        alert_details: {
+          risk_score: riskScore,
+          risk_categories: riskCategories,
+        },
         recommended_actions: {
-          immediate: riskLevel === 'critical' ? ['Immediate medical review', 'Emergency protocols'] : ['Medical review', 'Risk mitigation planning'],
+          immediate:
+            riskLevel === 'critical'
+              ? ['Immediate medical review', 'Emergency protocols']
+              : ['Medical review', 'Risk mitigation planning'],
         },
       });
     }
@@ -257,8 +298,8 @@ export class RiskAssessmentService {
 
   async getAllRiskAssessments(
     filters: Record<string, any> = {},
-    limit: number = 50,
-    offset: number = 0
+    limit = 50,
+    offset = 0
   ): Promise<RiskAssessment[]> {
     const supabase = await this.getSupabase();
     let query = supabase
@@ -276,7 +317,8 @@ export class RiskAssessmentService {
 
     const { data, error } = await query;
 
-    if (error) throw new Error(`Failed to fetch risk assessments: ${error.message}`);
+    if (error)
+      throw new Error(`Failed to fetch risk assessments: ${error.message}`);
     return data || [];
   }
 
@@ -304,8 +346,8 @@ export class RiskAssessmentService {
 
   async getAllValidations(
     filters: Record<string, any> = {},
-    limit: number = 50,
-    offset: number = 0
+    limit = 50,
+    offset = 0
   ): Promise<RiskValidation[]> {
     const supabase = await this.getSupabase();
     let query = supabase
@@ -329,8 +371,8 @@ export class RiskAssessmentService {
 
   async getAllAlerts(
     filters: Record<string, any> = {},
-    limit: number = 50,
-    offset: number = 0
+    limit = 50,
+    offset = 0
   ): Promise<RiskAlert[]> {
     const supabase = await this.getSupabase();
     let query = supabase
@@ -352,19 +394,27 @@ export class RiskAssessmentService {
     return data || [];
   }
 
-  async updateRiskAssessment(id: string, updates: UpdateRiskAssessmentRequest): Promise<RiskAssessment> {
+  async updateRiskAssessment(
+    id: string,
+    updates: UpdateRiskAssessmentRequest
+  ): Promise<RiskAssessment> {
     const supabase = await this.getSupabase();
     const updateData: any = { ...updates };
-    
+
     // Recalculate risk if factors changed
     if (updates.risk_factors) {
       const currentAssessment = await this.getRiskAssessment(id);
       if (currentAssessment) {
-        const newScore = this.calculateRiskScore(updates.risk_factors, currentAssessment.assessment_context);
+        const newScore = this.calculateRiskScore(
+          updates.risk_factors,
+          currentAssessment.assessment_context
+        );
         const newLevel = this.determineRiskLevel(newScore);
         updateData.risk_score = newScore;
         updateData.risk_level = newLevel;
-        updateData.risk_categories = this.generateRiskCategories(updates.risk_factors);
+        updateData.risk_categories = this.generateRiskCategories(
+          updates.risk_factors
+        );
         updateData.validation_required = this.requiresValidation({
           ...currentAssessment,
           risk_level: newLevel,
@@ -382,7 +432,8 @@ export class RiskAssessmentService {
       .select()
       .single();
 
-    if (error) throw new Error(`Failed to update risk assessment: ${error.message}`);
+    if (error)
+      throw new Error(`Failed to update risk assessment: ${error.message}`);
     return data;
   }
 
@@ -393,10 +444,14 @@ export class RiskAssessmentService {
       .delete()
       .eq('id', id);
 
-    if (error) throw new Error(`Failed to delete risk assessment: ${error.message}`);
+    if (error)
+      throw new Error(`Failed to delete risk assessment: ${error.message}`);
   }
 
-  async getPatientRiskAssessments(patientId: string, limit = 10): Promise<RiskAssessment[]> {
+  async getPatientRiskAssessments(
+    patientId: string,
+    limit = 10
+  ): Promise<RiskAssessment[]> {
     const supabase = await this.getSupabase();
     const { data, error } = await supabase
       .from('risk_assessments')
@@ -405,7 +460,10 @@ export class RiskAssessmentService {
       .order('assessment_date', { ascending: false })
       .limit(limit);
 
-    if (error) throw new Error(`Failed to get patient risk assessments: ${error.message}`);
+    if (error)
+      throw new Error(
+        `Failed to get patient risk assessments: ${error.message}`
+      );
     return data || [];
   }
 
@@ -413,13 +471,15 @@ export class RiskAssessmentService {
    * Medical Validation Operations
    */
 
-  async createValidation(data: CreateValidationRequest): Promise<RiskValidation> {
+  async createValidation(
+    data: CreateValidationRequest
+  ): Promise<RiskValidation> {
     const supabase = await this.getSupabase();
     const validationData = {
       ...data,
       validation_date: new Date().toISOString(),
       validator_credentials: data.validator_credentials || {},
-      requires_second_opinion: data.requires_second_opinion || false,
+      requires_second_opinion: data.requires_second_opinion,
     };
 
     const { data: validation, error } = await supabase
@@ -432,14 +492,20 @@ export class RiskAssessmentService {
 
     // Update assessment validation status
     await this.updateRiskAssessment(data.assessment_id, {
-      validation_status: data.validation_decision === 'approved' ? 'validated' : 
-                        data.validation_decision === 'rejected' ? 'rejected' : 'requires_review',
+      validation_status:
+        data.validation_decision === 'approved'
+          ? 'validated'
+          : data.validation_decision === 'rejected'
+            ? 'rejected'
+            : 'requires_review',
     });
 
     return validation;
   }
 
-  async getValidationsForAssessment(assessmentId: string): Promise<RiskValidation[]> {
+  async getValidationsForAssessment(
+    assessmentId: string
+  ): Promise<RiskValidation[]> {
     const supabase = await this.getSupabase();
     const { data, error } = await supabase
       .from('risk_validations')
@@ -455,7 +521,9 @@ export class RiskAssessmentService {
    * Risk Mitigation Operations
    */
 
-  async createMitigation(data: CreateMitigationRequest): Promise<RiskMitigation> {
+  async createMitigation(
+    data: CreateMitigationRequest
+  ): Promise<RiskMitigation> {
     const supabase = await this.getSupabase();
     const mitigationData = {
       ...data,
@@ -473,17 +541,22 @@ export class RiskAssessmentService {
     return mitigation;
   }
 
-  async updateMitigationStatus(id: string, status: 'planned' | 'active' | 'completed' | 'cancelled'): Promise<void> {
+  async updateMitigationStatus(
+    id: string,
+    status: 'planned' | 'active' | 'completed' | 'cancelled'
+  ): Promise<void> {
     const supabase = await this.getSupabase();
     const { error } = await supabase
       .from('risk_mitigations')
-      .update({ 
+      .update({
         implementation_status: status,
-        implementation_date: status === 'active' ? new Date().toISOString() : undefined,
+        implementation_date:
+          status === 'active' ? new Date().toISOString() : undefined,
       })
       .eq('id', id);
 
-    if (error) throw new Error(`Failed to update mitigation status: ${error.message}`);
+    if (error)
+      throw new Error(`Failed to update mitigation status: ${error.message}`);
   }
 
   /**
@@ -504,7 +577,11 @@ export class RiskAssessmentService {
     if (error) throw new Error(`Failed to acknowledge alert: ${error.message}`);
   }
 
-  async resolveAlert(id: string, userId: string, notes?: string): Promise<void> {
+  async resolveAlert(
+    id: string,
+    userId: string,
+    notes?: string
+  ): Promise<void> {
     const supabase = await this.getSupabase();
     const { error } = await supabase
       .from('risk_alerts')
@@ -527,7 +604,8 @@ export class RiskAssessmentService {
       .eq('id', id)
       .single();
 
-    if (fetchError) throw new Error(`Failed to fetch alert: ${fetchError.message}`);
+    if (fetchError)
+      throw new Error(`Failed to fetch alert: ${fetchError.message}`);
 
     const newEscalationLevel = Math.min((alert.escalation_level || 0) + 1, 5);
 
@@ -561,7 +639,7 @@ export class RiskAssessmentService {
 
   async getDashboardData(): Promise<RiskDashboardData> {
     const supabase = await this.getSupabase();
-    
+
     // Get total assessments
     const { count: totalAssessments } = await supabase
       .from('risk_assessments')
@@ -632,11 +710,15 @@ export class RiskAssessmentService {
 
     const { data, error } = await query.order('risk_category');
 
-    if (error) throw new Error(`Failed to get risk thresholds: ${error.message}`);
+    if (error)
+      throw new Error(`Failed to get risk thresholds: ${error.message}`);
     return data || [];
   }
 
-  async updateRiskThreshold(id: string, updates: Partial<RiskThreshold>): Promise<RiskThreshold> {
+  async updateRiskThreshold(
+    id: string,
+    updates: Partial<RiskThreshold>
+  ): Promise<RiskThreshold> {
     const supabase = await this.getSupabase();
     const { data, error } = await supabase
       .from('risk_thresholds')
@@ -645,7 +727,8 @@ export class RiskAssessmentService {
       .select()
       .single();
 
-    if (error) throw new Error(`Failed to update risk threshold: ${error.message}`);
+    if (error)
+      throw new Error(`Failed to update risk threshold: ${error.message}`);
     return data;
   }
 }

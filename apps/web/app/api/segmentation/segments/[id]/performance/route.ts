@@ -1,17 +1,17 @@
+import { type NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
-import { NextRequest, NextResponse } from 'next/server';
 
 interface RouteParams {
   id: string;
 }
 
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: RouteParams }
 ) {
   try {
     const supabase = await createClient();
-    
+
     // For development: Skip auth check
     // const { data: { user } } = await supabase.auth.getUser();
     // if (!user) {
@@ -56,26 +56,25 @@ export async function GET(
         campaign_open_rate: 0,
         treatment_success_rate: 0.8,
         patient_satisfaction_score: 0.85,
-        calculated_at: new Date().toISOString()
+        calculated_at: new Date().toISOString(),
       };
 
       return NextResponse.json({
         success: true,
-        data: defaultPerformance
+        data: defaultPerformance,
       });
     }
 
     return NextResponse.json({
       success: true,
-      data: performance[0]
+      data: performance[0],
     });
-
   } catch (error) {
     console.error('Error fetching segment performance:', error);
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to fetch segment performance',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );

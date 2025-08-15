@@ -1,20 +1,21 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
-import { Database } from '@/database.types';
+import type { Database } from '@/database.types';
 
-type RoleDomainMapping = Database['public']['Tables']['role_domain_mappings']['Row'];
+type RoleDomainMapping =
+  Database['public']['Tables']['role_domain_mappings']['Row'];
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Verificar autenticação e role de admin
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Não autorizado' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
     // Verificar se o usuário é admin
@@ -26,7 +27,10 @@ export async function GET(request: NextRequest) {
 
     if (profileError || profile?.role !== 'admin') {
       return NextResponse.json(
-        { error: 'Acesso negado. Apenas administradores podem acessar esta funcionalidade.' },
+        {
+          error:
+            'Acesso negado. Apenas administradores podem acessar esta funcionalidade.',
+        },
         { status: 403 }
       );
     }
@@ -48,9 +52,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       mappings: mappings || [],
-      total: mappings?.length || 0
+      total: mappings?.length || 0,
     });
-
   } catch (error) {
     console.error('Erro no endpoint de mapeamentos de domínio:', error);
     return NextResponse.json(
@@ -63,14 +66,14 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Verificar autenticação e role de admin
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Não autorizado' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
     // Verificar se o usuário é admin
@@ -82,7 +85,10 @@ export async function POST(request: NextRequest) {
 
     if (profileError || profile?.role !== 'admin') {
       return NextResponse.json(
-        { error: 'Acesso negado. Apenas administradores podem criar mapeamentos.' },
+        {
+          error:
+            'Acesso negado. Apenas administradores podem criar mapeamentos.',
+        },
         { status: 403 }
       );
     }
@@ -91,7 +97,7 @@ export async function POST(request: NextRequest) {
     const { domain, default_role, priority, is_active } = body;
 
     // Validar dados obrigatórios
-    if (!domain || !default_role) {
+    if (!(domain && default_role)) {
       return NextResponse.json(
         { error: 'Domínio e role padrão são obrigatórios' },
         { status: 400 }
@@ -102,7 +108,9 @@ export async function POST(request: NextRequest) {
     const validRoles = ['admin', 'doctor', 'nurse', 'staff', 'professional'];
     if (!validRoles.includes(default_role)) {
       return NextResponse.json(
-        { error: 'Role inválida. Valores permitidos: ' + validRoles.join(', ') },
+        {
+          error: `Role inválida. Valores permitidos: ${validRoles.join(', ')}`,
+        },
         { status: 400 }
       );
     }
@@ -137,7 +145,7 @@ export async function POST(request: NextRequest) {
       is_active: is_active !== undefined ? is_active : true,
       created_by: user.id,
       created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     };
 
     const { data: createdMapping, error: createError } = await supabase
@@ -155,19 +163,17 @@ export async function POST(request: NextRequest) {
     }
 
     // Registrar log de auditoria
-    const { error: logError } = await supabase
-      .from('role_audit_log')
-      .insert({
-        user_id: user.id,
-        action_type: 'domain_mapping_created',
-        target_domain: domain.toLowerCase(),
-        new_role: default_role,
-        metadata: {
-          mapping_id: createdMapping.id,
-          priority: priority || 1,
-          created_at: new Date().toISOString()
-        }
-      });
+    const { error: logError } = await supabase.from('role_audit_log').insert({
+      user_id: user.id,
+      action_type: 'domain_mapping_created',
+      target_domain: domain.toLowerCase(),
+      new_role: default_role,
+      metadata: {
+        mapping_id: createdMapping.id,
+        priority: priority || 1,
+        created_at: new Date().toISOString(),
+      },
+    });
 
     if (logError) {
       console.error('Erro ao registrar log de auditoria:', logError);
@@ -177,9 +183,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       mapping: createdMapping,
-      message: 'Mapeamento de domínio criado com sucesso'
+      message: 'Mapeamento de domínio criado com sucesso',
     });
-
   } catch (error) {
     console.error('Erro no endpoint de criação de mapeamento:', error);
     return NextResponse.json(

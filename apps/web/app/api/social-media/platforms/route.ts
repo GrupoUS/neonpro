@@ -1,16 +1,16 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { createClient } from '@/app/utils/supabase/server';
 
 /**
  * Social Media Platforms API Route
- * 
+ *
  * GET: Retrieve all available social media platforms with their configurations
  * POST: Add a new social media platform (admin only)
- * 
+ *
  * Research-backed implementation following:
  * - WhatsApp Business API best practices
- * - Instagram Graph API guidelines  
+ * - Instagram Graph API guidelines
  * - Facebook Graph API patterns
  * - Next.js 15 App Router conventions
  */
@@ -24,23 +24,25 @@ const createPlatformSchema = z.object({
   oauth_config: z.record(z.any()).default({}),
   api_rate_limits: z.record(z.any()).default({}),
   supported_features: z.record(z.boolean()).default({}),
-  webhook_capabilities: z.record(z.any()).default({})
+  webhook_capabilities: z.record(z.any()).default({}),
 });
 
 type CreatePlatformData = z.infer<typeof createPlatformSchema>;
 
 /**
  * GET /api/social-media/platforms
- * 
+ *
  * Retrieves all available social media platforms with their configurations
  * Includes OAuth settings, supported features, and API configurations
  */
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Verify authentication
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session) {
       return NextResponse.json(
         { error: 'Authentication required' },
@@ -96,23 +98,24 @@ export async function GET(request: NextRequest) {
       .eq('status', 'active');
 
     // Enhance platforms with connection status
-    const platformsWithStatus = platforms?.map(platform => ({
+    const platformsWithStatus = platforms?.map((platform) => ({
       ...platform,
-      connection_status: connectedAccounts?.find(
-        account => account.platform_name === platform.platform_name
-      ) || null,
+      connection_status:
+        connectedAccounts?.find(
+          (account) => account.platform_name === platform.platform_name
+        ) || null,
       is_connected: connectedAccounts?.some(
-        account => account.platform_name === platform.platform_name &&
-                  account.status === 'active'
-      ) || false
+        (account) =>
+          account.platform_name === platform.platform_name &&
+          account.status === 'active'
+      ),
     }));
 
     return NextResponse.json({
       success: true,
       data: platformsWithStatus,
-      total: platforms?.length || 0
+      total: platforms?.length || 0,
     });
-
   } catch (error) {
     console.error('Social media platforms API error:', error);
     return NextResponse.json(
@@ -124,16 +127,18 @@ export async function GET(request: NextRequest) {
 
 /**
  * POST /api/social-media/platforms
- * 
+ *
  * Creates a new social media platform (admin only)
  * Used for adding new platforms or custom integrations
  */
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Verify authentication
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session) {
       return NextResponse.json(
         { error: 'Authentication required' },
@@ -188,15 +193,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    return NextResponse.json({
-      success: true,
-      data: newPlatform,
-      message: 'Social media platform created successfully'
-    }, { status: 201 });
-
+    return NextResponse.json(
+      {
+        success: true,
+        data: newPlatform,
+        message: 'Social media platform created successfully',
+      },
+      { status: 201 }
+    );
   } catch (error) {
     console.error('Social media platforms POST error:', error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },

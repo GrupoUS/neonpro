@@ -1,8 +1,8 @@
 // Microsoft OAuth Provider Implementation
 // Story 1.3: SSO Integration - Microsoft OAuth 2.0 & Azure AD
 
-import { SSOProvider, SSOUserInfo, SSOTokenResponse } from '@/types/sso';
 import { logger } from '@/lib/logger';
+import type { SSOProvider, SSOTokenResponse, SSOUserInfo } from '@/types/sso';
 
 export interface MicrosoftOAuthConfig {
   clientId: string;
@@ -102,7 +102,7 @@ export class MicrosoftOAuthProvider {
     domainHint?: string;
   }): string {
     const { authUrl } = this.getTenantUrls();
-    
+
     const params = new URLSearchParams({
       client_id: this.config.clientId,
       response_type: 'code',
@@ -123,17 +123,20 @@ export class MicrosoftOAuthProvider {
       params.append('prompt', options.prompt || this.config.prompt);
     }
     if (options.domainHint || this.config.domainHint) {
-      params.append('domain_hint', options.domainHint || this.config.domainHint);
+      params.append(
+        'domain_hint',
+        options.domainHint || this.config.domainHint
+      );
     }
 
     const fullAuthUrl = `${authUrl}?${params.toString()}`;
-    logger.info('Microsoft OAuth: Generated auth URL', { 
+    logger.info('Microsoft OAuth: Generated auth URL', {
       clientId: this.config.clientId,
       tenant: this.config.tenant,
       scopes: this.config.scopes,
       domainHint: options.domainHint || this.config.domainHint,
     });
-    
+
     return fullAuthUrl;
   }
 
@@ -142,7 +145,7 @@ export class MicrosoftOAuthProvider {
    */
   async exchangeCodeForTokens(code: string): Promise<SSOTokenResponse> {
     const { tokenUrl } = this.getTenantUrls();
-    
+
     const params = new URLSearchParams({
       client_id: this.config.clientId,
       client_secret: this.config.clientSecret,
@@ -156,15 +159,15 @@ export class MicrosoftOAuthProvider {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
-          'Accept': 'application/json',
+          Accept: 'application/json',
         },
         body: params.toString(),
       });
 
       if (!response.ok) {
         const errorData = await response.text();
-        logger.error('Microsoft OAuth: Token exchange failed', { 
-          status: response.status, 
+        logger.error('Microsoft OAuth: Token exchange failed', {
+          status: response.status,
           error: errorData,
           tenant: this.config.tenant,
         });
@@ -172,7 +175,7 @@ export class MicrosoftOAuthProvider {
       }
 
       const tokenData: MicrosoftTokenInfo = await response.json();
-      
+
       logger.info('Microsoft OAuth: Token exchange successful', {
         hasRefreshToken: !!tokenData.refresh_token,
         expiresIn: tokenData.expires_in,
@@ -189,7 +192,7 @@ export class MicrosoftOAuthProvider {
         scope: tokenData.scope,
       };
     } catch (error) {
-      logger.error('Microsoft OAuth: Token exchange error', { 
+      logger.error('Microsoft OAuth: Token exchange error', {
         error: error.message,
         tenant: this.config.tenant,
       });
@@ -202,7 +205,7 @@ export class MicrosoftOAuthProvider {
    */
   async refreshAccessToken(refreshToken: string): Promise<SSOTokenResponse> {
     const { tokenUrl } = this.getTenantUrls();
-    
+
     const params = new URLSearchParams({
       client_id: this.config.clientId,
       client_secret: this.config.clientSecret,
@@ -216,15 +219,15 @@ export class MicrosoftOAuthProvider {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
-          'Accept': 'application/json',
+          Accept: 'application/json',
         },
         body: params.toString(),
       });
 
       if (!response.ok) {
         const errorData = await response.text();
-        logger.error('Microsoft OAuth: Token refresh failed', { 
-          status: response.status, 
+        logger.error('Microsoft OAuth: Token refresh failed', {
+          status: response.status,
           error: errorData,
           tenant: this.config.tenant,
         });
@@ -232,7 +235,7 @@ export class MicrosoftOAuthProvider {
       }
 
       const tokenData: MicrosoftTokenInfo = await response.json();
-      
+
       logger.info('Microsoft OAuth: Token refresh successful', {
         expiresIn: tokenData.expires_in,
         scope: tokenData.scope,
@@ -247,7 +250,7 @@ export class MicrosoftOAuthProvider {
         scope: tokenData.scope,
       };
     } catch (error) {
-      logger.error('Microsoft OAuth: Token refresh error', { 
+      logger.error('Microsoft OAuth: Token refresh error', {
         error: error.message,
         tenant: this.config.tenant,
       });
@@ -262,15 +265,15 @@ export class MicrosoftOAuthProvider {
     try {
       const response = await fetch(`${this.graphUrl}/me`, {
         headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'Accept': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+          Accept: 'application/json',
         },
       });
 
       if (!response.ok) {
         const errorData = await response.text();
-        logger.error('Microsoft OAuth: User info fetch failed', { 
-          status: response.status, 
+        logger.error('Microsoft OAuth: User info fetch failed', {
+          status: response.status,
           error: errorData,
           tenant: this.config.tenant,
         });
@@ -278,7 +281,7 @@ export class MicrosoftOAuthProvider {
       }
 
       const userData: MicrosoftUserInfo = await response.json();
-      
+
       logger.info('Microsoft OAuth: User info retrieved', {
         userPrincipalName: userData.userPrincipalName,
         mail: userData.mail,
@@ -296,7 +299,7 @@ export class MicrosoftOAuthProvider {
         organizationId: this.extractTenantId(userData),
       };
     } catch (error) {
-      logger.error('Microsoft OAuth: User info error', { 
+      logger.error('Microsoft OAuth: User info error', {
         error: error.message,
         tenant: this.config.tenant,
       });
@@ -309,25 +312,30 @@ export class MicrosoftOAuthProvider {
    */
   async getExtendedUserInfo(accessToken: string): Promise<AzureADUserInfo> {
     try {
-      const response = await fetch(`${this.graphUrl}/me?$select=id,displayName,givenName,surname,userPrincipalName,mail,mobilePhone,officeLocation,preferredLanguage,jobTitle,businessPhones,onPremisesSamAccountName,onPremisesUserPrincipalName,employeeId,department,companyName,usageLocation`, {
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'Accept': 'application/json',
-        },
-      });
+      const response = await fetch(
+        `${this.graphUrl}/me?$select=id,displayName,givenName,surname,userPrincipalName,mail,mobilePhone,officeLocation,preferredLanguage,jobTitle,businessPhones,onPremisesSamAccountName,onPremisesUserPrincipalName,employeeId,department,companyName,usageLocation`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            Accept: 'application/json',
+          },
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.text();
-        logger.error('Microsoft OAuth: Extended user info fetch failed', { 
-          status: response.status, 
+        logger.error('Microsoft OAuth: Extended user info fetch failed', {
+          status: response.status,
           error: errorData,
           tenant: this.config.tenant,
         });
-        throw new Error(`Microsoft OAuth extended user info fetch failed: ${errorData}`);
+        throw new Error(
+          `Microsoft OAuth extended user info fetch failed: ${errorData}`
+        );
       }
 
       const userData: AzureADUserInfo = await response.json();
-      
+
       logger.info('Microsoft OAuth: Extended user info retrieved', {
         userPrincipalName: userData.userPrincipalName,
         department: userData.department,
@@ -337,7 +345,7 @@ export class MicrosoftOAuthProvider {
 
       return userData;
     } catch (error) {
-      logger.error('Microsoft OAuth: Extended user info error', { 
+      logger.error('Microsoft OAuth: Extended user info error', {
         error: error.message,
         tenant: this.config.tenant,
       });
@@ -352,23 +360,25 @@ export class MicrosoftOAuthProvider {
     try {
       const response = await fetch(`${this.graphUrl}/organization`, {
         headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'Accept': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+          Accept: 'application/json',
         },
       });
 
       if (!response.ok) {
         const errorData = await response.text();
-        logger.error('Microsoft OAuth: Organization info fetch failed', { 
-          status: response.status, 
+        logger.error('Microsoft OAuth: Organization info fetch failed', {
+          status: response.status,
           error: errorData,
           tenant: this.config.tenant,
         });
-        throw new Error(`Microsoft OAuth organization info fetch failed: ${errorData}`);
+        throw new Error(
+          `Microsoft OAuth organization info fetch failed: ${errorData}`
+        );
       }
 
       const orgData = await response.json();
-      
+
       logger.info('Microsoft OAuth: Organization info retrieved', {
         organizationCount: orgData.value?.length || 0,
         tenant: this.config.tenant,
@@ -376,7 +386,7 @@ export class MicrosoftOAuthProvider {
 
       return orgData.value?.[0] || null;
     } catch (error) {
-      logger.error('Microsoft OAuth: Organization info error', { 
+      logger.error('Microsoft OAuth: Organization info error', {
         error: error.message,
         tenant: this.config.tenant,
       });
@@ -395,25 +405,25 @@ export class MicrosoftOAuthProvider {
         return match[1];
       }
     }
-    
+
     // Fallback to configured tenant if it's a GUID
-    if (this.config.tenant && this.config.tenant.match(/^[a-f0-9-]{36}$/i)) {
+    if (this.config.tenant?.match(/^[a-f0-9-]{36}$/i)) {
       return this.config.tenant;
     }
-    
-    return undefined;
+
+    return;
   }
 
   /**
    * Revoke Microsoft OAuth token
    */
-  async revokeToken(token: string): Promise<void> {
+  async revokeToken(_token: string): Promise<void> {
     // Microsoft doesn't have a standard revoke endpoint
     // Tokens expire automatically, but we can log the revocation attempt
     logger.info('Microsoft OAuth: Token revocation requested', {
       tenant: this.config.tenant,
     });
-    
+
     // In practice, you would typically just delete the token from your storage
     // and let it expire naturally
   }
@@ -423,19 +433,21 @@ export class MicrosoftOAuthProvider {
    */
   generateLogoutUrl(postLogoutRedirectUri?: string): string {
     const { logoutUrl } = this.getTenantUrls();
-    
+
     const params = new URLSearchParams();
     if (postLogoutRedirectUri) {
       params.append('post_logout_redirect_uri', postLogoutRedirectUri);
     }
-    
-    const fullLogoutUrl = params.toString() ? `${logoutUrl}?${params.toString()}` : logoutUrl;
-    
+
+    const fullLogoutUrl = params.toString()
+      ? `${logoutUrl}?${params.toString()}`
+      : logoutUrl;
+
     logger.info('Microsoft OAuth: Generated logout URL', {
       tenant: this.config.tenant,
       hasRedirect: !!postLogoutRedirectUri,
     });
-    
+
     return fullLogoutUrl;
   }
 
@@ -444,7 +456,7 @@ export class MicrosoftOAuthProvider {
    */
   getProviderConfig(): SSOProvider {
     const { authUrl, tokenUrl } = this.getTenantUrls();
-    
+
     return {
       id: 'microsoft',
       name: 'Microsoft',
@@ -462,7 +474,8 @@ export class MicrosoftOAuthProvider {
       metadata: {
         displayName: 'Microsoft',
         description: 'Sign in with your Microsoft account',
-        iconUrl: 'https://docs.microsoft.com/en-us/azure/active-directory/develop/media/howto-add-branding-in-azure-ad-apps/ms-symbollockup_mssymbol_19.png',
+        iconUrl:
+          'https://docs.microsoft.com/en-us/azure/active-directory/develop/media/howto-add-branding-in-azure-ad-apps/ms-symbollockup_mssymbol_19.png',
         buttonColor: '#0078d4',
         textColor: '#ffffff',
         supportedFeatures: [
@@ -473,7 +486,8 @@ export class MicrosoftOAuthProvider {
           'graph_api',
           'organization_info',
         ],
-        documentation: 'https://docs.microsoft.com/en-us/azure/active-directory/develop/',
+        documentation:
+          'https://docs.microsoft.com/en-us/azure/active-directory/develop/',
       },
     };
   }
@@ -500,19 +514,25 @@ export class MicrosoftOAuthProvider {
    * Check if tenant is Azure AD (not personal accounts)
    */
   isAzureAD(): boolean {
-    return this.config.tenant !== 'consumers' && this.config.tenant !== 'common';
+    return (
+      this.config.tenant !== 'consumers' && this.config.tenant !== 'common'
+    );
   }
 
   /**
    * Check if tenant allows personal accounts
    */
   allowsPersonalAccounts(): boolean {
-    return this.config.tenant === 'consumers' || this.config.tenant === 'common';
+    return (
+      this.config.tenant === 'consumers' || this.config.tenant === 'common'
+    );
   }
 }
 
 // Export factory function
-export function createMicrosoftOAuthProvider(config: MicrosoftOAuthConfig): MicrosoftOAuthProvider {
+export function createMicrosoftOAuthProvider(
+  config: MicrosoftOAuthConfig
+): MicrosoftOAuthProvider {
   return new MicrosoftOAuthProvider(config);
 }
 

@@ -1,32 +1,27 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
-import { Database } from '@/database.types';
+import type { Database } from '@/database.types';
 
 type Profile = Database['public']['Tables']['profiles']['Row'];
 
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Verificar autenticação
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Não autorizado' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
     const body = await request.json();
-    const { 
-      conflictType, 
-      localProfile, 
-      googleProfile, 
-      resolution 
-    } = body;
+    const { conflictType, localProfile, googleProfile, resolution } = body;
 
     // Validar dados obrigatórios
-    if (!conflictType || !localProfile || !googleProfile || !resolution) {
+    if (!(conflictType && localProfile && googleProfile && resolution)) {
       return NextResponse.json(
         { error: 'Dados obrigatórios ausentes' },
         { status: 400 }
@@ -40,41 +35,43 @@ export async function POST(request: NextRequest) {
       case 'keep_local':
         resolvedProfile = { ...localProfile };
         break;
-        
+
       case 'use_google':
         resolvedProfile = {
           ...localProfile,
           full_name: googleProfile.name || localProfile.full_name,
           avatar_url: googleProfile.picture || localProfile.avatar_url,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         };
         break;
-        
+
       case 'merge_smart':
         resolvedProfile = {
           ...localProfile,
           // Usar nome do Google se o local estiver vazio ou for genérico
-          full_name: (!localProfile.full_name || 
-                     localProfile.full_name === 'Usuário' || 
-                     localProfile.full_name.length < 3) 
-                     ? googleProfile.name || localProfile.full_name 
-                     : localProfile.full_name,
+          full_name:
+            !localProfile.full_name ||
+            localProfile.full_name === 'Usuário' ||
+            localProfile.full_name.length < 3
+              ? googleProfile.name || localProfile.full_name
+              : localProfile.full_name,
           // Usar avatar do Google se o local não existir
-          avatar_url: !localProfile.avatar_url ? 
-                     googleProfile.picture : localProfile.avatar_url,
-          updated_at: new Date().toISOString()
+          avatar_url: localProfile.avatar_url
+            ? localProfile.avatar_url
+            : googleProfile.picture,
+          updated_at: new Date().toISOString(),
         };
         break;
-        
+
       case 'custom':
         // Para resolução customizada, usar os dados fornecidos
         resolvedProfile = {
           ...localProfile,
           ...body.customData,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         };
         break;
-        
+
       default:
         return NextResponse.json(
           { error: 'Estratégia de resolução inválida' },
@@ -110,8 +107,8 @@ export async function POST(request: NextRequest) {
           conflict_type: conflictType,
           resolution_strategy: resolution,
           google_data: googleProfile,
-          resolved_at: new Date().toISOString()
-        }
+          resolved_at: new Date().toISOString(),
+        },
       });
 
     if (logError) {
@@ -125,10 +122,9 @@ export async function POST(request: NextRequest) {
       conflictResolution: {
         type: conflictType,
         strategy: resolution,
-        resolvedAt: new Date().toISOString()
-      }
+        resolvedAt: new Date().toISOString(),
+      },
     });
-
   } catch (error) {
     console.error('Erro no endpoint de resolução de conflitos:', error);
     return NextResponse.json(
@@ -138,17 +134,17 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Verificar autenticação
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Não autorizado' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
     // Buscar perfil atual
@@ -171,7 +167,7 @@ export async function GET(request: NextRequest) {
       name: user.user_metadata?.full_name || user.user_metadata?.name,
       email: user.email,
       picture: user.user_metadata?.avatar_url || user.user_metadata?.picture,
-      verified_email: user.email_confirmed_at ? true : false
+      verified_email: !!user.email_confirmed_at,
     };
 
     // Detectar conflitos potenciais
@@ -184,7 +180,7 @@ export async function GET(request: NextRequest) {
         field: 'full_name',
         local_value: profile.full_name,
         google_value: googleProfile.name,
-        severity: 'medium'
+        severity: 'medium',
       });
     }
 
@@ -195,7 +191,7 @@ export async function GET(request: NextRequest) {
         field: 'avatar_url',
         local_value: profile.avatar_url,
         google_value: googleProfile.picture,
-        severity: 'low'
+        severity: 'low',
       });
     }
 
@@ -204,32 +200,31 @@ export async function GET(request: NextRequest) {
       conflicts,
       profiles: {
         local: profile,
-        google: googleProfile
+        google: googleProfile,
       },
       resolutionStrategies: [
         {
           id: 'keep_local',
           name: 'Manter dados locais',
-          description: 'Preservar todas as informações atuais do perfil'
+          description: 'Preservar todas as informações atuais do perfil',
         },
         {
           id: 'use_google',
           name: 'Usar dados do Google',
-          description: 'Atualizar perfil com informações do Google'
+          description: 'Atualizar perfil com informações do Google',
         },
         {
           id: 'merge_smart',
           name: 'Mesclagem inteligente',
-          description: 'Combinar dados usando regras inteligentes'
+          description: 'Combinar dados usando regras inteligentes',
         },
         {
           id: 'custom',
           name: 'Resolução personalizada',
-          description: 'Escolher manualmente quais dados usar'
-        }
-      ]
+          description: 'Escolher manualmente quais dados usar',
+        },
+      ],
     });
-
   } catch (error) {
     console.error('Erro no endpoint de detecção de conflitos:', error);
     return NextResponse.json(

@@ -1,12 +1,24 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  AlertCircle,
+  Building2,
+  ExternalLink,
+  Package,
+  Users,
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { ExternalLink, Users, Package, Building2, AlertCircle } from 'lucide-react';
 
 interface Product {
   id: string;
@@ -55,7 +67,10 @@ interface TenantListProps {
   limit?: number;
 }
 
-export default function TenantList({ includeProducts = false, limit = 10 }: TenantListProps) {
+export default function TenantList({
+  includeProducts = false,
+  limit = 10,
+}: TenantListProps) {
   const [tenants, setTenants] = useState<Tenant[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -93,13 +108,13 @@ export default function TenantList({ includeProducts = false, limit = 10 }: Tena
   };
 
   const handleRetry = () => {
-    setRetryCount(prev => prev + 1);
+    setRetryCount((prev) => prev + 1);
     fetchTenants();
   };
 
   useEffect(() => {
     fetchTenants();
-  }, [includeProducts, limit]);
+  }, [fetchTenants]);
 
   const getSubscriptionBadgeVariant = (status: string) => {
     switch (status) {
@@ -131,7 +146,7 @@ export default function TenantList({ includeProducts = false, limit = 10 }: Tena
     return (
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-bold tracking-tight">Tenants</h2>
+          <h2 className="font-bold text-2xl tracking-tight">Tenants</h2>
           <Skeleton className="h-10 w-32" />
         </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -162,13 +177,13 @@ export default function TenantList({ includeProducts = false, limit = 10 }: Tena
     return (
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-bold tracking-tight">Tenants</h2>
+          <h2 className="font-bold text-2xl tracking-tight">Tenants</h2>
         </div>
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription className="flex items-center justify-between">
             <span>Erro ao carregar tenants: {error}</span>
-            <Button variant="outline" size="sm" onClick={handleRetry}>
+            <Button onClick={handleRetry} size="sm" variant="outline">
               Tentar novamente {retryCount > 0 && `(${retryCount})`}
             </Button>
           </AlertDescription>
@@ -181,9 +196,10 @@ export default function TenantList({ includeProducts = false, limit = 10 }: Tena
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight">Tenants</h2>
+          <h2 className="font-bold text-2xl tracking-tight">Tenants</h2>
           <p className="text-muted-foreground">
-            {tenants.length} tenant{tenants.length !== 1 ? 's' : ''} encontrado{tenants.length !== 1 ? 's' : ''}
+            {tenants.length} tenant{tenants.length !== 1 ? 's' : ''} encontrado
+            {tenants.length !== 1 ? 's' : ''}
           </p>
         </div>
         <Button onClick={fetchTenants} variant="outline">
@@ -194,9 +210,11 @@ export default function TenantList({ includeProducts = false, limit = 10 }: Tena
       {tenants.length === 0 ? (
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
-            <Building2 className="h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Nenhum tenant encontrado</h3>
-            <p className="text-muted-foreground text-center">
+            <Building2 className="mb-4 h-12 w-12 text-muted-foreground" />
+            <h3 className="mb-2 font-semibold text-lg">
+              Nenhum tenant encontrado
+            </h3>
+            <p className="text-center text-muted-foreground">
               Não há tenants cadastrados no sistema ainda.
             </p>
           </CardContent>
@@ -204,16 +222,16 @@ export default function TenantList({ includeProducts = false, limit = 10 }: Tena
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {tenants.map((tenant) => (
-            <Card key={tenant.id} className="hover:shadow-lg transition-shadow">
+            <Card className="transition-shadow hover:shadow-lg" key={tenant.id}>
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <CardTitle className="flex items-center gap-2">
                       {tenant.logo_url && (
                         <img
-                          src={tenant.logo_url}
                           alt={`${tenant.name} logo`}
                           className="h-6 w-6 rounded"
+                          src={tenant.logo_url}
                         />
                       )}
                       {tenant.name}
@@ -223,11 +241,11 @@ export default function TenantList({ includeProducts = false, limit = 10 }: Tena
                     </CardDescription>
                   </div>
                   {tenant.website_url && (
-                    <Button variant="ghost" size="sm" asChild>
+                    <Button asChild size="sm" variant="ghost">
                       <a
                         href={tenant.website_url}
-                        target="_blank"
                         rel="noopener noreferrer"
+                        target="_blank"
                       >
                         <ExternalLink className="h-4 w-4" />
                       </a>
@@ -237,57 +255,71 @@ export default function TenantList({ includeProducts = false, limit = 10 }: Tena
               </CardHeader>
               <CardContent className="space-y-4">
                 {tenant.description && (
-                  <p className="text-sm text-muted-foreground line-clamp-2">
+                  <p className="line-clamp-2 text-muted-foreground text-sm">
                     {tenant.description}
                   </p>
                 )}
 
                 <div className="flex flex-wrap gap-2">
-                  <Badge variant={getPlanBadgeVariant(tenant.subscription_plan)}>
+                  <Badge
+                    variant={getPlanBadgeVariant(tenant.subscription_plan)}
+                  >
                     {tenant.subscription_plan}
                   </Badge>
-                  <Badge variant={getSubscriptionBadgeVariant(tenant.subscription_status)}>
+                  <Badge
+                    variant={getSubscriptionBadgeVariant(
+                      tenant.subscription_status
+                    )}
+                  >
                     {tenant.subscription_status}
                   </Badge>
                 </div>
 
-                <div className="flex items-center justify-between text-sm text-muted-foreground">
+                <div className="flex items-center justify-between text-muted-foreground text-sm">
                   <div className="flex items-center gap-1">
                     <Users className="h-4 w-4" />
-                    {tenant.stats.total_users} usuário{tenant.stats.total_users !== 1 ? 's' : ''}
+                    {tenant.stats.total_users} usuário
+                    {tenant.stats.total_users !== 1 ? 's' : ''}
                   </div>
                   <div className="flex items-center gap-1">
                     <Package className="h-4 w-4" />
-                    {tenant.stats.total_products} produto{tenant.stats.total_products !== 1 ? 's' : ''}
+                    {tenant.stats.total_products} produto
+                    {tenant.stats.total_products !== 1 ? 's' : ''}
                   </div>
                 </div>
 
-                {includeProducts && tenant.products && tenant.products.length > 0 && (
-                  <div className="space-y-2">
-                    <h4 className="text-sm font-medium">Produtos:</h4>
-                    <div className="space-y-1">
-                      {tenant.products.slice(0, 3).map((product) => (
-                        <div key={product.id} className="flex justify-between items-center text-xs">
-                          <span className="truncate">{product.name}</span>
-                          <span className="text-muted-foreground">
-                            {new Intl.NumberFormat('pt-BR', {
-                              style: 'currency',
-                              currency: product.currency,
-                            }).format(product.price)}
-                          </span>
-                        </div>
-                      ))}
-                      {tenant.products.length > 3 && (
-                        <p className="text-xs text-muted-foreground">
-                          +{tenant.products.length - 3} mais
-                        </p>
-                      )}
+                {includeProducts &&
+                  tenant.products &&
+                  tenant.products.length > 0 && (
+                    <div className="space-y-2">
+                      <h4 className="font-medium text-sm">Produtos:</h4>
+                      <div className="space-y-1">
+                        {tenant.products.slice(0, 3).map((product) => (
+                          <div
+                            className="flex items-center justify-between text-xs"
+                            key={product.id}
+                          >
+                            <span className="truncate">{product.name}</span>
+                            <span className="text-muted-foreground">
+                              {new Intl.NumberFormat('pt-BR', {
+                                style: 'currency',
+                                currency: product.currency,
+                              }).format(product.price)}
+                            </span>
+                          </div>
+                        ))}
+                        {tenant.products.length > 3 && (
+                          <p className="text-muted-foreground text-xs">
+                            +{tenant.products.length - 3} mais
+                          </p>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
 
-                <div className="text-xs text-muted-foreground">
-                  Criado em {new Date(tenant.created_at).toLocaleDateString('pt-BR')}
+                <div className="text-muted-foreground text-xs">
+                  Criado em{' '}
+                  {new Date(tenant.created_at).toLocaleDateString('pt-BR')}
                 </div>
               </CardContent>
             </Card>

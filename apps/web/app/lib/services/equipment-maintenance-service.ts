@@ -4,9 +4,9 @@
 // =====================================================================================
 
 import type {
-    Equipment,
-    MaintenanceAlert,
-    MaintenanceSchedule
+  Equipment,
+  MaintenanceAlert,
+  MaintenanceSchedule,
 } from '@/app/types/maintenance';
 import { createClient } from '@/app/utils/supabase/server';
 
@@ -26,14 +26,16 @@ export class EquipmentMaintenanceService {
   /**
    * Create new equipment record
    */
-  async createEquipment(data: Omit<Equipment, 'id' | 'created_at' | 'updated_at' | 'status'>): Promise<Equipment> {
+  async createEquipment(
+    data: Omit<Equipment, 'id' | 'created_at' | 'updated_at' | 'status'>
+  ): Promise<Equipment> {
     const supabase = await this.getSupabase();
-    
+
     const equipmentData = {
       ...data,
       status: 'active' as const,
       created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     };
 
     const { data: equipment, error } = await supabase
@@ -51,7 +53,7 @@ export class EquipmentMaintenanceService {
    */
   async getEquipment(id: string): Promise<Equipment | null> {
     const supabase = await this.getSupabase();
-    
+
     const { data, error } = await supabase
       .from('equipment')
       .select(`
@@ -94,10 +96,11 @@ export class EquipmentMaintenanceService {
     pagination?: { page: number; limit: number }
   ): Promise<{ equipment: Equipment[]; total: number }> {
     const supabase = await this.getSupabase();
-    
+
     let query = supabase
       .from('equipment')
-      .select(`
+      .select(
+        `
         *,
         active_schedules:maintenance_schedules!inner(
           id,
@@ -109,7 +112,9 @@ export class EquipmentMaintenanceService {
           alert_type,
           severity
         )
-      `, { count: 'exact' })
+      `,
+        { count: 'exact' }
+      )
       .eq('clinic_id', clinicId)
       .eq('active_schedules.is_active', true)
       .eq('active_alerts.is_active', true);
@@ -134,10 +139,15 @@ export class EquipmentMaintenanceService {
       if (filters.warranty_expiring === true) {
         const futureDate = new Date();
         futureDate.setMonth(futureDate.getMonth() + 3);
-        query = query.lte('warranty_end_date', futureDate.toISOString().split('T')[0]);
+        query = query.lte(
+          'warranty_end_date',
+          futureDate.toISOString().split('T')[0]
+        );
       }
       if (filters.search) {
-        query = query.or(`name.ilike.%${filters.search}%,model.ilike.%${filters.search}%,serial_number.ilike.%${filters.search}%`);
+        query = query.or(
+          `name.ilike.%${filters.search}%,model.ilike.%${filters.search}%,serial_number.ilike.%${filters.search}%`
+        );
       }
     }
 
@@ -150,23 +160,27 @@ export class EquipmentMaintenanceService {
 
     const { data, error, count } = await query.order('name');
 
-    if (error) throw new Error(`Failed to get clinic equipment: ${error.message}`);
+    if (error)
+      throw new Error(`Failed to get clinic equipment: ${error.message}`);
 
     return {
       equipment: data || [],
-      total: count || 0
+      total: count || 0,
     };
   }
 
   /**
    * Update equipment information
    */
-  async updateEquipment(id: string, updates: Partial<Equipment>): Promise<Equipment> {
+  async updateEquipment(
+    id: string,
+    updates: Partial<Equipment>
+  ): Promise<Equipment> {
     const supabase = await this.getSupabase();
-    
+
     const updateData = {
       ...updates,
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     };
 
     const { data, error } = await supabase
@@ -187,9 +201,14 @@ export class EquipmentMaintenanceService {
   /**
    * Create maintenance schedule
    */
-  async createMaintenanceSchedule(data: Omit<MaintenanceSchedule, 'id' | 'created_at' | 'updated_at' | 'next_due_date' | 'is_active'>): Promise<MaintenanceSchedule> {
+  async createMaintenanceSchedule(
+    data: Omit<
+      MaintenanceSchedule,
+      'id' | 'created_at' | 'updated_at' | 'next_due_date' | 'is_active'
+    >
+  ): Promise<MaintenanceSchedule> {
     const supabase = await this.getSupabase();
-    
+
     // Calculate next due date based on frequency
     const nextDueDate = this.calculateNextDueDate(data);
 
@@ -198,7 +217,7 @@ export class EquipmentMaintenanceService {
       next_due_date: nextDueDate,
       is_active: true,
       created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     };
 
     const { data: schedule, error } = await supabase
@@ -207,7 +226,10 @@ export class EquipmentMaintenanceService {
       .select()
       .single();
 
-    if (error) throw new Error(`Failed to create maintenance schedule: ${error.message}`);
+    if (error)
+      throw new Error(
+        `Failed to create maintenance schedule: ${error.message}`
+      );
 
     // Create initial alert if needed
     if (schedule.alert_days_before > 0) {
@@ -218,13 +240,16 @@ export class EquipmentMaintenanceService {
         alert_type: 'scheduled_maintenance',
         severity: 'medium',
         title: `Manutenção agendada: ${schedule.schedule_name}`,
-        message: `Manutenção programada para o equipamento está se aproximando`,
-        trigger_date: this.calculateAlertDate(nextDueDate, schedule.alert_days_before),
+        message: 'Manutenção programada para o equipamento está se aproximando',
+        trigger_date: this.calculateAlertDate(
+          nextDueDate,
+          schedule.alert_days_before
+        ),
         due_date: nextDueDate,
         notification_recipients: schedule.notification_recipients,
         delivery_methods: ['dashboard'],
         updated_at: new Date().toISOString(),
-        notification_sent: false
+        notification_sent: false,
       });
     }
 
@@ -234,9 +259,11 @@ export class EquipmentMaintenanceService {
   /**
    * Get maintenance schedules for equipment
    */
-  async getEquipmentSchedules(equipmentId: string): Promise<MaintenanceSchedule[]> {
+  async getEquipmentSchedules(
+    equipmentId: string
+  ): Promise<MaintenanceSchedule[]> {
     const supabase = await this.getSupabase();
-    
+
     const { data, error } = await supabase
       .from('maintenance_schedules')
       .select('*')
@@ -244,23 +271,31 @@ export class EquipmentMaintenanceService {
       .eq('is_active', true)
       .order('next_due_date');
 
-    if (error) throw new Error(`Failed to get equipment schedules: ${error.message}`);
+    if (error)
+      throw new Error(`Failed to get equipment schedules: ${error.message}`);
     return data || [];
   }
 
   /**
    * Update maintenance schedule and recalculate due dates
    */
-  async updateMaintenanceSchedule(id: string, updates: Partial<MaintenanceSchedule>): Promise<MaintenanceSchedule> {
+  async updateMaintenanceSchedule(
+    id: string,
+    updates: Partial<MaintenanceSchedule>
+  ): Promise<MaintenanceSchedule> {
     const supabase = await this.getSupabase();
-    
+
     const updateData = {
       ...updates,
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     };
 
     // If frequency changed, recalculate next due date
-    if (updates.frequency_days || updates.frequency_hours || updates.frequency_cycles) {
+    if (
+      updates.frequency_days ||
+      updates.frequency_hours ||
+      updates.frequency_cycles
+    ) {
       const { data: currentSchedule } = await supabase
         .from('maintenance_schedules')
         .select('*')
@@ -270,7 +305,7 @@ export class EquipmentMaintenanceService {
       if (currentSchedule) {
         updateData.next_due_date = this.calculateNextDueDate({
           ...currentSchedule,
-          ...updates
+          ...updates,
         } as MaintenanceSchedule);
       }
     }
@@ -282,7 +317,10 @@ export class EquipmentMaintenanceService {
       .select()
       .single();
 
-    if (error) throw new Error(`Failed to update maintenance schedule: ${error.message}`);
+    if (error)
+      throw new Error(
+        `Failed to update maintenance schedule: ${error.message}`
+      );
     return data;
   }
 
@@ -293,15 +331,20 @@ export class EquipmentMaintenanceService {
   /**
    * Create maintenance alert
    */
-  async createMaintenanceAlert(data: Omit<MaintenanceAlert, 'id' | 'created_at' | 'is_active' | 'is_acknowledged' | 'is_resolved'>): Promise<MaintenanceAlert> {
+  async createMaintenanceAlert(
+    data: Omit<
+      MaintenanceAlert,
+      'id' | 'created_at' | 'is_active' | 'is_acknowledged' | 'is_resolved'
+    >
+  ): Promise<MaintenanceAlert> {
     const supabase = await this.getSupabase();
-    
+
     const alertData = {
       ...data,
       is_active: true,
       is_acknowledged: false,
       is_resolved: false,
-      created_at: new Date().toISOString()
+      created_at: new Date().toISOString(),
     };
 
     const { data: alert, error } = await supabase
@@ -310,7 +353,8 @@ export class EquipmentMaintenanceService {
       .select()
       .single();
 
-    if (error) throw new Error(`Failed to create maintenance alert: ${error.message}`);
+    if (error)
+      throw new Error(`Failed to create maintenance alert: ${error.message}`);
     return alert;
   }
 
@@ -327,7 +371,7 @@ export class EquipmentMaintenanceService {
     }
   ): Promise<MaintenanceAlert[]> {
     const supabase = await this.getSupabase();
-    
+
     let query = supabase
       .from('maintenance_alerts')
       .select(`
@@ -358,7 +402,9 @@ export class EquipmentMaintenanceService {
       }
     }
 
-    const { data, error } = await query.order('created_at', { ascending: false });
+    const { data, error } = await query.order('created_at', {
+      ascending: false,
+    });
 
     if (error) throw new Error(`Failed to get active alerts: ${error.message}`);
     return data || [];
@@ -367,9 +413,13 @@ export class EquipmentMaintenanceService {
   /**
    * Acknowledge alert
    */
-  async acknowledgeAlert(alertId: string, acknowledgedBy: string, notes?: string): Promise<MaintenanceAlert> {
+  async acknowledgeAlert(
+    alertId: string,
+    acknowledgedBy: string,
+    notes?: string
+  ): Promise<MaintenanceAlert> {
     const supabase = await this.getSupabase();
-    
+
     const { data, error } = await supabase
       .from('maintenance_alerts')
       .update({
@@ -377,7 +427,7 @@ export class EquipmentMaintenanceService {
         acknowledged_at: new Date().toISOString(),
         acknowledged_by: acknowledgedBy,
         acknowledgment_notes: notes,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', alertId)
       .select()
@@ -390,9 +440,13 @@ export class EquipmentMaintenanceService {
   /**
    * Resolve alert
    */
-  async resolveAlert(alertId: string, resolvedBy: string, notes: string): Promise<MaintenanceAlert> {
+  async resolveAlert(
+    alertId: string,
+    resolvedBy: string,
+    notes: string
+  ): Promise<MaintenanceAlert> {
     const supabase = await this.getSupabase();
-    
+
     const { data, error } = await supabase
       .from('maintenance_alerts')
       .update({
@@ -400,7 +454,7 @@ export class EquipmentMaintenanceService {
         resolved_at: new Date().toISOString(),
         resolved_by: resolvedBy,
         resolution_notes: notes,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', alertId)
       .select()
@@ -426,7 +480,7 @@ export class EquipmentMaintenanceService {
     alertsBySeverity: Record<string, number>;
   }> {
     const supabase = await this.getSupabase();
-    
+
     // Get total equipment count
     const { count: totalEquipment } = await supabase
       .from('equipment')
@@ -467,10 +521,13 @@ export class EquipmentMaintenanceService {
       .select('status')
       .eq('clinic_id', clinicId);
 
-    const equipmentByStatus = (equipmentStatusData || []).reduce((acc: Record<string, number>, item: any) => {
-      acc[item.status] = (acc[item.status] || 0) + 1;
-      return acc;
-    }, {});
+    const equipmentByStatus = (equipmentStatusData || []).reduce(
+      (acc: Record<string, number>, item: any) => {
+        acc[item.status] = (acc[item.status] || 0) + 1;
+        return acc;
+      },
+      {}
+    );
 
     // Get alerts by severity
     const { data: alertSeverityData } = await supabase
@@ -479,10 +536,13 @@ export class EquipmentMaintenanceService {
       .eq('clinic_id', clinicId)
       .eq('is_active', true);
 
-    const alertsBySeverity = (alertSeverityData || []).reduce((acc: Record<string, number>, item: any) => {
-      acc[item.severity] = (acc[item.severity] || 0) + 1;
-      return acc;
-    }, {});
+    const alertsBySeverity = (alertSeverityData || []).reduce(
+      (acc: Record<string, number>, item: any) => {
+        acc[item.severity] = (acc[item.severity] || 0) + 1;
+        return acc;
+      },
+      {}
+    );
 
     return {
       totalEquipment: totalEquipment || 0,
@@ -490,7 +550,7 @@ export class EquipmentMaintenanceService {
       overdueMaintenances: overdueMaintenances || 0,
       upcomingMaintenances: upcomingMaintenances || 0,
       equipmentByStatus,
-      alertsBySeverity
+      alertsBySeverity,
     };
   }
 
@@ -500,8 +560,11 @@ export class EquipmentMaintenanceService {
 
   private calculateNextDueDate(schedule: Partial<MaintenanceSchedule>): string {
     const now = new Date();
-    
-    if (schedule.frequency_type === 'fixed_interval' && schedule.frequency_days) {
+
+    if (
+      schedule.frequency_type === 'fixed_interval' &&
+      schedule.frequency_days
+    ) {
       now.setDate(now.getDate() + schedule.frequency_days);
     } else if (schedule.frequency_type === 'usage_based') {
       // For usage-based, we'll need to calculate based on current usage

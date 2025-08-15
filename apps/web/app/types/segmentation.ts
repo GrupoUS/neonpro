@@ -3,49 +3,36 @@
 // Epic 7 - Story 7.1: Comprehensive types for patient segmentation and AI analytics
 // =====================================================================================
 
-export type SegmentType = 
+export type SegmentType =
   | 'demographic'
-  | 'behavioral' 
+  | 'behavioral'
   | 'clinical'
   | 'engagement'
   | 'financial'
   | 'custom'
   | 'ai_generated';
 
-export type UpdateFrequency = 
+export type UpdateFrequency =
   | 'real_time'
   | 'hourly'
   | 'daily'
   | 'weekly'
   | 'monthly';
 
-export type EngagementLevel = 
+export type EngagementLevel =
   | 'very_low'
   | 'low'
   | 'medium'
   | 'high'
   | 'very_high';
 
-export type RevenueTrend = 
-  | 'declining'
-  | 'stable'
-  | 'growing'
-  | 'volatile';
+export type RevenueTrend = 'declining' | 'stable' | 'growing' | 'volatile';
 
-export type RiskLevel = 
-  | 'very_low'
-  | 'low'
-  | 'medium'
-  | 'high'
-  | 'very_high';
+export type RiskLevel = 'very_low' | 'low' | 'medium' | 'high' | 'very_high';
 
-export type HealthTrend = 
-  | 'declining'
-  | 'stable'
-  | 'improving'
-  | 'fluctuating';
+export type HealthTrend = 'declining' | 'stable' | 'improving' | 'fluctuating';
 
-export type ModelType = 
+export type ModelType =
   | 'classification'
   | 'clustering'
   | 'regression'
@@ -53,7 +40,7 @@ export type ModelType =
   | 'ensemble'
   | 'deep_learning';
 
-export type ModelStatus = 
+export type ModelStatus =
   | 'training'
   | 'validating'
   | 'testing'
@@ -61,7 +48,7 @@ export type ModelStatus =
   | 'deployed'
   | 'deprecated';
 
-export type PeriodType = 
+export type PeriodType =
   | 'daily'
   | 'weekly'
   | 'monthly'
@@ -75,27 +62,27 @@ export type PeriodType =
 export interface PatientSegment {
   id: string;
   clinic_id: string;
-  
+
   // Segment Definition
   name: string;
   description?: string;
   segment_type: SegmentType;
   ai_generated: boolean;
-  
+
   // Segmentation Criteria
   criteria: SegmentCriteria;
   ai_criteria?: SegmentCriteria;
-  
+
   // Performance Metrics
   accuracy_score?: number; // 0-1
   confidence_score?: number; // 0-1
   member_count: number;
-  
+
   // Configuration
   is_active: boolean;
   auto_update: boolean;
   update_frequency: UpdateFrequency;
-  
+
   // Metadata
   created_at: string;
   updated_at: string;
@@ -107,7 +94,17 @@ export interface SegmentCriteria {
 }
 
 export interface CriteriaRule {
-  operator: 'eq' | 'ne' | 'gt' | 'gte' | 'lt' | 'lte' | 'in' | 'not_in' | 'contains' | 'between';
+  operator:
+    | 'eq'
+    | 'ne'
+    | 'gt'
+    | 'gte'
+    | 'lt'
+    | 'lte'
+    | 'in'
+    | 'not_in'
+    | 'contains'
+    | 'between';
   value: any;
   field_type?: 'string' | 'number' | 'date' | 'boolean' | 'array';
 }
@@ -116,17 +113,17 @@ export interface PatientSegmentMembership {
   id: string;
   segment_id: string;
   patient_id: string;
-  
+
   // Membership Metadata
   membership_score?: number; // 0-1
   membership_reason?: MembershipReason;
-  
+
   // AI Predictions
   predicted_lifetime_value?: number;
   predicted_engagement_score?: number; // 0-1
   predicted_retention_probability?: number; // 0-1
   treatment_propensity?: TreatmentPropensity;
-  
+
   // Tracking
   assigned_at: string;
   last_validated: string;
@@ -159,40 +156,40 @@ export interface PatientAnalytics {
   id: string;
   patient_id: string;
   clinic_id: string;
-  
+
   // Behavioral Analytics
   visit_frequency_score?: number; // 0-1
   appointment_compliance_rate?: number; // 0-1
   treatment_adherence_score?: number; // 0-1
   engagement_level: EngagementLevel;
-  
+
   // Financial Analytics
   total_lifetime_value: number;
   average_transaction_value?: number;
   payment_reliability_score?: number; // 0-1
   revenue_trend?: RevenueTrend;
-  
+
   // Clinical Analytics
   condition_complexity_score?: number; // 0-1
   treatment_response_rate?: number; // 0-1
   risk_level: RiskLevel;
   health_improvement_trend?: HealthTrend;
-  
+
   // Interaction Analytics
   communication_preference?: CommunicationPreference;
   preferred_channels?: string[];
   response_rate_email?: number; // 0-1
   response_rate_sms?: number; // 0-1
   response_rate_phone?: number; // 0-1
-  
+
   // AI Insights
   ai_insights?: AIInsights;
   personality_profile?: PersonalityProfile;
   preference_predictions?: PreferencePredictions;
-  
+
   // ML Features
   feature_vector?: number[]; // 100-dimensional array
-  
+
   // Tracking
   last_calculated: string;
   calculation_version: number;
@@ -261,19 +258,19 @@ export interface PreferencePredictions {
 export interface SegmentPerformance {
   id: string;
   segment_id: string;
-  
+
   // Time Period
   period_start: string;
   period_end: string;
   period_type: PeriodType;
-  
+
   // Performance Metrics
   member_count: number;
   total_members: number;
   new_members: number;
   departed_members: number;
   member_retention_rate?: number; // 0-1
-  
+
   // Engagement Metrics
   average_engagement_score?: number; // 0-1
   engagement_rate: number; // 0-1
@@ -281,7 +278,7 @@ export interface SegmentPerformance {
   response_rate?: number; // 0-1
   conversion_rate?: number; // 0-1
   retention_rate: number; // 0-1
-  
+
   // Financial Metrics
   total_revenue: number;
   average_revenue_per_member?: number;
@@ -289,22 +286,22 @@ export interface SegmentPerformance {
   revenue_generated: number;
   cost_per_acquisition: number;
   roi?: number; // Return on investment
-  
+
   // Campaign Performance
   campaigns_sent: number;
   campaign_open_rate?: number; // 0-1
   campaign_click_rate?: number; // 0-1
   campaign_conversion_rate?: number; // 0-1
-  
+
   // Clinical Outcomes
   treatment_success_rate?: number; // 0-1
   patient_satisfaction_score?: number; // 0-1
   health_improvement_rate?: number; // 0-1
-  
+
   // Additional tracking
   active_members: number;
   analysis_date: string;
-  
+
   // Metadata
   calculated_at: string;
 }
@@ -316,29 +313,29 @@ export interface SegmentPerformance {
 export interface AIModel {
   id: string;
   clinic_id: string;
-  
+
   // Model Information
   model_name: string;
   model_type: ModelType;
   model_version: string;
-  
+
   // Configuration
   parameters?: ModelParameters;
   training_data_info?: TrainingDataInfo;
   features_used?: string[];
-  
+
   // Performance Metrics
   accuracy?: number; // 0-1
   precision_score?: number; // 0-1
   recall?: number; // 0-1
   f1_score?: number; // 0-1
   auc_score?: number; // 0-1
-  
+
   // Status
   status: ModelStatus;
   is_active: boolean;
   deployment_date?: string;
-  
+
   // Metadata
   created_at: string;
   trained_by?: string;
@@ -366,22 +363,22 @@ export interface TrainingDataInfo {
 export interface SegmentationRule {
   id: string;
   segment_id: string;
-  
+
   // Rule Definition
   rule_name: string;
   rule_description?: string;
   rule_logic: RuleLogic;
-  
+
   // Configuration
   priority: number;
   is_active: boolean;
   requires_ai: boolean;
-  
+
   // Performance
   matches_count: number;
   accuracy_rate?: number; // 0-1
   last_evaluated?: string;
-  
+
   // Metadata
   created_at: string;
   updated_at: string;
@@ -396,7 +393,17 @@ export interface RuleLogic {
 
 export interface RuleCondition {
   field: string;
-  operator: 'eq' | 'ne' | 'gt' | 'gte' | 'lt' | 'lte' | 'in' | 'not_in' | 'contains' | 'between';
+  operator:
+    | 'eq'
+    | 'ne'
+    | 'gt'
+    | 'gte'
+    | 'lt'
+    | 'lte'
+    | 'in'
+    | 'not_in'
+    | 'contains'
+    | 'between';
   value: any;
   weight?: number; // For weighted conditions
 }

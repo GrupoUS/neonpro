@@ -1,16 +1,16 @@
+import { type NextRequest, NextResponse } from 'next/server';
 import { PredictiveAnalyticsService } from '@/app/lib/services/predictive-analytics';
 import { updateForecastingModelSchema } from '@/app/lib/validations/predictive-analytics';
-import { NextRequest, NextResponse } from 'next/server';
 
 const service = new PredictiveAnalyticsService();
 
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
     const model = await service.getForecastingModel(params.id);
-    
+
     if (!model) {
       return NextResponse.json(
         { error: 'Modelo não encontrado' },
@@ -36,7 +36,10 @@ export async function PUT(
     const body = await request.json();
     const validatedData = updateForecastingModelSchema.parse(body);
 
-    const model = await service.updateForecastingModel(params.id, validatedData);
+    const model = await service.updateForecastingModel(
+      params.id,
+      validatedData
+    );
 
     return NextResponse.json(model);
   } catch (error) {
@@ -49,7 +52,7 @@ export async function PUT(
 }
 
 export async function DELETE(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {

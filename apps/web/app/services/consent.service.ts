@@ -1,5 +1,10 @@
+import type {
+  ConsentForm,
+  ConsentFormData,
+  DigitalSignature,
+  PatientConsent,
+} from '@/app/types/compliance';
 import { createClient } from '@/app/utils/supabase/client';
-import { ConsentForm, PatientConsent, ConsentFormData, DigitalSignature } from '@/app/types/compliance';
 
 export class ConsentService {
   private supabase = createClient();
@@ -50,7 +55,10 @@ export class ConsentService {
     return data[0];
   }
 
-  async updateConsentForm(id: string, updates: Partial<ConsentForm>): Promise<ConsentForm> {
+  async updateConsentForm(
+    id: string,
+    updates: Partial<ConsentForm>
+  ): Promise<ConsentForm> {
     const { data, error } = await this.supabase
       .from('consent_forms')
       .update(updates)
@@ -115,7 +123,12 @@ export class ConsentService {
     }
 
     return data || [];
-  }  async createPatientConsent(consentData: ConsentFormData, formId: string, patientId: string): Promise<PatientConsent> {
+  }
+  async createPatientConsent(
+    consentData: ConsentFormData,
+    formId: string,
+    patientId: string
+  ): Promise<PatientConsent> {
     const consentRecord: Partial<PatientConsent> = {
       patient_id: patientId,
       consent_form_id: formId,
@@ -128,18 +141,18 @@ export class ConsentService {
         cpf: consentData.cpf,
         email: consentData.email,
         phone: consentData.phone,
-        form_data: consentData
+        form_data: consentData,
       },
       signature_data: {
         signature: consentData.signature,
         timestamp: consentData.date,
         ip_address: consentData.ip_address,
-        user_agent: consentData.user_agent
+        user_agent: consentData.user_agent,
       },
       ip_address: consentData.ip_address,
       user_agent: consentData.user_agent,
       processing_categories: consentData.processing_categories,
-      status: 'active'
+      status: 'active',
     };
 
     const { data, error } = await this.supabase
@@ -156,13 +169,16 @@ export class ConsentService {
     return data;
   }
 
-  async withdrawConsent(consentId: string, reason: string): Promise<PatientConsent> {
+  async withdrawConsent(
+    consentId: string,
+    reason: string
+  ): Promise<PatientConsent> {
     const { data, error } = await this.supabase
       .from('patient_consents')
       .update({
         status: 'withdrawn',
         withdrawal_date: new Date().toISOString(),
-        withdrawal_reason: reason
+        withdrawal_reason: reason,
       })
       .eq('id', consentId)
       .select()
@@ -176,7 +192,10 @@ export class ConsentService {
     return data;
   }
 
-  async updateConsentExpiry(consentId: string, expiryDate: string): Promise<PatientConsent> {
+  async updateConsentExpiry(
+    consentId: string,
+    expiryDate: string
+  ): Promise<PatientConsent> {
     const { data, error } = await this.supabase
       .from('patient_consents')
       .update({ expires_at: expiryDate })
@@ -193,7 +212,9 @@ export class ConsentService {
   }
 
   // Patient Consent Management
-  async recordPatientConsent(consent: Partial<PatientConsent>): Promise<PatientConsent> {
+  async recordPatientConsent(
+    consent: Partial<PatientConsent>
+  ): Promise<PatientConsent> {
     const { data, error } = await this.supabase
       .from('patient_consent')
       .insert([consent])
@@ -208,13 +229,16 @@ export class ConsentService {
   }
 
   // Methods needed for testing
-  async grantPatientConsent(patientId: string, formId: string): Promise<PatientConsent> {
+  async grantPatientConsent(
+    patientId: string,
+    formId: string
+  ): Promise<PatientConsent> {
     const consentData = {
       patient_id: patientId,
       consent_form_id: formId,
       status: 'granted',
       consented_at: new Date().toISOString(),
-      signature_method: 'digital'
+      signature_method: 'digital',
     };
 
     const { data, error } = await this.supabase
@@ -230,13 +254,16 @@ export class ConsentService {
     return data[0];
   }
 
-  async revokePatientConsent(consentId: string, reason?: string): Promise<PatientConsent> {
+  async revokePatientConsent(
+    consentId: string,
+    reason?: string
+  ): Promise<PatientConsent> {
     const { data, error } = await this.supabase
       .from('patient_consent')
       .update({
         status: 'revoked',
         withdrawal_date: new Date().toISOString(),
-        withdrawal_reason: reason || 'User requested'
+        withdrawal_reason: reason || 'User requested',
       })
       .eq('id', consentId)
       .select();
@@ -251,7 +278,7 @@ export class ConsentService {
 
   // Digital Signature Validation
   validateDigitalSignature(signature: DigitalSignature): boolean {
-    if (!signature.signature_data || !signature.timestamp) {
+    if (!(signature.signature_data && signature.timestamp)) {
       return false;
     }
 
@@ -265,7 +292,7 @@ export class ConsentService {
   // Consent Form Templates
   renderConsentTemplate(template: string, data: ConsentFormData): string {
     let rendered = template;
-    
+
     // Replace template variables
     const replacements: Record<string, string> = {
       '{{patient_name}}': data.patient_name || '',
@@ -274,7 +301,7 @@ export class ConsentService {
       '{{phone}}': data.phone || '',
       '{{date}}': data.date || new Date().toLocaleDateString('pt-BR'),
       '{{consent_type}}': data.consent_type || '',
-      '{{purpose}}': data.purpose || ''
+      '{{purpose}}': data.purpose || '',
     };
 
     Object.entries(replacements).forEach(([key, value]) => {
@@ -285,7 +312,10 @@ export class ConsentService {
   }
 
   // Compliance Utilities
-  async getExpiringConsents(clinicId: string, daysAhead: number = 30): Promise<PatientConsent[]> {
+  async getExpiringConsents(
+    clinicId: string,
+    daysAhead = 30
+  ): Promise<PatientConsent[]> {
     const futureDate = new Date();
     futureDate.setDate(futureDate.getDate() + daysAhead);
 
@@ -332,10 +362,10 @@ export class ConsentService {
       active: 0,
       expired: 0,
       withdrawn: 0,
-      pending: 0
+      pending: 0,
     };
 
-    data?.forEach(consent => {
+    data?.forEach((consent) => {
       switch (consent.status) {
         case 'active':
           stats.active++;
@@ -376,8 +406,8 @@ export class ConsentService {
 
   // Audit Trail for Consent Operations
   async logConsentOperation(
-    operation: string, 
-    consentId: string, 
+    operation: string,
+    consentId: string,
     details: Record<string, any>
   ): Promise<void> {
     // This would integrate with the audit system
@@ -385,7 +415,7 @@ export class ConsentService {
       operation,
       consent_id: consentId,
       timestamp: new Date().toISOString(),
-      details
+      details,
     });
   }
 }

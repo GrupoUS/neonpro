@@ -4,9 +4,8 @@
  */
 
 import { createClient } from '@/app/utils/supabase/client';
-import { createClient as createBrowserClient } from '@/app/utils/supabase/client';
-import { sessionManager } from './session-manager';
 import { performanceTracker } from './performance-tracker';
+import { sessionManager } from './session-manager';
 
 export interface SecureTokenStorage {
   accessToken: string;
@@ -40,9 +39,9 @@ class EnhancedSessionManager {
   private activityTimer: NodeJS.Timeout | null = null;
   private warningTimer: NodeJS.Timeout | null = null;
   private sessionTimeouts: Map<string, SessionTimeout> = new Map();
-  
+
   private constructor() {}
-  
+
   public static getInstance(): EnhancedSessionManager {
     if (!EnhancedSessionManager.instance) {
       EnhancedSessionManager.instance = new EnhancedSessionManager();
@@ -58,36 +57,37 @@ class EnhancedSessionManager {
     tokens: SecureTokenStorage
   ): Promise<boolean> {
     const startTime = Date.now();
-    
+
     try {
       const supabase = await createClient();
-      
+
       // Encrypt sensitive token data
       const encryptedTokens = await this.encryptTokenData(tokens);
-      
-      const { error } = await supabase
-        .from('secure_tokens')
-        .upsert({
-          session_id: sessionId,
-          encrypted_tokens: encryptedTokens,
-          expires_at: new Date(tokens.expiresAt).toISOString(),
-          provider: tokens.provider,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        });
-      
+
+      const { error } = await supabase.from('secure_tokens').upsert({
+        session_id: sessionId,
+        encrypted_tokens: encryptedTokens,
+        expires_at: new Date(tokens.expiresAt).toISOString(),
+        provider: tokens.provider,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      });
+
       if (error) {
         console.error('Token storage error:', error);
         return false;
       }
-      
+
       // Log security event
       await this.logSecurityEvent(sessionId, 'tokens_stored', {
         provider: tokens.provider,
         expiresAt: tokens.expiresAt,
       });
-      
-      performanceTracker.recordMetric('secure_token_storage', Date.now() - startTime);
+
+      performanceTracker.recordMetric(
+        'secure_token_storage',
+        Date.now() - startTime
+      );
       return true;
     } catch (error) {
       console.error('Secure token storage failed:', error);
@@ -98,27 +98,32 @@ class EnhancedSessionManager {
   /**
    * Retrieve and decrypt stored tokens
    */
-  async retrieveTokensSecurely(sessionId: string): Promise<SecureTokenStorage | null> {
+  async retrieveTokensSecurely(
+    sessionId: string
+  ): Promise<SecureTokenStorage | null> {
     const startTime = Date.now();
-    
+
     try {
       const supabase = await createClient();
-      
+
       const { data, error } = await supabase
         .from('secure_tokens')
         .select('*')
         .eq('session_id', sessionId)
         .gte('expires_at', new Date().toISOString())
         .single();
-      
+
       if (error || !data) {
         return null;
       }
-      
+
       // Decrypt token data
       const tokens = await this.decryptTokenData(data.encrypted_tokens);
-      
-      performanceTracker.recordMetric('secure_token_retrieval', Date.now() - startTime);
+
+      performanceTracker.recordMetric(
+        'secure_token_retrieval',
+        Date.now() - startTime
+      );
       return tokens;
     } catch (error) {
       console.error('Token retrieval failed:', error);
@@ -140,7 +145,7 @@ class EnhancedSessionManager {
       warningThreshold: options.warningThreshold || 5, // 5 minutes warning
       lastActivity: Date.now(),
     };
-    
+
     this.sessionTimeouts.set(sessionId, timeout);
     this.startTimeoutMonitoring(sessionId, userId);
   }
@@ -154,26 +159,26 @@ class EnhancedSessionManager {
   ): Promise<void> {
     const timeout = this.sessionTimeouts.get(sessionId);
     if (!timeout) return;
-    
+
     // Update last activity timestamp
     timeout.lastActivity = Date.now();
     this.sessionTimeouts.set(sessionId, timeout);
-    
+
     // Log activity for security monitoring
     const activityRecord: SessionActivity = {
       sessionId,
       timestamp: Date.now(),
       ...activity,
     };
-    
+
     await this.logSessionActivity(activityRecord);
-    
+
     // Update session manager
     await sessionManager.updateSessionActivity(sessionId, {
       action: activity.action,
       resource: activity.resource,
     });
-    
+
     // Reset timeout timers
     this.resetTimeoutTimers(sessionId, activity.userId);
   }
@@ -184,12 +189,12 @@ class EnhancedSessionManager {
   shouldShowTimeoutWarning(sessionId: string): boolean {
     const timeout = this.sessionTimeouts.get(sessionId);
     if (!timeout) return false;
-    
+
     const timeSinceActivity = Date.now() - timeout.lastActivity;
     const warningThresholdMs = timeout.warningThreshold * 60 * 1000;
     const idleTimeoutMs = timeout.idleTimeout * 60 * 1000;
-    
-    return timeSinceActivity >= (idleTimeoutMs - warningThresholdMs);
+
+    return timeSinceActivity >= idleTimeoutMs - warningThresholdMs;
   }
 
   /**
@@ -199,19 +204,19 @@ class EnhancedSessionManager {
     try {
       // Clear timeout timers
       this.clearTimeoutTimers();
-      
+
       // Remove from timeout tracking
       this.sessionTimeouts.delete(sessionId);
-      
+
       // Invalidate stored tokens
       await this.invalidateStoredTokens(sessionId);
-      
+
       // Log security event
       await this.logSecurityEvent(sessionId, 'session_timeout', {
         reason,
         timestamp: Date.now(),
       });
-      
+
       // Notify session manager
       await sessionManager.manageConcurrentSessions('', sessionId);
     } catch (error) {
@@ -224,35 +229,35 @@ class EnhancedSessionManager {
    */
   async secureLogout(sessionId: string, userId: string): Promise<boolean> {
     const startTime = Date.now();
-    
+
     try {
       const supabase = await createClient();
-      
+
       // 1. Revoke OAuth tokens if applicable
       await this.revokeOAuthTokens(sessionId);
-      
+
       // 2. Clear stored tokens
       await this.invalidateStoredTokens(sessionId);
-      
+
       // 3. Invalidate Supabase session
       await supabase.auth.signOut();
-      
+
       // 4. Clear session timeout tracking
       this.sessionTimeouts.delete(sessionId);
       this.clearTimeoutTimers();
-      
+
       // 5. Log security event
       await this.logSecurityEvent(sessionId, 'secure_logout', {
         userId,
         timestamp: Date.now(),
       });
-      
+
       // 6. Clear browser storage (client-side)
       if (typeof window !== 'undefined') {
         localStorage.removeItem('supabase.auth.token');
         sessionStorage.clear();
       }
-      
+
       performanceTracker.recordMetric('secure_logout', Date.now() - startTime);
       return true;
     } catch (error) {
@@ -267,27 +272,32 @@ class EnhancedSessionManager {
   async monitorConcurrentSessions(userId: string): Promise<void> {
     try {
       const supabase = await createClient();
-      
+
       // Get all active sessions for user
       const { data: sessions } = await supabase
         .from('user_sessions')
         .select('*')
         .eq('user_id', userId)
         .eq('is_active', true);
-      
+
       if (!sessions) return;
-      
+
       // Check for suspicious concurrent sessions
-      const suspiciousSessions = sessions.filter(session => {
+      const suspiciousSessions = sessions.filter((session) => {
         const deviceInfo = session.device_info;
-        return session.risk_score > 7 || this.detectSuspiciousActivity(deviceInfo);
+        return (
+          session.risk_score > 7 || this.detectSuspiciousActivity(deviceInfo)
+        );
       });
-      
+
       // Terminate suspicious sessions
       for (const session of suspiciousSessions) {
-        await this.forceSessionTimeout(session.session_id, 'suspicious_activity');
+        await this.forceSessionTimeout(
+          session.session_id,
+          'suspicious_activity'
+        );
       }
-      
+
       // Use existing session manager for general concurrent session management
       await sessionManager.manageConcurrentSessions(userId, '');
     } catch (error) {
@@ -304,36 +314,39 @@ class EnhancedSessionManager {
     const tokenString = JSON.stringify(tokens);
     return Buffer.from(tokenString).toString('base64');
   }
-  
-  private async decryptTokenData(encryptedData: string): Promise<SecureTokenStorage> {
+
+  private async decryptTokenData(
+    encryptedData: string
+  ): Promise<SecureTokenStorage> {
     // In production, use proper decryption
     // For now, using base64 decoding as placeholder
     const tokenString = Buffer.from(encryptedData, 'base64').toString('utf-8');
     return JSON.parse(tokenString);
   }
-  
-  private startTimeoutMonitoring(sessionId: string, userId: string): void {
+
+  private startTimeoutMonitoring(sessionId: string, _userId: string): void {
     const timeout = this.sessionTimeouts.get(sessionId);
     if (!timeout) return;
-    
+
     // Set warning timer
-    const warningMs = (timeout.idleTimeout - timeout.warningThreshold) * 60 * 1000;
+    const warningMs =
+      (timeout.idleTimeout - timeout.warningThreshold) * 60 * 1000;
     this.warningTimer = setTimeout(() => {
       this.showTimeoutWarning(sessionId);
     }, warningMs);
-    
+
     // Set timeout timer
     const timeoutMs = timeout.idleTimeout * 60 * 1000;
     this.activityTimer = setTimeout(() => {
       this.forceSessionTimeout(sessionId, 'idle_timeout');
     }, timeoutMs);
   }
-  
+
   private resetTimeoutTimers(sessionId: string, userId: string): void {
     this.clearTimeoutTimers();
     this.startTimeoutMonitoring(sessionId, userId);
   }
-  
+
   private clearTimeoutTimers(): void {
     if (this.activityTimer) {
       clearTimeout(this.activityTimer);
@@ -344,34 +357,33 @@ class EnhancedSessionManager {
       this.warningTimer = null;
     }
   }
-  
+
   private showTimeoutWarning(sessionId: string): void {
     // Emit event for UI to show warning
     if (typeof window !== 'undefined') {
-      window.dispatchEvent(new CustomEvent('session-timeout-warning', {
-        detail: { sessionId }
-      }));
+      window.dispatchEvent(
+        new CustomEvent('session-timeout-warning', {
+          detail: { sessionId },
+        })
+      );
     }
   }
-  
+
   private async invalidateStoredTokens(sessionId: string): Promise<void> {
     try {
       const supabase = await createClient();
-      
-      await supabase
-        .from('secure_tokens')
-        .delete()
-        .eq('session_id', sessionId);
+
+      await supabase.from('secure_tokens').delete().eq('session_id', sessionId);
     } catch (error) {
       console.error('Token invalidation failed:', error);
     }
   }
-  
+
   private async revokeOAuthTokens(sessionId: string): Promise<void> {
     try {
       const tokens = await this.retrieveTokensSecurely(sessionId);
       if (!tokens || tokens.provider !== 'google') return;
-      
+
       // Revoke Google OAuth tokens
       const response = await fetch('https://oauth2.googleapis.com/revoke', {
         method: 'POST',
@@ -380,7 +392,7 @@ class EnhancedSessionManager {
         },
         body: `token=${tokens.accessToken}`,
       });
-      
+
       if (!response.ok) {
         console.warn('OAuth token revocation failed:', response.status);
       }
@@ -388,34 +400,32 @@ class EnhancedSessionManager {
       console.error('OAuth token revocation error:', error);
     }
   }
-  
-  private detectSuspiciousActivity(deviceInfo: any): boolean {
+
+  private detectSuspiciousActivity(_deviceInfo: any): boolean {
     // Implement suspicious activity detection logic
     // For now, basic checks
     return false;
   }
-  
+
   private async logSessionActivity(activity: SessionActivity): Promise<void> {
     try {
       const supabase = await createClient();
-      
-      await supabase
-        .from('session_activity_log')
-        .insert({
-          session_id: activity.sessionId,
-          user_id: activity.userId,
-          action: activity.action,
-          resource: activity.resource,
-          timestamp: new Date(activity.timestamp).toISOString(),
-          ip_address: activity.ipAddress,
-          user_agent: activity.userAgent,
-          risk_score: activity.riskScore,
-        });
+
+      await supabase.from('session_activity_log').insert({
+        session_id: activity.sessionId,
+        user_id: activity.userId,
+        action: activity.action,
+        resource: activity.resource,
+        timestamp: new Date(activity.timestamp).toISOString(),
+        ip_address: activity.ipAddress,
+        user_agent: activity.userAgent,
+        risk_score: activity.riskScore,
+      });
     } catch (error) {
       console.error('Session activity logging failed:', error);
     }
   }
-  
+
   private async logSecurityEvent(
     sessionId: string,
     event: string,
@@ -423,15 +433,13 @@ class EnhancedSessionManager {
   ): Promise<void> {
     try {
       const supabase = await createClient();
-      
-      await supabase
-        .from('security_audit_log')
-        .insert({
-          session_id: sessionId,
-          activity_type: event,
-          metadata,
-          timestamp: new Date().toISOString(),
-        });
+
+      await supabase.from('security_audit_log').insert({
+        session_id: sessionId,
+        activity_type: event,
+        metadata,
+        timestamp: new Date().toISOString(),
+      });
     } catch (error) {
       console.error('Security event logging failed:', error);
     }

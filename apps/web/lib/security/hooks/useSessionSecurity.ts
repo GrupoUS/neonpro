@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 /**
  * Session Security Hooks for React Components
@@ -39,7 +39,7 @@ const DEFAULT_TIMEOUT_CONFIG: SessionTimeoutConfig = {
   timeoutMinutes: 30,
   warningMinutes: [5, 2, 1],
   extendOnActivity: true,
-  showWarnings: true
+  showWarnings: true,
 };
 
 /**
@@ -53,17 +53,17 @@ export function useSessionSecurity(options: UseSessionSecurityOptions = {}) {
     timeoutConfig = {},
     onSecurityWarning,
     onSessionTimeout,
-    onCSRFError
+    onCSRFError,
   } = options;
 
-  const supabase = useSupabaseClient();
+  const _supabase = useSupabaseClient();
   const user = useUser();
-  
+
   const [securityState, setSecurityState] = useState<SessionSecurityState>({
     isSecure: true,
     riskScore: 0,
     warnings: [],
-    lastActivity: new Date()
+    lastActivity: new Date(),
   });
 
   const timeoutRef = useRef<NodeJS.Timeout>();
@@ -101,22 +101,29 @@ export function useSessionSecurity(options: UseSessionSecurityOptions = {}) {
         setupActivityTracking(sessionId);
       }
 
-      setSecurityState(prev => ({
+      setSecurityState((prev) => ({
         ...prev,
         sessionId,
         csrfToken,
-        lastActivity: new Date()
+        lastActivity: new Date(),
       }));
-
     } catch (error) {
       console.error('Failed to initialize session security:', error);
-      setSecurityState(prev => ({
+      setSecurityState((prev) => ({
         ...prev,
         isSecure: false,
-        warnings: [...prev.warnings, 'Failed to initialize security']
+        warnings: [...prev.warnings, 'Failed to initialize security'],
       }));
     }
-  }, [user, enableCSRF, enableTimeout, enableActivityTracking]);
+  }, [
+    user,
+    enableCSRF,
+    enableTimeout,
+    enableActivityTracking,
+    fetchCSRFToken,
+    initializeSessionTimeout,
+    setupActivityTracking,
+  ]);
 
   /**
    * Fetch CSRF token from server
@@ -127,9 +134,9 @@ export function useSessionSecurity(options: UseSessionSecurityOptions = {}) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-Session-ID': sessionId
+          'X-Session-ID': sessionId,
         },
-        body: JSON.stringify({ sessionId })
+        body: JSON.stringify({ sessionId }),
       });
 
       if (!response.ok) {
@@ -154,16 +161,16 @@ export function useSessionSecurity(options: UseSessionSecurityOptions = {}) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-Session-ID': sessionId
+          'X-Session-ID': sessionId,
         },
         body: JSON.stringify({
           sessionId,
           config: {
             timeoutMinutes: config.timeoutMinutes,
             warningMinutes: config.warningMinutes,
-            extendOnActivity: config.extendOnActivity
-          }
-        })
+            extendOnActivity: config.extendOnActivity,
+          },
+        }),
       });
 
       // Setup timeout monitoring
@@ -181,22 +188,22 @@ export function useSessionSecurity(options: UseSessionSecurityOptions = {}) {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
-    warningTimeoutsRef.current.forEach(timeout => clearTimeout(timeout));
+    warningTimeoutsRef.current.forEach((timeout) => clearTimeout(timeout));
     warningTimeoutsRef.current = [];
 
     const timeoutMs = config.timeoutMinutes * 60 * 1000;
-    const now = Date.now();
+    const _now = Date.now();
 
     // Setup warning timeouts
-    config.warningMinutes.forEach(warningMinutes => {
+    config.warningMinutes.forEach((warningMinutes) => {
       const warningMs = (config.timeoutMinutes - warningMinutes) * 60 * 1000;
       const warningTimeout = setTimeout(() => {
         const warning = `Session will expire in ${warningMinutes} minute${warningMinutes !== 1 ? 's' : ''}`;
-        
-        setSecurityState(prev => ({
+
+        setSecurityState((prev) => ({
           ...prev,
           timeoutWarning: warning,
-          warnings: [...prev.warnings, warning]
+          warnings: [...prev.warnings, warning],
         }));
 
         if (config.showWarnings) {
@@ -223,19 +230,19 @@ export function useSessionSecurity(options: UseSessionSecurityOptions = {}) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-Session-ID': sessionId
+          'X-Session-ID': sessionId,
         },
-        body: JSON.stringify({ sessionId })
+        body: JSON.stringify({ sessionId }),
       });
 
       // Clear local session data
       sessionStorage.removeItem('session-id');
       localStorage.clear();
 
-      setSecurityState(prev => ({
+      setSecurityState((prev) => ({
         ...prev,
         isSecure: false,
-        warnings: [...prev.warnings, 'Session has expired']
+        warnings: [...prev.warnings, 'Session has expired'],
       }));
 
       onSessionTimeout?.();
@@ -253,35 +260,41 @@ export function useSessionSecurity(options: UseSessionSecurityOptions = {}) {
       activityListenerRef.current();
     }
 
-    const activities = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
+    const activities = [
+      'mousedown',
+      'mousemove',
+      'keypress',
+      'scroll',
+      'touchstart',
+    ];
     let lastActivityTime = Date.now();
-    const throttleMs = 30000; // 30 seconds throttle
+    const throttleMs = 30_000; // 30 seconds throttle
 
     const handleActivity = async () => {
       const now = Date.now();
       if (now - lastActivityTime < throttleMs) return;
-      
+
       lastActivityTime = now;
-      
+
       try {
         // Update activity on server
         await fetch('/api/security/session-activity', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'X-Session-ID': sessionId
+            'X-Session-ID': sessionId,
           },
           body: JSON.stringify({
             sessionId,
             activityType: 'user_interaction',
-            timestamp: new Date().toISOString()
-          })
+            timestamp: new Date().toISOString(),
+          }),
         });
 
         // Update local state
-        setSecurityState(prev => ({
+        setSecurityState((prev) => ({
           ...prev,
-          lastActivity: new Date()
+          lastActivity: new Date(),
         }));
 
         // Extend session if configured
@@ -294,13 +307,13 @@ export function useSessionSecurity(options: UseSessionSecurityOptions = {}) {
     };
 
     // Add event listeners
-    activities.forEach(activity => {
+    activities.forEach((activity) => {
       document.addEventListener(activity, handleActivity, { passive: true });
     });
 
     // Store cleanup function
     activityListenerRef.current = () => {
-      activities.forEach(activity => {
+      activities.forEach((activity) => {
         document.removeEventListener(activity, handleActivity);
       });
     };
@@ -309,55 +322,63 @@ export function useSessionSecurity(options: UseSessionSecurityOptions = {}) {
   /**
    * Extend session manually
    */
-  const extendSession = useCallback(async (minutes: number = config.timeoutMinutes) => {
-    if (!securityState.sessionId) return;
+  const extendSession = useCallback(
+    async (minutes: number = config.timeoutMinutes) => {
+      if (!securityState.sessionId) return;
 
-    try {
-      await fetch('/api/security/session-timeout/extend', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Session-ID': securityState.sessionId
-        },
-        body: JSON.stringify({
-          sessionId: securityState.sessionId,
-          extensionMinutes: minutes
-        })
-      });
+      try {
+        await fetch('/api/security/session-timeout/extend', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Session-ID': securityState.sessionId,
+          },
+          body: JSON.stringify({
+            sessionId: securityState.sessionId,
+            extensionMinutes: minutes,
+          }),
+        });
 
-      // Reset timeout monitoring
-      if (enableTimeout) {
-        setupTimeoutMonitoring(securityState.sessionId);
+        // Reset timeout monitoring
+        if (enableTimeout) {
+          setupTimeoutMonitoring(securityState.sessionId);
+        }
+
+        setSecurityState((prev) => ({
+          ...prev,
+          timeoutWarning: undefined,
+          warnings: prev.warnings.filter((w) => !w.includes('expire')),
+        }));
+      } catch (error) {
+        console.error('Failed to extend session:', error);
       }
-
-      setSecurityState(prev => ({
-        ...prev,
-        timeoutWarning: undefined,
-        warnings: prev.warnings.filter(w => !w.includes('expire'))
-      }));
-    } catch (error) {
-      console.error('Failed to extend session:', error);
-    }
-  }, [securityState.sessionId, config.timeoutMinutes, enableTimeout]);
+    },
+    [
+      securityState.sessionId,
+      config.timeoutMinutes,
+      enableTimeout,
+      setupTimeoutMonitoring,
+    ]
+  );
 
   /**
    * Refresh CSRF token
    */
   const refreshCSRFToken = useCallback(async () => {
-    if (!enableCSRF || !securityState.sessionId) return;
+    if (!(enableCSRF && securityState.sessionId)) return;
 
     try {
       const newToken = await fetchCSRFToken(securityState.sessionId);
-      setSecurityState(prev => ({
+      setSecurityState((prev) => ({
         ...prev,
-        csrfToken: newToken
+        csrfToken: newToken,
       }));
       return newToken;
     } catch (error) {
       console.error('Failed to refresh CSRF token:', error);
       return null;
     }
-  }, [enableCSRF, securityState.sessionId]);
+  }, [enableCSRF, securityState.sessionId, fetchCSRFToken]);
 
   /**
    * Get headers for secure requests
@@ -384,7 +405,7 @@ export function useSessionSecurity(options: UseSessionSecurityOptions = {}) {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
-      warningTimeoutsRef.current.forEach(timeout => clearTimeout(timeout));
+      warningTimeoutsRef.current.forEach((timeout) => clearTimeout(timeout));
       if (activityListenerRef.current) {
         activityListenerRef.current();
       }
@@ -410,7 +431,7 @@ export function useSessionSecurity(options: UseSessionSecurityOptions = {}) {
     timeoutWarning: securityState.timeoutWarning,
     csrfToken: securityState.csrfToken,
     sessionId: securityState.sessionId,
-    lastActivity: securityState.lastActivity
+    lastActivity: securityState.lastActivity,
   };
 }
 
@@ -433,9 +454,9 @@ export function useCSRFToken(sessionId?: string) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-Session-ID': sessionId
+          'X-Session-ID': sessionId,
         },
-        body: JSON.stringify({ sessionId })
+        body: JSON.stringify({ sessionId }),
       });
 
       if (!response.ok) {
@@ -461,10 +482,7 @@ export function useCSRFToken(sessionId?: string) {
 /**
  * Hook for session timeout warnings
  */
-export function useSessionTimeout(
-  sessionId?: string,
-  onTimeout?: () => void
-) {
+export function useSessionTimeout(sessionId?: string, onTimeout?: () => void) {
   const [timeRemaining, setTimeRemaining] = useState<number | null>(null);
   const [warning, setWarning] = useState<string | null>(null);
 
@@ -473,12 +491,14 @@ export function useSessionTimeout(
 
     const checkTimeout = async () => {
       try {
-        const response = await fetch(`/api/security/session-timeout/status?sessionId=${sessionId}`);
+        const response = await fetch(
+          `/api/security/session-timeout/status?sessionId=${sessionId}`
+        );
         if (response.ok) {
           const data = await response.json();
           setTimeRemaining(data.timeRemaining);
           setWarning(data.warning);
-          
+
           if (data.shouldTimeout) {
             onTimeout?.();
           }
@@ -492,7 +512,7 @@ export function useSessionTimeout(
     checkTimeout();
 
     // Check every minute
-    const interval = setInterval(checkTimeout, 60000);
+    const interval = setInterval(checkTimeout, 60_000);
 
     return () => clearInterval(interval);
   }, [sessionId, onTimeout]);

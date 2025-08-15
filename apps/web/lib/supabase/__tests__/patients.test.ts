@@ -1,21 +1,21 @@
 import { createClient } from '@/app/utils/supabase/client';
-import { 
-  createPatient, 
-  getPatient, 
-  updatePatient, 
+import type { FHIR } from '@/lib/types/fhir';
+import {
+  createPatient,
   deletePatient,
-  searchPatients,
+  getPatient,
   getPatientStats,
-  type PatientFormData 
+  type PatientFormData,
+  searchPatients,
+  updatePatient,
 } from '../patients';
-import { FHIR } from '@/lib/types/fhir';
 
 // Mock the Supabase client
 jest.mock('@/app/utils/supabase/client');
 
 const mockSupabase = {
   from: jest.fn(),
-  rpc: jest.fn()
+  rpc: jest.fn(),
 };
 
 (createClient as jest.Mock).mockReturnValue(mockSupabase);
@@ -35,34 +35,34 @@ const mockPatientData: PatientFormData = {
     state: 'SP',
     neighborhood: 'Centro',
     number: '123',
-    complement: 'Apt 45'
+    complement: 'Apt 45',
   },
   emergencyContact: {
     name: 'Maria Silva',
     relationship: 'spouse',
-    phone: '11987654322'
+    phone: '11987654322',
   },
   medicalInfo: {
     allergies: ['Penicilina'],
     conditions: ['Hipertensão'],
     medications: ['Losartana 50mg'],
     bloodType: 'O+',
-    observations: 'Paciente com histórico familiar de diabetes'
+    observations: 'Paciente com histórico familiar de diabetes',
   },
   insuranceInfo: {
     hasInsurance: true,
     provider: 'Unimed',
     planType: 'particular',
     cardNumber: '123456789',
-    validUntil: '2025-12-31'
+    validUntil: '2025-12-31',
   },
   consents: {
     basic: true,
     marketing: false,
     healthCommunication: true,
     analytics: false,
-    surveys: true
-  }
+    surveys: true,
+  },
 };
 
 const mockFHIRPatient: FHIR.Patient = {
@@ -71,26 +71,28 @@ const mockFHIRPatient: FHIR.Patient = {
   identifier: [
     {
       type: {
-        coding: [{
-          system: 'http://terminology.hl7.org/CodeSystem/v2-0203',
-          code: 'TAX',
-          display: 'Tax ID number'
-        }]
+        coding: [
+          {
+            system: 'http://terminology.hl7.org/CodeSystem/v2-0203',
+            code: 'TAX',
+            display: 'Tax ID number',
+          },
+        ],
       },
       system: 'http://rnds.saude.gov.br/fhir/r4/NamingSystem/cpf',
-      value: '12345678901'
-    }
+      value: '12345678901',
+    },
   ],
   name: [
     {
       use: 'official',
       text: 'João Silva Santos',
       family: 'Santos',
-      given: ['João', 'Silva']
-    }
+      given: ['João', 'Silva'],
+    },
   ],
   gender: 'male',
-  birthDate: '1990-01-15'
+  birthDate: '1990-01-15',
 };
 
 describe('Patient Supabase Functions', () => {
@@ -102,12 +104,12 @@ describe('Patient Supabase Functions', () => {
     it('successfully creates a patient with valid data', async () => {
       const mockInsertResult = {
         data: [{ id: 123, medical_record_number: 'MR001' }],
-        error: null
+        error: null,
       };
 
       mockSupabase.from.mockReturnValue({
         insert: jest.fn().mockResolvedValue(mockInsertResult),
-        select: jest.fn().mockReturnThis()
+        select: jest.fn().mockReturnThis(),
       });
 
       const result = await createPatient(mockPatientData);
@@ -115,7 +117,7 @@ describe('Patient Supabase Functions', () => {
       expect(mockSupabase.from).toHaveBeenCalledWith('patients');
       expect(result).toEqual({
         success: true,
-        data: { id: 123, medical_record_number: 'MR001' }
+        data: { id: 123, medical_record_number: 'MR001' },
       });
     });
 
@@ -125,47 +127,48 @@ describe('Patient Supabase Functions', () => {
       mockSupabase.from.mockReturnValue({
         insert: jest.fn().mockResolvedValue({
           data: null,
-          error: mockError
+          error: mockError,
         }),
-        select: jest.fn().mockReturnThis()
+        select: jest.fn().mockReturnThis(),
       });
 
       const result = await createPatient(mockPatientData);
 
       expect(result).toEqual({
         success: false,
-        error: 'Duplicate CPF'
+        error: 'Duplicate CPF',
       });
     });
 
     it('transforms data to FHIR-compliant format', async () => {
       const mockInsertResult = {
         data: [{ id: 123, medical_record_number: 'MR001' }],
-        error: null
+        error: null,
       };
 
       const insertMock = jest.fn().mockResolvedValue(mockInsertResult);
       mockSupabase.from.mockReturnValue({
         insert: insertMock,
-        select: jest.fn().mockReturnThis()
+        select: jest.fn().mockReturnThis(),
       });
 
       await createPatient(mockPatientData);
 
       const insertedData = insertMock.mock.calls[0][0];
-      
+
       // Check FHIR structure
       expect(insertedData.fhir_data.resourceType).toBe('Patient');
       expect(insertedData.fhir_data.name[0].text).toBe('João Silva Santos');
       expect(insertedData.fhir_data.gender).toBe('male');
       expect(insertedData.fhir_data.birthDate).toBe('1990-01-15');
-      
+
       // Check identifiers
       expect(insertedData.fhir_data.identifier).toHaveLength(2); // CPF and RG
-      
+
       // Check CPF identifier
       const cpfIdentifier = insertedData.fhir_data.identifier.find(
-        (id: any) => id.system === 'http://rnds.saude.gov.br/fhir/r4/NamingSystem/cpf'
+        (id: any) =>
+          id.system === 'http://rnds.saude.gov.br/fhir/r4/NamingSystem/cpf'
       );
       expect(cpfIdentifier.value).toBe('12345678901');
     });
@@ -173,19 +176,19 @@ describe('Patient Supabase Functions', () => {
     it('includes LGPD consent data', async () => {
       const mockInsertResult = {
         data: [{ id: 123, medical_record_number: 'MR001' }],
-        error: null
+        error: null,
       };
 
       const insertMock = jest.fn().mockResolvedValue(mockInsertResult);
       mockSupabase.from.mockReturnValue({
         insert: insertMock,
-        select: jest.fn().mockReturnThis()
+        select: jest.fn().mockReturnThis(),
       });
 
       await createPatient(mockPatientData);
 
       const insertedData = insertMock.mock.calls[0][0];
-      
+
       // Check LGPD consent mapping
       expect(insertedData.lgpd_consents.basic_processing).toBe(true);
       expect(insertedData.lgpd_consents.marketing_communication).toBe(false);
@@ -203,10 +206,10 @@ describe('Patient Supabase Functions', () => {
         fhir_data: mockFHIRPatient,
         lgpd_consents: {
           basic_processing: true,
-          marketing_communication: false
+          marketing_communication: false,
         },
         created_at: '2024-01-15T10:00:00Z',
-        updated_at: '2024-01-15T10:00:00Z'
+        updated_at: '2024-01-15T10:00:00Z',
       };
 
       mockSupabase.from.mockReturnValue({
@@ -214,8 +217,8 @@ describe('Patient Supabase Functions', () => {
         eq: jest.fn().mockReturnThis(),
         single: jest.fn().mockResolvedValue({
           data: mockPatientRecord,
-          error: null
-        })
+          error: null,
+        }),
       });
 
       const result = await getPatient(123);
@@ -223,7 +226,7 @@ describe('Patient Supabase Functions', () => {
       expect(mockSupabase.from).toHaveBeenCalledWith('patients');
       expect(result).toEqual({
         success: true,
-        data: mockPatientRecord
+        data: mockPatientRecord,
       });
     });
 
@@ -233,15 +236,15 @@ describe('Patient Supabase Functions', () => {
         eq: jest.fn().mockReturnThis(),
         single: jest.fn().mockResolvedValue({
           data: null,
-          error: { code: 'PGRST116', message: 'The result contains 0 rows' }
-        })
+          error: { code: 'PGRST116', message: 'The result contains 0 rows' },
+        }),
       });
 
       const result = await getPatient(999);
 
       expect(result).toEqual({
         success: false,
-        error: 'Patient not found'
+        error: 'Patient not found',
       });
     });
   });
@@ -249,14 +252,14 @@ describe('Patient Supabase Functions', () => {
   describe('updatePatient', () => {
     it('updates patient data successfully', async () => {
       const updatedData = { ...mockPatientData, name: 'João Silva Santos Jr.' };
-      
+
       mockSupabase.from.mockReturnValue({
         update: jest.fn().mockReturnThis(),
         eq: jest.fn().mockReturnThis(),
         select: jest.fn().mockResolvedValue({
           data: [{ id: 123, medical_record_number: 'MR001' }],
-          error: null
-        })
+          error: null,
+        }),
       });
 
       const result = await updatePatient(123, updatedData);
@@ -271,15 +274,15 @@ describe('Patient Supabase Functions', () => {
         eq: jest.fn().mockReturnThis(),
         select: jest.fn().mockResolvedValue({
           data: null,
-          error: { message: 'Update failed' }
-        })
+          error: { message: 'Update failed' },
+        }),
       });
 
       const result = await updatePatient(123, mockPatientData);
 
       expect(result).toEqual({
         success: false,
-        error: 'Update failed'
+        error: 'Update failed',
       });
     });
   });
@@ -290,8 +293,8 @@ describe('Patient Supabase Functions', () => {
         update: jest.fn().mockReturnThis(),
         eq: jest.fn().mockResolvedValue({
           data: [{ id: 123 }],
-          error: null
-        })
+          error: null,
+        }),
       });
 
       const result = await deletePatient(123);
@@ -304,15 +307,15 @@ describe('Patient Supabase Functions', () => {
         update: jest.fn().mockReturnThis(),
         eq: jest.fn().mockResolvedValue({
           data: null,
-          error: { message: 'Patient not found' }
-        })
+          error: { message: 'Patient not found' },
+        }),
       });
 
       const result = await deletePatient(999);
 
       expect(result).toEqual({
         success: false,
-        error: 'Patient not found'
+        error: 'Patient not found',
       });
     });
   });
@@ -320,8 +323,16 @@ describe('Patient Supabase Functions', () => {
   describe('searchPatients', () => {
     it('searches patients by name successfully', async () => {
       const mockResults = [
-        { id: 1, medical_record_number: 'MR001', fhir_data: { name: [{ text: 'João Silva' }] } },
-        { id: 2, medical_record_number: 'MR002', fhir_data: { name: [{ text: 'João Santos' }] } }
+        {
+          id: 1,
+          medical_record_number: 'MR001',
+          fhir_data: { name: [{ text: 'João Silva' }] },
+        },
+        {
+          id: 2,
+          medical_record_number: 'MR002',
+          fhir_data: { name: [{ text: 'João Santos' }] },
+        },
       ];
 
       mockSupabase.from.mockReturnValue({
@@ -333,14 +344,14 @@ describe('Patient Supabase Functions', () => {
         range: jest.fn().mockResolvedValue({
           data: mockResults,
           error: null,
-          count: 2
-        })
+          count: 2,
+        }),
       });
 
       const result = await searchPatients({
         query: 'João',
         page: 1,
-        limit: 10
+        limit: 10,
       });
 
       expect(result.success).toBe(true);
@@ -358,19 +369,21 @@ describe('Patient Supabase Functions', () => {
         range: jest.fn().mockResolvedValue({
           data: [],
           error: null,
-          count: 0
-        })
+          count: 0,
+        }),
       });
 
       await searchPatients({
         query: 'João',
         status: 'active',
         page: 1,
-        limit: 10
+        limit: 10,
       });
 
       const mockCalls = mockSupabase.from().eq.mock.calls;
-      expect(mockCalls.some(call => call[0] === 'status' && call[1] === 'active')).toBe(true);
+      expect(
+        mockCalls.some((call) => call[0] === 'status' && call[1] === 'active')
+      ).toBe(true);
     });
   });
 
@@ -380,12 +393,12 @@ describe('Patient Supabase Functions', () => {
         total_patients: 150,
         active_patients: 140,
         new_this_month: 15,
-        avg_age: 35.5
+        avg_age: 35.5,
       };
 
       mockSupabase.rpc.mockResolvedValue({
         data: mockStats,
-        error: null
+        error: null,
       });
 
       const result = await getPatientStats();
@@ -393,21 +406,21 @@ describe('Patient Supabase Functions', () => {
       expect(mockSupabase.rpc).toHaveBeenCalledWith('get_patient_statistics');
       expect(result).toEqual({
         success: true,
-        data: mockStats
+        data: mockStats,
       });
     });
 
     it('handles statistics retrieval errors', async () => {
       mockSupabase.rpc.mockResolvedValue({
         data: null,
-        error: { message: 'Function not found' }
+        error: { message: 'Function not found' },
       });
 
       const result = await getPatientStats();
 
       expect(result).toEqual({
         success: false,
-        error: 'Function not found'
+        error: 'Function not found',
       });
     });
   });
@@ -416,12 +429,12 @@ describe('Patient Supabase Functions', () => {
     it('correctly transforms Brazilian address to FHIR format', async () => {
       const insertMock = jest.fn().mockResolvedValue({
         data: [{ id: 123 }],
-        error: null
+        error: null,
       });
 
       mockSupabase.from.mockReturnValue({
         insert: insertMock,
-        select: jest.fn().mockReturnThis()
+        select: jest.fn().mockReturnThis(),
       });
 
       await createPatient(mockPatientData);
@@ -441,12 +454,12 @@ describe('Patient Supabase Functions', () => {
     it('correctly transforms emergency contact to FHIR RelatedPerson', async () => {
       const insertMock = jest.fn().mockResolvedValue({
         data: [{ id: 123 }],
-        error: null
+        error: null,
       });
 
       mockSupabase.from.mockReturnValue({
         insert: insertMock,
-        select: jest.fn().mockReturnThis()
+        select: jest.fn().mockReturnThis(),
       });
 
       await createPatient(mockPatientData);

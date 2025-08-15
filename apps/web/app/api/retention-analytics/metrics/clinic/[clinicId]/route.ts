@@ -1,13 +1,13 @@
 // =====================================================================================
 // CLINIC RETENTION METRICS API ENDPOINTS
-// Epic 7.4: Patient Retention Analytics + Predictions  
+// Epic 7.4: Patient Retention Analytics + Predictions
 // API endpoints for clinic-wide retention metrics and analytics
 // =====================================================================================
 
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
-import { RetentionAnalyticsService } from '@/app/lib/services/retention-analytics-service';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { RetentionAnalyticsService } from '@/app/lib/services/retention-analytics-service';
+import { createClient } from '@/app/utils/supabase/server';
 
 // =====================================================================================
 // VALIDATION SCHEMAS
@@ -36,14 +36,14 @@ export async function GET(
   try {
     // Validate clinic ID parameter
     const clinicValidation = ClinicMetricsParamsSchema.safeParse({
-      clinicId: params.clinicId
+      clinicId: params.clinicId,
     });
 
     if (!clinicValidation.success) {
       return NextResponse.json(
-        { 
-          error: 'Invalid clinic ID', 
-          details: clinicValidation.error.issues 
+        {
+          error: 'Invalid clinic ID',
+          details: clinicValidation.error.issues,
         },
         { status: 400 }
       );
@@ -63,25 +63,26 @@ export async function GET(
 
     if (!queryValidation.success) {
       return NextResponse.json(
-        { 
-          error: 'Invalid query parameters', 
-          details: queryValidation.error.issues 
+        {
+          error: 'Invalid query parameters',
+          details: queryValidation.error.issues,
         },
         { status: 400 }
       );
     }
 
-    const { limit, offset, startDate, endDate, riskLevel } = queryValidation.data;
+    const { limit, offset, startDate, endDate, riskLevel } =
+      queryValidation.data;
 
     // Verify authentication
     const supabase = await createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Verify clinic access
@@ -113,38 +114,41 @@ export async function GET(
       .single();
 
     if (clinicError || !clinic) {
-      return NextResponse.json(
-        { error: 'Clinic not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Clinic not found' }, { status: 404 });
     }
 
     // Get clinic retention metrics
     const retentionService = new RetentionAnalyticsService();
     const metrics = await retentionService.getClinicRetentionMetrics(
-      clinicId, 
-      limit, 
+      clinicId,
+      limit,
       offset
     );
 
     // Apply additional filters if provided
     let filteredMetrics = metrics;
-    
+
     if (startDate || endDate || riskLevel) {
-      filteredMetrics = metrics.filter(metric => {
+      filteredMetrics = metrics.filter((metric) => {
         // Filter by date range
-        if (startDate && new Date(metric.last_appointment_date) < new Date(startDate)) {
+        if (
+          startDate &&
+          new Date(metric.last_appointment_date) < new Date(startDate)
+        ) {
           return false;
         }
-        if (endDate && new Date(metric.last_appointment_date) > new Date(endDate)) {
+        if (
+          endDate &&
+          new Date(metric.last_appointment_date) > new Date(endDate)
+        ) {
           return false;
         }
-        
+
         // Filter by risk level
         if (riskLevel && metric.churn_risk_level !== riskLevel) {
           return false;
         }
-        
+
         return true;
       });
     }
@@ -152,16 +156,29 @@ export async function GET(
     // Calculate summary statistics
     const summary = {
       total_patients: filteredMetrics.length,
-      average_retention_rate: filteredMetrics.reduce((sum, m) => sum + m.retention_rate, 0) / filteredMetrics.length || 0,
-      average_churn_risk: filteredMetrics.reduce((sum, m) => sum + m.churn_risk_score, 0) / filteredMetrics.length || 0,
+      average_retention_rate:
+        filteredMetrics.reduce((sum, m) => sum + m.retention_rate, 0) /
+          filteredMetrics.length || 0,
+      average_churn_risk:
+        filteredMetrics.reduce((sum, m) => sum + m.churn_risk_score, 0) /
+          filteredMetrics.length || 0,
       risk_distribution: {
-        low: filteredMetrics.filter(m => m.churn_risk_level === 'low').length,
-        medium: filteredMetrics.filter(m => m.churn_risk_level === 'medium').length,
-        high: filteredMetrics.filter(m => m.churn_risk_level === 'high').length,
-        critical: filteredMetrics.filter(m => m.churn_risk_level === 'critical').length,
+        low: filteredMetrics.filter((m) => m.churn_risk_level === 'low').length,
+        medium: filteredMetrics.filter((m) => m.churn_risk_level === 'medium')
+          .length,
+        high: filteredMetrics.filter((m) => m.churn_risk_level === 'high')
+          .length,
+        critical: filteredMetrics.filter(
+          (m) => m.churn_risk_level === 'critical'
+        ).length,
       },
-      total_lifetime_value: filteredMetrics.reduce((sum, m) => sum + m.lifetime_value, 0),
-      patients_at_risk: filteredMetrics.filter(m => ['high', 'critical'].includes(m.churn_risk_level)).length,
+      total_lifetime_value: filteredMetrics.reduce(
+        (sum, m) => sum + m.lifetime_value,
+        0
+      ),
+      patients_at_risk: filteredMetrics.filter((m) =>
+        ['high', 'critical'].includes(m.churn_risk_level)
+      ).length,
     };
 
     return NextResponse.json({
@@ -173,24 +190,23 @@ export async function GET(
           limit,
           offset,
           total: filteredMetrics.length,
-          hasMore: offset + limit < filteredMetrics.length
+          hasMore: offset + limit < filteredMetrics.length,
         },
         filters: {
           startDate,
           endDate,
-          riskLevel
-        }
+          riskLevel,
+        },
       },
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
-
   } catch (error) {
     console.error('Error getting clinic retention metrics:', error);
-    
+
     return NextResponse.json(
-      { 
+      {
         error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );
@@ -208,14 +224,14 @@ export async function POST(
   try {
     // Validate clinic ID parameter
     const clinicValidation = ClinicMetricsParamsSchema.safeParse({
-      clinicId: params.clinicId
+      clinicId: params.clinicId,
     });
 
     if (!clinicValidation.success) {
       return NextResponse.json(
-        { 
-          error: 'Invalid clinic ID', 
-          details: clinicValidation.error.issues 
+        {
+          error: 'Invalid clinic ID',
+          details: clinicValidation.error.issues,
         },
         { status: 400 }
       );
@@ -229,13 +245,13 @@ export async function POST(
 
     // Verify authentication
     const supabase = await createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Verify clinic access and permissions
@@ -270,7 +286,7 @@ export async function POST(
 
     // Get patients to calculate metrics for
     let targetPatientIds = patientIds;
-    
+
     if (!targetPatientIds || targetPatientIds.length === 0) {
       // Get all patients for the clinic
       const { data: patients, error: patientsError } = await supabase
@@ -283,7 +299,7 @@ export async function POST(
         throw new Error(`Failed to get patients: ${patientsError.message}`);
       }
 
-      targetPatientIds = patients.map(p => p.id);
+      targetPatientIds = patients.map((p) => p.id);
     }
 
     // Validate that all patients belong to the clinic
@@ -304,31 +320,35 @@ export async function POST(
     const retentionService = new RetentionAnalyticsService();
     const results = [];
     const errors = [];
-    
+
     const batchSize = 10; // Process 10 patients at a time
-    
+
     for (let i = 0; i < targetPatientIds.length; i += batchSize) {
       const batch = targetPatientIds.slice(i, i + batchSize);
-      
+
       const batchPromises = batch.map(async (patientId) => {
         try {
-          const metrics = await retentionService.calculatePatientRetentionMetrics(
-            patientId, 
-            clinicId
-          );
+          const metrics =
+            await retentionService.calculatePatientRetentionMetrics(
+              patientId,
+              clinicId
+            );
           return { patientId, metrics, success: true };
         } catch (error) {
-          console.error(`Failed to calculate metrics for patient ${patientId}:`, error);
-          return { 
-            patientId, 
-            error: error instanceof Error ? error.message : 'Unknown error', 
-            success: false 
+          console.error(
+            `Failed to calculate metrics for patient ${patientId}:`,
+            error
+          );
+          return {
+            patientId,
+            error: error instanceof Error ? error.message : 'Unknown error',
+            success: false,
           };
         }
       });
-      
+
       const batchResults = await Promise.allSettled(batchPromises);
-      
+
       batchResults.forEach((result) => {
         if (result.status === 'fulfilled') {
           if (result.value.success) {
@@ -340,7 +360,7 @@ export async function POST(
           errors.push({
             patientId: 'unknown',
             error: result.reason?.message || 'Promise rejected',
-            success: false
+            success: false,
           });
         }
       });
@@ -357,21 +377,20 @@ export async function POST(
     return NextResponse.json({
       success: true,
       data: {
-        results: results.map(r => r.metrics),
+        results: results.map((r) => r.metrics),
         summary,
-        errors: errors.length > 0 ? errors : undefined
+        errors: errors.length > 0 ? errors : undefined,
       },
       message: `Processed ${results.length} patients successfully, ${errors.length} failed`,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
-
   } catch (error) {
     console.error('Error in bulk clinic retention metrics calculation:', error);
-    
+
     return NextResponse.json(
-      { 
+      {
         error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );

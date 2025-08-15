@@ -1,99 +1,103 @@
-'use client'
+'use client';
 
 /**
  * Advanced Forecasting Charts Component for NeonPro
- * 
+ *
  * Interactive time series forecasting visualization using Recharts.
  * Displays revenue predictions, subscription growth forecasts, and confidence intervals
  * with scenario analysis and accuracy metrics.
  */
 
-import React, { useState, useMemo, useCallback } from 'react'
 import {
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  Area,
-  AreaChart,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ComposedChart,
-  Bar,
-  ReferenceLine,
-  Brush
-} from 'recharts'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Progress } from '@/components/ui/progress'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { 
-  TrendingUp, 
-  TrendingDown, 
-  Target, 
-  DollarSign, 
-  Users, 
+  Activity,
   AlertTriangle,
   BarChart3,
-  Activity,
-  Calendar
-} from 'lucide-react'
+  Calendar,
+  DollarSign,
+  Target,
+  TrendingDown,
+  TrendingUp,
+  Users,
+} from 'lucide-react';
+import { useCallback, useMemo, useState } from 'react';
+import {
+  Area,
+  Bar,
+  Brush,
+  CartesianGrid,
+  ComposedChart,
+  Legend,
+  Line,
+  LineChart,
+  ReferenceLine,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 // Types for forecasting data
 interface ForecastData {
-  date: string
-  actual?: number
-  predicted: number
-  lower_bound: number
-  upper_bound: number
-  confidence: number
+  date: string;
+  actual?: number;
+  predicted: number;
+  lower_bound: number;
+  upper_bound: number;
+  confidence: number;
 }
 
 interface ScenarioForecast {
-  name: string
-  data: ForecastData[]
-  color: string
+  name: string;
+  data: ForecastData[];
+  color: string;
 }
 
 interface AccuracyMetrics {
-  mae: number
-  mape: number
-  rmse: number
-  accuracy_score: number
+  mae: number;
+  mape: number;
+  rmse: number;
+  accuracy_score: number;
   predictions: Array<{
-    actual: number
-    predicted: number
-    date: string
-  }>
+    actual: number;
+    predicted: number;
+    date: string;
+  }>;
 }
 
 interface ForecastingChartsProps {
-  metric: 'subscriptions' | 'revenue' | 'churn_rate' | 'mrr' | 'arr'
-  historicalData: Array<{ date: string; value: number }>
-  forecastData: ForecastData[]
-  scenarios?: ScenarioForecast[]
-  accuracyMetrics?: AccuracyMetrics
-  loading?: boolean
-  className?: string
-  onDateRangeChange?: (start: string, end: string) => void
-  onScenarioToggle?: (scenario: string, enabled: boolean) => void
+  metric: 'subscriptions' | 'revenue' | 'churn_rate' | 'mrr' | 'arr';
+  historicalData: Array<{ date: string; value: number }>;
+  forecastData: ForecastData[];
+  scenarios?: ScenarioForecast[];
+  accuracyMetrics?: AccuracyMetrics;
+  loading?: boolean;
+  className?: string;
+  onDateRangeChange?: (start: string, end: string) => void;
+  onScenarioToggle?: (scenario: string, enabled: boolean) => void;
 }
 
 // Utility functions
 const formatValue = (value: number, metric: string) => {
   if (metric === 'revenue' || metric === 'mrr' || metric === 'arr') {
-    return `$${value.toLocaleString()}`
+    return `$${value.toLocaleString()}`;
   }
   if (metric === 'churn_rate') {
-    return `${value.toFixed(1)}%`
+    return `${value.toFixed(1)}%`;
   }
-  return value.toLocaleString()
-}
+  return value.toLocaleString();
+};
 
 const getMetricLabel = (metric: string) => {
   const labels = {
@@ -101,25 +105,25 @@ const getMetricLabel = (metric: string) => {
     revenue: 'Revenue',
     churn_rate: 'Churn Rate',
     mrr: 'Monthly Recurring Revenue',
-    arr: 'Annual Recurring Revenue'
-  }
-  return labels[metric as keyof typeof labels] || metric
-}
+    arr: 'Annual Recurring Revenue',
+  };
+  return labels[metric as keyof typeof labels] || metric;
+};
 
 const getMetricIcon = (metric: string) => {
   switch (metric) {
     case 'revenue':
     case 'mrr':
     case 'arr':
-      return DollarSign
+      return DollarSign;
     case 'subscriptions':
-      return Users
+      return Users;
     case 'churn_rate':
-      return TrendingDown
+      return TrendingDown;
     default:
-      return Activity
+      return Activity;
   }
-}
+};
 
 export function ForecastingCharts({
   metric,
@@ -130,103 +134,113 @@ export function ForecastingCharts({
   loading = false,
   className = '',
   onDateRangeChange,
-  onScenarioToggle
+  onScenarioToggle,
 }: ForecastingChartsProps) {
-  const [selectedView, setSelectedView] = useState<'forecast' | 'scenarios' | 'accuracy'>('forecast')
+  const [selectedView, setSelectedView] = useState<
+    'forecast' | 'scenarios' | 'accuracy'
+  >('forecast');
   const [enabledScenarios, setEnabledScenarios] = useState<Set<string>>(
-    new Set(scenarios.map(s => s.name))
-  )
-  const [showConfidenceInterval, setShowConfidenceInterval] = useState(true)
-  const [zoomDomain, setZoomDomain] = useState<[string, string] | null>(null)
+    new Set(scenarios.map((s) => s.name))
+  );
+  const [showConfidenceInterval, setShowConfidenceInterval] = useState(true);
+  const [_zoomDomain, setZoomDomain] = useState<[string, string] | null>(null);
 
   // Combine historical and forecast data
   const combinedData = useMemo(() => {
-    const historical = historicalData.map(d => ({
+    const historical = historicalData.map((d) => ({
       ...d,
-      type: 'historical' as const
-    }))
+      type: 'historical' as const,
+    }));
 
-    const forecast = forecastData.map(d => ({
+    const forecast = forecastData.map((d) => ({
       date: d.date,
       value: d.predicted,
       predicted: d.predicted,
       lower_bound: d.lower_bound,
       upper_bound: d.upper_bound,
       confidence: d.confidence,
-      type: 'forecast' as const
-    }))
+      type: 'forecast' as const,
+    }));
 
-    return [...historical, ...forecast]
-  }, [historicalData, forecastData])
+    return [...historical, ...forecast];
+  }, [historicalData, forecastData]);
 
   // Calculate forecast insights
   const forecastInsights = useMemo(() => {
-    if (forecastData.length === 0) return null
+    if (forecastData.length === 0) return null;
 
-    const firstForecast = forecastData[0]
-    const lastForecast = forecastData[forecastData.length - 1]
-    const lastHistorical = historicalData[historicalData.length - 1]
+    const _firstForecast = forecastData[0];
+    const lastForecast = forecastData[forecastData.length - 1];
+    const lastHistorical = historicalData[historicalData.length - 1];
 
-    const growth = lastHistorical 
-      ? ((lastForecast.predicted - lastHistorical.value) / lastHistorical.value) * 100
-      : 0
+    const growth = lastHistorical
+      ? ((lastForecast.predicted - lastHistorical.value) /
+          lastHistorical.value) *
+        100
+      : 0;
 
-    const averageConfidence = forecastData.reduce((sum, f) => sum + f.confidence, 0) / forecastData.length
-    
-    const volatility = forecastData.reduce((sum, f) => {
-      const range = f.upper_bound - f.lower_bound
-      const midpoint = (f.upper_bound + f.lower_bound) / 2
-      return sum + (range / midpoint)
-    }, 0) / forecastData.length
+    const averageConfidence =
+      forecastData.reduce((sum, f) => sum + f.confidence, 0) /
+      forecastData.length;
+
+    const volatility =
+      forecastData.reduce((sum, f) => {
+        const range = f.upper_bound - f.lower_bound;
+        const midpoint = (f.upper_bound + f.lower_bound) / 2;
+        return sum + range / midpoint;
+      }, 0) / forecastData.length;
 
     return {
       growth: Math.round(growth * 100) / 100,
       averageConfidence: Math.round(averageConfidence * 100) / 100,
       volatility: Math.round(volatility * 100) / 100,
       trend: growth > 5 ? 'positive' : growth < -5 ? 'negative' : 'stable',
-      forecastPeriods: forecastData.length
-    }
-  }, [forecastData, historicalData])
+      forecastPeriods: forecastData.length,
+    };
+  }, [forecastData, historicalData]);
 
   // Handle scenario toggle
-  const handleScenarioToggle = useCallback((scenarioName: string) => {
-    const newEnabled = new Set(enabledScenarios)
-    if (newEnabled.has(scenarioName)) {
-      newEnabled.delete(scenarioName)
-    } else {
-      newEnabled.add(scenarioName)
-    }
-    setEnabledScenarios(newEnabled)
-    onScenarioToggle?.(scenarioName, newEnabled.has(scenarioName))
-  }, [enabledScenarios, onScenarioToggle])
+  const handleScenarioToggle = useCallback(
+    (scenarioName: string) => {
+      const newEnabled = new Set(enabledScenarios);
+      if (newEnabled.has(scenarioName)) {
+        newEnabled.delete(scenarioName);
+      } else {
+        newEnabled.add(scenarioName);
+      }
+      setEnabledScenarios(newEnabled);
+      onScenarioToggle?.(scenarioName, newEnabled.has(scenarioName));
+    },
+    [enabledScenarios, onScenarioToggle]
+  );
 
   // Custom tooltip for forecast chart
   const ForecastTooltip = ({ active, payload, label }: any) => {
-    if (!active || !payload || !payload.length) return null
+    if (!(active && payload && payload.length)) return null;
 
-    const data = payload[0].payload
-    const isHistorical = data.type === 'historical'
+    const data = payload[0].payload;
+    const isHistorical = data.type === 'historical';
 
     return (
-      <div className="bg-white p-4 border rounded-lg shadow-lg max-w-xs">
-        <p className="font-semibold text-gray-900 mb-2">
+      <div className="max-w-xs rounded-lg border bg-white p-4 shadow-lg">
+        <p className="mb-2 font-semibold text-gray-900">
           {new Date(label).toLocaleDateString()}
         </p>
-        
+
         {isHistorical ? (
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded bg-blue-500" />
-            <span className="text-sm text-gray-600">Actual:</span>
-            <span className="text-sm font-medium">
+            <div className="h-3 w-3 rounded bg-blue-500" />
+            <span className="text-gray-600 text-sm">Actual:</span>
+            <span className="font-medium text-sm">
               {formatValue(data.value, metric)}
             </span>
           </div>
         ) : (
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded bg-green-500" />
-              <span className="text-sm text-gray-600">Predicted:</span>
-              <span className="text-sm font-medium">
+              <div className="h-3 w-3 rounded bg-green-500" />
+              <span className="text-gray-600 text-sm">Predicted:</span>
+              <span className="font-medium text-sm">
                 {formatValue(data.predicted, metric)}
               </span>
             </div>
@@ -235,7 +249,8 @@ export function ForecastingCharts({
                 <div className="flex items-center gap-2 text-xs">
                   <span className="text-gray-500">Range:</span>
                   <span>
-                    {formatValue(data.lower_bound, metric)} - {formatValue(data.upper_bound, metric)}
+                    {formatValue(data.lower_bound, metric)} -{' '}
+                    {formatValue(data.upper_bound, metric)}
                   </span>
                 </div>
                 <div className="flex items-center gap-2 text-xs">
@@ -247,23 +262,23 @@ export function ForecastingCharts({
           </div>
         )}
       </div>
-    )
-  }
+    );
+  };
 
-  const MetricIcon = getMetricIcon(metric)
+  const MetricIcon = getMetricIcon(metric);
 
   if (loading) {
     return (
       <Card className={`w-full ${className}`}>
         <CardHeader>
-          <div className="h-6 bg-gray-200 rounded animate-pulse" />
-          <div className="h-4 bg-gray-100 rounded animate-pulse" />
+          <div className="h-6 animate-pulse rounded bg-gray-200" />
+          <div className="h-4 animate-pulse rounded bg-gray-100" />
         </CardHeader>
         <CardContent>
-          <div className="h-96 bg-gray-50 rounded animate-pulse" />
+          <div className="h-96 animate-pulse rounded bg-gray-50" />
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
@@ -276,14 +291,15 @@ export function ForecastingCharts({
               {getMetricLabel(metric)} Forecast
             </CardTitle>
             <CardDescription>
-              Predictive analysis with confidence intervals and scenario modeling
+              Predictive analysis with confidence intervals and scenario
+              modeling
             </CardDescription>
           </div>
           <div className="flex items-center gap-2">
             <Button
-              variant={showConfidenceInterval ? "default" : "outline"}
-              size="sm"
               onClick={() => setShowConfidenceInterval(!showConfidenceInterval)}
+              size="sm"
+              variant={showConfidenceInterval ? 'default' : 'outline'}
             >
               Confidence Bands
             </Button>
@@ -291,24 +307,29 @@ export function ForecastingCharts({
         </div>
       </CardHeader>
       <CardContent>
-        <Tabs value={selectedView} onValueChange={(value: any) => setSelectedView(value)}>
+        <Tabs
+          onValueChange={(value: any) => setSelectedView(value)}
+          value={selectedView}
+        >
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="forecast">Forecast</TabsTrigger>
             <TabsTrigger value="scenarios">Scenarios</TabsTrigger>
             <TabsTrigger value="accuracy">Accuracy</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="forecast" className="mt-6">
+          <TabsContent className="mt-6" value="forecast">
             <div className="space-y-6">
               {/* Forecast Insights */}
               {forecastInsights && (
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                  <div className="bg-blue-50 p-4 rounded-lg">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+                  <div className="rounded-lg bg-blue-50 p-4">
                     <div className="flex items-center gap-2">
                       <BarChart3 className="h-4 w-4 text-blue-600" />
-                      <span className="text-sm font-medium text-blue-700">Growth</span>
+                      <span className="font-medium text-blue-700 text-sm">
+                        Growth
+                      </span>
                     </div>
-                    <div className="flex items-center gap-1 mt-1">
+                    <div className="mt-1 flex items-center gap-1">
                       {forecastInsights.trend === 'positive' ? (
                         <TrendingUp className="h-4 w-4 text-green-600" />
                       ) : forecastInsights.trend === 'negative' ? (
@@ -316,38 +337,45 @@ export function ForecastingCharts({
                       ) : (
                         <Activity className="h-4 w-4 text-gray-600" />
                       )}
-                      <span className="text-xl font-bold text-blue-900">
-                        {forecastInsights.growth > 0 ? '+' : ''}{forecastInsights.growth}%
+                      <span className="font-bold text-blue-900 text-xl">
+                        {forecastInsights.growth > 0 ? '+' : ''}
+                        {forecastInsights.growth}%
                       </span>
                     </div>
                   </div>
-                  
-                  <div className="bg-green-50 p-4 rounded-lg">
+
+                  <div className="rounded-lg bg-green-50 p-4">
                     <div className="flex items-center gap-2">
                       <Target className="h-4 w-4 text-green-600" />
-                      <span className="text-sm font-medium text-green-700">Confidence</span>
+                      <span className="font-medium text-green-700 text-sm">
+                        Confidence
+                      </span>
                     </div>
-                    <p className="text-xl font-bold text-green-900 mt-1">
+                    <p className="mt-1 font-bold text-green-900 text-xl">
                       {forecastInsights.averageConfidence}%
                     </p>
                   </div>
 
-                  <div className="bg-orange-50 p-4 rounded-lg">
+                  <div className="rounded-lg bg-orange-50 p-4">
                     <div className="flex items-center gap-2">
                       <AlertTriangle className="h-4 w-4 text-orange-600" />
-                      <span className="text-sm font-medium text-orange-700">Volatility</span>
+                      <span className="font-medium text-orange-700 text-sm">
+                        Volatility
+                      </span>
                     </div>
-                    <p className="text-xl font-bold text-orange-900 mt-1">
+                    <p className="mt-1 font-bold text-orange-900 text-xl">
                       {(forecastInsights.volatility * 100).toFixed(1)}%
                     </p>
                   </div>
 
-                  <div className="bg-purple-50 p-4 rounded-lg">
+                  <div className="rounded-lg bg-purple-50 p-4">
                     <div className="flex items-center gap-2">
                       <Calendar className="h-4 w-4 text-purple-600" />
-                      <span className="text-sm font-medium text-purple-700">Periods</span>
+                      <span className="font-medium text-purple-700 text-sm">
+                        Periods
+                      </span>
                     </div>
-                    <p className="text-xl font-bold text-purple-900 mt-1">
+                    <p className="mt-1 font-bold text-purple-900 text-xl">
                       {forecastInsights.forecastPeriods}
                     </p>
                   </div>
@@ -356,17 +384,19 @@ export function ForecastingCharts({
 
               {/* Main Forecast Chart */}
               <div className="h-96">
-                <ResponsiveContainer width="100%" height="100%">
+                <ResponsiveContainer height="100%" width="100%">
                   <ComposedChart data={combinedData}>
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis 
-                      dataKey="date" 
-                      tickFormatter={(date) => new Date(date).toLocaleDateString('en-US', { 
-                        month: 'short', 
-                        day: 'numeric' 
-                      })}
+                    <XAxis
+                      dataKey="date"
+                      tickFormatter={(date) =>
+                        new Date(date).toLocaleDateString('en-US', {
+                          month: 'short',
+                          day: 'numeric',
+                        })
+                      }
                     />
-                    <YAxis 
+                    <YAxis
                       tickFormatter={(value) => formatValue(value, metric)}
                     />
                     <Tooltip content={<ForecastTooltip />} />
@@ -375,66 +405,78 @@ export function ForecastingCharts({
                     {/* Confidence Interval Area */}
                     {showConfidenceInterval && (
                       <Area
-                        type="monotone"
                         dataKey="upper_bound"
-                        stackId="confidence"
-                        stroke="none"
                         fill="rgba(34, 197, 94, 0.1)"
                         name="Upper Bound"
+                        stackId="confidence"
+                        stroke="none"
+                        type="monotone"
                       />
                     )}
                     {showConfidenceInterval && (
                       <Area
-                        type="monotone"
                         dataKey="lower_bound"
-                        stackId="confidence"
-                        stroke="none"
                         fill="rgba(255, 255, 255, 1)"
                         name="Lower Bound"
+                        stackId="confidence"
+                        stroke="none"
+                        type="monotone"
                       />
                     )}
 
                     {/* Historical Data Line */}
                     <Line
-                      type="monotone"
+                      connectNulls={false}
                       dataKey="value"
+                      dot={(props) =>
+                        props.payload.type === 'historical'
+                          ? { ...props, fill: '#3b82f6', r: 3 }
+                          : false
+                      }
+                      name="Actual"
                       stroke="#3b82f6"
                       strokeWidth={2}
-                      dot={(props) => props.payload.type === 'historical' ? { ...props, fill: '#3b82f6', r: 3 } : false}
-                      connectNulls={false}
-                      name="Actual"
+                      type="monotone"
                     />
 
                     {/* Forecast Line */}
                     <Line
-                      type="monotone"
-                      dataKey="predicted"
-                      stroke="#22c55e"
-                      strokeWidth={2}
-                      strokeDasharray="5 5"
-                      dot={(props) => props.payload.type === 'forecast' ? { ...props, fill: '#22c55e', r: 3 } : false}
                       connectNulls={false}
+                      dataKey="predicted"
+                      dot={(props) =>
+                        props.payload.type === 'forecast'
+                          ? { ...props, fill: '#22c55e', r: 3 }
+                          : false
+                      }
                       name="Predicted"
+                      stroke="#22c55e"
+                      strokeDasharray="5 5"
+                      strokeWidth={2}
+                      type="monotone"
                     />
 
                     {/* Current Date Reference Line */}
-                    <ReferenceLine 
-                      x={historicalData[historicalData.length - 1]?.date} 
-                      stroke="#6b7280" 
+                    <ReferenceLine
+                      label={{ value: 'Now', position: 'topRight' }}
+                      stroke="#6b7280"
                       strokeDasharray="2 2"
-                      label={{ value: "Now", position: "topRight" }}
+                      x={historicalData[historicalData.length - 1]?.date}
                     />
 
-                    <Brush 
-                      dataKey="date" 
+                    <Brush
+                      dataKey="date"
                       height={30}
                       onChange={(domain) => {
-                        if (domain && domain.startIndex !== undefined && domain.endIndex !== undefined) {
-                          const start = combinedData[domain.startIndex]?.date
-                          const end = combinedData[domain.endIndex]?.date
+                        if (
+                          domain &&
+                          domain.startIndex !== undefined &&
+                          domain.endIndex !== undefined
+                        ) {
+                          const start = combinedData[domain.startIndex]?.date;
+                          const end = combinedData[domain.endIndex]?.date;
                           if (start && end) {
-                            setZoomDomain([start, end])
-                            onDateRangeChange?.(start, end)
+                            setZoomDomain([start, end]);
+                            onDateRangeChange?.(start, end);
                           }
                         }
                       }}
@@ -448,32 +490,42 @@ export function ForecastingCharts({
                 <Alert>
                   <TrendingUp className="h-4 w-4" />
                   <AlertDescription>
-                    <strong>Forecast Summary:</strong> Based on historical trends, we predict{' '}
+                    <strong>Forecast Summary:</strong> Based on historical
+                    trends, we predict{' '}
                     <strong>{getMetricLabel(metric).toLowerCase()}</strong> will{' '}
-                    {forecastInsights?.trend === 'positive' ? 'increase' : 
-                     forecastInsights?.trend === 'negative' ? 'decrease' : 'remain stable'} by{' '}
-                    <strong>{Math.abs(forecastInsights?.growth || 0)}%</strong> over the next{' '}
-                    {forecastData.length} periods with {forecastInsights?.averageConfidence}% confidence.
+                    {forecastInsights?.trend === 'positive'
+                      ? 'increase'
+                      : forecastInsights?.trend === 'negative'
+                        ? 'decrease'
+                        : 'remain stable'}{' '}
+                    by{' '}
+                    <strong>{Math.abs(forecastInsights?.growth || 0)}%</strong>{' '}
+                    over the next {forecastData.length} periods with{' '}
+                    {forecastInsights?.averageConfidence}% confidence.
                   </AlertDescription>
                 </Alert>
               )}
             </div>
           </TabsContent>
 
-          <TabsContent value="scenarios" className="mt-6">
+          <TabsContent className="mt-6" value="scenarios">
             <div className="space-y-6">
               {/* Scenario Controls */}
               <div className="flex flex-wrap gap-2">
                 {scenarios.map((scenario) => (
                   <Button
-                    key={scenario.name}
-                    variant={enabledScenarios.has(scenario.name) ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => handleScenarioToggle(scenario.name)}
                     className="flex items-center gap-2"
+                    key={scenario.name}
+                    onClick={() => handleScenarioToggle(scenario.name)}
+                    size="sm"
+                    variant={
+                      enabledScenarios.has(scenario.name)
+                        ? 'default'
+                        : 'outline'
+                    }
                   >
-                    <div 
-                      className="w-3 h-3 rounded-full" 
+                    <div
+                      className="h-3 w-3 rounded-full"
                       style={{ backgroundColor: scenario.color }}
                     />
                     {scenario.name}
@@ -483,46 +535,55 @@ export function ForecastingCharts({
 
               {/* Scenario Comparison Chart */}
               <div className="h-96">
-                <ResponsiveContainer width="100%" height="100%">
+                <ResponsiveContainer height="100%" width="100%">
                   <LineChart>
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis 
-                      dataKey="date" 
-                      tickFormatter={(date) => new Date(date).toLocaleDateString('en-US', { 
-                        month: 'short', 
-                        day: 'numeric' 
-                      })}
+                    <XAxis
+                      dataKey="date"
+                      tickFormatter={(date) =>
+                        new Date(date).toLocaleDateString('en-US', {
+                          month: 'short',
+                          day: 'numeric',
+                        })
+                      }
                     />
-                    <YAxis tickFormatter={(value) => formatValue(value, metric)} />
-                    <Tooltip 
-                      formatter={(value: number) => [formatValue(value, metric), 'Predicted']}
-                      labelFormatter={(date) => new Date(date).toLocaleDateString()}
+                    <YAxis
+                      tickFormatter={(value) => formatValue(value, metric)}
+                    />
+                    <Tooltip
+                      formatter={(value: number) => [
+                        formatValue(value, metric),
+                        'Predicted',
+                      ]}
+                      labelFormatter={(date) =>
+                        new Date(date).toLocaleDateString()
+                      }
                     />
                     <Legend />
 
                     {/* Historical Data */}
                     <Line
                       data={historicalData}
-                      type="monotone"
                       dataKey="value"
+                      name="Historical"
                       stroke="#6b7280"
                       strokeWidth={2}
-                      name="Historical"
+                      type="monotone"
                     />
 
                     {/* Scenario Lines */}
                     {scenarios
-                      .filter(scenario => enabledScenarios.has(scenario.name))
+                      .filter((scenario) => enabledScenarios.has(scenario.name))
                       .map((scenario) => (
                         <Line
-                          key={scenario.name}
                           data={scenario.data}
-                          type="monotone"
                           dataKey="predicted"
-                          stroke={scenario.color}
-                          strokeWidth={2}
-                          strokeDasharray="5 5"
+                          key={scenario.name}
                           name={scenario.name}
+                          stroke={scenario.color}
+                          strokeDasharray="5 5"
+                          strokeWidth={2}
+                          type="monotone"
                         />
                       ))}
                   </LineChart>
@@ -530,24 +591,26 @@ export function ForecastingCharts({
               </div>
 
               {/* Scenario Summary Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {scenarios.map((scenario) => {
-                  const lastForecast = scenario.data[scenario.data.length - 1]
-                  const firstForecast = scenario.data[0]
-                  const growth = firstForecast 
-                    ? ((lastForecast.predicted - firstForecast.predicted) / firstForecast.predicted) * 100
-                    : 0
+                  const lastForecast = scenario.data[scenario.data.length - 1];
+                  const firstForecast = scenario.data[0];
+                  const growth = firstForecast
+                    ? ((lastForecast.predicted - firstForecast.predicted) /
+                        firstForecast.predicted) *
+                      100
+                    : 0;
 
                   return (
-                    <Card 
-                      key={scenario.name} 
+                    <Card
                       className={`border-l-4 ${enabledScenarios.has(scenario.name) ? 'opacity-100' : 'opacity-50'}`}
+                      key={scenario.name}
                       style={{ borderLeftColor: scenario.color }}
                     >
                       <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium flex items-center gap-2">
-                          <div 
-                            className="w-3 h-3 rounded-full" 
+                        <CardTitle className="flex items-center gap-2 font-medium text-sm">
+                          <div
+                            className="h-3 w-3 rounded-full"
                             style={{ backgroundColor: scenario.color }}
                           />
                           {scenario.name}
@@ -555,27 +618,34 @@ export function ForecastingCharts({
                       </CardHeader>
                       <CardContent className="pt-2">
                         <div className="space-y-2">
-                          <div className="flex justify-between items-center">
-                            <span className="text-xs text-gray-600">Final Value</span>
-                            <span className="text-sm font-medium">
+                          <div className="flex items-center justify-between">
+                            <span className="text-gray-600 text-xs">
+                              Final Value
+                            </span>
+                            <span className="font-medium text-sm">
                               {formatValue(lastForecast.predicted, metric)}
                             </span>
                           </div>
-                          <div className="flex justify-between items-center">
-                            <span className="text-xs text-gray-600">Growth</span>
+                          <div className="flex items-center justify-between">
+                            <span className="text-gray-600 text-xs">
+                              Growth
+                            </span>
                             <div className="flex items-center gap-1">
                               {growth > 0 ? (
                                 <TrendingUp className="h-3 w-3 text-green-500" />
                               ) : (
                                 <TrendingDown className="h-3 w-3 text-red-500" />
                               )}
-                              <span className="text-sm font-medium">
-                                {growth > 0 ? '+' : ''}{growth.toFixed(1)}%
+                              <span className="font-medium text-sm">
+                                {growth > 0 ? '+' : ''}
+                                {growth.toFixed(1)}%
                               </span>
                             </div>
                           </div>
-                          <div className="flex justify-between items-center">
-                            <span className="text-xs text-gray-600">Confidence</span>
+                          <div className="flex items-center justify-between">
+                            <span className="text-gray-600 text-xs">
+                              Confidence
+                            </span>
                             <Badge variant="secondary">
                               {lastForecast.confidence}%
                             </Badge>
@@ -583,54 +653,65 @@ export function ForecastingCharts({
                         </div>
                       </CardContent>
                     </Card>
-                  )
+                  );
                 })}
               </div>
             </div>
           </TabsContent>
 
-          <TabsContent value="accuracy" className="mt-6">
+          <TabsContent className="mt-6" value="accuracy">
             {accuracyMetrics ? (
               <div className="space-y-6">
                 {/* Accuracy Metrics Overview */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                  <div className="bg-green-50 p-4 rounded-lg">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+                  <div className="rounded-lg bg-green-50 p-4">
                     <div className="flex items-center gap-2">
                       <Target className="h-4 w-4 text-green-600" />
-                      <span className="text-sm font-medium text-green-700">Accuracy Score</span>
+                      <span className="font-medium text-green-700 text-sm">
+                        Accuracy Score
+                      </span>
                     </div>
-                    <p className="text-2xl font-bold text-green-900 mt-1">
+                    <p className="mt-1 font-bold text-2xl text-green-900">
                       {accuracyMetrics.accuracy_score.toFixed(1)}%
                     </p>
-                    <Progress value={accuracyMetrics.accuracy_score} className="mt-2" />
+                    <Progress
+                      className="mt-2"
+                      value={accuracyMetrics.accuracy_score}
+                    />
                   </div>
 
-                  <div className="bg-blue-50 p-4 rounded-lg">
+                  <div className="rounded-lg bg-blue-50 p-4">
                     <div className="flex items-center gap-2">
                       <Activity className="h-4 w-4 text-blue-600" />
-                      <span className="text-sm font-medium text-blue-700">MAE</span>
+                      <span className="font-medium text-blue-700 text-sm">
+                        MAE
+                      </span>
                     </div>
-                    <p className="text-2xl font-bold text-blue-900 mt-1">
+                    <p className="mt-1 font-bold text-2xl text-blue-900">
                       {formatValue(accuracyMetrics.mae, metric)}
                     </p>
                   </div>
 
-                  <div className="bg-purple-50 p-4 rounded-lg">
+                  <div className="rounded-lg bg-purple-50 p-4">
                     <div className="flex items-center gap-2">
                       <BarChart3 className="h-4 w-4 text-purple-600" />
-                      <span className="text-sm font-medium text-purple-700">MAPE</span>
+                      <span className="font-medium text-purple-700 text-sm">
+                        MAPE
+                      </span>
                     </div>
-                    <p className="text-2xl font-bold text-purple-900 mt-1">
+                    <p className="mt-1 font-bold text-2xl text-purple-900">
                       {accuracyMetrics.mape.toFixed(1)}%
                     </p>
                   </div>
 
-                  <div className="bg-orange-50 p-4 rounded-lg">
+                  <div className="rounded-lg bg-orange-50 p-4">
                     <div className="flex items-center gap-2">
                       <TrendingUp className="h-4 w-4 text-orange-600" />
-                      <span className="text-sm font-medium text-orange-700">RMSE</span>
+                      <span className="font-medium text-orange-700 text-sm">
+                        RMSE
+                      </span>
                     </div>
-                    <p className="text-2xl font-bold text-orange-900 mt-1">
+                    <p className="mt-1 font-bold text-2xl text-orange-900">
                       {formatValue(accuracyMetrics.rmse, metric)}
                     </p>
                   </div>
@@ -638,46 +719,54 @@ export function ForecastingCharts({
 
                 {/* Accuracy Chart */}
                 <div className="h-96">
-                  <ResponsiveContainer width="100%" height="100%">
+                  <ResponsiveContainer height="100%" width="100%">
                     <ComposedChart data={accuracyMetrics.predictions}>
                       <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis 
+                      <XAxis
                         dataKey="date"
-                        tickFormatter={(date) => new Date(date).toLocaleDateString('en-US', { 
-                          month: 'short', 
-                          day: 'numeric' 
-                        })}
+                        tickFormatter={(date) =>
+                          new Date(date).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                          })
+                        }
                       />
-                      <YAxis tickFormatter={(value) => formatValue(value, metric)} />
-                      <Tooltip 
+                      <YAxis
+                        tickFormatter={(value) => formatValue(value, metric)}
+                      />
+                      <Tooltip
                         formatter={(value: number, name: string) => [
-                          formatValue(value, metric), 
-                          name === 'actual' ? 'Actual' : 'Predicted'
+                          formatValue(value, metric),
+                          name === 'actual' ? 'Actual' : 'Predicted',
                         ]}
-                        labelFormatter={(date) => new Date(date).toLocaleDateString()}
+                        labelFormatter={(date) =>
+                          new Date(date).toLocaleDateString()
+                        }
                       />
                       <Legend />
 
                       {/* Actual vs Predicted Lines */}
                       <Line
-                        type="monotone"
                         dataKey="actual"
+                        name="Actual"
                         stroke="#3b82f6"
                         strokeWidth={2}
-                        name="Actual"
+                        type="monotone"
                       />
                       <Line
-                        type="monotone"
                         dataKey="predicted"
-                        stroke="#22c55e"
-                        strokeWidth={2}
-                        strokeDasharray="5 5"
                         name="Predicted"
+                        stroke="#22c55e"
+                        strokeDasharray="5 5"
+                        strokeWidth={2}
+                        type="monotone"
                       />
 
                       {/* Error Bars */}
                       <Bar
-                        dataKey={(entry: any) => Math.abs(entry.actual - entry.predicted)}
+                        dataKey={(entry: any) =>
+                          Math.abs(entry.actual - entry.predicted)
+                        }
                         fill="rgba(239, 68, 68, 0.3)"
                         name="Prediction Error"
                       />
@@ -689,20 +778,32 @@ export function ForecastingCharts({
                 <Alert>
                   <Target className="h-4 w-4" />
                   <AlertDescription>
-                    <strong>Model Performance:</strong> The forecasting model achieves{' '}
-                    <strong>{accuracyMetrics.accuracy_score.toFixed(1)}%</strong> accuracy with an average error of{' '}
-                    <strong>{formatValue(accuracyMetrics.mae, metric)}</strong>. The model is{' '}
-                    {accuracyMetrics.accuracy_score >= 80 ? 'highly reliable' : 
-                     accuracyMetrics.accuracy_score >= 60 ? 'moderately reliable' : 'needs improvement'} for business planning.
+                    <strong>Model Performance:</strong> The forecasting model
+                    achieves{' '}
+                    <strong>
+                      {accuracyMetrics.accuracy_score.toFixed(1)}%
+                    </strong>{' '}
+                    accuracy with an average error of{' '}
+                    <strong>{formatValue(accuracyMetrics.mae, metric)}</strong>.
+                    The model is{' '}
+                    {accuracyMetrics.accuracy_score >= 80
+                      ? 'highly reliable'
+                      : accuracyMetrics.accuracy_score >= 60
+                        ? 'moderately reliable'
+                        : 'needs improvement'}{' '}
+                    for business planning.
                   </AlertDescription>
                 </Alert>
               </div>
             ) : (
-              <div className="text-center py-12">
-                <AlertTriangle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No Accuracy Data Available</h3>
+              <div className="py-12 text-center">
+                <AlertTriangle className="mx-auto mb-4 h-12 w-12 text-gray-400" />
+                <h3 className="mb-2 font-medium text-gray-900 text-lg">
+                  No Accuracy Data Available
+                </h3>
                 <p className="text-gray-600">
-                  Run model validation to see accuracy metrics and performance analysis.
+                  Run model validation to see accuracy metrics and performance
+                  analysis.
                 </p>
               </div>
             )}
@@ -710,5 +811,5 @@ export function ForecastingCharts({
         </Tabs>
       </CardContent>
     </Card>
-  )
+  );
 }

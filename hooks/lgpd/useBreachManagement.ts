@@ -1,9 +1,13 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import { LGPDComplianceManager } from '@/lib/lgpd/LGPDComplianceManager';
-import { BreachIncident, BreachIncidentFilters, PaginatedResponse } from '@/types/lgpd';
+import { useCallback, useEffect, useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { LGPDComplianceManager } from '@/lib/lgpd/LGPDComplianceManager';
+import type {
+  BreachIncident,
+  BreachIncidentFilters,
+  PaginatedResponse,
+} from '@/types/lgpd';
 
 interface UseBreachManagementReturn {
   // Data
@@ -16,25 +20,31 @@ interface UseBreachManagementReturn {
     critical: number;
     thisMonth: number;
   };
-  
+
   // Loading states
   isLoading: boolean;
   isReporting: boolean;
   isUpdating: boolean;
-  
+
   // Filters
   filters: BreachIncidentFilters;
   setFilters: (filters: BreachIncidentFilters) => void;
-  
+
   // Actions
   loadIncidents: () => Promise<void>;
-  reportIncident: (incident: Omit<BreachIncident, 'id' | 'created_at' | 'updated_at'>) => Promise<void>;
-  updateIncidentStatus: (incidentId: string, status: BreachIncident['status'], notes?: string) => Promise<void>;
+  reportIncident: (
+    incident: Omit<BreachIncident, 'id' | 'created_at' | 'updated_at'>
+  ) => Promise<void>;
+  updateIncidentStatus: (
+    incidentId: string,
+    status: BreachIncident['status'],
+    notes?: string
+  ) => Promise<void>;
   exportIncidents: () => Promise<void>;
-  
+
   // Pagination
   goToPage: (page: number) => void;
-  
+
   // Error handling
   error: string | null;
 }
@@ -47,166 +57,193 @@ export function useBreachManagement(): UseBreachManagementReturn {
     total: 0,
     active: 0,
     critical: 0,
-    thisMonth: 0
+    thisMonth: 0,
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isReporting, setIsReporting] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   const [filters, setFilters] = useState<BreachIncidentFilters>({
     limit: 20,
     offset: 0,
     sortBy: 'created_at',
-    sortOrder: 'desc'
+    sortOrder: 'desc',
   });
-  
+
   const { toast } = useToast();
   const complianceManager = new LGPDComplianceManager();
 
   const loadIncidents = useCallback(async () => {
     try {
       setError(null);
-      const response: PaginatedResponse<BreachIncident> = await complianceManager.getBreachIncidents({
-        ...filters,
-        offset: (currentPage - 1) * (filters.limit || 20)
-      });
-      
+      const response: PaginatedResponse<BreachIncident> =
+        await complianceManager.getBreachIncidents({
+          ...filters,
+          offset: (currentPage - 1) * (filters.limit || 20),
+        });
+
       setIncidents(response.data);
       setTotalCount(response.total);
-      
+
       // Calculate statistics
       const now = new Date();
       const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-      
-      const active = response.data.filter(i => i.status === 'active').length;
-      const critical = response.data.filter(i => i.severity === 'critical').length;
-      const thisMonth = response.data.filter(i => 
-        new Date(i.created_at) >= thisMonthStart
+
+      const active = response.data.filter((i) => i.status === 'active').length;
+      const critical = response.data.filter(
+        (i) => i.severity === 'critical'
       ).length;
-      
+      const thisMonth = response.data.filter(
+        (i) => new Date(i.created_at) >= thisMonthStart
+      ).length;
+
       setStatistics({
         total: response.total,
         active,
         critical,
-        thisMonth
+        thisMonth,
       });
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao carregar incidentes';
+      const errorMessage =
+        err instanceof Error ? err.message : 'Erro ao carregar incidentes';
       setError(errorMessage);
       toast({
         title: 'Erro',
         description: errorMessage,
-        variant: 'destructive'
+        variant: 'destructive',
       });
     }
   }, [filters, currentPage, complianceManager, toast]);
 
-  const reportIncident = useCallback(async (incident: Omit<BreachIncident, 'id' | 'created_at' | 'updated_at'>) => {
-    setIsReporting(true);
-    try {
-      setError(null);
-      
-      const newIncident = await complianceManager.reportBreachIncident(incident);
-      
-      // Update local state
-      setIncidents(prev => [newIncident, ...prev]);
-      setTotalCount(prev => prev + 1);
-      
-      // Update statistics
-      setStatistics(prev => ({
-        ...prev,
-        total: prev.total + 1,
-        active: incident.status === 'active' ? prev.active + 1 : prev.active,
-        critical: incident.severity === 'critical' ? prev.critical + 1 : prev.critical,
-        thisMonth: prev.thisMonth + 1
-      }));
-      
-      toast({
-        title: 'Incidente reportado',
-        description: `Incidente "${incident.title}" foi reportado com sucesso.`
-      });
-      
-      // Show critical incident warning
-      if (incident.severity === 'critical') {
-        toast({
-          title: 'Incidente Crítico Detectado',
-          description: 'Este incidente requer atenção imediata e pode necessitar notificação à ANPD.',
-          variant: 'destructive'
-        });
-      }
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao reportar incidente';
-      setError(errorMessage);
-      toast({
-        title: 'Erro',
-        description: errorMessage,
-        variant: 'destructive'
-      });
-    } finally {
-      setIsReporting(false);
-    }
-  }, [complianceManager, toast]);
+  const reportIncident = useCallback(
+    async (
+      incident: Omit<BreachIncident, 'id' | 'created_at' | 'updated_at'>
+    ) => {
+      setIsReporting(true);
+      try {
+        setError(null);
 
-  const updateIncidentStatus = useCallback(async (incidentId: string, status: BreachIncident['status'], notes?: string) => {
-    setIsUpdating(true);
-    try {
-      setError(null);
-      
-      const updateData = {
-        status,
-        updated_at: new Date().toISOString(),
-        ...(notes && { resolution_notes: notes }),
-        ...(status === 'resolved' && { resolved_at: new Date().toISOString() })
-      };
-      
-      await complianceManager.updateBreachIncident(incidentId, updateData);
-      
-      // Update local state
-      setIncidents(prev => prev.map(incident => 
-        incident.id === incidentId 
-          ? { ...incident, ...updateData }
-          : incident
-      ));
-      
-      // Update statistics
-      setStatistics(prev => {
-        const incident = incidents.find(i => i.id === incidentId);
-        if (!incident) return prev;
-        
-        const newStats = { ...prev };
-        
-        // Update active count
-        if (incident.status === 'active' && status !== 'active') {
-          newStats.active--;
-        } else if (incident.status !== 'active' && status === 'active') {
-          newStats.active++;
+        const newIncident =
+          await complianceManager.reportBreachIncident(incident);
+
+        // Update local state
+        setIncidents((prev) => [newIncident, ...prev]);
+        setTotalCount((prev) => prev + 1);
+
+        // Update statistics
+        setStatistics((prev) => ({
+          ...prev,
+          total: prev.total + 1,
+          active: incident.status === 'active' ? prev.active + 1 : prev.active,
+          critical:
+            incident.severity === 'critical'
+              ? prev.critical + 1
+              : prev.critical,
+          thisMonth: prev.thisMonth + 1,
+        }));
+
+        toast({
+          title: 'Incidente reportado',
+          description: `Incidente "${incident.title}" foi reportado com sucesso.`,
+        });
+
+        // Show critical incident warning
+        if (incident.severity === 'critical') {
+          toast({
+            title: 'Incidente Crítico Detectado',
+            description:
+              'Este incidente requer atenção imediata e pode necessitar notificação à ANPD.',
+            variant: 'destructive',
+          });
         }
-        
-        return newStats;
-      });
-      
-      toast({
-        title: 'Status atualizado',
-        description: 'Status do incidente foi atualizado com sucesso.'
-      });
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao atualizar status';
-      setError(errorMessage);
-      toast({
-        title: 'Erro',
-        description: errorMessage,
-        variant: 'destructive'
-      });
-    } finally {
-      setIsUpdating(false);
-    }
-  }, [complianceManager, incidents, toast]);
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : 'Erro ao reportar incidente';
+        setError(errorMessage);
+        toast({
+          title: 'Erro',
+          description: errorMessage,
+          variant: 'destructive',
+        });
+      } finally {
+        setIsReporting(false);
+      }
+    },
+    [complianceManager, toast]
+  );
+
+  const updateIncidentStatus = useCallback(
+    async (
+      incidentId: string,
+      status: BreachIncident['status'],
+      notes?: string
+    ) => {
+      setIsUpdating(true);
+      try {
+        setError(null);
+
+        const updateData = {
+          status,
+          updated_at: new Date().toISOString(),
+          ...(notes && { resolution_notes: notes }),
+          ...(status === 'resolved' && {
+            resolved_at: new Date().toISOString(),
+          }),
+        };
+
+        await complianceManager.updateBreachIncident(incidentId, updateData);
+
+        // Update local state
+        setIncidents((prev) =>
+          prev.map((incident) =>
+            incident.id === incidentId
+              ? { ...incident, ...updateData }
+              : incident
+          )
+        );
+
+        // Update statistics
+        setStatistics((prev) => {
+          const incident = incidents.find((i) => i.id === incidentId);
+          if (!incident) return prev;
+
+          const newStats = { ...prev };
+
+          // Update active count
+          if (incident.status === 'active' && status !== 'active') {
+            newStats.active--;
+          } else if (incident.status !== 'active' && status === 'active') {
+            newStats.active++;
+          }
+
+          return newStats;
+        });
+
+        toast({
+          title: 'Status atualizado',
+          description: 'Status do incidente foi atualizado com sucesso.',
+        });
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : 'Erro ao atualizar status';
+        setError(errorMessage);
+        toast({
+          title: 'Erro',
+          description: errorMessage,
+          variant: 'destructive',
+        });
+      } finally {
+        setIsUpdating(false);
+      }
+    },
+    [complianceManager, incidents, toast]
+  );
 
   const exportIncidents = useCallback(async () => {
     try {
       setError(null);
-      
+
       // Create CSV content
       const csvHeaders = [
         'ID',
@@ -220,10 +257,10 @@ export function useBreachManagement(): UseBreachManagementReturn {
         'Data de Resolução',
         'Reportado por',
         'Descrição',
-        'Ações Tomadas'
+        'Ações Tomadas',
       ];
-      
-      const csvRows = incidents.map(incident => [
+
+      const csvRows = incidents.map((incident) => [
         incident.id,
         incident.title,
         incident.incident_type,
@@ -235,35 +272,39 @@ export function useBreachManagement(): UseBreachManagementReturn {
         incident.resolved_at || '',
         incident.reported_by || '',
         incident.description || '',
-        incident.mitigation_actions?.join('; ') || ''
+        incident.mitigation_actions?.join('; ') || '',
       ]);
-      
+
       const csvContent = [csvHeaders, ...csvRows]
-        .map(row => row.map(cell => `"${cell}"`).join(','))
+        .map((row) => row.map((cell) => `"${cell}"`).join(','))
         .join('\n');
-      
+
       // Create and download file
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement('a');
       const url = URL.createObjectURL(blob);
       link.setAttribute('href', url);
-      link.setAttribute('download', `lgpd-incidents-${new Date().toISOString().split('T')[0]}.csv`);
+      link.setAttribute(
+        'download',
+        `lgpd-incidents-${new Date().toISOString().split('T')[0]}.csv`
+      );
       link.style.visibility = 'hidden';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      
+
       toast({
         title: 'Exportação concluída',
-        description: 'Incidentes exportados com sucesso.'
+        description: 'Incidentes exportados com sucesso.',
       });
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao exportar incidentes';
+      const errorMessage =
+        err instanceof Error ? err.message : 'Erro ao exportar incidentes';
       setError(errorMessage);
       toast({
         title: 'Erro na exportação',
         description: errorMessage,
-        variant: 'destructive'
+        variant: 'destructive',
       });
     }
   }, [incidents, toast]);
@@ -279,17 +320,20 @@ export function useBreachManagement(): UseBreachManagementReturn {
       await loadIncidents();
       setIsLoading(false);
     };
-    
+
     loadData();
   }, [loadIncidents]);
 
   // Auto-refresh for critical incidents
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (statistics.critical > 0) {
-        loadIncidents();
-      }
-    }, 2 * 60 * 1000); // 2 minutes for critical incidents
+    const interval = setInterval(
+      () => {
+        if (statistics.critical > 0) {
+          loadIncidents();
+        }
+      },
+      2 * 60 * 1000
+    ); // 2 minutes for critical incidents
 
     return () => clearInterval(interval);
   }, [loadIncidents, statistics.critical]);
@@ -300,26 +344,26 @@ export function useBreachManagement(): UseBreachManagementReturn {
     totalCount,
     currentPage,
     statistics,
-    
+
     // Loading states
     isLoading,
     isReporting,
     isUpdating,
-    
+
     // Filters
     filters,
     setFilters,
-    
+
     // Actions
     loadIncidents,
     reportIncident,
     updateIncidentStatus,
     exportIncidents,
-    
+
     // Pagination
     goToPage,
-    
+
     // Error handling
-    error
+    error,
   };
 }

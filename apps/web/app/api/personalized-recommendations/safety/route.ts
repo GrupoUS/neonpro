@@ -1,17 +1,17 @@
 // Story 9.2: Personalized Treatment Recommendations - API Safety Route
 // Safety profiles API endpoint
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { personalizedRecommendationsService } from '../../../lib/services/personalized-recommendations';
 import { updateSafetyProfileRequestSchema } from '../../../lib/validations/personalized-recommendations';
-import { UpdateSafetyProfileRequest } from '../../../types/personalized-recommendations';
+import type { UpdateSafetyProfileRequest } from '../../../types/personalized-recommendations';
 
 // Get safety profile
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const patientId = searchParams.get('patient_id');
-    
+
     if (!patientId) {
       return NextResponse.json(
         { error: 'Patient ID is required', success: false },
@@ -19,11 +19,12 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const safetyProfile = await personalizedRecommendationsService.getSafetyProfile(patientId);
-    
+    const safetyProfile =
+      await personalizedRecommendationsService.getSafetyProfile(patientId);
+
     return NextResponse.json({
       safetyProfile,
-      success: true
+      success: true,
     });
   } catch (error) {
     console.error('Error fetching safety profile:', error);
@@ -38,33 +39,38 @@ export async function GET(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json();
-    
+
     // Validate request body
     const validationResult = updateSafetyProfileRequestSchema.safeParse(body);
     if (!validationResult.success) {
       return NextResponse.json(
-        { 
-          error: 'Invalid safety profile data', 
+        {
+          error: 'Invalid safety profile data',
           details: validationResult.error.issues,
-          success: false 
+          success: false,
         },
         { status: 400 }
       );
     }
 
-    const { patient_id, ...updateData }: UpdateSafetyProfileRequest = validationResult.data;
-    const safetyProfile = await personalizedRecommendationsService.updateSafetyProfile(patient_id, updateData);
-    
+    const { patient_id, ...updateData }: UpdateSafetyProfileRequest =
+      validationResult.data;
+    const safetyProfile =
+      await personalizedRecommendationsService.updateSafetyProfile(
+        patient_id,
+        updateData
+      );
+
     if (!safetyProfile) {
       return NextResponse.json(
         { error: 'Safety profile not found', success: false },
         { status: 404 }
       );
     }
-    
+
     return NextResponse.json({
       safetyProfile,
-      success: true
+      success: true,
     });
   } catch (error) {
     console.error('Error updating safety profile:', error);

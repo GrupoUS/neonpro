@@ -364,7 +364,11 @@ export interface BudgetForecast {
 
 export interface BudgetNotification {
   id: string;
-  type: 'budget_alert' | 'approval_request' | 'variance_alert' | 'budget_exhausted';
+  type:
+    | 'budget_alert'
+    | 'approval_request'
+    | 'variance_alert'
+    | 'budget_exhausted';
   severity: 'info' | 'warning' | 'error' | 'critical';
   title: string;
   message: string;

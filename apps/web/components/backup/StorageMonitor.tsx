@@ -1,11 +1,35 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
+import {
+  Activity,
+  AlertTriangle,
+  Archive,
+  BarChart3,
+  CheckCircle,
+  Clock,
+  Cloud,
+  Database,
+  HardDrive,
+  RefreshCw,
+  Shield,
+  TrendingDown,
+  TrendingUp,
+  Zap,
+} from 'lucide-react';
+import type React from 'react';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
 import {
   Select,
   SelectContent,
@@ -13,24 +37,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import {
-  HardDrive,
-  Cloud,
-  Database,
-  AlertTriangle,
-  CheckCircle,
-  RefreshCw,
-  TrendingUp,
-  TrendingDown,
-  Activity,
-  Archive,
-  Zap,
-  Shield,
-  Clock,
-  BarChart3,
-} from 'lucide-react';
 import { formatBytes, formatDate } from '@/lib/utils';
-import { toast } from 'sonner';
 
 // Types
 interface StorageProvider {
@@ -87,7 +94,7 @@ const StorageMonitor: React.FC = () => {
 
   useEffect(() => {
     loadStorageData();
-  }, []);
+  }, [loadStorageData]);
 
   const loadStorageData = async () => {
     try {
@@ -147,9 +154,12 @@ const StorageMonitor: React.FC = () => {
 
   const handleTestConnection = async (providerId: string) => {
     try {
-      const response = await fetch(`/api/backup/storage/providers/${providerId}/test`, {
-        method: 'POST',
-      });
+      const response = await fetch(
+        `/api/backup/storage/providers/${providerId}/test`,
+        {
+          method: 'POST',
+        }
+      );
 
       if (response.ok) {
         toast.success('Conexão testada com sucesso');
@@ -211,14 +221,14 @@ const StorageMonitor: React.FC = () => {
   };
 
   const filteredProviders = selectedProvider
-    ? providers.filter(p => p.id === selectedProvider)
+    ? providers.filter((p) => p.id === selectedProvider)
     : providers;
 
   if (loading) {
     return (
       <div className="space-y-6">
-        <div className="text-center py-8">
-          <RefreshCw className="h-8 w-8 animate-spin mx-auto mb-2" />
+        <div className="py-8 text-center">
+          <RefreshCw className="mx-auto mb-2 h-8 w-8 animate-spin" />
           <p>Carregando dados de armazenamento...</p>
         </div>
       </div>
@@ -227,15 +237,15 @@ const StorageMonitor: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">Monitor de Armazenamento</h2>
+          <h2 className="font-bold text-2xl">Monitor de Armazenamento</h2>
           <p className="text-muted-foreground">
             Monitore o uso e saúde dos sistemas de armazenamento
           </p>
         </div>
         <div className="flex space-x-2">
-          <Select value={selectedProvider} onValueChange={setSelectedProvider}>
+          <Select onValueChange={setSelectedProvider} value={selectedProvider}>
             <SelectTrigger className="w-[200px]">
               <SelectValue placeholder="Todos os provedores" />
             </SelectTrigger>
@@ -248,8 +258,10 @@ const StorageMonitor: React.FC = () => {
               ))}
             </SelectContent>
           </Select>
-          <Button onClick={handleRefresh} disabled={refreshing}>
-            <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
+          <Button disabled={refreshing} onClick={handleRefresh}>
+            <RefreshCw
+              className={`mr-2 h-4 w-4 ${refreshing ? 'animate-spin' : ''}`}
+            />
             Atualizar
           </Button>
         </div>
@@ -260,23 +272,31 @@ const StorageMonitor: React.FC = () => {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
-              <Activity className="h-5 w-5 mr-2" />
+              <Activity className="mr-2 h-5 w-5" />
               Status Geral
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex items-center justify-between mb-4">
+            <div className="mb-4 flex items-center justify-between">
               <div className="flex items-center space-x-2">
-                <div className={`h-3 w-3 rounded-full ${
-                  health.overall_status === 'HEALTHY' ? 'bg-green-500' :
-                  health.overall_status === 'WARNING' ? 'bg-yellow-500' : 'bg-red-500'
-                }`} />
+                <div
+                  className={`h-3 w-3 rounded-full ${
+                    health.overall_status === 'HEALTHY'
+                      ? 'bg-green-500'
+                      : health.overall_status === 'WARNING'
+                        ? 'bg-yellow-500'
+                        : 'bg-red-500'
+                  }`}
+                />
                 <span className="font-medium">
-                  {health.overall_status === 'HEALTHY' ? 'Saudável' :
-                   health.overall_status === 'WARNING' ? 'Atenção' : 'Crítico'}
+                  {health.overall_status === 'HEALTHY'
+                    ? 'Saudável'
+                    : health.overall_status === 'WARNING'
+                      ? 'Atenção'
+                      : 'Crítico'}
                 </span>
               </div>
-              <span className="text-sm text-muted-foreground">
+              <span className="text-muted-foreground text-sm">
                 Última verificação: {formatDate(new Date(health.last_check))}
               </span>
             </div>
@@ -284,13 +304,16 @@ const StorageMonitor: React.FC = () => {
             {health.issues.length > 0 && (
               <div className="space-y-2">
                 {health.issues.map((issue, index) => (
-                  <Alert key={index} className={
-                    issue.severity === 'CRITICAL' || issue.severity === 'HIGH'
-                      ? 'border-red-200 bg-red-50'
-                      : issue.severity === 'MEDIUM'
-                      ? 'border-yellow-200 bg-yellow-50'
-                      : 'border-blue-200 bg-blue-50'
-                  }>
+                  <Alert
+                    className={
+                      issue.severity === 'CRITICAL' || issue.severity === 'HIGH'
+                        ? 'border-red-200 bg-red-50'
+                        : issue.severity === 'MEDIUM'
+                          ? 'border-yellow-200 bg-yellow-50'
+                          : 'border-blue-200 bg-blue-50'
+                    }
+                    key={index}
+                  >
                     <div className="flex items-start space-x-2">
                       {getSeverityIcon(issue.severity)}
                       <div className="flex-1">
@@ -298,7 +321,8 @@ const StorageMonitor: React.FC = () => {
                           <strong>{issue.type}:</strong> {issue.message}
                           {issue.recommendation && (
                             <div className="mt-1 text-sm">
-                              <strong>Recomendação:</strong> {issue.recommendation}
+                              <strong>Recomendação:</strong>{' '}
+                              {issue.recommendation}
                             </div>
                           )}
                         </AlertDescription>
@@ -314,13 +338,15 @@ const StorageMonitor: React.FC = () => {
 
       {/* Métricas Gerais */}
       {metrics && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-2xl font-bold">{metrics.total_backups}</p>
-                  <p className="text-sm text-muted-foreground">Total de Backups</p>
+                  <p className="font-bold text-2xl">{metrics.total_backups}</p>
+                  <p className="text-muted-foreground text-sm">
+                    Total de Backups
+                  </p>
                 </div>
                 <Archive className="h-8 w-8 text-blue-500" />
               </div>
@@ -331,8 +357,12 @@ const StorageMonitor: React.FC = () => {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-2xl font-bold">{formatBytes(metrics.total_size)}</p>
-                  <p className="text-sm text-muted-foreground">Espaço Utilizado</p>
+                  <p className="font-bold text-2xl">
+                    {formatBytes(metrics.total_size)}
+                  </p>
+                  <p className="text-muted-foreground text-sm">
+                    Espaço Utilizado
+                  </p>
                 </div>
                 <HardDrive className="h-8 w-8 text-green-500" />
               </div>
@@ -343,8 +373,12 @@ const StorageMonitor: React.FC = () => {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-2xl font-bold">{metrics.used_percentage.toFixed(1)}%</p>
-                  <p className="text-sm text-muted-foreground">Capacidade Usada</p>
+                  <p className="font-bold text-2xl">
+                    {metrics.used_percentage.toFixed(1)}%
+                  </p>
+                  <p className="text-muted-foreground text-sm">
+                    Capacidade Usada
+                  </p>
                 </div>
                 <BarChart3 className="h-8 w-8 text-orange-500" />
               </div>
@@ -355,10 +389,13 @@ const StorageMonitor: React.FC = () => {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-2xl font-bold">
-                    {formatBytes(metrics.growth_rate_mb_per_day * 1024 * 1024)}/dia
+                  <p className="font-bold text-2xl">
+                    {formatBytes(metrics.growth_rate_mb_per_day * 1024 * 1024)}
+                    /dia
                   </p>
-                  <p className="text-sm text-muted-foreground">Taxa de Crescimento</p>
+                  <p className="text-muted-foreground text-sm">
+                    Taxa de Crescimento
+                  </p>
                 </div>
                 {metrics.growth_rate_mb_per_day > 0 ? (
                   <TrendingUp className="h-8 w-8 text-green-500" />
@@ -376,7 +413,7 @@ const StorageMonitor: React.FC = () => {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
-              <BarChart3 className="h-5 w-5 mr-2" />
+              <BarChart3 className="mr-2 h-5 w-5" />
               Distribuição por Provedor
             </CardTitle>
             <CardDescription>
@@ -386,15 +423,16 @@ const StorageMonitor: React.FC = () => {
           <CardContent>
             <div className="space-y-4">
               {distribution.map((item) => (
-                <div key={item.provider_id} className="space-y-2">
-                  <div className="flex justify-between items-center">
+                <div className="space-y-2" key={item.provider_id}>
+                  <div className="flex items-center justify-between">
                     <span className="font-medium">{item.provider_name}</span>
-                    <div className="text-sm text-muted-foreground">
-                      {item.backup_count} backups • {formatBytes(item.total_size)}
+                    <div className="text-muted-foreground text-sm">
+                      {item.backup_count} backups •{' '}
+                      {formatBytes(item.total_size)}
                     </div>
                   </div>
-                  <Progress value={item.percentage} className="h-2" />
-                  <div className="text-xs text-muted-foreground">
+                  <Progress className="h-2" value={item.percentage} />
+                  <div className="text-muted-foreground text-xs">
                     {item.percentage.toFixed(1)}% do total
                   </div>
                 </div>
@@ -405,7 +443,7 @@ const StorageMonitor: React.FC = () => {
       )}
 
       {/* Provedores */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {filteredProviders.map((provider) => (
           <Card key={provider.id}>
             <CardHeader>
@@ -416,26 +454,30 @@ const StorageMonitor: React.FC = () => {
                   <Badge variant="outline">{provider.type}</Badge>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <div className={`h-2 w-2 rounded-full ${getStatusColor(provider.status)}`} />
-                  <span className={`text-sm ${getStatusColor(provider.status)}`}>
+                  <div
+                    className={`h-2 w-2 rounded-full ${getStatusColor(provider.status)}`}
+                  />
+                  <span
+                    className={`text-sm ${getStatusColor(provider.status)}`}
+                  >
                     {provider.status}
                   </span>
                 </div>
               </CardTitle>
               <CardDescription>
                 {provider.connection_status === 'CONNECTED' ? (
-                  <span className="text-green-600 flex items-center">
-                    <CheckCircle className="h-4 w-4 mr-1" />
+                  <span className="flex items-center text-green-600">
+                    <CheckCircle className="mr-1 h-4 w-4" />
                     Conectado
                   </span>
                 ) : provider.connection_status === 'ERROR' ? (
-                  <span className="text-red-600 flex items-center">
-                    <AlertTriangle className="h-4 w-4 mr-1" />
+                  <span className="flex items-center text-red-600">
+                    <AlertTriangle className="mr-1 h-4 w-4" />
                     Erro de conexão
                   </span>
                 ) : (
-                  <span className="text-gray-600 flex items-center">
-                    <Clock className="h-4 w-4 mr-1" />
+                  <span className="flex items-center text-gray-600">
+                    <Clock className="mr-1 h-4 w-4" />
                     Desconectado
                   </span>
                 )}
@@ -446,17 +488,22 @@ const StorageMonitor: React.FC = () => {
                 {/* Capacidade */}
                 {provider.total_capacity && (
                   <div>
-                    <div className="flex justify-between text-sm mb-2">
+                    <div className="mb-2 flex justify-between text-sm">
                       <span>Capacidade</span>
                       <span>
-                        {formatBytes(provider.used_capacity || 0)} / {formatBytes(provider.total_capacity)}
+                        {formatBytes(provider.used_capacity || 0)} /{' '}
+                        {formatBytes(provider.total_capacity)}
                       </span>
                     </div>
-                    <Progress 
-                      value={((provider.used_capacity || 0) / provider.total_capacity) * 100} 
+                    <Progress
                       className="h-2"
+                      value={
+                        ((provider.used_capacity || 0) /
+                          provider.total_capacity) *
+                        100
+                      }
                     />
-                    <div className="text-xs text-muted-foreground mt-1">
+                    <div className="mt-1 text-muted-foreground text-xs">
                       {formatBytes(provider.available_capacity || 0)} disponível
                     </div>
                   </div>
@@ -475,17 +522,17 @@ const StorageMonitor: React.FC = () => {
                 {/* Ações */}
                 <div className="flex space-x-2">
                   <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleTestConnection(provider.id)}
                     className="flex-1"
+                    onClick={() => handleTestConnection(provider.id)}
+                    size="sm"
+                    variant="outline"
                   >
-                    <Zap className="h-4 w-4 mr-2" />
+                    <Zap className="mr-2 h-4 w-4" />
                     Testar Conexão
                   </Button>
                   {provider.config && (
-                    <Button variant="outline" size="sm">
-                      <Shield className="h-4 w-4 mr-2" />
+                    <Button size="sm" variant="outline">
+                      <Shield className="mr-2 h-4 w-4" />
                       Configurar
                     </Button>
                   )}
@@ -498,14 +545,12 @@ const StorageMonitor: React.FC = () => {
 
       {providers.length === 0 && (
         <Card>
-          <CardContent className="text-center py-8">
-            <Cloud className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+          <CardContent className="py-8 text-center">
+            <Cloud className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
             <p className="text-muted-foreground">
               Nenhum provedor de armazenamento configurado
             </p>
-            <Button className="mt-4">
-              Configurar Provedor
-            </Button>
+            <Button className="mt-4">Configurar Provedor</Button>
           </CardContent>
         </Card>
       )}

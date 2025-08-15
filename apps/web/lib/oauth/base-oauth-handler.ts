@@ -1,13 +1,12 @@
 import { createClient } from '@/app/utils/supabase/server';
 import { TokenEncryptionService } from './token-encryption';
-import { 
-  IOAuthHandler, 
-  OAuthConfig, 
-  OAuthTokens, 
-  OAuthState, 
+import type {
+  IOAuthHandler,
+  OAuthConfig,
+  OAuthState,
+  OAuthTokens,
   OAuthUserProfile,
-  EncryptedTokenData,
-  SocialMediaPlatform 
+  SocialMediaPlatform,
 } from './types';
 
 /**
@@ -27,7 +26,13 @@ export abstract class BaseOAuthHandler implements IOAuthHandler {
   }
 
   private validateConfig(): void {
-    const required = ['clientId', 'clientSecret', 'redirectUri', 'authUrl', 'tokenUrl'];
+    const required = [
+      'clientId',
+      'clientSecret',
+      'redirectUri',
+      'authUrl',
+      'tokenUrl',
+    ];
     for (const field of required) {
       if (!this.config[field as keyof OAuthConfig]) {
         throw new Error(`OAuth configuration missing required field: ${field}`);
@@ -43,7 +48,10 @@ export abstract class BaseOAuthHandler implements IOAuthHandler {
   /**
    * Exchange authorization code for access tokens
    */
-  abstract exchangeCodeForTokens(code: string, state: string): Promise<OAuthTokens>;
+  abstract exchangeCodeForTokens(
+    code: string,
+    state: string
+  ): Promise<OAuthTokens>;
 
   /**
    * Refresh expired access tokens
@@ -70,18 +78,16 @@ export abstract class BaseOAuthHandler implements IOAuthHandler {
    */
   protected async storeOAuthState(state: OAuthState): Promise<void> {
     const supabase = await createClient();
-    
-    const { error } = await supabase
-      .from('oauth_states')
-      .insert({
-        state_id: state.nonce,
-        user_id: state.userId,
-        clinic_id: state.clinicId,
-        platform: state.platform,
-        created_at: state.createdAt.toISOString(),
-        redirect_to: state.redirectTo,
-        expires_at: new Date(Date.now() + 10 * 60 * 1000).toISOString() // 10 minutes
-      });
+
+    const { error } = await supabase.from('oauth_states').insert({
+      state_id: state.nonce,
+      user_id: state.userId,
+      clinic_id: state.clinicId,
+      platform: state.platform,
+      created_at: state.createdAt.toISOString(),
+      redirect_to: state.redirectTo,
+      expires_at: new Date(Date.now() + 10 * 60 * 1000).toISOString(), // 10 minutes
+    });
 
     if (error) {
       throw new Error(`Failed to store OAuth state: ${error.message}`);
@@ -91,9 +97,11 @@ export abstract class BaseOAuthHandler implements IOAuthHandler {
   /**
    * Validate and retrieve OAuth state from database
    */
-  protected async validateOAuthState(stateId: string): Promise<OAuthState | null> {
+  protected async validateOAuthState(
+    stateId: string
+  ): Promise<OAuthState | null> {
     const supabase = await createClient();
-    
+
     const { data, error } = await supabase
       .from('oauth_states')
       .select('*')
@@ -107,10 +115,7 @@ export abstract class BaseOAuthHandler implements IOAuthHandler {
     }
 
     // Delete the used state to prevent replay attacks
-    await supabase
-      .from('oauth_states')
-      .delete()
-      .eq('state_id', stateId);
+    await supabase.from('oauth_states').delete().eq('state_id', stateId);
 
     return {
       userId: data.user_id,
@@ -118,7 +123,7 @@ export abstract class BaseOAuthHandler implements IOAuthHandler {
       platform: data.platform,
       nonce: data.state_id,
       createdAt: new Date(data.created_at),
-      redirectTo: data.redirect_to
+      redirectTo: data.redirect_to,
     };
   }
 
@@ -126,16 +131,18 @@ export abstract class BaseOAuthHandler implements IOAuthHandler {
    * Store encrypted tokens in database
    */
   protected async storeTokens(
-    userId: string, 
-    clinicId: string, 
-    tokens: OAuthTokens, 
+    userId: string,
+    clinicId: string,
+    tokens: OAuthTokens,
     profile: OAuthUserProfile
   ): Promise<string> {
     const supabase = await createClient();
-    
+
     // Encrypt tokens
-    const encryptedAccessToken = TokenEncryptionService.encryptToken(tokens.accessToken);
-    const encryptedRefreshToken = tokens.refreshToken 
+    const encryptedAccessToken = TokenEncryptionService.encryptToken(
+      tokens.accessToken
+    );
+    const encryptedRefreshToken = tokens.refreshToken
       ? TokenEncryptionService.encryptToken(tokens.refreshToken)
       : null;
 
@@ -148,19 +155,21 @@ export abstract class BaseOAuthHandler implements IOAuthHandler {
       platform_name: profile.name,
       profile_picture_url: profile.profilePicture,
       follower_count: profile.followerCount || 0,
-      is_verified: profile.isVerified || false,
+      is_verified: profile.isVerified,
       encrypted_access_token: JSON.stringify(encryptedAccessToken),
-      encrypted_refresh_token: encryptedRefreshToken ? JSON.stringify(encryptedRefreshToken) : null,
+      encrypted_refresh_token: encryptedRefreshToken
+        ? JSON.stringify(encryptedRefreshToken)
+        : null,
       token_expires_at: tokens.expiresAt.toISOString(),
       token_scopes: tokens.scope ? tokens.scope.split(' ') : this.config.scopes,
       is_active: true,
-      last_sync_at: new Date().toISOString()
+      last_sync_at: new Date().toISOString(),
     };
 
     const { data, error } = await supabase
       .from('social_media_accounts')
-      .upsert(accountData, { 
-        onConflict: 'user_id,platform_id,platform_user_id' 
+      .upsert(accountData, {
+        onConflict: 'user_id,platform_id,platform_user_id',
       })
       .select('id')
       .single();
@@ -175,12 +184,16 @@ export abstract class BaseOAuthHandler implements IOAuthHandler {
   /**
    * Retrieve and decrypt tokens from database
    */
-  protected async getStoredTokens(accountId: string): Promise<OAuthTokens | null> {
+  protected async getStoredTokens(
+    accountId: string
+  ): Promise<OAuthTokens | null> {
     const supabase = await createClient();
-    
+
     const { data, error } = await supabase
       .from('social_media_accounts')
-      .select('encrypted_access_token, encrypted_refresh_token, token_expires_at, token_scopes')
+      .select(
+        'encrypted_access_token, encrypted_refresh_token, token_expires_at, token_scopes'
+      )
       .eq('id', accountId)
       .eq('is_active', true)
       .single();
@@ -192,7 +205,7 @@ export abstract class BaseOAuthHandler implements IOAuthHandler {
     try {
       const accessTokenData = JSON.parse(data.encrypted_access_token);
       const accessToken = TokenEncryptionService.decryptToken(accessTokenData);
-      
+
       let refreshToken: string | undefined;
       if (data.encrypted_refresh_token) {
         const refreshTokenData = JSON.parse(data.encrypted_refresh_token);
@@ -203,12 +216,16 @@ export abstract class BaseOAuthHandler implements IOAuthHandler {
         accessToken,
         refreshToken,
         expiresAt: new Date(data.token_expires_at),
-        expiresIn: Math.floor((new Date(data.token_expires_at).getTime() - Date.now()) / 1000),
+        expiresIn: Math.floor(
+          (new Date(data.token_expires_at).getTime() - Date.now()) / 1000
+        ),
         tokenType: 'Bearer',
-        scope: data.token_scopes?.join(' ')
+        scope: data.token_scopes?.join(' '),
       };
     } catch (error) {
-      throw new Error(`Failed to decrypt tokens: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to decrypt tokens: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -217,7 +234,7 @@ export abstract class BaseOAuthHandler implements IOAuthHandler {
    */
   protected shouldRefreshTokens(tokens: OAuthTokens): boolean {
     const twentyFourHours = 24 * 60 * 60 * 1000;
-    return (tokens.expiresAt.getTime() - Date.now()) < twentyFourHours;
+    return tokens.expiresAt.getTime() - Date.now() < twentyFourHours;
   }
 
   /**
@@ -225,7 +242,7 @@ export abstract class BaseOAuthHandler implements IOAuthHandler {
    */
   protected async cleanupExpiredStates(): Promise<void> {
     const supabase = await createClient();
-    
+
     await supabase
       .from('oauth_states')
       .delete()

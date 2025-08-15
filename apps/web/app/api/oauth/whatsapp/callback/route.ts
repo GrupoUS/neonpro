@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { randomBytes } from 'node:crypto';
+import { type NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
-import { WhatsAppOAuthHandler } from '@/lib/oauth/platforms/whatsapp-handler';
 import { Logger } from '@/lib/logger';
-import { randomBytes } from 'crypto';
+import { WhatsAppOAuthHandler } from '@/lib/oauth/platforms/whatsapp-handler';
 
 export async function GET(request: NextRequest) {
   const requestId = randomBytes(16).toString('hex');
@@ -21,7 +21,9 @@ export async function GET(request: NextRequest) {
       hasError: !!error,
       errorDescription,
       userAgent: request.headers.get('user-agent'),
-      ip: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip')
+      ip:
+        request.headers.get('x-forwarded-for') ||
+        request.headers.get('x-real-ip'),
     });
 
     // Handle OAuth errors
@@ -30,25 +32,31 @@ export async function GET(request: NextRequest) {
         requestId,
         provider: 'whatsapp',
         error,
-        errorDescription
+        errorDescription,
       });
 
       return NextResponse.redirect(
-        new URL(`/dashboard/settings/integrations?error=oauth_error&provider=whatsapp&message=${encodeURIComponent(errorDescription || error)}`, request.url)
+        new URL(
+          `/dashboard/settings/integrations?error=oauth_error&provider=whatsapp&message=${encodeURIComponent(errorDescription || error)}`,
+          request.url
+        )
       );
     }
 
     // Validate required parameters
-    if (!code || !state) {
+    if (!(code && state)) {
       Logger.error('WhatsApp OAuth callback missing required parameters', {
         requestId,
         provider: 'whatsapp',
         hasCode: !!code,
-        hasState: !!state
+        hasState: !!state,
       });
 
       return NextResponse.redirect(
-        new URL('/dashboard/settings/integrations?error=invalid_callback&provider=whatsapp', request.url)
+        new URL(
+          '/dashboard/settings/integrations?error=invalid_callback&provider=whatsapp',
+          request.url
+        )
       );
     }
 
@@ -66,11 +74,14 @@ export async function GET(request: NextRequest) {
         requestId,
         provider: 'whatsapp',
         state,
-        error: stateError?.message
+        error: stateError?.message,
       });
 
       return NextResponse.redirect(
-        new URL('/dashboard/settings/integrations?error=invalid_state&provider=whatsapp', request.url)
+        new URL(
+          '/dashboard/settings/integrations?error=invalid_state&provider=whatsapp',
+          request.url
+        )
       );
     }
 
@@ -80,11 +91,14 @@ export async function GET(request: NextRequest) {
         requestId,
         provider: 'whatsapp',
         state,
-        expiresAt: stateRecord.expires_at
+        expiresAt: stateRecord.expires_at,
       });
 
       return NextResponse.redirect(
-        new URL('/dashboard/settings/integrations?error=state_expired&provider=whatsapp', request.url)
+        new URL(
+          '/dashboard/settings/integrations?error=state_expired&provider=whatsapp',
+          request.url
+        )
       );
     }
 
@@ -92,31 +106,44 @@ export async function GET(request: NextRequest) {
     const userId = stateData.userId;
 
     // Verify user session
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+      error: sessionError,
+    } = await supabase.auth.getSession();
+
     if (sessionError || !session?.user || session.user.id !== userId) {
       Logger.error('WhatsApp OAuth session mismatch', {
         requestId,
         provider: 'whatsapp',
         expectedUserId: userId,
         actualUserId: session?.user?.id,
-        error: sessionError?.message
+        error: sessionError?.message,
       });
 
       return NextResponse.redirect(
-        new URL('/dashboard/settings/integrations?error=session_mismatch&provider=whatsapp', request.url)
+        new URL(
+          '/dashboard/settings/integrations?error=session_mismatch&provider=whatsapp',
+          request.url
+        )
       );
     }
 
     // Exchange code for tokens
     const oauthHandler = new WhatsAppOAuthHandler();
-    const encryptedToken = await oauthHandler.exchangeCodeForTokens(code, state);
+    const encryptedToken = await oauthHandler.exchangeCodeForTokens(
+      code,
+      state
+    );
 
     // Get user info from WhatsApp
-    const userInfo = await oauthHandler.getUserInfo(encryptedToken.encryptedData);
+    const userInfo = await oauthHandler.getUserInfo(
+      encryptedToken.encryptedData
+    );
 
     // Get business accounts
-    const businessAccounts = await oauthHandler.getBusinessAccounts(encryptedToken.encryptedData);
+    const businessAccounts = await oauthHandler.getBusinessAccounts(
+      encryptedToken.encryptedData
+    );
 
     // Create or update marketing platform connection
     const connectionData = {
@@ -131,18 +158,18 @@ export async function GET(request: NextRequest) {
       connected_at: new Date().toISOString(),
       platform_data: {
         userInfo,
-        businessAccounts: businessAccounts.map(account => ({
+        businessAccounts: businessAccounts.map((account) => ({
           id: account.id,
           name: account.name,
-          verification_status: account.verification_status
-        }))
-      }
+          verification_status: account.verification_status,
+        })),
+      },
     };
 
     const { data: connection, error: connectionError } = await supabase
       .from('marketing_platform_connections')
       .upsert(connectionData, {
-        onConflict: 'profile_id,platform_type'
+        onConflict: 'profile_id,platform_type',
       })
       .select()
       .single();
@@ -152,36 +179,36 @@ export async function GET(request: NextRequest) {
         requestId,
         provider: 'whatsapp',
         userId,
-        error: connectionError.message
+        error: connectionError.message,
       });
 
       return NextResponse.redirect(
-        new URL('/dashboard/settings/integrations?error=save_failed&provider=whatsapp', request.url)
+        new URL(
+          '/dashboard/settings/integrations?error=save_failed&provider=whatsapp',
+          request.url
+        )
       );
     }
 
     // Clean up OAuth state
-    await supabase
-      .from('oauth_states')
-      .delete()
-      .eq('state', state);
+    await supabase.from('oauth_states').delete().eq('state', state);
 
     // Log successful connection
-    await supabase
-      .from('oauth_audit_log')
-      .insert({
-        profile_id: userId,
-        provider: 'whatsapp',
-        action: 'connection_completed',
-        request_id: requestId,
-        ip_address: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip'),
-        user_agent: request.headers.get('user-agent'),
-        details: {
-          connectionId: connection.id,
-          platformUserId: userInfo.id,
-          businessAccountCount: businessAccounts.length
-        }
-      });
+    await supabase.from('oauth_audit_log').insert({
+      profile_id: userId,
+      provider: 'whatsapp',
+      action: 'connection_completed',
+      request_id: requestId,
+      ip_address:
+        request.headers.get('x-forwarded-for') ||
+        request.headers.get('x-real-ip'),
+      user_agent: request.headers.get('user-agent'),
+      details: {
+        connectionId: connection.id,
+        platformUserId: userInfo.id,
+        businessAccountCount: businessAccounts.length,
+      },
+    });
 
     Logger.info('WhatsApp OAuth connection successful', {
       requestId,
@@ -189,30 +216,32 @@ export async function GET(request: NextRequest) {
       userId,
       connectionId: connection.id,
       platformUserId: userInfo.id,
-      businessAccountCount: businessAccounts.length
+      businessAccountCount: businessAccounts.length,
     });
 
     return NextResponse.redirect(
-      new URL('/dashboard/settings/integrations?success=whatsapp_connected', request.url)
+      new URL(
+        '/dashboard/settings/integrations?success=whatsapp_connected',
+        request.url
+      )
     );
-
   } catch (error) {
     Logger.error('WhatsApp OAuth callback error', {
       requestId,
       provider: 'whatsapp',
       error: error instanceof Error ? error.message : 'Unknown error',
-      stack: error instanceof Error ? error.stack : undefined
+      stack: error instanceof Error ? error.stack : undefined,
     });
 
     return NextResponse.redirect(
-      new URL(`/dashboard/settings/integrations?error=callback_failed&provider=whatsapp&requestId=${requestId}`, request.url)
+      new URL(
+        `/dashboard/settings/integrations?error=callback_failed&provider=whatsapp&requestId=${requestId}`,
+        request.url
+      )
     );
   }
 }
 
-export async function POST(request: NextRequest) {
-  return NextResponse.json(
-    { error: 'Method not allowed' },
-    { status: 405 }
-  );
+export async function POST(_request: NextRequest) {
+  return NextResponse.json({ error: 'Method not allowed' }, { status: 405 });
 }

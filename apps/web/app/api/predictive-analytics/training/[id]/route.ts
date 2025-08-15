@@ -1,10 +1,10 @@
+import { type NextRequest, NextResponse } from 'next/server';
 import { PredictiveAnalyticsService } from '@/app/lib/services/predictive-analytics';
-import { NextRequest, NextResponse } from 'next/server';
 
 const service = new PredictiveAnalyticsService();
 
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {

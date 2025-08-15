@@ -1,18 +1,18 @@
 // Script to execute Accounts Payable migrations on Supabase online
 // Usage: node scripts/execute-ap-migrations.js
 
-const { createClient } = require("@supabase/supabase-js");
-const fs = require("fs");
-const path = require("path");
-require("dotenv").config({ path: ".env.local" });
+const { createClient } = require('@supabase/supabase-js');
+const fs = require('node:fs');
+const path = require('node:path');
+require('dotenv').config({ path: '.env.local' });
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-console.log("🚀 Executing Accounts Payable Migrations on Supabase Online...");
+console.log('🚀 Executing Accounts Payable Migrations on Supabase Online...');
 
-if (!supabaseUrl || !supabaseServiceKey) {
-  console.error("❌ Missing Supabase configuration in .env.local");
+if (!(supabaseUrl && supabaseServiceKey)) {
+  console.error('❌ Missing Supabase configuration in .env.local');
   process.exit(1);
 }
 
@@ -25,12 +25,12 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey, {
 
 async function executeMigrations() {
   try {
-    console.log("📂 Reading migration files...");
+    console.log('📂 Reading migration files...');
 
-    const migrationsDir = path.join(__dirname, "..", "supabase", "migrations");
+    const migrationsDir = path.join(__dirname, '..', 'supabase', 'migrations');
     const migrationFiles = [
-      "20250721120000_create_accounts_payable_schema.sql",
-      "20250721120001_insert_ap_test_data.sql",
+      '20250721120000_create_accounts_payable_schema.sql',
+      '20250721120001_insert_ap_test_data.sql',
     ];
 
     for (const filename of migrationFiles) {
@@ -42,23 +42,21 @@ async function executeMigrations() {
       }
 
       console.log(`\n📋 Executing migration: ${filename}`);
-      const sqlContent = fs.readFileSync(filePath, "utf8");
+      const sqlContent = fs.readFileSync(filePath, 'utf8');
 
       // Split SQL content by statements (basic approach)
       const statements = sqlContent
-        .split(";")
+        .split(';')
         .map((stmt) => stmt.trim())
-        .filter((stmt) => stmt.length > 0 && !stmt.startsWith("--"));
+        .filter((stmt) => stmt.length > 0 && !stmt.startsWith('--'));
 
       for (const [index, statement] of statements.entries()) {
         if (
-          statement.toLowerCase().includes("begin") ||
-          statement.toLowerCase().includes("commit") ||
-          statement.toLowerCase().includes("end")
+          statement.toLowerCase().includes('begin') ||
+          statement.toLowerCase().includes('commit') ||
+          statement.toLowerCase().includes('end')
         ) {
-          console.log(
-            `⏭️  Skipping transaction control statement ${index + 1}`
-          );
+          console.log(`⏭️  Skipping transaction control statement ${index + 1}`);
           continue;
         }
 
@@ -66,15 +64,15 @@ async function executeMigrations() {
           console.log(
             `⏳ Executing statement ${index + 1}/${statements.length}...`
           );
-          const { error } = await supabase.rpc("exec_sql", {
+          const { error } = await supabase.rpc('exec_sql', {
             sql_query: statement,
           });
 
           if (error) {
             // Try direct SQL execution via REST API
             const { data, error: directError } = await supabase
-              .from("_dummy")
-              .select("*")
+              .from('_dummy')
+              .select('*')
               .limit(0);
             if (directError) {
               console.log(`⚠️  Statement ${index + 1} failed:`, error.message);
@@ -98,14 +96,14 @@ async function executeMigrations() {
     }
 
     // Test if tables were created
-    console.log("\n🔍 Verifying table creation...");
-    const apTables = ["vendors", "accounts_payable", "expense_categories"];
+    console.log('\n🔍 Verifying table creation...');
+    const apTables = ['vendors', 'accounts_payable', 'expense_categories'];
 
     for (const tableName of apTables) {
       try {
         const { data, error } = await supabase
           .from(tableName)
-          .select("count")
+          .select('count')
           .limit(1);
         if (error) {
           console.log(
@@ -120,18 +118,18 @@ async function executeMigrations() {
       }
     }
 
-    console.log("\n🎯 Migration execution completed!");
+    console.log('\n🎯 Migration execution completed!');
     console.log(
-      "📋 Please check the Supabase dashboard to verify table creation:"
+      '📋 Please check the Supabase dashboard to verify table creation:'
     );
     console.log(
-      "🔗 https://supabase.com/dashboard/project/gfkskrkbnawkuppazkpt/editor"
+      '🔗 https://supabase.com/dashboard/project/gfkskrkbnawkuppazkpt/editor'
     );
   } catch (error) {
-    console.error("❌ Migration execution failed:", error.message);
-    console.log("\n💡 Manual execution may be required via Supabase dashboard");
+    console.error('❌ Migration execution failed:', error.message);
+    console.log('\n💡 Manual execution may be required via Supabase dashboard');
     console.log(
-      "📋 Copy the SQL from migration files to the SQL Editor in Supabase dashboard"
+      '📋 Copy the SQL from migration files to the SQL Editor in Supabase dashboard'
     );
     process.exit(1);
   }

@@ -5,8 +5,8 @@
  * Fase 3.4 - Production Deployment Validation
  */
 
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
 
 class ComplianceValidator {
   constructor() {
@@ -19,7 +19,7 @@ class ComplianceValidator {
     const timestamp = new Date().toISOString();
     const prefix = type === 'error' ? '❌' : type === 'warning' ? '⚠️' : '✅';
     console.log(`${prefix} [${timestamp}] ${message}`);
-    
+
     if (type === 'error') {
       this.issues.push(message);
     } else {
@@ -29,15 +29,15 @@ class ComplianceValidator {
 
   checkLGPDCompliance() {
     this.log('=== LGPD COMPLIANCE VALIDATION ===');
-    
+
     // Check for consent management
     const consentFiles = [
       'lib/compliance/consent-manager.ts',
       'components/consent/ConsentBanner.tsx',
-      'app/api/consent/route.ts'
+      'app/api/consent/route.ts',
     ];
-    
-    consentFiles.forEach(file => {
+
+    consentFiles.forEach((file) => {
       const filePath = path.join(this.rootDir, file);
       if (fs.existsSync(filePath)) {
         this.log(`LGPD Consent file exists: ${file}`);
@@ -50,10 +50,10 @@ class ComplianceValidator {
     const dataRightsFiles = [
       'app/api/lgpd/data-subject-rights/route.ts',
       'lib/compliance/data-subject-rights.ts',
-      'app/privacy/data-request/page.tsx'
+      'app/privacy/data-request/page.tsx',
     ];
-    
-    dataRightsFiles.forEach(file => {
+
+    dataRightsFiles.forEach((file) => {
       const filePath = path.join(this.rootDir, file);
       if (fs.existsSync(filePath)) {
         this.log(`LGPD Data Rights file exists: ${file}`);
@@ -72,15 +72,15 @@ class ComplianceValidator {
 
   checkANVISACompliance() {
     this.log('=== ANVISA COMPLIANCE VALIDATION ===');
-    
+
     // Check for product registration tracking
     const anvisaFiles = [
       'lib/compliance/anvisa-integration.ts',
       'database/tables/anvisa_products.sql',
-      'app/api/anvisa/products/route.ts'
+      'app/api/anvisa/products/route.ts',
     ];
-    
-    anvisaFiles.forEach(file => {
+
+    anvisaFiles.forEach((file) => {
       const filePath = path.join(this.rootDir, file);
       if (fs.existsSync(filePath)) {
         this.log(`ANVISA file exists: ${file}`);
@@ -93,10 +93,10 @@ class ComplianceValidator {
     const adverseEventFiles = [
       'lib/compliance/adverse-events.ts',
       'app/api/anvisa/adverse-events/route.ts',
-      'components/forms/AdverseEventForm.tsx'
+      'components/forms/AdverseEventForm.tsx',
     ];
-    
-    adverseEventFiles.forEach(file => {
+
+    adverseEventFiles.forEach((file) => {
       const filePath = path.join(this.rootDir, file);
       if (fs.existsSync(filePath)) {
         this.log(`ANVISA Adverse Event file exists: ${file}`);
@@ -108,15 +108,15 @@ class ComplianceValidator {
 
   checkCFMCompliance() {
     this.log('=== CFM COMPLIANCE VALIDATION ===');
-    
+
     // Check for professional licensing
     const cfmFiles = [
       'lib/compliance/cfm-integration.ts',
       'database/tables/cfm_professionals.sql',
-      'app/api/cfm/professionals/route.ts'
+      'app/api/cfm/professionals/route.ts',
     ];
-    
-    cfmFiles.forEach(file => {
+
+    cfmFiles.forEach((file) => {
       const filePath = path.join(this.rootDir, file);
       if (fs.existsSync(filePath)) {
         this.log(`CFM file exists: ${file}`);
@@ -129,10 +129,10 @@ class ComplianceValidator {
     const digitalFiles = [
       'lib/compliance/digital-signature.ts',
       'lib/compliance/electronic-prescription.ts',
-      'components/prescription/EPrescriptionForm.tsx'
+      'components/prescription/EPrescriptionForm.tsx',
     ];
-    
-    digitalFiles.forEach(file => {
+
+    digitalFiles.forEach((file) => {
       const filePath = path.join(this.rootDir, file);
       if (fs.existsSync(filePath)) {
         this.log(`CFM Digital file exists: ${file}`);
@@ -144,15 +144,15 @@ class ComplianceValidator {
 
   checkSecurityCompliance() {
     this.log('=== SECURITY COMPLIANCE VALIDATION ===');
-    
+
     // Check for authentication and authorization
     const authFiles = [
       'lib/auth/supabase.ts',
       'middleware.ts',
-      'lib/auth/rbac.ts'
+      'lib/auth/rbac.ts',
     ];
-    
-    authFiles.forEach(file => {
+
+    authFiles.forEach((file) => {
       const filePath = path.join(this.rootDir, file);
       if (fs.existsSync(filePath)) {
         this.log(`Security file exists: ${file}`);
@@ -165,10 +165,10 @@ class ComplianceValidator {
     const encryptionFiles = [
       'lib/security/encryption.ts',
       'lib/security/data-classification.ts',
-      'lib/security/audit-logging.ts'
+      'lib/security/audit-logging.ts',
     ];
-    
-    encryptionFiles.forEach(file => {
+
+    encryptionFiles.forEach((file) => {
       const filePath = path.join(this.rootDir, file);
       if (fs.existsSync(filePath)) {
         this.log(`Encryption file exists: ${file}`);
@@ -180,14 +180,14 @@ class ComplianceValidator {
 
   checkDatabaseCompliance() {
     this.log('=== DATABASE COMPLIANCE VALIDATION ===');
-    
+
     // Check for RLS policies
     const rlsFiles = [
       'database/policies/rls-policies.sql',
-      'supabase/migrations/20231201000000_rls_setup.sql'
+      'supabase/migrations/20231201000000_rls_setup.sql',
     ];
-    
-    rlsFiles.forEach(file => {
+
+    rlsFiles.forEach((file) => {
       const filePath = path.join(this.rootDir, file);
       if (fs.existsSync(filePath)) {
         this.log(`RLS policy file exists: ${file}`);
@@ -199,10 +199,10 @@ class ComplianceValidator {
     // Check for audit tables
     const auditFiles = [
       'database/tables/audit_logs.sql',
-      'database/triggers/audit_triggers.sql'
+      'database/triggers/audit_triggers.sql',
     ];
-    
-    auditFiles.forEach(file => {
+
+    auditFiles.forEach((file) => {
       const filePath = path.join(this.rootDir, file);
       if (fs.existsSync(filePath)) {
         this.log(`Audit file exists: ${file}`);
@@ -214,7 +214,7 @@ class ComplianceValidator {
 
   generateReport() {
     this.log('=== COMPLIANCE VALIDATION REPORT ===');
-    
+
     const totalChecks = this.validations.length + this.issues.length;
     const passedChecks = this.validations.length;
     const failedChecks = this.issues.length;
@@ -233,7 +233,7 @@ class ComplianceValidator {
       complianceScore,
       validations: this.validations,
       issues: this.issues,
-      recommendations: this.getRecommendations()
+      recommendations: this.getRecommendations(),
     };
 
     // Save report
@@ -242,14 +242,20 @@ class ComplianceValidator {
       JSON.stringify(report, null, 2)
     );
 
-    this.log(`Compliance report saved to: compliance-validation-report.json`);
-    
+    this.log('Compliance report saved to: compliance-validation-report.json');
+
     if (complianceScore >= 80) {
       this.log(`✅ COMPLIANCE READY FOR PRODUCTION (${complianceScore}%)`);
     } else if (complianceScore >= 60) {
-      this.log(`⚠️ COMPLIANCE NEEDS IMPROVEMENT (${complianceScore}%)`, 'warning');
+      this.log(
+        `⚠️ COMPLIANCE NEEDS IMPROVEMENT (${complianceScore}%)`,
+        'warning'
+      );
     } else {
-      this.log(`❌ COMPLIANCE NOT READY FOR PRODUCTION (${complianceScore}%)`, 'error');
+      this.log(
+        `❌ COMPLIANCE NOT READY FOR PRODUCTION (${complianceScore}%)`,
+        'error'
+      );
     }
 
     return report;
@@ -257,40 +263,50 @@ class ComplianceValidator {
 
   getRecommendations() {
     const recommendations = [];
-    
+
     if (this.issues.length > 0) {
-      recommendations.push('Resolve all critical compliance issues before production deployment');
+      recommendations.push(
+        'Resolve all critical compliance issues before production deployment'
+      );
     }
-    
-    if (this.issues.some(issue => issue.includes('LGPD'))) {
-      recommendations.push('Implement complete LGPD compliance framework (consent, data rights, privacy)');
+
+    if (this.issues.some((issue) => issue.includes('LGPD'))) {
+      recommendations.push(
+        'Implement complete LGPD compliance framework (consent, data rights, privacy)'
+      );
     }
-    
-    if (this.issues.some(issue => issue.includes('Security'))) {
-      recommendations.push('Complete security implementation (auth, encryption, audit logging)');
+
+    if (this.issues.some((issue) => issue.includes('Security'))) {
+      recommendations.push(
+        'Complete security implementation (auth, encryption, audit logging)'
+      );
     }
-    
-    if (this.issues.some(issue => issue.includes('RLS'))) {
-      recommendations.push('Implement Row Level Security policies for all sensitive tables');
+
+    if (this.issues.some((issue) => issue.includes('RLS'))) {
+      recommendations.push(
+        'Implement Row Level Security policies for all sensitive tables'
+      );
     }
-    
+
     recommendations.push('Conduct comprehensive security audit before go-live');
-    recommendations.push('Setup monitoring and alerting for compliance violations');
+    recommendations.push(
+      'Setup monitoring and alerting for compliance violations'
+    );
     recommendations.push('Schedule regular compliance reviews and updates');
-    
+
     return recommendations;
   }
 
   async run() {
     this.log('🏥 Starting NeonPro Healthcare Compliance Validation...');
     this.log(`Working directory: ${this.rootDir}`);
-    
+
     this.checkLGPDCompliance();
     this.checkANVISACompliance();
     this.checkCFMCompliance();
     this.checkSecurityCompliance();
     this.checkDatabaseCompliance();
-    
+
     const report = this.generateReport();
     return report;
   }
@@ -299,13 +315,14 @@ class ComplianceValidator {
 // Execute if run directly
 if (require.main === module) {
   const validator = new ComplianceValidator();
-  validator.run()
-    .then(report => {
+  validator
+    .run()
+    .then((report) => {
       if (report.complianceScore < 80) {
         process.exit(1);
       }
     })
-    .catch(error => {
+    .catch((error) => {
       console.error('❌ Compliance validation failed:', error);
       process.exit(1);
     });

@@ -3,85 +3,83 @@
  * Barrel export file for the Stock Output and Consumption Control System
  */
 
-// Core management classes
-export { StockOutputManager } from './stock-output-management';
-export { FIFOManager, fifoManager } from './fifo-management';
-export { ConsumptionAnalyzer, consumptionAnalyzer } from './consumption-analytics';
-
 // Configuration and utilities
-export { 
+export {
   InventoryConfigManager,
   InventoryDashboardProvider,
   InventoryIntegrationManager,
   InventoryUtils,
   inventoryConfigManager,
   inventoryDashboardProvider,
-  inventoryIntegrationManager
+  inventoryIntegrationManager,
 } from './config';
+export {
+  ConsumptionAnalyzer,
+  consumptionAnalyzer,
+} from './consumption-analytics';
+export { FIFOManager, fifoManager } from './fifo-management';
+// Core management classes
+export { StockOutputManager } from './stock-output-management';
 
 // Types
 export type {
+  ApiResponse,
+  AutoApprovalRule,
+  BatchMovement,
+  BatchStock,
+  ConsumptionAlert,
+  // Consumption analytics types
+  ConsumptionAnalytics,
+  ConsumptionForecast,
+  ConsumptionPattern as BaseConsumptionPattern,
+  ConsumptionPattern,
+  ConsumptionTrend,
+  CostEfficiency,
+  // Utility types
+  DateRange,
+  EfficiencyOpportunity,
+  ExpiryAction,
+  ExpiryAlert,
+  ExpiryMonitoring,
+  // FIFO management types
+  FIFOAnalysis,
+  FIFOOptimizationConfig,
+  FIFORecommendation,
+  FIFOResult,
+  InventoryAuditLog,
+  // Configuration types
+  InventoryConfig,
+  InventoryDashboardSummary,
+  InventoryMetrics,
+  InventoryWorkflow,
+  LowStockAlert,
+  PaginatedResponse,
+  ProductConsumption,
+  ProductCorrelation,
+  PurchaseRecommendation,
+  QualityCheck,
+  RegulatoryCompliance,
+  StockAlert,
+  StockMovement,
   // Stock output types
   StockOutput,
   StockOutputItem,
   StockRequest,
   StockRequestStatus,
-  AutoApprovalRule,
   StockTransfer,
-  TransferItem,
-  StockAlert,
-  BatchStock,
-  FIFOResult,
-  LowStockAlert,
-  ExpiryMonitoring,
-  ConsumptionPattern as BaseConsumptionPattern,
-  StockMovement,
-  QualityCheck,
-  RegulatoryCompliance,
-  
-  // FIFO management types
-  FIFOAnalysis,
-  FIFORecommendation,
-  ExpiryAlert,
-  ExpiryAction,
-  BatchMovement,
-  FIFOOptimizationConfig,
-  
-  // Consumption analytics types
-  ConsumptionAnalytics,
-  ProductConsumption,
-  ConsumptionTrend,
-  CostEfficiency,
-  EfficiencyOpportunity,
-  ConsumptionAlert,
-  ConsumptionForecast,
-  PurchaseRecommendation,
-  ConsumptionPattern,
-  ProductCorrelation,
-  
-  // Configuration types
-  InventoryConfig,
-  InventoryDashboardSummary,
-  InventoryWorkflow,
-  WorkflowStep,
   SystemIntegration,
-  InventoryMetrics,
-  InventoryAuditLog,
-  
-  // Utility types
-  DateRange,
+  TransferItem,
   ValueWithChange,
-  PaginatedResponse,
-  ApiResponse
+  WorkflowStep,
 } from './types';
 
 // Constants and enums
 export {
+  AlertType,
+  BatchStatus,
   DEFAULT_INVENTORY_CONFIG,
   StockOutputStatus,
-  BatchStatus,
-  AlertType,
-  TransferStatus
+  TransferStatus,
 } from './types';
 
 // Default instances for easy access
@@ -91,5 +89,5 @@ export const inventoryManagers = {
   consumption: consumptionAnalyzer,
   config: inventoryConfigManager,
   dashboard: inventoryDashboardProvider,
-  integration: inventoryIntegrationManager
+  integration: inventoryIntegrationManager,
 } as const;

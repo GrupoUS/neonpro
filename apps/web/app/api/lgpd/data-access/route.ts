@@ -1,22 +1,22 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
-import { z } from 'zod';
 import { nanoid } from 'nanoid';
+import { cookies } from 'next/headers';
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 
 /**
  * LGPD Data Access API Route
- * 
+ *
  * Implements LGPD Article 15 - Right of Access
  * Provides comprehensive data export for data subjects
- * 
+ *
  * Features:
  * - Complete user data extraction
  * - Multiple export formats (JSON, CSV, PDF)
  * - Anonymized references
  * - Audit trail
  * - Rate limiting
- * 
+ *
  * Security:
  * - Authentication required
  * - User can only access their own data
@@ -32,17 +32,21 @@ const RATE_LIMIT_WINDOW = 60 * 60 * 1000; // 1 hour
 // Request validation schema
 const DataAccessRequestSchema = z.object({
   format: z.enum(['json', 'csv', 'pdf']).default('json'),
-  categories: z.array(z.enum([
-    'profile',
-    'appointments',
-    'treatments',
-    'payments',
-    'communications',
-    'preferences',
-    'all'
-  ])).default(['all']),
+  categories: z
+    .array(
+      z.enum([
+        'profile',
+        'appointments',
+        'treatments',
+        'payments',
+        'communications',
+        'preferences',
+        'all',
+      ])
+    )
+    .default(['all']),
   includeDeleted: z.boolean().default(false),
-  anonymizeThirdParty: z.boolean().default(true)
+  anonymizeThirdParty: z.boolean().default(true),
 });
 
 interface UserDataExport {
@@ -71,19 +75,19 @@ interface UserDataExport {
 function checkRateLimit(userId: string): boolean {
   const now = Date.now();
   const userLimit = rateLimitMap.get(userId);
-  
+
   if (!userLimit || now > userLimit.resetTime) {
     rateLimitMap.set(userId, {
       count: 1,
-      resetTime: now + RATE_LIMIT_WINDOW
+      resetTime: now + RATE_LIMIT_WINDOW,
     });
     return true;
   }
-  
+
   if (userLimit.count >= RATE_LIMIT) {
     return false;
   }
-  
+
   userLimit.count++;
   return true;
 }
@@ -115,16 +119,20 @@ async function extractUserProfile(supabase: any, userId: string) {
     `)
     .eq('id', userId)
     .single();
-    
+
   if (error) {
     console.error('Error extracting user profile:', error);
     return null;
   }
-  
+
   return data;
 }
 
-async function extractUserAppointments(supabase: any, userId: string, includeDeleted = false) {
+async function extractUserAppointments(
+  supabase: any,
+  userId: string,
+  includeDeleted = false
+) {
   let query = supabase
     .from('appointments')
     .select(`
@@ -149,22 +157,28 @@ async function extractUserAppointments(supabase: any, userId: string, includeDel
       )
     `)
     .eq('patient_id', userId);
-    
+
   if (!includeDeleted) {
     query = query.is('deleted_at', null);
   }
-  
-  const { data, error } = await query.order('appointment_date', { ascending: false });
-  
+
+  const { data, error } = await query.order('appointment_date', {
+    ascending: false,
+  });
+
   if (error) {
     console.error('Error extracting appointments:', error);
     return [];
   }
-  
+
   return data || [];
 }
 
-async function extractUserTreatments(supabase: any, userId: string, includeDeleted = false) {
+async function extractUserTreatments(
+  supabase: any,
+  userId: string,
+  includeDeleted = false
+) {
   let query = supabase
     .from('treatments')
     .select(`
@@ -193,22 +207,26 @@ async function extractUserTreatments(supabase: any, userId: string, includeDelet
       )
     `)
     .eq('patient_id', userId);
-    
+
   if (!includeDeleted) {
     query = query.is('deleted_at', null);
   }
-  
+
   const { data, error } = await query.order('start_date', { ascending: false });
-  
+
   if (error) {
     console.error('Error extracting treatments:', error);
     return [];
   }
-  
+
   return data || [];
 }
 
-async function extractUserPayments(supabase: any, userId: string, includeDeleted = false) {
+async function extractUserPayments(
+  supabase: any,
+  userId: string,
+  includeDeleted = false
+) {
   let query = supabase
     .from('payments')
     .select(`
@@ -233,22 +251,28 @@ async function extractUserPayments(supabase: any, userId: string, includeDeleted
       )
     `)
     .eq('patient_id', userId);
-    
+
   if (!includeDeleted) {
     query = query.is('deleted_at', null);
   }
-  
-  const { data, error } = await query.order('payment_date', { ascending: false });
-  
+
+  const { data, error } = await query.order('payment_date', {
+    ascending: false,
+  });
+
   if (error) {
     console.error('Error extracting payments:', error);
     return [];
   }
-  
+
   return data || [];
 }
 
-async function extractUserCommunications(supabase: any, userId: string, anonymizeThirdParty = true) {
+async function extractUserCommunications(
+  supabase: any,
+  userId: string,
+  anonymizeThirdParty = true
+) {
   const { data, error } = await supabase
     .from('communications')
     .select(`
@@ -267,21 +291,24 @@ async function extractUserCommunications(supabase: any, userId: string, anonymiz
     `)
     .or(`sender_id.eq.${userId},recipient_id.eq.${userId}`)
     .order('sent_at', { ascending: false });
-    
+
   if (error) {
     console.error('Error extracting communications:', error);
     return [];
   }
-  
+
   // Anonymize third-party data if requested
   if (anonymizeThirdParty && data) {
-    return data.map(comm => ({
+    return data.map((comm) => ({
       ...comm,
       sender_name: comm.sender_id === userId ? comm.sender_name : '***',
-      content: comm.sender_id === userId ? comm.content : '[Content from clinic staff]'
+      content:
+        comm.sender_id === userId
+          ? comm.content
+          : '[Content from clinic staff]',
     }));
   }
-  
+
   return data || [];
 }
 
@@ -302,12 +329,12 @@ async function extractUserPreferences(supabase: any, userId: string) {
     `)
     .eq('user_id', userId)
     .single();
-    
+
   if (error) {
     console.error('Error extracting preferences:', error);
     return null;
   }
-  
+
   return data;
 }
 
@@ -318,79 +345,97 @@ async function extractUserMetadata(supabase: any, userId: string) {
     .select('created_at, last_login_at')
     .eq('id', userId)
     .single();
-    
+
   // Count total records
   const [
     appointmentsCount,
     treatmentsCount,
     paymentsCount,
-    communicationsCount
+    communicationsCount,
   ] = await Promise.all([
-    supabase.from('appointments').select('id', { count: 'exact' }).eq('patient_id', userId),
-    supabase.from('treatments').select('id', { count: 'exact' }).eq('patient_id', userId),
-    supabase.from('payments').select('id', { count: 'exact' }).eq('patient_id', userId),
-    supabase.from('communications').select('id', { count: 'exact' }).or(`sender_id.eq.${userId},recipient_id.eq.${userId}`)
+    supabase
+      .from('appointments')
+      .select('id', { count: 'exact' })
+      .eq('patient_id', userId),
+    supabase
+      .from('treatments')
+      .select('id', { count: 'exact' })
+      .eq('patient_id', userId),
+    supabase
+      .from('payments')
+      .select('id', { count: 'exact' })
+      .eq('patient_id', userId),
+    supabase
+      .from('communications')
+      .select('id', { count: 'exact' })
+      .or(`sender_id.eq.${userId},recipient_id.eq.${userId}`),
   ]);
-  
+
   return {
     accountCreated: userData?.created_at || null,
     lastLogin: userData?.last_login_at || null,
-    dataRetentionPolicy: '7 years from last interaction (as per LGPD requirements)',
-    totalRecords: (appointmentsCount.count || 0) + 
-                 (treatmentsCount.count || 0) + 
-                 (paymentsCount.count || 0) + 
-                 (communicationsCount.count || 0)
+    dataRetentionPolicy:
+      '7 years from last interaction (as per LGPD requirements)',
+    totalRecords:
+      (appointmentsCount.count || 0) +
+      (treatmentsCount.count || 0) +
+      (paymentsCount.count || 0) +
+      (communicationsCount.count || 0),
   };
 }
 
 // Format converters
 function convertToCSV(data: any): string {
   const flattenObject = (obj: any, prefix = ''): any => {
-    let flattened: any = {};
-    
-    for (let key in obj) {
+    const flattened: any = {};
+
+    for (const key in obj) {
       if (obj[key] === null || obj[key] === undefined) {
         flattened[prefix + key] = '';
       } else if (typeof obj[key] === 'object' && !Array.isArray(obj[key])) {
-        Object.assign(flattened, flattenObject(obj[key], prefix + key + '_'));
+        Object.assign(flattened, flattenObject(obj[key], `${prefix + key}_`));
       } else if (Array.isArray(obj[key])) {
         flattened[prefix + key] = JSON.stringify(obj[key]);
       } else {
         flattened[prefix + key] = obj[key];
       }
     }
-    
+
     return flattened;
   };
-  
+
   const flattened = flattenObject(data);
   const headers = Object.keys(flattened);
   const values = Object.values(flattened);
-  
+
   return [
     headers.join(','),
-    values.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')
+    values.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(','),
   ].join('\n');
 }
 
 // Log data access request
-async function logDataAccessRequest(supabase: any, userId: string, format: string, categories: string[], success: boolean) {
+async function logDataAccessRequest(
+  supabase: any,
+  userId: string,
+  format: string,
+  categories: string[],
+  success: boolean
+) {
   try {
-    await supabase
-      .from('lgpd_access_logs')
-      .insert([
-        {
-          user_id: userId,
-          request_type: 'data_access',
-          request_details: {
-            format,
-            categories,
-            timestamp: new Date().toISOString()
-          },
-          success,
-          created_at: new Date().toISOString()
-        }
-      ]);
+    await supabase.from('lgpd_access_logs').insert([
+      {
+        user_id: userId,
+        request_type: 'data_access',
+        request_details: {
+          format,
+          categories,
+          timestamp: new Date().toISOString(),
+        },
+        success,
+        created_at: new Date().toISOString(),
+      },
+    ]);
   } catch (error) {
     console.error('Failed to log data access request:', error);
   }
@@ -401,35 +446,43 @@ export async function POST(request: NextRequest) {
     // Initialize Supabase client
     const cookieStore = cookies();
     const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
-    
+
     // Get authenticated user
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Unauthorized. Please log in to access your data.' },
         { status: 401 }
       );
     }
-    
+
     // Check rate limiting
     if (!checkRateLimit(user.id)) {
       await logDataAccessRequest(supabase, user.id, 'unknown', [], false);
       return NextResponse.json(
-        { 
-          error: 'Rate limit exceeded. You can request data export 3 times per hour.',
-          retryAfter: Math.ceil((rateLimitMap.get(user.id)?.resetTime || Date.now()) - Date.now()) / 1000
+        {
+          error:
+            'Rate limit exceeded. You can request data export 3 times per hour.',
+          retryAfter:
+            Math.ceil(
+              (rateLimitMap.get(user.id)?.resetTime || Date.now()) - Date.now()
+            ) / 1000,
         },
         { status: 429 }
       );
     }
-    
+
     // Parse and validate request
     const body = await request.json();
     const validatedRequest = DataAccessRequestSchema.parse(body);
-    
-    const { format, categories, includeDeleted, anonymizeThirdParty } = validatedRequest;
-    
+
+    const { format, categories, includeDeleted, anonymizeThirdParty } =
+      validatedRequest;
+
     // Extract user data based on requested categories
     const exportData: UserDataExport = {
       exportId: nanoid(),
@@ -437,76 +490,95 @@ export async function POST(request: NextRequest) {
       exportDate: new Date().toISOString(),
       format,
       categories,
-      data: {}
+      data: {},
     };
-    
+
     // Extract data by category
     if (categories.includes('all') || categories.includes('profile')) {
       exportData.data.profile = await extractUserProfile(supabase, user.id);
     }
-    
+
     if (categories.includes('all') || categories.includes('appointments')) {
-      exportData.data.appointments = await extractUserAppointments(supabase, user.id, includeDeleted);
+      exportData.data.appointments = await extractUserAppointments(
+        supabase,
+        user.id,
+        includeDeleted
+      );
     }
-    
+
     if (categories.includes('all') || categories.includes('treatments')) {
-      exportData.data.treatments = await extractUserTreatments(supabase, user.id, includeDeleted);
+      exportData.data.treatments = await extractUserTreatments(
+        supabase,
+        user.id,
+        includeDeleted
+      );
     }
-    
+
     if (categories.includes('all') || categories.includes('payments')) {
-      exportData.data.payments = await extractUserPayments(supabase, user.id, includeDeleted);
+      exportData.data.payments = await extractUserPayments(
+        supabase,
+        user.id,
+        includeDeleted
+      );
     }
-    
+
     if (categories.includes('all') || categories.includes('communications')) {
-      exportData.data.communications = await extractUserCommunications(supabase, user.id, anonymizeThirdParty);
+      exportData.data.communications = await extractUserCommunications(
+        supabase,
+        user.id,
+        anonymizeThirdParty
+      );
     }
-    
+
     if (categories.includes('all') || categories.includes('preferences')) {
-      exportData.data.preferences = await extractUserPreferences(supabase, user.id);
+      exportData.data.preferences = await extractUserPreferences(
+        supabase,
+        user.id
+      );
     }
-    
+
     // Always include metadata
     exportData.data.metadata = await extractUserMetadata(supabase, user.id);
-    
+
     // Log successful request
     await logDataAccessRequest(supabase, user.id, format, categories, true);
-    
+
     // Return data in requested format
     switch (format) {
-      case 'csv':
+      case 'csv': {
         const csvData = convertToCSV(exportData);
         return new NextResponse(csvData, {
           status: 200,
           headers: {
             'Content-Type': 'text/csv',
-            'Content-Disposition': `attachment; filename="lgpd-data-export-${exportData.exportId}.csv"`
-          }
+            'Content-Disposition': `attachment; filename="lgpd-data-export-${exportData.exportId}.csv"`,
+          },
         });
-        
+      }
+
       case 'pdf':
         // For PDF, return JSON with instructions (PDF generation would require additional libraries)
         return NextResponse.json({
           ...exportData,
-          note: 'PDF export is available upon request. Please contact our data protection team.'
+          note: 'PDF export is available upon request. Please contact our data protection team.',
         });
-        
+
       default: // JSON
         return NextResponse.json(exportData);
     }
-    
   } catch (error) {
     console.error('LGPD Data Access Error:', error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { 
+        {
           error: 'Invalid request parameters',
-          details: error.errors
+          details: error.errors,
         },
         { status: 400 }
       );
     }
-    
+
     return NextResponse.json(
       { error: 'Internal server error during data export' },
       { status: 500 }
@@ -514,22 +586,22 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     // Initialize Supabase client
     const cookieStore = cookies();
     const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
-    
+
     // Get authenticated user
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-    
+
     // Get user's data access history
     const { data: accessHistory, error } = await supabase
       .from('lgpd_access_logs')
@@ -538,7 +610,7 @@ export async function GET(request: NextRequest) {
       .eq('request_type', 'data_access')
       .order('created_at', { ascending: false })
       .limit(10);
-      
+
     if (error) {
       console.error('Error fetching access history:', error);
       return NextResponse.json(
@@ -546,29 +618,29 @@ export async function GET(request: NextRequest) {
         { status: 500 }
       );
     }
-    
+
     // Get rate limit status
     const rateLimitStatus = rateLimitMap.get(user.id);
-    const remainingRequests = rateLimitStatus 
+    const remainingRequests = rateLimitStatus
       ? Math.max(0, RATE_LIMIT - rateLimitStatus.count)
       : RATE_LIMIT;
-    
+
     return NextResponse.json({
       message: 'LGPD Data Access API - Get your personal data export',
       rateLimitStatus: {
         remainingRequests,
         resetTime: rateLimitStatus?.resetTime || null,
-        windowDuration: RATE_LIMIT_WINDOW
+        windowDuration: RATE_LIMIT_WINDOW,
       },
       supportedFormats: ['json', 'csv', 'pdf'],
       availableCategories: [
         'profile',
-        'appointments', 
+        'appointments',
         'treatments',
         'payments',
         'communications',
         'preferences',
-        'all'
+        'all',
       ],
       recentAccessHistory: accessHistory || [],
       usage: {
@@ -577,17 +649,16 @@ export async function GET(request: NextRequest) {
           format: 'json | csv | pdf (default: json)',
           categories: 'Array of data categories (default: ["all"])',
           includeDeleted: 'boolean (default: false)',
-          anonymizeThirdParty: 'boolean (default: true)'
+          anonymizeThirdParty: 'boolean (default: true)',
         },
         example: {
           format: 'json',
           categories: ['profile', 'appointments'],
           includeDeleted: false,
-          anonymizeThirdParty: true
-        }
-      }
+          anonymizeThirdParty: true,
+        },
+      },
     });
-    
   } catch (error) {
     console.error('LGPD Data Access GET Error:', error);
     return NextResponse.json(

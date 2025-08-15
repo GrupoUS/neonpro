@@ -1,0 +1,45 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.2.0/schema.json",
+  "extends": ["ultracite"],
+  "javascript": {
+    "globals": [
+      "jest",
+      "describe",
+      "it",
+      "expect",
+      "beforeAll",
+      "afterAll",
+      "beforeEach",
+      "afterEach"
+    ]
+  },
+  "linter": {
+    "rules": {
+      "style": {
+        "noNonNullAssertion": "off",
+        "useFilenamingConvention": "off",
+        "noExportedImports": "off",
+        "noMagicNumbers": "off"
+      },
+      "nursery": {
+        "useConsistentTypeDefinitions": "off",
+        "noShadow": "off"
+      },
+      "correctness": {
+        "noUndeclaredVariables": "off",
+        "noUnusedVariables": "off",
+        "noSolidDestructuredProps": "off"
+      },
+      "suspicious": {
+        "noExplicitAny": "off",
+        "noThenProperty": "off",
+        "useAwait": "off",
+        "noConsole": "off"
+      },
+      "complexity": {
+        "noExcessiveLinesPerFunction": "off",
+        "noForEach": "off"
+      }
+    }
+  }
+}

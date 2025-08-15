@@ -2,101 +2,107 @@
 // Created: 2025-01-22
 // High-performance TypeScript interfaces for analytics service layer
 
-import { z } from 'zod'
+import { z } from 'zod';
 
 // ============================================================================
 // CORE METRIC TYPES
 // ============================================================================
 
-export type MetricPeriod = 'day' | 'week' | 'month' | 'quarter' | 'year'
-export type MetricCategory = 'revenue' | 'conversion' | 'engagement' | 'retention' | 'growth'
-export type TrialStatus = 'active' | 'converted' | 'expired' | 'cancelled'
-export type SubscriptionTier = 'free' | 'basic' | 'professional' | 'enterprise'
+export type MetricPeriod = 'day' | 'week' | 'month' | 'quarter' | 'year';
+export type MetricCategory =
+  | 'revenue'
+  | 'conversion'
+  | 'engagement'
+  | 'retention'
+  | 'growth';
+export type TrialStatus = 'active' | 'converted' | 'expired' | 'cancelled';
+export type SubscriptionTier = 'free' | 'basic' | 'professional' | 'enterprise';
 
 // Base metric interface
 export interface BaseMetric {
-  id: string
-  timestamp: Date
-  value: number
-  category: MetricCategory
-  metadata: Record<string, any>
+  id: string;
+  timestamp: Date;
+  value: number;
+  category: MetricCategory;
+  metadata: Record<string, any>;
 }
 
 // Revenue metrics
 export interface RevenueMetric extends BaseMetric {
-  category: 'revenue'
-  tier: SubscriptionTier
-  currency: string
-  mrr: number
-  arr: number
+  category: 'revenue';
+  tier: SubscriptionTier;
+  currency: string;
+  mrr: number;
+  arr: number;
 }
 
 // Conversion metrics
 export interface ConversionMetric extends BaseMetric {
-  category: 'conversion'
-  source: string
-  stage: string
-  conversionRate: number
-  cohortId: string
+  category: 'conversion';
+  source: string;
+  stage: string;
+  conversionRate: number;
+  cohortId: string;
 }
 
 // Trial metrics
 export interface TrialMetric extends BaseMetric {
-  category: 'engagement' | 'conversion'
-  userId: string
-  trialId: string
-  status: TrialStatus
-  daysActive: number
-  actionsCount: number
-  conversionProbability?: number
-}// Analytics Aggregation & Response Types - STORY-SUB-002 Task 2 (Part 2)
+  category: 'engagement' | 'conversion';
+  userId: string;
+  trialId: string;
+  status: TrialStatus;
+  daysActive: number;
+  actionsCount: number;
+  conversionProbability?: number;
+} // Analytics Aggregation & Response Types - STORY-SUB-002 Task 2 (Part 2)
 
 // ============================================================================
 // AGGREGATED DATA TYPES
 // ============================================================================
 
 export interface MetricAggregation {
-  period: MetricPeriod
-  startDate: Date
-  endDate: Date
-  total: number
-  average: number
-  median: number
-  percentile95: number
-  growth: number
-  periodOverPeriod: number
+  period: MetricPeriod;
+  startDate: Date;
+  endDate: Date;
+  total: number;
+  average: number;
+  median: number;
+  percentile95: number;
+  growth: number;
+  periodOverPeriod: number;
 }
 
 export interface RevenueAnalytics {
-  mrr: MetricAggregation
-  arr: MetricAggregation
-  churn: MetricAggregation
-  ltv: MetricAggregation
-  byTier: Record<SubscriptionTier, MetricAggregation>
-  forecast: ForecastData
+  mrr: MetricAggregation;
+  arr: MetricAggregation;
+  churn: MetricAggregation;
+  ltv: MetricAggregation;
+  byTier: Record<SubscriptionTier, MetricAggregation>;
+  forecast: ForecastData;
 }
 
 export interface ConversionAnalytics {
-  trialToPayment: MetricAggregation
-  signupToTrial: MetricAggregation
-  visitorToSignup: MetricAggregation
-  funnelAnalysis: FunnelStage[]
-  cohortAnalysis: CohortData[]
-}export interface FunnelStage {
-  stage: string
-  visitors: number
-  conversions: number
-  conversionRate: number
-  dropoffRate: number
+  trialToPayment: MetricAggregation;
+  signupToTrial: MetricAggregation;
+  visitorToSignup: MetricAggregation;
+  funnelAnalysis: FunnelStage[];
+  cohortAnalysis: CohortData[];
+}
+export interface FunnelStage {
+  stage: string;
+  visitors: number;
+  conversions: number;
+  conversionRate: number;
+  dropoffRate: number;
 }
 
 export interface CohortData {
-  cohortId: string
-  period: string
-  size: number
-  retentionRates: number[]
-  revenuePerUser: number[]
-  churnRate: number
+  cohortId: string;
+  period: string;
+  size: number;
+  retentionRates: number[];
+  revenuePerUser: number[];
+  churnRate: number;
 }
 
 // ============================================================================
@@ -104,48 +110,48 @@ export interface CohortData {
 // ============================================================================
 
 export interface ForecastData {
-  predicted: number[]
-  confidence: number[]
+  predicted: number[];
+  confidence: number[];
   scenarios: {
-    conservative: number[]
-    optimistic: number[]
-    realistic: number[]
-  }
-  accuracy: number
-  period: MetricPeriod
+    conservative: number[];
+    optimistic: number[];
+    realistic: number[];
+  };
+  accuracy: number;
+  period: MetricPeriod;
 }
 
 export interface TrialConversionPrediction {
-  userId: string
-  trialId: string
-  probability: number
-  confidence: number
-  riskFactors: string[]
-  recommendations: string[]
-  predictedValue: number
-  daysToDecision: number
-}// ============================================================================
+  userId: string;
+  trialId: string;
+  probability: number;
+  confidence: number;
+  riskFactors: string[];
+  recommendations: string[];
+  predictedValue: number;
+  daysToDecision: number;
+} // ============================================================================
 // REAL-TIME DATA STREAMING
 // ============================================================================
 
 export interface RealTimeMetric {
-  id: string
-  type: 'revenue' | 'conversion' | 'trial' | 'user'
-  value: number
-  delta: number
-  timestamp: Date
-  trend: 'up' | 'down' | 'stable'
+  id: string;
+  type: 'revenue' | 'conversion' | 'trial' | 'user';
+  value: number;
+  delta: number;
+  timestamp: Date;
+  trend: 'up' | 'down' | 'stable';
 }
 
 export interface MetricAlert {
-  id: string
-  metric: string
-  threshold: number
-  currentValue: number
-  severity: 'low' | 'medium' | 'high' | 'critical'
-  message: string
-  timestamp: Date
-  resolved: boolean
+  id: string;
+  metric: string;
+  threshold: number;
+  currentValue: number;
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  message: string;
+  timestamp: Date;
+  resolved: boolean;
 }
 
 // ============================================================================
@@ -153,32 +159,55 @@ export interface MetricAlert {
 // ============================================================================
 
 export interface AnalyticsQuery {
-  metrics: MetricCategory[]
-  period: MetricPeriod
-  startDate: Date
-  endDate: Date
-  filters?: Record<string, any>
-  groupBy?: string[]
-  aggregation?: 'sum' | 'avg' | 'count' | 'max' | 'min'
-}export interface AnalyticsResponse<T = any> {
-  data: T
+  metrics: MetricCategory[];
+  period: MetricPeriod;
+  startDate: Date;
+  endDate: Date;
+  filters?: Record<string, any>;
+  groupBy?: string[];
+  aggregation?: 'sum' | 'avg' | 'count' | 'max' | 'min';
+}
+export interface AnalyticsResponse<T = any> {
+  data: T;
   metadata: {
-    query: AnalyticsQuery
-    executionTime: number
-    cacheHit: boolean
-    dataFreshness: Date
-    totalRecords: number
-  }
+    query: AnalyticsQuery;
+    executionTime: number;
+    cacheHit: boolean;
+    dataFreshness: Date;
+    totalRecords: number;
+  };
 }
 
 // ============================================================================
 // ZOD VALIDATION SCHEMAS
 // ============================================================================
 
-export const MetricPeriodSchema = z.enum(['day', 'week', 'month', 'quarter', 'year'])
-export const MetricCategorySchema = z.enum(['revenue', 'conversion', 'engagement', 'retention', 'growth'])
-export const TrialStatusSchema = z.enum(['active', 'converted', 'expired', 'cancelled'])
-export const SubscriptionTierSchema = z.enum(['free', 'basic', 'professional', 'enterprise'])
+export const MetricPeriodSchema = z.enum([
+  'day',
+  'week',
+  'month',
+  'quarter',
+  'year',
+]);
+export const MetricCategorySchema = z.enum([
+  'revenue',
+  'conversion',
+  'engagement',
+  'retention',
+  'growth',
+]);
+export const TrialStatusSchema = z.enum([
+  'active',
+  'converted',
+  'expired',
+  'cancelled',
+]);
+export const SubscriptionTierSchema = z.enum([
+  'free',
+  'basic',
+  'professional',
+  'enterprise',
+]);
 
 export const AnalyticsQuerySchema = z.object({
   metrics: z.array(MetricCategorySchema),
@@ -187,12 +216,13 @@ export const AnalyticsQuerySchema = z.object({
   endDate: z.date(),
   filters: z.record(z.any()).optional(),
   groupBy: z.array(z.string()).optional(),
-  aggregation: z.enum(['sum', 'avg', 'count', 'max', 'min']).optional()
-})
+  aggregation: z.enum(['sum', 'avg', 'count', 'max', 'min']).optional(),
+});
 
 // Type utilities and inference helpers
-export type MetricType = RevenueMetric | ConversionMetric | TrialMetric
-export type AnalyticsQueryResult<T extends MetricCategory> = 
-  T extends 'revenue' ? RevenueAnalytics :
-  T extends 'conversion' ? ConversionAnalytics :
-  never
+export type MetricType = RevenueMetric | ConversionMetric | TrialMetric;
+export type AnalyticsQueryResult<T extends MetricCategory> = T extends 'revenue'
+  ? RevenueAnalytics
+  : T extends 'conversion'
+    ? ConversionAnalytics
+    : never;

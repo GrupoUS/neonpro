@@ -3,12 +3,12 @@
  * Automated bundle analysis and optimization recommendations
  */
 
-import { execFile, spawn } from 'child_process'
-import { promisify } from 'util'
-import { writeFileSync, readFileSync } from 'fs'
-import { join } from 'path'
+import { execFile } from 'node:child_process';
+import { readFileSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { promisify } from 'node:util';
 
-const execFileAsync = promisify(execFile)
+const execFileAsync = promisify(execFile);
 
 interface BundleStats {
   totalSize: number
@@ -89,8 +89,8 @@ function parseBuildOutput(output: string): any {
     const match = line.match(sizeRegex)
     if (match) {
       const [, name, size, gzipped] = match
-      const sizeKB = parseFloat(size)
-      const gzippedKB = parseFloat(gzipped)
+      const sizeKB = Number.parseFloat(size)
+      const gzippedKB = Number.parseFloat(gzipped)
       
       totalSize += sizeKB
       gzippedSize += gzippedKB
@@ -263,6 +263,6 @@ export async function runFullAnalysis(url?: string): Promise<void> {
 
 // CLI interface
 if (require.main === module) {
-  const url = process.argv[2]
-  runFullAnalysis(url)
+  const url = process.argv[2];
+  runFullAnalysis(url);
 }

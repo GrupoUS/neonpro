@@ -1,20 +1,20 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import EmailService from '@/app/lib/services/email-service';
 import { EmailMessageSchema } from '@/app/types/email';
-import { z } from 'zod';
+import { createClient } from '@/app/utils/supabase/server';
 
 export async function POST(request: NextRequest) {
   try {
     // Authentication check
     const supabase = await createClient();
-    const { data: { session }, error: authError } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+      error: authError,
+    } = await supabase.auth.getSession();
+
     if (authError || !session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Get user profile to verify clinic access
@@ -25,26 +25,23 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (!profile?.clinic_id) {
-      return NextResponse.json(
-        { error: 'Clinic not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Clinic not found' }, { status: 404 });
     }
 
     // Parse and validate request body
     const body = await request.json();
-    
+
     try {
       EmailMessageSchema.parse(body);
     } catch (validationError) {
       if (validationError instanceof z.ZodError) {
         return NextResponse.json(
-          { 
+          {
             error: 'Validation failed',
-            details: validationError.errors.map(err => ({
+            details: validationError.errors.map((err) => ({
               field: err.path.join('.'),
               message: err.message,
-            }))
+            })),
           },
           { status: 400 }
         );
@@ -71,24 +68,25 @@ export async function POST(request: NextRequest) {
     }
 
     // Initialize providers
-    await emailService.initializeProviders(providerConfigs.map(config => ({
-      provider: config.provider,
-      name: config.name,
-      settings: config.settings,
-      isActive: config.is_active,
-      priority: config.priority,
-      dailyLimit: config.daily_limit,
-      monthlyLimit: config.monthly_limit,
-      rateLimit: config.rate_limit,
-    })));
+    await emailService.initializeProviders(
+      providerConfigs.map((config) => ({
+        provider: config.provider,
+        name: config.name,
+        settings: config.settings,
+        isActive: config.is_active,
+        priority: config.priority,
+        dailyLimit: config.daily_limit,
+        monthlyLimit: config.monthly_limit,
+        rateLimit: config.rate_limit,
+      }))
+    );
 
     // Send email
     const result = await emailService.sendEmail(body);
 
     // Log the send attempt
-    await supabase
-      .from('email_logs')
-      .insert([{
+    await supabase.from('email_logs').insert([
+      {
         id: crypto.randomUUID(),
         clinic_id: profile.clinic_id,
         user_id: session.user.id,
@@ -105,16 +103,16 @@ export async function POST(request: NextRequest) {
           scheduled_at: body.scheduledAt,
         },
         created_at: new Date().toISOString(),
-      }]);
+      },
+    ]);
 
     return NextResponse.json(result);
-
   } catch (error) {
     console.error('Email send error:', error);
     return NextResponse.json(
-      { 
+      {
         success: false,
-        error: error instanceof Error ? error.message : 'Internal server error' 
+        error: error instanceof Error ? error.message : 'Internal server error',
       },
       { status: 500 }
     );
@@ -125,13 +123,13 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { session }, error: authError } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+      error: authError,
+    } = await supabase.auth.getSession();
+
     if (authError || !session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { data: profile } = await supabase
@@ -141,10 +139,7 @@ export async function GET(request: NextRequest) {
       .single();
 
     if (!profile?.clinic_id) {
-      return NextResponse.json(
-        { error: 'Clinic not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Clinic not found' }, { status: 404 });
     }
 
     const url = new URL(request.url);
@@ -167,10 +162,7 @@ export async function GET(request: NextRequest) {
 
     if (error) {
       if (error.code === 'PGRST116') {
-        return NextResponse.json(
-          { error: 'Email not found' },
-          { status: 404 }
-        );
+        return NextResponse.json({ error: 'Email not found' }, { status: 404 });
       }
       throw error;
     }
@@ -187,7 +179,6 @@ export async function GET(request: NextRequest) {
       log: emailLog,
       events: events || [],
     });
-
   } catch (error) {
     console.error('Email status check error:', error);
     return NextResponse.json(

@@ -1,55 +1,63 @@
-'use client'
+'use client';
 
-import React, { createContext, useContext, useEffect } from 'react'
-import { toast } from 'sonner'
-import { useNotifications } from '@/hooks/use-notifications'
-import type { Notification, NotificationPreferences } from '@/hooks/use-notifications'
+import type React from 'react';
+import { createContext, useContext, useEffect } from 'react';
+import { toast } from 'sonner';
+import type {
+  Notification,
+  NotificationPreferences,
+} from '@/hooks/use-notifications';
+import { useNotifications } from '@/hooks/use-notifications';
 
 interface NotificationContextValue {
   // State from hook
-  notifications: Notification[]
-  unreadCount: number
-  preferences: NotificationPreferences | null
-  isLoading: boolean
-  error: string | null
+  notifications: Notification[];
+  unreadCount: number;
+  preferences: NotificationPreferences | null;
+  isLoading: boolean;
+  error: string | null;
 
   // Actions from hook
-  markAsRead: (notificationId: string) => Promise<void>
-  markAllAsRead: () => Promise<void>
-  deleteNotification: (notificationId: string) => Promise<void>
-  updatePreferences: (preferences: Partial<NotificationPreferences>) => Promise<void>
-  refreshNotifications: () => Promise<void>
+  markAsRead: (notificationId: string) => Promise<void>;
+  markAllAsRead: () => Promise<void>;
+  deleteNotification: (notificationId: string) => Promise<void>;
+  updatePreferences: (
+    preferences: Partial<NotificationPreferences>
+  ) => Promise<void>;
+  refreshNotifications: () => Promise<void>;
 
   // Utilities from hook
-  getNotificationsByType: (type: Notification['type']) => Notification[]
-  getUnreadNotifications: () => Notification[]
-  hasUnreadNotifications: boolean
+  getNotificationsByType: (type: Notification['type']) => Notification[];
+  getUnreadNotifications: () => Notification[];
+  hasUnreadNotifications: boolean;
 
   // Global actions
-  showNotificationToast: (notification: Notification) => void
-  requestPermission: () => Promise<NotificationPermission>
-  sendPushNotification: (title: string, options?: NotificationOptions) => void
+  showNotificationToast: (notification: Notification) => void;
+  requestPermission: () => Promise<NotificationPermission>;
+  sendPushNotification: (title: string, options?: NotificationOptions) => void;
 }
 
-const NotificationContext = createContext<NotificationContextValue | undefined>(undefined)
+const NotificationContext = createContext<NotificationContextValue | undefined>(
+  undefined
+);
 
 interface NotificationProviderProps {
-  children: React.ReactNode
-  userId: string
-  disabled?: boolean
+  children: React.ReactNode;
+  userId: string;
+  disabled?: boolean;
 }
 
-export function NotificationProvider({ 
-  children, 
-  userId, 
-  disabled = false 
+export function NotificationProvider({
+  children,
+  userId,
+  disabled = false,
 }: NotificationProviderProps) {
   const notificationHook = useNotifications({
     userId,
     autoMarkAsRead: false,
     limit: 100,
-    realtime: !disabled
-  })
+    realtime: !disabled,
+  });
 
   const {
     notifications,
@@ -64,101 +72,106 @@ export function NotificationProvider({
     refreshNotifications,
     getNotificationsByType,
     getUnreadNotifications,
-    hasUnreadNotifications
-  } = notificationHook
+    hasUnreadNotifications,
+  } = notificationHook;
 
   // Show toast notification
   const showNotificationToast = (notification: Notification) => {
     const toastProps = {
       id: notification.id,
-      duration: notification.priority === 'high' ? 10000 : 5000,
-      action: notification.action_url ? {
-        label: 'Ver',
-        onClick: () => window.location.href = notification.action_url!
-      } : undefined
-    }
+      duration: notification.priority === 'high' ? 10_000 : 5000,
+      action: notification.action_url
+        ? {
+            label: 'Ver',
+            onClick: () => (window.location.href = notification.action_url!),
+          }
+        : undefined,
+    };
 
     switch (notification.type) {
       case 'appointment_confirmed':
         toast.success(notification.title, {
           description: notification.message,
-          ...toastProps
-        })
-        break
-      
+          ...toastProps,
+        });
+        break;
+
       case 'appointment_cancelled':
         toast.error(notification.title, {
           description: notification.message,
-          ...toastProps
-        })
-        break
-      
+          ...toastProps,
+        });
+        break;
+
       case 'appointment_reminder':
         toast.info(notification.title, {
           description: notification.message,
-          ...toastProps
-        })
-        break
-      
+          ...toastProps,
+        });
+        break;
+
       case 'appointment_rescheduled':
         toast.info(notification.title, {
           description: notification.message,
-          ...toastProps
-        })
-        break
-      
+          ...toastProps,
+        });
+        break;
+
       case 'system':
         if (notification.priority === 'high') {
           toast.error(notification.title, {
             description: notification.message,
-            ...toastProps
-          })
+            ...toastProps,
+          });
         } else {
           toast.info(notification.title, {
             description: notification.message,
-            ...toastProps
-          })
+            ...toastProps,
+          });
         }
-        break
-      
+        break;
+
       default:
         toast(notification.title, {
           description: notification.message,
-          ...toastProps
-        })
+          ...toastProps,
+        });
     }
-  }
+  };
 
   // Request notification permission
   const requestPermission = async (): Promise<NotificationPermission> => {
     if (!('Notification' in window)) {
-      console.warn('This browser does not support notifications')
-      return 'denied'
+      console.warn('This browser does not support notifications');
+      return 'denied';
     }
 
     if (Notification.permission === 'granted') {
-      return 'granted'
+      return 'granted';
     }
 
     if (Notification.permission !== 'denied') {
-      const permission = await Notification.requestPermission()
-      
+      const permission = await Notification.requestPermission();
+
       if (permission === 'granted') {
         toast.success('Notificações ativadas!', {
-          description: 'Você receberá notificações sobre seus agendamentos.'
-        })
+          description: 'Você receberá notificações sobre seus agendamentos.',
+        });
       }
-      
-      return permission
+
+      return permission;
     }
 
-    return Notification.permission
-  }
+    return Notification.permission;
+  };
 
   // Send push notification
-  const sendPushNotification = (title: string, options: NotificationOptions = {}) => {
+  const sendPushNotification = (
+    title: string,
+    options: NotificationOptions = {}
+  ) => {
     if (!('Notification' in window) || Notification.permission !== 'granted') {
-      return
+      return;
     }
 
     const defaultOptions: NotificationOptions = {
@@ -166,71 +179,85 @@ export function NotificationProvider({
       badge: '/icon-192x192.png',
       tag: 'neonpro-notification',
       requireInteraction: false,
-      ...options
-    }
+      ...options,
+    };
 
     try {
-      new Notification(title, defaultOptions)
+      new Notification(title, defaultOptions);
     } catch (error) {
-      console.error('Error sending push notification:', error)
+      console.error('Error sending push notification:', error);
     }
-  }
+  };
 
   // Handle new notifications with toast
   useEffect(() => {
     if (!disabled && notifications.length > 0) {
-      const latestNotification = notifications[0]
-      const isNewNotification = !latestNotification.read_at && 
-        new Date(latestNotification.created_at).getTime() > Date.now() - 5000 // Created in last 5 seconds
+      const latestNotification = notifications[0];
+      const isNewNotification =
+        !latestNotification.read_at &&
+        new Date(latestNotification.created_at).getTime() > Date.now() - 5000; // Created in last 5 seconds
 
       if (isNewNotification) {
         // Show toast notification
         if (preferences?.push_enabled !== false) {
-          showNotificationToast(latestNotification)
+          showNotificationToast(latestNotification);
         }
 
         // Send browser push notification for high priority
-        if (latestNotification.priority === 'high' && preferences?.push_enabled) {
+        if (
+          latestNotification.priority === 'high' &&
+          preferences?.push_enabled
+        ) {
           sendPushNotification(latestNotification.title, {
             body: latestNotification.message,
             tag: `notification-${latestNotification.id}`,
-            data: latestNotification.data
-          })
+            data: latestNotification.data,
+          });
         }
       }
     }
-  }, [notifications, preferences, disabled])
+  }, [
+    notifications,
+    preferences,
+    disabled,
+    sendPushNotification,
+    showNotificationToast,
+  ]);
 
   // Auto-request permission on mount if preferences allow
   useEffect(() => {
-    if (!disabled && preferences?.push_enabled && Notification.permission === 'default') {
+    if (
+      !disabled &&
+      preferences?.push_enabled &&
+      Notification.permission === 'default'
+    ) {
       // Don't auto-request immediately, wait for user interaction
       const timer = setTimeout(() => {
-        requestPermission()
-      }, 10000) // Wait 10 seconds
+        requestPermission();
+      }, 10_000); // Wait 10 seconds
 
-      return () => clearTimeout(timer)
+      return () => clearTimeout(timer);
     }
-  }, [preferences, disabled])
+  }, [preferences, disabled, requestPermission]);
 
   // Handle browser focus to mark notifications as read
   useEffect(() => {
     const handleFocus = () => {
       if (hasUnreadNotifications && preferences?.push_enabled) {
         // Auto-mark recent notifications as read when user focuses the app
-        const recentNotifications = getUnreadNotifications().filter(notif => 
-          new Date(notif.created_at).getTime() > Date.now() - 30000 // Last 30 seconds
-        )
-        
-        recentNotifications.forEach(notif => {
-          setTimeout(() => markAsRead(notif.id), 2000)
-        })
-      }
-    }
+        const recentNotifications = getUnreadNotifications().filter(
+          (notif) => new Date(notif.created_at).getTime() > Date.now() - 30_000 // Last 30 seconds
+        );
 
-    window.addEventListener('focus', handleFocus)
-    return () => window.removeEventListener('focus', handleFocus)
-  }, [hasUnreadNotifications, getUnreadNotifications, markAsRead, preferences])
+        recentNotifications.forEach((notif) => {
+          setTimeout(() => markAsRead(notif.id), 2000);
+        });
+      }
+    };
+
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
+  }, [hasUnreadNotifications, getUnreadNotifications, markAsRead, preferences]);
 
   const value: NotificationContextValue = {
     // State from hook
@@ -255,48 +282,54 @@ export function NotificationProvider({
     // Global actions
     showNotificationToast,
     requestPermission,
-    sendPushNotification
-  }
+    sendPushNotification,
+  };
 
   return (
     <NotificationContext.Provider value={value}>
       {children}
     </NotificationContext.Provider>
-  )
+  );
 }
 
 export function useNotificationContext(): NotificationContextValue {
-  const context = useContext(NotificationContext)
-  
+  const context = useContext(NotificationContext);
+
   if (context === undefined) {
-    throw new Error('useNotificationContext must be used within a NotificationProvider')
+    throw new Error(
+      'useNotificationContext must be used within a NotificationProvider'
+    );
   }
-  
-  return context
+
+  return context;
 }
 
 // Utility hook for toast notifications only (lightweight)
 export function useNotificationToast() {
-  const showSuccess = (title: string, description?: string, action?: { label: string; onClick: () => void }) => {
-    toast.success(title, { description, action })
-  }
+  const showSuccess = (
+    title: string,
+    description?: string,
+    action?: { label: string; onClick: () => void }
+  ) => {
+    toast.success(title, { description, action });
+  };
 
   const showError = (title: string, description?: string) => {
-    toast.error(title, { description })
-  }
+    toast.error(title, { description });
+  };
 
   const showInfo = (title: string, description?: string) => {
-    toast.info(title, { description })
-  }
+    toast.info(title, { description });
+  };
 
   const showWarning = (title: string, description?: string) => {
-    toast.warning(title, { description })
-  }
+    toast.warning(title, { description });
+  };
 
   return {
     showSuccess,
     showError,
     showInfo,
-    showWarning
-  }
+    showWarning,
+  };
 }

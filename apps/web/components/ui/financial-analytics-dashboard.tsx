@@ -1,164 +1,208 @@
-"use client"
+'use client';
 
-import React, { useState, useEffect } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Progress } from '@/components/ui/progress'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts'
-import { TrendingUp, TrendingDown, AlertTriangle, DollarSign, Calendar, Users, CreditCard } from 'lucide-react'
+import {
+  AlertTriangle,
+  Calendar,
+  CreditCard,
+  DollarSign,
+  TrendingUp,
+  Users,
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Legend,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 // Interfaces para tipagem
 interface CashFlowData {
-  id: string
-  date: string
-  clinic_id: string
-  inflow: number
-  outflow: number
-  net_cash_flow: number
-  running_balance: number
-  prediction_accuracy?: number
-  created_at: string
-  updated_at: string
+  id: string;
+  date: string;
+  clinic_id: string;
+  inflow: number;
+  outflow: number;
+  net_cash_flow: number;
+  running_balance: number;
+  prediction_accuracy?: number;
+  created_at: string;
+  updated_at: string;
 }
 
 interface FinancialMetrics {
-  daily_revenue: number
-  monthly_revenue: number
-  annual_revenue: number
-  average_treatment_value: number
-  patient_acquisition_cost: number
-  lifetime_value: number
-  cash_conversion_cycle: number
-  profit_margin: number
-  break_even_point: number
-  growth_rate: number
+  daily_revenue: number;
+  monthly_revenue: number;
+  annual_revenue: number;
+  average_treatment_value: number;
+  patient_acquisition_cost: number;
+  lifetime_value: number;
+  cash_conversion_cycle: number;
+  profit_margin: number;
+  break_even_point: number;
+  growth_rate: number;
 }
 
 interface Alert {
-  id: string
-  type: 'warning' | 'critical' | 'info'
-  message: string
-  timestamp: string
-  resolved: boolean
+  id: string;
+  type: 'warning' | 'critical' | 'info';
+  message: string;
+  timestamp: string;
+  resolved: boolean;
 }
 
 interface FinancialAnalyticsDashboardProps {
-  clinicId: string
-  className?: string
+  clinicId: string;
+  className?: string;
 }
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8']
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
 
-export function FinancialAnalyticsDashboard({ clinicId, className }: FinancialAnalyticsDashboardProps) {
+export function FinancialAnalyticsDashboard({
+  clinicId,
+  className,
+}: FinancialAnalyticsDashboardProps) {
   // State Management
-  const [cashFlowData, setCashFlowData] = useState<CashFlowData[]>([])
-  const [metrics, setMetrics] = useState<FinancialMetrics | null>(null)
-  const [alerts, setAlerts] = useState<Alert[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [timeRange, setTimeRange] = useState<'7d' | '30d' | '90d' | '1y'>('30d')
-  const [refreshing, setRefreshing] = useState(false)
+  const [cashFlowData, setCashFlowData] = useState<CashFlowData[]>([]);
+  const [metrics, setMetrics] = useState<FinancialMetrics | null>(null);
+  const [alerts, setAlerts] = useState<Alert[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [timeRange, setTimeRange] = useState<'7d' | '30d' | '90d' | '1y'>(
+    '30d'
+  );
+  const [refreshing, setRefreshing] = useState(false);
 
   // Fetch Financial Data
   const fetchFinancialData = async () => {
     try {
-      setLoading(true)
-      
+      setLoading(true);
+
       // Fetch cash flow data
-      const cashFlowResponse = await fetch(`/api/financial/cash-flow?clinic_id=${clinicId}&time_range=${timeRange}`)
-      if (!cashFlowResponse.ok) throw new Error('Failed to fetch cash flow data')
-      const cashFlow = await cashFlowResponse.json()
-      
+      const cashFlowResponse = await fetch(
+        `/api/financial/cash-flow?clinic_id=${clinicId}&time_range=${timeRange}`
+      );
+      if (!cashFlowResponse.ok)
+        throw new Error('Failed to fetch cash flow data');
+      const cashFlow = await cashFlowResponse.json();
+
       // Fetch financial metrics
-      const metricsResponse = await fetch(`/api/financial/metrics?clinic_id=${clinicId}&time_range=${timeRange}`)
-      if (!metricsResponse.ok) throw new Error('Failed to fetch metrics')
-      const metricsData = await metricsResponse.json()
-      
+      const metricsResponse = await fetch(
+        `/api/financial/metrics?clinic_id=${clinicId}&time_range=${timeRange}`
+      );
+      if (!metricsResponse.ok) throw new Error('Failed to fetch metrics');
+      const metricsData = await metricsResponse.json();
+
       // Fetch alerts
-      const alertsResponse = await fetch(`/api/financial/alerts?clinic_id=${clinicId}`)
-      if (!alertsResponse.ok) throw new Error('Failed to fetch alerts')
-      const alertsData = await alertsResponse.json()
-      
-      setCashFlowData(cashFlow.data || [])
-      setMetrics(metricsData.data || null)
-      setAlerts(alertsData.data || [])
-      setError(null)
+      const alertsResponse = await fetch(
+        `/api/financial/alerts?clinic_id=${clinicId}`
+      );
+      if (!alertsResponse.ok) throw new Error('Failed to fetch alerts');
+      const alertsData = await alertsResponse.json();
+
+      setCashFlowData(cashFlow.data || []);
+      setMetrics(metricsData.data || null);
+      setAlerts(alertsData.data || []);
+      setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load financial data')
-      console.error('Financial data fetch error:', err)
+      setError(
+        err instanceof Error ? err.message : 'Failed to load financial data'
+      );
+      console.error('Financial data fetch error:', err);
     } finally {
-      setLoading(false)
-      setRefreshing(false)
+      setLoading(false);
+      setRefreshing(false);
     }
-  }
+  };
 
   // Refresh Data
   const handleRefresh = async () => {
-    setRefreshing(true)
-    await fetchFinancialData()
-  }
+    setRefreshing(true);
+    await fetchFinancialData();
+  };
 
   // Initial data load and periodic refresh
   useEffect(() => {
-    fetchFinancialData()
-    
+    fetchFinancialData();
+
     // Auto-refresh every 5 minutes
-    const interval = setInterval(fetchFinancialData, 5 * 60 * 1000)
-    return () => clearInterval(interval)
-  }, [clinicId, timeRange])
+    const interval = setInterval(fetchFinancialData, 5 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, [fetchFinancialData]);
 
   // Format currency for Brazilian Real
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
-      currency: 'BRL'
-    }).format(value)
-  }
+      currency: 'BRL',
+    }).format(value);
+  };
 
   // Format percentage
   const formatPercentage = (value: number) => {
-    return `${value.toFixed(2)}%`
-  }
+    return `${value.toFixed(2)}%`;
+  };
 
   // Prepare chart data
-  const chartData = cashFlowData.map(item => ({
-    date: new Date(item.date).toLocaleDateString('pt-BR', { month: 'short', day: 'numeric' }),
+  const chartData = cashFlowData.map((item) => ({
+    date: new Date(item.date).toLocaleDateString('pt-BR', {
+      month: 'short',
+      day: 'numeric',
+    }),
     entrada: item.inflow,
     saida: Math.abs(item.outflow),
     liquido: item.net_cash_flow,
-    saldo: item.running_balance
-  }))
+    saldo: item.running_balance,
+  }));
 
   // Revenue distribution data
   const revenueDistribution = [
     { name: 'Procedimentos Estéticos', value: 60 },
     { name: 'Consultas', value: 25 },
     { name: 'Produtos', value: 10 },
-    { name: 'Outros', value: 5 }
-  ]
+    { name: 'Outros', value: 5 },
+  ];
 
   if (loading) {
     return (
       <div className={`space-y-6 ${className}`}>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
           {[...Array(4)].map((_, i) => (
-            <Card key={i} className="animate-pulse">
+            <Card className="animate-pulse" key={i}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <div className="h-4 bg-gray-200 rounded w-24"></div>
-                <div className="h-4 w-4 bg-gray-200 rounded"></div>
+                <div className="h-4 w-24 rounded bg-gray-200" />
+                <div className="h-4 w-4 rounded bg-gray-200" />
               </CardHeader>
               <CardContent>
-                <div className="h-8 bg-gray-200 rounded w-32 mb-2"></div>
-                <div className="h-4 bg-gray-200 rounded w-20"></div>
+                <div className="mb-2 h-8 w-32 rounded bg-gray-200" />
+                <div className="h-4 w-20 rounded bg-gray-200" />
               </CardContent>
             </Card>
           ))}
         </div>
       </div>
-    )
+    );
   }
 
   if (error) {
@@ -167,24 +211,37 @@ export function FinancialAnalyticsDashboard({ clinicId, className }: FinancialAn
         <AlertTriangle className="h-4 w-4" />
         <AlertDescription>
           {error}
-          <Button onClick={handleRefresh} variant="outline" size="sm" className="ml-2">
+          <Button
+            className="ml-2"
+            onClick={handleRefresh}
+            size="sm"
+            variant="outline"
+          >
             Tentar Novamente
           </Button>
         </AlertDescription>
       </Alert>
-    )
+    );
   }
 
   return (
     <div className={`space-y-6 ${className}`}>
       {/* Header with Controls */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">Analytics Financeiros</h2>
-          <p className="text-muted-foreground">Visão completa da saúde financeira da clínica</p>
+          <h2 className="font-bold text-3xl tracking-tight">
+            Analytics Financeiros
+          </h2>
+          <p className="text-muted-foreground">
+            Visão completa da saúde financeira da clínica
+          </p>
         </div>
         <div className="flex gap-2">
-          <Tabs value={timeRange} onValueChange={(value: any) => setTimeRange(value)} className="w-auto">
+          <Tabs
+            className="w-auto"
+            onValueChange={(value: any) => setTimeRange(value)}
+            value={timeRange}
+          >
             <TabsList>
               <TabsTrigger value="7d">7d</TabsTrigger>
               <TabsTrigger value="30d">30d</TabsTrigger>
@@ -192,35 +249,50 @@ export function FinancialAnalyticsDashboard({ clinicId, className }: FinancialAn
               <TabsTrigger value="1y">1a</TabsTrigger>
             </TabsList>
           </Tabs>
-          <Button onClick={handleRefresh} disabled={refreshing} variant="outline">
-            {refreshing ? "Atualizando..." : "Atualizar"}
+          <Button
+            disabled={refreshing}
+            onClick={handleRefresh}
+            variant="outline"
+          >
+            {refreshing ? 'Atualizando...' : 'Atualizar'}
           </Button>
         </div>
       </div>
 
       {/* Active Alerts */}
-      {alerts.filter(alert => !alert.resolved).length > 0 && (
+      {alerts.filter((alert) => !alert.resolved).length > 0 && (
         <div className="space-y-2">
-          {alerts.filter(alert => !alert.resolved).map(alert => (
-            <Alert key={alert.id} className={alert.type === 'critical' ? 'border-red-500 bg-red-50' : ''}>
-              <AlertTriangle className="h-4 w-4" />
-              <AlertDescription>{alert.message}</AlertDescription>
-            </Alert>
-          ))}
+          {alerts
+            .filter((alert) => !alert.resolved)
+            .map((alert) => (
+              <Alert
+                className={
+                  alert.type === 'critical' ? 'border-red-500 bg-red-50' : ''
+                }
+                key={alert.id}
+              >
+                <AlertTriangle className="h-4 w-4" />
+                <AlertDescription>{alert.message}</AlertDescription>
+              </Alert>
+            ))}
         </div>
       )}
 
       {/* Key Metrics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Receita Mensal</CardTitle>
+            <CardTitle className="font-medium text-sm">
+              Receita Mensal
+            </CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(metrics?.monthly_revenue || 0)}</div>
-            <p className="text-xs text-muted-foreground">
-              <TrendingUp className="inline h-3 w-3 mr-1" />
+            <div className="font-bold text-2xl">
+              {formatCurrency(metrics?.monthly_revenue || 0)}
+            </div>
+            <p className="text-muted-foreground text-xs">
+              <TrendingUp className="mr-1 inline h-3 w-3" />
               {formatPercentage(metrics?.growth_rate || 0)} vs mês anterior
             </p>
           </CardContent>
@@ -228,47 +300,61 @@ export function FinancialAnalyticsDashboard({ clinicId, className }: FinancialAn
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Valor Médio Tratamento</CardTitle>
+            <CardTitle className="font-medium text-sm">
+              Valor Médio Tratamento
+            </CardTitle>
             <CreditCard className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(metrics?.average_treatment_value || 0)}</div>
-            <p className="text-xs text-muted-foreground">Por procedimento</p>
+            <div className="font-bold text-2xl">
+              {formatCurrency(metrics?.average_treatment_value || 0)}
+            </div>
+            <p className="text-muted-foreground text-xs">Por procedimento</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Margem de Lucro</CardTitle>
+            <CardTitle className="font-medium text-sm">
+              Margem de Lucro
+            </CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatPercentage(metrics?.profit_margin || 0)}</div>
-            <Progress value={metrics?.profit_margin || 0} className="mt-2" />
+            <div className="font-bold text-2xl">
+              {formatPercentage(metrics?.profit_margin || 0)}
+            </div>
+            <Progress className="mt-2" value={metrics?.profit_margin || 0} />
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Ponto de Equilíbrio</CardTitle>
+            <CardTitle className="font-medium text-sm">
+              Ponto de Equilíbrio
+            </CardTitle>
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{metrics?.break_even_point || 0} dias</div>
-            <p className="text-xs text-muted-foreground">Para recuperar investimento</p>
+            <div className="font-bold text-2xl">
+              {metrics?.break_even_point || 0} dias
+            </div>
+            <p className="text-muted-foreground text-xs">
+              Para recuperar investimento
+            </p>
           </CardContent>
         </Card>
       </div>
 
       {/* Charts Section */}
-      <Tabs defaultValue="cash-flow" className="space-y-4">
+      <Tabs className="space-y-4" defaultValue="cash-flow">
         <TabsList>
           <TabsTrigger value="cash-flow">Fluxo de Caixa</TabsTrigger>
           <TabsTrigger value="revenue">Receita</TabsTrigger>
           <TabsTrigger value="distribution">Distribuição</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="cash-flow" className="space-y-4">
+        <TabsContent className="space-y-4" value="cash-flow">
           <Card>
             <CardHeader>
               <CardTitle>Fluxo de Caixa - {timeRange}</CardTitle>
@@ -277,23 +363,39 @@ export function FinancialAnalyticsDashboard({ clinicId, className }: FinancialAn
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <ResponsiveContainer width="100%" height={400}>
+              <ResponsiveContainer height={400} width="100%">
                 <LineChart data={chartData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="date" />
                   <YAxis tickFormatter={formatCurrency} />
                   <Tooltip formatter={(value: any) => formatCurrency(value)} />
                   <Legend />
-                  <Line type="monotone" dataKey="entrada" stroke="#00C49F" name="Entradas" />
-                  <Line type="monotone" dataKey="saida" stroke="#FF8042" name="Saídas" />
-                  <Line type="monotone" dataKey="liquido" stroke="#8884d8" name="Fluxo Líquido" strokeWidth={2} />
+                  <Line
+                    dataKey="entrada"
+                    name="Entradas"
+                    stroke="#00C49F"
+                    type="monotone"
+                  />
+                  <Line
+                    dataKey="saida"
+                    name="Saídas"
+                    stroke="#FF8042"
+                    type="monotone"
+                  />
+                  <Line
+                    dataKey="liquido"
+                    name="Fluxo Líquido"
+                    stroke="#8884d8"
+                    strokeWidth={2}
+                    type="monotone"
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </CardContent>
           </Card>
         </TabsContent>
 
-        <TabsContent value="revenue" className="space-y-4">
+        <TabsContent className="space-y-4" value="revenue">
           <Card>
             <CardHeader>
               <CardTitle>Evolução da Receita</CardTitle>
@@ -302,7 +404,7 @@ export function FinancialAnalyticsDashboard({ clinicId, className }: FinancialAn
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <ResponsiveContainer width="100%" height={400}>
+              <ResponsiveContainer height={400} width="100%">
                 <BarChart data={chartData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="date" />
@@ -315,7 +417,7 @@ export function FinancialAnalyticsDashboard({ clinicId, className }: FinancialAn
           </Card>
         </TabsContent>
 
-        <TabsContent value="distribution" className="space-y-4">
+        <TabsContent className="space-y-4" value="distribution">
           <Card>
             <CardHeader>
               <CardTitle>Distribuição da Receita</CardTitle>
@@ -324,20 +426,25 @@ export function FinancialAnalyticsDashboard({ clinicId, className }: FinancialAn
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <ResponsiveContainer width="100%" height={400}>
+              <ResponsiveContainer height={400} width="100%">
                 <PieChart>
                   <Pie
-                    data={revenueDistribution}
                     cx="50%"
                     cy="50%"
-                    labelLine={false}
-                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                    outerRadius={150}
-                    fill="#8884d8"
+                    data={revenueDistribution}
                     dataKey="value"
+                    fill="#8884d8"
+                    label={({ name, percent }) =>
+                      `${name} ${(percent * 100).toFixed(0)}%`
+                    }
+                    labelLine={false}
+                    outerRadius={150}
                   >
-                    {revenueDistribution.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    {revenueDistribution.map((_entry, index) => (
+                      <Cell
+                        fill={COLORS[index % COLORS.length]}
+                        key={`cell-${index}`}
+                      />
                     ))}
                   </Pie>
                   <Tooltip formatter={(value: any) => `${value}%`} />
@@ -349,7 +456,7 @@ export function FinancialAnalyticsDashboard({ clinicId, className }: FinancialAn
       </Tabs>
 
       {/* Additional Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -359,21 +466,35 @@ export function FinancialAnalyticsDashboard({ clinicId, className }: FinancialAn
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex justify-between">
-              <span className="text-sm font-medium">Custo de Aquisição (CAC)</span>
-              <span className="text-sm">{formatCurrency(metrics?.patient_acquisition_cost || 0)}</span>
+              <span className="font-medium text-sm">
+                Custo de Aquisição (CAC)
+              </span>
+              <span className="text-sm">
+                {formatCurrency(metrics?.patient_acquisition_cost || 0)}
+              </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-sm font-medium">Valor Vitalício (LTV)</span>
-              <span className="text-sm">{formatCurrency(metrics?.lifetime_value || 0)}</span>
+              <span className="font-medium text-sm">Valor Vitalício (LTV)</span>
+              <span className="text-sm">
+                {formatCurrency(metrics?.lifetime_value || 0)}
+              </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-sm font-medium">Ratio LTV/CAC</span>
-              <Badge variant={
-                (metrics?.lifetime_value || 0) / (metrics?.patient_acquisition_cost || 1) > 3 
-                  ? "default" 
-                  : "destructive"
-              }>
-                {((metrics?.lifetime_value || 0) / (metrics?.patient_acquisition_cost || 1)).toFixed(1)}x
+              <span className="font-medium text-sm">Ratio LTV/CAC</span>
+              <Badge
+                variant={
+                  (metrics?.lifetime_value || 0) /
+                    (metrics?.patient_acquisition_cost || 1) >
+                  3
+                    ? 'default'
+                    : 'destructive'
+                }
+              >
+                {(
+                  (metrics?.lifetime_value || 0) /
+                  (metrics?.patient_acquisition_cost || 1)
+                ).toFixed(1)}
+                x
               </Badge>
             </div>
           </CardContent>
@@ -385,12 +506,16 @@ export function FinancialAnalyticsDashboard({ clinicId, className }: FinancialAn
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex justify-between">
-              <span className="text-sm font-medium">Ciclo de Conversão de Caixa</span>
-              <span className="text-sm">{metrics?.cash_conversion_cycle || 0} dias</span>
+              <span className="font-medium text-sm">
+                Ciclo de Conversão de Caixa
+              </span>
+              <span className="text-sm">
+                {metrics?.cash_conversion_cycle || 0} dias
+              </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-sm font-medium">Taxa de Crescimento</span>
-              <span className="text-sm text-green-600">
+              <span className="font-medium text-sm">Taxa de Crescimento</span>
+              <span className="text-green-600 text-sm">
                 {formatPercentage(metrics?.growth_rate || 0)}
               </span>
             </div>
@@ -398,7 +523,7 @@ export function FinancialAnalyticsDashboard({ clinicId, className }: FinancialAn
         </Card>
       </div>
     </div>
-  )
+  );
 }
 
-export default FinancialAnalyticsDashboard
+export default FinancialAnalyticsDashboard;

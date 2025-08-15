@@ -1,7 +1,7 @@
 /**
  * Insights Panel Component
  * Epic 10 - Story 10.5: Vision Analytics Dashboard (Real-time Insights)
- * 
+ *
  * Displays AI-generated insights and recommendations including:
  * - Key performance insights and trends
  * - Automated recommendations for improvement
@@ -9,43 +9,42 @@
  * - Predictive insights and forecasting
  * - Clinical outcome analysis
  * - Business intelligence recommendations
- * 
+ *
  * BMAD METHOD + VOIDBEAST V6.0 ENHANCED - Quality ≥9.8/10
  */
 
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
-  TrendingUp,
-  TrendingDown,
-  Lightbulb,
-  AlertTriangle,
-  CheckCircle,
-  Target,
-  BarChart3,
-  Brain,
-  Star,
-  Clock,
-  Users,
   Activity,
   ArrowRight,
+  BarChart3,
+  Brain,
+  Clock,
   Eye,
+  Lightbulb,
+  Shield,
+  Target,
+  TrendingDown,
+  TrendingUp,
+  Users,
   Zap,
-  Shield
 } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 // Analytics Engine
-import {
-  type AnalyticsInsight,
-  type AnalyticsTimeframe,
-  AnalyticsUtils
-} from '@/lib/analytics';
+import type { AnalyticsInsight, AnalyticsTimeframe } from '@/lib/analytics';
 
 // Types
 interface InsightsPanelProps {
@@ -73,39 +72,41 @@ interface InsightCategory {
 export function InsightsPanel({
   insights,
   isLoading,
-  timeframe
+  timeframe,
 }: InsightsPanelProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [sortBy, setSortBy] = useState<'priority' | 'confidence' | 'impact' | 'timestamp'>('priority');
+  const [sortBy, setSortBy] = useState<
+    'priority' | 'confidence' | 'impact' | 'timestamp'
+  >('priority');
 
   /**
    * Process insights with additional metadata
    */
   const processedInsights = useMemo((): ProcessedInsight[] => {
-    return insights.map(insight => {
+    return insights.map((insight) => {
       // Determine category icon
       let categoryIcon: React.ReactNode;
       switch (insight.category) {
         case 'performance':
-          categoryIcon = <BarChart3 className="w-4 h-4" />;
+          categoryIcon = <BarChart3 className="h-4 w-4" />;
           break;
         case 'clinical':
-          categoryIcon = <Activity className="w-4 h-4" />;
+          categoryIcon = <Activity className="h-4 w-4" />;
           break;
         case 'business':
-          categoryIcon = <Target className="w-4 h-4" />;
+          categoryIcon = <Target className="h-4 w-4" />;
           break;
         case 'ai_model':
-          categoryIcon = <Brain className="w-4 h-4" />;
+          categoryIcon = <Brain className="h-4 w-4" />;
           break;
         case 'compliance':
-          categoryIcon = <Shield className="w-4 h-4" />;
+          categoryIcon = <Shield className="h-4 w-4" />;
           break;
         case 'user_experience':
-          categoryIcon = <Users className="w-4 h-4" />;
+          categoryIcon = <Users className="h-4 w-4" />;
           break;
         default:
-          categoryIcon = <Lightbulb className="w-4 h-4" />;
+          categoryIcon = <Lightbulb className="h-4 w-4" />;
       }
 
       // Determine priority color
@@ -128,11 +129,14 @@ export function InsightsPanel({
       }
 
       // Determine if actionable
-      const actionable = !!(insight.recommendations && insight.recommendations.length > 0);
+      const actionable = !!(
+        insight.recommendations && insight.recommendations.length > 0
+      );
 
       // Estimate impact based on confidence and business value
       let estimatedImpact: 'low' | 'medium' | 'high';
-      const impactScore = (insight.confidence / 100) * (insight.businessImpact?.efficiency || 50);
+      const impactScore =
+        (insight.confidence / 100) * (insight.businessImpact?.efficiency || 50);
       if (impactScore >= 70) {
         estimatedImpact = 'high';
       } else if (impactScore >= 40) {
@@ -146,7 +150,7 @@ export function InsightsPanel({
         categoryIcon,
         priorityColor,
         actionable,
-        estimatedImpact
+        estimatedImpact,
       };
     });
   }, [insights]);
@@ -156,53 +160,58 @@ export function InsightsPanel({
    */
   const insightCategories = useMemo((): InsightCategory[] => {
     const categories = new Map<string, ProcessedInsight[]>();
-    
-    processedInsights.forEach(insight => {
+
+    processedInsights.forEach((insight) => {
       const category = insight.category;
       if (!categories.has(category)) {
         categories.set(category, []);
       }
-      categories.get(category)!.push(insight);
+      categories.get(category)?.push(insight);
     });
 
     const categoryList: InsightCategory[] = [];
-    
+
     categories.forEach((insights, categoryId) => {
       let label: string;
       let icon: React.ReactNode;
-      
+
       switch (categoryId) {
         case 'performance':
           label = 'Performance';
-          icon = <BarChart3 className="w-4 h-4" />;
+          icon = <BarChart3 className="h-4 w-4" />;
           break;
         case 'clinical':
           label = 'Clinical';
-          icon = <Activity className="w-4 h-4" />;
+          icon = <Activity className="h-4 w-4" />;
           break;
         case 'business':
           label = 'Business';
-          icon = <Target className="w-4 h-4" />;
+          icon = <Target className="h-4 w-4" />;
           break;
         case 'ai_model':
           label = 'AI Models';
-          icon = <Brain className="w-4 h-4" />;
+          icon = <Brain className="h-4 w-4" />;
           break;
         case 'compliance':
           label = 'Compliance';
-          icon = <Shield className="w-4 h-4" />;
+          icon = <Shield className="h-4 w-4" />;
           break;
         case 'user_experience':
           label = 'User Experience';
-          icon = <Users className="w-4 h-4" />;
+          icon = <Users className="h-4 w-4" />;
           break;
         default:
           label = 'General';
-          icon = <Lightbulb className="w-4 h-4" />;
+          icon = <Lightbulb className="h-4 w-4" />;
       }
 
-      const averageConfidence = insights.reduce((sum, insight) => sum + insight.confidence, 0) / insights.length;
-      const totalImpact = insights.reduce((sum, insight) => sum + (insight.businessImpact?.efficiency || 0), 0);
+      const averageConfidence =
+        insights.reduce((sum, insight) => sum + insight.confidence, 0) /
+        insights.length;
+      const totalImpact = insights.reduce(
+        (sum, insight) => sum + (insight.businessImpact?.efficiency || 0),
+        0
+      );
 
       categoryList.push({
         id: categoryId,
@@ -210,7 +219,7 @@ export function InsightsPanel({
         icon,
         insights,
         averageConfidence,
-        totalImpact
+        totalImpact,
       });
     });
 
@@ -221,21 +230,30 @@ export function InsightsPanel({
    * Sort insights
    */
   const sortedInsights = useMemo(() => {
-    const insightsToSort = selectedCategory === 'all' 
-      ? processedInsights 
-      : processedInsights.filter(insight => insight.category === selectedCategory);
+    const insightsToSort =
+      selectedCategory === 'all'
+        ? processedInsights
+        : processedInsights.filter(
+            (insight) => insight.category === selectedCategory
+          );
 
     return insightsToSort.sort((a, b) => {
       switch (sortBy) {
-        case 'priority':
+        case 'priority': {
           const priorityOrder = { critical: 4, high: 3, medium: 2, low: 1 };
           return priorityOrder[b.priority] - priorityOrder[a.priority];
+        }
         case 'confidence':
           return b.confidence - a.confidence;
         case 'impact':
-          return (b.businessImpact?.efficiency || 0) - (a.businessImpact?.efficiency || 0);
+          return (
+            (b.businessImpact?.efficiency || 0) -
+            (a.businessImpact?.efficiency || 0)
+          );
         case 'timestamp':
-          return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
+          return (
+            new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+          );
         default:
           return 0;
       }
@@ -248,13 +266,13 @@ export function InsightsPanel({
   const getTrendIcon = (trend: 'improving' | 'declining' | 'stable') => {
     switch (trend) {
       case 'improving':
-        return <TrendingUp className="w-4 h-4 text-green-600" />;
+        return <TrendingUp className="h-4 w-4 text-green-600" />;
       case 'declining':
-        return <TrendingDown className="w-4 h-4 text-red-600" />;
+        return <TrendingDown className="h-4 w-4 text-red-600" />;
       case 'stable':
-        return <Activity className="w-4 h-4 text-blue-600" />;
+        return <Activity className="h-4 w-4 text-blue-600" />;
       default:
-        return <Activity className="w-4 h-4 text-gray-600" />;
+        return <Activity className="h-4 w-4 text-gray-600" />;
     }
   };
 
@@ -265,7 +283,7 @@ export function InsightsPanel({
     const colors = {
       low: 'bg-gray-100 text-gray-800',
       medium: 'bg-yellow-100 text-yellow-800',
-      high: 'bg-green-100 text-green-800'
+      high: 'bg-green-100 text-green-800',
     };
 
     return (
@@ -278,10 +296,10 @@ export function InsightsPanel({
   /**
    * Insight card component
    */
-  const InsightCard: React.FC<{ insight: ProcessedInsight; showCategory?: boolean }> = ({ 
-    insight, 
-    showCategory = true 
-  }) => (
+  const InsightCard: React.FC<{
+    insight: ProcessedInsight;
+    showCategory?: boolean;
+  }> = ({ insight, showCategory = true }) => (
     <Card className={`border-l-4 ${insight.priorityColor}`}>
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
@@ -291,7 +309,11 @@ export function InsightsPanel({
           </div>
           <div className="flex items-center gap-2">
             {getTrendIcon(insight.trend)}
-            <Badge variant={insight.priority === 'critical' ? 'destructive' : 'secondary'}>
+            <Badge
+              variant={
+                insight.priority === 'critical' ? 'destructive' : 'secondary'
+              }
+            >
               {insight.priority}
             </Badge>
           </div>
@@ -304,17 +326,22 @@ export function InsightsPanel({
         {/* Metrics */}
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <div className="text-sm text-gray-600">Confidence</div>
+            <div className="text-gray-600 text-sm">Confidence</div>
             <div className="flex items-center gap-2">
-              <Progress value={insight.confidence} className="flex-1" />
-              <span className="text-sm font-mono">{insight.confidence}%</span>
+              <Progress className="flex-1" value={insight.confidence} />
+              <span className="font-mono text-sm">{insight.confidence}%</span>
             </div>
           </div>
           <div>
-            <div className="text-sm text-gray-600">Business Impact</div>
+            <div className="text-gray-600 text-sm">Business Impact</div>
             <div className="flex items-center gap-2">
-              <Progress value={insight.businessImpact?.efficiency || 0} className="flex-1" />
-              <span className="text-sm font-mono">{insight.businessImpact?.efficiency || 0}%</span>
+              <Progress
+                className="flex-1"
+                value={insight.businessImpact?.efficiency || 0}
+              />
+              <span className="font-mono text-sm">
+                {insight.businessImpact?.efficiency || 0}%
+              </span>
             </div>
           </div>
         </div>
@@ -322,8 +349,8 @@ export function InsightsPanel({
         {/* Impact Badge */}
         <div className="flex items-center justify-between">
           {getImpactBadge(insight.estimatedImpact)}
-          <div className="text-xs text-gray-500">
-            <Clock className="w-3 h-3 inline mr-1" />
+          <div className="text-gray-500 text-xs">
+            <Clock className="mr-1 inline h-3 w-3" />
             {new Date(insight.timestamp).toLocaleDateString()}
           </div>
         </div>
@@ -331,10 +358,12 @@ export function InsightsPanel({
         {/* Data Points */}
         {insight.dataPoints && insight.dataPoints.length > 0 && (
           <div className="space-y-2">
-            <div className="text-sm font-medium text-gray-700">Key Data Points</div>
+            <div className="font-medium text-gray-700 text-sm">
+              Key Data Points
+            </div>
             <div className="grid grid-cols-2 gap-2 text-sm">
               {insight.dataPoints.slice(0, 4).map((point, index) => (
-                <div key={index} className="flex justify-between">
+                <div className="flex justify-between" key={index}>
                   <span className="text-gray-600">{point.label}:</span>
                   <span className="font-mono">{point.value}</span>
                 </div>
@@ -346,14 +375,17 @@ export function InsightsPanel({
         {/* Recommendations */}
         {insight.recommendations && insight.recommendations.length > 0 && (
           <div className="space-y-2">
-            <div className="text-sm font-medium text-gray-700 flex items-center gap-2">
-              <Lightbulb className="w-4 h-4 text-yellow-600" />
+            <div className="flex items-center gap-2 font-medium text-gray-700 text-sm">
+              <Lightbulb className="h-4 w-4 text-yellow-600" />
               Recommendations
             </div>
             <div className="space-y-1">
               {insight.recommendations.slice(0, 3).map((rec, index) => (
-                <div key={index} className="text-sm text-gray-600 flex items-start gap-2">
-                  <ArrowRight className="w-3 h-3 mt-0.5 text-blue-600" />
+                <div
+                  className="flex items-start gap-2 text-gray-600 text-sm"
+                  key={index}
+                >
+                  <ArrowRight className="mt-0.5 h-3 w-3 text-blue-600" />
                   <span>{rec}</span>
                 </div>
               ))}
@@ -363,8 +395,8 @@ export function InsightsPanel({
 
         {/* Action Button */}
         {insight.actionable && (
-          <Button size="sm" variant="outline" className="w-full">
-            <Zap className="w-4 h-4 mr-2" />
+          <Button className="w-full" size="sm" variant="outline">
+            <Zap className="mr-2 h-4 w-4" />
             Take Action
           </Button>
         )}
@@ -377,14 +409,14 @@ export function InsightsPanel({
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Eye className="w-5 h-5 text-blue-600" />
+            <Eye className="h-5 w-5 text-blue-600" />
             AI Insights
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="animate-pulse space-y-4">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="h-32 bg-gray-200 rounded"></div>
+              <div className="h-32 rounded bg-gray-200" key={i} />
             ))}
           </div>
         </CardContent>
@@ -397,16 +429,19 @@ export function InsightsPanel({
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Eye className="w-5 h-5 text-blue-600" />
+            <Eye className="h-5 w-5 text-blue-600" />
             AI Insights
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-center py-8">
-            <Brain className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">No Insights Available</h3>
+          <div className="py-8 text-center">
+            <Brain className="mx-auto mb-4 h-12 w-12 text-gray-400" />
+            <h3 className="mb-2 font-semibold text-gray-900 text-lg">
+              No Insights Available
+            </h3>
             <p className="text-gray-600">
-              AI insights will appear here as data is processed and patterns are identified.
+              AI insights will appear here as data is processed and patterns are
+              identified.
             </p>
           </div>
         </CardContent>
@@ -420,19 +455,20 @@ export function InsightsPanel({
         <div className="flex items-center justify-between">
           <div>
             <CardTitle className="flex items-center gap-2">
-              <Eye className="w-5 h-5 text-blue-600" />
+              <Eye className="h-5 w-5 text-blue-600" />
               AI Insights
             </CardTitle>
             <CardDescription>
-              {insights.length} insights generated from {timeframe} data analysis
+              {insights.length} insights generated from {timeframe} data
+              analysis
             </CardDescription>
           </div>
-          
+
           <div className="flex items-center gap-2">
             <select
-              value={sortBy}
+              className="rounded border px-2 py-1 text-sm"
               onChange={(e) => setSortBy(e.target.value as any)}
-              className="text-sm border rounded px-2 py-1"
+              value={sortBy}
             >
               <option value="priority">Sort by Priority</option>
               <option value="confidence">Sort by Confidence</option>
@@ -443,46 +479,64 @@ export function InsightsPanel({
         </div>
       </CardHeader>
       <CardContent>
-        <Tabs value={selectedCategory} onValueChange={setSelectedCategory}>
+        <Tabs onValueChange={setSelectedCategory} value={selectedCategory}>
           <TabsList className="grid w-full grid-cols-4 lg:grid-cols-7">
             <TabsTrigger value="all">All</TabsTrigger>
-            {insightCategories.map(category => (
-              <TabsTrigger key={category.id} value={category.id} className="flex items-center gap-1">
+            {insightCategories.map((category) => (
+              <TabsTrigger
+                className="flex items-center gap-1"
+                key={category.id}
+                value={category.id}
+              >
                 {category.icon}
                 <span className="hidden lg:inline">{category.label}</span>
-                <Badge variant="secondary" className="ml-1">
+                <Badge className="ml-1" variant="secondary">
                   {category.insights.length}
                 </Badge>
               </TabsTrigger>
             ))}
           </TabsList>
 
-          <TabsContent value={selectedCategory} className="space-y-4 mt-6">
+          <TabsContent className="mt-6 space-y-4" value={selectedCategory}>
             {/* Category Summary */}
             {selectedCategory !== 'all' && (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
                 {(() => {
-                  const category = insightCategories.find(cat => cat.id === selectedCategory);
+                  const category = insightCategories.find(
+                    (cat) => cat.id === selectedCategory
+                  );
                   if (!category) return null;
-                  
+
                   return (
                     <>
                       <Card>
                         <CardContent className="pt-6">
-                          <div className="text-2xl font-bold">{category.insights.length}</div>
-                          <p className="text-sm text-muted-foreground">Total Insights</p>
+                          <div className="font-bold text-2xl">
+                            {category.insights.length}
+                          </div>
+                          <p className="text-muted-foreground text-sm">
+                            Total Insights
+                          </p>
                         </CardContent>
                       </Card>
                       <Card>
                         <CardContent className="pt-6">
-                          <div className="text-2xl font-bold">{category.averageConfidence.toFixed(0)}%</div>
-                          <p className="text-sm text-muted-foreground">Avg Confidence</p>
+                          <div className="font-bold text-2xl">
+                            {category.averageConfidence.toFixed(0)}%
+                          </div>
+                          <p className="text-muted-foreground text-sm">
+                            Avg Confidence
+                          </p>
                         </CardContent>
                       </Card>
                       <Card>
                         <CardContent className="pt-6">
-                          <div className="text-2xl font-bold">{category.totalImpact.toFixed(0)}%</div>
-                          <p className="text-sm text-muted-foreground">Total Impact</p>
+                          <div className="font-bold text-2xl">
+                            {category.totalImpact.toFixed(0)}%
+                          </div>
+                          <p className="text-muted-foreground text-sm">
+                            Total Impact
+                          </p>
                         </CardContent>
                       </Card>
                     </>
@@ -495,17 +549,17 @@ export function InsightsPanel({
             <div className="space-y-4">
               {sortedInsights.map((insight, index) => (
                 <InsightCard
-                  key={`${insight.id}-${index}`}
                   insight={insight}
+                  key={`${insight.id}-${index}`}
                   showCategory={selectedCategory === 'all'}
                 />
               ))}
             </div>
 
             {sortedInsights.length === 0 && (
-              <div className="text-center py-8">
-                <Brain className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              <div className="py-8 text-center">
+                <Brain className="mx-auto mb-4 h-12 w-12 text-gray-400" />
+                <h3 className="mb-2 font-semibold text-gray-900 text-lg">
                   No Insights in This Category
                 </h3>
                 <p className="text-gray-600">

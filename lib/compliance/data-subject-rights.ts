@@ -31,7 +31,7 @@ export interface PersonalDataExport {
 
 export class LGPDDataSubjectRights {
   private static instance: LGPDDataSubjectRights;
-  
+
   static getInstance(): LGPDDataSubjectRights {
     if (!LGPDDataSubjectRights.instance) {
       LGPDDataSubjectRights.instance = new LGPDDataSubjectRights();
@@ -52,12 +52,12 @@ export class LGPDDataSubjectRights {
       requestDate: new Date(),
       details,
       ipAddress,
-      verification: 'pending'
+      verification: 'pending',
     };
 
     await this.storeDataSubjectRequest(request);
     await this.notifyDataProtectionOfficer(request);
-    
+
     console.log(`LGPD Data Access request created: ${request.id}`);
     return request;
   }
@@ -75,12 +75,12 @@ export class LGPDDataSubjectRights {
       requestDate: new Date(),
       details,
       ipAddress,
-      verification: 'pending'
+      verification: 'pending',
     };
 
     await this.storeDataSubjectRequest(request);
     await this.notifyDataProtectionOfficer(request);
-    
+
     console.log(`LGPD Data Rectification request created: ${request.id}`);
     return request;
   }
@@ -98,12 +98,12 @@ export class LGPDDataSubjectRights {
       requestDate: new Date(),
       details,
       ipAddress,
-      verification: 'pending'
+      verification: 'pending',
     };
 
     await this.storeDataSubjectRequest(request);
     await this.notifyDataProtectionOfficer(request);
-    
+
     console.log(`LGPD Data Deletion request created: ${request.id}`);
     return request;
   }
@@ -121,17 +121,20 @@ export class LGPDDataSubjectRights {
       requestDate: new Date(),
       details: `Data export in ${format} format`,
       ipAddress,
-      verification: 'pending'
+      verification: 'pending',
     };
 
     await this.storeDataSubjectRequest(request);
     await this.notifyDataProtectionOfficer(request);
-    
+
     console.log(`LGPD Data Portability request created: ${request.id}`);
     return request;
   }
 
-  async exportUserData(userId: string, format: 'json' | 'csv' | 'pdf' = 'json'): Promise<PersonalDataExport> {
+  async exportUserData(
+    userId: string,
+    format: 'json' | 'csv' | 'pdf' = 'json'
+  ): Promise<PersonalDataExport> {
     // Collect all user data from different sources
     const exportData: PersonalDataExport = {
       userId,
@@ -143,13 +146,13 @@ export class LGPDDataSubjectRights {
         appointments: await this.exportAppointmentData(userId),
         treatments: await this.exportTreatmentData(userId),
         financial: await this.exportFinancialData(userId),
-        communications: await this.exportCommunicationData(userId)
-      }
+        communications: await this.exportCommunicationData(userId),
+      },
     };
 
     // Log for audit
     console.log(`LGPD Data export completed for user: ${userId}`);
-    
+
     return exportData;
   }
 
@@ -160,10 +163,10 @@ export class LGPDDataSubjectRights {
       await this.anonymizeMedicalData(userId); // Keep medical data anonymized for legal reasons
       await this.deleteFinancialData(userId);
       await this.deleteCommunicationData(userId);
-      
+
       // Mark user as deleted but keep audit trail
       await this.markUserAsDeleted(userId);
-      
+
       console.log(`LGPD Data deletion completed for user: ${userId}`);
       return true;
     } catch (error) {
@@ -172,7 +175,9 @@ export class LGPDDataSubjectRights {
     }
   }
 
-  async getDataSubjectRequest(requestId: string): Promise<DataSubjectRequest | null> {
+  async getDataSubjectRequest(
+    _requestId: string
+  ): Promise<DataSubjectRequest | null> {
     // Implementation would query database
     return null;
   }
@@ -180,7 +185,7 @@ export class LGPDDataSubjectRights {
   async updateRequestStatus(
     requestId: string,
     status: DataSubjectRequest['status'],
-    details?: string
+    _details?: string
   ): Promise<boolean> {
     // Implementation would update database
     console.log(`LGPD Request ${requestId} status updated to: ${status}`);
@@ -191,14 +196,23 @@ export class LGPDDataSubjectRights {
     return `LGPD-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   }
 
-  private async storeDataSubjectRequest(request: DataSubjectRequest): Promise<void> {
+  private async storeDataSubjectRequest(
+    request: DataSubjectRequest
+  ): Promise<void> {
     // Implementation would store in Supabase
-    console.log('Storing LGPD data subject request:', JSON.stringify(request, null, 2));
+    console.log(
+      'Storing LGPD data subject request:',
+      JSON.stringify(request, null, 2)
+    );
   }
 
-  private async notifyDataProtectionOfficer(request: DataSubjectRequest): Promise<void> {
+  private async notifyDataProtectionOfficer(
+    request: DataSubjectRequest
+  ): Promise<void> {
     // Implementation would send notification to DPO
-    console.log(`Notifying DPO of LGPD request: ${request.requestType} - ${request.id}`);
+    console.log(
+      `Notifying DPO of LGPD request: ${request.requestType} - ${request.id}`
+    );
   }
 
   // Data export methods
@@ -232,7 +246,9 @@ export class LGPDDataSubjectRights {
   }
 
   private async anonymizeMedicalData(userId: string): Promise<void> {
-    console.log(`Anonymizing medical data for user: ${userId} (healthcare retention)`);
+    console.log(
+      `Anonymizing medical data for user: ${userId} (healthcare retention)`
+    );
   }
 
   private async deleteFinancialData(userId: string): Promise<void> {

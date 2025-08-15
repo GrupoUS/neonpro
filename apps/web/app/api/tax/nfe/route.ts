@@ -1,11 +1,11 @@
 // NFE Management API
 // Story 5.5: Specialized API for NFE operations
-// Author: VoidBeast V6.0 Master Orchestrator  
+// Author: VoidBeast V6.0 Master Orchestrator
 // Date: 2025-01-30
 
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { createClient } from '@/app/utils/supabase/server';
 
 // Validation schemas
 const nfeEmissionSchema = z.object({
@@ -18,14 +18,16 @@ const nfeCancellationSchema = z.object({
   justification: z.string().min(15).max(255),
 });
 
-const nfeConsultationSchema = z.object({
+const _nfeConsultationSchema = z.object({
   nfe_number: z.string().optional(),
   chave_nfe: z.string().optional(),
   status: z.enum(['draft', 'emitted', 'cancelled', 'rejected']).optional(),
-  date_range: z.object({
-    start_date: z.string(),
-    end_date: z.string(),
-  }).optional(),
+  date_range: z
+    .object({
+      start_date: z.string(),
+      end_date: z.string(),
+    })
+    .optional(),
 });
 
 /**
@@ -48,16 +50,16 @@ export async function GET(request: NextRequest) {
     switch (action) {
       case 'list':
         return await listNFEDocuments(supabase, clinicId, searchParams);
-      
+
       case 'status':
         return await getNFEStatus(supabase, searchParams);
-      
+
       case 'download':
         return await downloadNFE(supabase, searchParams);
-      
+
       case 'validate':
         return await validateNFE(supabase, searchParams);
-      
+
       default:
         return await getNFEOverview(supabase, clinicId);
     }
@@ -82,16 +84,16 @@ export async function POST(request: NextRequest) {
     switch (action) {
       case 'emit':
         return await emitNFE(supabase, body);
-      
+
       case 'cancel':
         return await cancelNFE(supabase, body);
-      
+
       case 'reprocess':
         return await reprocessNFE(supabase, body);
-      
+
       case 'batch-emit':
         return await batchEmitNFE(supabase, body);
-      
+
       default:
         return NextResponse.json(
           { error: 'Invalid action specified' },
@@ -108,7 +110,11 @@ export async function POST(request: NextRequest) {
 }
 
 // Helper functions
-async function listNFEDocuments(supabase: any, clinicId: string, searchParams: URLSearchParams) {
+async function listNFEDocuments(
+  supabase: any,
+  clinicId: string,
+  searchParams: URLSearchParams
+) {
   let query = supabase
     .from('nfe_documents')
     .select('*')
@@ -123,14 +129,12 @@ async function listNFEDocuments(supabase: any, clinicId: string, searchParams: U
   const startDate = searchParams.get('start_date');
   const endDate = searchParams.get('end_date');
   if (startDate && endDate) {
-    query = query
-      .gte('created_at', startDate)
-      .lte('created_at', endDate);
+    query = query.gte('created_at', startDate).lte('created_at', endDate);
   }
 
-  const limit = parseInt(searchParams.get('limit') || '50');
-  const offset = parseInt(searchParams.get('offset') || '0');
-  
+  const limit = Number.parseInt(searchParams.get('limit') || '50', 10);
+  const offset = Number.parseInt(searchParams.get('offset') || '0', 10);
+
   query = query
     .order('created_at', { ascending: false })
     .range(offset, offset + limit - 1);
@@ -150,8 +154,8 @@ async function listNFEDocuments(supabase: any, clinicId: string, searchParams: U
       total: count,
       limit,
       offset,
-      has_more: count > offset + limit
-    }
+      has_more: count > offset + limit,
+    },
   });
 }
 
@@ -159,16 +163,14 @@ async function getNFEStatus(supabase: any, searchParams: URLSearchParams) {
   const nfeId = searchParams.get('nfe_id');
   const chaveNfe = searchParams.get('chave_nfe');
 
-  if (!nfeId && !chaveNfe) {
+  if (!(nfeId || chaveNfe)) {
     return NextResponse.json(
       { error: 'nfe_id or chave_nfe parameter is required' },
       { status: 400 }
     );
   }
 
-  let query = supabase
-    .from('nfe_documents')
-    .select('*');
+  let query = supabase.from('nfe_documents').select('*');
 
   if (nfeId) {
     query = query.eq('id', nfeId);
@@ -179,26 +181,25 @@ async function getNFEStatus(supabase: any, searchParams: URLSearchParams) {
   const { data, error } = await query.single();
 
   if (error) {
-    return NextResponse.json(
-      { error: 'NFE not found' },
-      { status: 404 }
-    );
+    return NextResponse.json({ error: 'NFE not found' }, { status: 404 });
   }
 
   // Import NFE service to get latest status
-  const { NFEIntegrationService } = await import('@/lib/services/tax/nfe-service');
+  const { NFEIntegrationService } = await import(
+    '@/lib/services/tax/nfe-service'
+  );
   const nfeService = new NFEIntegrationService();
-  
+
   try {
     const updatedStatus = await nfeService.consultNFEStatus(data.chave_nfe);
-    
+
     // Update database if status changed
     if (updatedStatus.status !== data.status) {
       await supabase
         .from('nfe_documents')
-        .update({ 
+        .update({
           status: updatedStatus.status,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', data.id);
     }
@@ -207,10 +208,9 @@ async function getNFEStatus(supabase: any, searchParams: URLSearchParams) {
       data: {
         ...data,
         status: updatedStatus.status,
-        latest_consultation: updatedStatus
-      }
+        latest_consultation: updatedStatus,
+      },
     });
-
   } catch (error) {
     console.error('NFE status consultation error:', error);
     return NextResponse.json({ data });
@@ -235,25 +235,29 @@ async function downloadNFE(supabase: any, searchParams: URLSearchParams) {
     .single();
 
   if (error || !nfe) {
-    return NextResponse.json(
-      { error: 'NFE not found' },
-      { status: 404 }
-    );
+    return NextResponse.json({ error: 'NFE not found' }, { status: 404 });
   }
 
   // Import NFE service
-  const { NFEIntegrationService } = await import('@/lib/services/tax/nfe-service');
+  const { NFEIntegrationService } = await import(
+    '@/lib/services/tax/nfe-service'
+  );
   const nfeService = new NFEIntegrationService();
 
   try {
     const fileData = await nfeService.downloadNFE(nfe.chave_nfe, format);
-    
+
     const headers = new Headers();
-    headers.set('Content-Type', format === 'pdf' ? 'application/pdf' : 'application/xml');
-    headers.set('Content-Disposition', `attachment; filename="NFE_${nfe.numero_nfe}.${format}"`);
+    headers.set(
+      'Content-Type',
+      format === 'pdf' ? 'application/pdf' : 'application/xml'
+    );
+    headers.set(
+      'Content-Disposition',
+      `attachment; filename="NFE_${nfe.numero_nfe}.${format}"`
+    );
 
     return new NextResponse(fileData, { headers });
-
   } catch (error) {
     console.error('NFE download error:', error);
     return NextResponse.json(
@@ -280,29 +284,27 @@ async function validateNFE(supabase: any, searchParams: URLSearchParams) {
     .single();
 
   if (error || !nfe) {
-    return NextResponse.json(
-      { error: 'NFE not found' },
-      { status: 404 }
-    );
+    return NextResponse.json({ error: 'NFE not found' }, { status: 404 });
   }
 
   // Import NFE service
-  const { NFEIntegrationService } = await import('@/lib/services/tax/nfe-service');
+  const { NFEIntegrationService } = await import(
+    '@/lib/services/tax/nfe-service'
+  );
   const nfeService = new NFEIntegrationService();
 
   try {
     const validation = await nfeService.validateNFE(nfe);
-    
+
     return NextResponse.json({
       data: {
         nfe_id: nfeId,
         valid: validation.valid,
         errors: validation.errors || [],
         warnings: validation.warnings || [],
-        validated_at: new Date().toISOString()
-      }
+        validated_at: new Date().toISOString(),
+      },
     });
-
   } catch (error) {
     console.error('NFE validation error:', error);
     return NextResponse.json(
@@ -318,7 +320,10 @@ async function getNFEOverview(supabase: any, clinicId: string) {
     .from('nfe_documents')
     .select('status, valor_total, created_at')
     .eq('clinic_id', clinicId)
-    .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString());
+    .gte(
+      'created_at',
+      new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+    );
 
   if (statsError) {
     return NextResponse.json(
@@ -330,24 +335,27 @@ async function getNFEOverview(supabase: any, clinicId: string) {
   const summary = {
     total_documents: stats.length,
     total_value: stats.reduce((sum, doc) => sum + doc.valor_total, 0),
-    by_status: stats.reduce((acc, doc) => {
-      acc[doc.status] = (acc[doc.status] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>),
-    last_30_days: stats.length
+    by_status: stats.reduce(
+      (acc, doc) => {
+        acc[doc.status] = (acc[doc.status] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>
+    ),
+    last_30_days: stats.length,
   };
 
   return NextResponse.json({
     data: {
       summary,
-      recent_documents: stats.slice(0, 10)
-    }
+      recent_documents: stats.slice(0, 10),
+    },
   });
 }
 
 async function emitNFE(supabase: any, body: any) {
   const validatedData = nfeEmissionSchema.parse(body);
-  
+
   // Get NFE document
   const { data: nfe, error } = await supabase
     .from('nfe_documents')
@@ -356,26 +364,22 @@ async function emitNFE(supabase: any, body: any) {
     .single();
 
   if (error || !nfe) {
-    return NextResponse.json(
-      { error: 'NFE not found' },
-      { status: 404 }
-    );
+    return NextResponse.json({ error: 'NFE not found' }, { status: 404 });
   }
 
   if (nfe.status === 'emitted' && !validatedData.force_emission) {
-    return NextResponse.json(
-      { error: 'NFE already emitted' },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: 'NFE already emitted' }, { status: 400 });
   }
 
   // Import NFE service
-  const { NFEIntegrationService } = await import('@/lib/services/tax/nfe-service');
+  const { NFEIntegrationService } = await import(
+    '@/lib/services/tax/nfe-service'
+  );
   const nfeService = new NFEIntegrationService();
 
   try {
     const emission = await nfeService.emitNFE(validatedData.nfe_id);
-    
+
     // Update document status
     await supabase
       .from('nfe_documents')
@@ -384,7 +388,7 @@ async function emitNFE(supabase: any, body: any) {
         chave_nfe: emission.chave_nfe,
         protocolo_autorizacao: emission.protocolo,
         data_emissao: emission.data_emissao,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', validatedData.nfe_id);
 
@@ -394,20 +398,19 @@ async function emitNFE(supabase: any, body: any) {
         status: emission.status,
         chave_nfe: emission.chave_nfe,
         protocolo: emission.protocolo,
-        emitted_at: emission.data_emissao
-      }
+        emitted_at: emission.data_emissao,
+      },
     });
-
   } catch (error) {
     console.error('NFE emission error:', error);
-    
+
     // Update status to error
     await supabase
       .from('nfe_documents')
       .update({
         status: 'error',
         error_message: error.message,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', validatedData.nfe_id);
 
@@ -420,7 +423,7 @@ async function emitNFE(supabase: any, body: any) {
 
 async function cancelNFE(supabase: any, body: any) {
   const validatedData = nfeCancellationSchema.parse(body);
-  
+
   // Get NFE document
   const { data: nfe, error } = await supabase
     .from('nfe_documents')
@@ -429,10 +432,7 @@ async function cancelNFE(supabase: any, body: any) {
     .single();
 
   if (error || !nfe) {
-    return NextResponse.json(
-      { error: 'NFE not found' },
-      { status: 404 }
-    );
+    return NextResponse.json({ error: 'NFE not found' }, { status: 404 });
   }
 
   if (nfe.status !== 'emitted') {
@@ -443,7 +443,9 @@ async function cancelNFE(supabase: any, body: any) {
   }
 
   // Import NFE service
-  const { NFEIntegrationService } = await import('@/lib/services/tax/nfe-service');
+  const { NFEIntegrationService } = await import(
+    '@/lib/services/tax/nfe-service'
+  );
   const nfeService = new NFEIntegrationService();
 
   try {
@@ -451,7 +453,7 @@ async function cancelNFE(supabase: any, body: any) {
       nfe.chave_nfe,
       validatedData.justification
     );
-    
+
     // Update document status
     await supabase
       .from('nfe_documents')
@@ -460,7 +462,7 @@ async function cancelNFE(supabase: any, body: any) {
         cancellation_reason: validatedData.justification,
         cancellation_protocol: cancellation.protocolo,
         cancelled_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', validatedData.nfe_id);
 
@@ -469,10 +471,9 @@ async function cancelNFE(supabase: any, body: any) {
         nfe_id: validatedData.nfe_id,
         status: 'cancelled',
         cancellation_protocol: cancellation.protocolo,
-        cancelled_at: new Date().toISOString()
-      }
+        cancelled_at: new Date().toISOString(),
+      },
     });
-
   } catch (error) {
     console.error('NFE cancellation error:', error);
     return NextResponse.json(
@@ -486,10 +487,7 @@ async function reprocessNFE(supabase: any, body: any) {
   const { nfe_id } = body;
 
   if (!nfe_id) {
-    return NextResponse.json(
-      { error: 'nfe_id is required' },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: 'nfe_id is required' }, { status: 400 });
   }
 
   // Get NFE document
@@ -500,27 +498,25 @@ async function reprocessNFE(supabase: any, body: any) {
     .single();
 
   if (error || !nfe) {
-    return NextResponse.json(
-      { error: 'NFE not found' },
-      { status: 404 }
-    );
+    return NextResponse.json({ error: 'NFE not found' }, { status: 404 });
   }
 
   // Import NFE service
-  const { NFEIntegrationService } = await import('@/lib/services/tax/nfe-service');
+  const { NFEIntegrationService } = await import(
+    '@/lib/services/tax/nfe-service'
+  );
   const nfeService = new NFEIntegrationService();
 
   try {
     const reprocessed = await nfeService.reprocessNFE(nfe_id);
-    
+
     return NextResponse.json({
       data: {
         nfe_id,
         status: reprocessed.status,
-        reprocessed_at: new Date().toISOString()
-      }
+        reprocessed_at: new Date().toISOString(),
+      },
     });
-
   } catch (error) {
     console.error('NFE reprocessing error:', error);
     return NextResponse.json(
@@ -533,7 +529,7 @@ async function reprocessNFE(supabase: any, body: any) {
 async function batchEmitNFE(supabase: any, body: any) {
   const { nfe_ids, emit_options = {} } = body;
 
-  if (!nfe_ids || !Array.isArray(nfe_ids)) {
+  if (!(nfe_ids && Array.isArray(nfe_ids))) {
     return NextResponse.json(
       { error: 'nfe_ids array is required' },
       { status: 400 }
@@ -541,15 +537,17 @@ async function batchEmitNFE(supabase: any, body: any) {
   }
 
   // Import NFE service
-  const { NFEIntegrationService } = await import('@/lib/services/tax/nfe-service');
+  const { NFEIntegrationService } = await import(
+    '@/lib/services/tax/nfe-service'
+  );
   const nfeService = new NFEIntegrationService();
 
   const results = [];
-  
+
   for (const nfeId of nfe_ids) {
     try {
       const emission = await nfeService.emitNFE(nfeId);
-      
+
       // Update document status
       await supabase
         .from('nfe_documents')
@@ -558,7 +556,7 @@ async function batchEmitNFE(supabase: any, body: any) {
           chave_nfe: emission.chave_nfe,
           protocolo_autorizacao: emission.protocolo,
           data_emissao: emission.data_emissao,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', nfeId);
 
@@ -566,32 +564,31 @@ async function batchEmitNFE(supabase: any, body: any) {
         nfe_id: nfeId,
         success: true,
         status: emission.status,
-        chave_nfe: emission.chave_nfe
+        chave_nfe: emission.chave_nfe,
       });
-
     } catch (error) {
       console.error(`Batch NFE emission error for ${nfeId}:`, error);
-      
+
       // Update status to error
       await supabase
         .from('nfe_documents')
         .update({
           status: 'error',
           error_message: error.message,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', nfeId);
 
       results.push({
         nfe_id: nfeId,
         success: false,
-        error: error.message
+        error: error.message,
       });
     }
   }
 
-  const successful = results.filter(r => r.success).length;
-  const failed = results.filter(r => !r.success).length;
+  const successful = results.filter((r) => r.success).length;
+  const failed = results.filter((r) => !r.success).length;
 
   return NextResponse.json({
     data: {
@@ -599,7 +596,7 @@ async function batchEmitNFE(supabase: any, body: any) {
       total_processed: nfe_ids.length,
       successful,
       failed,
-      results
-    }
+      results,
+    },
   });
 }

@@ -1,10 +1,74 @@
 #!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
 
-echo "🔍 Running pre-commit validations..."
+echo "🚀 NEONPRO Pre-commit Validation"
+echo "================================="
 
-# Run lint-staged for automated fixes
-echo "🎨 Running lint-staged..."
-npx lint-staged
+# Get list of staged files
+STAGED_FILES=$(git diff --cached --name-only)
 
-echo "✅ All pre-commit checks passed!"
+# Check for code files (TypeScript, JavaScript, etc.)
+CODE_FILES=$(echo "$STAGED_FILES" | grep -E '\.(ts|tsx|js|jsx|vue|svelte)$' || true)
+
+# Check for documentation/config files only
+DOC_FILES=$(echo "$STAGED_FILES" | grep -E '\.(md|json|yaml|yml|txt|config\.js|config\.ts)$' || true)
+
+# If only documentation/config files are staged and no code files
+if [ -n "$DOC_FILES" ] && [ -z "$CODE_FILES" ]; then
+    echo "📝 Only documentation/config files changed:"
+    echo "$DOC_FILES"
+    echo "🔍 Running lint and format only..."
+    
+    # Run lint on changed files only
+    if pnpm lint:biome; then
+        echo "✅ Lint passed!"
+    else
+        echo "❌ Lint failed! Fix linting errors."
+        echo "💡 Tip: Run 'pnpm lint:biome --apply' to auto-fix"
+        exit 1
+    fi
+    
+    # Run format check on changed files only
+    if pnpm format:check; then
+        echo "✅ Format passed!"
+    else
+        echo "❌ Format failed! Run 'pnpm format' to fix."
+        exit 1
+    fi
+    
+    echo "✅ Pre-commit validation passed (documentation/config only)"
+    exit 0
+fi
+
+# For code changes, run full validation
+echo "🧪 Code files changed - running full validation..."
+echo "📁 Changed files:"
+echo "$STAGED_FILES"
+
+echo "🧪 Running tests (web app only)..."
+if pnpm test --filter=@neonpro/web; then
+    echo "✅ Tests passed!"
+else
+    echo "❌ Tests failed! Fix test errors before committing."
+    echo "💡 Tip: Run 'pnpm test --filter=@neonpro/web' to see detailed errors"
+    echo "💡 Or commit with --no-verify to skip this check temporarily"
+    exit 1
+fi
+
+echo "🔍 Running lint checks..."
+if pnpm lint:biome; then
+    echo "✅ Lint passed!"
+else
+    echo "❌ Lint failed! Fix linting errors."
+    echo "💡 Tip: Run 'pnpm lint:biome --apply' to auto-fix"
+    exit 1
+fi
+
+echo "🎨 Running format checks..."
+if pnpm format:check; then
+    echo "✅ Format passed!"
+else
+    echo "❌ Format failed! Run 'pnpm format' to fix."
+    exit 1
+fi
+
+echo "✅ Pre-commit validation passed!"

@@ -1,8 +1,8 @@
 // Google OAuth Provider Implementation
 // Story 1.3: SSO Integration - Google OAuth 2.0
 
-import { SSOProvider, SSOUserInfo, SSOTokenResponse } from '@/types/sso';
 import { logger } from '@/lib/logger';
+import type { SSOProvider, SSOTokenResponse, SSOUserInfo } from '@/types/sso';
 
 export interface GoogleOAuthConfig {
   clientId: string;
@@ -40,7 +40,8 @@ export class GoogleOAuthProvider {
   private config: GoogleOAuthConfig;
   private readonly authUrl = 'https://accounts.google.com/o/oauth2/v2/auth';
   private readonly tokenUrl = 'https://oauth2.googleapis.com/token';
-  private readonly userInfoUrl = 'https://www.googleapis.com/oauth2/v2/userinfo';
+  private readonly userInfoUrl =
+    'https://www.googleapis.com/oauth2/v2/userinfo';
   private readonly revokeUrl = 'https://oauth2.googleapis.com/revoke';
 
   constructor(config: GoogleOAuthConfig) {
@@ -106,12 +107,12 @@ export class GoogleOAuthProvider {
     }
 
     const authUrl = `${this.authUrl}?${params.toString()}`;
-    logger.info('Google OAuth: Generated auth URL', { 
+    logger.info('Google OAuth: Generated auth URL', {
       clientId: this.config.clientId,
       scopes: this.config.scopes,
-      hostedDomain: this.config.hostedDomain 
+      hostedDomain: this.config.hostedDomain,
     });
-    
+
     return authUrl;
   }
 
@@ -132,22 +133,22 @@ export class GoogleOAuthProvider {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
-          'Accept': 'application/json',
+          Accept: 'application/json',
         },
         body: params.toString(),
       });
 
       if (!response.ok) {
         const errorData = await response.text();
-        logger.error('Google OAuth: Token exchange failed', { 
-          status: response.status, 
-          error: errorData 
+        logger.error('Google OAuth: Token exchange failed', {
+          status: response.status,
+          error: errorData,
         });
         throw new Error(`Google OAuth token exchange failed: ${errorData}`);
       }
 
       const tokenData: GoogleTokenInfo = await response.json();
-      
+
       logger.info('Google OAuth: Token exchange successful', {
         hasRefreshToken: !!tokenData.refresh_token,
         expiresIn: tokenData.expires_in,
@@ -163,7 +164,9 @@ export class GoogleOAuthProvider {
         scope: tokenData.scope,
       };
     } catch (error) {
-      logger.error('Google OAuth: Token exchange error', { error: error.message });
+      logger.error('Google OAuth: Token exchange error', {
+        error: error.message,
+      });
       throw error;
     }
   }
@@ -184,22 +187,22 @@ export class GoogleOAuthProvider {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
-          'Accept': 'application/json',
+          Accept: 'application/json',
         },
         body: params.toString(),
       });
 
       if (!response.ok) {
         const errorData = await response.text();
-        logger.error('Google OAuth: Token refresh failed', { 
-          status: response.status, 
-          error: errorData 
+        logger.error('Google OAuth: Token refresh failed', {
+          status: response.status,
+          error: errorData,
         });
         throw new Error(`Google OAuth token refresh failed: ${errorData}`);
       }
 
       const tokenData: GoogleTokenInfo = await response.json();
-      
+
       logger.info('Google OAuth: Token refresh successful', {
         expiresIn: tokenData.expires_in,
         scope: tokenData.scope,
@@ -213,7 +216,9 @@ export class GoogleOAuthProvider {
         scope: tokenData.scope,
       };
     } catch (error) {
-      logger.error('Google OAuth: Token refresh error', { error: error.message });
+      logger.error('Google OAuth: Token refresh error', {
+        error: error.message,
+      });
       throw error;
     }
   }
@@ -225,24 +230,27 @@ export class GoogleOAuthProvider {
     try {
       const response = await fetch(this.userInfoUrl, {
         headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'Accept': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+          Accept: 'application/json',
         },
       });
 
       if (!response.ok) {
         const errorData = await response.text();
-        logger.error('Google OAuth: User info fetch failed', { 
-          status: response.status, 
-          error: errorData 
+        logger.error('Google OAuth: User info fetch failed', {
+          status: response.status,
+          error: errorData,
         });
         throw new Error(`Google OAuth user info fetch failed: ${errorData}`);
       }
 
       const userData: GoogleUserInfo = await response.json();
-      
+
       // Validate hosted domain if configured
-      if (this.config.hostedDomain && userData.hd !== this.config.hostedDomain) {
+      if (
+        this.config.hostedDomain &&
+        userData.hd !== this.config.hostedDomain
+      ) {
         logger.warn('Google OAuth: User not from expected hosted domain', {
           expected: this.config.hostedDomain,
           actual: userData.hd,
@@ -279,25 +287,30 @@ export class GoogleOAuthProvider {
    */
   async revokeToken(token: string): Promise<void> {
     try {
-      const response = await fetch(`${this.revokeUrl}?token=${encodeURIComponent(token)}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-      });
+      const response = await fetch(
+        `${this.revokeUrl}?token=${encodeURIComponent(token)}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.text();
-        logger.error('Google OAuth: Token revocation failed', { 
-          status: response.status, 
-          error: errorData 
+        logger.error('Google OAuth: Token revocation failed', {
+          status: response.status,
+          error: errorData,
         });
         throw new Error(`Google OAuth token revocation failed: ${errorData}`);
       }
 
       logger.info('Google OAuth: Token revoked successfully');
     } catch (error) {
-      logger.error('Google OAuth: Token revocation error', { error: error.message });
+      logger.error('Google OAuth: Token revocation error', {
+        error: error.message,
+      });
       throw error;
     }
   }
@@ -308,21 +321,27 @@ export class GoogleOAuthProvider {
   async validateIdToken(idToken: string): Promise<any> {
     try {
       // For production, use Google's token validation endpoint
-      const response = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${idToken}`);
-      
+      const response = await fetch(
+        `https://oauth2.googleapis.com/tokeninfo?id_token=${idToken}`
+      );
+
       if (!response.ok) {
         throw new Error('Invalid ID token');
       }
 
       const tokenInfo = await response.json();
-      
+
       // Validate audience (client ID)
       if (tokenInfo.aud !== this.config.clientId) {
         throw new Error('ID token audience mismatch');
       }
 
       // Validate issuer
-      if (!['accounts.google.com', 'https://accounts.google.com'].includes(tokenInfo.iss)) {
+      if (
+        !['accounts.google.com', 'https://accounts.google.com'].includes(
+          tokenInfo.iss
+        )
+      ) {
         throw new Error('ID token issuer mismatch');
       }
 
@@ -339,7 +358,9 @@ export class GoogleOAuthProvider {
 
       return tokenInfo;
     } catch (error) {
-      logger.error('Google OAuth: ID token validation error', { error: error.message });
+      logger.error('Google OAuth: ID token validation error', {
+        error: error.message,
+      });
       throw error;
     }
   }
@@ -375,7 +396,8 @@ export class GoogleOAuthProvider {
           'hosted_domains',
           'id_tokens',
         ],
-        documentation: 'https://developers.google.com/identity/protocols/oauth2',
+        documentation:
+          'https://developers.google.com/identity/protocols/oauth2',
       },
     };
   }
@@ -398,16 +420,14 @@ export class GoogleOAuthProvider {
 }
 
 // Export factory function
-export function createGoogleOAuthProvider(config: GoogleOAuthConfig): GoogleOAuthProvider {
+export function createGoogleOAuthProvider(
+  config: GoogleOAuthConfig
+): GoogleOAuthProvider {
   return new GoogleOAuthProvider(config);
 }
 
 // Export default configuration
-export const DEFAULT_GOOGLE_SCOPES = [
-  'openid',
-  'email', 
-  'profile',
-];
+export const DEFAULT_GOOGLE_SCOPES = ['openid', 'email', 'profile'];
 
 export const GOOGLE_WORKSPACE_SCOPES = [
   ...DEFAULT_GOOGLE_SCOPES,

@@ -1,98 +1,98 @@
 'use client';
 
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  DollarSign, 
-  TrendingUp, 
-  TrendingDown,
-  Calendar,
-  CreditCard,
-  Receipt,
-  PieChart,
+import { AnimatePresence, motion } from 'framer-motion';
+import {
+  AlertTriangle,
   BarChart3,
-  Filter,
-  Download,
-  Plus,
+  Calendar,
   CheckCircle,
   Clock,
+  CreditCard,
+  DollarSign,
+  Download,
+  Filter,
+  PieChart,
+  Plus,
+  Receipt,
+  TrendingDown,
+  TrendingUp,
   XCircle,
-  AlertTriangle
 } from 'lucide-react';
-import { NeonGradientCard } from '@/components/ui/NeonGradientCard';
+import { useState } from 'react';
 import { CosmicGlowButton } from '@/components/ui/CosmicGlowButton';
+import { NeonGradientCard } from '@/components/ui/NeonGradientCard';
 import { formatCurrency, formatDate } from '@/lib/utils';
 
 // Dados mock para financeiro
 const financeiroData = {
   summary: {
-    totalReceita: 127500.00,
-    receitaMensal: 45200.00,
-    contasReceber: 23800.00,
-    contasPagar: 8900.00,
+    totalReceita: 127_500.0,
+    receitaMensal: 45_200.0,
+    contasReceber: 23_800.0,
+    contasPagar: 8900.0,
     margemLucro: 68.5,
-    crescimentoMensal: 12.3
+    crescimentoMensal: 12.3,
   },
   transactions: [
     {
       id: 1,
       type: 'receita',
       description: 'Consulta - Maria Silva',
-      amount: 150.00,
+      amount: 150.0,
       date: new Date('2024-01-15'),
       status: 'pago',
       category: 'Consultas',
-      paymentMethod: 'Cartão de Crédito'
+      paymentMethod: 'Cartão de Crédito',
     },
     {
       id: 2,
       type: 'receita',
       description: 'Exame - João Santos',
-      amount: 300.00,
+      amount: 300.0,
       date: new Date('2024-01-14'),
       status: 'pendente',
       category: 'Exames',
-      paymentMethod: 'PIX'
+      paymentMethod: 'PIX',
     },
     {
       id: 3,
       type: 'despesa',
       description: 'Equipamento Médico',
-      amount: 2500.00,
+      amount: 2500.0,
       date: new Date('2024-01-13'),
       status: 'pago',
       category: 'Equipamentos',
-      paymentMethod: 'Transferência'
+      paymentMethod: 'Transferência',
     },
     {
       id: 4,
       type: 'receita',
       description: 'Cirurgia - Ana Costa',
-      amount: 1200.00,
+      amount: 1200.0,
       date: new Date('2024-01-12'),
       status: 'pago',
       category: 'Cirurgias',
-      paymentMethod: 'Dinheiro'
+      paymentMethod: 'Dinheiro',
     },
     {
       id: 5,
       type: 'despesa',
       description: 'Aluguel Clínica',
-      amount: 3500.00,
+      amount: 3500.0,
       date: new Date('2024-01-10'),
       status: 'vencido',
       category: 'Operacionais',
-      paymentMethod: 'Boleto'
-    }
+      paymentMethod: 'Boleto',
+    },
   ],
   monthlyData: [
-    { month: 'Jan', receita: 45200, despesa: 18500 },
-    { month: 'Fev', receita: 42800, despesa: 16200 },
-    { month: 'Mar', receita: 48600, despesa: 19800 },
-    { month: 'Abr', receita: 51200, despesa: 21000 },
-    { month: 'Mai', receita: 49800, despesa: 20200 },
-    { month: 'Jun', receita: 53400, despesa: 22100 }
-  ]
+    { month: 'Jan', receita: 45_200, despesa: 18_500 },
+    { month: 'Fev', receita: 42_800, despesa: 16_200 },
+    { month: 'Mar', receita: 48_600, despesa: 19_800 },
+    { month: 'Abr', receita: 51_200, despesa: 21_000 },
+    { month: 'Mai', receita: 49_800, despesa: 20_200 },
+    { month: 'Jun', receita: 53_400, despesa: 22_100 },
+  ],
 };
 
 const statusConfig = {
@@ -102,7 +102,7 @@ const statusConfig = {
     label: 'Pago',
     bgColor: 'bg-success/10',
     borderColor: 'border-success/30',
-    textColor: 'text-success'
+    textColor: 'text-success',
   },
   pendente: {
     color: 'warning',
@@ -110,7 +110,7 @@ const statusConfig = {
     label: 'Pendente',
     bgColor: 'bg-warning/10',
     borderColor: 'border-warning/30',
-    textColor: 'text-warning'
+    textColor: 'text-warning',
   },
   vencido: {
     color: 'danger',
@@ -118,7 +118,7 @@ const statusConfig = {
     label: 'Vencido',
     bgColor: 'bg-danger/10',
     borderColor: 'border-danger/30',
-    textColor: 'text-danger'
+    textColor: 'text-danger',
   },
   cancelado: {
     color: 'danger',
@@ -126,8 +126,8 @@ const statusConfig = {
     label: 'Cancelado',
     bgColor: 'bg-danger/10',
     borderColor: 'border-danger/30',
-    textColor: 'text-danger'
-  }
+    textColor: 'text-danger',
+  },
 };
 
 const typeConfig = {
@@ -135,14 +135,14 @@ const typeConfig = {
     color: 'success',
     gradient: 'success',
     icon: TrendingUp,
-    label: 'Receita'
+    label: 'Receita',
   },
   despesa: {
     color: 'danger',
     gradient: 'danger',
     icon: TrendingDown,
-    label: 'Despesa'
-  }
+    label: 'Despesa',
+  },
 };
 
 const TransactionCard = ({ transaction, index }) => {
@@ -153,43 +153,52 @@ const TransactionCard = ({ transaction, index }) => {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, y: 20 }}
       transition={{ delay: index * 0.1 }}
-      whileHover={{ 
-        scale: 1.02, 
+      whileHover={{
+        scale: 1.02,
         y: -5,
-        transition: { 
-          duration: 0.2, 
-          type: 'spring', 
-          stiffness: 400, 
-          damping: 17 
-        }
+        transition: {
+          duration: 0.2,
+          type: 'spring',
+          stiffness: 400,
+          damping: 17,
+        },
       }}
     >
-      <NeonGradientCard gradient={typeInfo.gradient} className="group">
-        <div className="flex items-start justify-between mb-4">
+      <NeonGradientCard className="group" gradient={typeInfo.gradient}>
+        <div className="mb-4 flex items-start justify-between">
           <div className="flex items-center space-x-3">
-            <div className={`w-12 h-12 rounded-full bg-${typeInfo.color}/20 flex items-center justify-center`}>
+            <div
+              className={`h-12 w-12 rounded-full bg-${typeInfo.color}/20 flex items-center justify-center`}
+            >
               <TypeIcon className={`h-6 w-6 text-${typeInfo.color}`} />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-white">{transaction.description}</h3>
+              <h3 className="font-semibold text-lg text-white">
+                {transaction.description}
+              </h3>
               <p className="text-gray-400 text-sm">{transaction.category}</p>
             </div>
           </div>
           <div className="text-right">
-            <p className={`text-2xl font-bold ${transaction.type === 'receita' ? 'text-success' : 'text-danger'}`}>
-              {transaction.type === 'receita' ? '+' : '-'}{formatCurrency(transaction.amount)}
+            <p
+              className={`font-bold text-2xl ${transaction.type === 'receita' ? 'text-success' : 'text-danger'}`}
+            >
+              {transaction.type === 'receita' ? '+' : '-'}
+              {formatCurrency(transaction.amount)}
             </p>
-            <div className={`inline-flex px-2 py-1 rounded-full text-xs font-medium mt-1 ${statusInfo.bgColor} ${statusInfo.borderColor} border`}>
-              <StatusIcon className={`h-3 w-3 mr-1 ${statusInfo.textColor}`} />
+            <div
+              className={`mt-1 inline-flex rounded-full px-2 py-1 font-medium text-xs ${statusInfo.bgColor} ${statusInfo.borderColor} border`}
+            >
+              <StatusIcon className={`mr-1 h-3 w-3 ${statusInfo.textColor}`} />
               <span className={statusInfo.textColor}>{statusInfo.label}</span>
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 mb-4">
+        <div className="mb-4 grid grid-cols-2 gap-4">
           <div className="space-y-2">
             <div className="flex items-center space-x-2 text-gray-300">
               <Calendar className="h-4 w-4 text-accent" />
@@ -205,14 +214,14 @@ const TransactionCard = ({ transaction, index }) => {
         </div>
 
         <div className="flex space-x-2">
-          <CosmicGlowButton variant="primary" size="sm" className="flex-1">
+          <CosmicGlowButton className="flex-1" size="sm" variant="primary">
             Detalhes
           </CosmicGlowButton>
-          <CosmicGlowButton variant="secondary" size="sm" className="flex-1">
+          <CosmicGlowButton className="flex-1" size="sm" variant="secondary">
             Editar
           </CosmicGlowButton>
           {transaction.status === 'pendente' && (
-            <CosmicGlowButton variant="success" size="sm" className="flex-1">
+            <CosmicGlowButton className="flex-1" size="sm" variant="success">
               Confirmar
             </CosmicGlowButton>
           )}
@@ -222,33 +231,43 @@ const TransactionCard = ({ transaction, index }) => {
   );
 };
 
-const FinancialCard = ({ icon: Icon, title, value, change, gradient, subtitle }) => (
-  <NeonGradientCard gradient={gradient} className="group">
+const FinancialCard = ({
+  icon: Icon,
+  title,
+  value,
+  change,
+  gradient,
+  subtitle,
+}) => (
+  <NeonGradientCard className="group" gradient={gradient}>
     <div className="flex items-center justify-between">
       <div className="space-y-2">
-        <p className="text-gray-400 text-sm font-medium">{title}</p>
-        <motion.p 
-          className="text-3xl font-bold text-white"
-          initial={{ scale: 0.8 }}
+        <p className="font-medium text-gray-400 text-sm">{title}</p>
+        <motion.p
           animate={{ scale: 1 }}
+          className="font-bold text-3xl text-white"
+          initial={{ scale: 0.8 }}
           transition={{ delay: 0.2 }}
         >
           {typeof value === 'number' ? formatCurrency(value) : `${value}%`}
         </motion.p>
         {change && (
           <div className="flex items-center space-x-1">
-            <TrendingUp className={`h-4 w-4 ${change > 0 ? 'text-success' : 'text-danger'}`} />
-            <span className={`text-sm font-medium ${change > 0 ? 'text-success' : 'text-danger'}`}>
-              {change > 0 ? '+' : ''}{change}%
+            <TrendingUp
+              className={`h-4 w-4 ${change > 0 ? 'text-success' : 'text-danger'}`}
+            />
+            <span
+              className={`font-medium text-sm ${change > 0 ? 'text-success' : 'text-danger'}`}
+            >
+              {change > 0 ? '+' : ''}
+              {change}%
             </span>
             <span className="text-gray-400 text-xs">este mês</span>
           </div>
         )}
-        {subtitle && (
-          <p className="text-gray-400 text-xs">{subtitle}</p>
-        )}
+        {subtitle && <p className="text-gray-400 text-xs">{subtitle}</p>}
       </div>
-      <div className="p-3 rounded-lg bg-white/10 backdrop-blur-sm">
+      <div className="rounded-lg bg-white/10 p-3 backdrop-blur-sm">
         <Icon className="h-8 w-8 text-accent" />
       </div>
     </div>
@@ -260,31 +279,35 @@ export default function Financeiro() {
   const [filterStatus, setFilterStatus] = useState('todos');
   const [filterPeriod, setFilterPeriod] = useState('mes');
 
-  const filteredTransactions = financeiroData.transactions.filter(transaction => {
-    const matchesType = filterType === 'todos' || transaction.type === filterType;
-    const matchesStatus = filterStatus === 'todos' || transaction.status === filterStatus;
-    return matchesType && matchesStatus;
-  });
+  const filteredTransactions = financeiroData.transactions.filter(
+    (transaction) => {
+      const matchesType =
+        filterType === 'todos' || transaction.type === filterType;
+      const matchesStatus =
+        filterStatus === 'todos' || transaction.status === filterStatus;
+      return matchesType && matchesStatus;
+    }
+  );
 
   const totalReceitas = filteredTransactions
-    .filter(t => t.type === 'receita' && t.status === 'pago')
+    .filter((t) => t.type === 'receita' && t.status === 'pago')
     .reduce((sum, t) => sum + t.amount, 0);
 
   const totalDespesas = filteredTransactions
-    .filter(t => t.type === 'despesa' && t.status === 'pago')
+    .filter((t) => t.type === 'despesa' && t.status === 'pago')
     .reduce((sum, t) => sum + t.amount, 0);
 
   const saldoLiquido = totalReceitas - totalDespesas;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 animate-background-position-spin">
+    <div className="min-h-screen animate-background-position-spin bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
       <div className="container mx-auto px-6 py-8">
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
+          initial={{ opacity: 0, y: -20 }}
         >
-          <h1 className="text-4xl font-bold text-white mb-2">
+          <h1 className="mb-2 font-bold text-4xl text-white">
             Financeiro NEONPROV1
           </h1>
           <p className="text-gray-400">
@@ -293,56 +316,62 @@ export default function Financeiro() {
         </motion.div>
 
         {/* Resumo Financeiro */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
           <FinancialCard
+            change={financeiroData.summary.crescimentoMensal}
+            gradient="success"
             icon={DollarSign}
             title="Receita Total"
             value={financeiroData.summary.totalReceita}
-            change={financeiroData.summary.crescimentoMensal}
-            gradient="success"
           />
           <FinancialCard
+            change={8.5}
+            gradient="primary"
             icon={TrendingUp}
             title="Receita Mensal"
             value={financeiroData.summary.receitaMensal}
-            change={8.5}
-            gradient="primary"
           />
           <FinancialCard
+            gradient="warning"
             icon={Receipt}
+            subtitle="Valores pendentes"
             title="Contas a Receber"
             value={financeiroData.summary.contasReceber}
-            gradient="warning"
-            subtitle="Valores pendentes"
           />
           <FinancialCard
+            gradient="danger"
             icon={CreditCard}
+            subtitle="Valores em aberto"
             title="Contas a Pagar"
             value={financeiroData.summary.contasPagar}
-            gradient="danger"
-            subtitle="Valores em aberto"
           />
         </div>
 
         {/* Saldo Líquido */}
         <div className="mb-8">
-          <NeonGradientCard gradient={saldoLiquido >= 0 ? 'success' : 'danger'} className="text-center">
+          <NeonGradientCard
+            className="text-center"
+            gradient={saldoLiquido >= 0 ? 'success' : 'danger'}
+          >
             <div className="flex items-center justify-center space-x-4">
-              <div className="p-4 rounded-full bg-white/10">
+              <div className="rounded-full bg-white/10 p-4">
                 <PieChart className="h-12 w-12 text-accent" />
               </div>
               <div>
-                <p className="text-gray-400 text-sm mb-1">Saldo Líquido (Período Filtrado)</p>
-                <motion.p 
-                  className={`text-4xl font-bold ${saldoLiquido >= 0 ? 'text-success' : 'text-danger'}`}
-                  initial={{ scale: 0.8 }}
+                <p className="mb-1 text-gray-400 text-sm">
+                  Saldo Líquido (Período Filtrado)
+                </p>
+                <motion.p
                   animate={{ scale: 1 }}
+                  className={`font-bold text-4xl ${saldoLiquido >= 0 ? 'text-success' : 'text-danger'}`}
+                  initial={{ scale: 0.8 }}
                   transition={{ delay: 0.3 }}
                 >
                   {formatCurrency(saldoLiquido)}
                 </motion.p>
                 <p className="text-gray-400 text-sm">
-                  Receitas: {formatCurrency(totalReceitas)} | Despesas: {formatCurrency(totalDespesas)}
+                  Receitas: {formatCurrency(totalReceitas)} | Despesas:{' '}
+                  {formatCurrency(totalDespesas)}
                 </p>
               </div>
             </div>
@@ -350,14 +379,14 @@ export default function Financeiro() {
         </div>
 
         {/* Controles de filtro */}
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
+        <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-5">
           <NeonGradientCard gradient="primary">
             <div className="relative">
-              <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Filter className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 transform text-gray-400" />
               <select
-                value={filterType}
+                className="w-full appearance-none rounded-lg border border-white/20 bg-white/10 py-2 pr-4 pl-10 text-white focus:outline-none focus:ring-2 focus:ring-accent"
                 onChange={(e) => setFilterType(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-accent appearance-none"
+                value={filterType}
               >
                 <option value="todos">Todos os Tipos</option>
                 <option value="receita">Receitas</option>
@@ -368,11 +397,11 @@ export default function Financeiro() {
 
           <NeonGradientCard gradient="secondary">
             <div className="relative">
-              <CheckCircle className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <CheckCircle className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 transform text-gray-400" />
               <select
-                value={filterStatus}
+                className="w-full appearance-none rounded-lg border border-white/20 bg-white/10 py-2 pr-4 pl-10 text-white focus:outline-none focus:ring-2 focus:ring-accent"
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-accent appearance-none"
+                value={filterStatus}
               >
                 <option value="todos">Todos os Status</option>
                 <option value="pago">Pagos</option>
@@ -384,11 +413,11 @@ export default function Financeiro() {
 
           <NeonGradientCard gradient="accent">
             <div className="relative">
-              <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Calendar className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 transform text-gray-400" />
               <select
-                value={filterPeriod}
+                className="w-full appearance-none rounded-lg border border-white/20 bg-white/10 py-2 pr-4 pl-10 text-white focus:outline-none focus:ring-2 focus:ring-accent"
                 onChange={(e) => setFilterPeriod(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-accent appearance-none"
+                value={filterPeriod}
               >
                 <option value="mes">Este Mês</option>
                 <option value="trimestre">Trimestre</option>
@@ -398,25 +427,31 @@ export default function Financeiro() {
             </div>
           </NeonGradientCard>
 
-          <CosmicGlowButton variant="success" className="h-full flex items-center justify-center">
-            <Plus className="h-5 w-5 mr-2" />
+          <CosmicGlowButton
+            className="flex h-full items-center justify-center"
+            variant="success"
+          >
+            <Plus className="mr-2 h-5 w-5" />
             Nova Transação
           </CosmicGlowButton>
 
-          <CosmicGlowButton variant="warning" className="h-full flex items-center justify-center">
-            <Download className="h-5 w-5 mr-2" />
+          <CosmicGlowButton
+            className="flex h-full items-center justify-center"
+            variant="warning"
+          >
+            <Download className="mr-2 h-5 w-5" />
             Exportar
           </CosmicGlowButton>
         </div>
 
         {/* Lista de transações */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <AnimatePresence>
             {filteredTransactions.map((transaction, index) => (
               <TransactionCard
+                index={index}
                 key={transaction.id}
                 transaction={transaction}
-                index={index}
               />
             ))}
           </AnimatePresence>
@@ -424,16 +459,16 @@ export default function Financeiro() {
 
         {filteredTransactions.length === 0 && (
           <motion.div
-            initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="text-center py-12"
+            className="py-12 text-center"
+            initial={{ opacity: 0 }}
           >
-            <NeonGradientCard gradient="primary" className="max-w-md mx-auto">
-              <BarChart3 className="h-16 w-16 text-accent mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-white mb-2">
+            <NeonGradientCard className="mx-auto max-w-md" gradient="primary">
+              <BarChart3 className="mx-auto mb-4 h-16 w-16 text-accent" />
+              <h3 className="mb-2 font-semibold text-white text-xl">
                 Nenhuma transação encontrada
               </h3>
-              <p className="text-gray-400 mb-4">
+              <p className="mb-4 text-gray-400">
                 Não há transações que correspondam aos filtros selecionados.
               </p>
               <CosmicGlowButton variant="primary">

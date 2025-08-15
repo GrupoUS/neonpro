@@ -1,6 +1,6 @@
-import { createMocks } from 'node-mocks-http'
-import handler from '@/app/api/analytics/export/route'
-import { mockExportData, mockSession } from '@/../../__tests__/utils/mockData'
+import { createMocks } from 'node-mocks-http';
+import { mockExportData, mockSession } from '@/../../__tests__/utils/mockData';
+import handler from '@/app/api/analytics/export/route';
 
 // Mock Supabase auth
 jest.mock('@/utils/supabase/server', () => ({
@@ -12,7 +12,7 @@ jest.mock('@/utils/supabase/server', () => ({
       }),
     },
   }),
-}))
+}));
 
 // Mock jsPDF
 jest.mock('jspdf', () => {
@@ -29,8 +29,8 @@ jest.mock('jspdf', () => {
     setFont: jest.fn(),
     addImage: jest.fn(),
     output: jest.fn().mockReturnValue('mock-pdf-content'),
-  }))
-})
+  }));
+});
 
 // Mock ExcelJS
 jest.mock('exceljs', () => ({
@@ -48,15 +48,17 @@ jest.mock('exceljs', () => ({
       }),
     }),
     xlsx: {
-      writeBuffer: jest.fn().mockResolvedValue(Buffer.from('mock-excel-content')),
+      writeBuffer: jest
+        .fn()
+        .mockResolvedValue(Buffer.from('mock-excel-content')),
     },
   })),
-}))
+}));
 
 describe('/api/analytics/export', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
-  })
+    jest.clearAllMocks();
+  });
 
   it('should export data to PDF format', async () => {
     const { req, res } = createMocks({
@@ -68,15 +70,15 @@ describe('/api/analytics/export', () => {
         format: 'pdf',
         data: mockExportData,
       },
-    })
+    });
 
-    await handler(req, res)
+    await handler(req, res);
 
-    expect(res._getStatusCode()).toBe(200)
-    expect(res._getHeaders()['content-type']).toBe('application/pdf')
-    expect(res._getHeaders()['content-disposition']).toContain('attachment')
-    expect(res._getData()).toBeTruthy()
-  })
+    expect(res._getStatusCode()).toBe(200);
+    expect(res._getHeaders()['content-type']).toBe('application/pdf');
+    expect(res._getHeaders()['content-disposition']).toContain('attachment');
+    expect(res._getData()).toBeTruthy();
+  });
 
   it('should export data to Excel format', async () => {
     const { req, res } = createMocks({
@@ -88,16 +90,16 @@ describe('/api/analytics/export', () => {
         format: 'excel',
         data: mockExportData,
       },
-    })
+    });
 
-    await handler(req, res)
+    await handler(req, res);
 
-    expect(res._getStatusCode()).toBe(200)
+    expect(res._getStatusCode()).toBe(200);
     expect(res._getHeaders()['content-type']).toBe(
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    )
-    expect(res._getHeaders()['content-disposition']).toContain('attachment')
-  })
+    );
+    expect(res._getHeaders()['content-disposition']).toContain('attachment');
+  });
 
   it('should export data to CSV format', async () => {
     const { req, res } = createMocks({
@@ -109,15 +111,15 @@ describe('/api/analytics/export', () => {
         format: 'csv',
         data: mockExportData,
       },
-    })
+    });
 
-    await handler(req, res)
+    await handler(req, res);
 
-    expect(res._getStatusCode()).toBe(200)
-    expect(res._getHeaders()['content-type']).toBe('text/csv')
-    expect(res._getHeaders()['content-disposition']).toContain('attachment')
-    expect(res._getData()).toContain('Total Patients,Total Revenue')
-  })
+    expect(res._getStatusCode()).toBe(200);
+    expect(res._getHeaders()['content-type']).toBe('text/csv');
+    expect(res._getHeaders()['content-disposition']).toContain('attachment');
+    expect(res._getData()).toContain('Total Patients,Total Revenue');
+  });
 
   it('should return 400 for invalid format', async () => {
     const { req, res } = createMocks({
@@ -129,22 +131,22 @@ describe('/api/analytics/export', () => {
         format: 'invalid',
         data: mockExportData,
       },
-    })
+    });
 
-    await handler(req, res)
+    await handler(req, res);
 
-    expect(res._getStatusCode()).toBe(400)
-    const data = JSON.parse(res._getData())
-    expect(data.error).toContain('Invalid export format')
-  })
+    expect(res._getStatusCode()).toBe(400);
+    const data = JSON.parse(res._getData());
+    expect(data.error).toContain('Invalid export format');
+  });
 
   it('should return 401 for unauthenticated requests', async () => {
     // Mock unauthenticated session
-    const mockSupabase = require('@/utils/supabase/server').createClient()
+    const mockSupabase = require('@/utils/supabase/server').createClient();
     mockSupabase.auth.getSession.mockResolvedValueOnce({
       data: { session: null },
       error: null,
-    })
+    });
 
     const { req, res } = createMocks({
       method: 'POST',
@@ -155,26 +157,26 @@ describe('/api/analytics/export', () => {
         format: 'pdf',
         data: mockExportData,
       },
-    })
+    });
 
-    await handler(req, res)
+    await handler(req, res);
 
-    expect(res._getStatusCode()).toBe(401)
-    const data = JSON.parse(res._getData())
-    expect(data.error).toBe('Unauthorized')
-  })
+    expect(res._getStatusCode()).toBe(401);
+    const data = JSON.parse(res._getData());
+    expect(data.error).toBe('Unauthorized');
+  });
 
   it('should return 405 for non-POST methods', async () => {
     const { req, res } = createMocks({
       method: 'GET',
-    })
+    });
 
-    await handler(req, res)
+    await handler(req, res);
 
-    expect(res._getStatusCode()).toBe(405)
-    const data = JSON.parse(res._getData())
-    expect(data.error).toBe('Method not allowed')
-  })
+    expect(res._getStatusCode()).toBe(405);
+    const data = JSON.parse(res._getData());
+    expect(data.error).toBe('Method not allowed');
+  });
 
   it('should handle missing data gracefully', async () => {
     const { req, res } = createMocks({
@@ -186,14 +188,14 @@ describe('/api/analytics/export', () => {
         format: 'pdf',
         // Missing data
       },
-    })
+    });
 
-    await handler(req, res)
+    await handler(req, res);
 
-    expect(res._getStatusCode()).toBe(400)
-    const data = JSON.parse(res._getData())
-    expect(data.error).toContain('Missing required data')
-  })
+    expect(res._getStatusCode()).toBe(400);
+    const data = JSON.parse(res._getData());
+    expect(data.error).toContain('Missing required data');
+  });
 
   it('should handle rate limiting', async () => {
     // Make multiple rapid requests
@@ -209,17 +211,17 @@ describe('/api/analytics/export', () => {
           data: mockExportData,
         },
       })
-    )
+    );
 
     const responses = await Promise.all(
       requests.map(({ req, res }) => handler(req, res))
-    )
+    );
 
     // Should have some rate limited responses
     const rateLimitedResponses = responses.filter(
       (_, index) => requests[index].res._getStatusCode() === 429
-    )
+    );
 
-    expect(rateLimitedResponses.length).toBeGreaterThan(0)
-  })
-})
+    expect(rateLimitedResponses.length).toBeGreaterThan(0);
+  });
+});

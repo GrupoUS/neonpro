@@ -8,7 +8,7 @@
 
 import { createClient } from '@supabase/supabase-js';
 import { parse } from 'csv-parse/sync';
-import { format, parseISO, isValid, differenceInDays } from 'date-fns';
+import { differenceInDays, format, isValid, parseISO } from 'date-fns';
 import { z } from 'zod';
 
 // Initialize Supabase client
@@ -31,12 +31,14 @@ export const EnhancedBankTransactionSchema = z.object({
   category: z.string().optional(),
   subcategory: z.string().optional(),
   // Enhanced fields from new system
-  counterparty: z.object({
-    name: z.string().optional(),
-    document: z.string().optional(),
-    bankCode: z.string().optional(),
-    accountNumber: z.string().optional(),
-  }).optional(),
+  counterparty: z
+    .object({
+      name: z.string().optional(),
+      document: z.string().optional(),
+      bankCode: z.string().optional(),
+      accountNumber: z.string().optional(),
+    })
+    .optional(),
   pixKey: z.string().optional(),
   authenticationCode: z.string().optional(),
   // Healthcare-specific fields
@@ -45,18 +47,33 @@ export const EnhancedBankTransactionSchema = z.object({
   clinicId: z.string().optional(),
   // Reconciliation fields
   matched_payment_id: z.string().optional(),
-  reconciliation_status: z.enum(['pending', 'matched', 'manual_review', 'unmatched', 'ignored']),
+  reconciliation_status: z.enum([
+    'pending',
+    'matched',
+    'manual_review',
+    'unmatched',
+    'ignored',
+  ]),
   reconciliation_score: z.number().min(0).max(1).optional(),
   processing_date: z.date().default(() => new Date()),
 });
 
-export type EnhancedBankTransaction = z.infer<typeof EnhancedBankTransactionSchema>;
+export type EnhancedBankTransaction = z.infer<
+  typeof EnhancedBankTransactionSchema
+>;
 
 export const EnhancedPaymentRecordSchema = z.object({
   id: z.string(),
   amount: z.number(),
   payment_date: z.string(),
-  payment_method: z.enum(['cash', 'pix', 'credit_card', 'debit_card', 'bank_transfer', 'check']),
+  payment_method: z.enum([
+    'cash',
+    'pix',
+    'credit_card',
+    'debit_card',
+    'bank_transfer',
+    'check',
+  ]),
   reference_id: z.string().optional(),
   customer_name: z.string().optional(),
   customer_document: z.string().optional(),
@@ -68,7 +85,12 @@ export const EnhancedPaymentRecordSchema = z.object({
   clinic_id: z.string().optional(),
   expected_settlement_date: z.string().optional(),
   // Enhanced reconciliation fields
-  reconciliation_status: z.enum(['pending', 'matched', 'manual_review', 'unmatched']),
+  reconciliation_status: z.enum([
+    'pending',
+    'matched',
+    'manual_review',
+    'unmatched',
+  ]),
   metadata: z.record(z.any()).optional(),
 });
 
@@ -80,7 +102,16 @@ export const ReconciliationMatchSchema = z.object({
   payment_id: z.string(),
   match_confidence: z.number().min(0).max(1),
   match_type: z.enum(['exact', 'fuzzy', 'partial', 'manual']),
-  match_criteria: z.array(z.enum(['amount', 'date', 'description', 'customer', 'reference', 'pix_key'])),
+  match_criteria: z.array(
+    z.enum([
+      'amount',
+      'date',
+      'description',
+      'customer',
+      'reference',
+      'pix_key',
+    ])
+  ),
   amount_variance: z.number().optional(),
   date_variance: z.number().optional(), // Days
   validation_status: z.enum(['pending', 'approved', 'rejected']),
@@ -195,81 +226,119 @@ export class EnhancedBankReconciliationService {
     } = {}
   ): Promise<EnhancedReconciliationResult> {
     const startTime = Date.now();
-    
+
     try {
       // Validate mapping
       const validatedMapping = enhancedCsvMappingSchema.parse(mapping);
-      
+
       // Parse CSV content
       const records = parse(csvContent, {
         columns: true,
         skip_empty_lines: true,
         trim: true,
       });
-      
+
       // Transform records to enhanced bank transactions
-      const transactions = await this.transformRecordsToTransactions(
-        records,
-        bankAccountId,
-        validatedMapping,
-        options.healthcareMode
-      );
-      
+      const transactions =
+        await EnhancedBankReconciliationService.transformRecordsToTransactions(
+          records,
+          bankAccountId,
+          validatedMapping,
+          options.healthcareMode
+        );
+
       // Get existing payments for matching
-      const payments = await this.getPaymentsForMatching(bankAccountId, options.healthcareMode);
-      
+      const payments =
+        await EnhancedBankReconciliationService.getPaymentsForMatching(
+          bankAccountId,
+          options.healthcareMode
+        );
+
       // Perform intelligent matching with multiple algorithms
-      const matchingResult = await this.performIntelligentMatching(
-        transactions,
-        payments,
-        options.autoApproveHighConfidence
-      );
-      
+      const matchingResult =
+        await EnhancedBankReconciliationService.performIntelligentMatching(
+          transactions,
+          payments,
+          options.autoApproveHighConfidence
+        );
+
       // Save transactions and matches to database
-      await this.saveTransactionsAndMatches(
+      await EnhancedBankReconciliationService.saveTransactionsAndMatches(
         transactions,
         matchingResult.matches,
         bankAccountId,
         userId
       );
-      
+
       const processingTime = Date.now() - startTime;
-      
+
       // Generate comprehensive result
       const result: EnhancedReconciliationResult = {
         total_imported: transactions.length,
-        total_matched: matchingResult.matches.filter(m => m.validation_status === 'approved').length,
-        total_unmatched: transactions.filter(t => t.reconciliation_status === 'unmatched').length,
-        automatic_matches: matchingResult.matches.filter(m => m.match_type !== 'manual').length,
-        manual_review_required: matchingResult.matches.filter(m => m.validation_status === 'pending').length,
-        reconciliation_rate: transactions.length > 0 ? 
-          matchingResult.matches.filter(m => m.validation_status === 'approved').length / transactions.length : 0,
-        average_confidence: matchingResult.matches.length > 0 ?
-          matchingResult.matches.reduce((sum, m) => sum + m.match_confidence, 0) / matchingResult.matches.length : 0,
+        total_matched: matchingResult.matches.filter(
+          (m) => m.validation_status === 'approved'
+        ).length,
+        total_unmatched: transactions.filter(
+          (t) => t.reconciliation_status === 'unmatched'
+        ).length,
+        automatic_matches: matchingResult.matches.filter(
+          (m) => m.match_type !== 'manual'
+        ).length,
+        manual_review_required: matchingResult.matches.filter(
+          (m) => m.validation_status === 'pending'
+        ).length,
+        reconciliation_rate:
+          transactions.length > 0
+            ? matchingResult.matches.filter(
+                (m) => m.validation_status === 'approved'
+              ).length / transactions.length
+            : 0,
+        average_confidence:
+          matchingResult.matches.length > 0
+            ? matchingResult.matches.reduce(
+                (sum, m) => sum + m.match_confidence,
+                0
+              ) / matchingResult.matches.length
+            : 0,
         matched_transactions: matchingResult.matches,
-        unmatched_bank_transactions: transactions.filter(t => t.reconciliation_status === 'unmatched'),
-        unmatched_payments: payments.filter(p => p.reconciliation_status === 'unmatched'),
+        unmatched_bank_transactions: transactions.filter(
+          (t) => t.reconciliation_status === 'unmatched'
+        ),
+        unmatched_payments: payments.filter(
+          (p) => p.reconciliation_status === 'unmatched'
+        ),
         processing_summary: {
-          exact_matches: matchingResult.matches.filter(m => m.match_type === 'exact').length,
-          fuzzy_matches: matchingResult.matches.filter(m => m.match_type === 'fuzzy').length,
-          partial_matches: matchingResult.matches.filter(m => m.match_type === 'partial').length,
+          exact_matches: matchingResult.matches.filter(
+            (m) => m.match_type === 'exact'
+          ).length,
+          fuzzy_matches: matchingResult.matches.filter(
+            (m) => m.match_type === 'fuzzy'
+          ).length,
+          partial_matches: matchingResult.matches.filter(
+            (m) => m.match_type === 'partial'
+          ).length,
           processing_time_ms: processingTime,
         },
         errors: [],
       };
-      
+
       // Add healthcare metrics if in healthcare mode
       if (options.healthcareMode) {
-        result.healthcare_metrics = this.calculateHealthcareMetrics(matchingResult.matches, payments);
+        result.healthcare_metrics =
+          EnhancedBankReconciliationService.calculateHealthcareMetrics(
+            matchingResult.matches,
+            payments
+          );
       }
-      
+
       return result;
-      
     } catch (error) {
       console.error('Enhanced reconciliation error:', error);
-      throw new Error(`Failed to perform enhanced bank reconciliation: ${error.message}`);
+      throw new Error(
+        `Failed to perform enhanced bank reconciliation: ${error.message}`
+      );
     }
-  }  /**
+  } /**
    * Transform CSV records to enhanced bank transactions
    */
   private static async transformRecordsToTransactions(
@@ -279,79 +348,110 @@ export class EnhancedBankReconciliationService {
     healthcareMode?: boolean
   ): Promise<EnhancedBankTransaction[]> {
     const transactions: EnhancedBankTransaction[] = [];
-    
+
     for (const record of records) {
       try {
         // Parse date
         const dateStr = record[mapping.date_column];
-        const date = this.parseDate(dateStr, mapping.date_format);
-        
-        if (!date || !isValid(date)) {
+        const date = EnhancedBankReconciliationService.parseDate(
+          dateStr,
+          mapping.date_format
+        );
+
+        if (!(date && isValid(date))) {
           console.warn(`Invalid date: ${dateStr}`);
           continue;
         }
-        
+
         // Parse amount
-        let amount = parseFloat(record[mapping.amount_column]?.toString().replace(/[^\d.,-]/g, '').replace(',', '.') || '0');
+        let amount = Number.parseFloat(
+          record[mapping.amount_column]
+            ?.toString()
+            .replace(/[^\d.,-]/g, '')
+            .replace(',', '.') || '0'
+        );
         if (mapping.amount_format === 'cents') {
           amount = amount / 100;
         }
-        
+
         // Determine transaction type
         let type: 'credit' | 'debit' = 'credit';
         if (mapping.type_column && record[mapping.type_column]) {
-          const typeValue = record[mapping.type_column].toString().toLowerCase();
-          if (mapping.debit_indicator && typeValue.includes(mapping.debit_indicator.toLowerCase())) {
+          const typeValue = record[mapping.type_column]
+            .toString()
+            .toLowerCase();
+          if (
+            mapping.debit_indicator &&
+            typeValue.includes(mapping.debit_indicator.toLowerCase())
+          ) {
             type = 'debit';
-          } else if (mapping.credit_indicator && typeValue.includes(mapping.credit_indicator.toLowerCase())) {
+          } else if (
+            mapping.credit_indicator &&
+            typeValue.includes(mapping.credit_indicator.toLowerCase())
+          ) {
             type = 'credit';
           }
         }
-        
+
         // If no type column, infer from amount sign
         if (amount < 0) {
           type = 'debit';
           amount = Math.abs(amount);
         }
-        
+
         // Extract counterparty information
-        const counterparty = mapping.counterparty_name_column ? {
-          name: record[mapping.counterparty_name_column] || undefined,
-          document: mapping.counterparty_document_column ? record[mapping.counterparty_document_column] : undefined,
-          bankCode: mapping.counterparty_bank_column ? record[mapping.counterparty_bank_column] : undefined,
-        } : undefined;
-        
+        const counterparty = mapping.counterparty_name_column
+          ? {
+              name: record[mapping.counterparty_name_column] || undefined,
+              document: mapping.counterparty_document_column
+                ? record[mapping.counterparty_document_column]
+                : undefined,
+              bankCode: mapping.counterparty_bank_column
+                ? record[mapping.counterparty_bank_column]
+                : undefined,
+            }
+          : undefined;
+
         // Create enhanced transaction
         const transaction: EnhancedBankTransaction = {
-          id: this.generateTransactionId(),
+          id: EnhancedBankReconciliationService.generateTransactionId(),
           date: format(date, 'yyyy-MM-dd'),
           description: record[mapping.description_column] || '',
           amount,
           type,
-          reference: mapping.reference_column ? record[mapping.reference_column] : undefined,
+          reference: mapping.reference_column
+            ? record[mapping.reference_column]
+            : undefined,
           bank_account_id: bankAccountId,
           counterparty,
-          pixKey: mapping.pix_key_column ? record[mapping.pix_key_column] : undefined,
-          authenticationCode: mapping.auth_code_column ? record[mapping.auth_code_column] : undefined,
+          pixKey: mapping.pix_key_column
+            ? record[mapping.pix_key_column]
+            : undefined,
+          authenticationCode: mapping.auth_code_column
+            ? record[mapping.auth_code_column]
+            : undefined,
           reconciliation_status: 'pending',
         };
-        
+
         // Add healthcare-specific fields if in healthcare mode
         if (healthcareMode) {
-          transaction.patientId = mapping.patient_id_column ? record[mapping.patient_id_column] : undefined;
-          transaction.treatmentId = mapping.treatment_id_column ? record[mapping.treatment_id_column] : undefined;
+          transaction.patientId = mapping.patient_id_column
+            ? record[mapping.patient_id_column]
+            : undefined;
+          transaction.treatmentId = mapping.treatment_id_column
+            ? record[mapping.treatment_id_column]
+            : undefined;
           transaction.clinicId = bankAccountId; // Associate with clinic/account
         }
-        
+
         // Validate transaction
         EnhancedBankTransactionSchema.parse(transaction);
         transactions.push(transaction);
-        
       } catch (error) {
-        console.warn(`Failed to process record:`, record, error);
+        console.warn('Failed to process record:', record, error);
       }
     }
-    
+
     return transactions;
   }
 
@@ -359,7 +459,7 @@ export class EnhancedBankReconciliationService {
    * Get payments for matching with enhanced filtering
    */
   private static async getPaymentsForMatching(
-    bankAccountId: string,
+    _bankAccountId: string,
     healthcareMode?: boolean
   ): Promise<EnhancedPaymentRecord[]> {
     try {
@@ -382,21 +482,23 @@ export class EnhancedBankReconciliationService {
           metadata
         `)
         .eq('status', 'completed')
-        .gte('payment_date', format(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), 'yyyy-MM-dd'));
-      
+        .gte(
+          'payment_date',
+          format(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), 'yyyy-MM-dd')
+        );
+
       if (healthcareMode) {
         query = query.not('patient_id', 'is', null);
       }
-      
+
       const { data, error } = await query;
-      
+
       if (error) throw error;
-      
-      return (data || []).map(payment => ({
+
+      return (data || []).map((payment) => ({
         ...payment,
         reconciliation_status: 'pending' as const,
       }));
-      
     } catch (error) {
       console.error('Error fetching payments for matching:', error);
       return [];
@@ -420,39 +522,61 @@ export class EnhancedBankReconciliationService {
     const usedPaymentIds = new Set<string>();
 
     // Phase 1: Exact matches (amount + date + reference/PIX)
-    const exactMatches = await this.findExactMatches(bankTransactions, payments);
+    const exactMatches =
+      await EnhancedBankReconciliationService.findExactMatches(
+        bankTransactions,
+        payments
+      );
     matches.push(...exactMatches);
-    exactMatches.forEach(match => {
+    exactMatches.forEach((match) => {
       usedBankTxIds.add(match.bank_transaction_id);
       usedPaymentIds.add(match.payment_id);
     });
 
     // Phase 2: High confidence fuzzy matches
-    const remainingBankTx = bankTransactions.filter(tx => tx.id && !usedBankTxIds.has(tx.id));
-    const remainingPayments = payments.filter(p => !usedPaymentIds.has(p.id));
+    const remainingBankTx = bankTransactions.filter(
+      (tx) => tx.id && !usedBankTxIds.has(tx.id)
+    );
+    const remainingPayments = payments.filter((p) => !usedPaymentIds.has(p.id));
 
-    const fuzzyMatches = await this.findFuzzyMatches(remainingBankTx, remainingPayments);
+    const fuzzyMatches =
+      await EnhancedBankReconciliationService.findFuzzyMatches(
+        remainingBankTx,
+        remainingPayments
+      );
     matches.push(...fuzzyMatches);
-    fuzzyMatches.forEach(match => {
+    fuzzyMatches.forEach((match) => {
       usedBankTxIds.add(match.bank_transaction_id);
       usedPaymentIds.add(match.payment_id);
     });
 
     // Phase 3: Partial matches (installments, split payments)
-    const remainingBankTx2 = bankTransactions.filter(tx => tx.id && !usedBankTxIds.has(tx.id));
-    const remainingPayments2 = payments.filter(p => !usedPaymentIds.has(p.id));
+    const remainingBankTx2 = bankTransactions.filter(
+      (tx) => tx.id && !usedBankTxIds.has(tx.id)
+    );
+    const remainingPayments2 = payments.filter(
+      (p) => !usedPaymentIds.has(p.id)
+    );
 
-    const partialMatches = await this.findPartialMatches(remainingBankTx2, remainingPayments2);
+    const partialMatches =
+      await EnhancedBankReconciliationService.findPartialMatches(
+        remainingBankTx2,
+        remainingPayments2
+      );
     matches.push(...partialMatches);
-    partialMatches.forEach(match => {
+    partialMatches.forEach((match) => {
       usedBankTxIds.add(match.bank_transaction_id);
       usedPaymentIds.add(match.payment_id);
     });
 
     // Auto-approve high confidence matches if enabled
     if (autoApproveHighConfidence) {
-      matches.forEach(match => {
-        if (match.match_confidence >= this.HIGH_CONFIDENCE_THRESHOLD && match.validation_status === 'pending') {
+      matches.forEach((match) => {
+        if (
+          match.match_confidence >=
+            EnhancedBankReconciliationService.HIGH_CONFIDENCE_THRESHOLD &&
+          match.validation_status === 'pending'
+        ) {
           match.validation_status = 'approved';
           match.validated_by = 'system';
           match.validated_at = new Date();
@@ -461,12 +585,22 @@ export class EnhancedBankReconciliationService {
     }
 
     // Update transaction and payment statuses
-    this.updateReconciliationStatuses(bankTransactions, payments, matches);
+    EnhancedBankReconciliationService.updateReconciliationStatuses(
+      bankTransactions,
+      payments,
+      matches
+    );
 
     return {
       matches,
-      unmatchedBankIds: new Set(bankTransactions.filter(tx => tx.id && !usedBankTxIds.has(tx.id)).map(tx => tx.id!)),
-      unmatchedPaymentIds: new Set(payments.filter(p => !usedPaymentIds.has(p.id)).map(p => p.id)),
+      unmatchedBankIds: new Set(
+        bankTransactions
+          .filter((tx) => tx.id && !usedBankTxIds.has(tx.id))
+          .map((tx) => tx.id!)
+      ),
+      unmatchedPaymentIds: new Set(
+        payments.filter((p) => !usedPaymentIds.has(p.id)).map((p) => p.id)
+      ),
     };
   }
 
@@ -482,34 +616,52 @@ export class EnhancedBankReconciliationService {
     for (const bankTx of bankTransactions) {
       if (!bankTx.id) continue;
 
-      const potentialMatches = payments.filter(payment => {
+      const potentialMatches = payments.filter((payment) => {
         // Exact amount match
-        const amountMatch = Math.abs(bankTx.amount - Math.abs(payment.amount)) <= this.AMOUNT_VARIANCE_TOLERANCE;
-        
+        const amountMatch =
+          Math.abs(bankTx.amount - Math.abs(payment.amount)) <=
+          EnhancedBankReconciliationService.AMOUNT_VARIANCE_TOLERANCE;
+
         // Date within tolerance
         const bankDate = parseISO(bankTx.date);
         const paymentDate = parseISO(payment.payment_date);
         const dateDiff = Math.abs(differenceInDays(bankDate, paymentDate));
-        const dateMatch = dateDiff <= this.DATE_VARIANCE_TOLERANCE;
+        const dateMatch =
+          dateDiff <= EnhancedBankReconciliationService.DATE_VARIANCE_TOLERANCE;
 
         // PIX key match (if available)
-        const pixMatch = bankTx.pixKey && payment.reference_id === bankTx.pixKey;
-        
-        // Reference match
-        const refMatch = bankTx.reference && payment.reference_id === bankTx.reference;
+        const pixMatch =
+          bankTx.pixKey && payment.reference_id === bankTx.pixKey;
 
-        return amountMatch && dateMatch && (pixMatch || refMatch || (!bankTx.pixKey && !bankTx.reference));
+        // Reference match
+        const refMatch =
+          bankTx.reference && payment.reference_id === bankTx.reference;
+
+        return (
+          amountMatch &&
+          dateMatch &&
+          (pixMatch || refMatch || !(bankTx.pixKey || bankTx.reference))
+        );
       });
 
       if (potentialMatches.length === 1) {
         const payment = potentialMatches[0];
-        const criteria: Array<'amount' | 'date' | 'description' | 'customer' | 'reference' | 'pix_key'> = ['amount', 'date'];
-        
-        if (bankTx.pixKey && payment.reference_id === bankTx.pixKey) criteria.push('pix_key');
-        if (bankTx.reference && payment.reference_id === bankTx.reference) criteria.push('reference');
+        const criteria: Array<
+          | 'amount'
+          | 'date'
+          | 'description'
+          | 'customer'
+          | 'reference'
+          | 'pix_key'
+        > = ['amount', 'date'];
+
+        if (bankTx.pixKey && payment.reference_id === bankTx.pixKey)
+          criteria.push('pix_key');
+        if (bankTx.reference && payment.reference_id === bankTx.reference)
+          criteria.push('reference');
 
         matches.push({
-          id: this.generateMatchId(),
+          id: EnhancedBankReconciliationService.generateMatchId(),
           bank_transaction_id: bankTx.id,
           payment_id: payment.id,
           match_confidence: 1.0,
@@ -537,13 +689,24 @@ export class EnhancedBankReconciliationService {
     for (const bankTx of bankTransactions) {
       if (!bankTx.id) continue;
 
-      let bestMatch: { payment: EnhancedPaymentRecord; score: number; criteria: string[] } | null = null;
+      let bestMatch: {
+        payment: EnhancedPaymentRecord;
+        score: number;
+        criteria: string[];
+      } | null = null;
 
       for (const payment of payments) {
-        const matchScore = this.calculateEnhancedMatchScore(bankTx, payment);
-        
-        if (matchScore.score >= this.MATCH_CONFIDENCE_THRESHOLD && 
-            (!bestMatch || matchScore.score > bestMatch.score)) {
+        const matchScore =
+          EnhancedBankReconciliationService.calculateEnhancedMatchScore(
+            bankTx,
+            payment
+          );
+
+        if (
+          matchScore.score >=
+            EnhancedBankReconciliationService.MATCH_CONFIDENCE_THRESHOLD &&
+          (!bestMatch || matchScore.score > bestMatch.score)
+        ) {
           bestMatch = {
             payment,
             score: matchScore.score,
@@ -554,21 +717,33 @@ export class EnhancedBankReconciliationService {
 
       if (bestMatch) {
         matches.push({
-          id: this.generateMatchId(),
+          id: EnhancedBankReconciliationService.generateMatchId(),
           bank_transaction_id: bankTx.id,
           payment_id: bestMatch.payment.id,
           match_confidence: bestMatch.score,
           match_type: 'fuzzy',
           match_criteria: bestMatch.criteria as any,
-          validation_status: bestMatch.score >= this.HIGH_CONFIDENCE_THRESHOLD ? 'approved' : 'pending',
-          validated_by: bestMatch.score >= this.HIGH_CONFIDENCE_THRESHOLD ? 'system' : undefined,
-          validated_at: bestMatch.score >= this.HIGH_CONFIDENCE_THRESHOLD ? new Date() : undefined,
+          validation_status:
+            bestMatch.score >=
+            EnhancedBankReconciliationService.HIGH_CONFIDENCE_THRESHOLD
+              ? 'approved'
+              : 'pending',
+          validated_by:
+            bestMatch.score >=
+            EnhancedBankReconciliationService.HIGH_CONFIDENCE_THRESHOLD
+              ? 'system'
+              : undefined,
+          validated_at:
+            bestMatch.score >=
+            EnhancedBankReconciliationService.HIGH_CONFIDENCE_THRESHOLD
+              ? new Date()
+              : undefined,
         });
       }
     }
 
     return matches;
-  }  /**
+  } /**
    * Enhanced match score calculation with multiple criteria
    */
   private static calculateEnhancedMatchScore(
@@ -589,10 +764,13 @@ export class EnhancedBankReconciliationService {
 
     // Amount similarity (required for any match)
     const amountDiff = Math.abs(bankTx.amount - Math.abs(payment.amount));
-    const amountSimilarity = Math.max(0, 1 - (amountDiff / Math.max(bankTx.amount, Math.abs(payment.amount))));
-    
+    const amountSimilarity = Math.max(
+      0,
+      1 - amountDiff / Math.max(bankTx.amount, Math.abs(payment.amount))
+    );
+
     if (amountSimilarity < 0.9) return { score: 0, criteria: [] }; // Skip if amount too different
-    
+
     score += weights.amount * amountSimilarity;
     criteria.push('amount');
 
@@ -600,8 +778,8 @@ export class EnhancedBankReconciliationService {
     const bankDate = parseISO(bankTx.date);
     const paymentDate = parseISO(payment.payment_date);
     const dateDiff = Math.abs(differenceInDays(bankDate, paymentDate));
-    const dateSimilarity = Math.max(0, 1 - (dateDiff / 7)); // 7-day window
-    
+    const dateSimilarity = Math.max(0, 1 - dateDiff / 7); // 7-day window
+
     if (dateSimilarity > 0.5) {
       score += weights.date * dateSimilarity;
       criteria.push('date');
@@ -609,11 +787,16 @@ export class EnhancedBankReconciliationService {
 
     // Customer name similarity (healthcare-specific enhancement)
     if (payment.customer_name && bankTx.counterparty?.name) {
-      const customerSimilarity = this.calculateStringSimilarity(
-        this.normalizeName(payment.customer_name),
-        this.normalizeName(bankTx.counterparty.name)
-      );
-      
+      const customerSimilarity =
+        EnhancedBankReconciliationService.calculateStringSimilarity(
+          EnhancedBankReconciliationService.normalizeName(
+            payment.customer_name
+          ),
+          EnhancedBankReconciliationService.normalizeName(
+            bankTx.counterparty.name
+          )
+        );
+
       if (customerSimilarity > 0.7) {
         score += weights.customer * customerSimilarity;
         criteria.push('customer');
@@ -621,11 +804,12 @@ export class EnhancedBankReconciliationService {
     }
 
     // Description similarity with healthcare terms recognition
-    const descriptionSimilarity = this.calculateDescriptionSimilarity(
-      bankTx.description,
-      payment.description || payment.customer_name || ''
-    );
-    
+    const descriptionSimilarity =
+      EnhancedBankReconciliationService.calculateDescriptionSimilarity(
+        bankTx.description,
+        payment.description || payment.customer_name || ''
+      );
+
     if (descriptionSimilarity > 0.6) {
       score += weights.description * descriptionSimilarity;
       criteria.push('description');
@@ -650,20 +834,30 @@ export class EnhancedBankReconciliationService {
     const matches: ReconciliationMatch[] = [];
 
     // Group payments by customer and date for installment detection
-    const paymentGroups = this.groupPaymentsByCustomerAndDate(payments);
+    const paymentGroups =
+      EnhancedBankReconciliationService.groupPaymentsByCustomerAndDate(
+        payments
+      );
 
     for (const bankTx of bankTransactions) {
       if (!bankTx.id) continue;
 
       // Find matching payment groups
-      const matchingGroups = this.findMatchingPaymentGroups(bankTx, paymentGroups);
-      
+      const matchingGroups =
+        EnhancedBankReconciliationService.findMatchingPaymentGroups(
+          bankTx,
+          paymentGroups
+        );
+
       for (const group of matchingGroups) {
-        if (group.confidence > this.MATCH_CONFIDENCE_THRESHOLD) {
+        if (
+          group.confidence >
+          EnhancedBankReconciliationService.MATCH_CONFIDENCE_THRESHOLD
+        ) {
           // Create partial matches for each payment in the group
           for (const payment of group.payments) {
             matches.push({
-              id: this.generateMatchId(),
+              id: EnhancedBankReconciliationService.generateMatchId(),
               bank_transaction_id: bankTx.id,
               payment_id: payment.id,
               match_confidence: group.confidence,
@@ -689,14 +883,15 @@ export class EnhancedBankReconciliationService {
     payments: EnhancedPaymentRecord[],
     matches: ReconciliationMatch[]
   ): void {
-    const matchedBankIds = new Set(matches.map(m => m.bank_transaction_id));
-    const matchedPaymentIds = new Set(matches.map(m => m.payment_id));
+    const matchedBankIds = new Set(matches.map((m) => m.bank_transaction_id));
+    const matchedPaymentIds = new Set(matches.map((m) => m.payment_id));
 
     // Update bank transactions
-    bankTransactions.forEach(tx => {
+    bankTransactions.forEach((tx) => {
       if (tx.id && matchedBankIds.has(tx.id)) {
-        const match = matches.find(m => m.bank_transaction_id === tx.id);
-        tx.reconciliation_status = match?.validation_status === 'approved' ? 'matched' : 'manual_review';
+        const match = matches.find((m) => m.bank_transaction_id === tx.id);
+        tx.reconciliation_status =
+          match?.validation_status === 'approved' ? 'matched' : 'manual_review';
         tx.reconciliation_score = match?.match_confidence;
         tx.matched_payment_id = match?.payment_id;
       } else {
@@ -705,10 +900,11 @@ export class EnhancedBankReconciliationService {
     });
 
     // Update payments
-    payments.forEach(payment => {
+    payments.forEach((payment) => {
       if (matchedPaymentIds.has(payment.id)) {
-        const match = matches.find(m => m.payment_id === payment.id);
-        payment.reconciliation_status = match?.validation_status === 'approved' ? 'matched' : 'manual_review';
+        const match = matches.find((m) => m.payment_id === payment.id);
+        payment.reconciliation_status =
+          match?.validation_status === 'approved' ? 'matched' : 'manual_review';
       } else {
         payment.reconciliation_status = 'unmatched';
       }
@@ -721,7 +917,7 @@ export class EnhancedBankReconciliationService {
   private static async saveTransactionsAndMatches(
     transactions: EnhancedBankTransaction[],
     matches: ReconciliationMatch[],
-    bankAccountId: string,
+    _bankAccountId: string,
     userId: string
   ): Promise<void> {
     try {
@@ -729,7 +925,7 @@ export class EnhancedBankReconciliationService {
       const { error: txError } = await supabase
         .from('bank_transactions')
         .upsert(
-          transactions.map(tx => ({
+          transactions.map((tx) => ({
             ...tx,
             created_by: userId,
             updated_at: new Date().toISOString(),
@@ -744,7 +940,7 @@ export class EnhancedBankReconciliationService {
         const { error: matchError } = await supabase
           .from('reconciliation_matches')
           .upsert(
-            matches.map(match => ({
+            matches.map((match) => ({
               ...match,
               created_by: userId,
               created_at: new Date().toISOString(),
@@ -756,7 +952,9 @@ export class EnhancedBankReconciliationService {
       }
 
       // Update payment reconciliation status
-      for (const match of matches.filter(m => m.validation_status === 'approved')) {
+      for (const match of matches.filter(
+        (m) => m.validation_status === 'approved'
+      )) {
         await supabase
           .from('payments')
           .update({
@@ -766,7 +964,6 @@ export class EnhancedBankReconciliationService {
           })
           .eq('id', match.payment_id);
       }
-
     } catch (error) {
       console.error('Error saving transactions and matches:', error);
       throw error;
@@ -784,16 +981,19 @@ export class EnhancedBankReconciliationService {
     treatment_matches: number;
     insurance_matches: number;
   } {
-    const approvedMatches = matches.filter(m => m.validation_status === 'approved');
-    const matchedPayments = payments.filter(p => 
-      approvedMatches.some(m => m.payment_id === p.id)
+    const approvedMatches = matches.filter(
+      (m) => m.validation_status === 'approved'
+    );
+    const matchedPayments = payments.filter((p) =>
+      approvedMatches.some((m) => m.payment_id === p.id)
     );
 
     return {
-      patient_matches: matchedPayments.filter(p => p.patient_id).length,
-      treatment_matches: matchedPayments.filter(p => p.treatment_type).length,
-      insurance_matches: matchedPayments.filter(p => 
-        p.payment_method === 'bank_transfer' && p.metadata?.insurance_claim
+      patient_matches: matchedPayments.filter((p) => p.patient_id).length,
+      treatment_matches: matchedPayments.filter((p) => p.treatment_type).length,
+      insurance_matches: matchedPayments.filter(
+        (p) =>
+          p.payment_method === 'bank_transfer' && p.metadata?.insurance_claim
       ).length,
     };
   }
@@ -804,35 +1004,52 @@ export class EnhancedBankReconciliationService {
    * Enhanced string similarity with healthcare terms recognition
    */
   private static calculateStringSimilarity(str1: string, str2: string): number {
-    if (!str1 || !str2) return 0;
-    
+    if (!(str1 && str2)) return 0;
+
     // Normalize strings
     const norm1 = str1.toLowerCase().trim();
     const norm2 = str2.toLowerCase().trim();
-    
+
     if (norm1 === norm2) return 1.0;
-    
+
     // Use Levenshtein distance
-    return this.levenshteinSimilarity(norm1, norm2);
+    return EnhancedBankReconciliationService.levenshteinSimilarity(
+      norm1,
+      norm2
+    );
   }
 
   /**
    * Enhanced description similarity with healthcare context
    */
-  private static calculateDescriptionSimilarity(desc1: string, desc2: string): number {
-    if (!desc1 || !desc2) return 0;
+  private static calculateDescriptionSimilarity(
+    desc1: string,
+    desc2: string
+  ): number {
+    if (!(desc1 && desc2)) return 0;
 
     // Normalize descriptions
-    const norm1 = this.normalizeDescription(desc1);
-    const norm2 = this.normalizeDescription(desc2);
+    const norm1 = EnhancedBankReconciliationService.normalizeDescription(desc1);
+    const norm2 = EnhancedBankReconciliationService.normalizeDescription(desc2);
 
     // Check for common healthcare terms
     const healthcareTerms = [
-      'consulta', 'procedimento', 'tratamento', 'estetica', 'botox',
-      'preenchimento', 'limpeza', 'peeling', 'massagem', 'depilacao'
+      'consulta',
+      'procedimento',
+      'tratamento',
+      'estetica',
+      'botox',
+      'preenchimento',
+      'limpeza',
+      'peeling',
+      'massagem',
+      'depilacao',
     ];
 
-    let similarity = this.levenshteinSimilarity(norm1, norm2);
+    let similarity = EnhancedBankReconciliationService.levenshteinSimilarity(
+      norm1,
+      norm2
+    );
 
     // Boost similarity if healthcare terms are present
     for (const term of healthcareTerms) {
@@ -848,7 +1065,9 @@ export class EnhancedBankReconciliationService {
    * Levenshtein distance similarity calculation
    */
   private static levenshteinSimilarity(str1: string, str2: string): number {
-    const matrix = Array(str2.length + 1).fill(null).map(() => Array(str1.length + 1).fill(null));
+    const matrix = Array(str2.length + 1)
+      .fill(null)
+      .map(() => Array(str1.length + 1).fill(null));
 
     for (let i = 0; i <= str1.length; i++) matrix[0][i] = i;
     for (let j = 0; j <= str2.length; j++) matrix[j][0] = j;
@@ -857,15 +1076,17 @@ export class EnhancedBankReconciliationService {
       for (let i = 1; i <= str1.length; i++) {
         const indicator = str1[i - 1] === str2[j - 1] ? 0 : 1;
         matrix[j][i] = Math.min(
-          matrix[j][i - 1] + 1,     // deletion
-          matrix[j - 1][i] + 1,     // insertion
+          matrix[j][i - 1] + 1, // deletion
+          matrix[j - 1][i] + 1, // insertion
           matrix[j - 1][i - 1] + indicator // substitution
         );
       }
     }
 
     const maxLength = Math.max(str1.length, str2.length);
-    return maxLength === 0 ? 1 : 1 - (matrix[str2.length][str1.length] / maxLength);
+    return maxLength === 0
+      ? 1
+      : 1 - matrix[str2.length][str1.length] / maxLength;
   }
 
   /**
@@ -874,9 +1095,12 @@ export class EnhancedBankReconciliationService {
   private static groupPaymentsByCustomerAndDate(
     payments: EnhancedPaymentRecord[]
   ): Map<string, { payments: EnhancedPaymentRecord[]; totalAmount: number }> {
-    const groups = new Map<string, { payments: EnhancedPaymentRecord[]; totalAmount: number }>();
+    const groups = new Map<
+      string,
+      { payments: EnhancedPaymentRecord[]; totalAmount: number }
+    >();
 
-    payments.forEach(payment => {
+    payments.forEach((payment) => {
       const key = `${payment.customer_name || 'unknown'}_${payment.payment_date}`;
       if (!groups.has(key)) {
         groups.set(key, { payments: [], totalAmount: 0 });
@@ -894,21 +1118,39 @@ export class EnhancedBankReconciliationService {
    */
   private static findMatchingPaymentGroups(
     bankTx: EnhancedBankTransaction,
-    paymentGroups: Map<string, { payments: EnhancedPaymentRecord[]; totalAmount: number }>
-  ): Array<{ payments: EnhancedPaymentRecord[]; confidence: number; totalAmount: number }> {
-    const matchingGroups: Array<{ payments: EnhancedPaymentRecord[]; confidence: number; totalAmount: number }> = [];
+    paymentGroups: Map<
+      string,
+      { payments: EnhancedPaymentRecord[]; totalAmount: number }
+    >
+  ): Array<{
+    payments: EnhancedPaymentRecord[];
+    confidence: number;
+    totalAmount: number;
+  }> {
+    const matchingGroups: Array<{
+      payments: EnhancedPaymentRecord[];
+      confidence: number;
+      totalAmount: number;
+    }> = [];
 
-    for (const [key, group] of paymentGroups) {
-      const amountMatch = Math.abs(bankTx.amount - group.totalAmount) <= this.AMOUNT_VARIANCE_TOLERANCE;
+    for (const [_key, group] of paymentGroups) {
+      const amountMatch =
+        Math.abs(bankTx.amount - group.totalAmount) <=
+        EnhancedBankReconciliationService.AMOUNT_VARIANCE_TOLERANCE;
 
       if (amountMatch && group.payments.length > 1) {
         // Calculate confidence based on date proximity
-        const avgDate = new Date(group.payments.reduce((sum, p) => sum + new Date(p.payment_date).getTime(), 0) / group.payments.length);
+        const avgDate = new Date(
+          group.payments.reduce(
+            (sum, p) => sum + new Date(p.payment_date).getTime(),
+            0
+          ) / group.payments.length
+        );
         const bankDate = parseISO(bankTx.date);
         const dateDiff = Math.abs(differenceInDays(bankDate, avgDate));
-        const dateScore = Math.max(0, 1 - (dateDiff / 7));
-        
-        const confidence = 0.8 + (dateScore * 0.2); // Base confidence + date bonus
+        const dateScore = Math.max(0, 1 - dateDiff / 7);
+
+        const confidence = 0.8 + dateScore * 0.2; // Base confidence + date bonus
 
         matchingGroups.push({
           payments: group.payments,
@@ -927,17 +1169,21 @@ export class EnhancedBankReconciliationService {
   private static parseDate(dateStr: string, format: string): Date | null {
     try {
       // Common Brazilian date formats
-      const formats = [format, 'dd/MM/yyyy', 'yyyy-MM-dd', 'MM/dd/yyyy', 'dd-MM-yyyy'];
-      
-      for (const fmt of formats) {
+      const formats = [
+        format,
+        'dd/MM/yyyy',
+        'yyyy-MM-dd',
+        'MM/dd/yyyy',
+        'dd-MM-yyyy',
+      ];
+
+      for (const _fmt of formats) {
         try {
           const parsed = parseISO(dateStr) || new Date(dateStr);
           if (isValid(parsed)) return parsed;
-        } catch {
-          continue;
-        }
+        } catch {}
       }
-      
+
       return null;
     } catch {
       return null;

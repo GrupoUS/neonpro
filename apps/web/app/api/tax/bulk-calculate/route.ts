@@ -9,19 +9,19 @@ import { bulkTaxCalculationRequestSchema } from '@/lib/validations/brazilian-tax
 export async function POST(request: Request) {
   try {
     const supabase = createClient();
-    
+
     // Check authentication
-    const { data: { session }, error: authError } = await supabase.auth.getSession();
+    const {
+      data: { session },
+      error: authError,
+    } = await supabase.auth.getSession();
     if (authError || !session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Parse request body
     const body = await request.json();
-    
+
     // Validate request data
     const validatedData = bulkTaxCalculationRequestSchema.parse(body);
 
@@ -45,12 +45,12 @@ export async function POST(request: Request) {
 
     for (let i = 0; i < validatedData.calculations.length; i++) {
       const calculation = validatedData.calculations[i];
-      
+
       try {
         // Calculate taxes for this item
         const taxResult = await brazilianTaxEngine.calculateTaxes({
           clinic_id: validatedData.clinic_id,
-          ...calculation
+          ...calculation,
         });
 
         // Store calculation result
@@ -63,7 +63,7 @@ export async function POST(request: Request) {
             taxes: taxResult.taxes,
             total_amount: taxResult.totalAmount,
             calculation_metadata: taxResult,
-            created_by: session.user.id
+            created_by: session.user.id,
           })
           .select()
           .single();
@@ -72,7 +72,7 @@ export async function POST(request: Request) {
           errors.push({
             index: i,
             error: 'Failed to store calculation result',
-            details: insertError.message
+            details: insertError.message,
           });
           continue;
         }
@@ -80,14 +80,13 @@ export async function POST(request: Request) {
         results.push({
           index: i,
           calculation_id: calculationRecord.id,
-          ...taxResult
+          ...taxResult,
         });
-
       } catch (error) {
         errors.push({
           index: i,
           error: 'Calculation failed',
-          details: error instanceof Error ? error.message : 'Unknown error'
+          details: error instanceof Error ? error.message : 'Unknown error',
         });
       }
     }
@@ -98,13 +97,12 @@ export async function POST(request: Request) {
         processed: results.length,
         failed: errors.length,
         results,
-        errors
-      }
+        errors,
+      },
     });
-
   } catch (error) {
     console.error('Bulk tax calculation error:', error);
-    
+
     if (error instanceof Error && error.name === 'ZodError') {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.message },

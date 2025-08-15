@@ -1,5 +1,5 @@
 // This file configures the initialization of Sentry on the server side
-import * as Sentry from '@sentry/nextjs'
+import * as Sentry from '@sentry/nextjs';
 
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
@@ -33,7 +33,7 @@ Sentry.init({
   },
 
   // Enhanced error context for server
-  beforeSend(event, hint) {
+  beforeSend(event, _hint) {
     // Add server-specific context
     event.contexts = {
       ...event.contexts,
@@ -44,29 +44,29 @@ Sentry.init({
         arch: process.arch,
         env: process.env.NODE_ENV,
       },
-    }
+    };
 
     // Filter out known non-critical errors
     if (process.env.NODE_ENV === 'production') {
-      const errorMessage = event.exception?.values?.[0]?.value || ''
-      
+      const errorMessage = event.exception?.values?.[0]?.value || '';
+
       // Skip database connection timeouts (these might be temporary)
       if (errorMessage.includes('connection timeout')) {
-        return null
+        return null;
       }
 
       // Skip rate limiting errors (expected behavior)
       if (errorMessage.includes('Too Many Requests')) {
-        return null
+        return null;
       }
     }
 
-    return event
+    return event;
   },
 
   // Server-specific options
   spotlight: process.env.NODE_ENV === 'development',
-  
+
   // Debugging (only in development)
   debug: process.env.NODE_ENV === 'development',
-})
+});

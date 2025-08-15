@@ -1,13 +1,16 @@
 /**
  * AI Prediction Feedback API Route
  * POST /api/ai/feedback
- * 
+ *
  * Handles feedback submission for AI predictions to improve model accuracy
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
-import { AIDurationPredictionService, ModelPerformanceService } from '@/lib/ai/duration-prediction';
+import {
+  AIDurationPredictionService,
+  ModelPerformanceService,
+} from '@/lib/ai/duration-prediction';
 
 // Request/Response types
 interface SubmitFeedbackRequest {
@@ -33,13 +36,18 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     // Parse request body
     const body: SubmitFeedbackRequest = await request.json();
-    
+
     // Validate required fields
-    if (!body.appointmentId || body.actualDuration === undefined || !body.completionStatus) {
+    if (
+      !body.appointmentId ||
+      body.actualDuration === undefined ||
+      !body.completionStatus
+    ) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Missing required fields: appointmentId, actualDuration, completionStatus'
+          error:
+            'Missing required fields: appointmentId, actualDuration, completionStatus',
         },
         { status: 400 }
       );
@@ -50,7 +58,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json(
         {
           success: false,
-          error: 'actualDuration must be a positive number'
+          error: 'actualDuration must be a positive number',
         },
         { status: 400 }
       );
@@ -58,8 +66,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     // Get current user
     const supabase = createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
     if (authError || !user) {
       return NextResponse.json(
         { success: false, error: 'Authentication required' },
@@ -87,13 +98,15 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const performanceService = new ModelPerformanceService();
 
     // Check if appointment has a prediction
-    const prediction = await aiService.getPredictionForAppointment(body.appointmentId);
-    
+    const prediction = await aiService.getPredictionForAppointment(
+      body.appointmentId
+    );
+
     if (!prediction) {
       return NextResponse.json(
         {
           success: false,
-          error: 'No AI prediction found for this appointment'
+          error: 'No AI prediction found for this appointment',
         },
         { status: 404 }
       );
@@ -108,20 +121,23 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     // Calculate accuracy metrics
     const predictionError = prediction.predictedDuration - body.actualDuration;
-    const accuracyScore = 1.0 - Math.min(
-      Math.abs(predictionError) / Math.max(prediction.predictedDuration, body.actualDuration),
-      1.0
-    );
+    const accuracyScore =
+      1.0 -
+      Math.min(
+        Math.abs(predictionError) /
+          Math.max(prediction.predictedDuration, body.actualDuration),
+        1.0
+      );
 
     // Submit additional feedback if provided
     if (body.manualOverride || body.overrideReason) {
       const { error: updateError } = await supabase
         .from('prediction_feedback')
         .update({
-          manual_override: body.manualOverride || false,
+          manual_override: body.manualOverride,
           override_reason: body.overrideReason,
           completion_status: body.completionStatus,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('appointment_id', body.appointmentId);
 
@@ -142,19 +158,18 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({
       success: true,
       feedback: {
-        accuracyScore: Math.round(accuracyScore * 10000) / 10000, // Round to 4 decimal places
+        accuracyScore: Math.round(accuracyScore * 10_000) / 10_000, // Round to 4 decimal places
         predictionError,
-        modelVersion: prediction.modelVersion
-      }
+        modelVersion: prediction.modelVersion,
+      },
     });
-
   } catch (error) {
     console.error('AI Feedback API Error:', error);
-    
+
     return NextResponse.json(
       {
         success: false,
-        error: 'Internal server error occurred while processing feedback'
+        error: 'Internal server error occurred while processing feedback',
       },
       { status: 500 }
     );
@@ -176,8 +191,11 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     // Get current user
     const supabase = createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
     if (authError || !user) {
       return NextResponse.json(
         { success: false, error: 'Authentication required' },
@@ -249,17 +267,16 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         overrideReason: data.override_reason,
         completionStatus: data.completion_status,
         createdAt: data.created_at,
-        updatedAt: data.updated_at
-      }
+        updatedAt: data.updated_at,
+      },
     });
-
   } catch (error) {
     console.error('AI Feedback GET API Error:', error);
-    
+
     return NextResponse.json(
       {
         success: false,
-        error: 'Internal server error occurred while retrieving feedback'
+        error: 'Internal server error occurred while retrieving feedback',
       },
       { status: 500 }
     );
@@ -269,14 +286,22 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 // Handle unsupported HTTP methods
 export async function PUT() {
   return NextResponse.json(
-    { success: false, error: 'Method not allowed. Use POST to submit feedback or GET to retrieve.' },
+    {
+      success: false,
+      error:
+        'Method not allowed. Use POST to submit feedback or GET to retrieve.',
+    },
     { status: 405 }
   );
 }
 
 export async function DELETE() {
   return NextResponse.json(
-    { success: false, error: 'Method not allowed. Use POST to submit feedback or GET to retrieve.' },
+    {
+      success: false,
+      error:
+        'Method not allowed. Use POST to submit feedback or GET to retrieve.',
+    },
     { status: 405 }
   );
 }

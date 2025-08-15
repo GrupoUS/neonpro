@@ -1,21 +1,24 @@
 /**
  * WebAuthn Credentials Management API
  * TASK-002: Multi-Factor Authentication Enhancement
- * 
+ *
  * Provides CRUD operations for WebAuthn credentials
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
 import { webAuthnService } from '@/lib/auth/webauthn-service';
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Get current user
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+      error: sessionError,
+    } = await supabase.auth.getSession();
+
     if (sessionError || !session?.user) {
       return NextResponse.json(
         { error: 'Authentication required' },
@@ -24,13 +27,14 @@ export async function GET(request: NextRequest) {
     }
 
     // Get user's WebAuthn credentials
-    const credentials = await webAuthnService.getUserCredentials(session.user.id);
+    const credentials = await webAuthnService.getUserCredentials(
+      session.user.id
+    );
 
     return NextResponse.json({
       success: true,
       credentials,
     });
-
   } catch (error) {
     console.error('Failed to fetch WebAuthn credentials:', error);
     return NextResponse.json(

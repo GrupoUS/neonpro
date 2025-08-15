@@ -1,10 +1,10 @@
-import { createClient } from "@/app/utils/supabase/server";
-import { NextResponse } from "next/server";
-import { z } from "zod";
+import { NextResponse } from 'next/server';
+import { z } from 'zod';
+import { createClient } from '@/app/utils/supabase/server';
 
 const UpdatePaymentSchema = z.object({
   status: z
-    .enum(["pending", "processing", "completed", "failed", "cancelled"])
+    .enum(['pending', 'processing', 'completed', 'failed', 'cancelled'])
     .optional(),
   notes: z.string().optional(),
   processed_at: z.string().optional(),
@@ -13,7 +13,7 @@ const UpdatePaymentSchema = z.object({
 });
 
 export async function GET(
-  request: Request,
+  _request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
@@ -25,11 +25,11 @@ export async function GET(
     } = await supabase.auth.getUser();
 
     if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { data: payment, error } = await supabase
-      .from("payments")
+      .from('payments')
       .select(
         `
         *,
@@ -63,18 +63,18 @@ export async function GET(
         )
       `
       )
-      .eq("id", resolvedParams.id)
+      .eq('id', resolvedParams.id)
       .single();
 
     if (error || !payment) {
-      return NextResponse.json({ error: "Payment not found" }, { status: 404 });
+      return NextResponse.json({ error: 'Payment not found' }, { status: 404 });
     }
 
     return NextResponse.json({ payment });
   } catch (error) {
-    console.error("API Error:", error);
+    console.error('API Error:', error);
     return NextResponse.json(
-      { error: "Internal Server Error" },
+      { error: 'Internal Server Error' },
       { status: 500 }
     );
   }
@@ -93,7 +93,7 @@ export async function PUT(
     } = await supabase.auth.getUser();
 
     if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
@@ -101,13 +101,13 @@ export async function PUT(
 
     // Get current payment data
     const { data: currentPayment, error: currentError } = await supabase
-      .from("payments")
-      .select("*, invoice:invoices(id, total_amount, status)")
-      .eq("id", resolvedParams.id)
+      .from('payments')
+      .select('*, invoice:invoices(id, total_amount, status)')
+      .eq('id', resolvedParams.id)
       .single();
 
     if (currentError || !currentPayment) {
-      return NextResponse.json({ error: "Payment not found" }, { status: 404 });
+      return NextResponse.json({ error: 'Payment not found' }, { status: 404 });
     }
 
     // Prepare update data
@@ -115,17 +115,17 @@ export async function PUT(
 
     // If status is being changed to completed, set processed_at
     if (
-      validatedData.status === "completed" &&
-      currentPayment.status !== "completed"
+      validatedData.status === 'completed' &&
+      currentPayment.status !== 'completed'
     ) {
       updateData.processed_at = new Date().toISOString();
     }
 
     // Update payment
     const { data: payment, error } = await supabase
-      .from("payments")
+      .from('payments')
       .update(updateData)
-      .eq("id", resolvedParams.id)
+      .eq('id', resolvedParams.id)
       .select(
         `
         *,
@@ -144,24 +144,24 @@ export async function PUT(
       .single();
 
     if (error) {
-      console.error("Error updating payment:", error);
+      console.error('Error updating payment:', error);
       return NextResponse.json(
-        { error: "Failed to update payment" },
+        { error: 'Failed to update payment' },
         { status: 500 }
       );
     }
 
     // If payment status changed to completed, check if invoice should be marked as paid
     if (
-      validatedData.status === "completed" &&
-      currentPayment.status !== "completed"
+      validatedData.status === 'completed' &&
+      currentPayment.status !== 'completed'
     ) {
       // Get all completed payments for this invoice
       const { data: completedPayments, error: paymentsError } = await supabase
-        .from("payments")
-        .select("amount")
-        .eq("invoice_id", currentPayment.invoice_id)
-        .eq("status", "completed");
+        .from('payments')
+        .select('amount')
+        .eq('invoice_id', currentPayment.invoice_id)
+        .eq('status', 'completed');
 
       if (!paymentsError && completedPayments) {
         const totalPaid = completedPayments.reduce(
@@ -171,9 +171,9 @@ export async function PUT(
 
         if (totalPaid >= currentPayment.invoice.total_amount) {
           await supabase
-            .from("invoices")
-            .update({ status: "paid" })
-            .eq("id", currentPayment.invoice_id);
+            .from('invoices')
+            .update({ status: 'paid' })
+            .eq('id', currentPayment.invoice_id);
         }
       }
     }
@@ -182,21 +182,21 @@ export async function PUT(
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: "Validation failed", details: error.errors },
+        { error: 'Validation failed', details: error.errors },
         { status: 400 }
       );
     }
 
-    console.error("API Error:", error);
+    console.error('API Error:', error);
     return NextResponse.json(
-      { error: "Internal Server Error" },
+      { error: 'Internal Server Error' },
       { status: 500 }
     );
   }
 }
 
 export async function DELETE(
-  request: Request,
+  _request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
@@ -208,62 +208,62 @@ export async function DELETE(
     } = await supabase.auth.getUser();
 
     if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Get payment details before deletion
     const { data: payment, error: paymentError } = await supabase
-      .from("payments")
-      .select("*, invoice:invoices(id, total_amount)")
-      .eq("id", resolvedParams.id)
+      .from('payments')
+      .select('*, invoice:invoices(id, total_amount)')
+      .eq('id', resolvedParams.id)
       .single();
 
     if (paymentError || !payment) {
-      return NextResponse.json({ error: "Payment not found" }, { status: 404 });
+      return NextResponse.json({ error: 'Payment not found' }, { status: 404 });
     }
 
     // Don't allow deletion of completed payments
-    if (payment.status === "completed") {
+    if (payment.status === 'completed') {
       return NextResponse.json(
-        { error: "Cannot delete completed payments" },
+        { error: 'Cannot delete completed payments' },
         { status: 400 }
       );
     }
 
     // Delete related installment payments first
     const { error: installmentsError } = await supabase
-      .from("installment_payments")
+      .from('installment_payments')
       .delete()
-      .eq("payment_id", resolvedParams.id);
+      .eq('payment_id', resolvedParams.id);
 
     if (installmentsError) {
-      console.error("Error deleting installments:", installmentsError);
+      console.error('Error deleting installments:', installmentsError);
       return NextResponse.json(
-        { error: "Failed to delete payment installments" },
+        { error: 'Failed to delete payment installments' },
         { status: 500 }
       );
     }
 
     // Delete payment
     const { error } = await supabase
-      .from("payments")
+      .from('payments')
       .delete()
-      .eq("id", resolvedParams.id);
+      .eq('id', resolvedParams.id);
 
     if (error) {
-      console.error("Error deleting payment:", error);
+      console.error('Error deleting payment:', error);
       return NextResponse.json(
-        { error: "Failed to delete payment" },
+        { error: 'Failed to delete payment' },
         { status: 500 }
       );
     }
 
     // Update invoice status if needed
     const { data: remainingPayments, error: remainingError } = await supabase
-      .from("payments")
-      .select("amount")
-      .eq("invoice_id", payment.invoice_id)
-      .eq("status", "completed");
+      .from('payments')
+      .select('amount')
+      .eq('invoice_id', payment.invoice_id)
+      .eq('status', 'completed');
 
     if (!remainingError) {
       const totalPaid =
@@ -271,17 +271,17 @@ export async function DELETE(
 
       if (totalPaid < payment.invoice.total_amount) {
         await supabase
-          .from("invoices")
-          .update({ status: "pending" })
-          .eq("id", payment.invoice_id);
+          .from('invoices')
+          .update({ status: 'pending' })
+          .eq('id', payment.invoice_id);
       }
     }
 
-    return NextResponse.json({ message: "Payment deleted successfully" });
+    return NextResponse.json({ message: 'Payment deleted successfully' });
   } catch (error) {
-    console.error("API Error:", error);
+    console.error('API Error:', error);
     return NextResponse.json(
-      { error: "Internal Server Error" },
+      { error: 'Internal Server Error' },
       { status: 500 }
     );
   }
@@ -301,53 +301,53 @@ export async function POST(
     } = await supabase.auth.getUser();
 
     if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
     const action = body.action;
 
-    if (action === "refund") {
-      const refundAmount = parseFloat(body.amount) || 0;
-      const reason = body.reason || "Refund requested";
+    if (action === 'refund') {
+      const refundAmount = Number.parseFloat(body.amount) || 0;
+      const reason = body.reason || 'Refund requested';
 
       // Get payment details
       const { data: payment, error: paymentError } = await supabase
-        .from("payments")
-        .select("*")
-        .eq("id", resolvedParams.id)
+        .from('payments')
+        .select('*')
+        .eq('id', resolvedParams.id)
         .single();
 
       if (paymentError || !payment) {
         return NextResponse.json(
-          { error: "Payment not found" },
+          { error: 'Payment not found' },
           { status: 404 }
         );
       }
 
-      if (payment.status !== "completed") {
+      if (payment.status !== 'completed') {
         return NextResponse.json(
-          { error: "Can only refund completed payments" },
+          { error: 'Can only refund completed payments' },
           { status: 400 }
         );
       }
 
       if (refundAmount > payment.amount) {
         return NextResponse.json(
-          { error: "Refund amount cannot exceed payment amount" },
+          { error: 'Refund amount cannot exceed payment amount' },
           { status: 400 }
         );
       }
 
       // Create refund payment (negative amount)
       const { data: refund, error: refundError } = await supabase
-        .from("payments")
+        .from('payments')
         .insert({
           invoice_id: payment.invoice_id,
           amount: -refundAmount,
           method: payment.method,
           payment_date: new Date().toISOString(),
-          status: "completed",
+          status: 'completed',
           installments: 1,
           installment_number: 1,
           fees: 0,
@@ -363,51 +363,51 @@ export async function POST(
         .single();
 
       if (refundError) {
-        console.error("Error creating refund:", refundError);
+        console.error('Error creating refund:', refundError);
         return NextResponse.json(
-          { error: "Failed to create refund" },
+          { error: 'Failed to create refund' },
           { status: 500 }
         );
       }
 
       // Update invoice status if needed
       const { data: allPayments, error: paymentsError } = await supabase
-        .from("payments")
-        .select("amount")
-        .eq("invoice_id", payment.invoice_id)
-        .eq("status", "completed");
+        .from('payments')
+        .select('amount')
+        .eq('invoice_id', payment.invoice_id)
+        .eq('status', 'completed');
 
       if (!paymentsError && allPayments) {
         const totalPaid = allPayments.reduce((sum, p) => sum + p.amount, 0);
 
         // Get invoice total
         const { data: invoice, error: invoiceError } = await supabase
-          .from("invoices")
-          .select("total_amount")
-          .eq("id", payment.invoice_id)
+          .from('invoices')
+          .select('total_amount')
+          .eq('id', payment.invoice_id)
           .single();
 
         if (!invoiceError && invoice) {
           const newStatus =
-            totalPaid >= invoice.total_amount ? "paid" : "pending";
+            totalPaid >= invoice.total_amount ? 'paid' : 'pending';
           await supabase
-            .from("invoices")
+            .from('invoices')
             .update({ status: newStatus })
-            .eq("id", payment.invoice_id);
+            .eq('id', payment.invoice_id);
         }
       }
 
       return NextResponse.json({
         refund,
-        message: "Refund processed successfully",
+        message: 'Refund processed successfully',
       });
     }
 
-    return NextResponse.json({ error: "Invalid action" }, { status: 400 });
+    return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
   } catch (error) {
-    console.error("API Error:", error);
+    console.error('API Error:', error);
     return NextResponse.json(
-      { error: "Internal Server Error" },
+      { error: 'Internal Server Error' },
       { status: 500 }
     );
   }

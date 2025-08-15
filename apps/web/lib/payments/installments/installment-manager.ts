@@ -3,10 +3,9 @@
 // Comprehensive payment plan and installment processing
 
 import { createClient } from '@supabase/supabase-js';
+import { addDays, addMonths, parseISO } from 'date-fns';
 import Stripe from 'stripe';
 import { logger } from '@/lib/utils/logger';
-import { addDays, addMonths, format, parseISO, isBefore, isAfter } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -70,7 +69,9 @@ interface ModifyPaymentPlanRequest {
 
 class InstallmentManager {
   // Create new payment plan
-  async createPaymentPlan(request: CreatePaymentPlanRequest): Promise<PaymentPlan> {
+  async createPaymentPlan(
+    request: CreatePaymentPlanRequest
+  ): Promise<PaymentPlan> {
     try {
       // Validate customer exists
       const { data: customer, error: customerError } = await supabase
@@ -84,7 +85,9 @@ class InstallmentManager {
       }
 
       // Calculate installment amount
-      const installmentAmount = Math.round((request.total_amount / request.installment_count) * 100) / 100;
+      const installmentAmount =
+        Math.round((request.total_amount / request.installment_count) * 100) /
+        100;
       const adjustedTotal = installmentAmount * request.installment_count;
 
       // Create payment plan
@@ -100,11 +103,11 @@ class InstallmentManager {
         description: request.description,
         metadata: {
           ...request.metadata,
-          auto_charge: request.auto_charge || false,
+          auto_charge: request.auto_charge,
           late_fee_percentage: request.late_fee_percentage || 0,
           grace_period_days: request.grace_period_days || 0,
-          created_by: 'system'
-        }
+          created_by: 'system',
+        },
       };
 
       const { data: createdPlan, error: planError } = await supabase
@@ -120,7 +123,9 @@ class InstallmentManager {
       // Generate installments
       await this.generateInstallments(createdPlan.id, request);
 
-      logger.info(`Payment plan created: ${createdPlan.id} for customer: ${request.customer_id}`);
+      logger.info(
+        `Payment plan created: ${createdPlan.id} for customer: ${request.customer_id}`
+      );
       return createdPlan;
     } catch (error) {
       logger.error('Error creating payment plan:', error);
@@ -141,13 +146,16 @@ class InstallmentManager {
         const installment: Omit<Installment, 'id'> = {
           payment_plan_id: paymentPlanId,
           installment_number: i,
-          amount: Math.round((request.total_amount / request.installment_count) * 100) / 100,
+          amount:
+            Math.round(
+              (request.total_amount / request.installment_count) * 100
+            ) / 100,
           due_date: currentDate.toISOString(),
           status: 'pending',
           metadata: {
-            auto_charge: request.auto_charge || false,
-            grace_period_days: request.grace_period_days || 0
-          }
+            auto_charge: request.auto_charge,
+            grace_period_days: request.grace_period_days || 0,
+          },
         };
 
         installments.push(installment);
@@ -177,7 +185,9 @@ class InstallmentManager {
         throw new Error(`Failed to create installments: ${error.message}`);
       }
 
-      logger.info(`Generated ${installments.length} installments for payment plan: ${paymentPlanId}`);
+      logger.info(
+        `Generated ${installments.length} installments for payment plan: ${paymentPlanId}`
+      );
     } catch (error) {
       logger.error('Error generating installments:', error);
       throw error;
@@ -208,7 +218,10 @@ class InstallmentManager {
         throw new Error('Installment not found');
       }
 
-      if (installment.status !== 'pending' && installment.status !== 'overdue') {
+      if (
+        installment.status !== 'pending' &&
+        installment.status !== 'overdue'
+      ) {
         throw new Error('Installment is not payable');
       }
 
@@ -217,11 +230,14 @@ class InstallmentManager {
 
       // Calculate late fee if overdue
       if (installment.status === 'overdue') {
-        const lateFeePercentage = installment.payment_plan.metadata?.late_fee_percentage || 0;
+        const lateFeePercentage =
+          installment.payment_plan.metadata?.late_fee_percentage || 0;
         if (lateFeePercentage > 0) {
-          const lateFee = Math.round((installment.amount * lateFeePercentage / 100) * 100) / 100;
+          const lateFee =
+            Math.round(((installment.amount * lateFeePercentage) / 100) * 100) /
+            100;
           totalAmount += lateFee;
-          
+
           // Update installment with late fee
           await supabase
             .from('installments')
@@ -242,9 +258,9 @@ class InstallmentManager {
           installment_id: installmentId,
           payment_plan_id: installment.payment_plan_id,
           installment_number: installment.installment_number.toString(),
-          ...metadata
+          ...metadata,
         },
-        description: `Installment ${installment.installment_number}/${installment.payment_plan.installment_count} - ${installment.payment_plan.description || 'Payment Plan'}`
+        description: `Installment ${installment.installment_number}/${installment.payment_plan.installment_count} - ${installment.payment_plan.description || 'Payment Plan'}`,
       });
 
       // Update installment with payment intent
@@ -252,7 +268,7 @@ class InstallmentManager {
         .from('installments')
         .update({
           stripe_payment_intent_id: paymentIntent.id,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', installmentId);
 
@@ -265,7 +281,7 @@ class InstallmentManager {
       return {
         payment_intent: paymentIntent,
         installment,
-        total_amount: totalAmount
+        total_amount: totalAmount,
       };
     } catch (error) {
       logger.error('Error processing installment payment:', error);
@@ -288,7 +304,7 @@ class InstallmentManager {
           paid_date: new Date().toISOString(),
           stripe_payment_intent_id: paymentIntentId,
           payment_method: paymentMethod,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', installmentId);
 
@@ -311,20 +327,22 @@ class InstallmentManager {
   }
 
   // Check if payment plan is completed
-  private async checkPaymentPlanCompletion(paymentPlanId: string): Promise<void> {
+  private async checkPaymentPlanCompletion(
+    paymentPlanId: string
+  ): Promise<void> {
     try {
       const { data: installments } = await supabase
         .from('installments')
         .select('status')
         .eq('payment_plan_id', paymentPlanId);
 
-      if (installments && installments.every(inst => inst.status === 'paid')) {
+      if (installments?.every((inst) => inst.status === 'paid')) {
         await supabase
           .from('payment_plans')
           .update({
             status: 'completed',
             completed_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
+            updated_at: new Date().toISOString(),
           })
           .eq('id', paymentPlanId);
 
@@ -336,7 +354,7 @@ class InstallmentManager {
   }
 
   // Get overdue installments
-  async getOverdueInstallments(gracePeriodDays: number = 0): Promise<Installment[]> {
+  async getOverdueInstallments(gracePeriodDays = 0): Promise<Installment[]> {
     try {
       const cutoffDate = addDays(new Date(), -gracePeriodDays).toISOString();
 
@@ -368,26 +386,30 @@ class InstallmentManager {
   async markInstallmentsAsOverdue(): Promise<number> {
     try {
       const overdueInstallments = await this.getOverdueInstallments();
-      
+
       if (overdueInstallments.length === 0) {
         return 0;
       }
 
-      const installmentIds = overdueInstallments.map(inst => inst.id);
+      const installmentIds = overdueInstallments.map((inst) => inst.id);
 
       const { error } = await supabase
         .from('installments')
         .update({
           status: 'overdue',
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .in('id', installmentIds);
 
       if (error) {
-        throw new Error(`Failed to mark installments as overdue: ${error.message}`);
+        throw new Error(
+          `Failed to mark installments as overdue: ${error.message}`
+        );
       }
 
-      logger.info(`Marked ${overdueInstallments.length} installments as overdue`);
+      logger.info(
+        `Marked ${overdueInstallments.length} installments as overdue`
+      );
       return overdueInstallments.length;
     } catch (error) {
       logger.error('Error marking installments as overdue:', error);
@@ -426,9 +448,14 @@ class InstallmentManager {
       const paidCount = paidInstallments?.length || 0;
 
       // If changing installment count, recalculate remaining installments
-      if (modifications.installment_count && modifications.installment_count !== currentPlan.installment_count) {
+      if (
+        modifications.installment_count &&
+        modifications.installment_count !== currentPlan.installment_count
+      ) {
         if (paidCount >= modifications.installment_count) {
-          throw new Error('Cannot reduce installment count below paid installments');
+          throw new Error(
+            'Cannot reduce installment count below paid installments'
+          );
         }
 
         // Cancel pending installments
@@ -441,8 +468,10 @@ class InstallmentManager {
         // Calculate remaining amount
         const paidAmount = paidCount * currentPlan.installment_amount;
         const remainingAmount = currentPlan.total_amount - paidAmount;
-        const remainingInstallments = modifications.installment_count - paidCount;
-        const newInstallmentAmount = Math.round((remainingAmount / remainingInstallments) * 100) / 100;
+        const remainingInstallments =
+          modifications.installment_count - paidCount;
+        const newInstallmentAmount =
+          Math.round((remainingAmount / remainingInstallments) * 100) / 100;
 
         // Generate new installments
         const { data: lastPaidInstallment } = await supabase
@@ -454,7 +483,7 @@ class InstallmentManager {
           .limit(1)
           .single();
 
-        let nextDueDate = lastPaidInstallment 
+        let nextDueDate = lastPaidInstallment
           ? parseISO(lastPaidInstallment.due_date)
           : parseISO(currentPlan.start_date);
 
@@ -483,7 +512,7 @@ class InstallmentManager {
             amount: newInstallmentAmount,
             due_date: nextDueDate.toISOString(),
             status: 'pending',
-            metadata: currentPlan.metadata
+            metadata: currentPlan.metadata,
           });
 
           // Calculate next due date
@@ -503,9 +532,7 @@ class InstallmentManager {
           }
         }
 
-        await supabase
-          .from('installments')
-          .insert(newInstallments);
+        await supabase.from('installments').insert(newInstallments);
       }
 
       // Update payment plan
@@ -515,9 +542,9 @@ class InstallmentManager {
         metadata: {
           ...currentPlan.metadata,
           ...modifications.metadata,
-          modified_at: new Date().toISOString()
+          modified_at: new Date().toISOString(),
         },
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       };
 
       const { data: result, error: updateError } = await supabase
@@ -528,7 +555,9 @@ class InstallmentManager {
         .single();
 
       if (updateError) {
-        throw new Error(`Failed to update payment plan: ${updateError.message}`);
+        throw new Error(
+          `Failed to update payment plan: ${updateError.message}`
+        );
       }
 
       logger.info(`Payment plan modified: ${paymentPlanId}`);
@@ -540,7 +569,10 @@ class InstallmentManager {
   }
 
   // Cancel payment plan
-  async cancelPaymentPlan(paymentPlanId: string, reason?: string): Promise<void> {
+  async cancelPaymentPlan(
+    paymentPlanId: string,
+    reason?: string
+  ): Promise<void> {
     try {
       // Update payment plan status
       await supabase
@@ -549,9 +581,9 @@ class InstallmentManager {
           status: 'cancelled',
           cancelled_at: new Date().toISOString(),
           metadata: {
-            cancellation_reason: reason || 'Manual cancellation'
+            cancellation_reason: reason || 'Manual cancellation',
           },
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', paymentPlanId);
 
@@ -560,7 +592,7 @@ class InstallmentManager {
         .from('installments')
         .update({
           status: 'cancelled',
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('payment_plan_id', paymentPlanId)
         .in('status', ['pending', 'overdue']);

@@ -1,7 +1,7 @@
 /**
  * Automated Reconciliation Engine - Banking Integration and Transaction Matching
  * NeonPro Healthcare System - Story 4.5 Architecture Alignment
- * 
+ *
  * This module provides automated bank reconciliation with AI-powered transaction matching,
  * multi-bank support, and 95%+ automatic reconciliation rate for Brazilian banking systems.
  */
@@ -40,15 +40,22 @@ export const BankTransactionSchema = z.object({
   type: z.enum(['credit', 'debit']),
   category: z.string().optional(),
   subcategory: z.string().optional(),
-  counterparty: z.object({
-    name: z.string().optional(),
-    document: z.string().optional(),
-    bankCode: z.string().optional(),
-    accountNumber: z.string().optional(),
-  }).optional(),
+  counterparty: z
+    .object({
+      name: z.string().optional(),
+      document: z.string().optional(),
+      bankCode: z.string().optional(),
+      accountNumber: z.string().optional(),
+    })
+    .optional(),
   pixKey: z.string().optional(),
   authenticationCode: z.string().optional(),
-  reconciliationStatus: z.enum(['pending', 'matched', 'manual_review', 'unmatched']),
+  reconciliationStatus: z.enum([
+    'pending',
+    'matched',
+    'manual_review',
+    'unmatched',
+  ]),
   reconciliationScore: z.number().min(0).max(1).optional(),
   processingDate: z.date(),
 });
@@ -64,9 +71,21 @@ export const ClinicTransactionSchema = z.object({
   customerId: z.string().optional(),
   customerName: z.string().optional(),
   invoiceId: z.string().optional(),
-  paymentMethod: z.enum(['cash', 'pix', 'credit_card', 'debit_card', 'bank_transfer', 'check']),
+  paymentMethod: z.enum([
+    'cash',
+    'pix',
+    'credit_card',
+    'debit_card',
+    'bank_transfer',
+    'check',
+  ]),
   status: z.enum(['pending', 'completed', 'cancelled', 'refunded']),
-  reconciliationStatus: z.enum(['pending', 'matched', 'manual_review', 'unmatched']),
+  reconciliationStatus: z.enum([
+    'pending',
+    'matched',
+    'manual_review',
+    'unmatched',
+  ]),
   expectedSettlementDate: z.date().optional(),
   metadata: z.record(z.any()).optional(),
 });
@@ -79,7 +98,9 @@ export const ReconciliationMatchSchema = z.object({
   clinicTransactionId: z.string(),
   matchConfidence: z.number().min(0).max(1),
   matchType: z.enum(['exact', 'fuzzy', 'partial', 'manual']),
-  matchCriteria: z.array(z.enum(['amount', 'date', 'description', 'customer', 'reference'])),
+  matchCriteria: z.array(
+    z.enum(['amount', 'date', 'description', 'customer', 'reference'])
+  ),
   amountVariance: z.number().optional(),
   dateVariance: z.number().optional(), // Days
   validationStatus: z.enum(['pending', 'approved', 'rejected']),
@@ -141,20 +162,29 @@ export class AutomatedReconciliationEngine {
   }> {
     try {
       // Validate input data
-      bankTransactions.forEach(tx => BankTransactionSchema.parse(tx));
-      clinicTransactions.forEach(tx => ClinicTransactionSchema.parse(tx));
+      bankTransactions.forEach((tx) => BankTransactionSchema.parse(tx));
+      clinicTransactions.forEach((tx) => ClinicTransactionSchema.parse(tx));
 
       const startTime = Date.now();
 
       // Filter by date range if specified
-      const filteredBankTx = this.filterByDateRange(bankTransactions, options.dateRange);
-      const filteredClinicTx = this.filterByDateRange(clinicTransactions, options.dateRange);
+      const filteredBankTx = this.filterByDateRange(
+        bankTransactions,
+        options.dateRange
+      );
+      const filteredClinicTx = this.filterByDateRange(
+        clinicTransactions,
+        options.dateRange
+      );
 
       // Reset reconciliation status
       await this.resetReconciliationStatus(filteredBankTx, filteredClinicTx);
 
       // Perform intelligent matching
-      const matches = await this.performIntelligentMatching(filteredBankTx, filteredClinicTx);
+      const matches = await this.performIntelligentMatching(
+        filteredBankTx,
+        filteredClinicTx
+      );
 
       // Auto-approve high confidence matches if enabled
       if (options.autoApproveHighConfidence) {
@@ -162,7 +192,11 @@ export class AutomatedReconciliationEngine {
       }
 
       // Update transaction statuses
-      await this.updateTransactionStatuses(matches, filteredBankTx, filteredClinicTx);
+      await this.updateTransactionStatuses(
+        matches,
+        filteredBankTx,
+        filteredClinicTx
+      );
 
       // Generate reconciliation report
       const report = this.generateReconciliationReport(
@@ -173,8 +207,16 @@ export class AutomatedReconciliationEngine {
       );
 
       // Get unmatched transactions
-      const unmatchedBank = this.getUnmatchedTransactions(filteredBankTx, matches, 'bank');
-      const unmatchedClinic = this.getUnmatchedTransactions(filteredClinicTx, matches, 'clinic');
+      const unmatchedBank = this.getUnmatchedTransactions(
+        filteredBankTx,
+        matches,
+        'bank'
+      );
+      const unmatchedClinic = this.getUnmatchedTransactions(
+        filteredClinicTx,
+        matches,
+        'clinic'
+      );
 
       return {
         matches,
@@ -200,29 +242,46 @@ export class AutomatedReconciliationEngine {
     const usedClinicTxIds = new Set<string>();
 
     // Phase 1: Exact matches (amount + date + reference)
-    const exactMatches = await this.findExactMatches(bankTransactions, clinicTransactions);
+    const exactMatches = await this.findExactMatches(
+      bankTransactions,
+      clinicTransactions
+    );
     matches.push(...exactMatches);
-    exactMatches.forEach(match => {
+    exactMatches.forEach((match) => {
       usedBankTxIds.add(match.bankTransactionId);
       usedClinicTxIds.add(match.clinicTransactionId);
     });
 
     // Phase 2: High confidence fuzzy matches
-    const remainingBankTx = bankTransactions.filter(tx => !usedBankTxIds.has(tx.id));
-    const remainingClinicTx = clinicTransactions.filter(tx => !usedClinicTxIds.has(tx.id));
+    const remainingBankTx = bankTransactions.filter(
+      (tx) => !usedBankTxIds.has(tx.id)
+    );
+    const remainingClinicTx = clinicTransactions.filter(
+      (tx) => !usedClinicTxIds.has(tx.id)
+    );
 
-    const fuzzyMatches = await this.findFuzzyMatches(remainingBankTx, remainingClinicTx);
+    const fuzzyMatches = await this.findFuzzyMatches(
+      remainingBankTx,
+      remainingClinicTx
+    );
     matches.push(...fuzzyMatches);
-    fuzzyMatches.forEach(match => {
+    fuzzyMatches.forEach((match) => {
       usedBankTxIds.add(match.bankTransactionId);
       usedClinicTxIds.add(match.clinicTransactionId);
     });
 
     // Phase 3: Partial matches (split payments, installments)
-    const remainingBankTx2 = bankTransactions.filter(tx => !usedBankTxIds.has(tx.id));
-    const remainingClinicTx2 = clinicTransactions.filter(tx => !usedClinicTxIds.has(tx.id));
+    const remainingBankTx2 = bankTransactions.filter(
+      (tx) => !usedBankTxIds.has(tx.id)
+    );
+    const remainingClinicTx2 = clinicTransactions.filter(
+      (tx) => !usedClinicTxIds.has(tx.id)
+    );
 
-    const partialMatches = await this.findPartialMatches(remainingBankTx2, remainingClinicTx2);
+    const partialMatches = await this.findPartialMatches(
+      remainingBankTx2,
+      remainingClinicTx2
+    );
     matches.push(...partialMatches);
 
     return matches;
@@ -238,12 +297,16 @@ export class AutomatedReconciliationEngine {
     const matches: ReconciliationMatch[] = [];
 
     for (const bankTx of bankTransactions) {
-      const potentialMatches = clinicTransactions.filter(clinicTx => {
+      const potentialMatches = clinicTransactions.filter((clinicTx) => {
         // Exact amount match
-        const amountMatch = Math.abs(bankTx.amount - Math.abs(clinicTx.amount)) <= this.AMOUNT_VARIANCE_TOLERANCE;
-        
+        const amountMatch =
+          Math.abs(bankTx.amount - Math.abs(clinicTx.amount)) <=
+          this.AMOUNT_VARIANCE_TOLERANCE;
+
         // Date within tolerance
-        const dateDiff = Math.abs(bankTx.date.getTime() - clinicTx.date.getTime()) / (1000 * 60 * 60 * 24);
+        const dateDiff =
+          Math.abs(bankTx.date.getTime() - clinicTx.date.getTime()) /
+          (1000 * 60 * 60 * 24);
         const dateMatch = dateDiff <= this.DATE_VARIANCE_TOLERANCE;
 
         return amountMatch && dateMatch;
@@ -278,13 +341,19 @@ export class AutomatedReconciliationEngine {
     const matches: ReconciliationMatch[] = [];
 
     for (const bankTx of bankTransactions) {
-      let bestMatch: { clinicTx: ClinicTransaction; score: number; criteria: string[] } | null = null;
+      let bestMatch: {
+        clinicTx: ClinicTransaction;
+        score: number;
+        criteria: string[];
+      } | null = null;
 
       for (const clinicTx of clinicTransactions) {
         const matchScore = this.calculateMatchScore(bankTx, clinicTx);
-        
-        if (matchScore.score >= this.MATCH_CONFIDENCE_THRESHOLD && 
-            (!bestMatch || matchScore.score > bestMatch.score)) {
+
+        if (
+          matchScore.score >= this.MATCH_CONFIDENCE_THRESHOLD &&
+          (!bestMatch || matchScore.score > bestMatch.score)
+        ) {
           bestMatch = {
             clinicTx,
             score: matchScore.score,
@@ -301,10 +370,22 @@ export class AutomatedReconciliationEngine {
           matchConfidence: bestMatch.score,
           matchType: 'fuzzy',
           matchCriteria: bestMatch.criteria as any[],
-          amountVariance: Math.abs(bankTx.amount - Math.abs(bestMatch.clinicTx.amount)),
-          dateVariance: Math.abs(bankTx.date.getTime() - bestMatch.clinicTx.date.getTime()) / (1000 * 60 * 60 * 24),
-          validationStatus: bestMatch.score >= this.HIGH_CONFIDENCE_THRESHOLD ? 'approved' : 'pending',
-          validatedAt: bestMatch.score >= this.HIGH_CONFIDENCE_THRESHOLD ? new Date() : undefined,
+          amountVariance: Math.abs(
+            bankTx.amount - Math.abs(bestMatch.clinicTx.amount)
+          ),
+          dateVariance:
+            Math.abs(
+              bankTx.date.getTime() - bestMatch.clinicTx.date.getTime()
+            ) /
+            (1000 * 60 * 60 * 24),
+          validationStatus:
+            bestMatch.score >= this.HIGH_CONFIDENCE_THRESHOLD
+              ? 'approved'
+              : 'pending',
+          validatedAt:
+            bestMatch.score >= this.HIGH_CONFIDENCE_THRESHOLD
+              ? new Date()
+              : undefined,
         });
       }
     }
@@ -322,7 +403,8 @@ export class AutomatedReconciliationEngine {
     const matches: ReconciliationMatch[] = [];
 
     // Group clinic transactions by customer and date range
-    const groupedClinicTx = this.groupTransactionsByCustomerAndDate(clinicTransactions);
+    const groupedClinicTx =
+      this.groupTransactionsByCustomerAndDate(clinicTransactions);
 
     for (const bankTx of bankTransactions) {
       // Look for multiple clinic transactions that sum to the bank transaction amount
@@ -367,8 +449,13 @@ export class AutomatedReconciliationEngine {
 
     // Amount similarity
     const amountDiff = Math.abs(bankTx.amount - Math.abs(clinicTx.amount));
-    const amountSimilarity = Math.max(0, 1 - (amountDiff / Math.max(Math.abs(bankTx.amount), Math.abs(clinicTx.amount))));
-    
+    const amountSimilarity = Math.max(
+      0,
+      1 -
+        amountDiff /
+          Math.max(Math.abs(bankTx.amount), Math.abs(clinicTx.amount))
+    );
+
     if (amountSimilarity > 0.95) {
       score += weights.amount;
       criteria.push('amount');
@@ -378,9 +465,11 @@ export class AutomatedReconciliationEngine {
     }
 
     // Date proximity
-    const dateDiff = Math.abs(bankTx.date.getTime() - clinicTx.date.getTime()) / (1000 * 60 * 60 * 24);
-    const dateSimilarity = Math.max(0, 1 - (dateDiff / 7)); // 7-day window
-    
+    const dateDiff =
+      Math.abs(bankTx.date.getTime() - clinicTx.date.getTime()) /
+      (1000 * 60 * 60 * 24);
+    const dateSimilarity = Math.max(0, 1 - dateDiff / 7); // 7-day window
+
     if (dateSimilarity > 0.7) {
       score += weights.date * dateSimilarity;
       criteria.push('date');
@@ -391,7 +480,7 @@ export class AutomatedReconciliationEngine {
       this.normalizeDescription(bankTx.description),
       this.normalizeDescription(clinicTx.description)
     );
-    
+
     if (descriptionSimilarity > 0.6) {
       score += weights.description * descriptionSimilarity;
       criteria.push('description');
@@ -403,7 +492,7 @@ export class AutomatedReconciliationEngine {
         this.normalizeName(clinicTx.customerName),
         this.normalizeName(bankTx.counterparty.name)
       );
-      
+
       if (customerSimilarity > 0.7) {
         score += weights.customer * customerSimilarity;
         criteria.push('customer');
@@ -416,9 +505,14 @@ export class AutomatedReconciliationEngine {
   /**
    * Auto-approve high confidence matches
    */
-  private async autoApproveHighConfidenceMatches(matches: ReconciliationMatch[]): Promise<void> {
+  private async autoApproveHighConfidenceMatches(
+    matches: ReconciliationMatch[]
+  ): Promise<void> {
     for (const match of matches) {
-      if (match.matchConfidence >= this.HIGH_CONFIDENCE_THRESHOLD && match.validationStatus === 'pending') {
+      if (
+        match.matchConfidence >= this.HIGH_CONFIDENCE_THRESHOLD &&
+        match.validationStatus === 'pending'
+      ) {
         match.validationStatus = 'approved';
         match.validatedBy = 'system';
         match.validatedAt = new Date();
@@ -434,14 +528,15 @@ export class AutomatedReconciliationEngine {
     bankTransactions: BankTransaction[],
     clinicTransactions: ClinicTransaction[]
   ): Promise<void> {
-    const matchedBankIds = new Set(matches.map(m => m.bankTransactionId));
-    const matchedClinicIds = new Set(matches.map(m => m.clinicTransactionId));
+    const matchedBankIds = new Set(matches.map((m) => m.bankTransactionId));
+    const matchedClinicIds = new Set(matches.map((m) => m.clinicTransactionId));
 
     // Update bank transactions
-    bankTransactions.forEach(tx => {
+    bankTransactions.forEach((tx) => {
       if (matchedBankIds.has(tx.id)) {
-        const match = matches.find(m => m.bankTransactionId === tx.id);
-        tx.reconciliationStatus = match?.validationStatus === 'approved' ? 'matched' : 'manual_review';
+        const match = matches.find((m) => m.bankTransactionId === tx.id);
+        tx.reconciliationStatus =
+          match?.validationStatus === 'approved' ? 'matched' : 'manual_review';
         tx.reconciliationScore = match?.matchConfidence;
       } else {
         tx.reconciliationStatus = 'unmatched';
@@ -449,10 +544,11 @@ export class AutomatedReconciliationEngine {
     });
 
     // Update clinic transactions
-    clinicTransactions.forEach(tx => {
+    clinicTransactions.forEach((tx) => {
       if (matchedClinicIds.has(tx.id)) {
-        const match = matches.find(m => m.clinicTransactionId === tx.id);
-        tx.reconciliationStatus = match?.validationStatus === 'approved' ? 'matched' : 'manual_review';
+        const match = matches.find((m) => m.clinicTransactionId === tx.id);
+        tx.reconciliationStatus =
+          match?.validationStatus === 'approved' ? 'matched' : 'manual_review';
       } else {
         tx.reconciliationStatus = 'unmatched';
       }
@@ -468,33 +564,48 @@ export class AutomatedReconciliationEngine {
     matches: ReconciliationMatch[],
     processingTime: number
   ): ReconciliationReport {
-    const approvedMatches = matches.filter(m => m.validationStatus === 'approved');
-    const pendingMatches = matches.filter(m => m.validationStatus === 'pending');
-    const automaticMatches = matches.filter(m => m.matchType !== 'manual');
-    const manualMatches = matches.filter(m => m.matchType === 'manual');
+    const approvedMatches = matches.filter(
+      (m) => m.validationStatus === 'approved'
+    );
+    const pendingMatches = matches.filter(
+      (m) => m.validationStatus === 'pending'
+    );
+    const automaticMatches = matches.filter((m) => m.matchType !== 'manual');
+    const manualMatches = matches.filter((m) => m.matchType === 'manual');
 
     const totalVariance = matches.reduce((sum, match) => {
       return sum + (match.amountVariance || 0);
     }, 0);
 
-    const reconciliationRate = bankTransactions.length > 0 
-      ? approvedMatches.length / bankTransactions.length 
-      : 0;
+    const reconciliationRate =
+      bankTransactions.length > 0
+        ? approvedMatches.length / bankTransactions.length
+        : 0;
 
-    const averageConfidence = matches.length > 0
-      ? matches.reduce((sum, m) => sum + m.matchConfidence, 0) / matches.length
-      : 0;
+    const averageConfidence =
+      matches.length > 0
+        ? matches.reduce((sum, m) => sum + m.matchConfidence, 0) /
+          matches.length
+        : 0;
 
     return {
       period: {
-        startDate: new Date(Math.min(...bankTransactions.map(tx => tx.date.getTime()))),
-        endDate: new Date(Math.max(...bankTransactions.map(tx => tx.date.getTime()))),
+        startDate: new Date(
+          Math.min(...bankTransactions.map((tx) => tx.date.getTime()))
+        ),
+        endDate: new Date(
+          Math.max(...bankTransactions.map((tx) => tx.date.getTime()))
+        ),
       },
       totalBankTransactions: bankTransactions.length,
       totalClinicTransactions: clinicTransactions.length,
       matchedTransactions: approvedMatches.length,
-      unmatchedBankTransactions: bankTransactions.filter(tx => tx.reconciliationStatus === 'unmatched').length,
-      unmatchedClinicTransactions: clinicTransactions.filter(tx => tx.reconciliationStatus === 'unmatched').length,
+      unmatchedBankTransactions: bankTransactions.filter(
+        (tx) => tx.reconciliationStatus === 'unmatched'
+      ).length,
+      unmatchedClinicTransactions: clinicTransactions.filter(
+        (tx) => tx.reconciliationStatus === 'unmatched'
+      ).length,
       pendingReviewTransactions: pendingMatches.length,
       reconciliationRate,
       averageMatchConfidence: averageConfidence,
@@ -516,9 +627,9 @@ export class AutomatedReconciliationEngine {
     dateRange?: { startDate: Date; endDate: Date }
   ): T[] {
     if (!dateRange) return transactions;
-    
-    return transactions.filter(tx => 
-      tx.date >= dateRange.startDate && tx.date <= dateRange.endDate
+
+    return transactions.filter(
+      (tx) => tx.date >= dateRange.startDate && tx.date <= dateRange.endDate
     );
   }
 
@@ -526,12 +637,12 @@ export class AutomatedReconciliationEngine {
     bankTransactions: BankTransaction[],
     clinicTransactions: ClinicTransaction[]
   ): Promise<void> {
-    bankTransactions.forEach(tx => {
+    bankTransactions.forEach((tx) => {
       tx.reconciliationStatus = 'pending';
       tx.reconciliationScore = undefined;
     });
 
-    clinicTransactions.forEach(tx => {
+    clinicTransactions.forEach((tx) => {
       tx.reconciliationStatus = 'pending';
     });
   }
@@ -542,10 +653,12 @@ export class AutomatedReconciliationEngine {
     type: 'bank' | 'clinic'
   ): T[] {
     const matchedIds = new Set(
-      matches.map(m => type === 'bank' ? m.bankTransactionId : m.clinicTransactionId)
+      matches.map((m) =>
+        type === 'bank' ? m.bankTransactionId : m.clinicTransactionId
+      )
     );
-    
-    return transactions.filter(tx => !matchedIds.has(tx.id));
+
+    return transactions.filter((tx) => !matchedIds.has(tx.id));
   }
 
   private groupTransactionsByCustomerAndDate(
@@ -553,12 +666,12 @@ export class AutomatedReconciliationEngine {
   ): Map<string, ClinicTransaction[]> {
     const groups = new Map<string, ClinicTransaction[]>();
 
-    transactions.forEach(tx => {
+    transactions.forEach((tx) => {
       const key = `${tx.customerId || 'unknown'}_${tx.date.toISOString().split('T')[0]}`;
       if (!groups.has(key)) {
         groups.set(key, []);
       }
-      groups.get(key)!.push(tx);
+      groups.get(key)?.push(tx);
     });
 
     return groups;
@@ -568,19 +681,31 @@ export class AutomatedReconciliationEngine {
     bankTx: BankTransaction,
     groupedTransactions: Map<string, ClinicTransaction[]>
   ): Array<{ transactions: ClinicTransaction[]; confidence: number }> {
-    const matchingGroups: Array<{ transactions: ClinicTransaction[]; confidence: number }> = [];
+    const matchingGroups: Array<{
+      transactions: ClinicTransaction[];
+      confidence: number;
+    }> = [];
 
-    for (const [key, transactions] of groupedTransactions) {
-      const totalAmount = transactions.reduce((sum, tx) => sum + Math.abs(tx.amount), 0);
-      const amountMatch = Math.abs(bankTx.amount - totalAmount) <= this.AMOUNT_VARIANCE_TOLERANCE;
+    for (const [_key, transactions] of groupedTransactions) {
+      const totalAmount = transactions.reduce(
+        (sum, tx) => sum + Math.abs(tx.amount),
+        0
+      );
+      const amountMatch =
+        Math.abs(bankTx.amount - totalAmount) <= this.AMOUNT_VARIANCE_TOLERANCE;
 
       if (amountMatch && transactions.length > 1) {
         // Calculate confidence based on amount match and date proximity
-        const avgDate = new Date(transactions.reduce((sum, tx) => sum + tx.date.getTime(), 0) / transactions.length);
-        const dateDiff = Math.abs(bankTx.date.getTime() - avgDate.getTime()) / (1000 * 60 * 60 * 24);
-        const dateScore = Math.max(0, 1 - (dateDiff / 7));
-        
-        const confidence = 0.8 + (dateScore * 0.2); // Base confidence + date bonus
+        const avgDate = new Date(
+          transactions.reduce((sum, tx) => sum + tx.date.getTime(), 0) /
+            transactions.length
+        );
+        const dateDiff =
+          Math.abs(bankTx.date.getTime() - avgDate.getTime()) /
+          (1000 * 60 * 60 * 24);
+        const dateScore = Math.max(0, 1 - dateDiff / 7);
+
+        const confidence = 0.8 + dateScore * 0.2; // Base confidence + date bonus
 
         matchingGroups.push({ transactions, confidence });
       }
@@ -591,7 +716,9 @@ export class AutomatedReconciliationEngine {
 
   private calculateStringSimilarity(str1: string, str2: string): number {
     // Simple Levenshtein distance implementation
-    const matrix = Array(str2.length + 1).fill(null).map(() => Array(str1.length + 1).fill(null));
+    const matrix = Array(str2.length + 1)
+      .fill(null)
+      .map(() => Array(str1.length + 1).fill(null));
 
     for (let i = 0; i <= str1.length; i++) matrix[0][i] = i;
     for (let j = 0; j <= str2.length; j++) matrix[j][0] = j;
@@ -600,15 +727,17 @@ export class AutomatedReconciliationEngine {
       for (let i = 1; i <= str1.length; i++) {
         const indicator = str1[i - 1] === str2[j - 1] ? 0 : 1;
         matrix[j][i] = Math.min(
-          matrix[j][i - 1] + 1,     // deletion
-          matrix[j - 1][i] + 1,     // insertion
+          matrix[j][i - 1] + 1, // deletion
+          matrix[j - 1][i] + 1, // insertion
           matrix[j - 1][i - 1] + indicator // substitution
         );
       }
     }
 
     const maxLength = Math.max(str1.length, str2.length);
-    return maxLength === 0 ? 1 : 1 - (matrix[str2.length][str1.length] / maxLength);
+    return maxLength === 0
+      ? 1
+      : 1 - matrix[str2.length][str1.length] / maxLength;
   }
 
   private normalizeDescription(description: string): string {
@@ -639,14 +768,24 @@ export class AutomatedReconciliationEngine {
     amount: number;
     reason: string;
   }> {
-    const explanations: Array<{ description: string; amount: number; reason: string }> = [];
+    const explanations: Array<{
+      description: string;
+      amount: number;
+      reason: string;
+    }> = [];
 
-    matches.forEach(match => {
-      if (match.amountVariance && match.amountVariance > this.AMOUNT_VARIANCE_TOLERANCE) {
+    matches.forEach((match) => {
+      if (
+        match.amountVariance &&
+        match.amountVariance > this.AMOUNT_VARIANCE_TOLERANCE
+      ) {
         explanations.push({
           description: `Match ${match.id}`,
           amount: match.amountVariance,
-          reason: match.matchType === 'partial' ? 'Partial payment matching' : 'Amount variance in fuzzy match',
+          reason:
+            match.matchType === 'partial'
+              ? 'Partial payment matching'
+              : 'Amount variance in fuzzy match',
         });
       }
     });

@@ -1,13 +1,18 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { MultiLocationInventoryService } from '@/app/lib/services/multi-location-inventory-service';
-import type { InventoryFilters, UpdateInventoryStock } from '@/app/lib/types/inventory';
+import type {
+  InventoryFilters,
+  UpdateInventoryStock,
+} from '@/app/lib/types/inventory';
+import { createClient } from '@/app/utils/supabase/server';
 
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -37,17 +42,19 @@ export async function GET(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
-    
+
     // Handle bulk updates
     if (Array.isArray(body)) {
-      const updates: UpdateInventoryStock[] = body.map(update => ({
+      const updates: UpdateInventoryStock[] = body.map((update) => ({
         ...update,
         last_counted_by: session.user.id,
       }));
@@ -57,7 +64,7 @@ export async function PUT(request: NextRequest) {
 
       return NextResponse.json({ data: updatedStock });
     }
-    
+
     // Handle single update
     const updateData: UpdateInventoryStock = {
       ...body,

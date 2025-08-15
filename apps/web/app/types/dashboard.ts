@@ -323,11 +323,41 @@ export interface PerformanceLogRequest {
 
 // Type Unions
 export type DashboardTheme = 'light' | 'dark' | 'auto';
-export type ChartType = 'line' | 'bar' | 'pie' | 'area' | 'scatter' | 'donut' | 'gauge';
+export type ChartType =
+  | 'line'
+  | 'bar'
+  | 'pie'
+  | 'area'
+  | 'scatter'
+  | 'donut'
+  | 'gauge';
 export type MetricType = 'revenue' | 'patient' | 'appointment' | 'efficiency';
-export type AlertType = 'revenue_drop' | 'low_bookings' | 'high_cancellations' | 'efficiency_warning';
+export type AlertType =
+  | 'revenue_drop'
+  | 'low_bookings'
+  | 'high_cancellations'
+  | 'efficiency_warning';
 export type NotificationMethod = 'email' | 'sms' | 'push' | 'dashboard';
-export type TimeRange = 'today' | 'week' | 'month' | 'quarter' | 'year' | 'custom';
+export type TimeRange =
+  | 'today'
+  | 'week'
+  | 'month'
+  | 'quarter'
+  | 'year'
+  | 'custom';
 export type AggregationType = 'sum' | 'average' | 'count' | 'min' | 'max';
-export type WidgetType = 'kpi' | 'chart' | 'table' | 'metric' | 'progress' | 'gauge' | 'timeline';
-export type DataSourceType = 'revenue' | 'patients' | 'appointments' | 'staff' | 'inventory' | 'custom';
+export type WidgetType =
+  | 'kpi'
+  | 'chart'
+  | 'table'
+  | 'metric'
+  | 'progress'
+  | 'gauge'
+  | 'timeline';
+export type DataSourceType =
+  | 'revenue'
+  | 'patients'
+  | 'appointments'
+  | 'staff'
+  | 'inventory'
+  | 'custom';

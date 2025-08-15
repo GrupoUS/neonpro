@@ -1,76 +1,76 @@
 /**
  * Comprehensive Analytics Dashboard Hook for NeonPro
- * 
+ *
  * Master hook that orchestrates multiple analytics capabilities:
  * - Integrates cohort analysis, forecasting, real-time metrics
  * - Provides unified dashboard state management
  * - Handles cross-analytics correlations and insights
  * - Manages dashboard-wide configuration and filters
- * 
+ *
  * This hook serves as the primary interface for the advanced analytics hub.
  */
 
-import { useState, useEffect, useCallback, useMemo } from 'react'
-import { useQueryClient } from '@tanstack/react-query'
-import { 
+import { useQueryClient } from '@tanstack/react-query';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  type CohortAnalysisHookConfig,
+  type ForecastingHookConfig,
+  type RealTimeConfig,
+  type StatisticalInsightsConfig,
   useCohortAnalysis,
   useForecasting,
   useRealTimeAnalytics,
   useStatisticalInsights,
-  type CohortAnalysisHookConfig,
-  type ForecastingHookConfig,
-  type RealTimeConfig,
-  type StatisticalInsightsConfig
-} from './index'
+} from './index';
 
 // Types for dashboard configuration
 export interface AnalyticsDashboardConfig {
-  cohortAnalysis: CohortAnalysisHookConfig
-  forecasting: ForecastingHookConfig
-  realTime: RealTimeConfig
-  statisticalInsights: StatisticalInsightsConfig
+  cohortAnalysis: CohortAnalysisHookConfig;
+  forecasting: ForecastingHookConfig;
+  realTime: RealTimeConfig;
+  statisticalInsights: StatisticalInsightsConfig;
   layout: {
-    sections: ('cohorts' | 'forecasting' | 'realtime' | 'insights')[]
-    defaultView: 'overview' | 'detailed'
-    refreshInterval: number
-  }
+    sections: ('cohorts' | 'forecasting' | 'realtime' | 'insights')[];
+    defaultView: 'overview' | 'detailed';
+    refreshInterval: number;
+  };
   filters: {
-    dateRange: { start: string; end: string }
-    segments: string[]
-    metrics: string[]
-  }
+    dateRange: { start: string; end: string };
+    segments: string[];
+    metrics: string[];
+  };
 }
 
 export interface AnalyticsDashboardState {
-  isInitialized: boolean
-  isLoading: boolean
-  hasErrors: boolean
-  errors: string[]
-  lastUpdate: Date | null
-  
+  isInitialized: boolean;
+  isLoading: boolean;
+  hasErrors: boolean;
+  errors: string[];
+  lastUpdate: Date | null;
+
   // Aggregated metrics
   kpis: {
-    totalRevenue: number
-    activeSubscriptions: number
-    churnRate: number
-    conversionRate: number
-    growthRate: number
-  }
-  
+    totalRevenue: number;
+    activeSubscriptions: number;
+    churnRate: number;
+    conversionRate: number;
+    growthRate: number;
+  };
+
   // Cross-analytics insights
-  correlations: any[]
-  trends: any[]
-  recommendations: string[]
-  alerts: any[]
+  correlations: any[];
+  trends: any[];
+  recommendations: string[];
+  alerts: any[];
 }
 
 export interface AnalyticsDashboardActions {
-  initialize: () => Promise<void>
-  refreshAll: () => Promise<void>
-  updateConfig: (config: Partial<AnalyticsDashboardConfig>) => Promise<void>
-  exportDashboard: (format: 'pdf' | 'excel') => Promise<void>
-  addAlert: (alert: any) => void
-  clearAlerts: () => void
+  initialize: () => Promise<void>;
+  refreshAll: () => Promise<void>;
+  updateConfig: (config: Partial<AnalyticsDashboardConfig>) => Promise<void>;
+  exportDashboard: (format: 'pdf' | 'excel') => Promise<void>;
+  addAlert: (alert: any) => void;
+  clearAlerts: () => void;
 }
 
 /**
@@ -79,74 +79,77 @@ export interface AnalyticsDashboardActions {
 export function useAnalyticsDashboard(
   initialConfig: AnalyticsDashboardConfig
 ): AnalyticsDashboardState & AnalyticsDashboardActions {
-  const queryClient = useQueryClient()
-  const [config, setConfig] = useState<AnalyticsDashboardConfig>(initialConfig)
-  const [isInitialized, setIsInitialized] = useState(false)
-  const [dashboardAlerts, setDashboardAlerts] = useState<any[]>([])
+  const _queryClient = useQueryClient();
+  const [config, setConfig] = useState<AnalyticsDashboardConfig>(initialConfig);
+  const [isInitialized, setIsInitialized] = useState(false);
+  const [dashboardAlerts, setDashboardAlerts] = useState<any[]>([]);
   const [kpis, setKpis] = useState({
     totalRevenue: 0,
     activeSubscriptions: 0,
     churnRate: 0,
     conversionRate: 0,
-    growthRate: 0
-  })
+    growthRate: 0,
+  });
 
   // Initialize individual analytics hooks
-  const cohortAnalysis = useCohortAnalysis(config.cohortAnalysis)
-  const forecasting = useForecasting(config.forecasting)
-  const realTimeAnalytics = useRealTimeAnalytics(config.realTime)
-  const statisticalInsights = useStatisticalInsights(config.statisticalInsights)
+  const cohortAnalysis = useCohortAnalysis(config.cohortAnalysis);
+  const forecasting = useForecasting(config.forecasting);
+  const realTimeAnalytics = useRealTimeAnalytics(config.realTime);
+  const statisticalInsights = useStatisticalInsights(
+    config.statisticalInsights
+  );
 
   // Aggregate loading states
   const isLoading = useMemo(() => {
-    return cohortAnalysis.isLoading || 
-           forecasting.isLoading || 
-           realTimeAnalytics.isConnected === false ||
-           statisticalInsights.isLoading
+    return (
+      cohortAnalysis.isLoading ||
+      forecasting.isLoading ||
+      realTimeAnalytics.isConnected === false ||
+      statisticalInsights.isLoading
+    );
   }, [
     cohortAnalysis.isLoading,
     forecasting.isLoading,
     realTimeAnalytics.isConnected,
-    statisticalInsights.isLoading
-  ])
+    statisticalInsights.isLoading,
+  ]);
 
   // Aggregate error states
   const errors = useMemo(() => {
-    const errorList = []
-    if (cohortAnalysis.error) errorList.push(`Cohort Analysis: ${cohortAnalysis.error}`)
-    if (forecasting.error) errorList.push(`Forecasting: ${forecasting.error}`)
-    if (realTimeAnalytics.error) errorList.push(`Real-time: ${realTimeAnalytics.error}`)
-    if (statisticalInsights.error) errorList.push(`Statistical: ${statisticalInsights.error}`)
-    return errorList
+    const errorList = [];
+    if (cohortAnalysis.error)
+      errorList.push(`Cohort Analysis: ${cohortAnalysis.error}`);
+    if (forecasting.error) errorList.push(`Forecasting: ${forecasting.error}`);
+    if (realTimeAnalytics.error)
+      errorList.push(`Real-time: ${realTimeAnalytics.error}`);
+    if (statisticalInsights.error)
+      errorList.push(`Statistical: ${statisticalInsights.error}`);
+    return errorList;
   }, [
     cohortAnalysis.error,
     forecasting.error,
     realTimeAnalytics.error,
-    statisticalInsights.error
-  ])
+    statisticalInsights.error,
+  ]);
 
   // Aggregate insights and recommendations
   const aggregatedInsights = useMemo(() => {
     const insights = [
       ...cohortAnalysis.insights,
-      ...statisticalInsights.insights
-    ]
-    
-    const recommendations = [
-      ...statisticalInsights.recommendations
-    ]
+      ...statisticalInsights.insights,
+    ];
 
-    const correlations = [
-      ...statisticalInsights.correlations
-    ]
+    const recommendations = [...statisticalInsights.recommendations];
 
-    return { insights, recommendations, correlations }
+    const correlations = [...statisticalInsights.correlations];
+
+    return { insights, recommendations, correlations };
   }, [
     cohortAnalysis.insights,
     statisticalInsights.insights,
     statisticalInsights.recommendations,
-    statisticalInsights.correlations
-  ])
+    statisticalInsights.correlations,
+  ]);
 
   // Calculate KPIs from all sources
   useEffect(() => {
@@ -155,52 +158,59 @@ export function useAnalyticsDashboard(
         totalRevenue: realTimeAnalytics.metrics.monthlyRecurringRevenue,
         activeSubscriptions: realTimeAnalytics.metrics.activeSubscriptions,
         churnRate: realTimeAnalytics.metrics.churnRate,
-        conversionRate: realTimeAnalytics.metrics.trialConversions > 0 
-          ? (realTimeAnalytics.metrics.trialConversions / realTimeAnalytics.metrics.newSignups) * 100 
-          : 0,
-        growthRate: 0 // Calculate from historical data
-      }
+        conversionRate:
+          realTimeAnalytics.metrics.trialConversions > 0
+            ? (realTimeAnalytics.metrics.trialConversions /
+                realTimeAnalytics.metrics.newSignups) *
+              100
+            : 0,
+        growthRate: 0, // Calculate from historical data
+      };
 
       // Calculate growth rate from forecasting data
       if (forecasting.forecast && forecasting.forecast.predictions.length > 1) {
-        const current = forecasting.forecast.predictions[0]?.value || 0
-        const future = forecasting.forecast.predictions[forecasting.forecast.predictions.length - 1]?.value || 0
-        newKpis.growthRate = current > 0 ? ((future - current) / current) * 100 : 0
+        const current = forecasting.forecast.predictions[0]?.value || 0;
+        const future =
+          forecasting.forecast.predictions[
+            forecasting.forecast.predictions.length - 1
+          ]?.value || 0;
+        newKpis.growthRate =
+          current > 0 ? ((future - current) / current) * 100 : 0;
       }
 
-      setKpis(newKpis)
-    }
+      setKpis(newKpis);
+    };
 
     if (isInitialized) {
-      calculateKPIs()
+      calculateKPIs();
     }
-  }, [
-    isInitialized,
-    realTimeAnalytics.metrics,
-    forecasting.forecast
-  ])
+  }, [isInitialized, realTimeAnalytics.metrics, forecasting.forecast]);
 
   // Combine alerts from all sources
   const allAlerts = useMemo(() => {
     return [
       ...dashboardAlerts,
       ...realTimeAnalytics.alerts,
-      ...statisticalInsights.anomalies.map(anomaly => ({
+      ...statisticalInsights.anomalies.map((anomaly) => ({
         id: `anomaly-${anomaly.metric}-${Date.now()}`,
         type: anomaly.severity === 'high' ? 'critical' : 'warning',
         message: `Anomaly detected in ${anomaly.metric}: ${anomaly.explanation}`,
         timestamp: new Date(anomaly.timestamp),
-        metric: anomaly.metric
-      }))
-    ]
-  }, [dashboardAlerts, realTimeAnalytics.alerts, statisticalInsights.anomalies])
+        metric: anomaly.metric,
+      })),
+    ];
+  }, [
+    dashboardAlerts,
+    realTimeAnalytics.alerts,
+    statisticalInsights.anomalies,
+  ]);
 
   // Initialize dashboard
   const initialize = useCallback(async () => {
     try {
       // Start real-time monitoring
-      realTimeAnalytics.startMonitoring()
-      
+      realTimeAnalytics.startMonitoring();
+
       // Generate initial cohort analysis
       if (config.cohortAnalysis.startDate && config.cohortAnalysis.endDate) {
         await cohortAnalysis.generateAnalysis({
@@ -210,22 +220,25 @@ export function useAnalyticsDashboard(
           startDate: config.cohortAnalysis.startDate,
           endDate: config.cohortAnalysis.endDate,
           includeRevenue: true,
-          includeChurn: true
-        })
+          includeChurn: true,
+        });
       }
 
       // Generate initial forecast
       await forecasting.generateForecast({
         metric: config.forecasting.metric,
         timeHorizon: config.forecasting.timeHorizon,
-        model: config.forecasting.model === 'auto' ? 'seasonal' : config.forecasting.model,
+        model:
+          config.forecasting.model === 'auto'
+            ? 'seasonal'
+            : config.forecasting.model,
         granularity: config.forecasting.granularity,
         confidenceLevel: config.forecasting.confidenceLevel,
         includeSeasonality: config.forecasting.includeSeasonality,
         includeTrends: config.forecasting.includeTrends,
         startDate: config.filters.dateRange.start,
-        endDate: config.filters.dateRange.end
-      })
+        endDate: config.filters.dateRange.end,
+      });
 
       // Run initial statistical analysis
       await statisticalInsights.runAnalysis({
@@ -234,27 +247,30 @@ export function useAnalyticsDashboard(
         analysisType: 'correlation',
         confidenceLevel: config.statisticalInsights.confidenceLevel,
         anomalyThreshold: config.statisticalInsights.anomalyThreshold,
-        includeSeasonality: config.statisticalInsights.includeSeasonality
-      })
+        includeSeasonality: config.statisticalInsights.includeSeasonality,
+      });
 
-      setIsInitialized(true)
+      setIsInitialized(true);
     } catch (error) {
-      console.error('Dashboard initialization failed:', error)
-      setDashboardAlerts(prev => [...prev, {
-        id: `init-error-${Date.now()}`,
-        type: 'critical',
-        message: 'Dashboard initialization failed',
-        timestamp: new Date(),
-        metric: 'system'
-      }])
+      console.error('Dashboard initialization failed:', error);
+      setDashboardAlerts((prev) => [
+        ...prev,
+        {
+          id: `init-error-${Date.now()}`,
+          type: 'critical',
+          message: 'Dashboard initialization failed',
+          timestamp: new Date(),
+          metric: 'system',
+        },
+      ]);
     }
   }, [
     config,
     cohortAnalysis,
     forecasting,
     realTimeAnalytics,
-    statisticalInsights
-  ])
+    statisticalInsights,
+  ]);
 
   // Refresh all analytics
   const refreshAll = useCallback(async () => {
@@ -263,89 +279,104 @@ export function useAnalyticsDashboard(
         cohortAnalysis.refreshData(),
         forecasting.refreshData(),
         realTimeAnalytics.refreshMetrics(),
-        statisticalInsights.refreshInsights()
-      ])
+        statisticalInsights.refreshInsights(),
+      ]);
     } catch (error) {
-      console.error('Dashboard refresh failed:', error)
+      console.error('Dashboard refresh failed:', error);
     }
-  }, [cohortAnalysis, forecasting, realTimeAnalytics, statisticalInsights])
+  }, [cohortAnalysis, forecasting, realTimeAnalytics, statisticalInsights]);
 
   // Update configuration
-  const updateConfig = useCallback(async (newConfig: Partial<AnalyticsDashboardConfig>) => {
-    const updatedConfig = { ...config, ...newConfig }
-    setConfig(updatedConfig)
+  const updateConfig = useCallback(
+    async (newConfig: Partial<AnalyticsDashboardConfig>) => {
+      const updatedConfig = { ...config, ...newConfig };
+      setConfig(updatedConfig);
 
-    // Update individual hook configurations
-    if (newConfig.cohortAnalysis) {
-      cohortAnalysis.updateConfig(newConfig.cohortAnalysis)
-    }
-    if (newConfig.forecasting) {
-      forecasting.updateConfig(newConfig.forecasting)
-    }
-    if (newConfig.realTime) {
-      realTimeAnalytics.updateConfig(newConfig.realTime)
-    }
+      // Update individual hook configurations
+      if (newConfig.cohortAnalysis) {
+        cohortAnalysis.updateConfig(newConfig.cohortAnalysis);
+      }
+      if (newConfig.forecasting) {
+        forecasting.updateConfig(newConfig.forecasting);
+      }
+      if (newConfig.realTime) {
+        realTimeAnalytics.updateConfig(newConfig.realTime);
+      }
 
-    // Refresh with new config
-    await refreshAll()
-  }, [config, cohortAnalysis, forecasting, realTimeAnalytics, refreshAll])
+      // Refresh with new config
+      await refreshAll();
+    },
+    [config, cohortAnalysis, forecasting, realTimeAnalytics, refreshAll]
+  );
 
   // Export dashboard
-  const exportDashboard = useCallback(async (format: 'pdf' | 'excel') => {
-    try {
-      const response = await fetch('/api/analytics/export-dashboard', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          format,
-          data: {
-            kpis,
-            cohorts: cohortAnalysis.metrics,
-            forecasts: forecasting.predictions,
-            insights: aggregatedInsights.insights,
-            correlations: aggregatedInsights.correlations,
-            config
-          }
-        })
-      })
+  const exportDashboard = useCallback(
+    async (format: 'pdf' | 'excel') => {
+      try {
+        const response = await fetch('/api/analytics/export-dashboard', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            format,
+            data: {
+              kpis,
+              cohorts: cohortAnalysis.metrics,
+              forecasts: forecasting.predictions,
+              insights: aggregatedInsights.insights,
+              correlations: aggregatedInsights.correlations,
+              config,
+            },
+          }),
+        });
 
-      if (!response.ok) throw new Error('Export failed')
+        if (!response.ok) throw new Error('Export failed');
 
-      const blob = await response.blob()
-      const url = window.URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `analytics-dashboard-${new Date().toISOString().split('T')[0]}.${format}`
-      document.body.appendChild(a)
-      a.click()
-      window.URL.revokeObjectURL(url)
-      document.body.removeChild(a)
-    } catch (error) {
-      console.error('Dashboard export failed:', error)
-    }
-  }, [kpis, cohortAnalysis.metrics, forecasting.predictions, aggregatedInsights, config])
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `analytics-dashboard-${new Date().toISOString().split('T')[0]}.${format}`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      } catch (error) {
+        console.error('Dashboard export failed:', error);
+      }
+    },
+    [
+      kpis,
+      cohortAnalysis.metrics,
+      forecasting.predictions,
+      aggregatedInsights,
+      config,
+    ]
+  );
 
   // Alert management
   const addAlert = useCallback((alert: any) => {
-    setDashboardAlerts(prev => [...prev, { ...alert, id: `custom-${Date.now()}` }])
-  }, [])
+    setDashboardAlerts((prev) => [
+      ...prev,
+      { ...alert, id: `custom-${Date.now()}` },
+    ]);
+  }, []);
 
   const clearAlerts = useCallback(() => {
-    setDashboardAlerts([])
-    realTimeAnalytics.clearAlerts()
-  }, [realTimeAnalytics])
+    setDashboardAlerts([]);
+    realTimeAnalytics.clearAlerts();
+  }, [realTimeAnalytics]);
 
   // Auto-initialize on mount
   useEffect(() => {
     if (!isInitialized) {
-      initialize()
+      initialize();
     }
-    
+
     return () => {
       // Cleanup on unmount
-      realTimeAnalytics.stopMonitoring()
-    }
-  }, [isInitialized, initialize, realTimeAnalytics])
+      realTimeAnalytics.stopMonitoring();
+    };
+  }, [isInitialized, initialize, realTimeAnalytics]);
 
   return {
     // State
@@ -366,6 +397,6 @@ export function useAnalyticsDashboard(
     updateConfig,
     exportDashboard,
     addAlert,
-    clearAlerts
-  }
+    clearAlerts,
+  };
 }

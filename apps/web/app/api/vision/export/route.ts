@@ -1,41 +1,45 @@
 /**
  * Vision Analysis Export API
  * POST /api/vision/export
- * 
+ *
  * Exports computer vision analysis results to various formats (PDF, Excel, JSON)
  * Epic 10 - Story 10.1: Automated Before/After Analysis
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { createClient } from '@/app/utils/supabase/server';
 import { withErrorMonitoring } from '@/lib/monitoring';
 
 // Export request validation schema
 const exportRequestSchema = z.object({
-  analysisIds: z.array(z.string().uuid()).min(1, 'Pelo menos uma análise deve ser selecionada'),
-  format: z.enum(['pdf', 'excel', 'json', 'csv'], { required_error: 'Formato de exportação é obrigatório' }),
+  analysisIds: z
+    .array(z.string().uuid())
+    .min(1, 'Pelo menos uma análise deve ser selecionada'),
+  format: z.enum(['pdf', 'excel', 'json', 'csv'], {
+    required_error: 'Formato de exportação é obrigatório',
+  }),
   includeImages: z.boolean().default(true),
   includeAnnotations: z.boolean().default(true),
   includeMetrics: z.boolean().default(true),
   includeTimeline: z.boolean().default(false),
   customFields: z.array(z.string()).optional(),
   reportTitle: z.string().optional(),
-  reportNotes: z.string().optional()
+  reportNotes: z.string().optional(),
 });
 
 // POST - Export analysis results
 export const POST = withErrorMonitoring(async (request: NextRequest) => {
   const supabase = createClient();
-  
+
   try {
     // Authenticate user
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Não autorizado' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
     // Parse and validate request body
@@ -94,37 +98,39 @@ export const POST = withErrorMonitoring(async (request: NextRequest) => {
       export_format: validatedData.format,
       export_options: validatedData,
       file_size_bytes: exportResult.data.length,
-      created_at: new Date().toISOString()
+      created_at: new Date().toISOString(),
     });
 
     // Return file with appropriate headers
     const headers = new Headers();
     headers.set('Content-Type', exportResult.contentType);
-    headers.set('Content-Disposition', `attachment; filename="${filename}.${validatedData.format}"`);
+    headers.set(
+      'Content-Disposition',
+      `attachment; filename="${filename}.${validatedData.format}"`
+    );
     headers.set('Content-Length', exportResult.data.length.toString());
 
     return new NextResponse(exportResult.data, {
       status: 200,
-      headers
+      headers,
     });
-
   } catch (error) {
     console.error('Vision export error:', error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { 
+        {
           error: 'Dados de entrada inválidos',
-          details: error.errors
+          details: error.errors,
         },
         { status: 400 }
       );
     }
 
     return NextResponse.json(
-      { 
+      {
         error: 'Erro interno do servidor',
-        details: error instanceof Error ? error.message : 'Erro desconhecido'
+        details: error instanceof Error ? error.message : 'Erro desconhecido',
       },
       { status: 500 }
     );
@@ -139,10 +145,11 @@ async function generateJSONExport(analysisData: any[], options: any) {
       totalAnalyses: analysisData.length,
       format: 'json',
       options,
-      reportTitle: options.reportTitle || 'Relatório de Análise de Visão Computacional',
-      reportNotes: options.reportNotes
+      reportTitle:
+        options.reportTitle || 'Relatório de Análise de Visão Computacional',
+      reportNotes: options.reportNotes,
     },
-    analyses: analysisData.map(analysis => ({
+    analyses: analysisData.map((analysis) => ({
       id: analysis.id,
       patientId: analysis.patient_id,
       treatmentType: analysis.treatment_type,
@@ -153,26 +160,26 @@ async function generateJSONExport(analysisData: any[], options: any) {
           accuracyScore: analysis.accuracy_score,
           confidence: analysis.confidence,
           improvementPercentage: analysis.improvement_percentage,
-          changeMetrics: analysis.change_metrics
-        }
+          changeMetrics: analysis.change_metrics,
+        },
       }),
       ...(options.includeImages && {
         images: {
           beforeImageUrl: analysis.before_image_url,
-          afterImageUrl: analysis.after_image_url
-        }
+          afterImageUrl: analysis.after_image_url,
+        },
       }),
       ...(options.includeAnnotations && {
-        annotations: analysis.analysis_annotations || []
+        annotations: analysis.analysis_annotations || [],
       }),
       performance: analysis.analysis_performance?.[0] || null,
-      qualityControl: analysis.analysis_quality_control?.[0] || null
-    }))
+      qualityControl: analysis.analysis_quality_control?.[0] || null,
+    })),
   };
 
   return {
     data: Buffer.from(JSON.stringify(exportData, null, 2)),
-    contentType: 'application/json'
+    contentType: 'application/json',
   };
 }
 
@@ -184,37 +191,43 @@ async function generateCSVExport(analysisData: any[], options: any) {
     'Treatment Type',
     'Status',
     'Created At',
-    ...(options.includeMetrics ? [
-      'Accuracy Score',
-      'Confidence',
-      'Improvement %',
-      'Processing Time (ms)'
-    ] : []),
-    'Notes'
+    ...(options.includeMetrics
+      ? [
+          'Accuracy Score',
+          'Confidence',
+          'Improvement %',
+          'Processing Time (ms)',
+        ]
+      : []),
+    'Notes',
   ];
 
-  const rows = analysisData.map(analysis => [
+  const rows = analysisData.map((analysis) => [
     analysis.id,
     analysis.patient_id,
     analysis.treatment_type,
     analysis.status,
     analysis.created_at,
-    ...(options.includeMetrics ? [
-      analysis.accuracy_score,
-      analysis.confidence,
-      analysis.improvement_percentage,
-      analysis.analysis_performance?.[0]?.processing_time_ms || ''
-    ] : []),
-    analysis.notes || ''
+    ...(options.includeMetrics
+      ? [
+          analysis.accuracy_score,
+          analysis.confidence,
+          analysis.improvement_percentage,
+          analysis.analysis_performance?.[0]?.processing_time_ms || '',
+        ]
+      : []),
+    analysis.notes || '',
   ]);
 
   const csvContent = [headers, ...rows]
-    .map(row => row.map(field => `"${String(field).replace(/"/g, '""')}"`).join(','))
+    .map((row) =>
+      row.map((field) => `"${String(field).replace(/"/g, '""')}"`).join(',')
+    )
     .join('\n');
 
   return {
     data: Buffer.from(csvContent),
-    contentType: 'text/csv'
+    contentType: 'text/csv',
   };
 }
 
@@ -228,7 +241,9 @@ RELATÓRIO DE ANÁLISE DE VISÃO COMPUTACIONAL
 Gerado em: ${new Date().toLocaleString('pt-BR')}
 Total de Análises: ${analysisData.length}
 
-${analysisData.map((analysis, index) => `
+${analysisData
+  .map(
+    (analysis, index) => `
 ANÁLISE ${index + 1}
 ${'='.repeat(20)}
 ID: ${analysis.id}
@@ -236,19 +251,25 @@ Paciente: ${analysis.patient_id}
 Tipo de Tratamento: ${analysis.treatment_type}
 Status: ${analysis.status}
 Data: ${new Date(analysis.created_at).toLocaleString('pt-BR')}
-${options.includeMetrics ? `
+${
+  options.includeMetrics
+    ? `
 MÉTRICAS:
 - Precisão: ${(analysis.accuracy_score * 100).toFixed(1)}%
 - Confiança: ${(analysis.confidence * 100).toFixed(1)}%
 - Melhoria: ${analysis.improvement_percentage.toFixed(1)}%
-` : ''}
+`
+    : ''
+}
 ${analysis.notes ? `Observações: ${analysis.notes}` : ''}
-`).join('\n')}
+`
+  )
+  .join('\n')}
 `;
 
   return {
     data: Buffer.from(content),
-    contentType: 'application/pdf'
+    contentType: 'application/pdf',
   };
 }
 
@@ -257,30 +278,31 @@ async function generateExcelExport(analysisData: any[], options: any) {
   // For now, return CSV format with Excel MIME type
   // In production, you would use a library like exceljs
   const csvResult = await generateCSVExport(analysisData, options);
-  
+
   return {
     data: csvResult.data,
-    contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    contentType:
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   };
 }
 
 // GET - Get export history
 export const GET = withErrorMonitoring(async (request: NextRequest) => {
   const supabase = createClient();
-  
+
   try {
     // Authenticate user
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Não autorizado' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
-    const limit = parseInt(searchParams.get('limit') || '20');
-    const offset = parseInt(searchParams.get('offset') || '0');
+    const limit = Number.parseInt(searchParams.get('limit') || '20', 10);
+    const offset = Number.parseInt(searchParams.get('offset') || '0', 10);
 
     // Get export history
     const { data: exportHistory, error } = await supabase
@@ -300,16 +322,15 @@ export const GET = withErrorMonitoring(async (request: NextRequest) => {
       pagination: {
         limit,
         offset,
-        total: exportHistory.length
-      }
+        total: exportHistory.length,
+      },
     });
-
   } catch (error) {
     console.error('Export history error:', error);
     return NextResponse.json(
-      { 
+      {
         error: 'Erro interno do servidor',
-        details: error instanceof Error ? error.message : 'Erro desconhecido'
+        details: error instanceof Error ? error.message : 'Erro desconhecido',
       },
       { status: 500 }
     );

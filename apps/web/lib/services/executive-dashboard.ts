@@ -4,8 +4,8 @@
  */
 
 import { createClient } from '@/app/utils/supabase/server';
-import { getCurrentUser } from '@/lib/auth/server';
 import { AnalyticsService } from '@/lib/analytics/service';
+import { getCurrentUser } from '@/lib/auth/server';
 import { logger } from '@/lib/logger';
 
 export interface DashboardKPI {
@@ -65,11 +65,14 @@ export interface PeriodComparison {
     end: string;
     metrics: Record<string, number>;
   };
-  changes: Record<string, {
-    absolute: number;
-    percentage: number;
-    trend: 'up' | 'down' | 'stable';
-  }>;
+  changes: Record<
+    string,
+    {
+      absolute: number;
+      percentage: number;
+      trend: 'up' | 'down' | 'stable';
+    }
+  >;
 }
 
 export interface ExecutiveDashboardFilters {
@@ -85,7 +88,6 @@ export interface ExecutiveDashboardFilters {
 
 export class ExecutiveDashboardService {
   private supabase;
-  private analyticsService: AnalyticsService;
 
   constructor() {
     this.supabase = createClient();
@@ -110,14 +112,14 @@ export class ExecutiveDashboardService {
       const [kpis, charts, alerts] = await Promise.all([
         this.getKPIs(filters),
         this.getChartData(filters),
-        this.getAlerts(filters)
+        this.getAlerts(filters),
       ]);
 
       return {
         kpis,
         charts,
         alerts,
-        lastUpdated: new Date().toISOString()
+        lastUpdated: new Date().toISOString(),
       };
     } catch (error) {
       logger.error('Error fetching dashboard metrics:', error);
@@ -146,7 +148,7 @@ export class ExecutiveDashboardService {
         await this.calculateAppointmentsKPI(metricsData, filters),
         await this.calculateEfficiencyKPI(metricsData, filters),
         await this.calculateProfitabilityKPI(metricsData, filters),
-        await this.calculateSatisfactionKPI(metricsData, filters)
+        await this.calculateSatisfactionKPI(metricsData, filters),
       ];
 
       return kpis;
@@ -173,7 +175,7 @@ export class ExecutiveDashboardService {
       return {
         revenue: this.processRevenueChart(chartData),
         appointments: this.processAppointmentsChart(chartData),
-        patients: this.processPatientsChart(chartData)
+        patients: this.processPatientsChart(chartData),
       };
     } catch (error) {
       logger.error('Error fetching chart data:', error);
@@ -184,7 +186,9 @@ export class ExecutiveDashboardService {
   /**
    * Get dashboard alerts
    */
-  async getAlerts(filters: ExecutiveDashboardFilters): Promise<DashboardAlert[]> {
+  async getAlerts(
+    filters: ExecutiveDashboardFilters
+  ): Promise<DashboardAlert[]> {
     try {
       const { data: alerts, error } = await this.supabase
         .from('executive_dashboard_alerts')
@@ -197,7 +201,7 @@ export class ExecutiveDashboardService {
 
       if (error) throw error;
 
-      return alerts.map(alert => ({
+      return alerts.map((alert) => ({
         id: alert.id,
         type: alert.alert_type,
         title: alert.title,
@@ -206,7 +210,7 @@ export class ExecutiveDashboardService {
         createdAt: alert.created_at,
         isRead: alert.is_read,
         actionRequired: alert.action_required,
-        category: alert.category
+        category: alert.category,
       }));
     } catch (error) {
       logger.error('Error fetching alerts:', error);
@@ -224,21 +228,21 @@ export class ExecutiveDashboardService {
     try {
       const [currentMetrics, previousMetrics] = await Promise.all([
         this.getPeriodMetrics(currentPeriod),
-        this.getPeriodMetrics(previousPeriod)
+        this.getPeriodMetrics(previousPeriod),
       ]);
 
       const changes: Record<string, any> = {};
-      
-      Object.keys(currentMetrics).forEach(key => {
+
+      Object.keys(currentMetrics).forEach((key) => {
         const current = currentMetrics[key] || 0;
         const previous = previousMetrics[key] || 0;
         const absolute = current - previous;
         const percentage = previous === 0 ? 0 : (absolute / previous) * 100;
-        
+
         changes[key] = {
           absolute,
           percentage,
-          trend: absolute > 0 ? 'up' : absolute < 0 ? 'down' : 'stable'
+          trend: absolute > 0 ? 'up' : absolute < 0 ? 'down' : 'stable',
         };
       });
 
@@ -246,14 +250,14 @@ export class ExecutiveDashboardService {
         current: {
           start: currentPeriod.start,
           end: currentPeriod.end,
-          metrics: currentMetrics
+          metrics: currentMetrics,
         },
         previous: {
           start: previousPeriod.start,
           end: previousPeriod.end,
-          metrics: previousMetrics
+          metrics: previousMetrics,
         },
-        changes
+        changes,
       };
     } catch (error) {
       logger.error('Error comparing periods:', error);
@@ -269,13 +273,13 @@ export class ExecutiveDashboardService {
     format: 'pdf' | 'excel' | 'csv'
   ): Promise<{ url: string; filename: string }> {
     try {
-      const metrics = await this.getDashboardMetrics(filters);
-      
+      const _metrics = await this.getDashboardMetrics(filters);
+
       // Implementation would depend on export library choice
       // For now, returning a placeholder
       return {
         url: `/api/exports/dashboard-${Date.now()}.${format}`,
-        filename: `executive-dashboard-${new Date().toISOString().split('T')[0]}.${format}`
+        filename: `executive-dashboard-${new Date().toISOString().split('T')[0]}.${format}`,
       };
     } catch (error) {
       logger.error('Error exporting dashboard:', error);
@@ -296,8 +300,8 @@ export class ExecutiveDashboardService {
       throw new Error('User profile not found');
     }
 
-    const hasExecutiveAccess = 
-      profile.role === 'admin' || 
+    const hasExecutiveAccess =
+      profile.role === 'admin' ||
       profile.role === 'owner' ||
       profile.permissions?.includes('executive_dashboard');
 
@@ -306,114 +310,236 @@ export class ExecutiveDashboardService {
     }
   }
 
-  private async calculateRevenueKPI(data: any[], filters: ExecutiveDashboardFilters): Promise<DashboardKPI> {
-    const currentRevenue = data.reduce((sum, item) => sum + (item.revenue || 0), 0);
-    const previousRevenue = await this.getPreviousPeriodValue('revenue', filters);
-    
+  private async calculateRevenueKPI(
+    data: any[],
+    filters: ExecutiveDashboardFilters
+  ): Promise<DashboardKPI> {
+    const currentRevenue = data.reduce(
+      (sum, item) => sum + (item.revenue || 0),
+      0
+    );
+    const previousRevenue = await this.getPreviousPeriodValue(
+      'revenue',
+      filters
+    );
+
     return {
       id: 'revenue',
       name: 'Receita Total',
       value: currentRevenue,
       previousValue: previousRevenue,
-      changePercent: previousRevenue === 0 ? 0 : ((currentRevenue - previousRevenue) / previousRevenue) * 100,
-      trend: currentRevenue > previousRevenue ? 'up' : currentRevenue < previousRevenue ? 'down' : 'stable',
+      changePercent:
+        previousRevenue === 0
+          ? 0
+          : ((currentRevenue - previousRevenue) / previousRevenue) * 100,
+      trend:
+        currentRevenue > previousRevenue
+          ? 'up'
+          : currentRevenue < previousRevenue
+            ? 'down'
+            : 'stable',
       format: 'currency',
-      category: 'financial'
+      category: 'financial',
     };
   }
 
-  private async calculatePatientsKPI(data: any[], filters: ExecutiveDashboardFilters): Promise<DashboardKPI> {
-    const currentPatients = data.reduce((sum, item) => sum + (item.new_patients || 0), 0);
-    const previousPatients = await this.getPreviousPeriodValue('new_patients', filters);
-    
+  private async calculatePatientsKPI(
+    data: any[],
+    filters: ExecutiveDashboardFilters
+  ): Promise<DashboardKPI> {
+    const currentPatients = data.reduce(
+      (sum, item) => sum + (item.new_patients || 0),
+      0
+    );
+    const previousPatients = await this.getPreviousPeriodValue(
+      'new_patients',
+      filters
+    );
+
     return {
       id: 'patients',
       name: 'Novos Pacientes',
       value: currentPatients,
       previousValue: previousPatients,
-      changePercent: previousPatients === 0 ? 0 : ((currentPatients - previousPatients) / previousPatients) * 100,
-      trend: currentPatients > previousPatients ? 'up' : currentPatients < previousPatients ? 'down' : 'stable',
+      changePercent:
+        previousPatients === 0
+          ? 0
+          : ((currentPatients - previousPatients) / previousPatients) * 100,
+      trend:
+        currentPatients > previousPatients
+          ? 'up'
+          : currentPatients < previousPatients
+            ? 'down'
+            : 'stable',
       format: 'number',
-      category: 'patient'
+      category: 'patient',
     };
   }
 
-  private async calculateAppointmentsKPI(data: any[], filters: ExecutiveDashboardFilters): Promise<DashboardKPI> {
-    const currentAppointments = data.reduce((sum, item) => sum + (item.appointments || 0), 0);
-    const previousAppointments = await this.getPreviousPeriodValue('appointments', filters);
-    
+  private async calculateAppointmentsKPI(
+    data: any[],
+    filters: ExecutiveDashboardFilters
+  ): Promise<DashboardKPI> {
+    const currentAppointments = data.reduce(
+      (sum, item) => sum + (item.appointments || 0),
+      0
+    );
+    const previousAppointments = await this.getPreviousPeriodValue(
+      'appointments',
+      filters
+    );
+
     return {
       id: 'appointments',
       name: 'Consultas Realizadas',
       value: currentAppointments,
       previousValue: previousAppointments,
-      changePercent: previousAppointments === 0 ? 0 : ((currentAppointments - previousAppointments) / previousAppointments) * 100,
-      trend: currentAppointments > previousAppointments ? 'up' : currentAppointments < previousAppointments ? 'down' : 'stable',
+      changePercent:
+        previousAppointments === 0
+          ? 0
+          : ((currentAppointments - previousAppointments) /
+              previousAppointments) *
+            100,
+      trend:
+        currentAppointments > previousAppointments
+          ? 'up'
+          : currentAppointments < previousAppointments
+            ? 'down'
+            : 'stable',
       format: 'number',
-      category: 'operational'
+      category: 'operational',
     };
   }
 
-  private async calculateEfficiencyKPI(data: any[], filters: ExecutiveDashboardFilters): Promise<DashboardKPI> {
-    const totalAppointments = data.reduce((sum, item) => sum + (item.appointments || 0), 0);
-    const completedAppointments = data.reduce((sum, item) => sum + (item.completed_appointments || 0), 0);
-    const currentEfficiency = totalAppointments === 0 ? 0 : (completedAppointments / totalAppointments) * 100;
-    const previousEfficiency = await this.getPreviousPeriodValue('efficiency', filters);
-    
+  private async calculateEfficiencyKPI(
+    data: any[],
+    filters: ExecutiveDashboardFilters
+  ): Promise<DashboardKPI> {
+    const totalAppointments = data.reduce(
+      (sum, item) => sum + (item.appointments || 0),
+      0
+    );
+    const completedAppointments = data.reduce(
+      (sum, item) => sum + (item.completed_appointments || 0),
+      0
+    );
+    const currentEfficiency =
+      totalAppointments === 0
+        ? 0
+        : (completedAppointments / totalAppointments) * 100;
+    const previousEfficiency = await this.getPreviousPeriodValue(
+      'efficiency',
+      filters
+    );
+
     return {
       id: 'efficiency',
       name: 'Taxa de Eficiência',
       value: currentEfficiency,
       previousValue: previousEfficiency,
-      changePercent: previousEfficiency === 0 ? 0 : ((currentEfficiency - previousEfficiency) / previousEfficiency) * 100,
-      trend: currentEfficiency > previousEfficiency ? 'up' : currentEfficiency < previousEfficiency ? 'down' : 'stable',
+      changePercent:
+        previousEfficiency === 0
+          ? 0
+          : ((currentEfficiency - previousEfficiency) / previousEfficiency) *
+            100,
+      trend:
+        currentEfficiency > previousEfficiency
+          ? 'up'
+          : currentEfficiency < previousEfficiency
+            ? 'down'
+            : 'stable',
       format: 'percentage',
-      category: 'operational'
+      category: 'operational',
     };
   }
 
-  private async calculateProfitabilityKPI(data: any[], filters: ExecutiveDashboardFilters): Promise<DashboardKPI> {
+  private async calculateProfitabilityKPI(
+    data: any[],
+    filters: ExecutiveDashboardFilters
+  ): Promise<DashboardKPI> {
     const revenue = data.reduce((sum, item) => sum + (item.revenue || 0), 0);
     const costs = data.reduce((sum, item) => sum + (item.costs || 0), 0);
-    const currentProfitability = revenue === 0 ? 0 : ((revenue - costs) / revenue) * 100;
-    const previousProfitability = await this.getPreviousPeriodValue('profitability', filters);
-    
+    const currentProfitability =
+      revenue === 0 ? 0 : ((revenue - costs) / revenue) * 100;
+    const previousProfitability = await this.getPreviousPeriodValue(
+      'profitability',
+      filters
+    );
+
     return {
       id: 'profitability',
       name: 'Margem de Lucro',
       value: currentProfitability,
       previousValue: previousProfitability,
-      changePercent: previousProfitability === 0 ? 0 : ((currentProfitability - previousProfitability) / previousProfitability) * 100,
-      trend: currentProfitability > previousProfitability ? 'up' : currentProfitability < previousProfitability ? 'down' : 'stable',
+      changePercent:
+        previousProfitability === 0
+          ? 0
+          : ((currentProfitability - previousProfitability) /
+              previousProfitability) *
+            100,
+      trend:
+        currentProfitability > previousProfitability
+          ? 'up'
+          : currentProfitability < previousProfitability
+            ? 'down'
+            : 'stable',
       format: 'percentage',
-      category: 'financial'
+      category: 'financial',
     };
   }
 
-  private async calculateSatisfactionKPI(data: any[], filters: ExecutiveDashboardFilters): Promise<DashboardKPI> {
-    const totalRatings = data.reduce((sum, item) => sum + (item.satisfaction_count || 0), 0);
-    const satisfactionSum = data.reduce((sum, item) => sum + (item.satisfaction_sum || 0), 0);
-    const currentSatisfaction = totalRatings === 0 ? 0 : (satisfactionSum / totalRatings);
-    const previousSatisfaction = await this.getPreviousPeriodValue('satisfaction', filters);
-    
+  private async calculateSatisfactionKPI(
+    data: any[],
+    filters: ExecutiveDashboardFilters
+  ): Promise<DashboardKPI> {
+    const totalRatings = data.reduce(
+      (sum, item) => sum + (item.satisfaction_count || 0),
+      0
+    );
+    const satisfactionSum = data.reduce(
+      (sum, item) => sum + (item.satisfaction_sum || 0),
+      0
+    );
+    const currentSatisfaction =
+      totalRatings === 0 ? 0 : satisfactionSum / totalRatings;
+    const previousSatisfaction = await this.getPreviousPeriodValue(
+      'satisfaction',
+      filters
+    );
+
     return {
       id: 'satisfaction',
       name: 'Satisfação do Cliente',
       value: currentSatisfaction,
       previousValue: previousSatisfaction,
-      changePercent: previousSatisfaction === 0 ? 0 : ((currentSatisfaction - previousSatisfaction) / previousSatisfaction) * 100,
-      trend: currentSatisfaction > previousSatisfaction ? 'up' : currentSatisfaction < previousSatisfaction ? 'down' : 'stable',
+      changePercent:
+        previousSatisfaction === 0
+          ? 0
+          : ((currentSatisfaction - previousSatisfaction) /
+              previousSatisfaction) *
+            100,
+      trend:
+        currentSatisfaction > previousSatisfaction
+          ? 'up'
+          : currentSatisfaction < previousSatisfaction
+            ? 'down'
+            : 'stable',
       format: 'number',
-      category: 'patient'
+      category: 'patient',
     };
   }
 
-  private async getPreviousPeriodValue(metric: string, filters: ExecutiveDashboardFilters): Promise<number> {
+  private async getPreviousPeriodValue(
+    metric: string,
+    filters: ExecutiveDashboardFilters
+  ): Promise<number> {
     // Calculate previous period based on current date range
     const startDate = new Date(filters.dateRange.start);
     const endDate = new Date(filters.dateRange.end);
-    const periodDays = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
-    
+    const periodDays = Math.ceil(
+      (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
+    );
+
     const previousStartDate = new Date(startDate);
     previousStartDate.setDate(previousStartDate.getDate() - periodDays);
     const previousEndDate = new Date(endDate);
@@ -434,27 +560,42 @@ export class ExecutiveDashboardService {
         return data.reduce((sum, item) => sum + (item.new_patients || 0), 0);
       case 'appointments':
         return data.reduce((sum, item) => sum + (item.appointments || 0), 0);
-      case 'efficiency':
-        const totalAppts = data.reduce((sum, item) => sum + (item.appointments || 0), 0);
-        const completedAppts = data.reduce((sum, item) => sum + (item.completed_appointments || 0), 0);
+      case 'efficiency': {
+        const totalAppts = data.reduce(
+          (sum, item) => sum + (item.appointments || 0),
+          0
+        );
+        const completedAppts = data.reduce(
+          (sum, item) => sum + (item.completed_appointments || 0),
+          0
+        );
         return totalAppts === 0 ? 0 : (completedAppts / totalAppts) * 100;
-      case 'profitability':
+      }
+      case 'profitability': {
         const rev = data.reduce((sum, item) => sum + (item.revenue || 0), 0);
         const costs = data.reduce((sum, item) => sum + (item.costs || 0), 0);
         return rev === 0 ? 0 : ((rev - costs) / rev) * 100;
-      case 'satisfaction':
-        const totalRatings = data.reduce((sum, item) => sum + (item.satisfaction_count || 0), 0);
-        const satisfactionSum = data.reduce((sum, item) => sum + (item.satisfaction_sum || 0), 0);
-        return totalRatings === 0 ? 0 : (satisfactionSum / totalRatings);
+      }
+      case 'satisfaction': {
+        const totalRatings = data.reduce(
+          (sum, item) => sum + (item.satisfaction_count || 0),
+          0
+        );
+        const satisfactionSum = data.reduce(
+          (sum, item) => sum + (item.satisfaction_sum || 0),
+          0
+        );
+        return totalRatings === 0 ? 0 : satisfactionSum / totalRatings;
+      }
       default:
         return 0;
     }
   }
 
   private processRevenueChart(data: any[]) {
-    const labels = data.map(item => item.date);
-    const revenue = data.map(item => item.revenue || 0);
-    
+    const labels = data.map((item) => item.date);
+    const revenue = data.map((item) => item.revenue || 0);
+
     // Get previous period data for comparison
     const previousData = data.map((_, index) => {
       const previousIndex = index - Math.floor(data.length / 2);
@@ -464,14 +605,14 @@ export class ExecutiveDashboardService {
     return {
       labels,
       data: revenue,
-      previousData
+      previousData,
     };
   }
 
   private processAppointmentsChart(data: any[]) {
-    const labels = data.map(item => item.date);
-    const appointments = data.map(item => item.appointments || 0);
-    
+    const labels = data.map((item) => item.date);
+    const appointments = data.map((item) => item.appointments || 0);
+
     const previousData = data.map((_, index) => {
       const previousIndex = index - Math.floor(data.length / 2);
       return previousIndex >= 0 ? data[previousIndex]?.appointments || 0 : 0;
@@ -480,14 +621,14 @@ export class ExecutiveDashboardService {
     return {
       labels,
       data: appointments,
-      previousData
+      previousData,
     };
   }
 
   private processPatientsChart(data: any[]) {
-    const labels = data.map(item => item.date);
-    const patients = data.map(item => item.new_patients || 0);
-    
+    const labels = data.map((item) => item.date);
+    const patients = data.map((item) => item.new_patients || 0);
+
     const previousData = data.map((_, index) => {
       const previousIndex = index - Math.floor(data.length / 2);
       return previousIndex >= 0 ? data[previousIndex]?.new_patients || 0 : 0;
@@ -496,11 +637,14 @@ export class ExecutiveDashboardService {
     return {
       labels,
       data: patients,
-      previousData
+      previousData,
     };
   }
 
-  private async getPeriodMetrics(period: { start: string; end: string }): Promise<Record<string, number>> {
+  private async getPeriodMetrics(period: {
+    start: string;
+    end: string;
+  }): Promise<Record<string, number>> {
     const { data, error } = await this.supabase
       .from('executive_dashboard_metrics')
       .select('*')
@@ -511,12 +655,20 @@ export class ExecutiveDashboardService {
 
     return {
       revenue: data.reduce((sum, item) => sum + (item.revenue || 0), 0),
-      new_patients: data.reduce((sum, item) => sum + (item.new_patients || 0), 0),
-      appointments: data.reduce((sum, item) => sum + (item.appointments || 0), 0),
+      new_patients: data.reduce(
+        (sum, item) => sum + (item.new_patients || 0),
+        0
+      ),
+      appointments: data.reduce(
+        (sum, item) => sum + (item.appointments || 0),
+        0
+      ),
       costs: data.reduce((sum, item) => sum + (item.costs || 0), 0),
-      satisfaction_average: data.length > 0 ? 
-        data.reduce((sum, item) => sum + (item.satisfaction_sum || 0), 0) / 
-        data.reduce((sum, item) => sum + (item.satisfaction_count || 1), 0) : 0
+      satisfaction_average:
+        data.length > 0
+          ? data.reduce((sum, item) => sum + (item.satisfaction_sum || 0), 0) /
+            data.reduce((sum, item) => sum + (item.satisfaction_count || 1), 0)
+          : 0,
     };
   }
 }

@@ -1,25 +1,25 @@
-import {
-    ComplianceReport,
-    ComplianceStats,
-    CreateComplianceReportData,
-    CreateProtocolOptimizationData,
-    CreateQualityBenchmarkData,
-    CreateSuccessPredictionData,
-    CreateTreatmentOutcomeData,
-    ProtocolOptimization,
-    ProtocolOptimizationFilters,
-    ProviderPerformance,
-    ProviderPerformanceFilters,
-    ProviderStats,
-    QualityBenchmark,
-    SuccessMetrics,
-    SuccessMetricsFilters,
-    SuccessPrediction,
-    SuccessRateStats,
-    TreatmentOutcome,
-    TreatmentSuccessFilters,
-    TreatmentTypeStats,
-    UpdateTreatmentOutcomeData
+import type {
+  ComplianceReport,
+  ComplianceStats,
+  CreateComplianceReportData,
+  CreateProtocolOptimizationData,
+  CreateQualityBenchmarkData,
+  CreateSuccessPredictionData,
+  CreateTreatmentOutcomeData,
+  ProtocolOptimization,
+  ProtocolOptimizationFilters,
+  ProviderPerformance,
+  ProviderPerformanceFilters,
+  ProviderStats,
+  QualityBenchmark,
+  SuccessMetrics,
+  SuccessMetricsFilters,
+  SuccessPrediction,
+  SuccessRateStats,
+  TreatmentOutcome,
+  TreatmentSuccessFilters,
+  TreatmentTypeStats,
+  UpdateTreatmentOutcomeData,
 } from '@/app/types/treatment-success';
 import { createClient } from '@/app/utils/supabase/server';
 
@@ -27,7 +27,11 @@ export class TreatmentSuccessService {
   private supabase = createClient();
 
   // Treatment Outcomes Management
-  async getTreatmentOutcomes(filters: TreatmentSuccessFilters = {}, page = 1, limit = 10) {
+  async getTreatmentOutcomes(
+    filters: TreatmentSuccessFilters = {},
+    page = 1,
+    limit = 10
+  ) {
     let query = (await this.supabase)
       .from('treatment_outcomes')
       .select('*', { count: 'exact' });
@@ -75,14 +79,16 @@ export class TreatmentSuccessService {
     const { data, error, count } = await query;
 
     if (error) {
-      throw new Error(`Erro ao buscar resultados de tratamento: ${error.message}`);
+      throw new Error(
+        `Erro ao buscar resultados de tratamento: ${error.message}`
+      );
     }
 
     return {
       data: data as TreatmentOutcome[],
       total: count || 0,
       page,
-      limit
+      limit,
     };
   }
 
@@ -94,7 +100,9 @@ export class TreatmentSuccessService {
       .single();
 
     if (error) {
-      throw new Error(`Erro ao buscar resultado de tratamento: ${error.message}`);
+      throw new Error(
+        `Erro ao buscar resultado de tratamento: ${error.message}`
+      );
     }
 
     return data as TreatmentOutcome;
@@ -108,13 +116,18 @@ export class TreatmentSuccessService {
       .single();
 
     if (error) {
-      throw new Error(`Erro ao criar resultado de tratamento: ${error.message}`);
+      throw new Error(
+        `Erro ao criar resultado de tratamento: ${error.message}`
+      );
     }
 
     return data as TreatmentOutcome;
   }
 
-  async updateTreatmentOutcome(id: string, updateData: UpdateTreatmentOutcomeData) {
+  async updateTreatmentOutcome(
+    id: string,
+    updateData: UpdateTreatmentOutcomeData
+  ) {
     const { data, error } = await (await this.supabase)
       .from('treatment_outcomes')
       .update({ ...updateData, updated_at: new Date().toISOString() })
@@ -123,7 +136,9 @@ export class TreatmentSuccessService {
       .single();
 
     if (error) {
-      throw new Error(`Erro ao atualizar resultado de tratamento: ${error.message}`);
+      throw new Error(
+        `Erro ao atualizar resultado de tratamento: ${error.message}`
+      );
     }
 
     return data as TreatmentOutcome;
@@ -136,14 +151,20 @@ export class TreatmentSuccessService {
       .eq('id', id);
 
     if (error) {
-      throw new Error(`Erro ao deletar resultado de tratamento: ${error.message}`);
+      throw new Error(
+        `Erro ao deletar resultado de tratamento: ${error.message}`
+      );
     }
 
     return { success: true };
   }
 
   // Success Metrics Management
-  async getSuccessMetrics(filters: SuccessMetricsFilters = {}, page = 1, limit = 10) {
+  async getSuccessMetrics(
+    filters: SuccessMetricsFilters = {},
+    page = 1,
+    limit = 10
+  ) {
     let query = (await this.supabase)
       .from('success_metrics')
       .select('*', { count: 'exact' });
@@ -185,15 +206,19 @@ export class TreatmentSuccessService {
       data: data as SuccessMetrics[],
       total: count || 0,
       page,
-      limit
+      limit,
     };
   }
 
-  async generateSuccessMetrics(treatmentType: string, providerId?: string, timePeriod: 'monthly' | 'quarterly' | 'yearly' = 'monthly') {
+  async generateSuccessMetrics(
+    treatmentType: string,
+    providerId?: string,
+    timePeriod: 'monthly' | 'quarterly' | 'yearly' = 'monthly'
+  ) {
     // Calculate date range based on time period
     const endDate = new Date();
     const startDate = new Date();
-    
+
     switch (timePeriod) {
       case 'monthly':
         startDate.setMonth(endDate.getMonth() - 1);
@@ -225,10 +250,18 @@ export class TreatmentSuccessService {
     }
 
     const totalTreatments = outcomes.length;
-    const successfulTreatments = outcomes.filter(o => o.success_score && o.success_score >= 0.8).length;
-    const successRate = totalTreatments > 0 ? successfulTreatments / totalTreatments : 0;
-    const averageSatisfaction = outcomes.reduce((sum, o) => sum + (o.patient_satisfaction_score || 0), 0) / totalTreatments;
-    const complicationRate = outcomes.filter(o => o.complications).length / totalTreatments;
+    const successfulTreatments = outcomes.filter(
+      (o) => o.success_score && o.success_score >= 0.8
+    ).length;
+    const successRate =
+      totalTreatments > 0 ? successfulTreatments / totalTreatments : 0;
+    const averageSatisfaction =
+      outcomes.reduce(
+        (sum, o) => sum + (o.patient_satisfaction_score || 0),
+        0
+      ) / totalTreatments;
+    const complicationRate =
+      outcomes.filter((o) => o.complications).length / totalTreatments;
 
     const metricsData = {
       treatment_type: treatmentType,
@@ -257,7 +290,11 @@ export class TreatmentSuccessService {
   }
 
   // Provider Performance Management
-  async getProviderPerformance(filters: ProviderPerformanceFilters = {}, page = 1, limit = 10) {
+  async getProviderPerformance(
+    filters: ProviderPerformanceFilters = {},
+    page = 1,
+    limit = 10
+  ) {
     let query = (await this.supabase)
       .from('provider_performance')
       .select('*', { count: 'exact' });
@@ -289,19 +326,25 @@ export class TreatmentSuccessService {
     const { data, error, count } = await query;
 
     if (error) {
-      throw new Error(`Erro ao buscar performance de profissionais: ${error.message}`);
+      throw new Error(
+        `Erro ao buscar performance de profissionais: ${error.message}`
+      );
     }
 
     return {
       data: data as ProviderPerformance[],
       total: count || 0,
       page,
-      limit
+      limit,
     };
   }
 
   // Protocol Optimization Management
-  async getProtocolOptimizations(filters: ProtocolOptimizationFilters = {}, page = 1, limit = 10) {
+  async getProtocolOptimizations(
+    filters: ProtocolOptimizationFilters = {},
+    page = 1,
+    limit = 10
+  ) {
     let query = (await this.supabase)
       .from('protocol_optimizations')
       .select('*', { count: 'exact' });
@@ -311,13 +354,19 @@ export class TreatmentSuccessService {
       query = query.eq('treatment_type', filters.treatment_type);
     }
     if (filters.implementation_priority) {
-      query = query.eq('implementation_priority', filters.implementation_priority);
+      query = query.eq(
+        'implementation_priority',
+        filters.implementation_priority
+      );
     }
     if (filters.approval_status) {
       query = query.eq('approval_status', filters.approval_status);
     }
     if (filters.success_improvement_min !== undefined) {
-      query = query.gte('success_rate_improvement', filters.success_improvement_min);
+      query = query.gte(
+        'success_rate_improvement',
+        filters.success_improvement_min
+      );
     }
 
     // Apply pagination
@@ -325,24 +374,29 @@ export class TreatmentSuccessService {
     query = query.range(offset, offset + limit - 1);
 
     // Order by priority and creation date
-    query = query.order('implementation_priority', { ascending: false })
-                   .order('created_at', { ascending: false });
+    query = query
+      .order('implementation_priority', { ascending: false })
+      .order('created_at', { ascending: false });
 
     const { data, error, count } = await query;
 
     if (error) {
-      throw new Error(`Erro ao buscar otimizações de protocolo: ${error.message}`);
+      throw new Error(
+        `Erro ao buscar otimizações de protocolo: ${error.message}`
+      );
     }
 
     return {
       data: data as ProtocolOptimization[],
       total: count || 0,
       page,
-      limit
+      limit,
     };
   }
 
-  async createProtocolOptimization(optimizationData: CreateProtocolOptimizationData) {
+  async createProtocolOptimization(
+    optimizationData: CreateProtocolOptimizationData
+  ) {
     const { data, error } = await (await this.supabase)
       .from('protocol_optimizations')
       .insert(optimizationData)
@@ -350,7 +404,9 @@ export class TreatmentSuccessService {
       .single();
 
     if (error) {
-      throw new Error(`Erro ao criar otimização de protocolo: ${error.message}`);
+      throw new Error(
+        `Erro ao criar otimização de protocolo: ${error.message}`
+      );
     }
 
     return data as ProtocolOptimization;
@@ -359,7 +415,7 @@ export class TreatmentSuccessService {
   // Quality Benchmarks Management
   async getQualityBenchmarks(page = 1, limit = 10) {
     const offset = (page - 1) * limit;
-    
+
     const { data, error, count } = await (await this.supabase)
       .from('quality_benchmarks')
       .select('*', { count: 'exact' })
@@ -367,14 +423,16 @@ export class TreatmentSuccessService {
       .order('treatment_type', { ascending: true });
 
     if (error) {
-      throw new Error(`Erro ao buscar benchmarks de qualidade: ${error.message}`);
+      throw new Error(
+        `Erro ao buscar benchmarks de qualidade: ${error.message}`
+      );
     }
 
     return {
       data: data as QualityBenchmark[],
       total: count || 0,
       page,
-      limit
+      limit,
     };
   }
 
@@ -406,9 +464,11 @@ export class TreatmentSuccessService {
     }
 
     // Simple prediction algorithm - can be enhanced with ML models
-    const avgSuccessRate = historicalData.length > 0 
-      ? historicalData.reduce((sum, item) => sum + item.success_score, 0) / historicalData.length
-      : 0.5;
+    const avgSuccessRate =
+      historicalData.length > 0
+        ? historicalData.reduce((sum, item) => sum + item.success_score, 0) /
+          historicalData.length
+        : 0.5;
 
     const predictionWithRate = {
       ...predictionData,
@@ -422,7 +482,9 @@ export class TreatmentSuccessService {
       .single();
 
     if (insertError) {
-      throw new Error(`Erro ao criar predição de sucesso: ${insertError.message}`);
+      throw new Error(
+        `Erro ao criar predição de sucesso: ${insertError.message}`
+      );
     }
 
     return data as SuccessPrediction;
@@ -431,7 +493,7 @@ export class TreatmentSuccessService {
   // Compliance Reports Management
   async getComplianceReports(page = 1, limit = 10) {
     const offset = (page - 1) * limit;
-    
+
     const { data, error, count } = await (await this.supabase)
       .from('compliance_reports')
       .select('*', { count: 'exact' })
@@ -439,14 +501,16 @@ export class TreatmentSuccessService {
       .order('created_at', { ascending: false });
 
     if (error) {
-      throw new Error(`Erro ao buscar relatórios de conformidade: ${error.message}`);
+      throw new Error(
+        `Erro ao buscar relatórios de conformidade: ${error.message}`
+      );
     }
 
     return {
       data: data as ComplianceReport[],
       total: count || 0,
       page,
-      limit
+      limit,
     };
   }
 
@@ -458,7 +522,9 @@ export class TreatmentSuccessService {
       .single();
 
     if (error) {
-      throw new Error(`Erro ao criar relatório de conformidade: ${error.message}`);
+      throw new Error(
+        `Erro ao criar relatório de conformidade: ${error.message}`
+      );
     }
 
     return data as ComplianceReport;
@@ -476,9 +542,18 @@ export class TreatmentSuccessService {
       throw new Error(`Erro ao buscar estatísticas: ${error.message}`);
     }
 
-    const totalTreatments = metricsData.reduce((sum, m) => sum + m.total_treatments, 0);
-    const weightedSuccessRate = metricsData.reduce((sum, m) => sum + (m.success_rate * m.total_treatments), 0) / totalTreatments;
-    const averageSatisfaction = metricsData.reduce((sum, m) => sum + (m.average_satisfaction || 0), 0) / metricsData.length;
+    const totalTreatments = metricsData.reduce(
+      (sum, m) => sum + m.total_treatments,
+      0
+    );
+    const weightedSuccessRate =
+      metricsData.reduce(
+        (sum, m) => sum + m.success_rate * m.total_treatments,
+        0
+      ) / totalTreatments;
+    const averageSatisfaction =
+      metricsData.reduce((sum, m) => sum + (m.average_satisfaction || 0), 0) /
+      metricsData.length;
 
     return {
       overall_success_rate: weightedSuccessRate || 0,
@@ -486,7 +561,7 @@ export class TreatmentSuccessService {
       average_satisfaction: averageSatisfaction,
       benchmark_comparison: 0.85, // Industry benchmark
       trend_direction: 'up', // Would be calculated from time series
-      improvement_opportunities: 3
+      improvement_opportunities: 3,
     };
   }
 
@@ -498,42 +573,57 @@ export class TreatmentSuccessService {
       .order('overall_success_rate', { ascending: false });
 
     if (error) {
-      throw new Error(`Erro ao buscar estatísticas de profissionais: ${error.message}`);
+      throw new Error(
+        `Erro ao buscar estatísticas de profissionais: ${error.message}`
+      );
     }
 
     const totalProviders = performanceData.length;
     const topPerformer = performanceData[0];
-    const averagePerformance = performanceData.reduce((sum, p) => sum + p.overall_success_rate, 0) / totalProviders;
-    const improvementNeeded = performanceData.filter(p => p.overall_success_rate < 0.8).length;
+    const averagePerformance =
+      performanceData.reduce((sum, p) => sum + p.overall_success_rate, 0) /
+      totalProviders;
+    const improvementNeeded = performanceData.filter(
+      (p) => p.overall_success_rate < 0.8
+    ).length;
 
     return {
       total_providers: totalProviders,
       top_performer: {
         provider_id: topPerformer?.provider_id || '',
-        success_rate: topPerformer?.overall_success_rate || 0
+        success_rate: topPerformer?.overall_success_rate || 0,
       },
       average_performance: averagePerformance,
-      improvement_needed: improvementNeeded
+      improvement_needed: improvementNeeded,
     };
   }
 
   async getTreatmentTypeStats(): Promise<TreatmentTypeStats[]> {
     const { data: metricsData, error } = await (await this.supabase)
       .from('success_metrics')
-      .select('treatment_type, success_rate, total_treatments, average_satisfaction')
+      .select(
+        'treatment_type, success_rate, total_treatments, average_satisfaction'
+      )
       .order('total_treatments', { ascending: false })
       .limit(10);
 
     if (error) {
-      throw new Error(`Erro ao buscar estatísticas por tipo de tratamento: ${error.message}`);
+      throw new Error(
+        `Erro ao buscar estatísticas por tipo de tratamento: ${error.message}`
+      );
     }
 
-    return metricsData.map(m => ({
+    return metricsData.map((m) => ({
       treatment_type: m.treatment_type,
       success_rate: m.success_rate,
       total_treatments: m.total_treatments,
       satisfaction_score: m.average_satisfaction || 0,
-      benchmark_status: m.success_rate >= 0.85 ? 'above' : m.success_rate >= 0.75 ? 'at' : 'below'
+      benchmark_status:
+        m.success_rate >= 0.85
+          ? 'above'
+          : m.success_rate >= 0.75
+            ? 'at'
+            : 'below',
     }));
   }
 
@@ -545,20 +635,25 @@ export class TreatmentSuccessService {
       .limit(50);
 
     if (error) {
-      throw new Error(`Erro ao buscar estatísticas de conformidade: ${error.message}`);
+      throw new Error(
+        `Erro ao buscar estatísticas de conformidade: ${error.message}`
+      );
     }
 
-    const averageCompliance = reportsData
-      .filter(r => r.compliance_score)
-      .reduce((sum, r) => sum + r.compliance_score, 0) / reportsData.length;
+    const averageCompliance =
+      reportsData
+        .filter((r) => r.compliance_score)
+        .reduce((sum, r) => sum + r.compliance_score, 0) / reportsData.length;
 
-    const pendingReports = reportsData.filter(r => r.status === 'draft' || r.status === 'review').length;
+    const pendingReports = reportsData.filter(
+      (r) => r.status === 'draft' || r.status === 'review'
+    ).length;
 
     return {
       overall_compliance: averageCompliance || 0,
       pending_reports: pendingReports,
       overdue_items: 0, // Would need additional logic
-      certification_status: 'current'
+      certification_status: 'current',
     };
   }
 }

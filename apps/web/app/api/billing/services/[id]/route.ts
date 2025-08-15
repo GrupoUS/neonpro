@@ -1,20 +1,20 @@
-import { createClient } from "@/app/utils/supabase/server";
-import { NextResponse } from "next/server";
-import { z } from "zod";
+import { NextResponse } from 'next/server';
+import { z } from 'zod';
+import { createClient } from '@/app/utils/supabase/server';
 
 const UpdateServiceSchema = z.object({
-  name: z.string().min(1, "Nome é obrigatório").optional(),
+  name: z.string().min(1, 'Nome é obrigatório').optional(),
   description: z.string().optional(),
   category: z.string().optional(),
-  service_type: z.enum(["procedure", "consultation", "package"]).optional(),
-  base_price: z.number().min(0, "Preço deve ser positivo").optional(),
+  service_type: z.enum(['procedure', 'consultation', 'package']).optional(),
+  base_price: z.number().min(0, 'Preço deve ser positivo').optional(),
   duration_minutes: z.number().int().min(0).optional(),
   is_active: z.boolean().optional(),
   requires_appointment: z.boolean().optional(),
 });
 
 export async function GET(
-  request: Request,
+  _request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
@@ -26,24 +26,24 @@ export async function GET(
     } = await supabase.auth.getUser();
 
     if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { data: service, error } = await supabase
-      .from("services")
-      .select("*")
-      .eq("id", resolvedParams.id)
+      .from('services')
+      .select('*')
+      .eq('id', resolvedParams.id)
       .single();
 
     if (error || !service) {
-      return NextResponse.json({ error: "Service not found" }, { status: 404 });
+      return NextResponse.json({ error: 'Service not found' }, { status: 404 });
     }
 
     return NextResponse.json({ service });
   } catch (error) {
-    console.error("API Error:", error);
+    console.error('API Error:', error);
     return NextResponse.json(
-      { error: "Internal Server Error" },
+      { error: 'Internal Server Error' },
       { status: 500 }
     );
   }
@@ -62,23 +62,23 @@ export async function PUT(
     } = await supabase.auth.getUser();
 
     if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
     const validatedData = UpdateServiceSchema.parse(body);
 
     const { data: service, error } = await supabase
-      .from("services")
+      .from('services')
       .update(validatedData)
-      .eq("id", resolvedParams.id)
+      .eq('id', resolvedParams.id)
       .select()
       .single();
 
     if (error) {
-      console.error("Error updating service:", error);
+      console.error('Error updating service:', error);
       return NextResponse.json(
-        { error: "Failed to update service" },
+        { error: 'Failed to update service' },
         { status: 500 }
       );
     }
@@ -87,21 +87,21 @@ export async function PUT(
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: "Validation failed", details: error.errors },
+        { error: 'Validation failed', details: error.errors },
         { status: 400 }
       );
     }
 
-    console.error("API Error:", error);
+    console.error('API Error:', error);
     return NextResponse.json(
-      { error: "Internal Server Error" },
+      { error: 'Internal Server Error' },
       { status: 500 }
     );
   }
 }
 
 export async function DELETE(
-  request: Request,
+  _request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
@@ -113,20 +113,20 @@ export async function DELETE(
     } = await supabase.auth.getUser();
 
     if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Check if service has related invoices
     const { data: invoices, error: invoiceError } = await supabase
-      .from("invoice_items")
-      .select("id")
-      .eq("service_id", resolvedParams.id)
+      .from('invoice_items')
+      .select('id')
+      .eq('service_id', resolvedParams.id)
       .limit(1);
 
     if (invoiceError) {
-      console.error("Error checking service relations:", invoiceError);
+      console.error('Error checking service relations:', invoiceError);
       return NextResponse.json(
-        { error: "Failed to check service relations" },
+        { error: 'Failed to check service relations' },
         { status: 500 }
       );
     }
@@ -134,45 +134,45 @@ export async function DELETE(
     if (invoices && invoices.length > 0) {
       // Don't delete, just deactivate
       const { data: service, error } = await supabase
-        .from("services")
+        .from('services')
         .update({ is_active: false })
-        .eq("id", resolvedParams.id)
+        .eq('id', resolvedParams.id)
         .select()
         .single();
 
       if (error) {
-        console.error("Error deactivating service:", error);
+        console.error('Error deactivating service:', error);
         return NextResponse.json(
-          { error: "Failed to deactivate service" },
+          { error: 'Failed to deactivate service' },
           { status: 500 }
         );
       }
 
       return NextResponse.json({
         service,
-        message: "Service deactivated due to existing invoices",
+        message: 'Service deactivated due to existing invoices',
       });
     }
 
     // Safe to delete
     const { error } = await supabase
-      .from("services")
+      .from('services')
       .delete()
-      .eq("id", resolvedParams.id);
+      .eq('id', resolvedParams.id);
 
     if (error) {
-      console.error("Error deleting service:", error);
+      console.error('Error deleting service:', error);
       return NextResponse.json(
-        { error: "Failed to delete service" },
+        { error: 'Failed to delete service' },
         { status: 500 }
       );
     }
 
-    return NextResponse.json({ message: "Service deleted successfully" });
+    return NextResponse.json({ message: 'Service deleted successfully' });
   } catch (error) {
-    console.error("API Error:", error);
+    console.error('API Error:', error);
     return NextResponse.json(
-      { error: "Internal Server Error" },
+      { error: 'Internal Server Error' },
       { status: 500 }
     );
   }

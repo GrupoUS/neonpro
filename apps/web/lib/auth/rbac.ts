@@ -1,7 +1,7 @@
 /**
  * NeonPro Healthcare RBAC Engine
  * AUTH-02 Implementation - Healthcare Role-Based Access Control Engine
- * 
+ *
  * Features:
  * - Hierarchical role management with inheritance
  * - Healthcare-specific role definitions with CFM compliance
@@ -13,15 +13,13 @@
  */
 
 import { z } from 'zod';
-import { 
-  Permission, 
-  HealthcareRole, 
-  MedicalSpecialty, 
-  HEALTHCARE_PERMISSIONS,
+import {
   getPermission,
-  permissionRequiresSpecialty
+  HEALTHCARE_PERMISSIONS,
+  HealthcareRole,
+  MedicalSpecialty,
+  type Permission,
 } from './permissions';
-import { createClient } from '@supabase/supabase-js';
 
 // ============================================================================
 // CORE RBAC TYPES & SCHEMAS
@@ -35,32 +33,32 @@ export const UserRoleContextSchema = z.object({
   role: z.nativeEnum(HealthcareRole),
   clinic_id: z.string().uuid(),
   franchise_id: z.string().uuid().optional(),
-  
+
   // Medical Professional Information
   medical_license: z.string().optional(),
   cfm_number: z.string().optional(),
   medical_specialty: z.nativeEnum(MedicalSpecialty).optional(),
   license_expiry: z.date().optional(),
   license_active: z.boolean().default(true),
-  
+
   // Additional Specialties/Certifications
   additional_specialties: z.array(z.nativeEnum(MedicalSpecialty)).default([]),
   certifications: z.array(z.string()).default([]),
-  
+
   // Access Context
   active: z.boolean().default(true),
   temporary_access: z.boolean().default(false),
   emergency_access: z.boolean().default(false),
   access_granted_at: z.date().default(() => new Date()),
   access_expires_at: z.date().optional(),
-  
+
   // Audit Information
   granted_by: z.string().uuid().optional(),
   last_validated: z.date().default(() => new Date()),
   validation_required: z.boolean().default(false),
-  
+
   created_at: z.date().default(() => new Date()),
-  updated_at: z.date().default(() => new Date())
+  updated_at: z.date().default(() => new Date()),
 });
 
 export type UserRoleContext = z.infer<typeof UserRoleContextSchema>;
@@ -73,30 +71,37 @@ export const RoleDefinitionSchema = z.object({
   name: z.string(),
   description: z.string(),
   level: z.number(), // Hierarchy level (higher = more privileges)
-  category: z.enum(['system', 'clinical', 'administrative', 'compliance', 'patient', 'external']),
-  
+  category: z.enum([
+    'system',
+    'clinical',
+    'administrative',
+    'compliance',
+    'patient',
+    'external',
+  ]),
+
   // Permission Management
   permissions: z.array(z.string()),
   inherited_from: z.array(z.nativeEnum(HealthcareRole)).default([]),
   can_delegate_to: z.array(z.nativeEnum(HealthcareRole)).default([]),
-  
+
   // Healthcare-Specific Requirements
   requires_medical_license: z.boolean().default(false),
   requires_cfm_registration: z.boolean().default(false),
   allowed_specialties: z.array(z.nativeEnum(MedicalSpecialty)).default([]),
-  
+
   // Compliance Requirements
   requires_background_check: z.boolean().default(false),
   requires_continuing_education: z.boolean().default(false),
   audit_frequency_days: z.number().default(90),
-  
+
   // Access Control
   multi_clinic_access: z.boolean().default(false),
   emergency_override_capable: z.boolean().default(false),
   can_approve_emergency_access: z.boolean().default(false),
-  
+
   created_at: z.date().default(() => new Date()),
-  updated_at: z.date().default(() => new Date())
+  updated_at: z.date().default(() => new Date()),
 });
 
 export type RoleDefinition = z.infer<typeof RoleDefinitionSchema>;
@@ -110,21 +115,21 @@ export const PermissionCheckResultSchema = z.object({
   user_id: z.string(),
   role: z.nativeEnum(HealthcareRole),
   reason: z.string(),
-  
+
   // Context Information
   clinic_id: z.string().optional(),
   requires_validation: z.boolean().default(false),
   emergency_override: z.boolean().default(false),
-  
+
   // Compliance Checks
   license_valid: z.boolean().default(true),
   specialty_match: z.boolean().default(true),
   cfm_compliant: z.boolean().default(true),
   lgpd_compliant: z.boolean().default(true),
-  
+
   // Audit Trail
   checked_at: z.date().default(() => new Date()),
-  audit_log_id: z.string().optional()
+  audit_log_id: z.string().optional(),
 });
 
 export type PermissionCheckResult = z.infer<typeof PermissionCheckResultSchema>;
@@ -136,7 +141,10 @@ export type PermissionCheckResult = z.infer<typeof PermissionCheckResultSchema>;
 /**
  * Complete Healthcare Role Hierarchy with Permissions
  */
-export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition> = {
+export const HEALTHCARE_ROLE_DEFINITIONS: Record<
+  HealthcareRole,
+  RoleDefinition
+> = {
   // ===== SYSTEM ROLES =====
   [HealthcareRole.SUPER_ADMIN]: {
     role: HealthcareRole.SUPER_ADMIN,
@@ -157,7 +165,7 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
     emergency_override_capable: true,
     can_approve_emergency_access: true,
     created_at: new Date(),
-    updated_at: new Date()
+    updated_at: new Date(),
   },
 
   [HealthcareRole.SYSTEM_ADMIN]: {
@@ -171,12 +179,12 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
       'system.configure.clinic',
       'audit.access.clinic',
       'compliance.report.lgpd',
-      'scheduling.manage.clinic'
+      'scheduling.manage.clinic',
     ],
     inherited_from: [],
     can_delegate_to: [
       HealthcareRole.ADMIN_MANAGER,
-      HealthcareRole.COMPLIANCE_OFFICER
+      HealthcareRole.COMPLIANCE_OFFICER,
     ],
     requires_medical_license: false,
     requires_cfm_registration: false,
@@ -188,7 +196,7 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
     emergency_override_capable: false,
     can_approve_emergency_access: false,
     created_at: new Date(),
-    updated_at: new Date()
+    updated_at: new Date(),
   },
 
   // ===== CLINICAL LEADERSHIP =====
@@ -218,14 +226,14 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
       'compliance.report.lgpd',
       'emergency.override.access',
       'emergency.access.all',
-      'system.configure.clinic'
+      'system.configure.clinic',
     ],
     inherited_from: [],
     can_delegate_to: [
       HealthcareRole.CLINICAL_COORDINATOR,
       HealthcareRole.DOCTOR_SPECIALIST,
       HealthcareRole.DOCTOR_GENERAL,
-      HealthcareRole.NURSE_MANAGER
+      HealthcareRole.NURSE_MANAGER,
     ],
     requires_medical_license: true,
     requires_cfm_registration: true,
@@ -237,7 +245,7 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
     emergency_override_capable: true,
     can_approve_emergency_access: true,
     created_at: new Date(),
-    updated_at: new Date()
+    updated_at: new Date(),
   },
 
   [HealthcareRole.CLINICAL_COORDINATOR]: {
@@ -254,12 +262,12 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
       'license.validate.cfm',
       'equipment.operate.standard',
       'audit.access.clinic',
-      'compliance.report.cfm'
+      'compliance.report.cfm',
     ],
     inherited_from: [HealthcareRole.REGISTERED_NURSE],
     can_delegate_to: [
       HealthcareRole.REGISTERED_NURSE,
-      HealthcareRole.NURSING_TECHNICIAN
+      HealthcareRole.NURSING_TECHNICIAN,
     ],
     requires_medical_license: true,
     requires_cfm_registration: true,
@@ -271,14 +279,15 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
     emergency_override_capable: true,
     can_approve_emergency_access: false,
     created_at: new Date(),
-    updated_at: new Date()
+    updated_at: new Date(),
   },
 
   // ===== HEALTHCARE PROFESSIONALS (CFM Licensed) =====
   [HealthcareRole.DOCTOR_SPECIALIST]: {
     role: HealthcareRole.DOCTOR_SPECIALIST,
     name: 'Specialist Doctor',
-    description: 'Medical specialist with specialty-specific procedure authorization',
+    description:
+      'Medical specialist with specialty-specific procedure authorization',
     level: 80,
     category: 'clinical',
     permissions: [
@@ -292,12 +301,12 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
       'equipment.operate.standard',
       'equipment.operate.advanced',
       'scheduling.manage.own',
-      'emergency.override.access'
+      'emergency.override.access',
     ],
     inherited_from: [HealthcareRole.DOCTOR_GENERAL],
     can_delegate_to: [
       HealthcareRole.RESIDENT_DOCTOR,
-      HealthcareRole.REGISTERED_NURSE
+      HealthcareRole.REGISTERED_NURSE,
     ],
     requires_medical_license: true,
     requires_cfm_registration: true,
@@ -309,13 +318,14 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
     emergency_override_capable: true,
     can_approve_emergency_access: false,
     created_at: new Date(),
-    updated_at: new Date()
+    updated_at: new Date(),
   },
 
   [HealthcareRole.DOCTOR_GENERAL]: {
     role: HealthcareRole.DOCTOR_GENERAL,
     name: 'General Practitioner',
-    description: 'General practice physician with standard clinical permissions',
+    description:
+      'General practice physician with standard clinical permissions',
     level: 70,
     category: 'clinical',
     permissions: [
@@ -325,12 +335,12 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
       'prescription.create.standard',
       'equipment.operate.standard',
       'scheduling.manage.own',
-      'emergency.override.access'
+      'emergency.override.access',
     ],
     inherited_from: [],
     can_delegate_to: [
       HealthcareRole.RESIDENT_DOCTOR,
-      HealthcareRole.REGISTERED_NURSE
+      HealthcareRole.REGISTERED_NURSE,
     ],
     requires_medical_license: true,
     requires_cfm_registration: true,
@@ -342,7 +352,7 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
     emergency_override_capable: true,
     can_approve_emergency_access: false,
     created_at: new Date(),
-    updated_at: new Date()
+    updated_at: new Date(),
   },
 
   [HealthcareRole.RESIDENT_DOCTOR]: {
@@ -356,7 +366,7 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
       'patient.write.own',
       'procedure.perform.general',
       'equipment.operate.standard',
-      'scheduling.manage.own'
+      'scheduling.manage.own',
     ],
     inherited_from: [],
     can_delegate_to: [],
@@ -370,7 +380,7 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
     emergency_override_capable: false,
     can_approve_emergency_access: false,
     created_at: new Date(),
-    updated_at: new Date()
+    updated_at: new Date(),
   },
 
   // ===== NURSING PROFESSIONALS =====
@@ -386,12 +396,12 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
       'procedure.perform.general',
       'equipment.operate.standard',
       'scheduling.manage.clinic',
-      'audit.access.clinic'
+      'audit.access.clinic',
     ],
     inherited_from: [HealthcareRole.REGISTERED_NURSE],
     can_delegate_to: [
       HealthcareRole.REGISTERED_NURSE,
-      HealthcareRole.NURSING_TECHNICIAN
+      HealthcareRole.NURSING_TECHNICIAN,
     ],
     requires_medical_license: true,
     requires_cfm_registration: false, // COREN registration
@@ -403,7 +413,7 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
     emergency_override_capable: true,
     can_approve_emergency_access: false,
     created_at: new Date(),
-    updated_at: new Date()
+    updated_at: new Date(),
   },
 
   [HealthcareRole.REGISTERED_NURSE]: {
@@ -417,7 +427,7 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
       'patient.write.own',
       'procedure.perform.general',
       'equipment.operate.standard',
-      'scheduling.manage.own'
+      'scheduling.manage.own',
     ],
     inherited_from: [],
     can_delegate_to: [HealthcareRole.NURSING_TECHNICIAN],
@@ -431,7 +441,7 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
     emergency_override_capable: false,
     can_approve_emergency_access: false,
     created_at: new Date(),
-    updated_at: new Date()
+    updated_at: new Date(),
   },
 
   [HealthcareRole.NURSING_TECHNICIAN]: {
@@ -443,7 +453,7 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
     permissions: [
       'patient.read.own',
       'equipment.operate.standard',
-      'scheduling.manage.own'
+      'scheduling.manage.own',
     ],
     inherited_from: [],
     can_delegate_to: [],
@@ -457,7 +467,7 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
     emergency_override_capable: false,
     can_approve_emergency_access: false,
     created_at: new Date(),
-    updated_at: new Date()
+    updated_at: new Date(),
   },
 
   // ===== ALLIED HEALTH PROFESSIONALS =====
@@ -472,7 +482,7 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
       'patient.write.own',
       'procedure.perform.specialty',
       'equipment.operate.standard',
-      'scheduling.manage.own'
+      'scheduling.manage.own',
     ],
     inherited_from: [],
     can_delegate_to: [],
@@ -486,20 +496,21 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
     emergency_override_capable: false,
     can_approve_emergency_access: false,
     created_at: new Date(),
-    updated_at: new Date()
+    updated_at: new Date(),
   },
 
   [HealthcareRole.PSYCHOLOGIST]: {
     role: HealthcareRole.PSYCHOLOGIST,
     name: 'Psychologist',
-    description: 'Mental health professional with psychological care permissions',
+    description:
+      'Mental health professional with psychological care permissions',
     level: 50,
     category: 'clinical',
     permissions: [
       'patient.read.own',
       'patient.write.own',
       'procedure.perform.specialty',
-      'scheduling.manage.own'
+      'scheduling.manage.own',
     ],
     inherited_from: [],
     can_delegate_to: [],
@@ -513,7 +524,7 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
     emergency_override_capable: false,
     can_approve_emergency_access: false,
     created_at: new Date(),
-    updated_at: new Date()
+    updated_at: new Date(),
   },
 
   [HealthcareRole.NUTRITIONIST]: {
@@ -526,7 +537,7 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
       'patient.read.own',
       'patient.write.own',
       'procedure.perform.specialty',
-      'scheduling.manage.own'
+      'scheduling.manage.own',
     ],
     inherited_from: [],
     can_delegate_to: [],
@@ -540,20 +551,21 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
     emergency_override_capable: false,
     can_approve_emergency_access: false,
     created_at: new Date(),
-    updated_at: new Date()
+    updated_at: new Date(),
   },
 
   [HealthcareRole.PHARMACIST]: {
     role: HealthcareRole.PHARMACIST,
     name: 'Pharmacist',
-    description: 'Pharmaceutical professional with medication management permissions',
+    description:
+      'Pharmaceutical professional with medication management permissions',
     level: 55,
     category: 'clinical',
     permissions: [
       'patient.read.own',
       'prescription.create.standard',
       'prescription.create.controlled',
-      'scheduling.manage.own'
+      'scheduling.manage.own',
     ],
     inherited_from: [],
     can_delegate_to: [],
@@ -567,21 +579,22 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
     emergency_override_capable: false,
     can_approve_emergency_access: false,
     created_at: new Date(),
-    updated_at: new Date()
+    updated_at: new Date(),
   },
 
   // ===== TECHNICAL STAFF =====
   [HealthcareRole.RADIOLOGY_TECHNICIAN]: {
     role: HealthcareRole.RADIOLOGY_TECHNICIAN,
     name: 'Radiology Technician',
-    description: 'Medical imaging technician with equipment operation permissions',
+    description:
+      'Medical imaging technician with equipment operation permissions',
     level: 40,
     category: 'clinical',
     permissions: [
       'patient.read.own',
       'equipment.operate.standard',
       'equipment.operate.advanced',
-      'scheduling.manage.own'
+      'scheduling.manage.own',
     ],
     inherited_from: [],
     can_delegate_to: [],
@@ -595,7 +608,7 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
     emergency_override_capable: false,
     can_approve_emergency_access: false,
     created_at: new Date(),
-    updated_at: new Date()
+    updated_at: new Date(),
   },
 
   [HealthcareRole.LAB_TECHNICIAN]: {
@@ -607,7 +620,7 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
     permissions: [
       'patient.read.own',
       'equipment.operate.standard',
-      'scheduling.manage.own'
+      'scheduling.manage.own',
     ],
     inherited_from: [],
     can_delegate_to: [],
@@ -621,7 +634,7 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
     emergency_override_capable: false,
     can_approve_emergency_access: false,
     created_at: new Date(),
-    updated_at: new Date()
+    updated_at: new Date(),
   },
 
   [HealthcareRole.EQUIPMENT_TECHNICIAN]: {
@@ -633,7 +646,7 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
     permissions: [
       'equipment.operate.standard',
       'equipment.operate.advanced',
-      'scheduling.manage.own'
+      'scheduling.manage.own',
     ],
     inherited_from: [],
     can_delegate_to: [],
@@ -647,7 +660,7 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
     emergency_override_capable: false,
     can_approve_emergency_access: false,
     created_at: new Date(),
-    updated_at: new Date()
+    updated_at: new Date(),
   },
 
   // ===== ADMINISTRATIVE STAFF =====
@@ -662,13 +675,13 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
       'scheduling.manage.clinic',
       'billing.process.standard',
       'audit.access.clinic',
-      'system.configure.clinic'
+      'system.configure.clinic',
     ],
     inherited_from: [],
     can_delegate_to: [
       HealthcareRole.RECEPTIONIST,
       HealthcareRole.BILLING_SPECIALIST,
-      HealthcareRole.SECRETARY
+      HealthcareRole.SECRETARY,
     ],
     requires_medical_license: false,
     requires_cfm_registration: false,
@@ -680,7 +693,7 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
     emergency_override_capable: false,
     can_approve_emergency_access: false,
     created_at: new Date(),
-    updated_at: new Date()
+    updated_at: new Date(),
   },
 
   [HealthcareRole.RECEPTIONIST]: {
@@ -692,7 +705,7 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
     permissions: [
       'patient.create.clinic',
       'scheduling.manage.clinic',
-      'billing.process.standard'
+      'billing.process.standard',
     ],
     inherited_from: [],
     can_delegate_to: [],
@@ -706,7 +719,7 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
     emergency_override_capable: false,
     can_approve_emergency_access: false,
     created_at: new Date(),
-    updated_at: new Date()
+    updated_at: new Date(),
   },
 
   [HealthcareRole.BILLING_SPECIALIST]: {
@@ -715,10 +728,7 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
     description: 'Medical billing and insurance processing',
     level: 35,
     category: 'administrative',
-    permissions: [
-      'billing.process.standard',
-      'scheduling.manage.own'
-    ],
+    permissions: ['billing.process.standard', 'scheduling.manage.own'],
     inherited_from: [],
     can_delegate_to: [],
     requires_medical_license: false,
@@ -731,7 +741,7 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
     emergency_override_capable: false,
     can_approve_emergency_access: false,
     created_at: new Date(),
-    updated_at: new Date()
+    updated_at: new Date(),
   },
 
   [HealthcareRole.SECRETARY]: {
@@ -740,9 +750,7 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
     description: 'Administrative support and documentation',
     level: 25,
     category: 'administrative',
-    permissions: [
-      'scheduling.manage.own'
-    ],
+    permissions: ['scheduling.manage.own'],
     inherited_from: [],
     can_delegate_to: [],
     requires_medical_license: false,
@@ -755,7 +763,7 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
     emergency_override_capable: false,
     can_approve_emergency_access: false,
     created_at: new Date(),
-    updated_at: new Date()
+    updated_at: new Date(),
   },
 
   // ===== COMPLIANCE & AUDIT =====
@@ -770,7 +778,7 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
       'compliance.report.cfm',
       'compliance.report.lgpd',
       'license.validate.cfm',
-      'license.monitor.expiration'
+      'license.monitor.expiration',
     ],
     inherited_from: [],
     can_delegate_to: [HealthcareRole.AUDITOR],
@@ -784,7 +792,7 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
     emergency_override_capable: false,
     can_approve_emergency_access: false,
     created_at: new Date(),
-    updated_at: new Date()
+    updated_at: new Date(),
   },
 
   [HealthcareRole.AUDITOR]: {
@@ -796,7 +804,7 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
     permissions: [
       'audit.access.clinic',
       'compliance.report.cfm',
-      'compliance.report.lgpd'
+      'compliance.report.lgpd',
     ],
     inherited_from: [],
     can_delegate_to: [],
@@ -810,7 +818,7 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
     emergency_override_capable: false,
     can_approve_emergency_access: false,
     created_at: new Date(),
-    updated_at: new Date()
+    updated_at: new Date(),
   },
 
   [HealthcareRole.QUALITY_MANAGER]: {
@@ -823,7 +831,7 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
       'audit.access.clinic',
       'compliance.report.cfm',
       'compliance.report.lgpd',
-      'license.monitor.expiration'
+      'license.monitor.expiration',
     ],
     inherited_from: [],
     can_delegate_to: [HealthcareRole.AUDITOR],
@@ -837,7 +845,7 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
     emergency_override_capable: false,
     can_approve_emergency_access: false,
     created_at: new Date(),
-    updated_at: new Date()
+    updated_at: new Date(),
   },
 
   // ===== PATIENT & FAMILY =====
@@ -847,10 +855,7 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
     description: 'Patient with access to own medical records',
     level: 10,
     category: 'patient',
-    permissions: [
-      'patient.read.own',
-      'scheduling.manage.own'
-    ],
+    permissions: ['patient.read.own', 'scheduling.manage.own'],
     inherited_from: [],
     can_delegate_to: [HealthcareRole.PATIENT_FAMILY],
     requires_medical_license: false,
@@ -863,7 +868,7 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
     emergency_override_capable: false,
     can_approve_emergency_access: false,
     created_at: new Date(),
-    updated_at: new Date()
+    updated_at: new Date(),
   },
 
   [HealthcareRole.PATIENT_FAMILY]: {
@@ -872,9 +877,7 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
     description: 'Family member with limited patient record access',
     level: 5,
     category: 'patient',
-    permissions: [
-      'patient.read.own'
-    ],
+    permissions: ['patient.read.own'],
     inherited_from: [],
     can_delegate_to: [],
     requires_medical_license: false,
@@ -887,7 +890,7 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
     emergency_override_capable: false,
     can_approve_emergency_access: false,
     created_at: new Date(),
-    updated_at: new Date()
+    updated_at: new Date(),
   },
 
   // ===== EXTERNAL =====
@@ -910,7 +913,7 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
     emergency_override_capable: false,
     can_approve_emergency_access: false,
     created_at: new Date(),
-    updated_at: new Date()
+    updated_at: new Date(),
   },
 
   [HealthcareRole.VENDOR]: {
@@ -919,9 +922,7 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
     description: 'External vendor with limited system access',
     level: 15,
     category: 'external',
-    permissions: [
-      'equipment.operate.standard'
-    ],
+    permissions: ['equipment.operate.standard'],
     inherited_from: [],
     can_delegate_to: [],
     requires_medical_license: false,
@@ -934,8 +935,8 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<HealthcareRole, RoleDefinition>
     emergency_override_capable: false,
     can_approve_emergency_access: false,
     created_at: new Date(),
-    updated_at: new Date()
-  }
+    updated_at: new Date(),
+  },
 };
 
 // ============================================================================
@@ -970,7 +971,13 @@ export class HealthcareRBACEngine {
       // Get user role context
       const userContext = await this.getUserRoleContext(userId);
       if (!userContext) {
-        return this.createPermissionResult(false, permission, userId, HealthcareRole.GUEST, 'User not found');
+        return this.createPermissionResult(
+          false,
+          permission,
+          userId,
+          HealthcareRole.GUEST,
+          'User not found'
+        );
       }
 
       // Check cache first
@@ -983,16 +990,25 @@ export class HealthcareRBACEngine {
       // Get role definition
       const roleDefinition = HEALTHCARE_ROLE_DEFINITIONS[userContext.role];
       if (!roleDefinition) {
-        return this.createPermissionResult(false, permission, userId, userContext.role, 'Role not found');
+        return this.createPermissionResult(
+          false,
+          permission,
+          userId,
+          userContext.role,
+          'Role not found'
+        );
       }
 
       // Emergency override check
-      if (context?.emergencyOverride && roleDefinition.emergency_override_capable) {
+      if (
+        context?.emergencyOverride &&
+        roleDefinition.emergency_override_capable
+      ) {
         const result = this.createPermissionResult(
-          true, 
-          permission, 
-          userId, 
-          userContext.role, 
+          true,
+          permission,
+          userId,
+          userContext.role,
           'Emergency override granted',
           { emergency_override: true }
         );
@@ -1004,60 +1020,90 @@ export class HealthcareRBACEngine {
       // Check base permission
       const hasBasePermission = roleDefinition.permissions.includes(permission);
       if (!hasBasePermission) {
-        return this.createPermissionResult(false, permission, userId, userContext.role, 'Permission not granted to role');
+        return this.createPermissionResult(
+          false,
+          permission,
+          userId,
+          userContext.role,
+          'Permission not granted to role'
+        );
       }
 
       // Get permission definition
       const permissionDef = getPermission(permission);
       if (!permissionDef) {
-        return this.createPermissionResult(false, permission, userId, userContext.role, 'Permission definition not found');
+        return this.createPermissionResult(
+          false,
+          permission,
+          userId,
+          userContext.role,
+          'Permission definition not found'
+        );
       }
 
       // Healthcare-specific validation
-      const healthcareValidation = await this.validateHealthcareRequirements(userContext, permissionDef);
+      const healthcareValidation = await this.validateHealthcareRequirements(
+        userContext,
+        permissionDef
+      );
       if (!healthcareValidation.valid) {
         return this.createPermissionResult(
-          false, 
-          permission, 
-          userId, 
-          userContext.role, 
+          false,
+          permission,
+          userId,
+          userContext.role,
           healthcareValidation.reason,
           {
             license_valid: healthcareValidation.license_valid,
             specialty_match: healthcareValidation.specialty_match,
-            cfm_compliant: healthcareValidation.cfm_compliant
+            cfm_compliant: healthcareValidation.cfm_compliant,
           }
         );
       }
 
       // Context-specific validation
-      const contextValidation = await this.validateContext(userContext, permissionDef, context);
+      const contextValidation = await this.validateContext(
+        userContext,
+        permissionDef,
+        context
+      );
       if (!contextValidation.valid) {
-        return this.createPermissionResult(false, permission, userId, userContext.role, contextValidation.reason);
+        return this.createPermissionResult(
+          false,
+          permission,
+          userId,
+          userContext.role,
+          contextValidation.reason
+        );
       }
 
       // Permission granted
       const result = this.createPermissionResult(
-        true, 
-        permission, 
-        userId, 
-        userContext.role, 
+        true,
+        permission,
+        userId,
+        userContext.role,
         'Permission granted',
         {
           license_valid: healthcareValidation.license_valid,
           specialty_match: healthcareValidation.specialty_match,
           cfm_compliant: healthcareValidation.cfm_compliant,
-          lgpd_compliant: true
+          lgpd_compliant: true,
         }
       );
 
       this.setCache(cacheKey, result);
       await this.logAuditTrail(result, context);
       return result;
-
     } catch (error) {
       console.error('Permission check error:', error);
-      return this.createPermissionResult(false, permission, userId, HealthcareRole.GUEST, 'System error during permission check');
+      return this.createPermissionResult(
+        false,
+        permission,
+        userId,
+        HealthcareRole.GUEST,
+        'System error during permission check'
+      );
     }
   }
 
@@ -1067,10 +1113,16 @@ export class HealthcareRBACEngine {
   async checkPermissions(
     userId: string,
     permissions: string[],
-    context?: { clinicId?: string; patientId?: string; emergencyOverride?: boolean }
+    context?: {
+      clinicId?: string;
+      patientId?: string;
+      emergencyOverride?: boolean;
+    }
   ): Promise<PermissionCheckResult[]> {
     const results = await Promise.all(
-      permissions.map(permission => this.checkPermission(userId, permission, context))
+      permissions.map((permission) =>
+        this.checkPermission(userId, permission, context)
+      )
     );
     return results;
   }
@@ -1092,7 +1144,7 @@ export class HealthcareRBACEngine {
     for (const inheritedRole of roleDefinition.inherited_from) {
       const inheritedRoleDef = HEALTHCARE_ROLE_DEFINITIONS[inheritedRole];
       if (inheritedRoleDef) {
-        inheritedRoleDef.permissions.forEach(p => permissions.add(p));
+        inheritedRoleDef.permissions.forEach((p) => permissions.add(p));
       }
     }
 
@@ -1122,10 +1174,10 @@ export class HealthcareRBACEngine {
         await this.supabase.from('temporary_access').insert({
           user_id: userId,
           granted_by: grantedBy,
-          permissions: permissions,
+          permissions,
           expires_at: expiresAt.toISOString(),
-          reason: reason,
-          active: true
+          reason,
+          active: true,
         });
       }
 
@@ -1142,7 +1194,11 @@ export class HealthcareRBACEngine {
   /**
    * Revoke access immediately
    */
-  async revokeAccess(userId: string, revokedBy: string, reason: string): Promise<boolean> {
+  async revokeAccess(
+    userId: string,
+    revokedBy: string,
+    reason: string
+  ): Promise<boolean> {
     try {
       // Validate revoker has authority
       const revokerContext = await this.getUserRoleContext(revokedBy);
@@ -1155,12 +1211,22 @@ export class HealthcareRBACEngine {
       if (this.supabase) {
         await this.supabase
           .from('user_roles')
-          .update({ active: false, revoked_at: new Date().toISOString(), revoked_by: revokedBy, revoke_reason: reason })
+          .update({
+            active: false,
+            revoked_at: new Date().toISOString(),
+            revoked_by: revokedBy,
+            revoke_reason: reason,
+          })
           .eq('user_id', userId);
 
         await this.supabase
           .from('temporary_access')
-          .update({ active: false, revoked_at: new Date().toISOString(), revoked_by: revokedBy, revoke_reason: reason })
+          .update({
+            active: false,
+            revoked_at: new Date().toISOString(),
+            revoked_by: revokedBy,
+            revoke_reason: reason,
+          })
           .eq('user_id', userId);
       }
 
@@ -1178,7 +1244,9 @@ export class HealthcareRBACEngine {
   // PRIVATE HELPER METHODS
   // ============================================================================
 
-  private async getUserRoleContext(userId: string): Promise<UserRoleContext | null> {
+  private async getUserRoleContext(
+    userId: string
+  ): Promise<UserRoleContext | null> {
     try {
       if (!this.supabase) return null;
 
@@ -1215,7 +1283,7 @@ export class HealthcareRBACEngine {
         reason: 'Medical license required',
         license_valid: false,
         specialty_match: true,
-        cfm_compliant: false
+        cfm_compliant: false,
       };
     }
 
@@ -1226,7 +1294,7 @@ export class HealthcareRBACEngine {
         reason: 'Medical license expired',
         license_valid: false,
         specialty_match: true,
-        cfm_compliant: false
+        cfm_compliant: false,
       };
     }
 
@@ -1237,19 +1305,22 @@ export class HealthcareRBACEngine {
         reason: 'Medical license not active',
         license_valid: false,
         specialty_match: true,
-        cfm_compliant: false
+        cfm_compliant: false,
       };
     }
 
     // Check specialty requirements
-    const specialtyMatch = this.checkSpecialtyRequirement(userContext, permission);
+    const specialtyMatch = this.checkSpecialtyRequirement(
+      userContext,
+      permission
+    );
     if (!specialtyMatch) {
       return {
         valid: false,
         reason: 'Medical specialty not authorized for this procedure',
         license_valid: true,
         specialty_match: false,
-        cfm_compliant: true
+        cfm_compliant: true,
       };
     }
 
@@ -1260,7 +1331,7 @@ export class HealthcareRBACEngine {
         reason: 'CFM registration required',
         license_valid: true,
         specialty_match: true,
-        cfm_compliant: false
+        cfm_compliant: false,
       };
     }
 
@@ -1269,26 +1340,39 @@ export class HealthcareRBACEngine {
       reason: 'Healthcare requirements validated',
       license_valid: true,
       specialty_match: true,
-      cfm_compliant: true
+      cfm_compliant: true,
     };
   }
 
-  private checkSpecialtyRequirement(userContext: UserRoleContext, permission: Permission): boolean {
+  private checkSpecialtyRequirement(
+    userContext: UserRoleContext,
+    permission: Permission
+  ): boolean {
     if (permission.requires_specialty.length === 0) return true;
-    if (!userContext.medical_specialty && userContext.additional_specialties.length === 0) return false;
+    if (
+      !userContext.medical_specialty &&
+      userContext.additional_specialties.length === 0
+    )
+      return false;
 
     const userSpecialties = [
       ...(userContext.medical_specialty ? [userContext.medical_specialty] : []),
-      ...userContext.additional_specialties
+      ...userContext.additional_specialties,
     ];
 
-    return permission.requires_specialty.some(required => userSpecialties.includes(required));
+    return permission.requires_specialty.some((required) =>
+      userSpecialties.includes(required)
+    );
   }
 
   private async validateContext(
     userContext: UserRoleContext,
     permission: Permission,
-    context?: { clinicId?: string; patientId?: string; emergencyOverride?: boolean }
+    context?: {
+      clinicId?: string;
+      patientId?: string;
+      emergencyOverride?: boolean;
+    }
   ): Promise<{ valid: boolean; reason: string }> {
     // Clinic context validation
     if (context?.clinicId && context.clinicId !== userContext.clinic_id) {
@@ -1301,16 +1385,25 @@ export class HealthcareRBACEngine {
     // Patient context validation
     if (context?.patientId && permission.scope === 'own') {
       // Check if user has relationship with patient
-      const hasPatientRelationship = await this.checkPatientRelationship(userContext.user_id, context.patientId);
+      const hasPatientRelationship = await this.checkPatientRelationship(
+        userContext.user_id,
+        context.patientId
+      );
       if (!hasPatientRelationship) {
-        return { valid: false, reason: 'No authorized relationship with patient' };
+        return {
+          valid: false,
+          reason: 'No authorized relationship with patient',
+        };
       }
     }
 
     return { valid: true, reason: 'Context validated' };
   }
 
-  private async checkPatientRelationship(userId: string, patientId: string): Promise<boolean> {
+  private async checkPatientRelationship(
+    userId: string,
+    patientId: string
+  ): Promise<boolean> {
     if (!this.supabase) return false;
 
     const { data, error } = await this.supabase
@@ -1345,11 +1438,14 @@ export class HealthcareRBACEngine {
       cfm_compliant: true,
       lgpd_compliant: true,
       checked_at: new Date(),
-      ...additionalData
+      ...additionalData,
     };
   }
 
-  private async logAuditTrail(result: PermissionCheckResult, context?: any): Promise<void> {
+  private async logAuditTrail(
+    result: PermissionCheckResult,
+    context?: any
+  ): Promise<void> {
     if (!this.supabase) return;
 
     try {
@@ -1359,9 +1455,9 @@ export class HealthcareRBACEngine {
         resource: result.permission,
         result: result.granted ? 'granted' : 'denied',
         reason: result.reason,
-        context: context,
+        context,
         emergency_override: result.emergency_override,
-        timestamp: result.checked_at
+        timestamp: result.checked_at,
       });
     } catch (error) {
       console.error('Audit trail logging error:', error);
@@ -1374,7 +1470,7 @@ export class HealthcareRBACEngine {
 
     const result = cached[0];
     const age = Date.now() - result.checked_at.getTime();
-    
+
     if (age > this.cacheExpiry) {
       this.permissionCache.delete(key);
       return null;
@@ -1388,8 +1484,10 @@ export class HealthcareRBACEngine {
   }
 
   private clearUserCache(userId: string): void {
-    const keysToDelete = Array.from(this.permissionCache.keys()).filter(key => key.startsWith(`${userId}:`));
-    keysToDelete.forEach(key => this.permissionCache.delete(key));
+    const keysToDelete = Array.from(this.permissionCache.keys()).filter((key) =>
+      key.startsWith(`${userId}:`)
+    );
+    keysToDelete.forEach((key) => this.permissionCache.delete(key));
   }
 }
 
@@ -1400,29 +1498,40 @@ export class HealthcareRBACEngine {
 /**
  * Get role definition by role
  */
-export function getRoleDefinition(role: HealthcareRole): RoleDefinition | undefined {
+export function getRoleDefinition(
+  role: HealthcareRole
+): RoleDefinition | undefined {
   return HEALTHCARE_ROLE_DEFINITIONS[role];
 }
 
 /**
  * Get roles by category
  */
-export function getRolesByCategory(category: RoleDefinition['category']): RoleDefinition[] {
-  return Object.values(HEALTHCARE_ROLE_DEFINITIONS).filter(role => role.category === category);
+export function getRolesByCategory(
+  category: RoleDefinition['category']
+): RoleDefinition[] {
+  return Object.values(HEALTHCARE_ROLE_DEFINITIONS).filter(
+    (role) => role.category === category
+  );
 }
 
 /**
  * Get roles requiring medical license
  */
 export function getLicenseRequiredRoles(): RoleDefinition[] {
-  return Object.values(HEALTHCARE_ROLE_DEFINITIONS).filter(role => role.requires_medical_license);
+  return Object.values(HEALTHCARE_ROLE_DEFINITIONS).filter(
+    (role) => role.requires_medical_license
+  );
 }
 
 /**
  * Get roles by hierarchy level
  */
-export function getRolesByLevel(minLevel: number, maxLevel?: number): RoleDefinition[] {
-  return Object.values(HEALTHCARE_ROLE_DEFINITIONS).filter(role => {
+export function getRolesByLevel(
+  minLevel: number,
+  maxLevel?: number
+): RoleDefinition[] {
+  return Object.values(HEALTHCARE_ROLE_DEFINITIONS).filter((role) => {
     return role.level >= minLevel && (!maxLevel || role.level <= maxLevel);
   });
 }
@@ -1430,9 +1539,12 @@ export function getRolesByLevel(minLevel: number, maxLevel?: number): RoleDefini
 /**
  * Check if role can delegate to another role
  */
-export function canDelegate(fromRole: HealthcareRole, toRole: HealthcareRole): boolean {
+export function canDelegate(
+  fromRole: HealthcareRole,
+  toRole: HealthcareRole
+): boolean {
   const fromRoleDef = HEALTHCARE_ROLE_DEFINITIONS[fromRole];
-  return fromRoleDef?.can_delegate_to.includes(toRole) || false;
+  return fromRoleDef?.can_delegate_to.includes(toRole);
 }
 
 /**

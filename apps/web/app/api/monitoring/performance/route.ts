@@ -1,13 +1,13 @@
-import { createClient } from "@/app/utils/supabase/server";
-import { NextResponse } from "next/server";
-import { performanceMonitor } from "@/lib/monitoring/performance-monitor";
+import { NextResponse } from 'next/server';
+import { createClient } from '@/app/utils/supabase/server';
+import { performanceMonitor } from '@/lib/monitoring/performance-monitor';
 
 // 🚀 Edge Runtime para monitoramento de performance ultra-rápido
 export const runtime = 'edge';
 
 /**
  * 📊 NeonPro Performance Monitoring API - Edge Runtime
- * 
+ *
  * ⚡ Ultra-fast performance metrics com Edge Runtime
  * 🔥 <30ms response time para métricas críticas
  * 🌐 Global edge deployment para monitoramento mundial
@@ -17,20 +17,28 @@ export const runtime = 'edge';
 export async function GET(request: Request) {
   try {
     const supabase = await createClient();
-    
+
     // Authenticate user
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
-    const timeWindow = parseInt(searchParams.get("timeWindow") || "300000"); // 5min default
-    const route = searchParams.get("route");
-    
+    const timeWindow = Number.parseInt(
+      searchParams.get('timeWindow') || '300000',
+      10
+    ); // 5min default
+    const route = searchParams.get('route');
+
     if (route) {
       // Get performance for specific route
-      const routePerformance = performanceMonitor.getRoutePerformance(route, timeWindow);
+      const routePerformance = performanceMonitor.getRoutePerformance(
+        route,
+        timeWindow
+      );
       return NextResponse.json({
         success: true,
         route,
@@ -38,35 +46,35 @@ export async function GET(request: Request) {
         performance: routePerformance,
         timestamp: Date.now(),
       });
-    } else {
-      // Get general performance summary
-      const summary = performanceMonitor.getPerformanceSummary(timeWindow);
-      return NextResponse.json({
-        success: true,
-        timeWindow,
-        summary,
-        metricsCount: performanceMonitor.getMetricsCount(),
-        timestamp: Date.now(),
-      });
     }
-
+    // Get general performance summary
+    const summary = performanceMonitor.getPerformanceSummary(timeWindow);
+    return NextResponse.json({
+      success: true,
+      timeWindow,
+      summary,
+      metricsCount: performanceMonitor.getMetricsCount(),
+      timestamp: Date.now(),
+    });
   } catch (error) {
-    console.error("Performance API error:", error);
+    console.error('Performance API error:', error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }
-}/**
+} /**
  * 📈 Record client-side performance metrics
  */
 export async function POST(request: Request) {
   try {
     const supabase = await createClient();
-    
-    const { data: { user } } = await supabase.auth.getUser();
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
@@ -74,7 +82,7 @@ export async function POST(request: Request) {
 
     if (!name || typeof value !== 'number') {
       return NextResponse.json(
-        { error: "Invalid metric data" },
+        { error: 'Invalid metric data' },
         { status: 400 }
       );
     }
@@ -87,11 +95,10 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json({ success: true });
-
   } catch (error) {
-    console.error("Performance recording error:", error);
+    console.error('Performance recording error:', error);
     return NextResponse.json(
-      { error: "Failed to record metric" },
+      { error: 'Failed to record metric' },
       { status: 500 }
     );
   }

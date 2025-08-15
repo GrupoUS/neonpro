@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/app/utils/supabase/server";
+import { type NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@/app/utils/supabase/server';
 
 interface RouteParams {
   params: Promise<{
@@ -7,17 +7,17 @@ interface RouteParams {
   }>;
 }
 
-export async function GET(
-  request: NextRequest,
-  { params }: RouteParams
-) {
+export async function GET(_request: NextRequest, { params }: RouteParams) {
   try {
     const supabase = await createClient();
-    
+
     // Verificar autenticação
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const resolvedParams = await params;
@@ -32,7 +32,10 @@ export async function GET(
       .single();
 
     if (convError || !conversation) {
-      return NextResponse.json({ error: "Conversation not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: 'Conversation not found' },
+        { status: 404 }
+      );
     }
 
     // Buscar mensagens da conversa
@@ -45,34 +48,36 @@ export async function GET(
 
     if (messagesError) {
       console.error('Error fetching messages:', messagesError);
-      return NextResponse.json({ error: "Failed to fetch messages" }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Failed to fetch messages' },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json({
       conversation,
-      messages: messages || []
+      messages: messages || [],
     });
-
   } catch (error) {
     console.error('Conversation Messages API Error:', error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }
 }
 
-export async function PATCH(
-  request: NextRequest,
-  { params }: RouteParams
-) {
+export async function PATCH(request: NextRequest, { params }: RouteParams) {
   try {
     const supabase = await createClient();
-    
+
     // Verificar autenticação
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const resolvedParams = await params;
@@ -88,7 +93,10 @@ export async function PATCH(
       .single();
 
     if (convError || !existingConversation) {
-      return NextResponse.json({ error: "Conversation not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: 'Conversation not found' },
+        { status: 404 }
+      );
     }
 
     // Preparar dados para atualização
@@ -97,7 +105,10 @@ export async function PATCH(
     if (is_active !== undefined) updateData.is_active = is_active;
 
     if (Object.keys(updateData).length === 0) {
-      return NextResponse.json({ error: "No valid fields to update" }, { status: 400 });
+      return NextResponse.json(
+        { error: 'No valid fields to update' },
+        { status: 400 }
+      );
     }
 
     // Atualizar conversa
@@ -111,31 +122,33 @@ export async function PATCH(
 
     if (error) {
       console.error('Error updating conversation:', error);
-      return NextResponse.json({ error: "Failed to update conversation" }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Failed to update conversation' },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json({ conversation });
-
   } catch (error) {
     console.error('Update Conversation API Error:', error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }
 }
 
-export async function DELETE(
-  request: NextRequest,
-  { params }: RouteParams
-) {
+export async function DELETE(_request: NextRequest, { params }: RouteParams) {
   try {
     const supabase = await createClient();
-    
+
     // Verificar autenticação
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const resolvedParams = await params;
@@ -150,7 +163,10 @@ export async function DELETE(
       .single();
 
     if (convError || !existingConversation) {
-      return NextResponse.json({ error: "Conversation not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: 'Conversation not found' },
+        { status: 404 }
+      );
     }
 
     // Deletar conversa (cascata automática deletará mensagens)
@@ -162,15 +178,17 @@ export async function DELETE(
 
     if (error) {
       console.error('Error deleting conversation:', error);
-      return NextResponse.json({ error: "Failed to delete conversation" }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Failed to delete conversation' },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json({ success: true });
-
   } catch (error) {
     console.error('Delete Conversation API Error:', error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }

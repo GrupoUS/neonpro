@@ -2,21 +2,23 @@
 // Epic 7.2: Automated Marketing Campaigns + Personalization
 // Author: VoidBeast Agent
 
+import { type NextRequest, NextResponse } from 'next/server';
 import { MarketingCampaignService } from '@/app/lib/services/marketing-campaign-service';
 import { UpdateCampaignSchema } from '@/app/lib/validations/campaigns';
 import { createClient } from '@/app/utils/supabase/server';
-import { NextRequest, NextResponse } from 'next/server';
 
 const campaignService = new MarketingCampaignService();
 
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
     // Authentication check
     const supabase = await createClient();
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -29,12 +31,14 @@ export async function GET(
 
     return NextResponse.json({
       campaign: result.data,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
-
   } catch (error) {
     console.error('Error in campaign GET:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
 
@@ -45,7 +49,9 @@ export async function PUT(
   try {
     // Authentication check
     const supabase = await createClient();
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -55,13 +61,19 @@ export async function PUT(
     const validationResult = UpdateCampaignSchema.safeParse(body);
 
     if (!validationResult.success) {
-      return NextResponse.json({ 
-        error: 'Validation failed', 
-        details: validationResult.error.errors 
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          error: 'Validation failed',
+          details: validationResult.error.errors,
+        },
+        { status: 400 }
+      );
     }
 
-    const result = await campaignService.updateCampaign(params.id, validationResult.data);
+    const result = await campaignService.updateCampaign(
+      params.id,
+      validationResult.data
+    );
 
     if (!result.success) {
       return NextResponse.json({ error: result.error }, { status: 500 });
@@ -70,23 +82,27 @@ export async function PUT(
     return NextResponse.json({
       message: 'Campaign updated successfully',
       campaign: result.data,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
-
   } catch (error) {
     console.error('Error in campaign PUT:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
 
 export async function DELETE(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
     // Authentication check
     const supabase = await createClient();
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -99,11 +115,13 @@ export async function DELETE(
 
     return NextResponse.json({
       message: 'Campaign deleted successfully',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
-
   } catch (error) {
     console.error('Error in campaign DELETE:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }

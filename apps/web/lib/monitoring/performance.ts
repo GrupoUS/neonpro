@@ -1,7 +1,7 @@
 /**
  * TASK-001: Foundation Setup & Baseline
  * Performance Measurement Utilities
- * 
+ *
  * Provides comprehensive performance monitoring for all epic routes,
  * API endpoints, and database queries to establish baseline measurements.
  */
@@ -29,7 +29,7 @@ export const PERFORMANCE_BUDGETS: PerformanceBudget = {
   api_max_ms: 500,
   page_max_ms: 2000,
   db_max_ms: 100,
-  component_max_ms: 50
+  component_max_ms: 50,
 };
 
 class PerformanceMonitor {
@@ -61,11 +61,15 @@ class PerformanceMonitor {
 
     await this.logPerformanceMetric({
       ...metric,
-      duration_ms
+      duration_ms,
     });
 
     // Check against performance budgets
-    this.checkPerformanceBudget(metric.metric_type, duration_ms, metric.route_path);
+    this.checkPerformanceBudget(
+      metric.metric_type,
+      duration_ms,
+      metric.route_path
+    );
   }
 
   /**
@@ -94,7 +98,7 @@ class PerformanceMonitor {
     routePath: string
   ): void {
     let budget: number;
-    
+
     switch (metricType) {
       case 'api_response':
         budget = PERFORMANCE_BUDGETS.api_max_ms;
@@ -116,7 +120,7 @@ class PerformanceMonitor {
       console.warn(
         `Performance budget exceeded for ${metricType} on ${routePath}: ${duration}ms > ${budget}ms`
       );
-      
+
       // Log budget violation as system metric
       this.logSystemMetric(
         'performance_budget_violation',
@@ -139,15 +143,13 @@ class PerformanceMonitor {
     metadata?: Record<string, any>
   ): Promise<void> {
     try {
-      const { error } = await this.supabase
-        .from('system_metrics')
-        .insert({
-          metric_type: metricType,
-          metric_name: metricName,
-          metric_value: value,
-          metric_unit: unit,
-          metadata
-        });
+      const { error } = await this.supabase.from('system_metrics').insert({
+        metric_type: metricType,
+        metric_name: metricName,
+        metric_value: value,
+        metric_unit: unit,
+        metadata,
+      });
 
       if (error) {
         console.error('Failed to log system metric:', error);
@@ -163,7 +165,7 @@ class PerformanceMonitor {
   async getPerformanceBaseline(
     routePath: string,
     metricType?: PerformanceMetric['metric_type'],
-    days: number = 7
+    days = 7
   ): Promise<{
     average: number;
     median: number;
@@ -192,15 +194,15 @@ class PerformanceMonitor {
         return null;
       }
 
-      const durations = data.map(d => d.duration_ms).sort((a, b) => a - b);
+      const durations = data.map((d) => d.duration_ms).sort((a, b) => a - b);
       const count = durations.length;
-      
+
       return {
         average: durations.reduce((sum, d) => sum + d, 0) / count,
         median: durations[Math.floor(count / 2)],
         p95: durations[Math.floor(count * 0.95)],
         p99: durations[Math.floor(count * 0.99)],
-        count
+        count,
       };
     } catch (error) {
       console.error('Error getting performance baseline:', error);
@@ -211,7 +213,7 @@ class PerformanceMonitor {
   /**
    * Generate performance report for all routes
    */
-  async generatePerformanceReport(days: number = 7): Promise<Record<string, any>> {
+  async generatePerformanceReport(days = 7): Promise<Record<string, any>> {
     try {
       const startDate = new Date();
       startDate.setDate(startDate.getDate() - days);
@@ -227,35 +229,38 @@ class PerformanceMonitor {
 
       // Group by route and metric type
       const report: Record<string, any> = {};
-      
-      data.forEach(metric => {
+
+      data.forEach((metric) => {
         const key = `${metric.route_path}_${metric.metric_type}`;
         if (!report[key]) {
           report[key] = {
             route_path: metric.route_path,
             metric_type: metric.metric_type,
-            durations: []
+            durations: [],
           };
         }
         report[key].durations.push(metric.duration_ms);
       });
 
       // Calculate statistics for each route/metric combination
-      Object.keys(report).forEach(key => {
-        const durations = report[key].durations.sort((a: number, b: number) => a - b);
+      Object.keys(report).forEach((key) => {
+        const durations = report[key].durations.sort(
+          (a: number, b: number) => a - b
+        );
         const count = durations.length;
-        
+
         report[key] = {
           ...report[key],
           count,
-          average: durations.reduce((sum: number, d: number) => sum + d, 0) / count,
+          average:
+            durations.reduce((sum: number, d: number) => sum + d, 0) / count,
           median: durations[Math.floor(count / 2)],
           p95: durations[Math.floor(count * 0.95)],
           p99: durations[Math.floor(count * 0.99)],
           min: durations[0],
-          max: durations[count - 1]
+          max: durations[count - 1],
         };
-        
+
         delete report[key].durations; // Remove raw data to keep response clean
       });
 
@@ -271,39 +276,40 @@ class PerformanceMonitor {
 export const performanceMonitor = new PerformanceMonitor();
 
 // Utility decorators and hooks for easy integration
-export function measureAsync<T>(
+export function measureAsync<_T>(
   operationId: string,
   metricType: PerformanceMetric['metric_type'],
   routePath: string
 ) {
-  return function (
-    target: any,
-    propertyName: string,
+  return (
+    _target: any,
+    _propertyName: string,
     descriptor: PropertyDescriptor
-  ) {
+  ) => {
     const method = descriptor.value;
 
     descriptor.value = async function (...args: any[]) {
       performanceMonitor.startMeasurement(operationId);
-      
+
       try {
         const result = await method.apply(this, args);
-        
+
         await performanceMonitor.endMeasurement(operationId, {
           route_path: routePath,
           metric_type: metricType,
-          status_code: 200
+          status_code: 200,
         });
-        
+
         return result;
       } catch (error) {
         await performanceMonitor.endMeasurement(operationId, {
           route_path: routePath,
           metric_type: metricType,
           status_code: 500,
-          error_message: error instanceof Error ? error.message : 'Unknown error'
+          error_message:
+            error instanceof Error ? error.message : 'Unknown error',
         });
-        
+
         throw error;
       }
     };
@@ -316,7 +322,7 @@ export function usePerformanceTracker(componentName: string) {
     await performanceMonitor.logPerformanceMetric({
       route_path: componentName,
       metric_type: 'component_render',
-      duration_ms: renderTime
+      duration_ms: renderTime,
     });
   };
 
@@ -336,7 +342,7 @@ export async function trackPerformance(options: {
     metric_type: 'api_response',
     duration_ms: options.duration,
     status_code: options.success ? 200 : 500,
-    metadata: options.metadata
+    metadata: options.metadata,
   });
 }
 

@@ -1,18 +1,17 @@
 /**
  * API Endpoint: Notification Status
- * 
+ *
  * Endpoint para consultar status, histórico e métricas de notificações
- * 
+ *
  * @route GET /api/notifications/status
  * @route GET /api/notifications/status/[id]
  * @author APEX Architecture Team
  * @version 1.0.0
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createClient } from '@/app/utils/supabase/server';
-import { notificationAnalytics } from '@/lib/notifications/analytics/notification-analytics';
 
 // ================================================================================
 // VALIDATION SCHEMAS
@@ -22,7 +21,9 @@ const StatusQuerySchema = z.object({
   id: z.string().uuid().optional(),
   userId: z.string().uuid().optional(),
   type: z.string().optional(),
-  status: z.enum(['pending', 'sent', 'delivered', 'failed', 'cancelled']).optional(),
+  status: z
+    .enum(['pending', 'sent', 'delivered', 'failed', 'cancelled'])
+    .optional(),
   dateFrom: z.string().datetime().optional(),
   dateTo: z.string().datetime().optional(),
   limit: z.number().min(1).max(1000).default(50),
@@ -33,15 +34,21 @@ const StatusQuerySchema = z.object({
 // HELPER FUNCTIONS
 // ================================================================================
 
-async function validateAuth(request: NextRequest) {
+async function validateAuth(_request: NextRequest) {
   const supabase = await createClient();
-  
-  const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+
+  const {
+    data: { session },
+    error: sessionError,
+  } = await supabase.auth.getSession();
   if (sessionError || !session) {
     return { error: 'Não autenticado', status: 401 };
   }
 
-  const { data: { user }, error: userError } = await supabase.auth.getUser();
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
   if (userError || !user) {
     return { error: 'Usuário inválido', status: 401 };
   }
@@ -79,7 +86,7 @@ export async function GET(request: NextRequest) {
 
     const { profile, supabase } = authResult;
     const { searchParams } = new URL(request.url);
-    
+
     // Validar parâmetros
     const queryParams = {
       id: searchParams.get('id') || undefined,
@@ -88,14 +95,17 @@ export async function GET(request: NextRequest) {
       status: searchParams.get('status') || undefined,
       dateFrom: searchParams.get('dateFrom') || undefined,
       dateTo: searchParams.get('dateTo') || undefined,
-      limit: parseInt(searchParams.get('limit') || '50'),
-      offset: parseInt(searchParams.get('offset') || '0'),
+      limit: Number.parseInt(searchParams.get('limit') || '50', 10),
+      offset: Number.parseInt(searchParams.get('offset') || '0', 10),
     };
 
     const validationResult = StatusQuerySchema.safeParse(queryParams);
     if (!validationResult.success) {
       return NextResponse.json(
-        { error: 'Parâmetros inválidos', details: validationResult.error.errors },
+        {
+          error: 'Parâmetros inválidos',
+          details: validationResult.error.errors,
+        },
         { status: 400 }
       );
     }
@@ -173,11 +183,10 @@ export async function GET(request: NextRequest) {
         total: totalCount,
         limit: query.limit,
         offset: query.offset,
-        hasNext: totalCount > (query.offset + query.limit),
+        hasNext: totalCount > query.offset + query.limit,
         hasPrevious: query.offset > 0,
       },
     });
-
   } catch (error) {
     console.error('Erro na consulta de status:', error);
     return NextResponse.json(

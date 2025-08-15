@@ -2,28 +2,22 @@
 // Story 11.4: Alertas e Relatórios de Estoque
 // Unit tests for Zod schemas and validation functions
 
-import { describe, it, expect } from '@jest/globals';
+import { describe, expect, it } from '@jest/globals';
 import {
-  stockAlertConfigSchema,
-  createStockAlertConfigSchema,
-  updateStockAlertConfigSchema,
-  stockAlertSchema,
   acknowledgeAlertSchema,
-  resolveAlertSchema,
-  customStockReportSchema,
-  stockPerformanceMetricsSchema,
-  stockDashboardDataSchema,
   alertsQuerySchema,
-  validateStockAlertConfig,
-  validateCreateStockAlertConfig,
+  createStockAlertConfigSchema,
+  customStockReportSchema,
+  resolveAlertSchema,
+  stockAlertConfigSchema,
+  stockAlertSchema,
+  stockDashboardDataSchema,
+  stockPerformanceMetricsSchema,
+  updateStockAlertConfigSchema,
   validateAcknowledgeAlert,
+  validateCreateStockAlertConfig,
   validateResolveAlert,
-  AlertType,
-  SeverityLevel,
-  AlertStatus,
-  ThresholdUnit,
-  NotificationChannel,
-  StockAlertValidationError
+  validateStockAlertConfig,
 } from '@/app/lib/types/stock-alerts';
 
 // =====================================================
@@ -43,7 +37,7 @@ const validAlertConfig = {
   createdAt: new Date(),
   updatedAt: new Date(),
   createdBy: 'user123e45-e89b-12d3-a456-426614174000',
-  updatedBy: 'user123e45-e89b-12d3-a456-426614174000'
+  updatedBy: 'user123e45-e89b-12d3-a456-426614174000',
 };
 
 const validCreateAlertConfig = {
@@ -54,7 +48,7 @@ const validCreateAlertConfig = {
   thresholdUnit: 'quantity' as const,
   severityLevel: 'high' as const,
   isActive: true,
-  notificationChannels: ['in_app', 'whatsapp'] as const
+  notificationChannels: ['in_app', 'whatsapp'] as const,
 };
 
 const validAlert = {
@@ -68,20 +62,20 @@ const validAlert = {
   message: 'Low stock alert for Product X',
   status: 'active' as const,
   metadata: { source: 'automated' },
-  createdAt: new Date()
+  createdAt: new Date(),
 };
 
 const validAcknowledgeAlert = {
   alertId: 'alert123-e89b-12d3-a456-426614174000',
   acknowledgedBy: 'user123e45-e89b-12d3-a456-426614174000',
-  note: 'Acknowledged by manager'
+  note: 'Acknowledged by manager',
 };
 
 const validResolveAlert = {
   alertId: 'alert123-e89b-12d3-a456-426614174000',
   resolvedBy: 'user123e45-e89b-12d3-a456-426614174000',
   resolution: 'Stock replenished from emergency supply',
-  actionsTaken: ['emergency_purchase', 'supplier_contact']
+  actionsTaken: ['emergency_purchase', 'supplier_contact'],
 };
 
 // =====================================================
@@ -114,7 +108,9 @@ describe('Stock Alert Config Schema Validation', () => {
       const result = stockAlertConfigSchema.safeParse(invalidConfig);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].message).toContain('Must be a positive number');
+        expect(result.error.issues[0].message).toContain(
+          'Must be a positive number'
+        );
       }
     });
 
@@ -129,7 +125,9 @@ describe('Stock Alert Config Schema Validation', () => {
       const result = stockAlertConfigSchema.safeParse(invalidConfig);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].message).toContain('At least one notification channel required');
+        expect(result.error.issues[0].message).toContain(
+          'At least one notification channel required'
+        );
       }
     });
 
@@ -137,7 +135,7 @@ describe('Stock Alert Config Schema Validation', () => {
       const categoryConfig = {
         ...validAlertConfig,
         productId: undefined,
-        categoryId: 'cat123e45-e89b-12d3-a456-426614174000'
+        categoryId: 'cat123e45-e89b-12d3-a456-426614174000',
       };
       const result = stockAlertConfigSchema.safeParse(categoryConfig);
       expect(result.success).toBe(true);
@@ -147,7 +145,7 @@ describe('Stock Alert Config Schema Validation', () => {
       const globalConfig = {
         ...validAlertConfig,
         productId: undefined,
-        categoryId: undefined
+        categoryId: undefined,
       };
       const result = stockAlertConfigSchema.safeParse(globalConfig);
       expect(result.success).toBe(true);
@@ -156,7 +154,9 @@ describe('Stock Alert Config Schema Validation', () => {
 
   describe('createStockAlertConfigSchema', () => {
     it('should validate valid create request', () => {
-      const result = createStockAlertConfigSchema.safeParse(validCreateAlertConfig);
+      const result = createStockAlertConfigSchema.safeParse(
+        validCreateAlertConfig
+      );
       expect(result.success).toBe(true);
     });
 
@@ -171,7 +171,7 @@ describe('Stock Alert Config Schema Validation', () => {
         clinicId: 'cc123e45-e89b-12d3-a456-426614174000',
         alertType: 'low_stock' as const,
         thresholdValue: 5,
-        notificationChannels: ['in_app'] as const
+        notificationChannels: ['in_app'] as const,
       };
       const result = createStockAlertConfigSchema.safeParse(minimalConfig);
       expect(result.success).toBe(true);
@@ -187,7 +187,7 @@ describe('Stock Alert Config Schema Validation', () => {
     it('should validate partial updates', () => {
       const partialUpdate = {
         thresholdValue: 20,
-        severityLevel: 'high' as const
+        severityLevel: 'high' as const,
       };
       const result = updateStockAlertConfigSchema.safeParse(partialUpdate);
       expect(result.success).toBe(true);
@@ -196,7 +196,7 @@ describe('Stock Alert Config Schema Validation', () => {
     it('should reject update with readonly fields', () => {
       const invalidUpdate = {
         clinicId: 'new-clinic-id',
-        thresholdValue: 20
+        thresholdValue: 20,
       };
       const result = updateStockAlertConfigSchema.safeParse(invalidUpdate);
       expect(result.success).toBe(false);
@@ -226,14 +226,16 @@ describe('Stock Alert Schema Validation', () => {
       const result = stockAlertSchema.safeParse(invalidAlert);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].message).toContain('Must be non-negative');
+        expect(result.error.issues[0].message).toContain(
+          'Must be non-negative'
+        );
       }
     });
 
     it('should reject empty or too long messages', () => {
       const emptyMessage = { ...validAlert, message: '' };
       const longMessage = { ...validAlert, message: 'a'.repeat(1001) };
-      
+
       expect(stockAlertSchema.safeParse(emptyMessage).success).toBe(false);
       expect(stockAlertSchema.safeParse(longMessage).success).toBe(false);
     });
@@ -243,19 +245,21 @@ describe('Stock Alert Schema Validation', () => {
       const validAck = {
         ...validAlert,
         acknowledgedBy: 'user123',
-        acknowledgedAt: new Date()
+        acknowledgedAt: new Date(),
       };
       expect(stockAlertSchema.safeParse(validAck).success).toBe(true);
 
       // Invalid: only acknowledgedBy present
       const invalidAck = {
         ...validAlert,
-        acknowledgedBy: 'user123'
+        acknowledgedBy: 'user123',
       };
       const result = stockAlertSchema.safeParse(invalidAck);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].message).toContain('Both acknowledgedBy and acknowledgedAt must be provided');
+        expect(result.error.issues[0].message).toContain(
+          'Both acknowledgedBy and acknowledgedAt must be provided'
+        );
       }
     });
   });
@@ -269,7 +273,7 @@ describe('Stock Alert Schema Validation', () => {
     it('should trim and validate note length', () => {
       const longNote = {
         ...validAcknowledgeAlert,
-        note: ' ' + 'a'.repeat(501) + ' '
+        note: ` ${'a'.repeat(501)} `,
       };
       const result = acknowledgeAlertSchema.safeParse(longNote);
       expect(result.success).toBe(false);
@@ -296,12 +300,17 @@ describe('Stock Alert Schema Validation', () => {
       const result = resolveAlertSchema.safeParse(invalidResolve);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].message).toContain('Resolution description required');
+        expect(result.error.issues[0].message).toContain(
+          'Resolution description required'
+        );
       }
     });
 
     it('should reject overly long resolution description', () => {
-      const longResolution = { ...validResolveAlert, resolution: 'a'.repeat(1001) };
+      const longResolution = {
+        ...validResolveAlert,
+        resolution: 'a'.repeat(1001),
+      };
       const result = resolveAlertSchema.safeParse(longResolution);
       expect(result.success).toBe(false);
       if (!result.success) {
@@ -324,11 +333,11 @@ describe('Custom Stock Reports Schema Validation', () => {
     filters: {
       dateRange: {
         start: new Date('2025-01-01'),
-        end: new Date('2025-01-31')
+        end: new Date('2025-01-31'),
       },
-      productIds: ['pc123e45-e89b-12d3-a456-426614174000']
+      productIds: ['pc123e45-e89b-12d3-a456-426614174000'],
     },
-    isActive: true
+    isActive: true,
   };
 
   it('should validate valid custom report', () => {
@@ -343,7 +352,10 @@ describe('Custom Stock Reports Schema Validation', () => {
   });
 
   it('should trim report names', () => {
-    const reportWithSpaces = { ...validReport, reportName: '  Trimmed Report  ' };
+    const reportWithSpaces = {
+      ...validReport,
+      reportName: '  Trimmed Report  ',
+    };
     const result = customStockReportSchema.safeParse(reportWithSpaces);
     expect(result.success).toBe(true);
     if (result.success) {
@@ -357,14 +369,16 @@ describe('Custom Stock Reports Schema Validation', () => {
       filters: {
         dateRange: {
           start: new Date('2025-01-31'),
-          end: new Date('2025-01-01') // End before start
-        }
-      }
+          end: new Date('2025-01-01'), // End before start
+        },
+      },
     };
     const result = customStockReportSchema.safeParse(invalidDateRange);
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.issues[0].message).toContain('Start date must be before or equal to end date');
+      expect(result.error.issues[0].message).toContain(
+        'Start date must be before or equal to end date'
+      );
     }
   });
 
@@ -374,12 +388,12 @@ describe('Custom Stock Reports Schema Validation', () => {
       dayOfWeek: 1, // Monday
       time: '09:30',
       recipients: ['user@example.com'],
-      enabled: true
+      enabled: true,
     };
 
     const reportWithSchedule = {
       ...validReport,
-      scheduleConfig: validSchedule
+      scheduleConfig: validSchedule,
     };
 
     const result = customStockReportSchema.safeParse(reportWithSchedule);
@@ -390,12 +404,12 @@ describe('Custom Stock Reports Schema Validation', () => {
     const invalidSchedule = {
       frequency: 'daily' as const,
       time: '25:70', // Invalid time
-      recipients: ['user@example.com']
+      recipients: ['user@example.com'],
     };
 
     const reportWithInvalidSchedule = {
       ...validReport,
-      scheduleConfig: invalidSchedule
+      scheduleConfig: invalidSchedule,
     };
 
     const result = customStockReportSchema.safeParse(reportWithInvalidSchedule);
@@ -414,7 +428,7 @@ describe('Stock Performance Metrics Schema Validation', () => {
   const validMetrics = {
     clinicId: 'cc123e45-e89b-12d3-a456-426614174000',
     metricDate: new Date(),
-    totalValue: 10000.50,
+    totalValue: 10_000.5,
     turnoverRate: 4.2,
     daysCoverage: 45,
     accuracyPercentage: 95.5,
@@ -424,7 +438,7 @@ describe('Stock Performance Metrics Schema Validation', () => {
     criticalAlertsCount: 1,
     productsCount: 150,
     outOfStockCount: 5,
-    lowStockCount: 12
+    lowStockCount: 12,
   };
 
   it('should validate valid performance metrics', () => {
@@ -448,14 +462,14 @@ describe('Stock Performance Metrics Schema Validation', () => {
     const minimalMetrics = {
       clinicId: 'cc123e45-e89b-12d3-a456-426614174000',
       metricDate: new Date(),
-      totalValue: 10000,
+      totalValue: 10_000,
       wasteValue: 0,
       wastePercentage: 0,
       activeAlertsCount: 0,
       criticalAlertsCount: 0,
       productsCount: 100,
       outOfStockCount: 0,
-      lowStockCount: 0
+      lowStockCount: 0,
     };
     const result = stockPerformanceMetricsSchema.safeParse(minimalMetrics);
     expect(result.success).toBe(true);
@@ -469,14 +483,14 @@ describe('Stock Performance Metrics Schema Validation', () => {
 describe('Stock Dashboard Data Schema Validation', () => {
   const validDashboardData = {
     kpis: {
-      totalValue: 50000,
+      totalValue: 50_000,
       turnoverRate: 6.5,
       daysCoverage: 30,
       accuracyPercentage: 98.2,
       activeAlerts: 5,
       criticalAlerts: 1,
       wasteValue: 200,
-      wastePercentage: 0.4
+      wastePercentage: 0.4,
     },
     charts: {
       consumptionTrend: [
@@ -484,8 +498,8 @@ describe('Stock Dashboard Data Schema Validation', () => {
           date: new Date().toISOString(),
           value: 100,
           category: 'medical_supplies',
-          trend: 'up' as const
-        }
+          trend: 'up' as const,
+        },
       ],
       topProducts: [
         {
@@ -494,25 +508,25 @@ describe('Stock Dashboard Data Schema Validation', () => {
           sku: 'SKU001',
           consumption: 50,
           value: 500,
-          changePercentage: 5.2
-        }
+          changePercentage: 5.2,
+        },
       ],
       alertsByType: [
         {
           type: 'low_stock' as const,
           count: 3,
           severity: 'medium' as const,
-          percentage: 60
-        }
+          percentage: 60,
+        },
       ],
       wasteAnalysis: [
         {
           period: 'Last week',
           waste: 50,
           percentage: 0.5,
-          trend: 'improving' as const
-        }
-      ]
+          trend: 'improving' as const,
+        },
+      ],
     },
     alerts: [validAlert],
     recommendations: [
@@ -524,10 +538,10 @@ describe('Stock Dashboard Data Schema Validation', () => {
         message: 'Several products need reordering',
         actionable: true,
         dismissible: true,
-        createdAt: new Date()
-      }
+        createdAt: new Date(),
+      },
     ],
-    lastUpdated: new Date()
+    lastUpdated: new Date(),
   };
 
   it('should validate complete dashboard data', () => {
@@ -558,7 +572,7 @@ describe('Query Schema Validation', () => {
         limit: 25,
         offset: 50,
         sortBy: 'severity_level',
-        sortOrder: 'asc'
+        sortOrder: 'asc',
       };
       const result = alertsQuerySchema.safeParse(validQuery);
       expect(result.success).toBe(true);
@@ -602,7 +616,9 @@ describe('Validation Functions', () => {
 
   describe('validateCreateStockAlertConfig', () => {
     it('should validate valid create config', () => {
-      expect(() => validateCreateStockAlertConfig(validCreateAlertConfig)).not.toThrow();
+      expect(() =>
+        validateCreateStockAlertConfig(validCreateAlertConfig)
+      ).not.toThrow();
     });
 
     it('should throw on invalid create config', () => {
@@ -613,7 +629,9 @@ describe('Validation Functions', () => {
 
   describe('validateAcknowledgeAlert', () => {
     it('should validate valid acknowledge request', () => {
-      expect(() => validateAcknowledgeAlert(validAcknowledgeAlert)).not.toThrow();
+      expect(() =>
+        validateAcknowledgeAlert(validAcknowledgeAlert)
+      ).not.toThrow();
     });
 
     it('should throw on invalid acknowledge request', () => {
@@ -642,23 +660,25 @@ describe('Edge Cases and Security', () => {
   it('should handle extremely large numbers appropriately', () => {
     const configWithLargeNumber = {
       ...validCreateAlertConfig,
-      thresholdValue: Number.MAX_SAFE_INTEGER
+      thresholdValue: Number.MAX_SAFE_INTEGER,
     };
-    const result = createStockAlertConfigSchema.safeParse(configWithLargeNumber);
+    const result = createStockAlertConfigSchema.safeParse(
+      configWithLargeNumber
+    );
     expect(result.success).toBe(true);
   });
 
   it('should reject null/undefined values where required', () => {
     const configWithNull = {
       ...validCreateAlertConfig,
-      clinicId: null
+      clinicId: null,
     };
     const result = createStockAlertConfigSchema.safeParse(configWithNull);
     expect(result.success).toBe(false);
   });
 
   it('should sanitize string inputs', () => {
-    const configWithWhitespace = {
+    const _configWithWhitespace = {
       ...validCreateAlertConfig,
       // Note: reportName trimming is tested in custom reports
     };
@@ -668,9 +688,11 @@ describe('Edge Cases and Security', () => {
   it('should handle array validation correctly', () => {
     const configWithInvalidChannels = {
       ...validCreateAlertConfig,
-      notificationChannels: ['invalid_channel']
+      notificationChannels: ['invalid_channel'],
     };
-    const result = createStockAlertConfigSchema.safeParse(configWithInvalidChannels);
+    const result = createStockAlertConfigSchema.safeParse(
+      configWithInvalidChannels
+    );
     expect(result.success).toBe(false);
   });
 });
@@ -681,41 +703,41 @@ describe('Edge Cases and Security', () => {
 
 describe('Performance and Scalability', () => {
   it('should handle large arrays efficiently', () => {
-    const largeArray = Array(1000).fill(0).map((_, i) => ({
-      date: new Date().toISOString(),
-      value: i,
-      trend: 'stable' as const
-    }));
+    const largeArray = Array(1000)
+      .fill(0)
+      .map((_, i) => ({
+        date: new Date().toISOString(),
+        value: i,
+        trend: 'stable' as const,
+      }));
 
     const dashboardWithLargeData = {
       kpis: {
-        totalValue: 50000,
+        totalValue: 50_000,
         turnoverRate: 6.5,
         daysCoverage: 30,
         accuracyPercentage: 98.2,
         activeAlerts: 5,
         criticalAlerts: 1,
         wasteValue: 200,
-        wastePercentage: 0.4
+        wastePercentage: 0.4,
       },
       charts: {
         consumptionTrend: largeArray,
         topProducts: [],
         alertsByType: [],
-        wasteAnalysis: []
+        wasteAnalysis: [],
       },
       alerts: [],
       recommendations: [],
-      lastUpdated: new Date()
+      lastUpdated: new Date(),
     };
 
     const startTime = performance.now();
     const result = stockDashboardDataSchema.safeParse(dashboardWithLargeData);
     const endTime = performance.now();
-    
+
     expect(result.success).toBe(true);
     expect(endTime - startTime).toBeLessThan(100); // Should complete within 100ms
   });
 });
-
-export {};

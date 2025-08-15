@@ -3,20 +3,18 @@
  * HIPAA-compliant email notifications using React Email templates
  */
 
-import { Resend } from 'resend';
 import { render } from '@react-email/render';
+import { Resend } from 'resend';
 import { NOTIFICATION_CONFIG } from './config';
-import { z } from 'zod';
-
+import { AppointmentCancellationEmail } from './templates/appointment-cancellation';
+import { AppointmentConfirmationEmail } from './templates/appointment-confirmation';
 // Import email templates
 import { AppointmentReminderEmail } from './templates/appointment-reminder';
-import { AppointmentConfirmationEmail } from './templates/appointment-confirmation';
-import { AppointmentCancellationEmail } from './templates/appointment-cancellation';
+import { BillingReminderEmail } from './templates/billing-reminder';
+import { EmergencyAlertEmail } from './templates/emergency-alert';
+import { FollowUpReminderEmail } from './templates/follow-up-reminder';
 import { RescheduleRequestEmail } from './templates/reschedule-request';
 import { TreatmentReminderEmail } from './templates/treatment-reminder';
-import { FollowUpReminderEmail } from './templates/follow-up-reminder';
-import { EmergencyAlertEmail } from './templates/emergency-alert';
-import { BillingReminderEmail } from './templates/billing-reminder';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -56,15 +54,19 @@ export class EmailService {
       // Get appropriate template component
       const TemplateComponent = this.getTemplateComponent(payload.type);
       if (!TemplateComponent) {
-        throw new Error(`No template found for notification type: ${payload.type}`);
+        throw new Error(
+          `No template found for notification type: ${payload.type}`
+        );
       }
 
       // Render email template
-      const emailHtml = render(TemplateComponent({
-        ...payload.templateData,
-        recipientEmail: payload.recipientEmail,
-        timezone: payload.timezone || 'UTC'
-      }));
+      const emailHtml = render(
+        TemplateComponent({
+          ...payload.templateData,
+          recipientEmail: payload.recipientEmail,
+          timezone: payload.timezone || 'UTC',
+        })
+      );
 
       // Prepare email data
       const emailData = {
@@ -80,8 +82,8 @@ export class EmailService {
         tags: [
           { name: 'notification_type', value: payload.type },
           { name: 'priority', value: payload.priority || 'normal' },
-          { name: 'clinic', value: 'neonpro' }
-        ]
+          { name: 'clinic', value: 'neonpro' },
+        ],
       };
 
       // Send email via Resend
@@ -96,30 +98,29 @@ export class EmailService {
         notificationId: result.data?.id || `email_${Date.now()}`,
         messageId: result.data?.id,
         channel: 'email',
-        deliveredAt: new Date()
+        deliveredAt: new Date(),
       };
-
     } catch (error) {
       console.error('Email sending error:', error);
       return {
         success: false,
         channel: 'email',
-        error: error instanceof Error ? error.message : 'Failed to send email'
+        error: error instanceof Error ? error.message : 'Failed to send email',
       };
     }
-  }  /**
+  } /**
    * Get React Email template component for notification type
    */
   private getTemplateComponent(type: string) {
     const templates = {
-      'appointment_reminder': AppointmentReminderEmail,
-      'appointment_confirmation': AppointmentConfirmationEmail,
-      'appointment_cancellation': AppointmentCancellationEmail,
-      'reschedule_request': RescheduleRequestEmail,
-      'treatment_reminder': TreatmentReminderEmail,
-      'follow_up_reminder': FollowUpReminderEmail,
-      'emergency_alert': EmergencyAlertEmail,
-      'billing_reminder': BillingReminderEmail
+      appointment_reminder: AppointmentReminderEmail,
+      appointment_confirmation: AppointmentConfirmationEmail,
+      appointment_cancellation: AppointmentCancellationEmail,
+      reschedule_request: RescheduleRequestEmail,
+      treatment_reminder: TreatmentReminderEmail,
+      follow_up_reminder: FollowUpReminderEmail,
+      emergency_alert: EmergencyAlertEmail,
+      billing_reminder: BillingReminderEmail,
     };
 
     return templates[type as keyof typeof templates];
@@ -130,18 +131,23 @@ export class EmailService {
    */
   private getPriorityHeader(priority?: string): string {
     switch (priority) {
-      case 'urgent': return '1';
-      case 'high': return '2';
-      case 'normal': return '3';
-      case 'low': return '4';
-      default: return '3';
+      case 'urgent':
+        return '1';
+      case 'high':
+        return '2';
+      case 'normal':
+        return '3';
+      case 'low':
+        return '4';
+      default:
+        return '3';
     }
   }
 
   /**
    * Get email delivery status from Resend
    */
-  async getDeliveryStatus(messageId: string): Promise<{
+  async getDeliveryStatus(_messageId: string): Promise<{
     status: 'pending' | 'sent' | 'delivered' | 'failed' | 'cancelled';
     deliveredAt?: Date;
     error?: string;
@@ -150,78 +156,15 @@ export class EmailService {
       // Note: This is a placeholder for Resend's delivery status API
       // Resend doesn't currently provide detailed delivery status
       // You would implement webhook handling for delivery events
-      
+
       // For now, assume sent means delivered after a short delay
       return {
         status: 'delivered',
-        deliveredAt: new Date()
+        deliveredAt: new Date(),
       };
-
     } catch (error) {
       console.error('Error getting email delivery status:', error);
       return null;
-    }
-  }
-
-  /**
-   * Validate email template data against schema
-   */
-  private validateTemplateData(type: string, data: any): boolean {
-    try {
-      // Define schemas for each template type
-      const appointmentSchema = z.object({
-        patientName: z.string(),
-        appointmentDate: z.string(),
-        appointmentTime: z.string(),
-        clinicName: z.string(),
-        clinicAddress: z.string(),
-        cancellationLink: z.string().url().optional(),
-        rescheduleLink: z.string().url().optional()
-      });
-
-      const treatmentSchema = z.object({
-        patientName: z.string(),
-        treatmentName: z.string(),
-        nextAppointment: z.string(),
-        instructions: z.string().optional()
-      });
-
-      const billingSchema = z.object({
-        patientName: z.string(),
-        amountDue: z.string(),
-        dueDate: z.string(),
-        paymentLink: z.string().url(),
-        invoiceNumber: z.string()
-      });
-
-      // Validate based on type
-      switch (type) {
-        case 'appointment_reminder':
-        case 'appointment_confirmation':
-        case 'appointment_cancellation':
-        case 'reschedule_request':
-          appointmentSchema.parse(data);
-          break;
-        case 'treatment_reminder':
-        case 'follow_up_reminder':
-          treatmentSchema.parse(data);
-          break;
-        case 'billing_reminder':
-          billingSchema.parse(data);
-          break;
-        case 'emergency_alert':
-          z.object({
-            patientName: z.string(),
-            message: z.string(),
-            contactInfo: z.string()
-          }).parse(data);
-          break;
-      }
-
-      return true;
-    } catch (error) {
-      console.error(`Template data validation failed for ${type}:`, error);
-      return false;
     }
   }
 }

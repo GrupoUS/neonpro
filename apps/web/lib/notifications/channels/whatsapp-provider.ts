@@ -4,13 +4,13 @@
  * Compliance: LGPD + ANVISA + CFM + WhatsApp Business Policies
  */
 
-import { 
-  NotificationChannel, 
-  NotificationProvider, 
-  NotificationResult,
-  NotificationMetadata,
+import type {
   HealthcareNotificationContext,
-  LGPDCompliantData 
+  LGPDCompliantData,
+  NotificationChannel,
+  NotificationMetadata,
+  NotificationProvider,
+  NotificationResult,
 } from '../types/notifications';
 
 // WhatsApp-specific types
@@ -176,11 +176,11 @@ class TwilioWhatsAppProvider implements WhatsAppProvider {
         `https://api.twilio.com/2010-04-01/Accounts/${this.accountSid}.json`,
         {
           headers: {
-            'Authorization': `Basic ${auth}`,
+            Authorization: `Basic ${auth}`,
           },
         }
       );
-      
+
       return response.ok;
     } catch (error) {
       console.error(`[${this.id}] Health check failed:`, error);
@@ -190,11 +190,11 @@ class TwilioWhatsAppProvider implements WhatsAppProvider {
 
   async sendWhatsApp(params: WhatsAppParams): Promise<NotificationResult> {
     const startTime = Date.now();
-    
+
     try {
       // Validate LGPD compliance
       await this.validateLGPDCompliance(params.metadata.lgpdConsent);
-      
+
       // Validate WhatsApp Business compliance
       if (params.metadata.whatsappContext) {
         await this.validateWhatsAppCompliance(params);
@@ -204,7 +204,7 @@ class TwilioWhatsAppProvider implements WhatsAppProvider {
       const results: NotificationResult[] = [];
 
       for (const phoneNumber of phoneNumbers) {
-        if (!await this.validatePhoneNumber(phoneNumber)) {
+        if (!(await this.validatePhoneNumber(phoneNumber))) {
           throw new Error(`Invalid WhatsApp number: ${phoneNumber}`);
         }
 
@@ -230,7 +230,7 @@ class TwilioWhatsAppProvider implements WhatsAppProvider {
 
         // Rate limiting between messages
         if (phoneNumbers.length > 1) {
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          await new Promise((resolve) => setTimeout(resolve, 1000));
         }
       }
 
@@ -240,8 +240,8 @@ class TwilioWhatsAppProvider implements WhatsAppProvider {
       }
 
       return {
-        success: results.every(r => r.success),
-        messageId: results.map(r => r.messageId).join(','),
+        success: results.every((r) => r.success),
+        messageId: results.map((r) => r.messageId).join(','),
         providerId: this.id,
         channel: this.channel,
         timestamp: new Date(),
@@ -249,14 +249,13 @@ class TwilioWhatsAppProvider implements WhatsAppProvider {
           ...params.metadata,
           duration: Date.now() - startTime,
           bulkResults: results,
-          totalSent: results.filter(r => r.success).length,
-          totalFailed: results.filter(r => !r.success).length,
+          totalSent: results.filter((r) => r.success).length,
+          totalFailed: results.filter((r) => !r.success).length,
         },
       };
-
     } catch (error) {
       const duration = Date.now() - startTime;
-      
+
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -266,20 +265,22 @@ class TwilioWhatsAppProvider implements WhatsAppProvider {
         metadata: {
           ...params.metadata,
           duration,
-          error: error,
+          error,
         },
       };
     }
   }
 
-  async sendBulkWhatsApp(params: BulkWhatsAppParams): Promise<NotificationResult[]> {
+  async sendBulkWhatsApp(
+    params: BulkWhatsAppParams
+  ): Promise<NotificationResult[]> {
     const batchSize = params.batchSize || 5; // Conservative for WhatsApp limits
     const results: NotificationResult[] = [];
-    
+
     for (let i = 0; i < params.messages.length; i += batchSize) {
       const batch = params.messages.slice(i, i + batchSize);
-      
-      const batchPromises = batch.map(message => 
+
+      const batchPromises = batch.map((message) =>
         this.sendTemplate({
           to: message.to,
           templateName: message.templateName,
@@ -290,7 +291,7 @@ class TwilioWhatsAppProvider implements WhatsAppProvider {
       );
 
       const batchResults = await Promise.allSettled(batchPromises);
-      
+
       batchResults.forEach((result, index) => {
         if (result.status === 'fulfilled') {
           results.push(result.value);
@@ -308,20 +309,22 @@ class TwilioWhatsAppProvider implements WhatsAppProvider {
 
       // Rate limiting between batches (WhatsApp is strict)
       if (i + batchSize < params.messages.length) {
-        await new Promise(resolve => setTimeout(resolve, 2000)); // 2s delay
+        await new Promise((resolve) => setTimeout(resolve, 2000)); // 2s delay
       }
     }
 
     return results;
   }
 
-  async sendTemplate(params: WhatsAppTemplateParams): Promise<NotificationResult> {
+  async sendTemplate(
+    params: WhatsAppTemplateParams
+  ): Promise<NotificationResult> {
     const startTime = Date.now();
-    
+
     try {
       const auth = btoa(`${this.accountSid}:${this.authToken}`);
       const phoneNumbers = Array.isArray(params.to) ? params.to : [params.to];
-      
+
       // Prepare template content
       const templateContent = this.buildTemplateContent(
         params.templateName,
@@ -343,9 +346,12 @@ class TwilioWhatsAppProvider implements WhatsAppProvider {
         if (params.templateParams) {
           params.templateParams.forEach((param, index) => {
             if (param.type === 'text' && param.text) {
-              payload.append(`ContentVariables`, JSON.stringify({
-                [`${index + 1}`]: param.text
-              }));
+              payload.append(
+                'ContentVariables',
+                JSON.stringify({
+                  [`${index + 1}`]: param.text,
+                })
+              );
             }
           });
         }
@@ -355,7 +361,7 @@ class TwilioWhatsAppProvider implements WhatsAppProvider {
           {
             method: 'POST',
             headers: {
-              'Authorization': `Basic ${auth}`,
+              Authorization: `Basic ${auth}`,
               'Content-Type': 'application/x-www-form-urlencoded',
             },
             body: payload,
@@ -363,9 +369,11 @@ class TwilioWhatsAppProvider implements WhatsAppProvider {
         );
 
         const responseData = await response.json();
-        
+
         if (!response.ok) {
-          throw new Error(`Twilio WhatsApp API error: ${responseData.message || response.statusText}`);
+          throw new Error(
+            `Twilio WhatsApp API error: ${responseData.message || response.statusText}`
+          );
         }
 
         results.push({
@@ -385,22 +393,23 @@ class TwilioWhatsAppProvider implements WhatsAppProvider {
         });
       }
 
-      return results.length === 1 ? results[0] : {
-        success: results.every(r => r.success),
-        messageId: results.map(r => r.messageId).join(','),
-        providerId: this.id,
-        channel: this.channel,
-        timestamp: new Date(),
-        metadata: {
-          ...params.metadata,
-          duration: Date.now() - startTime,
-          bulkResults: results,
-        },
-      };
-
+      return results.length === 1
+        ? results[0]
+        : {
+            success: results.every((r) => r.success),
+            messageId: results.map((r) => r.messageId).join(','),
+            providerId: this.id,
+            channel: this.channel,
+            timestamp: new Date(),
+            metadata: {
+              ...params.metadata,
+              duration: Date.now() - startTime,
+              bulkResults: results,
+            },
+          };
     } catch (error) {
       const duration = Date.now() - startTime;
-      
+
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -410,7 +419,7 @@ class TwilioWhatsAppProvider implements WhatsAppProvider {
         metadata: {
           ...params.metadata,
           duration,
-          error: error,
+          error,
         },
       };
     }
@@ -444,13 +453,13 @@ class TwilioWhatsAppProvider implements WhatsAppProvider {
         `https://api.twilio.com/2010-04-01/Accounts/${this.accountSid}/Messages/${messageId}.json`,
         {
           headers: {
-            'Authorization': `Basic ${auth}`,
+            Authorization: `Basic ${auth}`,
           },
         }
       );
 
       const data = await response.json();
-      
+
       if (!response.ok) {
         throw new Error(`Twilio API error: ${data.message}`);
       }
@@ -460,11 +469,13 @@ class TwilioWhatsAppProvider implements WhatsAppProvider {
         timestamp: data.date_updated ? new Date(data.date_updated) : undefined,
         errorCode: data.error_code,
         errorMessage: data.error_message,
-        pricing: data.price ? {
-          category: data.subresource_uris?.media ? 'media' : 'text',
-          price: data.price,
-          currency: data.price_unit,
-        } : undefined,
+        pricing: data.price
+          ? {
+              category: data.subresource_uris?.media ? 'media' : 'text',
+              price: data.price,
+              currency: data.price_unit,
+            }
+          : undefined,
       };
     } catch (error) {
       return {
@@ -474,10 +485,13 @@ class TwilioWhatsAppProvider implements WhatsAppProvider {
     }
   }
 
-  private async sendSessionMessage(phoneNumber: string, params: WhatsAppParams): Promise<NotificationResult> {
+  private async sendSessionMessage(
+    phoneNumber: string,
+    params: WhatsAppParams
+  ): Promise<NotificationResult> {
     // Session messages can only be sent within 24h window after user interaction
     const auth = btoa(`${this.accountSid}:${this.authToken}`);
-    
+
     const payload = new URLSearchParams({
       To: `whatsapp:${phoneNumber}`,
       From: `whatsapp:${this.fromNumber}`,
@@ -497,7 +511,7 @@ class TwilioWhatsAppProvider implements WhatsAppProvider {
       {
         method: 'POST',
         headers: {
-          'Authorization': `Basic ${auth}`,
+          Authorization: `Basic ${auth}`,
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: payload,
@@ -505,9 +519,11 @@ class TwilioWhatsAppProvider implements WhatsAppProvider {
     );
 
     const responseData = await response.json();
-    
+
     if (!response.ok) {
-      throw new Error(`Twilio WhatsApp API error: ${responseData.message || response.statusText}`);
+      throw new Error(
+        `Twilio WhatsApp API error: ${responseData.message || response.statusText}`
+      );
     }
 
     return {
@@ -525,11 +541,15 @@ class TwilioWhatsAppProvider implements WhatsAppProvider {
     };
   }
 
-  private buildTemplateContent(templateName: string, language: string, parameters?: WhatsAppTemplateParameter[]): string {
+  private buildTemplateContent(
+    templateName: string,
+    _language: string,
+    parameters?: WhatsAppTemplateParameter[]
+  ): string {
     // This would typically fetch template from Twilio or your template store
     // For now, return template name as placeholder
     let content = `{{${templateName}}}`;
-    
+
     if (parameters) {
       parameters.forEach((param, index) => {
         if (param.type === 'text' && param.text) {
@@ -537,64 +557,83 @@ class TwilioWhatsAppProvider implements WhatsAppProvider {
         }
       });
     }
-    
+
     return content;
   }
 
-  private mapTwilioStatus(twilioStatus: string): WhatsAppMessageStatus['status'] {
+  private mapTwilioStatus(
+    twilioStatus: string
+  ): WhatsAppMessageStatus['status'] {
     const statusMap: Record<string, WhatsAppMessageStatus['status']> = {
-      'queued': 'queued',
-      'sending': 'sent',
-      'sent': 'sent',
-      'delivered': 'delivered',
-      'read': 'read',
-      'failed': 'failed',
-      'undelivered': 'failed',
+      queued: 'queued',
+      sending: 'sent',
+      sent: 'sent',
+      delivered: 'delivered',
+      read: 'read',
+      failed: 'failed',
+      undelivered: 'failed',
     };
-    
+
     return statusMap[twilioStatus] || 'failed';
   }
 
-  private async validateLGPDCompliance(lgpdData: LGPDCompliantData): Promise<void> {
+  private async validateLGPDCompliance(
+    lgpdData: LGPDCompliantData
+  ): Promise<void> {
     if (!lgpdData.consentGiven) {
       throw new Error('LGPD: WhatsApp consent not provided');
     }
-    
+
     if (lgpdData.consentExpiry && new Date() > lgpdData.consentExpiry) {
       throw new Error('LGPD: WhatsApp consent expired');
     }
-    
-    if (!lgpdData.purposes.includes('notifications') && !lgpdData.purposes.includes('marketing')) {
+
+    if (
+      !(
+        lgpdData.purposes.includes('notifications') ||
+        lgpdData.purposes.includes('marketing')
+      )
+    ) {
       throw new Error('LGPD: WhatsApp purpose not authorized');
     }
   }
 
-  private async validateWhatsAppCompliance(params: WhatsAppParams): Promise<void> {
+  private async validateWhatsAppCompliance(
+    params: WhatsAppParams
+  ): Promise<void> {
     const context = params.metadata.whatsappContext!;
-    
+
     // Check 24-hour session window for session messages
-    if (context.messageType === 'session' && context.sessionExpiresAt) {
-      if (new Date() > context.sessionExpiresAt) {
-        throw new Error('WhatsApp: 24-hour session window expired, must use template message');
-      }
+    if (
+      context.messageType === 'session' &&
+      context.sessionExpiresAt &&
+      new Date() > context.sessionExpiresAt
+    ) {
+      throw new Error(
+        'WhatsApp: 24-hour session window expired, must use template message'
+      );
     }
 
     // Marketing message restrictions
     if (context.category === 'marketing') {
       const now = new Date();
       const hour = now.getHours();
-      
+
       // No marketing messages outside business hours (8 AM - 8 PM)
       if (hour < 8 || hour >= 20) {
-        throw new Error('WhatsApp: Marketing messages restricted outside business hours');
+        throw new Error(
+          'WhatsApp: Marketing messages restricted outside business hours'
+        );
       }
     }
 
     // Require opt-in for marketing
-    if (this.config.compliance.requireOptIn && context.category === 'marketing') {
-      if (!params.metadata.lgpdConsent.purposes.includes('marketing')) {
-        throw new Error('WhatsApp: Marketing opt-in required');
-      }
+    if (
+      this.config.compliance.requireOptIn &&
+      context.category === 'marketing' &&
+      !params.metadata.lgpdConsent.purposes.includes('marketing')
+    ) {
+      throw new Error('WhatsApp: Marketing opt-in required');
     }
   }
 }
@@ -605,7 +644,6 @@ class TwilioWhatsAppProvider implements WhatsAppProvider {
  */
 class WhatsAppProviderFactory {
   private provider: WhatsAppProvider;
-  private config: WhatsAppProviderConfig;
 
   constructor(config: WhatsAppProviderConfig) {
     this.config = config;
@@ -627,7 +665,8 @@ class WhatsAppProviderFactory {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'WhatsApp provider failed',
+        error:
+          error instanceof Error ? error.message : 'WhatsApp provider failed',
         providerId: 'whatsapp-factory',
         channel: 'whatsapp',
         timestamp: new Date(),
@@ -636,14 +675,17 @@ class WhatsAppProviderFactory {
     }
   }
 
-  async sendTemplate(params: WhatsAppTemplateParams): Promise<NotificationResult> {
+  async sendTemplate(
+    params: WhatsAppTemplateParams
+  ): Promise<NotificationResult> {
     try {
       const provider = await this.getProvider();
       return await provider.sendTemplate(params);
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'WhatsApp template failed',
+        error:
+          error instanceof Error ? error.message : 'WhatsApp template failed',
         providerId: 'whatsapp-factory',
         channel: 'whatsapp',
         timestamp: new Date(),
@@ -652,14 +694,17 @@ class WhatsAppProviderFactory {
     }
   }
 
-  async sendBulkWhatsApp(params: BulkWhatsAppParams): Promise<NotificationResult[]> {
+  async sendBulkWhatsApp(
+    params: BulkWhatsAppParams
+  ): Promise<NotificationResult[]> {
     try {
       const provider = await this.getProvider();
       return await provider.sendBulkWhatsApp(params);
     } catch (error) {
-      return params.messages.map(message => ({
+      return params.messages.map((message) => ({
         success: false,
-        error: error instanceof Error ? error.message : 'WhatsApp provider failed',
+        error:
+          error instanceof Error ? error.message : 'WhatsApp provider failed',
         providerId: 'whatsapp-factory',
         channel: 'whatsapp',
         timestamp: new Date(),
@@ -670,14 +715,14 @@ class WhatsAppProviderFactory {
 }
 
 // Export types and implementations
-export type { 
-  WhatsAppProvider, 
-  WhatsAppParams, 
-  BulkWhatsAppParams, 
+export type {
+  WhatsAppProvider,
+  WhatsAppParams,
+  BulkWhatsAppParams,
   WhatsAppTemplateParams,
   WhatsAppTemplateParameter,
   WhatsAppBusinessContext,
   WhatsAppMessageStatus,
-  WhatsAppProviderConfig 
+  WhatsAppProviderConfig,
 };
 export { TwilioWhatsAppProvider, WhatsAppProviderFactory };

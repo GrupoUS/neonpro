@@ -1,6 +1,6 @@
 /**
  * Vision Analysis Configuration Hook for NeonPro
- * 
+ *
  * Custom hook for managing computer vision analysis configuration and user preferences.
  * Provides functionality for:
  * - Loading and updating user-specific configurations
@@ -8,11 +8,11 @@
  * - Handling notification and export preferences
  * - Privacy and sharing settings management
  * - Advanced feature toggles
- * 
+ *
  * Integrates with the vision config API and provides real-time updates.
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 // Configuration interfaces
@@ -21,7 +21,7 @@ export interface VisionAnalysisConfig {
   accuracyThreshold: number;
   confidenceThreshold: number;
   processingTimeLimit: number;
-  
+
   // Image processing settings
   imageProcessing: {
     maxResolution: number;
@@ -29,7 +29,7 @@ export interface VisionAnalysisConfig {
     enablePreprocessing: boolean;
     autoEnhancement: boolean;
   };
-  
+
   // Notification preferences
   notifications: {
     analysisComplete: boolean;
@@ -37,7 +37,7 @@ export interface VisionAnalysisConfig {
     processingTimeAlert: boolean;
     emailNotifications: boolean;
   };
-  
+
   // Export preferences
   export: {
     defaultFormat: 'json' | 'csv' | 'pdf' | 'excel';
@@ -46,7 +46,7 @@ export interface VisionAnalysisConfig {
     includeMetrics: boolean;
     autoExport: boolean;
   };
-  
+
   // Privacy settings
   privacy: {
     dataRetentionDays: number;
@@ -54,7 +54,7 @@ export interface VisionAnalysisConfig {
     shareWithResearch: boolean;
     anonymizeExports: boolean;
   };
-  
+
   // Advanced features
   advanced: {
     enableBatchProcessing: boolean;
@@ -79,28 +79,30 @@ export interface VisionConfigActions {
   discardChanges: () => void;
 }
 
-export interface UseVisionConfigReturn extends VisionConfigState, VisionConfigActions {}
+export interface UseVisionConfigReturn
+  extends VisionConfigState,
+    VisionConfigActions {}
 
 // Default configuration
 const DEFAULT_CONFIG: VisionAnalysisConfig = {
   accuracyThreshold: 0.85,
-  confidenceThreshold: 0.80,
-  processingTimeLimit: 30000, // 30 seconds
-  
+  confidenceThreshold: 0.8,
+  processingTimeLimit: 30_000, // 30 seconds
+
   imageProcessing: {
     maxResolution: 2048,
     compressionQuality: 0.9,
     enablePreprocessing: true,
     autoEnhancement: true,
   },
-  
+
   notifications: {
     analysisComplete: true,
     lowAccuracyAlert: true,
     processingTimeAlert: true,
     emailNotifications: false,
   },
-  
+
   export: {
     defaultFormat: 'json',
     includeImages: true,
@@ -108,14 +110,14 @@ const DEFAULT_CONFIG: VisionAnalysisConfig = {
     includeMetrics: true,
     autoExport: false,
   },
-  
+
   privacy: {
     dataRetentionDays: 365,
     allowAnalytics: true,
     shareWithResearch: false,
     anonymizeExports: true,
   },
-  
+
   advanced: {
     enableBatchProcessing: false,
     useGPUAcceleration: true,
@@ -131,41 +133,42 @@ export function useVisionConfig(): UseVisionConfigReturn {
     hasUnsavedChanges: false,
   });
 
-  const [originalConfig, setOriginalConfig] = useState<VisionAnalysisConfig | null>(null);
+  const [originalConfig, setOriginalConfig] =
+    useState<VisionAnalysisConfig | null>(null);
 
   /**
    * Load configuration from API
    */
   const loadConfig = useCallback(async () => {
-    setState(prev => ({ ...prev, isLoading: true, error: null }));
-    
+    setState((prev) => ({ ...prev, isLoading: true, error: null }));
+
     try {
       const response = await fetch('/api/vision/config');
-      
+
       if (!response.ok) {
         throw new Error('Failed to load configuration');
       }
-      
+
       const data = await response.json();
       const config = data.config || DEFAULT_CONFIG;
-      
-      setState(prev => ({
+
+      setState((prev) => ({
         ...prev,
         config,
         isLoading: false,
         hasUnsavedChanges: false,
       }));
-      
+
       setOriginalConfig(config);
-      
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to load configuration';
-      setState(prev => ({
+      const errorMessage =
+        error instanceof Error ? error.message : 'Failed to load configuration';
+      setState((prev) => ({
         ...prev,
         error: errorMessage,
         isLoading: false,
       }));
-      
+
       console.error('Config load error:', error);
       toast.error('Failed to load configuration');
     }
@@ -174,20 +177,24 @@ export function useVisionConfig(): UseVisionConfigReturn {
   /**
    * Update configuration (local state only)
    */
-  const updateConfig = useCallback(async (updates: Partial<VisionAnalysisConfig>) => {
-    setState(prev => {
-      if (!prev.config) return prev;
-      
-      const newConfig = { ...prev.config, ...updates };
-      const hasChanges = JSON.stringify(newConfig) !== JSON.stringify(originalConfig);
-      
-      return {
-        ...prev,
-        config: newConfig,
-        hasUnsavedChanges: hasChanges,
-      };
-    });
-  }, [originalConfig]);
+  const updateConfig = useCallback(
+    async (updates: Partial<VisionAnalysisConfig>) => {
+      setState((prev) => {
+        if (!prev.config) return prev;
+
+        const newConfig = { ...prev.config, ...updates };
+        const hasChanges =
+          JSON.stringify(newConfig) !== JSON.stringify(originalConfig);
+
+        return {
+          ...prev,
+          config: newConfig,
+          hasUnsavedChanges: hasChanges,
+        };
+      });
+    },
+    [originalConfig]
+  );
 
   /**
    * Save configuration to API
@@ -197,9 +204,9 @@ export function useVisionConfig(): UseVisionConfigReturn {
       toast.error('No configuration to save');
       return;
     }
-    
-    setState(prev => ({ ...prev, isLoading: true, error: null }));
-    
+
+    setState((prev) => ({ ...prev, isLoading: true, error: null }));
+
     try {
       const response = await fetch('/api/vision/config', {
         method: 'PUT',
@@ -208,28 +215,28 @@ export function useVisionConfig(): UseVisionConfigReturn {
         },
         body: JSON.stringify({ config: state.config }),
       });
-      
+
       if (!response.ok) {
         throw new Error('Failed to save configuration');
       }
-      
-      setState(prev => ({
+
+      setState((prev) => ({
         ...prev,
         isLoading: false,
         hasUnsavedChanges: false,
       }));
-      
+
       setOriginalConfig(state.config);
       toast.success('Configuration saved successfully');
-      
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to save configuration';
-      setState(prev => ({
+      const errorMessage =
+        error instanceof Error ? error.message : 'Failed to save configuration';
+      setState((prev) => ({
         ...prev,
         error: errorMessage,
         isLoading: false,
       }));
-      
+
       console.error('Config save error:', error);
       toast.error('Failed to save configuration');
     }
@@ -239,38 +246,40 @@ export function useVisionConfig(): UseVisionConfigReturn {
    * Reset configuration to defaults
    */
   const resetToDefaults = useCallback(async () => {
-    setState(prev => ({ ...prev, isLoading: true, error: null }));
-    
+    setState((prev) => ({ ...prev, isLoading: true, error: null }));
+
     try {
       const response = await fetch('/api/vision/config', {
         method: 'POST',
       });
-      
+
       if (!response.ok) {
         throw new Error('Failed to reset configuration');
       }
-      
+
       const data = await response.json();
       const config = data.config || DEFAULT_CONFIG;
-      
-      setState(prev => ({
+
+      setState((prev) => ({
         ...prev,
         config,
         isLoading: false,
         hasUnsavedChanges: false,
       }));
-      
+
       setOriginalConfig(config);
       toast.success('Configuration reset to defaults');
-      
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to reset configuration';
-      setState(prev => ({
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : 'Failed to reset configuration';
+      setState((prev) => ({
         ...prev,
         error: errorMessage,
         isLoading: false,
       }));
-      
+
       console.error('Config reset error:', error);
       toast.error('Failed to reset configuration');
     }
@@ -281,13 +290,13 @@ export function useVisionConfig(): UseVisionConfigReturn {
    */
   const discardChanges = useCallback(() => {
     if (originalConfig) {
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
         config: originalConfig,
         hasUnsavedChanges: false,
         error: null,
       }));
-      
+
       toast.success('Changes discarded');
     }
   }, [originalConfig]);

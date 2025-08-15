@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { createClient } from "@/app/utils/supabase/client";
 import {
   createContext,
-  ReactNode,
+  type ReactNode,
   useContext,
   useEffect,
   useReducer,
-} from "react";
-import { toast } from "sonner";
+} from 'react';
+import { toast } from 'sonner';
+import { createClient } from '@/app/utils/supabase/client';
 
 // Types
 export interface Customer {
@@ -28,7 +28,7 @@ export interface Customer {
   sms_opt_in: boolean;
   whatsapp_opt_in: boolean;
   marketing_opt_in: boolean;
-  status: "active" | "inactive" | "blocked";
+  status: 'active' | 'inactive' | 'blocked';
   created_at: string;
   updated_at: string;
 }
@@ -50,8 +50,8 @@ export interface MarketingCampaign {
   id: string;
   name: string;
   description?: string;
-  type: "email" | "sms" | "whatsapp" | "push";
-  status: "draft" | "scheduled" | "sending" | "sent" | "cancelled";
+  type: 'email' | 'sms' | 'whatsapp' | 'push';
+  status: 'draft' | 'scheduled' | 'sending' | 'sent' | 'cancelled';
   target_segment_id?: string;
   target_all_customers: boolean;
   subject?: string;
@@ -91,34 +91,34 @@ interface CRMState {
 // Actions
 type CRMAction =
   | {
-      type: "SET_LOADING";
-      payload: { key: keyof CRMState["loading"]; value: boolean };
+      type: 'SET_LOADING';
+      payload: { key: keyof CRMState['loading']; value: boolean };
     }
   | {
-      type: "SET_ERROR";
-      payload: { key: keyof CRMState["errors"]; value?: string };
+      type: 'SET_ERROR';
+      payload: { key: keyof CRMState['errors']; value?: string };
     }
-  | { type: "SET_CUSTOMERS"; payload: Customer[] }
-  | { type: "ADD_CUSTOMER"; payload: Customer }
-  | { type: "UPDATE_CUSTOMER"; payload: Customer }
-  | { type: "DELETE_CUSTOMER"; payload: string }
-  | { type: "SET_SEGMENTS"; payload: CustomerSegment[] }
-  | { type: "ADD_SEGMENT"; payload: CustomerSegment }
-  | { type: "UPDATE_SEGMENT"; payload: CustomerSegment }
-  | { type: "DELETE_SEGMENT"; payload: string }
-  | { type: "SET_CAMPAIGNS"; payload: MarketingCampaign[] }
-  | { type: "ADD_CAMPAIGN"; payload: MarketingCampaign }
-  | { type: "UPDATE_CAMPAIGN"; payload: MarketingCampaign }
-  | { type: "DELETE_CAMPAIGN"; payload: string }
+  | { type: 'SET_CUSTOMERS'; payload: Customer[] }
+  | { type: 'ADD_CUSTOMER'; payload: Customer }
+  | { type: 'UPDATE_CUSTOMER'; payload: Customer }
+  | { type: 'DELETE_CUSTOMER'; payload: string }
+  | { type: 'SET_SEGMENTS'; payload: CustomerSegment[] }
+  | { type: 'ADD_SEGMENT'; payload: CustomerSegment }
+  | { type: 'UPDATE_SEGMENT'; payload: CustomerSegment }
+  | { type: 'DELETE_SEGMENT'; payload: string }
+  | { type: 'SET_CAMPAIGNS'; payload: MarketingCampaign[] }
+  | { type: 'ADD_CAMPAIGN'; payload: MarketingCampaign }
+  | { type: 'UPDATE_CAMPAIGN'; payload: MarketingCampaign }
+  | { type: 'DELETE_CAMPAIGN'; payload: string }
   | {
-      type: "SET_FILTER";
-      payload: { key: keyof CRMState["filters"]; value: string };
+      type: 'SET_FILTER';
+      payload: { key: keyof CRMState['filters']; value: string };
     };
 
 // Reducer
 const crmReducer = (state: CRMState, action: CRMAction): CRMState => {
   switch (action.type) {
-    case "SET_LOADING":
+    case 'SET_LOADING':
       return {
         ...state,
         loading: {
@@ -126,66 +126,66 @@ const crmReducer = (state: CRMState, action: CRMAction): CRMState => {
           [action.payload.key]: action.payload.value,
         },
       };
-    case "SET_ERROR":
+    case 'SET_ERROR':
       return {
         ...state,
         errors: { ...state.errors, [action.payload.key]: action.payload.value },
       };
-    case "SET_CUSTOMERS":
+    case 'SET_CUSTOMERS':
       return { ...state, customers: action.payload };
-    case "ADD_CUSTOMER":
+    case 'ADD_CUSTOMER':
       return { ...state, customers: [...state.customers, action.payload] };
-    case "UPDATE_CUSTOMER":
+    case 'UPDATE_CUSTOMER':
       return {
         ...state,
         customers: state.customers.map((customer) =>
           customer.id === action.payload.id ? action.payload : customer
         ),
       };
-    case "DELETE_CUSTOMER":
+    case 'DELETE_CUSTOMER':
       return {
         ...state,
         customers: state.customers.filter(
           (customer) => customer.id !== action.payload
         ),
       };
-    case "SET_SEGMENTS":
+    case 'SET_SEGMENTS':
       return { ...state, segments: action.payload };
-    case "ADD_SEGMENT":
+    case 'ADD_SEGMENT':
       return { ...state, segments: [...state.segments, action.payload] };
-    case "UPDATE_SEGMENT":
+    case 'UPDATE_SEGMENT':
       return {
         ...state,
         segments: state.segments.map((segment) =>
           segment.id === action.payload.id ? action.payload : segment
         ),
       };
-    case "DELETE_SEGMENT":
+    case 'DELETE_SEGMENT':
       return {
         ...state,
         segments: state.segments.filter(
           (segment) => segment.id !== action.payload
         ),
       };
-    case "SET_CAMPAIGNS":
+    case 'SET_CAMPAIGNS':
       return { ...state, campaigns: action.payload };
-    case "ADD_CAMPAIGN":
+    case 'ADD_CAMPAIGN':
       return { ...state, campaigns: [...state.campaigns, action.payload] };
-    case "UPDATE_CAMPAIGN":
+    case 'UPDATE_CAMPAIGN':
       return {
         ...state,
         campaigns: state.campaigns.map((campaign) =>
           campaign.id === action.payload.id ? action.payload : campaign
         ),
       };
-    case "DELETE_CAMPAIGN":
+    case 'DELETE_CAMPAIGN':
       return {
         ...state,
         campaigns: state.campaigns.filter(
           (campaign) => campaign.id !== action.payload
         ),
       };
-    case "SET_FILTER":
+    case 'SET_FILTER':
       return {
         ...state,
         filters: {
@@ -210,9 +210,9 @@ const initialState: CRMState = {
   },
   errors: {},
   filters: {
-    customer_search: "",
-    customer_status: "",
-    customer_segment: "",
+    customer_search: '',
+    customer_status: '',
+    customer_segment: '',
   },
 };
 
@@ -223,7 +223,7 @@ interface CRMContextType {
   // Customer actions
   loadCustomers: () => Promise<void>;
   createCustomer: (
-    customer: Omit<Customer, "id" | "created_at" | "updated_at">
+    customer: Omit<Customer, 'id' | 'created_at' | 'updated_at'>
   ) => Promise<void>;
   updateCustomer: (customer: Customer) => Promise<void>;
   deleteCustomer: (customerId: string) => Promise<void>;
@@ -231,7 +231,7 @@ interface CRMContextType {
   // Segment actions
   loadSegments: () => Promise<void>;
   createSegment: (
-    segment: Omit<CustomerSegment, "id" | "created_at" | "updated_at">
+    segment: Omit<CustomerSegment, 'id' | 'created_at' | 'updated_at'>
   ) => Promise<void>;
   updateSegment: (segment: CustomerSegment) => Promise<void>;
   deleteSegment: (segmentId: string) => Promise<void>;
@@ -239,13 +239,13 @@ interface CRMContextType {
   // Campaign actions
   loadCampaigns: () => Promise<void>;
   createCampaign: (
-    campaign: Omit<MarketingCampaign, "id" | "created_at" | "updated_at">
+    campaign: Omit<MarketingCampaign, 'id' | 'created_at' | 'updated_at'>
   ) => Promise<void>;
   updateCampaign: (campaign: MarketingCampaign) => Promise<void>;
   deleteCampaign: (campaignId: string) => Promise<void>;
 
   // Filter actions
-  setFilter: (key: keyof CRMState["filters"], value: string) => void;
+  setFilter: (key: keyof CRMState['filters'], value: string) => void;
   clearFilters: () => void;
 
   // Computed properties
@@ -263,17 +263,17 @@ export function CRMProvider({ children }: { children: ReactNode }) {
   // Customer functions
   const loadCustomers = async () => {
     dispatch({
-      type: "SET_LOADING",
-      payload: { key: "customers", value: true },
+      type: 'SET_LOADING',
+      payload: { key: 'customers', value: true },
     });
     dispatch({
-      type: "SET_ERROR",
-      payload: { key: "customers", value: undefined },
+      type: 'SET_ERROR',
+      payload: { key: 'customers', value: undefined },
     });
 
     try {
       const { data, error } = await supabase
-        .from("customers")
+        .from('customers')
         .select(
           `
           *,
@@ -284,43 +284,43 @@ export function CRMProvider({ children }: { children: ReactNode }) {
           )
         `
         )
-        .order("created_at", { ascending: false });
+        .order('created_at', { ascending: false });
 
       if (error) throw error;
 
-      dispatch({ type: "SET_CUSTOMERS", payload: data || [] });
+      dispatch({ type: 'SET_CUSTOMERS', payload: data || [] });
     } catch (error) {
-      console.error("Error loading customers:", error);
+      console.error('Error loading customers:', error);
       dispatch({
-        type: "SET_ERROR",
-        payload: { key: "customers", value: "Erro ao carregar clientes" },
+        type: 'SET_ERROR',
+        payload: { key: 'customers', value: 'Erro ao carregar clientes' },
       });
-      toast.error("Erro ao carregar clientes");
+      toast.error('Erro ao carregar clientes');
     } finally {
       dispatch({
-        type: "SET_LOADING",
-        payload: { key: "customers", value: false },
+        type: 'SET_LOADING',
+        payload: { key: 'customers', value: false },
       });
     }
   };
 
   const createCustomer = async (
-    customerData: Omit<Customer, "id" | "created_at" | "updated_at">
+    customerData: Omit<Customer, 'id' | 'created_at' | 'updated_at'>
   ) => {
     try {
       const { data, error } = await supabase
-        .from("customers")
+        .from('customers')
         .insert([customerData])
         .select()
         .single();
 
       if (error) throw error;
 
-      dispatch({ type: "ADD_CUSTOMER", payload: data });
-      toast.success("Cliente criado com sucesso");
+      dispatch({ type: 'ADD_CUSTOMER', payload: data });
+      toast.success('Cliente criado com sucesso');
     } catch (error) {
-      console.error("Error creating customer:", error);
-      toast.error("Erro ao criar cliente");
+      console.error('Error creating customer:', error);
+      toast.error('Erro ao criar cliente');
       throw error;
     }
   };
@@ -328,19 +328,19 @@ export function CRMProvider({ children }: { children: ReactNode }) {
   const updateCustomer = async (customer: Customer) => {
     try {
       const { data, error } = await supabase
-        .from("customers")
+        .from('customers')
         .update(customer)
-        .eq("id", customer.id)
+        .eq('id', customer.id)
         .select()
         .single();
 
       if (error) throw error;
 
-      dispatch({ type: "UPDATE_CUSTOMER", payload: data });
-      toast.success("Cliente atualizado com sucesso");
+      dispatch({ type: 'UPDATE_CUSTOMER', payload: data });
+      toast.success('Cliente atualizado com sucesso');
     } catch (error) {
-      console.error("Error updating customer:", error);
-      toast.error("Erro ao atualizar cliente");
+      console.error('Error updating customer:', error);
+      toast.error('Erro ao atualizar cliente');
       throw error;
     }
   };
@@ -348,17 +348,17 @@ export function CRMProvider({ children }: { children: ReactNode }) {
   const deleteCustomer = async (customerId: string) => {
     try {
       const { error } = await supabase
-        .from("customers")
+        .from('customers')
         .delete()
-        .eq("id", customerId);
+        .eq('id', customerId);
 
       if (error) throw error;
 
-      dispatch({ type: "DELETE_CUSTOMER", payload: customerId });
-      toast.success("Cliente excluído com sucesso");
+      dispatch({ type: 'DELETE_CUSTOMER', payload: customerId });
+      toast.success('Cliente excluído com sucesso');
     } catch (error) {
-      console.error("Error deleting customer:", error);
-      toast.error("Erro ao excluir cliente");
+      console.error('Error deleting customer:', error);
+      toast.error('Erro ao excluir cliente');
       throw error;
     }
   };
@@ -366,55 +366,55 @@ export function CRMProvider({ children }: { children: ReactNode }) {
   // Segment functions
   const loadSegments = async () => {
     dispatch({
-      type: "SET_LOADING",
-      payload: { key: "segments", value: true },
+      type: 'SET_LOADING',
+      payload: { key: 'segments', value: true },
     });
     dispatch({
-      type: "SET_ERROR",
-      payload: { key: "segments", value: undefined },
+      type: 'SET_ERROR',
+      payload: { key: 'segments', value: undefined },
     });
 
     try {
       const { data, error } = await supabase
-        .from("customer_segments")
-        .select("*")
-        .order("created_at", { ascending: false });
+        .from('customer_segments')
+        .select('*')
+        .order('created_at', { ascending: false });
 
       if (error) throw error;
 
-      dispatch({ type: "SET_SEGMENTS", payload: data || [] });
+      dispatch({ type: 'SET_SEGMENTS', payload: data || [] });
     } catch (error) {
-      console.error("Error loading segments:", error);
+      console.error('Error loading segments:', error);
       dispatch({
-        type: "SET_ERROR",
-        payload: { key: "segments", value: "Erro ao carregar segmentos" },
+        type: 'SET_ERROR',
+        payload: { key: 'segments', value: 'Erro ao carregar segmentos' },
       });
-      toast.error("Erro ao carregar segmentos");
+      toast.error('Erro ao carregar segmentos');
     } finally {
       dispatch({
-        type: "SET_LOADING",
-        payload: { key: "segments", value: false },
+        type: 'SET_LOADING',
+        payload: { key: 'segments', value: false },
       });
     }
   };
 
   const createSegment = async (
-    segmentData: Omit<CustomerSegment, "id" | "created_at" | "updated_at">
+    segmentData: Omit<CustomerSegment, 'id' | 'created_at' | 'updated_at'>
   ) => {
     try {
       const { data, error } = await supabase
-        .from("customer_segments")
+        .from('customer_segments')
         .insert([segmentData])
         .select()
         .single();
 
       if (error) throw error;
 
-      dispatch({ type: "ADD_SEGMENT", payload: data });
-      toast.success("Segmento criado com sucesso");
+      dispatch({ type: 'ADD_SEGMENT', payload: data });
+      toast.success('Segmento criado com sucesso');
     } catch (error) {
-      console.error("Error creating segment:", error);
-      toast.error("Erro ao criar segmento");
+      console.error('Error creating segment:', error);
+      toast.error('Erro ao criar segmento');
       throw error;
     }
   };
@@ -422,19 +422,19 @@ export function CRMProvider({ children }: { children: ReactNode }) {
   const updateSegment = async (segment: CustomerSegment) => {
     try {
       const { data, error } = await supabase
-        .from("customer_segments")
+        .from('customer_segments')
         .update(segment)
-        .eq("id", segment.id)
+        .eq('id', segment.id)
         .select()
         .single();
 
       if (error) throw error;
 
-      dispatch({ type: "UPDATE_SEGMENT", payload: data });
-      toast.success("Segmento atualizado com sucesso");
+      dispatch({ type: 'UPDATE_SEGMENT', payload: data });
+      toast.success('Segmento atualizado com sucesso');
     } catch (error) {
-      console.error("Error updating segment:", error);
-      toast.error("Erro ao atualizar segmento");
+      console.error('Error updating segment:', error);
+      toast.error('Erro ao atualizar segmento');
       throw error;
     }
   };
@@ -442,17 +442,17 @@ export function CRMProvider({ children }: { children: ReactNode }) {
   const deleteSegment = async (segmentId: string) => {
     try {
       const { error } = await supabase
-        .from("customer_segments")
+        .from('customer_segments')
         .delete()
-        .eq("id", segmentId);
+        .eq('id', segmentId);
 
       if (error) throw error;
 
-      dispatch({ type: "DELETE_SEGMENT", payload: segmentId });
-      toast.success("Segmento excluído com sucesso");
+      dispatch({ type: 'DELETE_SEGMENT', payload: segmentId });
+      toast.success('Segmento excluído com sucesso');
     } catch (error) {
-      console.error("Error deleting segment:", error);
-      toast.error("Erro ao excluir segmento");
+      console.error('Error deleting segment:', error);
+      toast.error('Erro ao excluir segmento');
       throw error;
     }
   };
@@ -460,55 +460,55 @@ export function CRMProvider({ children }: { children: ReactNode }) {
   // Campaign functions
   const loadCampaigns = async () => {
     dispatch({
-      type: "SET_LOADING",
-      payload: { key: "campaigns", value: true },
+      type: 'SET_LOADING',
+      payload: { key: 'campaigns', value: true },
     });
     dispatch({
-      type: "SET_ERROR",
-      payload: { key: "campaigns", value: undefined },
+      type: 'SET_ERROR',
+      payload: { key: 'campaigns', value: undefined },
     });
 
     try {
       const { data, error } = await supabase
-        .from("marketing_campaigns")
-        .select("*")
-        .order("created_at", { ascending: false });
+        .from('marketing_campaigns')
+        .select('*')
+        .order('created_at', { ascending: false });
 
       if (error) throw error;
 
-      dispatch({ type: "SET_CAMPAIGNS", payload: data || [] });
+      dispatch({ type: 'SET_CAMPAIGNS', payload: data || [] });
     } catch (error) {
-      console.error("Error loading campaigns:", error);
+      console.error('Error loading campaigns:', error);
       dispatch({
-        type: "SET_ERROR",
-        payload: { key: "campaigns", value: "Erro ao carregar campanhas" },
+        type: 'SET_ERROR',
+        payload: { key: 'campaigns', value: 'Erro ao carregar campanhas' },
       });
-      toast.error("Erro ao carregar campanhas");
+      toast.error('Erro ao carregar campanhas');
     } finally {
       dispatch({
-        type: "SET_LOADING",
-        payload: { key: "campaigns", value: false },
+        type: 'SET_LOADING',
+        payload: { key: 'campaigns', value: false },
       });
     }
   };
 
   const createCampaign = async (
-    campaignData: Omit<MarketingCampaign, "id" | "created_at" | "updated_at">
+    campaignData: Omit<MarketingCampaign, 'id' | 'created_at' | 'updated_at'>
   ) => {
     try {
       const { data, error } = await supabase
-        .from("marketing_campaigns")
+        .from('marketing_campaigns')
         .insert([campaignData])
         .select()
         .single();
 
       if (error) throw error;
 
-      dispatch({ type: "ADD_CAMPAIGN", payload: data });
-      toast.success("Campanha criada com sucesso");
+      dispatch({ type: 'ADD_CAMPAIGN', payload: data });
+      toast.success('Campanha criada com sucesso');
     } catch (error) {
-      console.error("Error creating campaign:", error);
-      toast.error("Erro ao criar campanha");
+      console.error('Error creating campaign:', error);
+      toast.error('Erro ao criar campanha');
       throw error;
     }
   };
@@ -516,19 +516,19 @@ export function CRMProvider({ children }: { children: ReactNode }) {
   const updateCampaign = async (campaign: MarketingCampaign) => {
     try {
       const { data, error } = await supabase
-        .from("marketing_campaigns")
+        .from('marketing_campaigns')
         .update(campaign)
-        .eq("id", campaign.id)
+        .eq('id', campaign.id)
         .select()
         .single();
 
       if (error) throw error;
 
-      dispatch({ type: "UPDATE_CAMPAIGN", payload: data });
-      toast.success("Campanha atualizada com sucesso");
+      dispatch({ type: 'UPDATE_CAMPAIGN', payload: data });
+      toast.success('Campanha atualizada com sucesso');
     } catch (error) {
-      console.error("Error updating campaign:", error);
-      toast.error("Erro ao atualizar campanha");
+      console.error('Error updating campaign:', error);
+      toast.error('Erro ao atualizar campanha');
       throw error;
     }
   };
@@ -536,38 +536,38 @@ export function CRMProvider({ children }: { children: ReactNode }) {
   const deleteCampaign = async (campaignId: string) => {
     try {
       const { error } = await supabase
-        .from("marketing_campaigns")
+        .from('marketing_campaigns')
         .delete()
-        .eq("id", campaignId);
+        .eq('id', campaignId);
 
       if (error) throw error;
 
-      dispatch({ type: "DELETE_CAMPAIGN", payload: campaignId });
-      toast.success("Campanha excluída com sucesso");
+      dispatch({ type: 'DELETE_CAMPAIGN', payload: campaignId });
+      toast.success('Campanha excluída com sucesso');
     } catch (error) {
-      console.error("Error deleting campaign:", error);
-      toast.error("Erro ao excluir campanha");
+      console.error('Error deleting campaign:', error);
+      toast.error('Erro ao excluir campanha');
       throw error;
     }
   };
 
   // Filter functions
-  const setFilter = (key: keyof CRMState["filters"], value: string) => {
-    dispatch({ type: "SET_FILTER", payload: { key, value } });
+  const setFilter = (key: keyof CRMState['filters'], value: string) => {
+    dispatch({ type: 'SET_FILTER', payload: { key, value } });
   };
 
   const clearFilters = () => {
     dispatch({
-      type: "SET_FILTER",
-      payload: { key: "customer_search", value: "" },
+      type: 'SET_FILTER',
+      payload: { key: 'customer_search', value: '' },
     });
     dispatch({
-      type: "SET_FILTER",
-      payload: { key: "customer_status", value: "" },
+      type: 'SET_FILTER',
+      payload: { key: 'customer_status', value: '' },
     });
     dispatch({
-      type: "SET_FILTER",
-      payload: { key: "customer_segment", value: "" },
+      type: 'SET_FILTER',
+      payload: { key: 'customer_segment', value: '' },
     });
   };
 
@@ -600,7 +600,7 @@ export function CRMProvider({ children }: { children: ReactNode }) {
     loadCustomers();
     loadSegments();
     loadCampaigns();
-  }, []);
+  }, [loadCampaigns, loadCustomers, loadSegments]);
 
   const contextValue: CRMContextType = {
     state,
@@ -640,7 +640,7 @@ export function CRMProvider({ children }: { children: ReactNode }) {
 export function useCRM() {
   const context = useContext(CRMContext);
   if (context === undefined) {
-    throw new Error("useCRM must be used within a CRMProvider");
+    throw new Error('useCRM must be used within a CRMProvider');
   }
   return context;
 }

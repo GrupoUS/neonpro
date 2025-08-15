@@ -1,14 +1,14 @@
 /**
  * API Endpoint: Notification Analytics
- * 
+ *
  * Endpoint para métricas, relatórios e insights de notificações
- * 
+ *
  * @route GET /api/notifications/analytics
  * @author APEX Architecture Team
  * @version 1.0.0
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createClient } from '@/app/utils/supabase/server';
 import { notificationAnalytics } from '@/lib/notifications/analytics/notification-analytics';
@@ -18,32 +18,44 @@ import { notificationAnalytics } from '@/lib/notifications/analytics/notificatio
 // ================================================================================
 
 const AnalyticsQuerySchema = z.object({
-  metric: z.enum(['overview', 'performance', 'engagement', 'channels', 'trends']).default('overview'),
-  period: z.enum(['hour', 'day', 'week', 'month', 'quarter', 'year']).default('week'),
+  metric: z
+    .enum(['overview', 'performance', 'engagement', 'channels', 'trends'])
+    .default('overview'),
+  period: z
+    .enum(['hour', 'day', 'week', 'month', 'quarter', 'year'])
+    .default('week'),
   dateFrom: z.string().datetime().optional(),
   dateTo: z.string().datetime().optional(),
   groupBy: z.enum(['type', 'channel', 'status', 'user']).optional(),
-  filters: z.object({
-    type: z.string().optional(),
-    channel: z.string().optional(),
-    status: z.string().optional(),
-    userId: z.string().uuid().optional(),
-  }).optional(),
+  filters: z
+    .object({
+      type: z.string().optional(),
+      channel: z.string().optional(),
+      status: z.string().optional(),
+      userId: z.string().uuid().optional(),
+    })
+    .optional(),
 });
 
 // ================================================================================
 // HELPER FUNCTIONS
 // ================================================================================
 
-async function validateAuth(request: NextRequest) {
+async function validateAuth(_request: NextRequest) {
   const supabase = await createClient();
-  
-  const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+
+  const {
+    data: { session },
+    error: sessionError,
+  } = await supabase.auth.getSession();
   if (sessionError || !session) {
     return { error: 'Não autenticado', status: 401 };
   }
 
-  const { data: { user }, error: userError } = await supabase.auth.getUser();
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
   if (userError || !user) {
     return { error: 'Usuário inválido', status: 401 };
   }
@@ -59,8 +71,9 @@ async function validateAuth(request: NextRequest) {
   }
 
   // Verificar permissões de analytics
-  const canViewAnalytics = profile.permissions?.includes('view_analytics') || 
-                          ['admin', 'manager'].includes(profile.role);
+  const canViewAnalytics =
+    profile.permissions?.includes('view_analytics') ||
+    ['admin', 'manager'].includes(profile.role);
 
   if (!canViewAnalytics) {
     return { error: 'Sem permissão para visualizar analytics', status: 403 };
@@ -75,32 +88,32 @@ async function validateAuth(request: NextRequest) {
 function calculatePeriod(period: string, dateFrom?: string, dateTo?: string) {
   const now = new Date();
   let from: Date;
-  let to: Date = dateTo ? new Date(dateTo) : now;
+  const to: Date = dateTo ? new Date(dateTo) : now;
 
   if (dateFrom) {
     from = new Date(dateFrom);
   } else {
     switch (period) {
       case 'hour':
-        from = new Date(now.getTime() - (60 * 60 * 1000)); // 1 hora
+        from = new Date(now.getTime() - 60 * 60 * 1000); // 1 hora
         break;
       case 'day':
-        from = new Date(now.getTime() - (24 * 60 * 60 * 1000)); // 1 dia
+        from = new Date(now.getTime() - 24 * 60 * 60 * 1000); // 1 dia
         break;
       case 'week':
-        from = new Date(now.getTime() - (7 * 24 * 60 * 60 * 1000)); // 1 semana
+        from = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000); // 1 semana
         break;
       case 'month':
-        from = new Date(now.getTime() - (30 * 24 * 60 * 60 * 1000)); // 30 dias
+        from = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000); // 30 dias
         break;
       case 'quarter':
-        from = new Date(now.getTime() - (90 * 24 * 60 * 60 * 1000)); // 90 dias
+        from = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000); // 90 dias
         break;
       case 'year':
-        from = new Date(now.getTime() - (365 * 24 * 60 * 60 * 1000)); // 365 dias
+        from = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000); // 365 dias
         break;
       default:
-        from = new Date(now.getTime() - (7 * 24 * 60 * 60 * 1000));
+        from = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
     }
   }
 
@@ -127,7 +140,7 @@ export async function GET(request: NextRequest) {
 
     const { profile } = authResult;
     const { searchParams } = new URL(request.url);
-    
+
     // Validar parâmetros
     const queryParams = {
       metric: searchParams.get('metric') || 'overview',
@@ -146,13 +159,20 @@ export async function GET(request: NextRequest) {
     const validationResult = AnalyticsQuerySchema.safeParse(queryParams);
     if (!validationResult.success) {
       return NextResponse.json(
-        { error: 'Parâmetros inválidos', details: validationResult.error.errors },
+        {
+          error: 'Parâmetros inválidos',
+          details: validationResult.error.errors,
+        },
         { status: 400 }
       );
     }
 
     const query = validationResult.data;
-    const { from, to } = calculatePeriod(query.period, query.dateFrom, query.dateTo);
+    const { from, to } = calculatePeriod(
+      query.period,
+      query.dateFrom,
+      query.dateTo
+    );
 
     // Buscar métricas baseadas no tipo solicitado
     let analyticsData;
@@ -220,13 +240,13 @@ export async function GET(request: NextRequest) {
       data: analyticsData,
       generatedAt: new Date().toISOString(),
     });
-
   } catch (error) {
     console.error('Erro nas analytics de notificações:', error);
     return NextResponse.json(
-      { 
+      {
         error: 'Erro interno do servidor',
-        details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        details:
+          process.env.NODE_ENV === 'development' ? error.message : undefined,
       },
       { status: 500 }
     );

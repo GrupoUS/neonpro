@@ -1,17 +1,17 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import EmailService from '@/app/lib/services/email-service';
+import { createClient } from '@/app/utils/supabase/server';
 
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { session }, error: authError } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+      error: authError,
+    } = await supabase.auth.getSession();
+
     if (authError || !session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { data: profile } = await supabase
@@ -21,10 +21,7 @@ export async function GET(request: NextRequest) {
       .single();
 
     if (!profile?.clinic_id) {
-      return NextResponse.json(
-        { error: 'Clinic not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Clinic not found' }, { status: 404 });
     }
 
     const { searchParams } = new URL(request.url);
@@ -38,11 +35,10 @@ export async function GET(request: NextRequest) {
       startDate: startDate || undefined,
       endDate: endDate || undefined,
       templateId: templateId || undefined,
-      provider: provider || undefined
+      provider: provider || undefined,
     });
 
     return NextResponse.json(analytics);
-
   } catch (error) {
     console.error('Get email analytics error:', error);
     return NextResponse.json(

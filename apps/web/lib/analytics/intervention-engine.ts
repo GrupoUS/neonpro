@@ -5,10 +5,9 @@
 
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import type { Database } from '@/types/database';
-import type { 
-  NoShowPrediction, 
-  InterventionRecommendation,
-  PatientRiskProfile 
+import type {
+  NoShowPrediction,
+  PatientRiskProfile,
 } from './no-show-prediction';
 
 // Intervention execution status
@@ -17,7 +16,7 @@ export enum InterventionStatus {
   EXECUTED = 'EXECUTED',
   FAILED = 'FAILED',
   CANCELLED = 'CANCELLED',
-  PENDING_RESPONSE = 'PENDING_RESPONSE'
+  PENDING_RESPONSE = 'PENDING_RESPONSE',
 }
 
 // Intervention types with detailed configurations
@@ -176,11 +175,11 @@ export class InterventionEngine {
         channel: 'SMS',
         automationLevel: 'FULLY_AUTOMATED',
         executionTime: '24h before',
-        costPerExecution: 0.50,
+        costPerExecution: 0.5,
         averageEffectiveness: 0.35,
         targetRiskLevel: ['LOW', 'MEDIUM'],
         prerequisites: ['valid_phone_number'],
-        contraindications: ['opted_out_sms']
+        contraindications: ['opted_out_sms'],
       },
       {
         id: 'email_confirmation_48h',
@@ -189,11 +188,11 @@ export class InterventionEngine {
         channel: 'EMAIL',
         automationLevel: 'FULLY_AUTOMATED',
         executionTime: '48h before',
-        costPerExecution: 0.10,
+        costPerExecution: 0.1,
         averageEffectiveness: 0.42,
         targetRiskLevel: ['MEDIUM', 'HIGH'],
         prerequisites: ['valid_email'],
-        contraindications: ['opted_out_email']
+        contraindications: ['opted_out_email'],
       },
       {
         id: 'phone_call_high_risk',
@@ -202,11 +201,11 @@ export class InterventionEngine {
         channel: 'PHONE',
         automationLevel: 'MANUAL',
         executionTime: '48h before',
-        costPerExecution: 15.00,
+        costPerExecution: 15.0,
         averageEffectiveness: 0.75,
         targetRiskLevel: ['HIGH', 'CRITICAL'],
         prerequisites: ['valid_phone_number'],
-        contraindications: ['do_not_call_list']
+        contraindications: ['do_not_call_list'],
       },
       {
         id: 'loyalty_incentive',
@@ -215,11 +214,11 @@ export class InterventionEngine {
         channel: 'MULTIPLE',
         automationLevel: 'SEMI_AUTOMATED',
         executionTime: '72h before',
-        costPerExecution: 5.00,
+        costPerExecution: 5.0,
         averageEffectiveness: 0.55,
         targetRiskLevel: ['HIGH', 'CRITICAL'],
         prerequisites: ['enrolled_loyalty_program'],
-        contraindications: ['recent_incentive_used']
+        contraindications: ['recent_incentive_used'],
       },
       {
         id: 'educational_content',
@@ -232,11 +231,11 @@ export class InterventionEngine {
         averageEffectiveness: 0.28,
         targetRiskLevel: ['LOW', 'MEDIUM', 'HIGH'],
         prerequisites: ['valid_email'],
-        contraindications: []
-      }
+        contraindications: [],
+      },
     ];
 
-    types.forEach(type => this.interventionTypes.set(type.id, type));
+    types.forEach((type) => this.interventionTypes.set(type.id, type));
   }
 
   /**
@@ -254,8 +253,12 @@ export class InterventionEngine {
       const timeToAppointment = appointmentDate.getTime() - now.getTime();
 
       // Get patient preferences and constraints
-      const patientConstraints = await this.getPatientConstraints(prediction.patientId);
-      const historicalEffectiveness = await this.getHistoricalEffectiveness(prediction.patientId);
+      const patientConstraints = await this.getPatientConstraints(
+        prediction.patientId
+      );
+      const historicalEffectiveness = await this.getHistoricalEffectiveness(
+        prediction.patientId
+      );
 
       // Analyze each intervention type for suitability
       for (const [typeId, interventionType] of this.interventionTypes) {
@@ -275,7 +278,8 @@ export class InterventionEngine {
             riskProfile,
             appointmentData,
             suitability,
-            historicalEffectiveness[typeId] || interventionType.averageEffectiveness
+            historicalEffectiveness[typeId] ||
+              interventionType.averageEffectiveness
           );
 
           recommendations.push(recommendation);
@@ -291,7 +295,6 @@ export class InterventionEngine {
       });
 
       return recommendations.slice(0, 5); // Return top 5 recommendations
-
     } catch (error) {
       console.error('Error generating smart recommendations:', error);
       throw new Error('Failed to generate intervention recommendations');
@@ -310,17 +313,20 @@ export class InterventionEngine {
 
     for (let i = 0; i < predictions.length; i += batchSize) {
       const batch = predictions.slice(i, i + batchSize);
-      const batchPromises = batch.map(prediction => 
+      const batchPromises = batch.map((prediction) =>
         this.executePatientInterventions(prediction, campaignId)
       );
 
       const batchResults = await Promise.allSettled(batchPromises);
-      
+
       batchResults.forEach((result, index) => {
         if (result.status === 'fulfilled') {
           executions.push(...result.value);
         } else {
-          console.error(`Failed to execute interventions for prediction ${batch[index].appointmentId}:`, result.reason);
+          console.error(
+            `Failed to execute interventions for prediction ${batch[index].appointmentId}:`,
+            result.reason
+          );
         }
       });
     }
@@ -339,10 +345,12 @@ export class InterventionEngine {
 
     // Generate recommendations
     const riskProfile = await this.getPatientRiskProfile(prediction.patientId);
-    const appointmentData = await this.getAppointmentData(prediction.appointmentId);
+    const appointmentData = await this.getAppointmentData(
+      prediction.appointmentId
+    );
     const recommendations = await this.generateSmartRecommendations(
-      prediction, 
-      riskProfile, 
+      prediction,
+      riskProfile,
       appointmentData
     );
 
@@ -357,7 +365,10 @@ export class InterventionEngine {
         );
         executions.push(execution);
       } catch (error) {
-        console.error(`Failed to schedule intervention ${recommendation.interventionTypeId}:`, error);
+        console.error(
+          `Failed to schedule intervention ${recommendation.interventionTypeId}:`,
+          error
+        );
       }
     }
 
@@ -370,12 +381,16 @@ export class InterventionEngine {
   private async scheduleIntervention(
     recommendation: SmartInterventionRecommendation,
     prediction: NoShowPrediction,
-    appointmentData: any,
+    _appointmentData: any,
     campaignId?: string
   ): Promise<InterventionExecution> {
-    const interventionType = this.interventionTypes.get(recommendation.interventionTypeId);
+    const interventionType = this.interventionTypes.get(
+      recommendation.interventionTypeId
+    );
     if (!interventionType) {
-      throw new Error(`Intervention type ${recommendation.interventionTypeId} not found`);
+      throw new Error(
+        `Intervention type ${recommendation.interventionTypeId} not found`
+      );
     }
 
     const execution: InterventionExecution = {
@@ -393,8 +408,8 @@ export class InterventionEngine {
         riskScore: prediction.riskScore,
         confidence: prediction.confidence,
         expectedEffectiveness: recommendation.expectedEffectiveness,
-        reasoning: recommendation.reasoning
-      }
+        reasoning: recommendation.reasoning,
+      },
     };
 
     // Save to database
@@ -416,7 +431,7 @@ export class InterventionEngine {
   ): Promise<InterventionCampaign> {
     const campaign: InterventionCampaign = {
       id: this.generateCampaignId(),
-      ...campaignConfig
+      ...campaignConfig,
     };
 
     this.activeCampaigns.set(campaign.id, campaign);
@@ -435,14 +450,19 @@ export class InterventionEngine {
     }
 
     // Find eligible patients
-    const eligiblePredictions = await this.findEligiblePatients(campaign.targetCriteria);
-    
+    const eligiblePredictions = await this.findEligiblePatients(
+      campaign.targetCriteria
+    );
+
     // Execute interventions
-    const executions = await this.executeBatchInterventions(eligiblePredictions, campaignId);
+    const executions = await this.executeBatchInterventions(
+      eligiblePredictions,
+      campaignId
+    );
 
     // Track campaign progress
     const results = await this.calculateCampaignResults(campaignId, executions);
-    
+
     // Update campaign with results
     campaign.results = results;
     await this.updateCampaign(campaign);
@@ -455,10 +475,10 @@ export class InterventionEngine {
    */
   async monitorInterventionEffectiveness(): Promise<InterventionAnalytics> {
     const endDate = new Date();
-    const startDate = new Date(endDate.getTime() - (30 * 24 * 60 * 60 * 1000)); // 30 days
+    const startDate = new Date(endDate.getTime() - 30 * 24 * 60 * 60 * 1000); // 30 days
 
     const executions = await this.getExecutionHistory(startDate, endDate);
-    
+
     return this.calculateInterventionAnalytics(executions, startDate, endDate);
   }
 
@@ -482,11 +502,11 @@ export class InterventionEngine {
       rescheduled: appointmentOutcome === 'RESCHEDULED',
       cancelled: appointmentOutcome === 'CANCELLED',
       noShow: appointmentOutcome === 'NO_SHOW',
-      effectivenessScore
+      effectivenessScore,
     };
 
     await this.updateExecution(execution);
-    
+
     // Update intervention type effectiveness
     await this.updateInterventionTypeEffectiveness(
       execution.interventionTypeId,
@@ -507,34 +527,42 @@ export class InterventionEngine {
     let estimatedImpact = 0;
 
     // Analyze channel effectiveness
-    const bestChannel = Object.entries(analytics.channelEffectiveness)
-      .sort(([,a], [,b]) => b - a)[0];
-    
+    const bestChannel = Object.entries(analytics.channelEffectiveness).sort(
+      ([, a], [, b]) => b - a
+    )[0];
+
     if (bestChannel && bestChannel[1] > 0.5) {
-      recommendations.push(`Increase usage of ${bestChannel[0]} channel (${(bestChannel[1] * 100).toFixed(1)}% effective)`);
+      recommendations.push(
+        `Increase usage of ${bestChannel[0]} channel (${(bestChannel[1] * 100).toFixed(1)}% effective)`
+      );
       estimatedImpact += 0.15;
     }
 
     // Analyze timing optimization
     const timingAnalysis = await this.analyzeOptimalTiming();
     if (timingAnalysis.confidence > 0.7) {
-      recommendations.push(`Adjust intervention timing to ${timingAnalysis.optimalTiming}`);
-      estimatedImpact += 0.10;
+      recommendations.push(
+        `Adjust intervention timing to ${timingAnalysis.optimalTiming}`
+      );
+      estimatedImpact += 0.1;
     }
 
     // Analyze risk level targeting
-    const riskAnalysis = Object.entries(analytics.riskLevelEffectiveness)
-      .sort(([,a], [,b]) => b - a);
-    
+    const riskAnalysis = Object.entries(analytics.riskLevelEffectiveness).sort(
+      ([, a], [, b]) => b - a
+    );
+
     if (riskAnalysis.length > 0) {
-      recommendations.push(`Focus interventions on ${riskAnalysis[0][0]} risk patients for best ROI`);
+      recommendations.push(
+        `Focus interventions on ${riskAnalysis[0][0]} risk patients for best ROI`
+      );
       estimatedImpact += 0.08;
     }
 
     return {
       recommendations,
       estimatedImpact,
-      confidenceLevel: Math.min(analytics.totalInterventions / 1000, 1) // Confidence based on data volume
+      confidenceLevel: Math.min(analytics.totalInterventions / 1000, 1), // Confidence based on data volume
     };
   }
 
@@ -543,8 +571,8 @@ export class InterventionEngine {
   private assessInterventionSuitability(
     interventionType: InterventionType,
     prediction: NoShowPrediction,
-    riskProfile: PatientRiskProfile,
-    appointmentData: any,
+    _riskProfile: PatientRiskProfile,
+    _appointmentData: any,
     patientConstraints: any,
     timeToAppointment: number
   ): { suitable: boolean; score: number; reasons: string[] } {
@@ -558,7 +586,9 @@ export class InterventionEngine {
     }
 
     // Check timing feasibility
-    const requiredTime = this.parseExecutionTime(interventionType.executionTime);
+    const requiredTime = this.parseExecutionTime(
+      interventionType.executionTime
+    );
     if (timeToAppointment >= requiredTime) {
       score += 20;
       reasons.push('Sufficient time for execution');
@@ -568,7 +598,7 @@ export class InterventionEngine {
     }
 
     // Check prerequisites
-    const prerequisitesMet = interventionType.prerequisites.every(req => 
+    const prerequisitesMet = interventionType.prerequisites.every((req) =>
       this.checkPrerequisite(req, patientConstraints)
     );
     if (prerequisitesMet) {
@@ -579,8 +609,8 @@ export class InterventionEngine {
     }
 
     // Check contraindications
-    const hasContraindications = interventionType.contraindications.some(contra => 
-      this.checkContraindication(contra, patientConstraints)
+    const hasContraindications = interventionType.contraindications.some(
+      (contra) => this.checkContraindication(contra, patientConstraints)
     );
     if (hasContraindications) {
       score -= 100;
@@ -588,41 +618,52 @@ export class InterventionEngine {
     }
 
     // Cost-effectiveness consideration
-    const costEffectiveness = interventionType.averageEffectiveness / interventionType.costPerExecution;
+    const costEffectiveness =
+      interventionType.averageEffectiveness / interventionType.costPerExecution;
     score += Math.min(costEffectiveness * 10, 20);
 
     return {
       suitable: score > 30,
       score,
-      reasons
+      reasons,
     };
   }
 
   private async createSmartRecommendation(
     interventionType: InterventionType,
     prediction: NoShowPrediction,
-    riskProfile: PatientRiskProfile,
+    _riskProfile: PatientRiskProfile,
     appointmentData: any,
     suitability: { score: number },
     historicalEffectiveness: number
   ): Promise<SmartInterventionRecommendation> {
     const appointmentDate = new Date(appointmentData.scheduled_date);
-    const executionTime = this.calculateExecutionTime(appointmentDate, interventionType.executionTime);
-    
+    const executionTime = this.calculateExecutionTime(
+      appointmentDate,
+      interventionType.executionTime
+    );
+
     const personalizedMessage = await this.generatePersonalizedMessage(
       interventionType,
       prediction,
       appointmentData
     );
 
-    const expectedEffectiveness = (interventionType.averageEffectiveness + historicalEffectiveness) / 2;
+    const expectedEffectiveness =
+      (interventionType.averageEffectiveness + historicalEffectiveness) / 2;
     const appointmentValue = await this.getAppointmentValue(appointmentData);
     const expectedSavings = expectedEffectiveness * appointmentValue;
-    const expectedROI = (expectedSavings - interventionType.costPerExecution) / interventionType.costPerExecution;
+    const expectedROI =
+      (expectedSavings - interventionType.costPerExecution) /
+      interventionType.costPerExecution;
 
     return {
       interventionTypeId: interventionType.id,
-      priority: this.calculatePriority(prediction.riskScore, suitability.score, expectedROI),
+      priority: this.calculatePriority(
+        prediction.riskScore,
+        suitability.score,
+        expectedROI
+      ),
       executionTime,
       personalizedMessage,
       expectedCost: interventionType.costPerExecution,
@@ -631,10 +672,10 @@ export class InterventionEngine {
       reasoning: [
         `Risk level: ${prediction.riskLevel} (${prediction.riskScore}%)`,
         `Expected effectiveness: ${(expectedEffectiveness * 100).toFixed(1)}%`,
-        `Expected ROI: ${(expectedROI * 100).toFixed(1)}%`
+        `Expected ROI: ${(expectedROI * 100).toFixed(1)}%`,
       ],
       alternatives: await this.findAlternativeInterventions(interventionType),
-      contraindications: interventionType.contraindications
+      contraindications: interventionType.contraindications,
     };
   }
 
@@ -645,39 +686,55 @@ export class InterventionEngine {
       '24h before': 24 * 60 * 60 * 1000,
       '48h before': 48 * 60 * 60 * 1000,
       '72h before': 72 * 60 * 60 * 1000,
-      '1week before': 7 * 24 * 60 * 60 * 1000
+      '1week before': 7 * 24 * 60 * 60 * 1000,
     };
     return timeMap[executionTime] || 24 * 60 * 60 * 1000;
   }
 
-  private calculateExecutionTime(appointmentDate: Date, executionTime: string): Date {
+  private calculateExecutionTime(
+    appointmentDate: Date,
+    executionTime: string
+  ): Date {
     const timeOffset = this.parseExecutionTime(executionTime);
     return new Date(appointmentDate.getTime() - timeOffset);
   }
 
-  private calculatePriority(riskScore: number, suitabilityScore: number, expectedROI: number): number {
-    return Math.round((riskScore * 0.4 + suitabilityScore * 0.3 + expectedROI * 30) / 100 * 10);
+  private calculatePriority(
+    riskScore: number,
+    suitabilityScore: number,
+    expectedROI: number
+  ): number {
+    return Math.round(
+      ((riskScore * 0.4 + suitabilityScore * 0.3 + expectedROI * 30) / 100) * 10
+    );
   }
 
   private async generatePersonalizedMessage(
     interventionType: InterventionType,
-    prediction: NoShowPrediction,
+    _prediction: NoShowPrediction,
     appointmentData: any
   ): Promise<string> {
     // Generate personalized message based on intervention type and patient data
     const patientName = appointmentData.patient_name || 'Patient';
-    const appointmentDate = new Date(appointmentData.scheduled_date).toLocaleDateString();
-    const appointmentTime = new Date(appointmentData.scheduled_date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    const appointmentDate = new Date(
+      appointmentData.scheduled_date
+    ).toLocaleDateString();
+    const appointmentTime = new Date(
+      appointmentData.scheduled_date
+    ).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
     const templates: Record<string, string> = {
-      'sms_reminder_24h': `Hi ${patientName}! Reminder: You have an appointment tomorrow (${appointmentDate}) at ${appointmentTime}. Reply CONFIRM to confirm or RESCHEDULE if you need to change it. Thank you!`,
-      'email_confirmation_48h': `Dear ${patientName}, please confirm your upcoming appointment on ${appointmentDate} at ${appointmentTime}. Click here to confirm or reschedule if needed.`,
-      'phone_call_high_risk': `Personal call script: Confirm appointment for ${patientName} on ${appointmentDate} at ${appointmentTime}. Address any concerns and offer flexible rescheduling.`,
-      'loyalty_incentive': `Hi ${patientName}! Your appointment on ${appointmentDate} is confirmed. Attend and earn 100 loyalty points! Questions? Reply or call us.`,
-      'educational_content': `Dear ${patientName}, preparing for your ${appointmentData.type} appointment? Here are some helpful tips and what to expect...`
+      sms_reminder_24h: `Hi ${patientName}! Reminder: You have an appointment tomorrow (${appointmentDate}) at ${appointmentTime}. Reply CONFIRM to confirm or RESCHEDULE if you need to change it. Thank you!`,
+      email_confirmation_48h: `Dear ${patientName}, please confirm your upcoming appointment on ${appointmentDate} at ${appointmentTime}. Click here to confirm or reschedule if needed.`,
+      phone_call_high_risk: `Personal call script: Confirm appointment for ${patientName} on ${appointmentDate} at ${appointmentTime}. Address any concerns and offer flexible rescheduling.`,
+      loyalty_incentive: `Hi ${patientName}! Your appointment on ${appointmentDate} is confirmed. Attend and earn 100 loyalty points! Questions? Reply or call us.`,
+      educational_content: `Dear ${patientName}, preparing for your ${appointmentData.type} appointment? Here are some helpful tips and what to expect...`,
     };
 
-    return templates[interventionType.id] || `Reminder: Appointment on ${appointmentDate} at ${appointmentTime}`;
+    return (
+      templates[interventionType.id] ||
+      `Reminder: Appointment on ${appointmentDate} at ${appointmentTime}`
+    );
   }
 
   private calculateEffectivenessScore(
@@ -687,43 +744,59 @@ export class InterventionEngine {
     const baseScore = outcome === 'ATTENDED' ? 100 : 0;
     const responseBonus = execution.response ? 20 : 0;
     const timingBonus = this.calculateTimingBonus(execution);
-    
+
     return Math.min(baseScore + responseBonus + timingBonus, 100);
   }
 
   private calculateTimingBonus(execution: InterventionExecution): number {
     if (!execution.executedAt) return 0;
-    
-    const timeDiff = Math.abs(execution.scheduledAt.getTime() - execution.executedAt.getTime());
+
+    const timeDiff = Math.abs(
+      execution.scheduledAt.getTime() - execution.executedAt.getTime()
+    );
     const hoursDiff = timeDiff / (1000 * 60 * 60);
-    
+
     // Bonus for executing on time (within 1 hour of scheduled time)
     return hoursDiff <= 1 ? 10 : Math.max(10 - hoursDiff, 0);
   }
 
   private async calculateCampaignResults(
-    campaignId: string,
+    _campaignId: string,
     executions: InterventionExecution[]
   ): Promise<CampaignResults> {
     const totalCost = executions.reduce((sum, exec) => sum + exec.cost, 0);
-    const completedExecutions = executions.filter(exec => exec.outcome);
-    const attendedAppointments = completedExecutions.filter(exec => exec.outcome?.appointmentKept);
-    
-    const noShowReduction = completedExecutions.length > 0 
-      ? (attendedAppointments.length / completedExecutions.length) * 100 
-      : 0;
+    const completedExecutions = executions.filter((exec) => exec.outcome);
+    const attendedAppointments = completedExecutions.filter(
+      (exec) => exec.outcome?.appointmentKept
+    );
+
+    const noShowReduction =
+      completedExecutions.length > 0
+        ? (attendedAppointments.length / completedExecutions.length) * 100
+        : 0;
 
     return {
-      totalParticipants: new Set(executions.map(exec => exec.patientId)).size,
+      totalParticipants: new Set(executions.map((exec) => exec.patientId)).size,
       interventionsExecuted: executions.length,
       costIncurred: totalCost,
       noShowReduction,
-      costPerPreventedNoShow: attendedAppointments.length > 0 ? totalCost / attendedAppointments.length : 0,
+      costPerPreventedNoShow:
+        attendedAppointments.length > 0
+          ? totalCost / attendedAppointments.length
+          : 0,
       patientSatisfactionScore: 85, // Placeholder
-      completionRate: (executions.filter(exec => exec.status === InterventionStatus.EXECUTED).length / executions.length) * 100,
-      responseRate: (executions.filter(exec => exec.response).length / executions.length) * 100,
+      completionRate:
+        (executions.filter(
+          (exec) => exec.status === InterventionStatus.EXECUTED
+        ).length /
+          executions.length) *
+        100,
+      responseRate:
+        (executions.filter((exec) => exec.response).length /
+          executions.length) *
+        100,
       effectivenessByRiskLevel: {},
-      effectivenessByInterventionType: {}
+      effectivenessByInterventionType: {},
     };
   }
 
@@ -734,7 +807,7 @@ export class InterventionEngine {
   ): InterventionAnalytics {
     const totalCost = executions.reduce((sum, exec) => sum + exec.cost, 0);
     const totalSavings = executions
-      .filter(exec => exec.outcome?.appointmentKept)
+      .filter((exec) => exec.outcome?.appointmentKept)
       .reduce((sum, exec) => sum + (exec.metadata.appointmentValue || 100), 0);
 
     return {
@@ -742,14 +815,15 @@ export class InterventionEngine {
       totalInterventions: executions.length,
       totalCost,
       totalSavings,
-      netROI: totalSavings > 0 ? ((totalSavings - totalCost) / totalCost) * 100 : 0,
+      netROI:
+        totalSavings > 0 ? ((totalSavings - totalCost) / totalCost) * 100 : 0,
       noShowReduction: 0, // Calculate based on historical comparison
       avgResponseTime: 120, // Placeholder
       campaignPerformance: {},
       channelEffectiveness: {},
       riskLevelEffectiveness: {},
       patientSatisfactionTrend: [85, 87, 88, 86, 89], // Placeholder
-      predictedOptimizations: []
+      predictedOptimizations: [],
     };
   }
 
@@ -762,7 +836,7 @@ export class InterventionEngine {
     return `camp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 
-  private async getPatientConstraints(patientId: string): Promise<any> {
+  private async getPatientConstraints(_patientId: string): Promise<any> {
     // Fetch patient communication preferences, opt-outs, etc.
     return {
       validPhoneNumber: true,
@@ -771,16 +845,20 @@ export class InterventionEngine {
       optedOutEmail: false,
       doNotCallList: false,
       enrolledLoyaltyProgram: true,
-      recentIncentiveUsed: false
+      recentIncentiveUsed: false,
     };
   }
 
-  private async getHistoricalEffectiveness(patientId: string): Promise<Record<string, number>> {
+  private async getHistoricalEffectiveness(
+    _patientId: string
+  ): Promise<Record<string, number>> {
     // Get patient-specific intervention effectiveness
     return {};
   }
 
-  private async getPatientRiskProfile(patientId: string): Promise<PatientRiskProfile> {
+  private async getPatientRiskProfile(
+    _patientId: string
+  ): Promise<PatientRiskProfile> {
     // This would integrate with the risk scoring engine
     throw new Error('Method not implemented');
   }
@@ -801,72 +879,96 @@ export class InterventionEngine {
 
   private checkPrerequisite(prerequisite: string, constraints: any): boolean {
     const checks: Record<string, boolean> = {
-      'valid_phone_number': constraints.validPhoneNumber,
-      'valid_email': constraints.validEmail,
-      'enrolled_loyalty_program': constraints.enrolledLoyaltyProgram
+      valid_phone_number: constraints.validPhoneNumber,
+      valid_email: constraints.validEmail,
+      enrolled_loyalty_program: constraints.enrolledLoyaltyProgram,
     };
-    return checks[prerequisite] || false;
+    return checks[prerequisite];
   }
 
-  private checkContraindication(contraindication: string, constraints: any): boolean {
+  private checkContraindication(
+    contraindication: string,
+    constraints: any
+  ): boolean {
     const checks: Record<string, boolean> = {
-      'opted_out_sms': constraints.optedOutSms,
-      'opted_out_email': constraints.optedOutEmail,
-      'do_not_call_list': constraints.doNotCallList,
-      'recent_incentive_used': constraints.recentIncentiveUsed
+      opted_out_sms: constraints.optedOutSms,
+      opted_out_email: constraints.optedOutEmail,
+      do_not_call_list: constraints.doNotCallList,
+      recent_incentive_used: constraints.recentIncentiveUsed,
     };
-    return checks[contraindication] || false;
+    return checks[contraindication];
   }
 
-  private async findAlternativeInterventions(currentType: InterventionType): Promise<string[]> {
+  private async findAlternativeInterventions(
+    currentType: InterventionType
+  ): Promise<string[]> {
     return Array.from(this.interventionTypes.values())
-      .filter(type => 
-        type.category === currentType.category && 
-        type.id !== currentType.id
+      .filter(
+        (type) =>
+          type.category === currentType.category && type.id !== currentType.id
       )
-      .map(type => type.name);
+      .map((type) => type.name);
   }
 
-  private async analyzeOptimalTiming(): Promise<{ optimalTiming: string; confidence: number }> {
+  private async analyzeOptimalTiming(): Promise<{
+    optimalTiming: string;
+    confidence: number;
+  }> {
     return { optimalTiming: '24h before', confidence: 0.8 };
   }
 
-  private async findEligiblePatients(criteria: any): Promise<NoShowPrediction[]> {
+  private async findEligiblePatients(
+    _criteria: any
+  ): Promise<NoShowPrediction[]> {
     // Find patients matching campaign criteria
     return [];
   }
 
-  private async saveInterventionExecution(execution: InterventionExecution): Promise<void> {
+  private async saveInterventionExecution(
+    _execution: InterventionExecution
+  ): Promise<void> {
     // Save execution to database
   }
 
-  private async scheduleAutomatedExecution(execution: InterventionExecution): Promise<void> {
+  private async scheduleAutomatedExecution(
+    _execution: InterventionExecution
+  ): Promise<void> {
     // Schedule automated execution (e.g., via queue system)
   }
 
-  private async saveCampaign(campaign: InterventionCampaign): Promise<void> {
+  private async saveCampaign(_campaign: InterventionCampaign): Promise<void> {
     // Save campaign to database
   }
 
-  private async updateCampaign(campaign: InterventionCampaign): Promise<void> {
+  private async updateCampaign(_campaign: InterventionCampaign): Promise<void> {
     // Update campaign in database
   }
 
-  private async getExecutionHistory(startDate: Date, endDate: Date): Promise<InterventionExecution[]> {
+  private async getExecutionHistory(
+    _startDate: Date,
+    _endDate: Date
+  ): Promise<InterventionExecution[]> {
     // Get execution history from database
     return [];
   }
 
-  private async getExecution(executionId: string): Promise<InterventionExecution | null> {
+  private async getExecution(
+    _executionId: string
+  ): Promise<InterventionExecution | null> {
     // Get specific execution from database
     return null;
   }
 
-  private async updateExecution(execution: InterventionExecution): Promise<void> {
+  private async updateExecution(
+    _execution: InterventionExecution
+  ): Promise<void> {
     // Update execution in database
   }
 
-  private async updateInterventionTypeEffectiveness(typeId: string, effectiveness: number): Promise<void> {
+  private async updateInterventionTypeEffectiveness(
+    _typeId: string,
+    _effectiveness: number
+  ): Promise<void> {
     // Update intervention type effectiveness metrics
   }
 }
@@ -878,7 +980,7 @@ export const interventionEngine = new InterventionEngine();
 export function formatCost(cost: number): string {
   return new Intl.NumberFormat('pt-BR', {
     style: 'currency',
-    currency: 'BRL'
+    currency: 'BRL',
   }).format(cost);
 }
 
@@ -892,7 +994,7 @@ export function getInterventionStatusColor(status: InterventionStatus): string {
     [InterventionStatus.EXECUTED]: 'text-green-600',
     [InterventionStatus.FAILED]: 'text-red-600',
     [InterventionStatus.CANCELLED]: 'text-gray-600',
-    [InterventionStatus.PENDING_RESPONSE]: 'text-yellow-600'
+    [InterventionStatus.PENDING_RESPONSE]: 'text-yellow-600',
   };
   return colors[status] || 'text-gray-600';
 }

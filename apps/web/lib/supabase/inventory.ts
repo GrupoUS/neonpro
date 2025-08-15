@@ -6,17 +6,17 @@
 
 import { createClient } from '@/app/utils/supabase/client';
 import type {
-    AlertStatus,
-    BarcodeSession,
-    InventoryApiResponse,
-    InventoryCategory,
-    InventoryItem,
-    InventoryLocation,
-    MovementType,
-    ScannedItem,
-    SessionType,
-    StockAlert,
-    StockMovement
+  AlertStatus,
+  BarcodeSession,
+  InventoryApiResponse,
+  InventoryCategory,
+  InventoryItem,
+  InventoryLocation,
+  MovementType,
+  ScannedItem,
+  SessionType,
+  StockAlert,
+  StockMovement,
 } from '@/lib/types/inventory';
 
 const supabase = createClient();
@@ -55,13 +55,18 @@ export async function getInventoryItems(filters?: {
       query = query.eq('status', filters.status);
     }
     if (filters?.search) {
-      query = query.or(`name.ilike.%${filters.search}%,sku.ilike.%${filters.search}%,description.ilike.%${filters.search}%`);
+      query = query.or(
+        `name.ilike.%${filters.search}%,sku.ilike.%${filters.search}%,description.ilike.%${filters.search}%`
+      );
     }
     if (filters?.limit) {
       query = query.limit(filters.limit);
     }
     if (filters?.offset) {
-      query = query.range(filters.offset, (filters.offset + (filters.limit || 20)) - 1);
+      query = query.range(
+        filters.offset,
+        filters.offset + (filters.limit || 20) - 1
+      );
     }
 
     const { data, error, count } = await query;
@@ -74,7 +79,7 @@ export async function getInventoryItems(filters?: {
       success: true,
       data: data || [],
       timestamp: new Date().toISOString(),
-      total_count: count || data?.length || 0
+      total_count: count || data?.length || 0,
     };
   } catch (error) {
     console.error('Error fetching inventory items:', error);
@@ -82,12 +87,14 @@ export async function getInventoryItems(filters?: {
       success: false,
       data: [],
       message: error instanceof Error ? error.message : 'Unknown error',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 }
 
-export async function getInventoryItemById(id: string): Promise<InventoryApiResponse<InventoryItem | null>> {
+export async function getInventoryItemById(
+  id: string
+): Promise<InventoryApiResponse<InventoryItem | null>> {
   try {
     const { data, error } = await supabase
       .from('inventory_items')
@@ -105,8 +112,8 @@ export async function getInventoryItemById(id: string): Promise<InventoryApiResp
 
     return {
       success: true,
-      data: data,
-      timestamp: new Date().toISOString()
+      data,
+      timestamp: new Date().toISOString(),
     };
   } catch (error) {
     console.error('Error fetching inventory item:', error);
@@ -114,12 +121,14 @@ export async function getInventoryItemById(id: string): Promise<InventoryApiResp
       success: false,
       data: null,
       message: error instanceof Error ? error.message : 'Unknown error',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 }
 
-export async function getInventoryItemByBarcode(barcode: string): Promise<InventoryApiResponse<InventoryItem | null>> {
+export async function getInventoryItemByBarcode(
+  barcode: string
+): Promise<InventoryApiResponse<InventoryItem | null>> {
   try {
     const { data, error } = await supabase
       .from('inventory_items')
@@ -132,14 +141,15 @@ export async function getInventoryItemByBarcode(barcode: string): Promise<Invent
       .eq('is_active', true)
       .single();
 
-    if (error && error.code !== 'PGRST116') { // PGRST116 = not found
+    if (error && error.code !== 'PGRST116') {
+      // PGRST116 = not found
       throw error;
     }
 
     return {
       success: true,
       data: data || null,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   } catch (error) {
     console.error('Error fetching inventory item by barcode:', error);
@@ -147,21 +157,23 @@ export async function getInventoryItemByBarcode(barcode: string): Promise<Invent
       success: false,
       data: null,
       message: error instanceof Error ? error.message : 'Unknown error',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 }
 
-export async function createInventoryItem(item: Partial<InventoryItem>): Promise<InventoryApiResponse<InventoryItem | null>> {
+export async function createInventoryItem(
+  item: Partial<InventoryItem>
+): Promise<InventoryApiResponse<InventoryItem | null>> {
   try {
     const { data: userData } = await supabase.auth.getUser();
-    
+
     const { data, error } = await supabase
       .from('inventory_items')
       .insert({
         ...item,
         created_by: userData.user?.id,
-        last_updated_by: userData.user?.id
+        last_updated_by: userData.user?.id,
       })
       .select(`
         *,
@@ -176,8 +188,8 @@ export async function createInventoryItem(item: Partial<InventoryItem>): Promise
 
     return {
       success: true,
-      data: data,
-      timestamp: new Date().toISOString()
+      data,
+      timestamp: new Date().toISOString(),
     };
   } catch (error) {
     console.error('Error creating inventory item:', error);
@@ -185,20 +197,23 @@ export async function createInventoryItem(item: Partial<InventoryItem>): Promise
       success: false,
       data: null,
       message: error instanceof Error ? error.message : 'Unknown error',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 }
 
-export async function updateInventoryItem(id: string, updates: Partial<InventoryItem>): Promise<InventoryApiResponse<InventoryItem | null>> {
+export async function updateInventoryItem(
+  id: string,
+  updates: Partial<InventoryItem>
+): Promise<InventoryApiResponse<InventoryItem | null>> {
   try {
     const { data: userData } = await supabase.auth.getUser();
-    
+
     const { data, error } = await supabase
       .from('inventory_items')
       .update({
         ...updates,
-        last_updated_by: userData.user?.id
+        last_updated_by: userData.user?.id,
       })
       .eq('id', id)
       .select(`
@@ -214,8 +229,8 @@ export async function updateInventoryItem(id: string, updates: Partial<Inventory
 
     return {
       success: true,
-      data: data,
-      timestamp: new Date().toISOString()
+      data,
+      timestamp: new Date().toISOString(),
     };
   } catch (error) {
     console.error('Error updating inventory item:', error);
@@ -223,7 +238,7 @@ export async function updateInventoryItem(id: string, updates: Partial<Inventory
       success: false,
       data: null,
       message: error instanceof Error ? error.message : 'Unknown error',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 }
@@ -247,7 +262,7 @@ export async function updateStockLevel(
 ): Promise<InventoryApiResponse<boolean>> {
   try {
     const { data: userData } = await supabase.auth.getUser();
-    
+
     if (!userData.user) {
       throw new Error('User not authenticated');
     }
@@ -260,7 +275,7 @@ export async function updateStockLevel(
       p_user_id: userData.user.id,
       p_reference_type: options?.referenceType || null,
       p_reference_id: options?.referenceId || null,
-      p_notes: options?.notes || null
+      p_notes: options?.notes || null,
     });
 
     if (error) {
@@ -270,7 +285,7 @@ export async function updateStockLevel(
     return {
       success: true,
       data: true,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   } catch (error) {
     console.error('Error updating stock level:', error);
@@ -278,7 +293,7 @@ export async function updateStockLevel(
       success: false,
       data: false,
       message: error instanceof Error ? error.message : 'Unknown error',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 }
@@ -322,7 +337,10 @@ export async function getStockMovements(filters?: {
       query = query.limit(filters.limit);
     }
     if (filters?.offset) {
-      query = query.range(filters.offset, (filters.offset + (filters.limit || 20)) - 1);
+      query = query.range(
+        filters.offset,
+        filters.offset + (filters.limit || 20) - 1
+      );
     }
 
     const { data, error } = await query;
@@ -334,7 +352,7 @@ export async function getStockMovements(filters?: {
     return {
       success: true,
       data: data || [],
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   } catch (error) {
     console.error('Error fetching stock movements:', error);
@@ -342,7 +360,7 @@ export async function getStockMovements(filters?: {
       success: false,
       data: [],
       message: error instanceof Error ? error.message : 'Unknown error',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 }
@@ -389,7 +407,7 @@ export async function getStockAlerts(filters?: {
     return {
       success: true,
       data: data || [],
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   } catch (error) {
     console.error('Error fetching stock alerts:', error);
@@ -397,22 +415,25 @@ export async function getStockAlerts(filters?: {
       success: false,
       data: [],
       message: error instanceof Error ? error.message : 'Unknown error',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 }
 
-export async function resolveStockAlert(alertId: string, resolutionNotes?: string): Promise<InventoryApiResponse<boolean>> {
+export async function resolveStockAlert(
+  alertId: string,
+  resolutionNotes?: string
+): Promise<InventoryApiResponse<boolean>> {
   try {
     const { data: userData } = await supabase.auth.getUser();
-    
+
     const { error } = await supabase
       .from('stock_alerts')
       .update({
         status: 'resolved',
         resolved_at: new Date().toISOString(),
         resolved_by: userData.user?.id,
-        resolution_notes: resolutionNotes
+        resolution_notes: resolutionNotes,
       })
       .eq('id', alertId);
 
@@ -423,7 +444,7 @@ export async function resolveStockAlert(alertId: string, resolutionNotes?: strin
     return {
       success: true,
       data: true,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   } catch (error) {
     console.error('Error resolving stock alert:', error);
@@ -431,7 +452,7 @@ export async function resolveStockAlert(alertId: string, resolutionNotes?: strin
       success: false,
       data: false,
       message: error instanceof Error ? error.message : 'Unknown error',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 }
@@ -446,7 +467,7 @@ export async function createBarcodeSession(
 ): Promise<InventoryApiResponse<BarcodeSession | null>> {
   try {
     const { data: userData } = await supabase.auth.getUser();
-    
+
     if (!userData.user) {
       throw new Error('User not authenticated');
     }
@@ -457,7 +478,7 @@ export async function createBarcodeSession(
         user_id: userData.user.id,
         session_type: sessionType,
         location_id: locationId,
-        status: 'active'
+        status: 'active',
       })
       .select()
       .single();
@@ -468,8 +489,8 @@ export async function createBarcodeSession(
 
     return {
       success: true,
-      data: data,
-      timestamp: new Date().toISOString()
+      data,
+      timestamp: new Date().toISOString(),
     };
   } catch (error) {
     console.error('Error creating barcode session:', error);
@@ -477,7 +498,7 @@ export async function createBarcodeSession(
       success: false,
       data: null,
       message: error instanceof Error ? error.message : 'Unknown error',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 }
@@ -485,7 +506,12 @@ export async function createBarcodeSession(
 export async function addScannedItem(
   sessionId: string,
   barcodeValue: string,
-  scanResult: 'success' | 'item_not_found' | 'invalid_barcode' | 'duplicate_scan' | 'error',
+  scanResult:
+    | 'success'
+    | 'item_not_found'
+    | 'invalid_barcode'
+    | 'duplicate_scan'
+    | 'error',
   inventoryItemId?: string,
   errorMessage?: string
 ): Promise<InventoryApiResponse<ScannedItem | null>> {
@@ -498,7 +524,7 @@ export async function addScannedItem(
         scan_result: scanResult,
         inventory_item_id: inventoryItemId,
         error_message: errorMessage,
-        needs_manual_review: scanResult !== 'success'
+        needs_manual_review: scanResult !== 'success',
       })
       .select()
       .single();
@@ -511,14 +537,14 @@ export async function addScannedItem(
     await supabase
       .from('barcode_sessions')
       .update({
-        total_items_scanned: await getSessionItemCount(sessionId)
+        total_items_scanned: await getSessionItemCount(sessionId),
       })
       .eq('id', sessionId);
 
     return {
       success: true,
-      data: data,
-      timestamp: new Date().toISOString()
+      data,
+      timestamp: new Date().toISOString(),
     };
   } catch (error) {
     console.error('Error adding scanned item:', error);
@@ -526,7 +552,7 @@ export async function addScannedItem(
       success: false,
       data: null,
       message: error instanceof Error ? error.message : 'Unknown error',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 }
@@ -536,18 +562,21 @@ async function getSessionItemCount(sessionId: string): Promise<number> {
     .from('scanned_items')
     .select('*', { count: 'exact', head: true })
     .eq('session_id', sessionId);
-  
+
   return count || 0;
 }
 
-export async function completeBarcodeSession(sessionId: string, notes?: string): Promise<InventoryApiResponse<boolean>> {
+export async function completeBarcodeSession(
+  sessionId: string,
+  notes?: string
+): Promise<InventoryApiResponse<boolean>> {
   try {
     const { error } = await supabase
       .from('barcode_sessions')
       .update({
         status: 'completed',
         ended_at: new Date().toISOString(),
-        notes: notes
+        notes,
       })
       .eq('id', sessionId);
 
@@ -558,7 +587,7 @@ export async function completeBarcodeSession(sessionId: string, notes?: string):
     return {
       success: true,
       data: true,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   } catch (error) {
     console.error('Error completing barcode session:', error);
@@ -566,7 +595,7 @@ export async function completeBarcodeSession(sessionId: string, notes?: string):
       success: false,
       data: false,
       message: error instanceof Error ? error.message : 'Unknown error',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 }
@@ -575,7 +604,9 @@ export async function completeBarcodeSession(sessionId: string, notes?: string):
 // CATEGORIES AND LOCATIONS
 // =====================================================
 
-export async function getInventoryCategories(): Promise<InventoryApiResponse<InventoryCategory[]>> {
+export async function getInventoryCategories(): Promise<
+  InventoryApiResponse<InventoryCategory[]>
+> {
   try {
     const { data, error } = await supabase
       .from('inventory_categories')
@@ -590,7 +621,7 @@ export async function getInventoryCategories(): Promise<InventoryApiResponse<Inv
     return {
       success: true,
       data: data || [],
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   } catch (error) {
     console.error('Error fetching inventory categories:', error);
@@ -598,12 +629,14 @@ export async function getInventoryCategories(): Promise<InventoryApiResponse<Inv
       success: false,
       data: [],
       message: error instanceof Error ? error.message : 'Unknown error',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 }
 
-export async function getInventoryLocations(): Promise<InventoryApiResponse<InventoryLocation[]>> {
+export async function getInventoryLocations(): Promise<
+  InventoryApiResponse<InventoryLocation[]>
+> {
   try {
     const { data, error } = await supabase
       .from('inventory_locations')
@@ -618,7 +651,7 @@ export async function getInventoryLocations(): Promise<InventoryApiResponse<Inve
     return {
       success: true,
       data: data || [],
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   } catch (error) {
     console.error('Error fetching inventory locations:', error);
@@ -626,7 +659,7 @@ export async function getInventoryLocations(): Promise<InventoryApiResponse<Inve
       success: false,
       data: [],
       message: error instanceof Error ? error.message : 'Unknown error',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 }
@@ -643,7 +676,7 @@ export function subscribeToInventoryUpdates(callback: (payload: any) => void) {
       {
         event: '*',
         schema: 'public',
-        table: 'inventory_items'
+        table: 'inventory_items',
       },
       callback
     )
@@ -652,7 +685,7 @@ export function subscribeToInventoryUpdates(callback: (payload: any) => void) {
       {
         event: '*',
         schema: 'public',
-        table: 'stock_movements'
+        table: 'stock_movements',
       },
       callback
     )
@@ -661,7 +694,7 @@ export function subscribeToInventoryUpdates(callback: (payload: any) => void) {
       {
         event: '*',
         schema: 'public',
-        table: 'stock_alerts'
+        table: 'stock_alerts',
       },
       callback
     )
@@ -676,7 +709,7 @@ export function subscribeToStockAlerts(callback: (payload: any) => void) {
       {
         event: 'INSERT',
         schema: 'public',
-        table: 'stock_alerts'
+        table: 'stock_alerts',
       },
       callback
     )

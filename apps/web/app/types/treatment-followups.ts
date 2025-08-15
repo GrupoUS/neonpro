@@ -4,44 +4,44 @@
 // =====================================================================================
 
 // Core Follow-up Types
-export type FollowupType = 
-  | 'post_treatment' 
-  | 'progress_check' 
-  | 'satisfaction' 
-  | 'maintenance' 
-  | 'care_instructions' 
+export type FollowupType =
+  | 'post_treatment'
+  | 'progress_check'
+  | 'satisfaction'
+  | 'maintenance'
+  | 'care_instructions'
   | 'warning_check';
 
-export type CommunicationMethod = 
-  | 'sms' 
-  | 'email' 
-  | 'whatsapp' 
-  | 'call' 
+export type CommunicationMethod =
+  | 'sms'
+  | 'email'
+  | 'whatsapp'
+  | 'call'
   | 'in_person';
 
-export type FollowupStatus = 
-  | 'pending' 
-  | 'sent' 
-  | 'completed' 
-  | 'failed' 
-  | 'cancelled' 
+export type FollowupStatus =
+  | 'pending'
+  | 'sent'
+  | 'completed'
+  | 'failed'
+  | 'cancelled'
   | 'rescheduled';
 
-export type ResponseType = 
-  | 'satisfaction_rating' 
-  | 'yes_no' 
-  | 'text' 
-  | 'photo' 
-  | 'scale_1_10' 
+export type ResponseType =
+  | 'satisfaction_rating'
+  | 'yes_no'
+  | 'text'
+  | 'photo'
+  | 'scale_1_10'
   | 'multiple_choice';
 
 export type Priority = 'low' | 'normal' | 'high' | 'urgent';
 
-export type AttachmentType = 
-  | 'before_photo' 
-  | 'after_photo' 
-  | 'progress_photo' 
-  | 'document' 
+export type AttachmentType =
+  | 'before_photo'
+  | 'after_photo'
+  | 'progress_photo'
+  | 'document'
   | 'report';
 
 // Follow-up Template Interface
@@ -111,7 +111,7 @@ export interface TreatmentFollowup {
   notes?: string;
   created_at: string;
   updated_at: string;
-  
+
   // Relationships
   template?: FollowupTemplate;
   patient?: {
@@ -276,7 +276,11 @@ export interface AutomationRule {
   name: string;
   description?: string;
   trigger_condition: string; // JSON rule
-  action_type: 'create_followup' | 'send_reminder' | 'escalate' | 'schedule_appointment';
+  action_type:
+    | 'create_followup'
+    | 'send_reminder'
+    | 'escalate'
+    | 'schedule_appointment';
   action_config: Record<string, any>;
   active: boolean;
   clinic_id: string;

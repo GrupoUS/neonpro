@@ -6,7 +6,7 @@ export async function register() {
   // Temporarily disabled to fix OpenTelemetry module error
   console.log('🔧 Instrumentation temporarily disabled');
   return;
-  
+
   /*
   if (process.env.NEXT_RUNTIME === 'nodejs') {
     try {

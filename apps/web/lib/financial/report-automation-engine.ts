@@ -96,12 +96,13 @@ export class ReportAutomationEngine {
         next_run_date: schedule.nextRunDate.toISOString(),
         is_active: schedule.isActive,
         created_by: schedule.createdBy,
-        format: schedule.format
+        format: schedule.format,
       })
       .select('id')
       .single();
 
-    if (error) throw new Error(`Failed to create report schedule: ${error.message}`);
+    if (error)
+      throw new Error(`Failed to create report schedule: ${error.message}`);
 
     return scheduleData.id;
   }
@@ -116,7 +117,8 @@ export class ReportAutomationEngine {
       .eq('clinic_id', clinicId)
       .order('next_run_date', { ascending: true });
 
-    if (error) throw new Error(`Failed to fetch report schedules: ${error.message}`);
+    if (error)
+      throw new Error(`Failed to fetch report schedules: ${error.message}`);
 
     return schedules.map((schedule: any) => ({
       scheduleId: schedule.id,
@@ -126,17 +128,22 @@ export class ReportAutomationEngine {
       recipients: schedule.recipients,
       parameters: schedule.parameters,
       nextRunDate: new Date(schedule.next_run_date),
-      lastRunDate: schedule.last_run_date ? new Date(schedule.last_run_date) : undefined,
+      lastRunDate: schedule.last_run_date
+        ? new Date(schedule.last_run_date)
+        : undefined,
       isActive: schedule.is_active,
       createdBy: schedule.created_by,
-      format: schedule.format
+      format: schedule.format,
     }));
   }
 
   /**
    * Process scheduled reports (called by cron job)
    */
-  async processScheduledReports(): Promise<{ processed: number; failed: number }> {
+  async processScheduledReports(): Promise<{
+    processed: number;
+    failed: number;
+  }> {
     const { data: dueReports, error } = await this.supabase
       .from('report_schedules')
       .select('*')
@@ -154,7 +161,10 @@ export class ReportAutomationEngine {
         await this.updateNextRunDate(schedule.id, schedule.frequency);
         processed++;
       } catch (error) {
-        console.error(`Failed to process scheduled report ${schedule.id}:`, error);
+        console.error(
+          `Failed to process scheduled report ${schedule.id}:`,
+          error
+        );
         failed++;
       }
     }
@@ -167,15 +177,18 @@ export class ReportAutomationEngine {
    */
   private async generateAndDeliverReport(schedule: any): Promise<void> {
     // Generate report based on type and parameters
-    const reportData = await this.generateReport(schedule.report_type, schedule.parameters);
-    
+    const reportData = await this.generateReport(
+      schedule.report_type,
+      schedule.parameters
+    );
+
     // Export to specified format
     const exportResult = await this.exportReport(reportData, {
       format: schedule.format,
       includeCharts: true,
       includeRawData: false,
       compression: true,
-      branding: true
+      branding: true,
     });
 
     // Deliver to recipients
@@ -184,7 +197,7 @@ export class ReportAutomationEngine {
       recipients: schedule.recipients,
       deliveryMethod: 'email',
       filePath: exportResult.filePath,
-      status: 'pending'
+      status: 'pending',
     });
 
     // Update last run date
@@ -216,12 +229,13 @@ export class ReportAutomationEngine {
         layout: template.layout,
         styling: template.styling,
         is_default: template.isDefault,
-        created_by: template.createdBy
+        created_by: template.createdBy,
       })
       .select('id')
       .single();
 
-    if (error) throw new Error(`Failed to create report template: ${error.message}`);
+    if (error)
+      throw new Error(`Failed to create report template: ${error.message}`);
 
     return templateData.id;
   }
@@ -242,9 +256,12 @@ export class ReportAutomationEngine {
       query = query.eq('report_type', reportType);
     }
 
-    const { data: templates, error } = await query.order('created_at', { ascending: false });
+    const { data: templates, error } = await query.order('created_at', {
+      ascending: false,
+    });
 
-    if (error) throw new Error(`Failed to fetch report templates: ${error.message}`);
+    if (error)
+      throw new Error(`Failed to fetch report templates: ${error.message}`);
 
     return templates.map((template: any) => ({
       templateId: template.id,
@@ -256,7 +273,7 @@ export class ReportAutomationEngine {
       styling: template.styling,
       isDefault: template.is_default,
       createdBy: template.created_by,
-      createdAt: new Date(template.created_at)
+      createdAt: new Date(template.created_at),
     }));
   }
 
@@ -298,7 +315,10 @@ export class ReportAutomationEngine {
 
       // Apply password protection if specified
       if (options.password) {
-        exportResult = await this.passwordProtectFile(exportResult, options.password);
+        exportResult = await this.passwordProtectFile(
+          exportResult,
+          options.password
+        );
       }
 
       return exportResult;
@@ -315,19 +335,22 @@ export class ReportAutomationEngine {
     options: ExportOptions
   ): Promise<{ filePath: string; fileSize: number; downloadUrl: string }> {
     // Use Puppeteer or similar for PDF generation
-    const { data: pdfResult, error } = await this.supabase.rpc('generate_pdf_report', {
-      report_data: reportData,
-      include_charts: options.includeCharts,
-      watermark: options.watermark,
-      branding: options.branding
-    });
+    const { data: pdfResult, error } = await this.supabase.rpc(
+      'generate_pdf_report',
+      {
+        report_data: reportData,
+        include_charts: options.includeCharts,
+        watermark: options.watermark,
+        branding: options.branding,
+      }
+    );
 
     if (error) throw new Error(`PDF generation failed: ${error.message}`);
 
     return {
       filePath: pdfResult.file_path,
       fileSize: pdfResult.file_size,
-      downloadUrl: pdfResult.download_url
+      downloadUrl: pdfResult.download_url,
     };
   }
 
@@ -338,19 +361,22 @@ export class ReportAutomationEngine {
     reportData: any,
     options: ExportOptions
   ): Promise<{ filePath: string; fileSize: number; downloadUrl: string }> {
-    const { data: excelResult, error } = await this.supabase.rpc('generate_excel_report', {
-      report_data: reportData,
-      include_charts: options.includeCharts,
-      include_raw_data: options.includeRawData,
-      branding: options.branding
-    });
+    const { data: excelResult, error } = await this.supabase.rpc(
+      'generate_excel_report',
+      {
+        report_data: reportData,
+        include_charts: options.includeCharts,
+        include_raw_data: options.includeRawData,
+        branding: options.branding,
+      }
+    );
 
     if (error) throw new Error(`Excel generation failed: ${error.message}`);
 
     return {
       filePath: excelResult.file_path,
       fileSize: excelResult.file_size,
-      downloadUrl: excelResult.download_url
+      downloadUrl: excelResult.download_url,
     };
   }
 
@@ -361,17 +387,20 @@ export class ReportAutomationEngine {
     reportData: any,
     options: ExportOptions
   ): Promise<{ filePath: string; fileSize: number; downloadUrl: string }> {
-    const { data: csvResult, error } = await this.supabase.rpc('generate_csv_report', {
-      report_data: reportData,
-      include_raw_data: options.includeRawData
-    });
+    const { data: csvResult, error } = await this.supabase.rpc(
+      'generate_csv_report',
+      {
+        report_data: reportData,
+        include_raw_data: options.includeRawData,
+      }
+    );
 
     if (error) throw new Error(`CSV generation failed: ${error.message}`);
 
     return {
       filePath: csvResult.file_path,
       fileSize: csvResult.file_size,
-      downloadUrl: csvResult.download_url
+      downloadUrl: csvResult.download_url,
     };
   }
 
@@ -380,18 +409,21 @@ export class ReportAutomationEngine {
    */
   private async exportToJSON(
     reportData: any,
-    options: ExportOptions
+    _options: ExportOptions
   ): Promise<{ filePath: string; fileSize: number; downloadUrl: string }> {
-    const { data: jsonResult, error } = await this.supabase.rpc('generate_json_report', {
-      report_data: reportData
-    });
+    const { data: jsonResult, error } = await this.supabase.rpc(
+      'generate_json_report',
+      {
+        report_data: reportData,
+      }
+    );
 
     if (error) throw new Error(`JSON generation failed: ${error.message}`);
 
     return {
       filePath: jsonResult.file_path,
       fileSize: jsonResult.file_size,
-      downloadUrl: jsonResult.download_url
+      downloadUrl: jsonResult.download_url,
     };
   }
 
@@ -402,7 +434,9 @@ export class ReportAutomationEngine {
   /**
    * Deliver report to recipients via email
    */
-  async deliverReport(delivery: Omit<ReportDelivery, 'deliveryId'>): Promise<string> {
+  async deliverReport(
+    delivery: Omit<ReportDelivery, 'deliveryId'>
+  ): Promise<string> {
     const { data: deliveryData, error } = await this.supabase
       .from('report_deliveries')
       .insert({
@@ -412,16 +446,21 @@ export class ReportAutomationEngine {
         status: delivery.status,
         file_path: delivery.filePath,
         file_size: delivery.fileSize,
-        retry_count: 0
+        retry_count: 0,
       })
       .select('id')
       .single();
 
-    if (error) throw new Error(`Failed to create report delivery: ${error.message}`);
+    if (error)
+      throw new Error(`Failed to create report delivery: ${error.message}`);
 
     // Send email with report attachment
     if (delivery.deliveryMethod === 'email') {
-      await this.sendReportEmail(deliveryData.id, delivery.recipients, delivery.filePath!);
+      await this.sendReportEmail(
+        deliveryData.id,
+        delivery.recipients,
+        delivery.filePath!
+      );
     }
 
     return deliveryData.id;
@@ -438,8 +477,8 @@ export class ReportAutomationEngine {
     try {
       const { error } = await this.supabase.rpc('send_report_email', {
         delivery_id: deliveryId,
-        recipients: recipients,
-        file_path: filePath
+        recipients,
+        file_path: filePath,
       });
 
       if (error) throw error;
@@ -449,7 +488,7 @@ export class ReportAutomationEngine {
         .from('report_deliveries')
         .update({
           status: 'delivered',
-          delivered_at: new Date().toISOString()
+          delivered_at: new Date().toISOString(),
         })
         .eq('id', deliveryId);
     } catch (error) {
@@ -458,7 +497,7 @@ export class ReportAutomationEngine {
         .from('report_deliveries')
         .update({
           status: 'failed',
-          error_message: error.message
+          error_message: error.message,
         })
         .eq('id', deliveryId);
 
@@ -475,7 +514,10 @@ export class ReportAutomationEngine {
    */
   async archiveReport(
     clinicId: string,
-    archive: Omit<ReportArchive, 'archiveId' | 'downloadCount' | 'lastAccessedAt'>
+    archive: Omit<
+      ReportArchive,
+      'archiveId' | 'downloadCount' | 'lastAccessedAt'
+    >
   ): Promise<string> {
     const { data: archiveData, error } = await this.supabase
       .from('report_archives')
@@ -489,7 +531,7 @@ export class ReportAutomationEngine {
         parameters: archive.parameters,
         generated_by: archive.generatedBy,
         retention_period: archive.retentionPeriod,
-        download_count: 0
+        download_count: 0,
       })
       .select('id')
       .single();
@@ -522,9 +564,12 @@ export class ReportAutomationEngine {
         .lte('generated_date', dateRange.end.toISOString());
     }
 
-    const { data: archives, error } = await query.order('generated_date', { ascending: false });
+    const { data: archives, error } = await query.order('generated_date', {
+      ascending: false,
+    });
 
-    if (error) throw new Error(`Failed to fetch archived reports: ${error.message}`);
+    if (error)
+      throw new Error(`Failed to fetch archived reports: ${error.message}`);
 
     return archives.map((archive: any) => ({
       archiveId: archive.id,
@@ -537,7 +582,9 @@ export class ReportAutomationEngine {
       generatedBy: archive.generated_by,
       retentionPeriod: archive.retention_period,
       downloadCount: archive.download_count,
-      lastAccessedAt: archive.last_accessed_at ? new Date(archive.last_accessed_at) : undefined
+      lastAccessedAt: archive.last_accessed_at
+        ? new Date(archive.last_accessed_at)
+        : undefined,
     }));
   }
 
@@ -548,11 +595,17 @@ export class ReportAutomationEngine {
   /**
    * Generate report based on type and parameters
    */
-  private async generateReport(reportType: string, parameters: any): Promise<any> {
-    const { data: reportData, error } = await this.supabase.rpc('generate_report_data', {
-      report_type: reportType,
-      parameters: parameters
-    });
+  private async generateReport(
+    reportType: string,
+    parameters: any
+  ): Promise<any> {
+    const { data: reportData, error } = await this.supabase.rpc(
+      'generate_report_data',
+      {
+        report_type: reportType,
+        parameters,
+      }
+    );
 
     if (error) throw new Error(`Report generation failed: ${error.message}`);
 
@@ -562,7 +615,10 @@ export class ReportAutomationEngine {
   /**
    * Update next run date for scheduled report
    */
-  private async updateNextRunDate(scheduleId: string, frequency: string): Promise<void> {
+  private async updateNextRunDate(
+    scheduleId: string,
+    frequency: string
+  ): Promise<void> {
     const nextRunDate = this.calculateNextRunDate(new Date(), frequency);
 
     await this.supabase
@@ -601,12 +657,17 @@ export class ReportAutomationEngine {
   /**
    * Compress file for optimization
    */
-  private async compressFile(
-    fileResult: { filePath: string; fileSize: number; downloadUrl: string }
-  ): Promise<{ filePath: string; fileSize: number; downloadUrl: string }> {
-    const { data: compressedResult, error } = await this.supabase.rpc('compress_file', {
-      file_path: fileResult.filePath
-    });
+  private async compressFile(fileResult: {
+    filePath: string;
+    fileSize: number;
+    downloadUrl: string;
+  }): Promise<{ filePath: string; fileSize: number; downloadUrl: string }> {
+    const { data: compressedResult, error } = await this.supabase.rpc(
+      'compress_file',
+      {
+        file_path: fileResult.filePath,
+      }
+    );
 
     if (error) throw new Error(`File compression failed: ${error.message}`);
 
@@ -620,10 +681,13 @@ export class ReportAutomationEngine {
     fileResult: { filePath: string; fileSize: number; downloadUrl: string },
     password: string
   ): Promise<{ filePath: string; fileSize: number; downloadUrl: string }> {
-    const { data: protectedResult, error } = await this.supabase.rpc('password_protect_file', {
-      file_path: fileResult.filePath,
-      password: password
-    });
+    const { data: protectedResult, error } = await this.supabase.rpc(
+      'password_protect_file',
+      {
+        file_path: fileResult.filePath,
+        password,
+      }
+    );
 
     if (error) throw new Error(`Password protection failed: ${error.message}`);
 

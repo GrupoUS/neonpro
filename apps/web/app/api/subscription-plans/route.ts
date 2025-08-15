@@ -2,12 +2,12 @@
 // Story 6.1 - Task 2: Recurring Payment System
 // Subscription plans management endpoints
 
-import { NextRequest, NextResponse } from 'next/server';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { subscriptionManager } from '@/lib/payments/recurring/subscription-manager';
 import { logger } from '@/lib/utils/logger';
-import { z } from 'zod';
 
 // Validation Schemas
 const createPlanSchema = z.object({
@@ -20,17 +20,23 @@ const createPlanSchema = z.object({
   trial_period_days: z.number().min(0).max(365).optional(),
   usage_type: z.enum(['licensed', 'metered']).default('licensed'),
   billing_scheme: z.enum(['per_unit', 'tiered']).default('per_unit'),
-  tiers: z.array(z.object({
-    up_to: z.number().nullable(),
-    flat_amount: z.number().optional(),
-    unit_amount: z.number().optional()
-  })).optional(),
-  transform_usage: z.object({
-    divide_by: z.number().min(1),
-    round: z.enum(['up', 'down'])
-  }).optional(),
+  tiers: z
+    .array(
+      z.object({
+        up_to: z.number().nullable(),
+        flat_amount: z.number().optional(),
+        unit_amount: z.number().optional(),
+      })
+    )
+    .optional(),
+  transform_usage: z
+    .object({
+      divide_by: z.number().min(1),
+      round: z.enum(['up', 'down']),
+    })
+    .optional(),
   metadata: z.record(z.any()).optional(),
-  active: z.boolean().default(true)
+  active: z.boolean().default(true),
 });
 
 const updatePlanSchema = z.object({
@@ -38,20 +44,20 @@ const updatePlanSchema = z.object({
   description: z.string().optional(),
   trial_period_days: z.number().min(0).max(365).optional(),
   metadata: z.record(z.any()).optional(),
-  active: z.boolean().optional()
+  active: z.boolean().optional(),
 });
 
 // GET /api/subscription-plans - List subscription plans
 export async function GET(request: NextRequest) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
@@ -59,8 +65,8 @@ export async function GET(request: NextRequest) {
     const currency = searchParams.get('currency');
     const interval = searchParams.get('interval');
     const usageType = searchParams.get('usage_type');
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '10');
+    const page = Number.parseInt(searchParams.get('page') || '1', 10);
+    const limit = Number.parseInt(searchParams.get('limit') || '10', 10);
 
     // Build query
     let query = supabase
@@ -104,8 +110,8 @@ export async function GET(request: NextRequest) {
         page,
         limit,
         total: totalCount || 0,
-        pages: Math.ceil((totalCount || 0) / limit)
-      }
+        pages: Math.ceil((totalCount || 0) / limit),
+      },
     });
   } catch (error) {
     logger.error('Error in GET /api/subscription-plans:', error);
@@ -120,13 +126,13 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Check if user is admin
@@ -136,7 +142,7 @@ export async function POST(request: NextRequest) {
       .eq('user_id', user.id)
       .single();
 
-    if (!userProfile || !['admin', 'owner'].includes(userProfile.role)) {
+    if (!(userProfile && ['admin', 'owner'].includes(userProfile.role))) {
       return NextResponse.json(
         { error: 'Insufficient permissions' },
         { status: 403 }
@@ -144,14 +150,14 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    
+
     // Validate request body
     const validationResult = createPlanSchema.safeParse(body);
     if (!validationResult.success) {
       return NextResponse.json(
-        { 
+        {
           error: 'Invalid request data',
-          details: validationResult.error.errors
+          details: validationResult.error.errors,
         },
         { status: 400 }
       );
@@ -178,18 +184,18 @@ export async function POST(request: NextRequest) {
 
     logger.info(`Subscription plan created: ${plan.id} by user: ${user.id}`);
 
-    return NextResponse.json({
-      data: plan,
-      message: 'Subscription plan created successfully'
-    }, { status: 201 });
+    return NextResponse.json(
+      {
+        data: plan,
+        message: 'Subscription plan created successfully',
+      },
+      { status: 201 }
+    );
   } catch (error) {
     logger.error('Error in POST /api/subscription-plans:', error);
-    
+
     if (error instanceof Error) {
-      return NextResponse.json(
-        { error: error.message },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: error.message }, { status: 400 });
     }
 
     return NextResponse.json(
@@ -203,13 +209,13 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Check if user is admin
@@ -219,7 +225,7 @@ export async function PUT(request: NextRequest) {
       .eq('user_id', user.id)
       .single();
 
-    if (!userProfile || !['admin', 'owner'].includes(userProfile.role)) {
+    if (!(userProfile && ['admin', 'owner'].includes(userProfile.role))) {
       return NextResponse.json(
         { error: 'Insufficient permissions' },
         { status: 403 }
@@ -229,7 +235,7 @@ export async function PUT(request: NextRequest) {
     const body = await request.json();
     const { plan_ids, updates } = body;
 
-    if (!Array.isArray(plan_ids) || !updates) {
+    if (!(Array.isArray(plan_ids) && updates)) {
       return NextResponse.json(
         { error: 'Invalid request data' },
         { status: 400 }
@@ -240,9 +246,9 @@ export async function PUT(request: NextRequest) {
     const validationResult = updatePlanSchema.safeParse(updates);
     if (!validationResult.success) {
       return NextResponse.json(
-        { 
+        {
           error: 'Invalid update data',
-          details: validationResult.error.errors
+          details: validationResult.error.errors,
         },
         { status: 400 }
       );
@@ -262,15 +268,15 @@ export async function PUT(request: NextRequest) {
       } catch (error) {
         errors.push({
           plan_id: planId,
-          error: error instanceof Error ? error.message : 'Unknown error'
+          error: error instanceof Error ? error.message : 'Unknown error',
         });
       }
     }
 
     return NextResponse.json({
       data: results,
-      errors: errors,
-      message: `Updated ${results.length} plans, ${errors.length} errors`
+      errors,
+      message: `Updated ${results.length} plans, ${errors.length} errors`,
     });
   } catch (error) {
     logger.error('Error in PUT /api/subscription-plans:', error);
@@ -285,13 +291,13 @@ export async function PUT(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Check if user is admin
@@ -301,7 +307,7 @@ export async function DELETE(request: NextRequest) {
       .eq('user_id', user.id)
       .single();
 
-    if (!userProfile || !['admin', 'owner'].includes(userProfile.role)) {
+    if (!(userProfile && ['admin', 'owner'].includes(userProfile.role))) {
       return NextResponse.json(
         { error: 'Insufficient permissions' },
         { status: 403 }
@@ -324,23 +330,22 @@ export async function DELETE(request: NextRequest) {
     // Deactivate each plan
     for (const planId of plan_ids) {
       try {
-        const deactivatedPlan = await subscriptionManager.updatePlan(
-          planId,
-          { active: false }
-        );
+        const deactivatedPlan = await subscriptionManager.updatePlan(planId, {
+          active: false,
+        });
         results.push(deactivatedPlan);
       } catch (error) {
         errors.push({
           plan_id: planId,
-          error: error instanceof Error ? error.message : 'Unknown error'
+          error: error instanceof Error ? error.message : 'Unknown error',
         });
       }
     }
 
     return NextResponse.json({
       data: results,
-      errors: errors,
-      message: `Deactivated ${results.length} plans, ${errors.length} errors`
+      errors,
+      message: `Deactivated ${results.length} plans, ${errors.length} errors`,
     });
   } catch (error) {
     logger.error('Error in DELETE /api/subscription-plans:', error);

@@ -1,32 +1,33 @@
 // Story 9.2: Personalized Treatment Recommendations - API Feedback Route
 // Recommendation feedback API endpoint
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { personalizedRecommendationsService } from '../../../lib/services/personalized-recommendations';
 import { createRecommendationFeedbackRequestSchema } from '../../../lib/validations/personalized-recommendations';
-import { CreateRecommendationFeedbackRequest } from '../../../types/personalized-recommendations';
+import type { CreateRecommendationFeedbackRequest } from '../../../types/personalized-recommendations';
 
 // Get recommendation feedback
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    
+
     const query = {
       recommendation_id: searchParams.get('recommendation_id') || undefined,
       provider_id: searchParams.get('provider_id') || undefined,
       feedback_type: searchParams.get('feedback_type') || undefined,
       adoption_status: searchParams.get('adoption_status') || undefined,
-      limit: parseInt(searchParams.get('limit') || '10'),
-      offset: parseInt(searchParams.get('offset') || '0'),
+      limit: Number.parseInt(searchParams.get('limit') || '10', 10),
+      offset: Number.parseInt(searchParams.get('offset') || '0', 10),
       sort_by: searchParams.get('sort_by') || 'created_at',
-      sort_order: (searchParams.get('sort_order') as 'asc' | 'desc') || 'desc'
+      sort_order: (searchParams.get('sort_order') as 'asc' | 'desc') || 'desc',
     };
 
-    const feedback = await personalizedRecommendationsService.getFeedback(query);
-    
+    const feedback =
+      await personalizedRecommendationsService.getFeedback(query);
+
     return NextResponse.json({
       feedback,
-      success: true
+      success: true,
     });
   } catch (error) {
     console.error('Error fetching recommendation feedback:', error);
@@ -41,27 +42,33 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    
+
     // Validate request body
-    const validationResult = createRecommendationFeedbackRequestSchema.safeParse(body);
+    const validationResult =
+      createRecommendationFeedbackRequestSchema.safeParse(body);
     if (!validationResult.success) {
       return NextResponse.json(
-        { 
-          error: 'Invalid recommendation feedback data', 
+        {
+          error: 'Invalid recommendation feedback data',
           details: validationResult.error.issues,
-          success: false 
+          success: false,
         },
         { status: 400 }
       );
     }
 
-    const feedbackData: CreateRecommendationFeedbackRequest = validationResult.data;
-    const feedback = await personalizedRecommendationsService.createFeedback(feedbackData);
-    
-    return NextResponse.json({
-      feedback,
-      success: true
-    }, { status: 201 });
+    const feedbackData: CreateRecommendationFeedbackRequest =
+      validationResult.data;
+    const feedback =
+      await personalizedRecommendationsService.createFeedback(feedbackData);
+
+    return NextResponse.json(
+      {
+        feedback,
+        success: true,
+      },
+      { status: 201 }
+    );
   } catch (error) {
     console.error('Error creating recommendation feedback:', error);
     return NextResponse.json(

@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
+import { type NextRequest, NextResponse } from 'next/server';
 import { SessionManager } from '@/lib/auth/session-manager';
 import { SecurityEventType } from '@/types/session';
 
@@ -33,7 +33,7 @@ export class SessionAuthMiddleware {
 
     try {
       // Create Supabase client
-      const supabase = createServerClient(
+      const _supabase = createServerClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
         {
@@ -44,7 +44,7 @@ export class SessionAuthMiddleware {
             set(name: string, value: string, options: any) {
               response.cookies.set(name, value, options);
             },
-            remove(name: string, options: any) {
+            remove(name: string, _options: any) {
               response.cookies.delete(name);
             },
           },
@@ -53,7 +53,7 @@ export class SessionAuthMiddleware {
 
       // Get session token from cookie
       const sessionToken = request.cookies.get('session-token')?.value;
-      
+
       if (!sessionToken) {
         return this.redirectToLogin(request);
       }
@@ -64,7 +64,7 @@ export class SessionAuthMiddleware {
         {
           ipAddress: this.getClientIP(request),
           userAgent: request.headers.get('user-agent') || 'Unknown',
-          requestPath: pathname
+          requestPath: pathname,
         }
       );
 
@@ -77,7 +77,7 @@ export class SessionAuthMiddleware {
             reason: sessionValidation.reason,
             ipAddress: this.getClientIP(request),
             userAgent: request.headers.get('user-agent') || 'Unknown',
-            requestPath: pathname
+            requestPath: pathname,
           }
         );
 
@@ -92,7 +92,7 @@ export class SessionAuthMiddleware {
           sessionToken,
           {
             ipAddress: this.getClientIP(request),
-            userAgent: request.headers.get('user-agent') || 'Unknown'
+            userAgent: request.headers.get('user-agent') || 'Unknown',
           }
         );
 
@@ -103,7 +103,7 @@ export class SessionAuthMiddleware {
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'lax',
             maxAge: 60 * 60 * 24 * 7, // 7 days
-            path: '/'
+            path: '/',
           });
         }
       }
@@ -118,21 +118,16 @@ export class SessionAuthMiddleware {
       await this.checkSuspiciousActivity(request, sessionValidation.userId!);
 
       return response;
-
     } catch (error) {
       console.error('Session middleware error:', error);
-      
+
       // Log error as security event
-      await this.logSecurityEvent(
-        'unknown',
-        SecurityEventType.SYSTEM_ERROR,
-        {
-          error: error instanceof Error ? error.message : 'Unknown error',
-          ipAddress: this.getClientIP(request),
-          userAgent: request.headers.get('user-agent') || 'Unknown',
-          requestPath: pathname
-        }
-      );
+      await this.logSecurityEvent('unknown', SecurityEventType.SYSTEM_ERROR, {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        ipAddress: this.getClientIP(request),
+        userAgent: request.headers.get('user-agent') || 'Unknown',
+        requestPath: pathname,
+      });
 
       return this.redirectToLogin(request);
     }
@@ -153,11 +148,11 @@ export class SessionAuthMiddleware {
       '/about',
       '/contact',
       '/',
-      '/public'
+      '/public',
     ];
 
-    return publicRoutes.some(route => 
-      pathname === route || pathname.startsWith(`${route}/`)
+    return publicRoutes.some(
+      (route) => pathname === route || pathname.startsWith(`${route}/`)
     );
   }
 
@@ -172,11 +167,11 @@ export class SessionAuthMiddleware {
       '/api/auth/reset-password',
       '/api/auth/verify-email',
       '/api/health',
-      '/api/public'
+      '/api/public',
     ];
 
-    return publicApiRoutes.some(route => 
-      pathname === route || pathname.startsWith(`${route}/`)
+    return publicApiRoutes.some(
+      (route) => pathname === route || pathname.startsWith(`${route}/`)
     );
   }
 
@@ -187,11 +182,11 @@ export class SessionAuthMiddleware {
     const forwarded = request.headers.get('x-forwarded-for');
     const realIP = request.headers.get('x-real-ip');
     const remoteAddr = request.headers.get('x-remote-addr');
-    
+
     if (forwarded) {
       return forwarded.split(',')[0].trim();
     }
-    
+
     return realIP || remoteAddr || '0.0.0.0';
   }
 
@@ -200,7 +195,7 @@ export class SessionAuthMiddleware {
    */
   private redirectToLogin(request: NextRequest): NextResponse {
     const loginUrl = new URL('/login', request.url);
-    
+
     // Add return URL for redirect after login
     if (request.nextUrl.pathname !== '/login') {
       loginUrl.searchParams.set('returnUrl', request.nextUrl.pathname);
@@ -223,7 +218,7 @@ export class SessionAuthMiddleware {
         eventType,
         severity: this.getEventSeverity(eventType),
         details,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     } catch (error) {
       console.error('Failed to log security event:', error);
@@ -233,20 +228,22 @@ export class SessionAuthMiddleware {
   /**
    * Get event severity based on type
    */
-  private getEventSeverity(eventType: SecurityEventType): 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' {
+  private getEventSeverity(
+    eventType: SecurityEventType
+  ): 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' {
     switch (eventType) {
       case SecurityEventType.FAILED_LOGIN:
       case SecurityEventType.SESSION_VALIDATION_FAILED:
         return 'MEDIUM';
-      
+
       case SecurityEventType.SUSPICIOUS_ACTIVITY:
       case SecurityEventType.MULTIPLE_FAILED_ATTEMPTS:
         return 'HIGH';
-      
+
       case SecurityEventType.ACCOUNT_LOCKED:
       case SecurityEventType.SECURITY_BREACH:
         return 'CRITICAL';
-      
+
       default:
         return 'LOW';
     }
@@ -262,10 +259,11 @@ export class SessionAuthMiddleware {
     try {
       const ipAddress = this.getClientIP(request);
       const userAgent = request.headers.get('user-agent') || 'Unknown';
-      
+
       // Check for rapid requests from same IP
       const recentRequests = await this.getRecentRequests(ipAddress);
-      if (recentRequests > 100) { // More than 100 requests in last minute
+      if (recentRequests > 100) {
+        // More than 100 requests in last minute
         await this.logSecurityEvent(
           userId,
           SecurityEventType.SUSPICIOUS_ACTIVITY,
@@ -274,7 +272,7 @@ export class SessionAuthMiddleware {
             requestCount: recentRequests,
             ipAddress,
             userAgent,
-            timeWindow: '1 minute'
+            timeWindow: '1 minute',
           }
         );
       }
@@ -287,13 +285,16 @@ export class SessionAuthMiddleware {
           {
             reason: 'Unusual user agent detected',
             userAgent,
-            ipAddress
+            ipAddress,
           }
         );
       }
 
       // Check for geographic anomalies (simplified)
-      const isUnusualLocation = await this.checkUnusualLocation(userId, ipAddress);
+      const isUnusualLocation = await this.checkUnusualLocation(
+        userId,
+        ipAddress
+      );
       if (isUnusualLocation) {
         await this.logSecurityEvent(
           userId,
@@ -301,11 +302,10 @@ export class SessionAuthMiddleware {
           {
             reason: 'Unusual geographic location',
             ipAddress,
-            userAgent
+            userAgent,
           }
         );
       }
-
     } catch (error) {
       console.error('Error checking suspicious activity:', error);
     }
@@ -314,7 +314,7 @@ export class SessionAuthMiddleware {
   /**
    * Get recent request count for IP (simplified implementation)
    */
-  private async getRecentRequests(ipAddress: string): Promise<number> {
+  private async getRecentRequests(_ipAddress: string): Promise<number> {
     // In a real implementation, this would check a cache/database
     // For now, return 0 to avoid false positives
     return 0;
@@ -332,24 +332,24 @@ export class SessionAuthMiddleware {
       /curl/i,
       /wget/i,
       /python/i,
-      /java/i
+      /java/i,
     ];
 
-    return suspiciousPatterns.some(pattern => pattern.test(userAgent));
+    return suspiciousPatterns.some((pattern) => pattern.test(userAgent));
   }
 
   /**
    * Check for unusual geographic location (simplified)
    */
   private async checkUnusualLocation(
-    userId: string,
-    ipAddress: string
+    _userId: string,
+    _ipAddress: string
   ): Promise<boolean> {
     // In a real implementation, this would:
     // 1. Get IP geolocation
     // 2. Compare with user's typical locations
     // 3. Flag if significantly different
-    
+
     // For now, return false to avoid false positives
     return false;
   }

@@ -1,132 +1,126 @@
 /**
  * AI System Index
  * Central exports for all AI-powered engines and systems
- * 
+ *
  * Story 3.2: AI-powered Risk Assessment + Insights
  * Complete AI system implementation with 6 core engines
  */
 
-// Core AI Engines
-export { AIRiskAssessmentEngine } from './risk-assessment';
-export { AITreatmentRecommendationEngine } from './treatment-recommendations';
-export { AIPredictiveAnalyticsEngine } from './predictive-analytics';
-export { AIBehaviorAnalysisEngine } from './behavior-analysis';
-export { AIHealthMonitoringEngine } from './health-monitoring';
-export { AIContinuousLearningSystem } from './continuous-learning';
-
-// Type exports for Risk Assessment
-export type {
-  RiskFactor,
-  RiskAssessment,
-  HealthPrediction,
-  SafetyAlert,
-  ModelMetrics
-} from './risk-assessment';
-
-// Type exports for Treatment Recommendations
-export type {
-  TreatmentRecommendation,
-  ExpectedOutcome,
-  TreatmentProtocol,
-  ProtocolStep,
-  ProtocolCustomization,
-  TreatmentCombination,
-  EvidenceSource
-} from './treatment-recommendations';
-
-// Type exports for Predictive Analytics
-export type {
-  OutcomePrediction,
-  PredictedOutcome,
-  RecoveryTimeline,
-  ComplicationPrediction,
-  ExpectedResult,
-  LongTermPrognosis,
-  PredictionFactor,
-  AlternativeScenario,
-  OutcomeChange,
-  PatientResponseModel,
-  ResponseProfile,
-  HistoricalPattern,
-  PredictiveIndicator,
-  ThresholdValue,
-  PersonalizationFactor
-} from './predictive-analytics';
-
 // Type exports for Behavior Analysis
 export type {
-  BehaviorAnalysis,
-  BehaviorProfile,
-  CommunicationStyle,
   AppointmentBehavior,
-  TreatmentCompliance,
+  BehaviorAnalysis,
+  BehaviorPrediction,
+  BehaviorProfile,
+  BehaviorRecommendation,
+  BehaviorRiskIndicator,
+  BehaviorTrigger,
+  CommunicationStyle,
+  ComplianceBarrier,
   DecisionMakingPattern,
   EngagementPattern,
-  BehaviorRiskIndicator,
-  BehaviorRecommendation,
-  TimePreference,
-  ComplianceBarrier,
   InfluenceFactor,
-  SatisfactionDriver,
-  BehaviorTrigger,
   PatientSegment,
-  BehaviorPrediction
+  SatisfactionDriver,
+  TimePreference,
+  TreatmentCompliance,
 } from './behavior-analysis';
-
-// Type exports for Health Monitoring
-export type {
-  HealthTrendAnalysis,
-  MonitoringPeriod,
-  HealthTrend,
-  VitalTrend,
-  TreatmentEffectiveness,
-  EarlyWarning,
-  HealthRecommendation,
-  WearableData,
-  HealthPrediction as HealthMonitoringPrediction,
-  HealthInsight,
-  TrendDirection,
-  AlertSeverity,
-  MonitoringFrequency,
-  DataQuality,
-  HealthScore,
-  ImprovementArea,
-  SuccessArea,
-  BehaviorHealthCorrelation,
-  PersonalizedGoal,
-  MotivationStrategy
-} from './health-monitoring';
-
+export { AIBehaviorAnalysisEngine } from './behavior-analysis';
 // Type exports for Continuous Learning
 export type {
-  LearningSystem,
-  MLModel,
-  SystemPerformance,
-  LearningConfiguration,
-  TrainingSession,
-  ValidationResult,
-  DeploymentStatus,
-  ModelPerformance,
-  FeatureImportance,
-  ModelArtifacts,
-  ClinicalImpact,
-  TrainingMetrics,
-  ValidationMetrics,
-  StatisticalTest,
-  ClinicalValidation,
-  BiasAnalysis,
-  FairnessMetrics,
-  Alert,
-  ClassificationReport,
-  EfficacyResult,
-  SafetyResult,
-  DemographicBias,
-  DataBias,
-  MetricAverage,
-  FeedbackData,
   ABTestResult,
-  DataDrift
+  Alert,
+  BiasAnalysis,
+  ClassificationReport,
+  ClinicalImpact,
+  ClinicalValidation,
+  DataBias,
+  DataDrift,
+  DemographicBias,
+  DeploymentStatus,
+  EfficacyResult,
+  FairnessMetrics,
+  FeatureImportance,
+  FeedbackData,
+  LearningConfiguration,
+  LearningSystem,
+  MetricAverage,
+  MLModel,
+  ModelArtifacts,
+  ModelPerformance,
+  SafetyResult,
+  StatisticalTest,
+  SystemPerformance,
+  TrainingMetrics,
+  TrainingSession,
+  ValidationMetrics,
+  ValidationResult,
 } from './continuous-learning';
+export { AIContinuousLearningSystem } from './continuous-learning';
+// Type exports for Health Monitoring
+export type {
+  AlertSeverity,
+  BehaviorHealthCorrelation,
+  DataQuality,
+  EarlyWarning,
+  HealthInsight,
+  HealthPrediction as HealthMonitoringPrediction,
+  HealthRecommendation,
+  HealthScore,
+  HealthTrend,
+  HealthTrendAnalysis,
+  ImprovementArea,
+  MonitoringFrequency,
+  MonitoringPeriod,
+  MotivationStrategy,
+  PersonalizedGoal,
+  SuccessArea,
+  TreatmentEffectiveness,
+  TrendDirection,
+  VitalTrend,
+  WearableData,
+} from './health-monitoring';
+export { AIHealthMonitoringEngine } from './health-monitoring';
+// Type exports for Predictive Analytics
+export type {
+  AlternativeScenario,
+  ComplicationPrediction,
+  ExpectedResult,
+  HistoricalPattern,
+  LongTermPrognosis,
+  OutcomeChange,
+  OutcomePrediction,
+  PatientResponseModel,
+  PersonalizationFactor,
+  PredictedOutcome,
+  PredictionFactor,
+  PredictiveIndicator,
+  RecoveryTimeline,
+  ResponseProfile,
+  ThresholdValue,
+} from './predictive-analytics';
+export { AIPredictiveAnalyticsEngine } from './predictive-analytics';
+// Type exports for Risk Assessment
+export type {
+  HealthPrediction,
+  ModelMetrics,
+  RiskAssessment,
+  RiskFactor,
+  SafetyAlert,
+} from './risk-assessment';
+// Core AI Engines
+export { AIRiskAssessmentEngine } from './risk-assessment';
+// Type exports for Treatment Recommendations
+export type {
+  EvidenceSource,
+  ExpectedOutcome,
+  ProtocolCustomization,
+  ProtocolStep,
+  TreatmentCombination,
+  TreatmentProtocol,
+  TreatmentRecommendation,
+} from './treatment-recommendations';
+export { AITreatmentRecommendationEngine } from './treatment-recommendations';
 
 /**
  * AI System Factory
@@ -136,7 +130,7 @@ export class AISystemFactory {
   /**
    * Create a complete AI system with all engines
    */
-  static createCompleteAISystem(config?: {
+  static createCompleteAISystem(_config?: {
     riskAssessment?: any;
     treatmentRecommendation?: any;
     predictiveAnalytics?: any;
@@ -160,43 +154,43 @@ export class AISystemFactory {
         early_stopping: true,
         feature_selection: true,
         hyperparameter_tuning: true,
-        ensemble_methods: true
-      })
+        ensemble_methods: true,
+      }),
     };
   }
 
   /**
    * Create risk assessment engine with custom configuration
    */
-  static createRiskAssessmentEngine(config?: any) {
+  static createRiskAssessmentEngine(_config?: any) {
     return new AIRiskAssessmentEngine();
   }
 
   /**
    * Create treatment recommendation engine with custom configuration
    */
-  static createTreatmentRecommendationEngine(config?: any) {
+  static createTreatmentRecommendationEngine(_config?: any) {
     return new AITreatmentRecommendationEngine();
   }
 
   /**
    * Create predictive analytics engine with custom configuration
    */
-  static createPredictiveAnalyticsEngine(config?: any) {
+  static createPredictiveAnalyticsEngine(_config?: any) {
     return new AIPredictiveAnalyticsEngine();
   }
 
   /**
    * Create behavior analysis engine with custom configuration
    */
-  static createBehaviorAnalysisEngine(config?: any) {
+  static createBehaviorAnalysisEngine(_config?: any) {
     return new AIBehaviorAnalysisEngine();
   }
 
   /**
    * Create health monitoring engine with custom configuration
    */
-  static createHealthMonitoringEngine(config?: any) {
+  static createHealthMonitoringEngine(_config?: any) {
     return new AIHealthMonitoringEngine();
   }
 
@@ -214,7 +208,7 @@ export class AISystemFactory {
       early_stopping: true,
       feature_selection: true,
       hyperparameter_tuning: true,
-      ensemble_methods: true
+      ensemble_methods: true,
     };
 
     return new AIContinuousLearningSystem(config || defaultConfig);
@@ -230,38 +224,38 @@ export const AI_SYSTEM_CONFIG = {
     MODEL_VERSION: '1.0.0',
     ACCURACY_THRESHOLD: 0.85,
     CONFIDENCE_THRESHOLD: 0.8,
-    ALERT_THRESHOLD: 0.7
+    ALERT_THRESHOLD: 0.7,
   },
   TREATMENT_RECOMMENDATION: {
     MODEL_VERSION: '1.0.0',
     SUCCESS_RATE_THRESHOLD: 0.75,
     EVIDENCE_LEVEL_THRESHOLD: 'moderate',
-    MAX_RECOMMENDATIONS: 5
+    MAX_RECOMMENDATIONS: 5,
   },
   PREDICTIVE_ANALYTICS: {
     MODEL_VERSION: '1.0.0',
     PREDICTION_HORIZON_DAYS: 90,
     CONFIDENCE_THRESHOLD: 0.8,
-    UPDATE_FREQUENCY: 'daily'
+    UPDATE_FREQUENCY: 'daily',
   },
   BEHAVIOR_ANALYSIS: {
     MODEL_VERSION: '1.0.0',
     ENGAGEMENT_THRESHOLD: 0.7,
     COMPLIANCE_THRESHOLD: 0.8,
-    ANALYSIS_WINDOW_DAYS: 30
+    ANALYSIS_WINDOW_DAYS: 30,
   },
   HEALTH_MONITORING: {
     MODEL_VERSION: '1.0.0',
     MONITORING_FREQUENCY: 'daily',
     ALERT_THRESHOLD: 0.8,
-    TREND_ANALYSIS_DAYS: 14
+    TREND_ANALYSIS_DAYS: 14,
   },
   CONTINUOUS_LEARNING: {
     MODEL_VERSION: '1.0.0',
     RETRAIN_FREQUENCY: 'weekly',
     PERFORMANCE_THRESHOLD: 0.05,
-    MIN_DATA_THRESHOLD: 1000
-  }
+    MIN_DATA_THRESHOLD: 1000,
+  },
 };
 
 /**
@@ -277,20 +271,44 @@ export class AISystemStatus {
       overall_status: 'healthy',
       timestamp: new Date(),
       engines: {
-        risk_assessment: { status: 'active', last_update: new Date(), performance: 0.87 },
-        treatment_recommendation: { status: 'active', last_update: new Date(), performance: 0.82 },
-        predictive_analytics: { status: 'active', last_update: new Date(), performance: 0.85 },
-        behavior_analysis: { status: 'active', last_update: new Date(), performance: 0.79 },
-        health_monitoring: { status: 'active', last_update: new Date(), performance: 0.83 },
-        continuous_learning: { status: 'active', last_update: new Date(), performance: 0.88 }
+        risk_assessment: {
+          status: 'active',
+          last_update: new Date(),
+          performance: 0.87,
+        },
+        treatment_recommendation: {
+          status: 'active',
+          last_update: new Date(),
+          performance: 0.82,
+        },
+        predictive_analytics: {
+          status: 'active',
+          last_update: new Date(),
+          performance: 0.85,
+        },
+        behavior_analysis: {
+          status: 'active',
+          last_update: new Date(),
+          performance: 0.79,
+        },
+        health_monitoring: {
+          status: 'active',
+          last_update: new Date(),
+          performance: 0.83,
+        },
+        continuous_learning: {
+          status: 'active',
+          last_update: new Date(),
+          performance: 0.88,
+        },
       },
       system_metrics: {
-        total_predictions: 15420,
+        total_predictions: 15_420,
         accuracy_rate: 0.84,
         response_time_ms: 45,
         uptime_percentage: 99.8,
-        error_rate: 0.02
-      }
+        error_rate: 0.02,
+      },
     };
   }
 
@@ -308,13 +326,13 @@ export class AISystemStatus {
         response_time: 45,
         throughput: 1200,
         error_rate: 0.02,
-        user_satisfaction: 4.2
+        user_satisfaction: 4.2,
       },
       trends: {
         accuracy_trend: 'improving',
         performance_trend: 'stable',
-        usage_trend: 'increasing'
-      }
+        usage_trend: 'increasing',
+      },
     };
   }
 }
@@ -328,5 +346,5 @@ export default {
   AIContinuousLearningSystem,
   AISystemFactory,
   AISystemStatus,
-  AI_SYSTEM_CONFIG
+  AI_SYSTEM_CONFIG,
 };

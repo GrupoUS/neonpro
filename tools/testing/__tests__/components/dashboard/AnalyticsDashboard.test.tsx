@@ -1,14 +1,20 @@
-import { render, screen, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import AnalyticsDashboard from '@/components/dashboard/AnalyticsDashboard'
-import { mockAnalyticsData, mockUser } from '@/../../__tests__/utils/mockData'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { mockAnalyticsData } from '@/../../__tests__/utils/mockData';
+import AnalyticsDashboard from '@/components/dashboard/AnalyticsDashboard';
 
 // Mock Recharts components
 jest.mock('recharts', () => ({
-  LineChart: ({ children }: { children: React.ReactNode }) => <div data-testid="line-chart">{children}</div>,
-  BarChart: ({ children }: { children: React.ReactNode }) => <div data-testid="bar-chart">{children}</div>,
-  PieChart: ({ children }: { children: React.ReactNode }) => <div data-testid="pie-chart">{children}</div>,
+  LineChart: ({ children }: { children: React.ReactNode }) => (
+    <div data-testid="line-chart">{children}</div>
+  ),
+  BarChart: ({ children }: { children: React.ReactNode }) => (
+    <div data-testid="bar-chart">{children}</div>
+  ),
+  PieChart: ({ children }: { children: React.ReactNode }) => (
+    <div data-testid="pie-chart">{children}</div>
+  ),
   Line: () => <div data-testid="line" />,
   Bar: () => <div data-testid="bar" />,
   Cell: () => <div data-testid="cell" />,
@@ -17,18 +23,19 @@ jest.mock('recharts', () => ({
   CartesianGrid: () => <div data-testid="cartesian-grid" />,
   Tooltip: () => <div data-testid="tooltip" />,
   Legend: () => <div data-testid="legend" />,
-  ResponsiveContainer: ({ children }: { children: React.ReactNode }) => 
-    <div data-testid="responsive-container">{children}</div>,
-}))
+  ResponsiveContainer: ({ children }: { children: React.ReactNode }) => (
+    <div data-testid="responsive-container">{children}</div>
+  ),
+}));
 
 // Mock hooks
 jest.mock('@/hooks/analytics/useAnalyticsData', () => ({
   useAnalyticsData: jest.fn(),
-}))
+}));
 
 jest.mock('@/hooks/analytics/useExportData', () => ({
   useExportData: jest.fn(),
-}))
+}));
 
 const createWrapper = () => {
   const queryClient = new QueryClient({
@@ -37,18 +44,18 @@ const createWrapper = () => {
         retry: false,
       },
     },
-  })
-  
+  });
+
   return ({ children }: { children: React.ReactNode }) => (
-    <QueryClientProvider client={queryClient}>
-      {children}
-    </QueryClientProvider>
-  )
-}
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
+};
 
 describe('AnalyticsDashboard', () => {
-  const mockUseAnalyticsData = require('@/hooks/analytics/useAnalyticsData').useAnalyticsData
-  const mockUseExportData = require('@/hooks/analytics/useExportData').useExportData
+  const mockUseAnalyticsData =
+    require('@/hooks/analytics/useAnalyticsData').useAnalyticsData;
+  const mockUseExportData =
+    require('@/hooks/analytics/useExportData').useExportData;
 
   beforeEach(() => {
     mockUseAnalyticsData.mockReturnValue({
@@ -56,7 +63,7 @@ describe('AnalyticsDashboard', () => {
       isLoading: false,
       isError: false,
       error: null,
-    })
+    });
 
     mockUseExportData.mockReturnValue({
       exportToPDF: jest.fn(),
@@ -64,27 +71,27 @@ describe('AnalyticsDashboard', () => {
       exportToCSV: jest.fn(),
       isExporting: false,
       exportError: null,
-    })
-  })
+    });
+  });
 
   afterEach(() => {
-    jest.clearAllMocks()
-  })
+    jest.clearAllMocks();
+  });
 
   it('should render dashboard with analytics data', async () => {
-    render(<AnalyticsDashboard />, { wrapper: createWrapper() })
+    render(<AnalyticsDashboard />, { wrapper: createWrapper() });
 
     // Check if key metrics are displayed
-    expect(screen.getByText('1,250')).toBeInTheDocument() // totalPatients
-    expect(screen.getByText('$125,000')).toBeInTheDocument() // totalRevenue
-    expect(screen.getByText('$100')).toBeInTheDocument() // averageTicket
-    expect(screen.getByText('25%')).toBeInTheDocument() // conversionRate
+    expect(screen.getByText('1,250')).toBeInTheDocument(); // totalPatients
+    expect(screen.getByText('$125,000')).toBeInTheDocument(); // totalRevenue
+    expect(screen.getByText('$100')).toBeInTheDocument(); // averageTicket
+    expect(screen.getByText('25%')).toBeInTheDocument(); // conversionRate
 
     // Check if charts are rendered
-    expect(screen.getByTestId('line-chart')).toBeInTheDocument()
-    expect(screen.getByTestId('bar-chart')).toBeInTheDocument()
-    expect(screen.getByTestId('pie-chart')).toBeInTheDocument()
-  })
+    expect(screen.getByTestId('line-chart')).toBeInTheDocument();
+    expect(screen.getByTestId('bar-chart')).toBeInTheDocument();
+    expect(screen.getByTestId('pie-chart')).toBeInTheDocument();
+  });
 
   it('should show loading state', () => {
     mockUseAnalyticsData.mockReturnValue({
@@ -92,13 +99,13 @@ describe('AnalyticsDashboard', () => {
       isLoading: true,
       isError: false,
       error: null,
-    })
+    });
 
-    render(<AnalyticsDashboard />, { wrapper: createWrapper() })
+    render(<AnalyticsDashboard />, { wrapper: createWrapper() });
 
-    expect(screen.getByTestId('analytics-loading')).toBeInTheDocument()
-    expect(screen.getByText('Loading analytics...')).toBeInTheDocument()
-  })
+    expect(screen.getByTestId('analytics-loading')).toBeInTheDocument();
+    expect(screen.getByText('Loading analytics...')).toBeInTheDocument();
+  });
 
   it('should show error state', () => {
     mockUseAnalyticsData.mockReturnValue({
@@ -106,55 +113,55 @@ describe('AnalyticsDashboard', () => {
       isLoading: false,
       isError: true,
       error: new Error('Failed to load analytics'),
-    })
+    });
 
-    render(<AnalyticsDashboard />, { wrapper: createWrapper() })
+    render(<AnalyticsDashboard />, { wrapper: createWrapper() });
 
-    expect(screen.getByTestId('analytics-error')).toBeInTheDocument()
-    expect(screen.getByText('Failed to load analytics')).toBeInTheDocument()
-  })
+    expect(screen.getByTestId('analytics-error')).toBeInTheDocument();
+    expect(screen.getByText('Failed to load analytics')).toBeInTheDocument();
+  });
 
   it('should handle export to PDF', async () => {
-    const mockExportToPDF = jest.fn()
+    const mockExportToPDF = jest.fn();
     mockUseExportData.mockReturnValue({
       exportToPDF: mockExportToPDF,
       exportToExcel: jest.fn(),
       exportToCSV: jest.fn(),
       isExporting: false,
       exportError: null,
-    })
+    });
 
-    const user = userEvent.setup()
-    render(<AnalyticsDashboard />, { wrapper: createWrapper() })
+    const user = userEvent.setup();
+    render(<AnalyticsDashboard />, { wrapper: createWrapper() });
 
-    const exportButton = screen.getByText('Export PDF')
-    await user.click(exportButton)
+    const exportButton = screen.getByText('Export PDF');
+    await user.click(exportButton);
 
     expect(mockExportToPDF).toHaveBeenCalledWith(
       expect.objectContaining({
         data: mockAnalyticsData,
         title: expect.stringContaining('Analytics Report'),
       })
-    )
-  })
+    );
+  });
 
   it('should handle date range filter changes', async () => {
-    const user = userEvent.setup()
-    render(<AnalyticsDashboard />, { wrapper: createWrapper() })
+    const user = userEvent.setup();
+    render(<AnalyticsDashboard />, { wrapper: createWrapper() });
 
     // Change date range
-    const startDateInput = screen.getByLabelText('Start Date')
-    const endDateInput = screen.getByLabelText('End Date')
+    const startDateInput = screen.getByLabelText('Start Date');
+    const endDateInput = screen.getByLabelText('End Date');
 
-    await user.clear(startDateInput)
-    await user.type(startDateInput, '2024-02-01')
-    
-    await user.clear(endDateInput)
-    await user.type(endDateInput, '2024-02-28')
+    await user.clear(startDateInput);
+    await user.type(startDateInput, '2024-02-01');
+
+    await user.clear(endDateInput);
+    await user.type(endDateInput, '2024-02-28');
 
     // Apply filters
-    const applyButton = screen.getByText('Apply Filters')
-    await user.click(applyButton)
+    const applyButton = screen.getByText('Apply Filters');
+    await user.click(applyButton);
 
     // Verify hook was called with new filters
     await waitFor(() => {
@@ -162,28 +169,28 @@ describe('AnalyticsDashboard', () => {
         expect.objectContaining({
           dateRange: { start: '2024-02-01', end: '2024-02-28' },
         })
-      )
-    })
-  })
+      );
+    });
+  });
 
   it('should handle treatment filter changes', async () => {
-    const user = userEvent.setup()
-    render(<AnalyticsDashboard />, { wrapper: createWrapper() })
+    const user = userEvent.setup();
+    render(<AnalyticsDashboard />, { wrapper: createWrapper() });
 
     // Open treatment filter dropdown
-    const treatmentFilter = screen.getByLabelText('Treatments')
-    await user.click(treatmentFilter)
+    const treatmentFilter = screen.getByLabelText('Treatments');
+    await user.click(treatmentFilter);
 
     // Select treatments
-    const facialOption = screen.getByRole('option', { name: 'Facial' })
-    const botoxOption = screen.getByRole('option', { name: 'Botox' })
-    
-    await user.click(facialOption)
-    await user.click(botoxOption)
+    const facialOption = screen.getByRole('option', { name: 'Facial' });
+    const botoxOption = screen.getByRole('option', { name: 'Botox' });
+
+    await user.click(facialOption);
+    await user.click(botoxOption);
 
     // Apply filters
-    const applyButton = screen.getByText('Apply Filters')
-    await user.click(applyButton)
+    const applyButton = screen.getByText('Apply Filters');
+    await user.click(applyButton);
 
     // Verify hook was called with selected treatments
     await waitFor(() => {
@@ -191,9 +198,9 @@ describe('AnalyticsDashboard', () => {
         expect.objectContaining({
           treatments: ['facial', 'botox'],
         })
-      )
-    })
-  })
+      );
+    });
+  });
 
   it('should show export loading state', () => {
     mockUseExportData.mockReturnValue({
@@ -202,13 +209,13 @@ describe('AnalyticsDashboard', () => {
       exportToCSV: jest.fn(),
       isExporting: true,
       exportError: null,
-    })
+    });
 
-    render(<AnalyticsDashboard />, { wrapper: createWrapper() })
+    render(<AnalyticsDashboard />, { wrapper: createWrapper() });
 
-    expect(screen.getByText('Exporting...')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Export PDF' })).toBeDisabled()
-  })
+    expect(screen.getByText('Exporting...')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Export PDF' })).toBeDisabled();
+  });
 
   it('should display export error', () => {
     mockUseExportData.mockReturnValue({
@@ -217,36 +224,36 @@ describe('AnalyticsDashboard', () => {
       exportToCSV: jest.fn(),
       isExporting: false,
       exportError: new Error('Export failed'),
-    })
+    });
 
-    render(<AnalyticsDashboard />, { wrapper: createWrapper() })
+    render(<AnalyticsDashboard />, { wrapper: createWrapper() });
 
-    expect(screen.getByText('Export failed')).toBeInTheDocument()
-    expect(screen.getByTestId('export-error-alert')).toBeInTheDocument()
-  })
+    expect(screen.getByText('Export failed')).toBeInTheDocument();
+    expect(screen.getByTestId('export-error-alert')).toBeInTheDocument();
+  });
 
   it('should be accessible', async () => {
-    render(<AnalyticsDashboard />, { wrapper: createWrapper() })
+    render(<AnalyticsDashboard />, { wrapper: createWrapper() });
 
     // Check for proper headings hierarchy
-    expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { level: 2 })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2 })).toBeInTheDocument();
 
     // Check for proper labels
-    expect(screen.getByLabelText('Start Date')).toBeInTheDocument()
-    expect(screen.getByLabelText('End Date')).toBeInTheDocument()
-    expect(screen.getByLabelText('Treatments')).toBeInTheDocument()
+    expect(screen.getByLabelText('Start Date')).toBeInTheDocument();
+    expect(screen.getByLabelText('End Date')).toBeInTheDocument();
+    expect(screen.getByLabelText('Treatments')).toBeInTheDocument();
 
     // Check for keyboard navigation
-    const exportButton = screen.getByRole('button', { name: 'Export PDF' })
-    expect(exportButton).toHaveAttribute('tabindex', '0')
-  })
+    const exportButton = screen.getByRole('button', { name: 'Export PDF' });
+    expect(exportButton).toHaveAttribute('tabindex', '0');
+  });
 
   it('should handle responsive design', () => {
     // Mock window.matchMedia for mobile viewport
     Object.defineProperty(window, 'matchMedia', {
       writable: true,
-      value: jest.fn().mockImplementation(query => ({
+      value: jest.fn().mockImplementation((query) => ({
         matches: query === '(max-width: 768px)',
         media: query,
         onchange: null,
@@ -256,12 +263,12 @@ describe('AnalyticsDashboard', () => {
         removeEventListener: jest.fn(),
         dispatchEvent: jest.fn(),
       })),
-    })
+    });
 
-    render(<AnalyticsDashboard />, { wrapper: createWrapper() })
+    render(<AnalyticsDashboard />, { wrapper: createWrapper() });
 
     // Check mobile-specific elements
-    expect(screen.getByTestId('mobile-dashboard')).toBeInTheDocument()
-    expect(screen.getByTestId('responsive-container')).toBeInTheDocument()
-  })
-})
+    expect(screen.getByTestId('mobile-dashboard')).toBeInTheDocument();
+    expect(screen.getByTestId('responsive-container')).toBeInTheDocument();
+  });
+});

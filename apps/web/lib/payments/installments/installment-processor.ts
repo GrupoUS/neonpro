@@ -3,9 +3,8 @@
 // Service for processing installment payments and automation
 
 import { createClient } from '@supabase/supabase-js';
+import { addDays, format, isBefore } from 'date-fns';
 import Stripe from 'stripe';
-import { addDays, addWeeks, addMonths, addQuarters, isBefore, isAfter, format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
 
 // Types
 interface InstallmentProcessorConfig {
@@ -74,12 +73,12 @@ export class InstallmentProcessor {
       retryAttempts: 3,
       lateFeePercentage: 2.0, // 2% late fee
       gracePeriodDays: 3,
-      ...config
+      ...config,
     };
 
     this.supabase = createClient(config.supabaseUrl, config.supabaseKey);
     this.stripe = new Stripe(config.stripeSecretKey, {
-      apiVersion: '2023-10-16'
+      apiVersion: '2023-10-16',
     });
   }
 
@@ -121,7 +120,7 @@ export class InstallmentProcessor {
         return {
           success: false,
           installmentId,
-          error: 'Installment already paid'
+          error: 'Installment already paid',
         };
       }
 
@@ -129,7 +128,7 @@ export class InstallmentProcessor {
         return {
           success: false,
           installmentId,
-          error: 'Installment is cancelled'
+          error: 'Installment is cancelled',
         };
       }
 
@@ -147,7 +146,8 @@ export class InstallmentProcessor {
       // Get or use payment method
       let finalPaymentMethodId = paymentMethodId;
       if (!finalPaymentMethodId) {
-        const defaultPaymentMethod = await this.getDefaultPaymentMethod(stripeCustomerId);
+        const defaultPaymentMethod =
+          await this.getDefaultPaymentMethod(stripeCustomerId);
         finalPaymentMethodId = defaultPaymentMethod?.id;
       }
 
@@ -169,8 +169,8 @@ export class InstallmentProcessor {
           payment_plan_id: installment.payment_plan_id,
           customer_id: customer.id,
           installment_number: installment.installment_number.toString(),
-          late_fee: lateFee.toString()
-        }
+          late_fee: lateFee.toString(),
+        },
       });
 
       // Update installment with payment intent
@@ -179,7 +179,7 @@ export class InstallmentProcessor {
         .update({
           stripe_payment_intent_id: paymentIntent.id,
           late_fee: lateFee,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', installmentId);
 
@@ -190,34 +190,33 @@ export class InstallmentProcessor {
       // Check payment status
       if (paymentIntent.status === 'succeeded') {
         await this.markInstallmentAsPaid(installmentId, paymentIntent.id);
-        
+
         return {
           success: true,
           installmentId,
           paymentIntentId: paymentIntent.id,
           amount: installment.amount,
-          lateFee
+          lateFee,
         };
-      } else if (paymentIntent.status === 'requires_action') {
+      }
+      if (paymentIntent.status === 'requires_action') {
         return {
           success: false,
           installmentId,
           paymentIntentId: paymentIntent.id,
           error: 'Payment requires additional action',
           amount: installment.amount,
-          lateFee
+          lateFee,
         };
-      } else {
-        throw new Error(`Payment failed with status: ${paymentIntent.status}`);
       }
-
+      throw new Error(`Payment failed with status: ${paymentIntent.status}`);
     } catch (error) {
       console.error('Error processing installment payment:', error);
-      
+
       return {
         success: false,
         installmentId,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -244,14 +243,14 @@ export class InstallmentProcessor {
     // Process in batches to avoid overwhelming the system
     for (let i = 0; i < installmentIds.length; i += maxConcurrent) {
       const batch = installmentIds.slice(i, i + maxConcurrent);
-      
+
       const batchPromises = batch.map(async (installmentId) => {
         const result = await this.processInstallmentPayment(
           installmentId,
           options.paymentMethodId,
           options.customerId
         );
-        
+
         if (result.success) {
           successful++;
           if (result.amount) totalAmount += result.amount;
@@ -260,7 +259,7 @@ export class InstallmentProcessor {
           failed++;
           if (result.error) errors.push(`${installmentId}: ${result.error}`);
         }
-        
+
         return result;
       });
 
@@ -276,8 +275,8 @@ export class InstallmentProcessor {
       summary: {
         totalAmount,
         totalLateFees,
-        errors
-      }
+        errors,
+      },
     };
   }
 
@@ -291,7 +290,11 @@ export class InstallmentProcessor {
       dryRun?: boolean;
     } = {}
   ): Promise<BulkProcessingResult> {
-    const { maxDaysOverdue = 30, maxInstallments = 100, dryRun = false } = options;
+    const {
+      maxDaysOverdue = 30,
+      maxInstallments = 100,
+      dryRun = false,
+    } = options;
 
     try {
       // Get overdue installments
@@ -302,7 +305,9 @@ export class InstallmentProcessor {
         .limit(maxInstallments);
 
       if (error) {
-        throw new Error(`Failed to fetch overdue installments: ${error.message}`);
+        throw new Error(
+          `Failed to fetch overdue installments: ${error.message}`
+        );
       }
 
       if (!overdueInstallments || overdueInstallments.length === 0) {
@@ -314,19 +319,21 @@ export class InstallmentProcessor {
           summary: {
             totalAmount: 0,
             totalLateFees: 0,
-            errors: []
-          }
+            errors: [],
+          },
         };
       }
 
       if (dryRun) {
         // Return simulation results
-        const simulatedResults: ProcessingResult[] = overdueInstallments.map(installment => ({
-          success: true,
-          installmentId: installment.id,
-          amount: installment.amount,
-          lateFee: installment.late_fee || 0
-        }));
+        const simulatedResults: ProcessingResult[] = overdueInstallments.map(
+          (installment) => ({
+            success: true,
+            installmentId: installment.id,
+            amount: installment.amount,
+            lateFee: installment.late_fee || 0,
+          })
+        );
 
         return {
           totalProcessed: overdueInstallments.length,
@@ -334,20 +341,25 @@ export class InstallmentProcessor {
           failed: 0,
           results: simulatedResults,
           summary: {
-            totalAmount: overdueInstallments.reduce((sum, i) => sum + i.amount, 0),
-            totalLateFees: overdueInstallments.reduce((sum, i) => sum + (i.late_fee || 0), 0),
-            errors: []
-          }
+            totalAmount: overdueInstallments.reduce(
+              (sum, i) => sum + i.amount,
+              0
+            ),
+            totalLateFees: overdueInstallments.reduce(
+              (sum, i) => sum + (i.late_fee || 0),
+              0
+            ),
+            errors: [],
+          },
         };
       }
 
       // Process the overdue installments
-      const installmentIds = overdueInstallments.map(i => i.id);
+      const installmentIds = overdueInstallments.map((i) => i.id);
       return await this.processBulkInstallments(installmentIds);
-
     } catch (error) {
       console.error('Error processing overdue installments:', error);
-      
+
       return {
         totalProcessed: 0,
         successful: 0,
@@ -356,8 +368,8 @@ export class InstallmentProcessor {
         summary: {
           totalAmount: 0,
           totalLateFees: 0,
-          errors: [error instanceof Error ? error.message : 'Unknown error']
-        }
+          errors: [error instanceof Error ? error.message : 'Unknown error'],
+        },
       };
     }
   }
@@ -377,7 +389,7 @@ export class InstallmentProcessor {
         paid_date: new Date().toISOString(),
         payment_method: paymentMethod || 'stripe',
         stripe_payment_intent_id: paymentIntentId,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', installmentId);
 
@@ -400,8 +412,9 @@ export class InstallmentProcessor {
     }
 
     // Calculate late fee as percentage of installment amount
-    const lateFeeAmount = installment.amount * (this.config.lateFeePercentage! / 100);
-    
+    const lateFeeAmount =
+      installment.amount * (this.config.lateFeePercentage! / 100);
+
     // Round to 2 decimal places
     return Math.round(lateFeeAmount * 100) / 100;
   }
@@ -409,17 +422,19 @@ export class InstallmentProcessor {
   /**
    * Get default payment method for customer
    */
-  private async getDefaultPaymentMethod(customerId: string): Promise<PaymentMethodInfo | null> {
+  private async getDefaultPaymentMethod(
+    customerId: string
+  ): Promise<PaymentMethodInfo | null> {
     try {
       const customer = await this.stripe.customers.retrieve(customerId);
-      
+
       if (customer.deleted) {
         return null;
       }
 
       const paymentMethods = await this.stripe.paymentMethods.list({
         customer: customerId,
-        type: 'card'
+        type: 'card',
       });
 
       if (paymentMethods.data.length === 0) {
@@ -431,14 +446,15 @@ export class InstallmentProcessor {
       return {
         id: pm.id,
         type: pm.type,
-        card: pm.card ? {
-          brand: pm.card.brand,
-          last4: pm.card.last4,
-          exp_month: pm.card.exp_month,
-          exp_year: pm.card.exp_year
-        } : undefined
+        card: pm.card
+          ? {
+              brand: pm.card.brand,
+              last4: pm.card.last4,
+              exp_month: pm.card.exp_month,
+              exp_year: pm.card.exp_year,
+            }
+          : undefined,
       };
-
     } catch (error) {
       console.error('Error getting default payment method:', error);
       return null;
@@ -450,8 +466,9 @@ export class InstallmentProcessor {
    */
   async updateOverdueStatus(): Promise<{ updated: number; errors: string[] }> {
     try {
-      const { data, error } = await this.supabase
-        .rpc('mark_overdue_installments');
+      const { data, error } = await this.supabase.rpc(
+        'mark_overdue_installments'
+      );
 
       if (error) {
         throw new Error(`Failed to update overdue status: ${error.message}`);
@@ -459,15 +476,14 @@ export class InstallmentProcessor {
 
       return {
         updated: data || 0,
-        errors: []
+        errors: [],
       };
-
     } catch (error) {
       console.error('Error updating overdue status:', error);
-      
+
       return {
         updated: 0,
-        errors: [error instanceof Error ? error.message : 'Unknown error']
+        errors: [error instanceof Error ? error.message : 'Unknown error'],
       };
     }
   }
@@ -495,7 +511,6 @@ export class InstallmentProcessor {
       }
 
       return data || [];
-
     } catch (error) {
       console.error('Error getting processing stats:', error);
       throw error;
@@ -525,16 +540,21 @@ export class InstallmentProcessor {
         return {
           success: false,
           installmentId,
-          error: 'Installment already paid'
+          error: 'Installment already paid',
         };
       }
 
       // Cancel previous payment intent if exists
       if (installment.stripe_payment_intent_id) {
         try {
-          await this.stripe.paymentIntents.cancel(installment.stripe_payment_intent_id);
+          await this.stripe.paymentIntents.cancel(
+            installment.stripe_payment_intent_id
+          );
         } catch (cancelError) {
-          console.warn('Could not cancel previous payment intent:', cancelError);
+          console.warn(
+            'Could not cancel previous payment intent:',
+            cancelError
+          );
         }
       }
 
@@ -544,14 +564,13 @@ export class InstallmentProcessor {
         paymentMethodId,
         installment.payment_plans.customers.stripe_customer_id
       );
-
     } catch (error) {
       console.error('Error retrying failed payment:', error);
-      
+
       return {
         success: false,
         installmentId,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -563,15 +582,21 @@ export class InstallmentProcessor {
     try {
       switch (event.type) {
         case 'payment_intent.succeeded':
-          await this.handlePaymentIntentSucceeded(event.data.object as Stripe.PaymentIntent);
+          await this.handlePaymentIntentSucceeded(
+            event.data.object as Stripe.PaymentIntent
+          );
           break;
 
         case 'payment_intent.payment_failed':
-          await this.handlePaymentIntentFailed(event.data.object as Stripe.PaymentIntent);
+          await this.handlePaymentIntentFailed(
+            event.data.object as Stripe.PaymentIntent
+          );
           break;
 
         case 'payment_intent.canceled':
-          await this.handlePaymentIntentCanceled(event.data.object as Stripe.PaymentIntent);
+          await this.handlePaymentIntentCanceled(
+            event.data.object as Stripe.PaymentIntent
+          );
           break;
 
         default:
@@ -583,17 +608,25 @@ export class InstallmentProcessor {
     }
   }
 
-  private async handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent): Promise<void> {
+  private async handlePaymentIntentSucceeded(
+    paymentIntent: Stripe.PaymentIntent
+  ): Promise<void> {
     const installmentId = paymentIntent.metadata.installment_id;
-    
+
     if (installmentId) {
-      await this.markInstallmentAsPaid(installmentId, paymentIntent.id, 'stripe');
+      await this.markInstallmentAsPaid(
+        installmentId,
+        paymentIntent.id,
+        'stripe'
+      );
     }
   }
 
-  private async handlePaymentIntentFailed(paymentIntent: Stripe.PaymentIntent): Promise<void> {
+  private async handlePaymentIntentFailed(
+    paymentIntent: Stripe.PaymentIntent
+  ): Promise<void> {
     const installmentId = paymentIntent.metadata.installment_id;
-    
+
     if (installmentId) {
       // Update installment with failure information
       const { error } = await this.supabase
@@ -601,10 +634,11 @@ export class InstallmentProcessor {
         .update({
           metadata: {
             ...paymentIntent.metadata,
-            last_payment_error: paymentIntent.last_payment_error?.message || 'Payment failed',
-            failed_at: new Date().toISOString()
+            last_payment_error:
+              paymentIntent.last_payment_error?.message || 'Payment failed',
+            failed_at: new Date().toISOString(),
           },
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', installmentId);
 
@@ -614,9 +648,11 @@ export class InstallmentProcessor {
     }
   }
 
-  private async handlePaymentIntentCanceled(paymentIntent: Stripe.PaymentIntent): Promise<void> {
+  private async handlePaymentIntentCanceled(
+    paymentIntent: Stripe.PaymentIntent
+  ): Promise<void> {
     const installmentId = paymentIntent.metadata.installment_id;
-    
+
     if (installmentId) {
       // Clear the payment intent ID from installment
       const { error } = await this.supabase
@@ -625,9 +661,9 @@ export class InstallmentProcessor {
           stripe_payment_intent_id: null,
           metadata: {
             ...paymentIntent.metadata,
-            canceled_at: new Date().toISOString()
+            canceled_at: new Date().toISOString(),
           },
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', installmentId);
 
@@ -647,10 +683,10 @@ export function getInstallmentProcessor(): InstallmentProcessor {
       supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL!,
       supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
       stripeSecretKey: process.env.STRIPE_SECRET_KEY!,
-      webhookSecret: process.env.STRIPE_WEBHOOK_SECRET
+      webhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
     });
   }
-  
+
   return installmentProcessorInstance;
 }
 

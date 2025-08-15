@@ -1,5 +1,5 @@
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const _path = require('node:path');
 
 // Lista de arquivos que devem existir após a migração
 const requiredFiles = [
@@ -8,7 +8,7 @@ const requiredFiles = [
   'prisma/seed.ts',
   'package.json',
   '.env.local',
-  
+
   // Componentes
   'components/TenantList.tsx',
   'components/ui/badge.tsx',
@@ -16,28 +16,28 @@ const requiredFiles = [
   'components/ui/card.tsx',
   'components/ui/skeleton.tsx',
   'components/ui/alert.tsx',
-  
+
   // Páginas e API
   'app/tenants/page.tsx',
   'app/api/tenants/route.ts',
-  
+
   // Utilitários
   'lib/prisma.ts',
   'lib/supabase.ts',
   'lib/utils.ts',
   'lib/types.ts',
-  
+
   // Scripts de setup
   'setup.bat',
   'test-migration.js',
-  'MIGRATION-SETUP.md'
+  'MIGRATION-SETUP.md',
 ];
 
 // Função para verificar se um arquivo existe
-function fileExists(filePath) {
+function _fileExists(filePath) {
   try {
     return fs.existsSync(filePath);
-  } catch (error) {
+  } catch (_error) {
     return false;
   }
 }
@@ -51,12 +51,12 @@ function getFileInfo(filePath) {
       exists: true,
       size: stats.size,
       lines: content.split('\n').length,
-      modified: stats.mtime
+      modified: stats.mtime,
     };
   } catch (error) {
     return {
       exists: false,
-      error: error.message
+      error: error.message,
     };
   }
 }
@@ -74,12 +74,14 @@ function validateMigration() {
   console.log('📁 Verificando arquivos obrigatórios...');
   console.log('');
 
-  requiredFiles.forEach(file => {
+  requiredFiles.forEach((file) => {
     const info = getFileInfo(file);
     const status = info.exists ? '✅' : '❌';
-    
+
     if (info.exists) {
-      console.log(`${status} ${file} (${info.lines} linhas, ${(info.size / 1024).toFixed(1)}KB)`);
+      console.log(
+        `${status} ${file} (${info.lines} linhas, ${(info.size / 1024).toFixed(1)}KB)`
+      );
       results.push({ file, status: 'OK', info });
     } else {
       console.log(`${status} ${file} - ARQUIVO AUSENTE`);
@@ -95,18 +97,18 @@ function validateMigration() {
   // Verificar package.json
   try {
     const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-    if (packageJson.prisma && packageJson.prisma.seed) {
+    if (packageJson.prisma?.seed) {
       console.log('✅ package.json - Script de seed configurado');
     } else {
       console.log('⚠️ package.json - Script de seed não encontrado');
     }
-    
-    if (packageJson.devDependencies && packageJson.devDependencies['ts-node']) {
+
+    if (packageJson.devDependencies?.['ts-node']) {
       console.log('✅ package.json - ts-node instalado');
     } else {
       console.log('⚠️ package.json - ts-node não encontrado');
     }
-  } catch (error) {
+  } catch (_error) {
     console.log('❌ package.json - Erro ao ler arquivo');
     allValid = false;
   }
@@ -117,16 +119,17 @@ function validateMigration() {
     const hasSupabaseUrl = envContent.includes('NEXT_PUBLIC_SUPABASE_URL');
     const hasSupabaseKey = envContent.includes('NEXT_PUBLIC_SUPABASE_ANON_KEY');
     const hasDatabaseUrl = envContent.includes('DATABASE_URL');
-    
+
     if (hasSupabaseUrl && hasSupabaseKey && hasDatabaseUrl) {
       console.log('✅ .env.local - Todas as variáveis essenciais configuradas');
     } else {
       console.log('⚠️ .env.local - Algumas variáveis podem estar ausentes');
       if (!hasSupabaseUrl) console.log('   - NEXT_PUBLIC_SUPABASE_URL ausente');
-      if (!hasSupabaseKey) console.log('   - NEXT_PUBLIC_SUPABASE_ANON_KEY ausente');
+      if (!hasSupabaseKey)
+        console.log('   - NEXT_PUBLIC_SUPABASE_ANON_KEY ausente');
       if (!hasDatabaseUrl) console.log('   - DATABASE_URL ausente');
     }
-  } catch (error) {
+  } catch (_error) {
     console.log('❌ .env.local - Erro ao ler arquivo');
   }
 
@@ -136,14 +139,14 @@ function validateMigration() {
     const hasTenantModel = schemaContent.includes('model Tenant');
     const hasProfileModel = schemaContent.includes('model Profile');
     const hasProductModel = schemaContent.includes('model Product');
-    
+
     if (hasTenantModel && hasProfileModel && hasProductModel) {
       console.log('✅ schema.prisma - Todos os modelos essenciais presentes');
     } else {
       console.log('⚠️ schema.prisma - Alguns modelos podem estar ausentes');
       allValid = false;
     }
-  } catch (error) {
+  } catch (_error) {
     console.log('❌ schema.prisma - Erro ao ler arquivo');
     allValid = false;
   }
@@ -152,36 +155,36 @@ function validateMigration() {
   console.log('');
   console.log('🔧 Verificando arquivos corrigidos...');
   console.log('');
-  
+
   // Verificar lib/types.ts
   try {
     const typesContent = fs.readFileSync('lib/types.ts', 'utf8');
     const hasImports = typesContent.includes('@prisma/client');
     const hasTenantType = typesContent.includes('TenantWithProducts');
     const hasApiTypes = typesContent.includes('ApiResponse');
-    
+
     if (hasImports && hasTenantType && hasApiTypes) {
       console.log('✅ lib/types.ts - Tipos TypeScript completos');
     } else {
       console.log('⚠️ lib/types.ts - Alguns tipos podem estar ausentes');
     }
-  } catch (error) {
+  } catch (_error) {
     console.log('❌ lib/types.ts - Erro ao ler arquivo');
     allValid = false;
   }
-  
+
   // Verificar lib/supabase.ts
   try {
     const supabaseContent = fs.readFileSync('lib/supabase.ts', 'utf8');
     const hasCreateClient = supabaseContent.includes('createClient');
     const hasAuthHelpers = supabaseContent.includes('signIn');
-    
+
     if (hasCreateClient && hasAuthHelpers) {
       console.log('✅ lib/supabase.ts - Cliente Supabase configurado');
     } else {
       console.log('⚠️ lib/supabase.ts - Configuração incompleta');
     }
-  } catch (error) {
+  } catch (_error) {
     console.log('❌ lib/supabase.ts - Erro ao ler arquivo');
     allValid = false;
   }
@@ -190,13 +193,13 @@ function validateMigration() {
   console.log('📊 ========================================');
   console.log('📊 RESUMO DA VALIDAÇÃO CORRIGIDA');
   console.log('📊 ========================================');
-  
-  const validFiles = results.filter(r => r.status === 'OK').length;
+
+  const validFiles = results.filter((r) => r.status === 'OK').length;
   const totalFiles = results.length;
-  
+
   console.log(`✅ Arquivos válidos: ${validFiles}/${totalFiles}`);
   console.log(`❌ Arquivos ausentes: ${totalFiles - validFiles}/${totalFiles}`);
-  
+
   if (allValid && validFiles === totalFiles) {
     console.log('');
     console.log('🎉 MIGRAÇÃO VALIDADA COM SUCESSO!');
@@ -224,9 +227,9 @@ function validateMigration() {
     console.log('🔧 Verifique os arquivos marcados com ❌ acima');
     console.log('📖 Consulte MIGRATION-SETUP.md para mais detalhes');
   }
-  
+
   console.log('');
-  
+
   return allValid && validFiles === totalFiles;
 }
 

@@ -69,7 +69,13 @@ export interface TokenRefreshResponse {
   error?: string;
 }
 
-export type SocialMediaPlatform = 'instagram' | 'facebook' | 'whatsapp_business' | 'hubspot' | 'twitter' | 'linkedin';
+export type SocialMediaPlatform =
+  | 'instagram'
+  | 'facebook'
+  | 'whatsapp_business'
+  | 'hubspot'
+  | 'twitter'
+  | 'linkedin';
 
 export interface PlatformCredentials {
   platform: SocialMediaPlatform;
@@ -93,7 +99,10 @@ export interface EncryptedTokenData {
 
 export abstract class IOAuthHandler {
   abstract getAuthorizationUrl(state: OAuthState): string;
-  abstract exchangeCodeForTokens(code: string, state: string): Promise<OAuthTokens>;
+  abstract exchangeCodeForTokens(
+    code: string,
+    state: string
+  ): Promise<OAuthTokens>;
   abstract refreshTokens(refreshToken: string): Promise<OAuthTokens>;
   abstract getUserProfile(accessToken: string): Promise<OAuthUserProfile>;
   abstract validateTokens(tokens: OAuthTokens): Promise<boolean>;

@@ -5,7 +5,6 @@
  */
 
 import { createClient } from '@/lib/supabase/client';
-import type { Database } from '@/lib/database.types';
 
 // Types
 export interface SearchMetrics {
@@ -81,7 +80,11 @@ export interface UserSearchBehavior {
 
 export interface PerformanceAlert {
   id: string;
-  type: 'slow_response' | 'high_error_rate' | 'low_success_rate' | 'system_overload';
+  type:
+    | 'slow_response'
+    | 'high_error_rate'
+    | 'low_success_rate'
+    | 'system_overload';
   severity: 'low' | 'medium' | 'high' | 'critical';
   message: string;
   metrics: Record<string, number>;
@@ -128,7 +131,7 @@ export class SearchAnalytics {
     responseTime: 2000, // 2 seconds
     successRate: 0.95, // 95%
     errorRate: 0.05, // 5%
-    clickThroughRate: 0.3 // 30%
+    clickThroughRate: 0.3, // 30%
   };
   private alertCallbacks: Array<(alert: PerformanceAlert) => void> = [];
   private metricsCache = new Map<string, { data: any; timestamp: number }>();
@@ -137,34 +140,34 @@ export class SearchAnalytics {
   /**
    * Track a search event
    */
-  async trackSearchEvent(event: Omit<SearchEvent, 'id' | 'timestamp'>): Promise<void> {
+  async trackSearchEvent(
+    event: Omit<SearchEvent, 'id' | 'timestamp'>
+  ): Promise<void> {
     try {
       const searchEvent: SearchEvent = {
         ...event,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       };
 
       // Store in database
-      const { error } = await this.supabase
-        .from('search_analytics')
-        .insert({
-          user_id: searchEvent.userId,
-          session_id: searchEvent.sessionId,
-          query: searchEvent.query,
-          search_type: searchEvent.searchType,
-          nlp_results: searchEvent.nlpResults,
-          filters: searchEvent.filters,
-          result_count: searchEvent.resultCount,
-          response_time: searchEvent.responseTime,
-          performance_breakdown: searchEvent.performanceBreakdown,
-          success: searchEvent.success,
-          error_message: searchEvent.errorMessage,
-          clicked_results: searchEvent.clickedResults,
-          refined_query: searchEvent.refinedQuery,
-          user_agent: searchEvent.userAgent,
-          ip_address: searchEvent.ipAddress,
-          created_at: new Date(searchEvent.timestamp).toISOString()
-        });
+      const { error } = await this.supabase.from('search_analytics').insert({
+        user_id: searchEvent.userId,
+        session_id: searchEvent.sessionId,
+        query: searchEvent.query,
+        search_type: searchEvent.searchType,
+        nlp_results: searchEvent.nlpResults,
+        filters: searchEvent.filters,
+        result_count: searchEvent.resultCount,
+        response_time: searchEvent.responseTime,
+        performance_breakdown: searchEvent.performanceBreakdown,
+        success: searchEvent.success,
+        error_message: searchEvent.errorMessage,
+        clicked_results: searchEvent.clickedResults,
+        refined_query: searchEvent.refinedQuery,
+        user_agent: searchEvent.userAgent,
+        ip_address: searchEvent.ipAddress,
+        created_at: new Date(searchEvent.timestamp).toISOString(),
+      });
 
       if (error) {
         console.error('Failed to track search event:', error);
@@ -176,7 +179,6 @@ export class SearchAnalytics {
 
       // Update real-time metrics
       this.updateRealTimeMetrics(searchEvent);
-
     } catch (error) {
       console.error('Error tracking search event:', error);
     }
@@ -201,7 +203,7 @@ export class SearchAnalytics {
           result_id: resultId,
           action,
           position,
-          created_at: new Date().toISOString()
+          created_at: new Date().toISOString(),
         });
 
       if (error) {
@@ -215,10 +217,12 @@ export class SearchAnalytics {
   /**
    * Get comprehensive search metrics
    */
-  async getSearchMetrics(options: AnalyticsOptions = {}): Promise<SearchMetrics> {
+  async getSearchMetrics(
+    options: AnalyticsOptions = {}
+  ): Promise<SearchMetrics> {
     const cacheKey = `metrics_${JSON.stringify(options)}`;
     const cached = this.metricsCache.get(cacheKey);
-    
+
     if (cached && Date.now() - cached.timestamp < this.cacheTimeout) {
       return cached.data;
     }
@@ -226,7 +230,7 @@ export class SearchAnalytics {
     try {
       const timeRange = options.timeRange || {
         start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 days ago
-        end: new Date()
+        end: new Date(),
       };
 
       // Build base query
@@ -260,11 +264,10 @@ export class SearchAnalytics {
       // Cache results
       this.metricsCache.set(cacheKey, {
         data: metrics,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
 
       return metrics;
-
     } catch (error) {
       console.error('Error getting search metrics:', error);
       throw error;
@@ -274,7 +277,10 @@ export class SearchAnalytics {
   /**
    * Get user search behavior analysis
    */
-  async getUserSearchBehavior(userId: string, days: number = 30): Promise<UserSearchBehavior> {
+  async getUserSearchBehavior(
+    userId: string,
+    days = 30
+  ): Promise<UserSearchBehavior> {
     try {
       const startDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
 
@@ -289,18 +295,18 @@ export class SearchAnalytics {
         throw error;
       }
 
-      const { data: interactions, error: interactionError } = await this.supabase
-        .from('search_result_interactions')
-        .select('*')
-        .in('session_id', searchEvents?.map(e => e.session_id) || [])
-        .gte('created_at', startDate.toISOString());
+      const { data: interactions, error: interactionError } =
+        await this.supabase
+          .from('search_result_interactions')
+          .select('*')
+          .in('session_id', searchEvents?.map((e) => e.session_id) || [])
+          .gte('created_at', startDate.toISOString());
 
       if (interactionError) {
         throw interactionError;
       }
 
       return this.analyzeBehavior(searchEvents || [], interactions || []);
-
     } catch (error) {
       console.error('Error getting user search behavior:', error);
       throw error;
@@ -310,7 +316,7 @@ export class SearchAnalytics {
   /**
    * Get performance alerts
    */
-  async getPerformanceAlerts(resolved: boolean = false): Promise<PerformanceAlert[]> {
+  async getPerformanceAlerts(resolved = false): Promise<PerformanceAlert[]> {
     try {
       const { data, error } = await this.supabase
         .from('performance_alerts')
@@ -323,19 +329,22 @@ export class SearchAnalytics {
         throw error;
       }
 
-      return data?.map(alert => ({
-        id: alert.id,
-        type: alert.type,
-        severity: alert.severity,
-        message: alert.message,
-        metrics: alert.metrics,
-        threshold: alert.threshold,
-        currentValue: alert.current_value,
-        timestamp: new Date(alert.created_at).getTime(),
-        resolved: alert.resolved,
-        resolvedAt: alert.resolved_at ? new Date(alert.resolved_at).getTime() : undefined
-      })) || [];
-
+      return (
+        data?.map((alert) => ({
+          id: alert.id,
+          type: alert.type,
+          severity: alert.severity,
+          message: alert.message,
+          metrics: alert.metrics,
+          threshold: alert.threshold,
+          currentValue: alert.current_value,
+          timestamp: new Date(alert.created_at).getTime(),
+          resolved: alert.resolved,
+          resolvedAt: alert.resolved_at
+            ? new Date(alert.resolved_at).getTime()
+            : undefined,
+        })) || []
+      );
     } catch (error) {
       console.error('Error getting performance alerts:', error);
       return [];
@@ -352,7 +361,10 @@ export class SearchAnalytics {
         .from('search_analytics')
         .select('query, response_time, performance_breakdown')
         .gt('response_time', this.performanceThresholds.responseTime)
-        .gte('created_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString())
+        .gte(
+          'created_at',
+          new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+        )
         .order('response_time', { ascending: false })
         .limit(100);
 
@@ -361,7 +373,6 @@ export class SearchAnalytics {
       }
 
       return this.generateOptimizations(slowQueries || []);
-
     } catch (error) {
       console.error('Error getting optimization suggestions:', error);
       return [];
@@ -382,23 +393,26 @@ export class SearchAnalytics {
       const [summary, alerts, optimizations] = await Promise.all([
         this.getSearchMetrics(options),
         this.getPerformanceAlerts(false),
-        this.getOptimizationSuggestions()
+        this.getOptimizationSuggestions(),
       ]);
 
       // Generate trends (simplified for now)
       const trends = await this.generateTrends(options);
 
       // Generate recommendations
-      const recommendations = this.generateRecommendations(summary, alerts, optimizations);
+      const recommendations = this.generateRecommendations(
+        summary,
+        alerts,
+        optimizations
+      );
 
       return {
         summary,
         trends,
         alerts,
         optimizations,
-        recommendations
+        recommendations,
       };
-
     } catch (error) {
       console.error('Error generating performance report:', error);
       throw error;
@@ -410,7 +424,7 @@ export class SearchAnalytics {
    */
   onPerformanceAlert(callback: (alert: PerformanceAlert) => void): () => void {
     this.alertCallbacks.push(callback);
-    
+
     return () => {
       const index = this.alertCallbacks.indexOf(callback);
       if (index > -1) {
@@ -439,30 +453,38 @@ export class SearchAnalytics {
         userEngagement: {
           clickThroughRate: 0,
           averageResultsViewed: 0,
-          refinementRate: 0
+          refinementRate: 0,
         },
         performanceBreakdown: {
           nlpProcessing: 0,
           databaseQuery: 0,
           resultProcessing: 0,
-          total: 0
-        }
+          total: 0,
+        },
       };
     }
 
     const totalSearches = searchEvents.length;
-    const successfulSearches = searchEvents.filter(e => e.success).length;
-    const averageResponseTime = searchEvents.reduce((sum, e) => sum + e.response_time, 0) / totalSearches;
+    const successfulSearches = searchEvents.filter((e) => e.success).length;
+    const averageResponseTime =
+      searchEvents.reduce((sum, e) => sum + e.response_time, 0) / totalSearches;
     const successRate = successfulSearches / totalSearches;
 
     // Popular queries
-    const queryCount = new Map<string, { count: number; totalTime: number; successes: number }>();
-    searchEvents.forEach(event => {
-      const existing = queryCount.get(event.query) || { count: 0, totalTime: 0, successes: 0 };
+    const queryCount = new Map<
+      string,
+      { count: number; totalTime: number; successes: number }
+    >();
+    searchEvents.forEach((event) => {
+      const existing = queryCount.get(event.query) || {
+        count: 0,
+        totalTime: 0,
+        successes: 0,
+      };
       queryCount.set(event.query, {
         count: existing.count + 1,
         totalTime: existing.totalTime + event.response_time,
-        successes: existing.successes + (event.success ? 1 : 0)
+        successes: existing.successes + (event.success ? 1 : 0),
       });
     });
 
@@ -471,27 +493,31 @@ export class SearchAnalytics {
         query,
         count: stats.count,
         avgResponseTime: stats.totalTime / stats.count,
-        successRate: stats.successes / stats.count
+        successRate: stats.successes / stats.count,
       }))
       .sort((a, b) => b.count - a.count)
       .slice(0, 10);
 
     // Search types
     const typeCount = new Map<string, { count: number; totalTime: number }>();
-    searchEvents.forEach(event => {
-      const existing = typeCount.get(event.search_type) || { count: 0, totalTime: 0 };
+    searchEvents.forEach((event) => {
+      const existing = typeCount.get(event.search_type) || {
+        count: 0,
+        totalTime: 0,
+      };
       typeCount.set(event.search_type, {
         count: existing.count + 1,
-        totalTime: existing.totalTime + event.response_time
+        totalTime: existing.totalTime + event.response_time,
       });
     });
 
-    const searchTypes = Array.from(typeCount.entries())
-      .map(([type, stats]) => ({
+    const searchTypes = Array.from(typeCount.entries()).map(
+      ([type, stats]) => ({
         type,
         count: stats.count,
-        avgResponseTime: stats.totalTime / stats.count
-      }));
+        avgResponseTime: stats.totalTime / stats.count,
+      })
+    );
 
     // Performance breakdown
     const performanceBreakdown = searchEvents.reduce(
@@ -500,16 +526,18 @@ export class SearchAnalytics {
         return {
           nlpProcessing: acc.nlpProcessing + (breakdown.nlpProcessing || 0),
           databaseQuery: acc.databaseQuery + (breakdown.databaseQuery || 0),
-          resultProcessing: acc.resultProcessing + (breakdown.resultProcessing || 0),
-          total: acc.total + event.response_time
+          resultProcessing:
+            acc.resultProcessing + (breakdown.resultProcessing || 0),
+          total: acc.total + event.response_time,
         };
       },
       { nlpProcessing: 0, databaseQuery: 0, resultProcessing: 0, total: 0 }
     );
 
     // Average the breakdown
-    Object.keys(performanceBreakdown).forEach(key => {
-      performanceBreakdown[key as keyof typeof performanceBreakdown] /= totalSearches;
+    Object.keys(performanceBreakdown).forEach((key) => {
+      performanceBreakdown[key as keyof typeof performanceBreakdown] /=
+        totalSearches;
     });
 
     return {
@@ -521,15 +549,18 @@ export class SearchAnalytics {
       userEngagement: {
         clickThroughRate: 0.3, // TODO: Calculate from interactions
         averageResultsViewed: 5.2, // TODO: Calculate from interactions
-        refinementRate: 0.15 // TODO: Calculate from refined queries
+        refinementRate: 0.15, // TODO: Calculate from refined queries
       },
-      performanceBreakdown
+      performanceBreakdown,
     };
   }
 
-  private analyzeBehavior(searchEvents: any[], interactions: any[]): UserSearchBehavior {
+  private analyzeBehavior(
+    searchEvents: any[],
+    interactions: any[]
+  ): UserSearchBehavior {
     const totalSearches = searchEvents.length;
-    
+
     if (totalSearches === 0) {
       return {
         userId: '',
@@ -542,53 +573,61 @@ export class SearchAnalytics {
         performancePreferences: {
           prefersVoice: false,
           prefersFilters: false,
-          averageResultsViewed: 0
-        }
+          averageResultsViewed: 0,
+        },
       };
     }
 
     // Calculate session durations
     const sessions = new Map<string, { start: number; end: number }>();
-    searchEvents.forEach(event => {
+    searchEvents.forEach((event) => {
       const timestamp = new Date(event.created_at).getTime();
       const existing = sessions.get(event.session_id);
-      
-      if (!existing) {
-        sessions.set(event.session_id, { start: timestamp, end: timestamp });
-      } else {
+
+      if (existing) {
         sessions.set(event.session_id, {
           start: Math.min(existing.start, timestamp),
-          end: Math.max(existing.end, timestamp)
+          end: Math.max(existing.end, timestamp),
         });
+      } else {
+        sessions.set(event.session_id, { start: timestamp, end: timestamp });
       }
     });
 
-    const averageSessionDuration = Array.from(sessions.values())
-      .reduce((sum, session) => sum + (session.end - session.start), 0) / sessions.size;
+    const averageSessionDuration =
+      Array.from(sessions.values()).reduce(
+        (sum, session) => sum + (session.end - session.start),
+        0
+      ) / sessions.size;
 
     // Preferred search types
     const typeCount = new Map<string, number>();
-    searchEvents.forEach(event => {
-      typeCount.set(event.search_type, (typeCount.get(event.search_type) || 0) + 1);
+    searchEvents.forEach((event) => {
+      typeCount.set(
+        event.search_type,
+        (typeCount.get(event.search_type) || 0) + 1
+      );
     });
-    
+
     const preferredSearchTypes = Array.from(typeCount.entries())
       .sort((a, b) => b[1] - a[1])
       .map(([type]) => type);
 
     // Common queries
     const queryCount = new Map<string, number>();
-    searchEvents.forEach(event => {
+    searchEvents.forEach((event) => {
       queryCount.set(event.query, (queryCount.get(event.query) || 0) + 1);
     });
-    
+
     const commonQueries = Array.from(queryCount.entries())
       .sort((a, b) => b[1] - a[1])
       .slice(0, 10)
       .map(([query]) => query);
 
     // Click-through rate
-    const clickedSessions = new Set(interactions.filter(i => i.action === 'click').map(i => i.session_id));
+    const clickedSessions = new Set(
+      interactions.filter((i) => i.action === 'click').map((i) => i.session_id)
+    );
     const clickThroughRate = clickedSessions.size / sessions.size;
 
     return {
@@ -601,9 +640,13 @@ export class SearchAnalytics {
       refinementPatterns: [], // TODO: Implement refinement pattern analysis
       performancePreferences: {
         prefersVoice: preferredSearchTypes[0] === 'voice',
-        prefersFilters: searchEvents.some(e => e.filters && Object.keys(e.filters).length > 0),
-        averageResultsViewed: interactions.filter(i => i.action === 'view').length / totalSearches
-      }
+        prefersFilters: searchEvents.some(
+          (e) => e.filters && Object.keys(e.filters).length > 0
+        ),
+        averageResultsViewed:
+          interactions.filter((i) => i.action === 'view').length /
+          totalSearches,
+      },
     };
   }
 
@@ -615,13 +658,16 @@ export class SearchAnalytics {
       alerts.push({
         id: `slow_response_${Date.now()}`,
         type: 'slow_response',
-        severity: event.responseTime > this.performanceThresholds.responseTime * 2 ? 'high' : 'medium',
+        severity:
+          event.responseTime > this.performanceThresholds.responseTime * 2
+            ? 'high'
+            : 'medium',
         message: `Slow search response: ${event.responseTime}ms for query "${event.query}"`,
         metrics: { responseTime: event.responseTime },
         threshold: this.performanceThresholds.responseTime,
         currentValue: event.responseTime,
         timestamp: Date.now(),
-        resolved: false
+        resolved: false,
       });
     }
 
@@ -636,31 +682,29 @@ export class SearchAnalytics {
         threshold: this.performanceThresholds.successRate,
         currentValue: 0,
         timestamp: Date.now(),
-        resolved: false
+        resolved: false,
       });
     }
 
     // Store alerts and notify callbacks
     for (const alert of alerts) {
       await this.storeAlert(alert);
-      this.alertCallbacks.forEach(callback => callback(alert));
+      this.alertCallbacks.forEach((callback) => callback(alert));
     }
   }
 
   private async storeAlert(alert: PerformanceAlert): Promise<void> {
     try {
-      const { error } = await this.supabase
-        .from('performance_alerts')
-        .insert({
-          type: alert.type,
-          severity: alert.severity,
-          message: alert.message,
-          metrics: alert.metrics,
-          threshold: alert.threshold,
-          current_value: alert.currentValue,
-          resolved: alert.resolved,
-          created_at: new Date(alert.timestamp).toISOString()
-        });
+      const { error } = await this.supabase.from('performance_alerts').insert({
+        type: alert.type,
+        severity: alert.severity,
+        message: alert.message,
+        metrics: alert.metrics,
+        threshold: alert.threshold,
+        current_value: alert.currentValue,
+        resolved: alert.resolved,
+        created_at: new Date(alert.timestamp).toISOString(),
+      });
 
       if (error) {
         console.error('Failed to store performance alert:', error);
@@ -674,25 +718,23 @@ export class SearchAnalytics {
     // Update real-time metrics cache
     const key = 'realtime_metrics';
     const cached = this.metricsCache.get(key);
-    
+
     if (cached) {
       // Update existing metrics
       cached.data.totalSearches += 1;
-      cached.data.averageResponseTime = (
-        (cached.data.averageResponseTime * (cached.data.totalSearches - 1) + event.responseTime) /
-        cached.data.totalSearches
-      );
-      
+      cached.data.averageResponseTime =
+        (cached.data.averageResponseTime * (cached.data.totalSearches - 1) +
+          event.responseTime) /
+        cached.data.totalSearches;
+
       if (event.success) {
-        cached.data.successRate = (
+        cached.data.successRate =
           (cached.data.successRate * (cached.data.totalSearches - 1) + 1) /
-          cached.data.totalSearches
-        );
+          cached.data.totalSearches;
       } else {
-        cached.data.successRate = (
+        cached.data.successRate =
           (cached.data.successRate * (cached.data.totalSearches - 1)) /
-          cached.data.totalSearches
-        );
+          cached.data.totalSearches;
       }
     }
   }
@@ -702,28 +744,32 @@ export class SearchAnalytics {
 
     // Analyze query patterns
     const queryPatterns = new Map<string, number>();
-    slowQueries.forEach(query => {
+    slowQueries.forEach((query) => {
       // Simple pattern detection (could be enhanced with ML)
-      const pattern = query.query.toLowerCase().replace(/\d+/g, 'N').replace(/[^a-z\s]/g, '');
+      const pattern = query.query
+        .toLowerCase()
+        .replace(/\d+/g, 'N')
+        .replace(/[^a-z\s]/g, '');
       queryPatterns.set(pattern, (queryPatterns.get(pattern) || 0) + 1);
     });
 
     // Generate optimizations for common patterns
     queryPatterns.forEach((count, pattern) => {
-      if (count >= 5) { // Pattern appears in at least 5 slow queries
+      if (count >= 5) {
+        // Pattern appears in at least 5 slow queries
         optimizations.push({
           queryPattern: pattern,
           optimization: {
             type: 'index',
             description: `Create specialized index for pattern: ${pattern}`,
             expectedImprovement: 0.4, // 40% improvement
-            implementation: `CREATE INDEX idx_search_${pattern.replace(/\s+/g, '_')} ON relevant_table (...)`
+            implementation: `CREATE INDEX idx_search_${pattern.replace(/\s+/g, '_')} ON relevant_table (...)`,
           },
           impact: {
             affectedQueries: count,
             potentialSpeedup: 0.4,
-            confidenceScore: Math.min(count / 10, 1) // Higher confidence with more occurrences
-          }
+            confidenceScore: Math.min(count / 10, 1), // Higher confidence with more occurrences
+          },
         });
       }
     });
@@ -731,31 +777,37 @@ export class SearchAnalytics {
     return optimizations;
   }
 
-  private async generateTrends(options: AnalyticsOptions): Promise<Array<{ date: string; metrics: Partial<SearchMetrics> }>> {
+  private async generateTrends(
+    options: AnalyticsOptions
+  ): Promise<Array<{ date: string; metrics: Partial<SearchMetrics> }>> {
     // Simplified trend generation - could be enhanced
     const trends: Array<{ date: string; metrics: Partial<SearchMetrics> }> = [];
-    
+
     const days = 7; // Last 7 days
     for (let i = days - 1; i >= 0; i--) {
       const date = new Date(Date.now() - i * 24 * 60 * 60 * 1000);
-      const dayStart = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      const dayStart = new Date(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate()
+      );
       const dayEnd = new Date(dayStart.getTime() + 24 * 60 * 60 * 1000);
-      
+
       const dayMetrics = await this.getSearchMetrics({
         ...options,
-        timeRange: { start: dayStart, end: dayEnd }
+        timeRange: { start: dayStart, end: dayEnd },
       });
-      
+
       trends.push({
         date: date.toISOString().split('T')[0],
         metrics: {
           totalSearches: dayMetrics.totalSearches,
           averageResponseTime: dayMetrics.averageResponseTime,
-          successRate: dayMetrics.successRate
-        }
+          successRate: dayMetrics.successRate,
+        },
       });
     }
-    
+
     return trends;
   }
 
@@ -780,7 +832,9 @@ export class SearchAnalytics {
     }
 
     // Alert-based recommendations
-    const criticalAlerts = alerts.filter(a => a.severity === 'critical').length;
+    const criticalAlerts = alerts.filter(
+      (a) => a.severity === 'critical'
+    ).length;
     if (criticalAlerts > 0) {
       recommendations.push(
         `${criticalAlerts} alertas críticos detectados. Ação imediata necessária para manter a qualidade do serviço.`
@@ -789,7 +843,9 @@ export class SearchAnalytics {
 
     // Optimization recommendations
     if (optimizations.length > 0) {
-      const highImpactOptimizations = optimizations.filter(o => o.impact.potentialSpeedup > 0.3).length;
+      const highImpactOptimizations = optimizations.filter(
+        (o) => o.impact.potentialSpeedup > 0.3
+      ).length;
       if (highImpactOptimizations > 0) {
         recommendations.push(
           `${highImpactOptimizations} otimizações de alto impacto identificadas. Implementação pode melhorar performance significativamente.`
@@ -798,7 +854,10 @@ export class SearchAnalytics {
     }
 
     // Usage pattern recommendations
-    if (metrics.userEngagement.clickThroughRate < this.performanceThresholds.clickThroughRate) {
+    if (
+      metrics.userEngagement.clickThroughRate <
+      this.performanceThresholds.clickThroughRate
+    ) {
       recommendations.push(
         `Taxa de cliques baixa (${Math.round(metrics.userEngagement.clickThroughRate * 100)}%). Considere melhorar relevância dos resultados ou interface de usuário.`
       );

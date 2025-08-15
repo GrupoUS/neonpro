@@ -5,12 +5,11 @@
 
 import { createClient } from '@supabase/supabase-js';
 import type {
-  DashboardLayout,
-  DashboardWidget,
-  DashboardTemplate,
-  GridLayout,
   DashboardFilters,
-  FinancialKPI,
+  DashboardLayout,
+  DashboardTemplate,
+  DashboardWidget,
+  GridLayout,
 } from '@/lib/types/kpi-types';
 
 export interface WidgetLibraryItem {
@@ -18,7 +17,12 @@ export interface WidgetLibraryItem {
   type: 'kpi_card' | 'chart' | 'table' | 'alert_panel' | 'summary_stats';
   name: string;
   description: string;
-  category: 'overview' | 'revenue' | 'profitability' | 'operational' | 'financial_health';
+  category:
+    | 'overview'
+    | 'revenue'
+    | 'profitability'
+    | 'operational'
+    | 'financial_health';
   defaultConfig: DashboardWidget['configuration'];
   requiredKpis: string[];
   minSize: { w: number; h: number };
@@ -54,7 +58,10 @@ export class DashboardBuilder {
   async createDashboard(
     userId: string,
     name: string,
-    layoutType: 'kpi_dashboard' | 'executive_summary' | 'detailed_analysis' = 'kpi_dashboard',
+    layoutType:
+      | 'kpi_dashboard'
+      | 'executive_summary'
+      | 'detailed_analysis' = 'kpi_dashboard',
     templateId?: string
   ): Promise<DashboardLayout> {
     try {
@@ -63,7 +70,7 @@ export class DashboardBuilder {
       if (templateId) {
         const template = await this.getTemplate(templateId);
         if (!template) throw new Error('Template not found');
-        
+
         initialLayout = {
           layout_name: name,
           layout_type: layoutType,
@@ -92,7 +99,6 @@ export class DashboardBuilder {
 
       if (error) throw error;
       return data;
-
     } catch (error) {
       console.error('Error creating dashboard:', error);
       throw error;
@@ -116,7 +122,6 @@ export class DashboardBuilder {
 
       if (error) throw error;
       return data;
-
     } catch (error) {
       console.error('Error updating dashboard:', error);
       throw error;
@@ -131,7 +136,6 @@ export class DashboardBuilder {
         .eq('id', dashboardId);
 
       if (error) throw error;
-
     } catch (error) {
       console.error('Error deleting dashboard:', error);
       throw error;
@@ -148,7 +152,6 @@ export class DashboardBuilder {
 
       if (error) return null;
       return data;
-
     } catch (error) {
       console.error('Error fetching dashboard:', error);
       return null;
@@ -181,11 +184,12 @@ export class DashboardBuilder {
         query = query.ilike('layout_name', `%${filters.search}%`);
       }
 
-      const { data, error } = await query.order('updated_at', { ascending: false });
+      const { data, error } = await query.order('updated_at', {
+        ascending: false,
+      });
 
       if (error) throw error;
       return data || [];
-
     } catch (error) {
       console.error('Error fetching user dashboards:', error);
       return [];
@@ -200,7 +204,9 @@ export class DashboardBuilder {
     kpiIds?: string[],
     config?: Partial<DashboardWidget['configuration']>
   ): DashboardLayout {
-    const widgetTemplate = this.widgetLibrary.find(w => w.type === widgetType);
+    const widgetTemplate = this.widgetLibrary.find(
+      (w) => w.type === widgetType
+    );
     if (!widgetTemplate) throw new Error('Widget type not found');
 
     const newWidget: DashboardWidget = {
@@ -225,7 +231,9 @@ export class DashboardBuilder {
   removeWidget(layout: DashboardLayout, widgetId: string): DashboardLayout {
     return {
       ...layout,
-      widget_configuration: layout.widget_configuration.filter(w => w.id !== widgetId),
+      widget_configuration: layout.widget_configuration.filter(
+        (w) => w.id !== widgetId
+      ),
     };
   }
 
@@ -236,14 +244,14 @@ export class DashboardBuilder {
   ): DashboardLayout {
     return {
       ...layout,
-      widget_configuration: layout.widget_configuration.map(widget =>
+      widget_configuration: layout.widget_configuration.map((widget) =>
         widget.id === widgetId ? { ...widget, ...updates } : widget
       ),
     };
   }
 
   duplicateWidget(layout: DashboardLayout, widgetId: string): DashboardLayout {
-    const widget = layout.widget_configuration.find(w => w.id === widgetId);
+    const widget = layout.widget_configuration.find((w) => w.id === widgetId);
     if (!widget) throw new Error('Widget not found');
 
     const duplicatedWidget: DashboardWidget = {
@@ -267,7 +275,10 @@ export class DashboardBuilder {
   }
 
   // Grid Layout Management
-  updateGridLayout(layout: DashboardLayout, gridUpdates: Partial<GridLayout>): DashboardLayout {
+  updateGridLayout(
+    layout: DashboardLayout,
+    gridUpdates: Partial<GridLayout>
+  ): DashboardLayout {
     return {
       ...layout,
       grid_layout: {
@@ -280,32 +291,34 @@ export class DashboardBuilder {
   optimizeLayout(layout: DashboardLayout): DashboardLayout {
     // Auto-arrange widgets to minimize gaps and overlaps
     const widgets = [...layout.widget_configuration];
-    const grid = layout.grid_layout;
-    
+    const _grid = layout.grid_layout;
+
     // Sort widgets by y position, then x position
-    widgets.sort((a, b) => a.position.y - b.position.y || a.position.x - b.position.x);
-    
+    widgets.sort(
+      (a, b) => a.position.y - b.position.y || a.position.x - b.position.x
+    );
+
     let currentY = 0;
     const rowWidgets: DashboardWidget[][] = [];
-    
+
     // Group widgets by rows
-    widgets.forEach(widget => {
+    widgets.forEach((widget) => {
       if (widget.position.y >= currentY + 1) {
         rowWidgets.push([]);
         currentY = widget.position.y;
       }
       rowWidgets[rowWidgets.length - 1].push(widget);
     });
-    
+
     // Reposition widgets to eliminate gaps
     let y = 0;
     const optimizedWidgets: DashboardWidget[] = [];
-    
-    rowWidgets.forEach(row => {
+
+    rowWidgets.forEach((row) => {
       let x = 0;
-      const maxHeight = Math.max(...row.map(w => w.position.h));
-      
-      row.forEach(widget => {
+      const maxHeight = Math.max(...row.map((w) => w.position.h));
+
+      row.forEach((widget) => {
         optimizedWidgets.push({
           ...widget,
           position: {
@@ -316,10 +329,10 @@ export class DashboardBuilder {
         });
         x += widget.position.w;
       });
-      
+
       y += maxHeight;
     });
-    
+
     return {
       ...layout,
       widget_configuration: optimizedWidgets,
@@ -350,25 +363,25 @@ export class DashboardBuilder {
 
   async getTemplates(category?: string): Promise<DashboardTemplate[]> {
     if (category) {
-      return this.templates.filter(t => t.category === category);
+      return this.templates.filter((t) => t.category === category);
     }
     return this.templates;
   }
 
   async getTemplate(templateId: string): Promise<DashboardTemplate | null> {
-    return this.templates.find(t => t.id === templateId) || null;
+    return this.templates.find((t) => t.id === templateId) || null;
   }
 
   // Widget Library
   getWidgetLibrary(category?: string): WidgetLibraryItem[] {
     if (category) {
-      return this.widgetLibrary.filter(w => w.category === category);
+      return this.widgetLibrary.filter((w) => w.category === category);
     }
     return this.widgetLibrary;
   }
 
   getWidgetTemplate(type: string): WidgetLibraryItem | null {
-    return this.widgetLibrary.find(w => w.type === type) || null;
+    return this.widgetLibrary.find((w) => w.type === type) || null;
   }
 
   // Validation and Compatibility
@@ -381,7 +394,7 @@ export class DashboardBuilder {
     const warnings: string[] = [];
 
     // Check for widget overlaps
-    const positions = layout.widget_configuration.map(w => w.position);
+    const positions = layout.widget_configuration.map((w) => w.position);
     for (let i = 0; i < positions.length; i++) {
       for (let j = i + 1; j < positions.length; j++) {
         if (this.doWidgetsOverlap(positions[i], positions[j])) {
@@ -396,9 +409,14 @@ export class DashboardBuilder {
       if (template) {
         const { w, h } = widget.position;
         if (w < template.minSize.w || h < template.minSize.h) {
-          warnings.push(`Widget ${index + 1} is smaller than recommended minimum size`);
+          warnings.push(
+            `Widget ${index + 1} is smaller than recommended minimum size`
+          );
         }
-        if (template.maxSize && (w > template.maxSize.w || h > template.maxSize.h)) {
+        if (
+          template.maxSize &&
+          (w > template.maxSize.w || h > template.maxSize.h)
+        ) {
           warnings.push(`Widget ${index + 1} exceeds maximum recommended size`);
         }
       }
@@ -407,8 +425,14 @@ export class DashboardBuilder {
     // Check for missing KPIs
     layout.widget_configuration.forEach((widget, index) => {
       const template = this.getWidgetTemplate(widget.type);
-      if (template && template.requiredKpis.length > 0 && !widget.kpi_ids?.length) {
-        errors.push(`Widget ${index + 1} (${widget.type}) requires KPI selection`);
+      if (
+        template &&
+        template.requiredKpis.length > 0 &&
+        !widget.kpi_ids?.length
+      ) {
+        errors.push(
+          `Widget ${index + 1} (${widget.type}) requires KPI selection`
+        );
       }
     });
 
@@ -419,7 +443,10 @@ export class DashboardBuilder {
     };
   }
 
-  async validateKPICompatibility(kpiIds: string[], widgetType: string): Promise<boolean> {
+  async validateKPICompatibility(
+    kpiIds: string[],
+    widgetType: string
+  ): Promise<boolean> {
     try {
       const { data: kpis } = await this.supabase
         .from('financial_kpis')
@@ -430,9 +457,8 @@ export class DashboardBuilder {
       if (!template) return false;
 
       // Check if KPI categories are compatible with widget type
-      const categories = kpis?.map(k => k.kpi_category) || [];
+      const categories = kpis?.map((k) => k.kpi_category) || [];
       return this.areKPICategoriesCompatible(categories, widgetType);
-
     } catch (error) {
       console.error('Error validating KPI compatibility:', error);
       return false;
@@ -447,9 +473,13 @@ export class DashboardBuilder {
     recommendations: string[];
   } {
     const widgetCount = layout.widget_configuration.length;
-    const chartWidgets = layout.widget_configuration.filter(w => w.type === 'chart').length;
-    const tableWidgets = layout.widget_configuration.filter(w => w.type === 'table').length;
-    
+    const chartWidgets = layout.widget_configuration.filter(
+      (w) => w.type === 'chart'
+    ).length;
+    const tableWidgets = layout.widget_configuration.filter(
+      (w) => w.type === 'table'
+    ).length;
+
     // Estimate load time based on widget types and count
     let estimatedLoadTime = 200; // Base load time
     estimatedLoadTime += widgetCount * 50;
@@ -462,7 +492,9 @@ export class DashboardBuilder {
 
     const recommendations: string[] = [];
     if (widgetCount > 20) {
-      recommendations.push('Consider splitting into multiple dashboards for better performance');
+      recommendations.push(
+        'Consider splitting into multiple dashboards for better performance'
+      );
     }
     if (chartWidgets > 6) {
       recommendations.push('Too many charts may impact load time');
@@ -492,17 +524,32 @@ export class DashboardBuilder {
     );
   }
 
-  private areKPICategoriesCompatible(categories: string[], widgetType: string): boolean {
+  private areKPICategoriesCompatible(
+    categories: string[],
+    widgetType: string
+  ): boolean {
     const compatibilityMap: Record<string, string[]> = {
       kpi_card: ['revenue', 'profitability', 'operational', 'financial_health'],
       chart: ['revenue', 'profitability', 'operational'],
       table: ['revenue', 'profitability', 'operational', 'financial_health'],
-      alert_panel: ['revenue', 'profitability', 'operational', 'financial_health'],
-      summary_stats: ['revenue', 'profitability', 'operational', 'financial_health'],
+      alert_panel: [
+        'revenue',
+        'profitability',
+        'operational',
+        'financial_health',
+      ],
+      summary_stats: [
+        'revenue',
+        'profitability',
+        'operational',
+        'financial_health',
+      ],
     };
 
     const compatibleCategories = compatibilityMap[widgetType] || [];
-    return categories.every(category => compatibleCategories.includes(category));
+    return categories.every((category) =>
+      compatibleCategories.includes(category)
+    );
   }
 
   private getDefaultGridLayout(): GridLayout {
@@ -526,7 +573,9 @@ export class DashboardBuilder {
   private getDefaultFilters(): DashboardFilters {
     return {
       time_period: {
-        start_date: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        start_date: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+          .toISOString()
+          .split('T')[0],
         end_date: new Date().toISOString().split('T')[0],
         preset: 'month',
       },

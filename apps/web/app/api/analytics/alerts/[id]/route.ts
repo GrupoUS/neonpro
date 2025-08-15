@@ -3,7 +3,7 @@
 // Author: Dev Agent
 // Date: 2025-01-26
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
 
 interface RouteParams {
@@ -12,10 +12,10 @@ interface RouteParams {
   };
 }
 
-export async function GET(request: NextRequest, { params }: RouteParams) {
+export async function GET(_request: NextRequest, { params }: RouteParams) {
   try {
     const supabase = createClient();
-    
+
     // Get current user
     const {
       data: { user },
@@ -67,7 +67,6 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
         metadata: alert.metadata,
       },
     });
-
   } catch (error) {
     console.error('Error retrieving alert:', error);
     return NextResponse.json(
@@ -84,7 +83,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 export async function PATCH(request: NextRequest, { params }: RouteParams) {
   try {
     const supabase = createClient();
-    
+
     // Get current user
     const {
       data: { user },
@@ -117,7 +116,10 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
       };
     } else {
       return NextResponse.json(
-        { success: false, error: 'Invalid action. Use "acknowledge" or "unacknowledge"' },
+        {
+          success: false,
+          error: 'Invalid action. Use "acknowledge" or "unacknowledge"',
+        },
         { status: 400 }
       );
     }
@@ -166,7 +168,6 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
       },
       message: `Alert ${action}d successfully`,
     });
-
   } catch (error) {
     console.error('Error updating alert:', error);
     return NextResponse.json(
@@ -180,10 +181,10 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: RouteParams) {
+export async function DELETE(_request: NextRequest, { params }: RouteParams) {
   try {
     const supabase = createClient();
-    
+
     // Get current user
     const {
       data: { user },
@@ -210,7 +211,6 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
       success: true,
       message: 'Alert deleted successfully',
     });
-
   } catch (error) {
     console.error('Error deleting alert:', error);
     return NextResponse.json(

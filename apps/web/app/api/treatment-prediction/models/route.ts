@@ -1,24 +1,27 @@
 // GET /api/treatment-prediction/models - Get prediction models
+
+import { type NextRequest, NextResponse } from 'next/server';
 import { TreatmentPredictionService } from '@/app/lib/services/treatment-prediction';
-import { ModelFilters } from '@/app/types/treatment-prediction';
+import type { ModelFilters } from '@/app/types/treatment-prediction';
 import { createServerClient } from '@/app/utils/supabase/server';
-import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    
+
     // Validate authentication
     const supabase = await createServerClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Parse query parameters
     const filters: ModelFilters = {};
-    
+
     if (searchParams.get('status')) {
       filters.status = searchParams.get('status') as any;
     }
@@ -26,7 +29,9 @@ export async function GET(request: NextRequest) {
       filters.algorithm_type = searchParams.get('algorithm_type') as any;
     }
     if (searchParams.get('accuracy_min')) {
-      filters.accuracy_min = parseFloat(searchParams.get('accuracy_min')!);
+      filters.accuracy_min = Number.parseFloat(
+        searchParams.get('accuracy_min')!
+      );
     }
     if (searchParams.get('version')) {
       filters.version = searchParams.get('version')!;
@@ -43,9 +48,8 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       models,
-      total: models.length
+      total: models.length,
     });
-
   } catch (error) {
     console.error('Error fetching prediction models:', error);
     return NextResponse.json(
@@ -59,8 +63,10 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createServerClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -72,14 +78,17 @@ export async function POST(request: NextRequest) {
       .eq('id', session.user.id)
       .single();
 
-    if (!profile || !['admin', 'manager'].includes(profile.role)) {
-      return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 });
+    if (!(profile && ['admin', 'manager'].includes(profile.role))) {
+      return NextResponse.json(
+        { error: 'Insufficient permissions' },
+        { status: 403 }
+      );
     }
 
     const body = await request.json();
 
     // Validate required fields
-    if (!body.name || !body.algorithm_type) {
+    if (!(body.name && body.algorithm_type)) {
       return NextResponse.json(
         { error: 'Missing required fields: name, algorithm_type' },
         { status: 400 }
@@ -89,11 +98,13 @@ export async function POST(request: NextRequest) {
     const predictionService = new TreatmentPredictionService();
     const model = await predictionService.createModel(body);
 
-    return NextResponse.json({
-      model,
-      message: 'Prediction model created successfully'
-    }, { status: 201 });
-
+    return NextResponse.json(
+      {
+        model,
+        message: 'Prediction model created successfully',
+      },
+      { status: 201 }
+    );
   } catch (error) {
     console.error('Error creating prediction model:', error);
     return NextResponse.json(

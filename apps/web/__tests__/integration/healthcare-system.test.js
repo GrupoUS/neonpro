@@ -4,7 +4,7 @@
  * para uso real por profissionais de saúde
  */
 
-import { describe, test, expect, beforeAll } from '@jest/globals';
+import { describe, expect, test } from '@jest/globals';
 
 describe('🏥 NeonPro - Healthcare System Integration Tests', () => {
   describe('📋 Core Module Validation', () => {
@@ -18,7 +18,7 @@ describe('🏥 NeonPro - Healthcare System Integration Tests', () => {
         'lib/monitoring/performance',
         'lib/analytics/analytics',
         'lib/compliance/audit-logger',
-        'lib/compliance/data-classification'
+        'lib/compliance/data-classification',
       ];
 
       const moduleResults = await Promise.allSettled(
@@ -36,7 +36,9 @@ describe('🏥 NeonPro - Healthcare System Integration Tests', () => {
       console.log('📊 Module Loading Results:');
       moduleResults.forEach((result) => {
         if (result.status === 'fulfilled') {
-          console.log(`✅ ${result.value.modulePath}: ${result.value.loaded ? 'LOADED' : 'FAILED'}`);
+          console.log(
+            `✅ ${result.value.modulePath}: ${result.value.loaded ? 'LOADED' : 'FAILED'}`
+          );
           if (!result.value.loaded) {
             console.log(`   Error: ${result.value.error}`);
           }
@@ -45,29 +47,31 @@ describe('🏥 NeonPro - Healthcare System Integration Tests', () => {
 
       // Validate critical modules are accessible
       const loadedModules = moduleResults.filter(
-        result => result.status === 'fulfilled' && result.value.loaded
+        (result) => result.status === 'fulfilled' && result.value.loaded
       );
 
       expect(loadedModules.length).toBeGreaterThan(0);
-      console.log(`✅ Loaded ${loadedModules.length} out of ${modules.length} modules`);
+      console.log(
+        `✅ Loaded ${loadedModules.length} out of ${modules.length} modules`
+      );
     });
 
     test('should validate healthcare data types and schemas', () => {
       // Test core data types exist
       const healthcareTypes = [
         'Patient',
-        'Appointment', 
+        'Appointment',
         'Treatment',
         'Consultation',
         'AuditLog',
-        'ComplianceRecord'
+        'ComplianceRecord',
       ];
 
       // This test validates type definitions exist
       // In a real app, these would be imported from @neonpro/types
       expect(healthcareTypes).toBeDefined();
       expect(healthcareTypes.length).toBeGreaterThan(0);
-      
+
       console.log('✅ Healthcare data types validated');
     });
 
@@ -75,14 +79,14 @@ describe('🏥 NeonPro - Healthcare System Integration Tests', () => {
       // Test compliance constants and configurations
       const complianceFrameworks = [
         'LGPD',
-        'ANVISA', 
+        'ANVISA',
         'CFM',
         'AUDIT_LOGGING',
         'DATA_CLASSIFICATION',
-        'CONSENT_MANAGEMENT'
+        'CONSENT_MANAGEMENT',
       ];
 
-      complianceFrameworks.forEach(framework => {
+      complianceFrameworks.forEach((framework) => {
         expect(framework).toBeDefined();
         expect(typeof framework).toBe('string');
       });
@@ -99,19 +103,19 @@ describe('🏥 NeonPro - Healthcare System Integration Tests', () => {
         security: {
           mfa: true,
           sessionTimeout: 3600,
-          encryptionRequired: true
+          encryptionRequired: true,
         },
         compliance: {
           lgpd: true,
           auditLogging: true,
-          gdprCompliant: true
-        }
+          gdprCompliant: true,
+        },
       };
 
       expect(authConfig.security.mfa).toBe(true);
       expect(authConfig.compliance.lgpd).toBe(true);
       expect(authConfig.providers).toContain('credentials');
-      
+
       console.log('✅ Authentication configuration validated');
     });
 
@@ -121,13 +125,19 @@ describe('🏥 NeonPro - Healthcare System Integration Tests', () => {
         algorithms: ['AES-256', 'RSA-2048'],
         fieldLevelEncryption: true,
         transitEncryption: 'TLS-1.3',
-        dataClassification: ['public', 'internal', 'confidential', 'restricted', 'patient']
+        dataClassification: [
+          'public',
+          'internal',
+          'confidential',
+          'restricted',
+          'patient',
+        ],
       };
 
       expect(encryptionConfig.fieldLevelEncryption).toBe(true);
       expect(encryptionConfig.transitEncryption).toBe('TLS-1.3');
       expect(encryptionConfig.dataClassification).toContain('patient');
-      
+
       console.log('✅ Data encryption and privacy measures validated');
     });
   });
@@ -137,14 +147,14 @@ describe('🏥 NeonPro - Healthcare System Integration Tests', () => {
       // Test core clinic workflows
       const clinicWorkflows = [
         'patientRegistration',
-        'appointmentScheduling', 
+        'appointmentScheduling',
         'treatmentPlanning',
         'consultationNotes',
         'billingIntegration',
-        'complianceReporting'
+        'complianceReporting',
       ];
 
-      clinicWorkflows.forEach(workflow => {
+      clinicWorkflows.forEach((workflow) => {
         expect(workflow).toBeDefined();
         expect(typeof workflow).toBe('string');
       });
@@ -156,15 +166,15 @@ describe('🏥 NeonPro - Healthcare System Integration Tests', () => {
       // Test patient data operations
       const patientOperations = [
         'create',
-        'read', 
+        'read',
         'update',
         'delete', // With proper audit
         'consent',
         'export', // LGPD right
-        'anonymize'
+        'anonymize',
       ];
 
-      patientOperations.forEach(operation => {
+      patientOperations.forEach((operation) => {
         expect(operation).toBeDefined();
         expect(typeof operation).toBe('string');
       });
@@ -177,29 +187,46 @@ describe('🏥 NeonPro - Healthcare System Integration Tests', () => {
       const healthcareScenarios = [
         {
           name: 'appointmentBooking',
-          steps: ['authenticate', 'validatePatient', 'checkAvailability', 'createAppointment', 'auditLog'],
+          steps: [
+            'authenticate',
+            'validatePatient',
+            'checkAvailability',
+            'createAppointment',
+            'auditLog',
+          ],
           complexity: 'moderate',
-          complianceRequired: true
+          complianceRequired: true,
         },
         {
-          name: 'treatmentPlanning', 
-          steps: ['patientHistory', 'clinicalAssessment', 'treatmentOptions', 'consentManagement', 'documentation'],
+          name: 'treatmentPlanning',
+          steps: [
+            'patientHistory',
+            'clinicalAssessment',
+            'treatmentOptions',
+            'consentManagement',
+            'documentation',
+          ],
           complexity: 'high',
-          complianceRequired: true
+          complianceRequired: true,
         },
         {
           name: 'complianceReporting',
-          steps: ['dataCollection', 'auditTrail', 'reportGeneration', 'regulatorySubmission'],
-          complexity: 'high', 
-          complianceRequired: true
-        }
+          steps: [
+            'dataCollection',
+            'auditTrail',
+            'reportGeneration',
+            'regulatorySubmission',
+          ],
+          complexity: 'high',
+          complianceRequired: true,
+        },
       ];
 
-      healthcareScenarios.forEach(scenario => {
+      healthcareScenarios.forEach((scenario) => {
         expect(scenario.name).toBeDefined();
         expect(scenario.steps.length).toBeGreaterThan(0);
         expect(scenario.complianceRequired).toBe(true);
-        
+
         console.log(`✅ Healthcare scenario '${scenario.name}' validated`);
       });
     });
@@ -210,16 +237,16 @@ describe('🏥 NeonPro - Healthcare System Integration Tests', () => {
       // Test performance benchmarks for healthcare use
       const performanceRequirements = {
         pageLoadTime: 2000, // <2s
-        apiResponseTime: 500, // <500ms  
+        apiResponseTime: 500, // <500ms
         uptime: 99.9, // 99.9%
         concurrentUsers: 100, // Support 100+ concurrent users
-        dataProcessingTime: 1000 // <1s for routine operations
+        dataProcessingTime: 1000, // <1s for routine operations
       };
 
       expect(performanceRequirements.pageLoadTime).toBeLessThanOrEqual(2000);
       expect(performanceRequirements.apiResponseTime).toBeLessThanOrEqual(500);
       expect(performanceRequirements.uptime).toBeGreaterThanOrEqual(99.9);
-      
+
       console.log('✅ System performance requirements validated');
     });
 
@@ -230,13 +257,13 @@ describe('🏥 NeonPro - Healthcare System Integration Tests', () => {
         userFriendlyMessages: true,
         automaticRetry: true,
         fallbackMechanisms: true,
-        auditErrorLogging: true
+        auditErrorLogging: true,
       };
 
-      Object.values(errorHandling).forEach(feature => {
+      Object.values(errorHandling).forEach((feature) => {
         expect(feature).toBe(true);
       });
-      
+
       console.log('✅ Error handling and recovery validated');
     });
   });
@@ -251,13 +278,13 @@ describe('🏥 NeonPro - Healthcare System Integration Tests', () => {
         monitoring: true,
         backups: true,
         scalingEnabled: true,
-        securityHeaders: true
+        securityHeaders: true,
       };
 
       expect(deploymentConfig.region).toBe('sa-east-1');
       expect(deploymentConfig.ssl).toBe(true);
       expect(deploymentConfig.monitoring).toBe(true);
-      
+
       console.log('✅ Deployment configuration validated');
     });
 
@@ -271,7 +298,7 @@ describe('🏥 NeonPro - Healthcare System Integration Tests', () => {
         offlineCapability: false, // Online-first for compliance
         integrationAPIs: true, // ERP/billing integration
         trainingMaterials: true, // User documentation
-        supportChannels: true // Help desk integration
+        supportChannels: true, // Help desk integration
       };
 
       // Validate critical readiness factors
@@ -279,7 +306,7 @@ describe('🏥 NeonPro - Healthcare System Integration Tests', () => {
       expect(readinessCriteria.mobileResponsive).toBe(true);
       expect(readinessCriteria.accessibilityCompliant).toBe(true);
       expect(readinessCriteria.integrationAPIs).toBe(true);
-      
+
       console.log('✅ Healthcare professional readiness criteria validated');
     });
 
@@ -292,14 +319,16 @@ describe('🏥 NeonPro - Healthcare System Integration Tests', () => {
         auditLogging: 'operational',
         errorHandling: 'operational',
         performanceMonitoring: 'operational',
-        securityMeasures: 'operational'
+        securityMeasures: 'operational',
       };
 
-      Object.values(systemIntegration).forEach(status => {
+      Object.values(systemIntegration).forEach((status) => {
         expect(status).toBe('operational');
       });
-      
-      console.log('🎉 FINAL SYSTEM INTEGRATION VALIDATED - READY FOR HEALTHCARE PROFESSIONALS! 🎉');
+
+      console.log(
+        '🎉 FINAL SYSTEM INTEGRATION VALIDATED - READY FOR HEALTHCARE PROFESSIONALS! 🎉'
+      );
     });
   });
 });
@@ -316,8 +345,8 @@ export const healthcareTestUtils = {
       dataProcessing: true,
       marketing: false,
       research: false,
-      dateConsent: new Date().toISOString()
-    }
+      dateConsent: new Date().toISOString(),
+    },
   },
 
   mockAppointmentData: {
@@ -329,12 +358,18 @@ export const healthcareTestUtils = {
     status: 'scheduled',
     compliance: {
       lgpdConsent: true,
-      auditLogged: true
-    }
+      auditLogged: true,
+    },
   },
 
   validateComplianceRequirements: (data) => {
-    const required = ['auditLogging', 'dataClassification', 'consentManagement'];
-    return required.every(req => data.compliance && data.compliance[req] === true);
-  }
+    const required = [
+      'auditLogging',
+      'dataClassification',
+      'consentManagement',
+    ];
+    return required.every(
+      (req) => data.compliance && data.compliance[req] === true
+    );
+  },
 };

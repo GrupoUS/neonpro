@@ -3,28 +3,30 @@
 // ============================================================================
 
 import { createClient } from '@supabase/supabase-js';
-import { 
+import {
+  AuditEventType,
+  ComplianceReportType,
+  type LGPDAuditLog,
+} from '@/types/lgpd';
+import {
+  type AutomationConfig,
+  LGPDAutoAnonymizationService,
+  LGPDAutoAuditService,
   LGPDAutoConsentService,
   LGPDAutoDataSubjectRightsService,
-  LGPDAutoAuditService,
   LGPDAutoReportingService,
-  LGPDAutoAnonymizationService,
-  AutomationConfig,
-  ComplianceHealthCheck
 } from './lgpd-automation';
 import { LGPDComplianceService } from './lgpd-core';
-import { 
-  LGPDAuditLog, 
-  AuditEventType, 
-  ComplianceReport, 
-  ComplianceReportType,
-  AnonymizationJob
-} from '@/types/lgpd';
 
 export interface AutomationSchedule {
   id: string;
   clinicId: string;
-  automationType: 'consent_check' | 'audit' | 'reporting' | 'anonymization' | 'health_check';
+  automationType:
+    | 'consent_check'
+    | 'audit'
+    | 'reporting'
+    | 'anonymization'
+    | 'health_check';
   frequency: 'daily' | 'weekly' | 'monthly' | 'quarterly';
   enabled: boolean;
   lastRun?: Date;
@@ -65,14 +67,13 @@ export class LGPDAutomationOrchestrator {
   private auditService: LGPDAutoAuditService;
   private reportingService: LGPDAutoReportingService;
   private anonymizationService: LGPDAutoAnonymizationService;
-  private complianceService: LGPDComplianceService;
 
   constructor() {
     this.supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
-    
+
     this.consentService = new LGPDAutoConsentService();
     this.dataSubjectService = new LGPDAutoDataSubjectRightsService();
     this.auditService = new LGPDAutoAuditService();
@@ -98,7 +99,8 @@ export class LGPDAutomationOrchestrator {
       results.push(consentResult);
 
       // 3. Processamento de solicitações de direitos
-      const rightsResult = await this.executeDataSubjectRightsAutomation(clinicId);
+      const rightsResult =
+        await this.executeDataSubjectRightsAutomation(clinicId);
       results.push(rightsResult);
 
       // 4. Auditoria automática
@@ -110,17 +112,17 @@ export class LGPDAutomationOrchestrator {
       results.push(reportingResult);
 
       // 6. Anonimização automática
-      const anonymizationResult = await this.executeAnonymizationAutomation(clinicId);
+      const anonymizationResult =
+        await this.executeAnonymizationAutomation(clinicId);
       results.push(anonymizationResult);
 
       // Registrar execução completa
       await this.logAutomationExecution(clinicId, results, startTime);
 
       return results;
-
     } catch (error) {
       console.error('Full automation failed:', error);
-      
+
       const errorResult: AutomationResult = {
         id: crypto.randomUUID(),
         automationType: 'full_automation',
@@ -130,9 +132,9 @@ export class LGPDAutomationOrchestrator {
         itemsProcessed: 0,
         itemsSuccessful: 0,
         errors: [error instanceof Error ? error.message : 'Unknown error'],
-        details: { clinicId }
+        details: { clinicId },
       };
-      
+
       results.push(errorResult);
       return results;
     }
@@ -141,12 +143,15 @@ export class LGPDAutomationOrchestrator {
   /**
    * Executa verificação de saúde do compliance
    */
-  private async executeHealthCheck(clinicId: string): Promise<AutomationResult> {
+  private async executeHealthCheck(
+    clinicId: string
+  ): Promise<AutomationResult> {
     const startTime = new Date();
-    
+
     try {
-      const healthCheck = await this.auditService.performComplianceHealthCheck(clinicId);
-      
+      const healthCheck =
+        await this.auditService.performComplianceHealthCheck(clinicId);
+
       return {
         id: crypto.randomUUID(),
         automationType: 'health_check',
@@ -156,7 +161,7 @@ export class LGPDAutomationOrchestrator {
         itemsProcessed: 1,
         itemsSuccessful: healthCheck.overallScore >= 80 ? 1 : 0,
         errors: healthCheck.criticalIssues,
-        details: healthCheck
+        details: healthCheck,
       };
     } catch (error) {
       return {
@@ -168,7 +173,7 @@ export class LGPDAutomationOrchestrator {
         itemsProcessed: 0,
         itemsSuccessful: 0,
         errors: [error instanceof Error ? error.message : 'Unknown error'],
-        details: { clinicId }
+        details: { clinicId },
       };
     }
   }
@@ -176,13 +181,16 @@ export class LGPDAutomationOrchestrator {
   /**
    * Executa automação de consentimentos
    */
-  private async executeConsentAutomation(clinicId: string): Promise<AutomationResult> {
+  private async executeConsentAutomation(
+    clinicId: string
+  ): Promise<AutomationResult> {
     const startTime = new Date();
-    
+
     try {
-      const expiredConsents = await this.consentService.checkConsentExpiration(clinicId);
+      const expiredConsents =
+        await this.consentService.checkConsentExpiration(clinicId);
       const processedCount = expiredConsents.length;
-      
+
       return {
         id: crypto.randomUUID(),
         automationType: 'consent_check',
@@ -192,7 +200,7 @@ export class LGPDAutomationOrchestrator {
         itemsProcessed: processedCount,
         itemsSuccessful: processedCount,
         errors: [],
-        details: { expiredConsents }
+        details: { expiredConsents },
       };
     } catch (error) {
       return {
@@ -204,7 +212,7 @@ export class LGPDAutomationOrchestrator {
         itemsProcessed: 0,
         itemsSuccessful: 0,
         errors: [error instanceof Error ? error.message : 'Unknown error'],
-        details: { clinicId }
+        details: { clinicId },
       };
     }
   }
@@ -212,12 +220,15 @@ export class LGPDAutomationOrchestrator {
   /**
    * Executa automação de direitos do titular
    */
-  private async executeDataSubjectRightsAutomation(clinicId: string): Promise<AutomationResult> {
+  private async executeDataSubjectRightsAutomation(
+    clinicId: string
+  ): Promise<AutomationResult> {
     const startTime = new Date();
-    
+
     try {
-      const processedRequests = await this.dataSubjectService.processAutomaticRequests(clinicId);
-      
+      const processedRequests =
+        await this.dataSubjectService.processAutomaticRequests(clinicId);
+
       return {
         id: crypto.randomUUID(),
         automationType: 'data_subject_rights',
@@ -225,9 +236,11 @@ export class LGPDAutomationOrchestrator {
         startTime,
         endTime: new Date(),
         itemsProcessed: processedRequests.length,
-        itemsSuccessful: processedRequests.filter(r => r.status === 'completed').length,
+        itemsSuccessful: processedRequests.filter(
+          (r) => r.status === 'completed'
+        ).length,
         errors: [],
-        details: { processedRequests }
+        details: { processedRequests },
       };
     } catch (error) {
       return {
@@ -239,7 +252,7 @@ export class LGPDAutomationOrchestrator {
         itemsProcessed: 0,
         itemsSuccessful: 0,
         errors: [error instanceof Error ? error.message : 'Unknown error'],
-        details: { clinicId }
+        details: { clinicId },
       };
     }
   }
@@ -247,12 +260,15 @@ export class LGPDAutomationOrchestrator {
   /**
    * Executa automação de auditoria
    */
-  private async executeAuditAutomation(clinicId: string): Promise<AutomationResult> {
+  private async executeAuditAutomation(
+    clinicId: string
+  ): Promise<AutomationResult> {
     const startTime = new Date();
-    
+
     try {
-      const auditResult = await this.auditService.performAutomaticAudit(clinicId);
-      
+      const auditResult =
+        await this.auditService.performAutomaticAudit(clinicId);
+
       return {
         id: crypto.randomUUID(),
         automationType: 'audit',
@@ -261,8 +277,10 @@ export class LGPDAutomationOrchestrator {
         endTime: new Date(),
         itemsProcessed: 1,
         itemsSuccessful: auditResult.complianceScore >= 80 ? 1 : 0,
-        errors: auditResult.actionItems.filter(item => item.priority === 'critical').map(item => item.description),
-        details: auditResult
+        errors: auditResult.actionItems
+          .filter((item) => item.priority === 'critical')
+          .map((item) => item.description),
+        details: auditResult,
       };
     } catch (error) {
       return {
@@ -274,7 +292,7 @@ export class LGPDAutomationOrchestrator {
         itemsProcessed: 0,
         itemsSuccessful: 0,
         errors: [error instanceof Error ? error.message : 'Unknown error'],
-        details: { clinicId }
+        details: { clinicId },
       };
     }
   }
@@ -282,18 +300,23 @@ export class LGPDAutomationOrchestrator {
   /**
    * Executa automação de relatórios
    */
-  private async executeReportingAutomation(clinicId: string): Promise<AutomationResult> {
+  private async executeReportingAutomation(
+    clinicId: string
+  ): Promise<AutomationResult> {
     const startTime = new Date();
-    
+
     try {
       const reportTypes = [
         ComplianceReportType.CONSENT_SUMMARY,
         ComplianceReportType.DATA_PROCESSING,
-        ComplianceReportType.AUDIT_TRAIL
+        ComplianceReportType.AUDIT_TRAIL,
       ];
-      
-      const reports = await this.reportingService.generateComplianceReports(clinicId, reportTypes);
-      
+
+      const reports = await this.reportingService.generateComplianceReports(
+        clinicId,
+        reportTypes
+      );
+
       return {
         id: crypto.randomUUID(),
         automationType: 'reporting',
@@ -303,7 +326,7 @@ export class LGPDAutomationOrchestrator {
         itemsProcessed: reportTypes.length,
         itemsSuccessful: reports.length,
         errors: [],
-        details: { reports }
+        details: { reports },
       };
     } catch (error) {
       return {
@@ -315,7 +338,7 @@ export class LGPDAutomationOrchestrator {
         itemsProcessed: 0,
         itemsSuccessful: 0,
         errors: [error instanceof Error ? error.message : 'Unknown error'],
-        details: { clinicId }
+        details: { clinicId },
       };
     }
   }
@@ -323,12 +346,15 @@ export class LGPDAutomationOrchestrator {
   /**
    * Executa automação de anonimização
    */
-  private async executeAnonymizationAutomation(clinicId: string): Promise<AutomationResult> {
+  private async executeAnonymizationAutomation(
+    clinicId: string
+  ): Promise<AutomationResult> {
     const startTime = new Date();
-    
+
     try {
-      const anonymizationJob = await this.anonymizationService.executeAutoAnonymization(clinicId);
-      
+      const anonymizationJob =
+        await this.anonymizationService.executeAutoAnonymization(clinicId);
+
       return {
         id: crypto.randomUUID(),
         automationType: 'anonymization',
@@ -338,7 +364,7 @@ export class LGPDAutomationOrchestrator {
         itemsProcessed: anonymizationJob.recordsProcessed,
         itemsSuccessful: anonymizationJob.recordsAnonymized,
         errors: anonymizationJob.errors || [],
-        details: anonymizationJob
+        details: anonymizationJob,
       };
     } catch (error) {
       return {
@@ -350,7 +376,7 @@ export class LGPDAutomationOrchestrator {
         itemsProcessed: 0,
         itemsSuccessful: 0,
         errors: [error instanceof Error ? error.message : 'Unknown error'],
-        details: { clinicId }
+        details: { clinicId },
       };
     }
   }
@@ -365,26 +391,29 @@ export class LGPDAutomationOrchestrator {
         this.getActiveConsents(clinicId),
         this.getPendingRequests(clinicId),
         this.getScheduledTasks(clinicId),
-        this.getRecentAuditLogs(clinicId)
+        this.getRecentAuditLogs(clinicId),
       ]);
 
       // Calcular score de compliance
-      const healthCheck = await this.auditService.performComplianceHealthCheck(clinicId);
-      
+      const healthCheck =
+        await this.auditService.performComplianceHealthCheck(clinicId);
+
       // Identificar issues críticos
       const criticalIssues = healthCheck.criticalIssues.length;
-      
+
       // Próximas tarefas agendadas
       const nextScheduledTasks = schedules
-        .filter(s => s.enabled)
+        .filter((s) => s.enabled)
         .sort((a, b) => a.nextRun.getTime() - b.nextRun.getTime())
         .slice(0, 5);
-      
+
       // Alertas recentes
       const recentAlerts = auditLogs
-        .filter(log => log.riskLevel === 'high' || log.riskLevel === 'critical')
+        .filter(
+          (log) => log.riskLevel === 'high' || log.riskLevel === 'critical'
+        )
         .slice(0, 5)
-        .map(log => `${log.eventType}: ${log.action}`);
+        .map((log) => `${log.eventType}: ${log.action}`);
 
       return {
         complianceScore: healthCheck.overallScore,
@@ -393,7 +422,7 @@ export class LGPDAutomationOrchestrator {
         criticalIssues,
         lastAuditDate: healthCheck.lastAuditDate,
         nextScheduledTasks,
-        recentAlerts
+        recentAlerts,
       };
     } catch (error) {
       console.error('Error getting dashboard metrics:', error);
@@ -404,15 +433,16 @@ export class LGPDAutomationOrchestrator {
   /**
    * Configura automação para uma clínica
    */
-  async configureAutomation(clinicId: string, config: AutomationConfig): Promise<void> {
+  async configureAutomation(
+    clinicId: string,
+    config: AutomationConfig
+  ): Promise<void> {
     try {
-      await this.supabase
-        .from('lgpd_automation_config')
-        .upsert({
-          clinic_id: clinicId,
-          config,
-          updated_at: new Date().toISOString()
-        });
+      await this.supabase.from('lgpd_automation_config').upsert({
+        clinic_id: clinicId,
+        config,
+        updated_at: new Date().toISOString(),
+      });
 
       // Criar/atualizar agendamentos
       await this.updateAutomationSchedules(clinicId, config);
@@ -428,7 +458,7 @@ export class LGPDAutomationOrchestrator {
   async executeScheduledTasks(): Promise<void> {
     try {
       const now = new Date();
-      
+
       const { data: scheduledTasks } = await this.supabase
         .from('lgpd_automation_schedules')
         .select('*')
@@ -438,17 +468,16 @@ export class LGPDAutomationOrchestrator {
       for (const task of scheduledTasks || []) {
         try {
           await this.executeScheduledTask(task);
-          
+
           // Atualizar próxima execução
           const nextRun = this.calculateNextRun(task.frequency, now);
           await this.supabase
             .from('lgpd_automation_schedules')
             .update({
               last_run: now.toISOString(),
-              next_run: nextRun.toISOString()
+              next_run: nextRun.toISOString(),
             })
             .eq('id', task.id);
-
         } catch (error) {
           console.error(`Failed to execute scheduled task ${task.id}:`, error);
         }
@@ -477,7 +506,9 @@ export class LGPDAutomationOrchestrator {
     return data || [];
   }
 
-  private async getScheduledTasks(clinicId: string): Promise<AutomationSchedule[]> {
+  private async getScheduledTasks(
+    clinicId: string
+  ): Promise<AutomationSchedule[]> {
     const { data } = await this.supabase
       .from('lgpd_automation_schedules')
       .select('*')
@@ -496,8 +527,8 @@ export class LGPDAutomationOrchestrator {
   }
 
   private async logAutomationExecution(
-    clinicId: string, 
-    results: AutomationResult[], 
+    clinicId: string,
+    results: AutomationResult[],
     startTime: Date
   ): Promise<void> {
     const auditLog: LGPDAuditLog = {
@@ -514,21 +545,28 @@ export class LGPDAutomationOrchestrator {
         startTime,
         endTime: new Date(),
         results,
-        totalItemsProcessed: results.reduce((sum, r) => sum + r.itemsProcessed, 0),
-        totalItemsSuccessful: results.reduce((sum, r) => sum + r.itemsSuccessful, 0),
-        totalErrors: results.reduce((sum, r) => sum + r.errors.length, 0)
+        totalItemsProcessed: results.reduce(
+          (sum, r) => sum + r.itemsProcessed,
+          0
+        ),
+        totalItemsSuccessful: results.reduce(
+          (sum, r) => sum + r.itemsSuccessful,
+          0
+        ),
+        totalErrors: results.reduce((sum, r) => sum + r.errors.length, 0),
       },
       ipAddress: 'system',
       userAgent: 'LGPD Automation Orchestrator',
-      riskLevel: 'low'
+      riskLevel: 'low',
     };
 
-    await this.supabase
-      .from('lgpd_audit_logs')
-      .insert(auditLog);
+    await this.supabase.from('lgpd_audit_logs').insert(auditLog);
   }
 
-  private async updateAutomationSchedules(clinicId: string, config: AutomationConfig): Promise<void> {
+  private async updateAutomationSchedules(
+    _clinicId: string,
+    _config: AutomationConfig
+  ): Promise<void> {
     // Implementar lógica de atualização de agendamentos
     // baseada na configuração fornecida
   }
@@ -555,7 +593,7 @@ export class LGPDAutomationOrchestrator {
 
   private calculateNextRun(frequency: string, lastRun: Date): Date {
     const next = new Date(lastRun);
-    
+
     switch (frequency) {
       case 'daily':
         next.setDate(next.getDate() + 1);
@@ -570,7 +608,7 @@ export class LGPDAutomationOrchestrator {
         next.setMonth(next.getMonth() + 3);
         break;
     }
-    
+
     return next;
   }
 }

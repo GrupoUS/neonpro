@@ -1,18 +1,22 @@
 /**
  * RBAC Permission Manager Class
  * Story 1.2: Role-Based Access Control Implementation
- * 
+ *
  * This class provides a manager interface for the RBAC system,
  * wrapping the functional permissions API in a class-based interface.
  */
 
-import { UserRole, Permission, PermissionCheck, PermissionResult, RoleDefinition, UserRoleAssignment } from '@/types/rbac';
 import { createClient } from '@/app/utils/supabase/client';
-import { AuthUser } from '@/lib/middleware/auth';
+import type {
+  Permission,
+  PermissionResult,
+  UserRoleAssignment,
+} from '@/types/rbac';
 
 export class RBACPermissionManager {
   private supabase: any;
-  private permissionCache: Map<string, { data: any, timestamp: number }> = new Map();
+  private permissionCache: Map<string, { data: any; timestamp: number }> =
+    new Map();
   private cacheTimeout = 5 * 60 * 1000; // 5 minutes
 
   constructor(supabaseClient?: any) {
@@ -22,11 +26,14 @@ export class RBACPermissionManager {
   /**
    * Get user role assignment with clinic context
    */
-  async getUserRole(userId: string, clinicId: string): Promise<UserRoleAssignment | null> {
+  async getUserRole(
+    userId: string,
+    clinicId: string
+  ): Promise<UserRoleAssignment | null> {
     try {
       const cacheKey = `getUserRole:${userId}:${clinicId}`;
       const cached = this.permissionCache.get(cacheKey);
-      
+
       if (cached && Date.now() - cached.timestamp < this.cacheTimeout) {
         return cached.data;
       }
@@ -49,7 +56,10 @@ export class RBACPermissionManager {
       }
 
       const result = userRole || null;
-      this.permissionCache.set(cacheKey, { data: result, timestamp: Date.now() });
+      this.permissionCache.set(cacheKey, {
+        data: result,
+        timestamp: Date.now(),
+      });
       return result;
     } catch (error) {
       console.error('Error in getUserRole:', error);
@@ -70,42 +80,51 @@ export class RBACPermissionManager {
     try {
       const cacheKey = `hasPermission:${userId}:${permission}:${clinicId}:${resourceId || ''}`;
       const cached = this.permissionCache.get(cacheKey);
-      
+
       if (cached && Date.now() - cached.timestamp < this.cacheTimeout) {
         return cached.data;
       }
 
       const roleAssignment = await this.getUserRole(userId, clinicId);
-      
-      if (!roleAssignment || !roleAssignment.role) {
+
+      if (!(roleAssignment && roleAssignment.role)) {
         const result = { granted: false };
-        this.permissionCache.set(cacheKey, { data: result, timestamp: Date.now() });
+        this.permissionCache.set(cacheKey, {
+          data: result,
+          timestamp: Date.now(),
+        });
         return result;
       }
 
       const role = roleAssignment.role;
-      
+
       // Check if role has wildcard permission
       if (role.permissions.includes('*')) {
-        const result = { 
-          granted: true, 
+        const result = {
+          granted: true,
           role: role.name,
-          resourceId 
+          resourceId,
         };
-        this.permissionCache.set(cacheKey, { data: result, timestamp: Date.now() });
+        this.permissionCache.set(cacheKey, {
+          data: result,
+          timestamp: Date.now(),
+        });
         return result;
       }
 
       // Check if role has specific permission
       const hasPermission = role.permissions.includes(permission);
-      
+
       const result = {
         granted: hasPermission,
         role: role.name,
-        resourceId
+        resourceId,
       };
-      
-      this.permissionCache.set(cacheKey, { data: result, timestamp: Date.now() });
+
+      this.permissionCache.set(cacheKey, {
+        data: result,
+        timestamp: Date.now(),
+      });
       return result;
     } catch (error) {
       console.error('Error in hasPermission:', error);
@@ -116,12 +135,16 @@ export class RBACPermissionManager {
   /**
    * Check if user can manage another user (hierarchy validation)
    */
-  async canManageUser(managerId: string, targetUserId: string, clinicId: string): Promise<boolean> {
+  async canManageUser(
+    managerId: string,
+    targetUserId: string,
+    clinicId: string
+  ): Promise<boolean> {
     try {
       const managerRole = await this.getUserRole(managerId, clinicId);
       const targetRole = await this.getUserRole(targetUserId, clinicId);
 
-      if (!managerRole?.role || !targetRole?.role) {
+      if (!(managerRole?.role && targetRole?.role)) {
         return false;
       }
 
@@ -139,19 +162,22 @@ export class RBACPermissionManager {
   /**
    * Assign role to user
    */
-  async assignRole(userId: string, roleId: string, clinicId: string, assignedBy: string): Promise<boolean> {
+  async assignRole(
+    userId: string,
+    roleId: string,
+    clinicId: string,
+    assignedBy: string
+  ): Promise<boolean> {
     try {
-      const { error } = await this.supabase
-        .from('user_roles')
-        .insert({
-          user_id: userId,
-          role_id: roleId,
-          clinic_id: clinicId,
-          assigned_by: assignedBy,
-          is_active: true,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        });
+      const { error } = await this.supabase.from('user_roles').insert({
+        user_id: userId,
+        role_id: roleId,
+        clinic_id: clinicId,
+        assigned_by: assignedBy,
+        is_active: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      });
 
       return !error;
     } catch (error) {
@@ -163,14 +189,18 @@ export class RBACPermissionManager {
   /**
    * Remove role from user
    */
-  async removeRole(userId: string, clinicId: string, removedBy: string): Promise<boolean> {
+  async removeRole(
+    userId: string,
+    clinicId: string,
+    removedBy: string
+  ): Promise<boolean> {
     try {
       const { error } = await this.supabase
         .from('user_roles')
         .update({
           is_active: false,
           updated_at: new Date().toISOString(),
-          updated_by: removedBy
+          updated_by: removedBy,
         })
         .eq('user_id', userId)
         .eq('clinic_id', clinicId)

@@ -1,17 +1,20 @@
 // Story 10.2: Progress Tracking through Computer Vision - Analytics API
 // API endpoint for progress tracking analytics and dashboard data
 
-import { progressTrackingService } from '@/app/lib/services/progress-tracking';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
+import { progressTrackingService } from '@/app/lib/services/progress-tracking';
 
 export async function GET(request: NextRequest) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    
+
     // Check authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Authentication required' },
@@ -25,11 +28,13 @@ export async function GET(request: NextRequest) {
     const treatmentType = searchParams.get('treatment_type') || undefined;
 
     switch (type) {
-      case 'dashboard_stats':
-        const stats = await progressTrackingService.getProgressDashboardStats(patientId);
+      case 'dashboard_stats': {
+        const stats =
+          await progressTrackingService.getProgressDashboardStats(patientId);
         return NextResponse.json(stats);
+      }
 
-      case 'trend_data':
+      case 'trend_data': {
         if (!patientId) {
           return NextResponse.json(
             { error: 'patient_id is required for trend data' },
@@ -37,18 +42,24 @@ export async function GET(request: NextRequest) {
           );
         }
         const trendData = await progressTrackingService.getProgressTrendData(
-          patientId, 
+          patientId,
           treatmentType
         );
         return NextResponse.json(trendData);
+      }
 
-      case 'multi_session_analysis':
-        const analyses = await progressTrackingService.getMultiSessionAnalyses(patientId);
+      case 'multi_session_analysis': {
+        const analyses =
+          await progressTrackingService.getMultiSessionAnalyses(patientId);
         return NextResponse.json(analyses);
+      }
 
       default:
         return NextResponse.json(
-          { error: 'Invalid analytics type. Use: dashboard_stats, trend_data, or multi_session_analysis' },
+          {
+            error:
+              'Invalid analytics type. Use: dashboard_stats, trend_data, or multi_session_analysis',
+          },
           { status: 400 }
         );
     }

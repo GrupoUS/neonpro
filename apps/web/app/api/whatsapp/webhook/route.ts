@@ -2,7 +2,7 @@
 // Handles webhook events from Meta's WhatsApp Cloud API
 // Used for message status updates and incoming messages
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { whatsAppService } from '@/app/lib/services/whatsapp-service';
 import { createClient } from '@/app/utils/supabase/server';
 
@@ -14,7 +14,11 @@ export async function GET(request: NextRequest) {
     const token = searchParams.get('hub.verify_token');
     const challenge = searchParams.get('hub.challenge');
 
-    console.log('WhatsApp webhook verification request:', { mode, token, challenge });
+    console.log('WhatsApp webhook verification request:', {
+      mode,
+      token,
+      challenge,
+    });
 
     if (mode === 'subscribe') {
       // Get the verify token from the database
@@ -35,13 +39,12 @@ export async function GET(request: NextRequest) {
       if (token === config.webhook_verify_token) {
         console.log('Webhook verification successful');
         return new NextResponse(challenge, { status: 200 });
-      } else {
-        console.error('Invalid webhook verify token');
-        return NextResponse.json(
-          { error: 'Invalid verify token' },
-          { status: 403 }
-        );
       }
+      console.error('Invalid webhook verify token');
+      return NextResponse.json(
+        { error: 'Invalid verify token' },
+        { status: 403 }
+      );
     }
 
     return NextResponse.json(
@@ -61,7 +64,10 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const payload = await request.json();
-    console.log('WhatsApp webhook payload received:', JSON.stringify(payload, null, 2));
+    console.log(
+      'WhatsApp webhook payload received:',
+      JSON.stringify(payload, null, 2)
+    );
 
     // Verify the webhook payload structure
     if (!payload.object || payload.object !== 'whatsapp_business_account') {
@@ -72,7 +78,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!payload.entry || !Array.isArray(payload.entry)) {
+    if (!(payload.entry && Array.isArray(payload.entry))) {
       console.error('Invalid webhook entry structure');
       return NextResponse.json(
         { error: 'Invalid webhook entry' },
@@ -90,10 +96,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ status: 'success' }, { status: 200 });
   } catch (error) {
     console.error('Webhook processing error:', error);
-    
+
     // Log the error for debugging
-    await logWebhookError(error instanceof Error ? error.message : 'Unknown error');
-    
+    await logWebhookError(
+      error instanceof Error ? error.message : 'Unknown error'
+    );
+
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -105,15 +113,13 @@ export async function POST(request: NextRequest) {
 async function logWebhookEvent(payload: any): Promise<void> {
   try {
     const supabase = await createClient();
-    
-    const { error } = await supabase
-      .from('whatsapp_webhook_logs')
-      .insert({
-        event_type: 'webhook_received',
-        payload: payload,
-        status: 'success',
-        created_at: new Date().toISOString()
-      });
+
+    const { error } = await supabase.from('whatsapp_webhook_logs').insert({
+      event_type: 'webhook_received',
+      payload,
+      status: 'success',
+      created_at: new Date().toISOString(),
+    });
 
     if (error) {
       console.error('Error logging webhook event:', error);
@@ -127,15 +133,13 @@ async function logWebhookEvent(payload: any): Promise<void> {
 async function logWebhookError(errorMessage: string): Promise<void> {
   try {
     const supabase = await createClient();
-    
-    const { error } = await supabase
-      .from('whatsapp_webhook_logs')
-      .insert({
-        event_type: 'webhook_error',
-        payload: { error: errorMessage },
-        status: 'error',
-        created_at: new Date().toISOString()
-      });
+
+    const { error } = await supabase.from('whatsapp_webhook_logs').insert({
+      event_type: 'webhook_error',
+      payload: { error: errorMessage },
+      status: 'error',
+      created_at: new Date().toISOString(),
+    });
 
     if (error) {
       console.error('Error logging webhook error:', error);

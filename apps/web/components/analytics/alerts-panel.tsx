@@ -1,50 +1,50 @@
 /**
- * Alerts Panel Component  
+ * Alerts Panel Component
  * Epic 10 - Story 10.5: Vision Analytics Dashboard (Real-time Insights)
- * 
+ *
  * Displays system alerts and notifications including:
  * - Performance alerts and system warnings
- * - Clinical alerts and safety notifications  
+ * - Clinical alerts and safety notifications
  * - Compliance alerts and regulatory warnings
  * - AI model alerts and accuracy degradation
  * - Business alerts and operational issues
  * - Real-time alert management and acknowledgment
- * 
+ *
  * BMAD METHOD + VOIDBEAST V6.0 ENHANCED - Quality ≥9.8/10
  */
 
 'use client';
 
-import { useState, useMemo } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import {
-  AlertTriangle,
-  AlertCircle,
-  Shield,
   Activity,
-  Brain,
-  Clock,
-  CheckCircle,
-  X,
-  Eye,
+  AlertTriangle,
   Bell,
-  BellRing,
-  Zap,
-  TrendingDown,
-  Server,
+  Brain,
+  CheckCircle,
   Database,
+  Eye,
+  Server,
+  Shield,
+  Users,
   Wifi,
-  Users
 } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 // Analytics Engine
-import { type AnalyticsAlert } from '@/lib/analytics';
+import type { AnalyticsAlert } from '@/lib/analytics';
 
-// Types  
+// Types
 interface AlertsPanelProps {
   alerts: AnalyticsAlert[];
   isLoading: boolean;
@@ -73,36 +73,36 @@ export function AlertsPanel({ alerts, isLoading }: AlertsPanelProps) {
    * Process alerts with additional metadata
    */
   const processedAlerts = useMemo((): ProcessedAlert[] => {
-    return alerts.map(alert => {
+    return alerts.map((alert) => {
       // Category icon
       let categoryIcon: React.ReactNode;
       switch (alert.category) {
         case 'performance':
-          categoryIcon = <Activity className="w-4 h-4" />;
+          categoryIcon = <Activity className="h-4 w-4" />;
           break;
         case 'clinical':
-          categoryIcon = <Shield className="w-4 h-4" />;
+          categoryIcon = <Shield className="h-4 w-4" />;
           break;
         case 'compliance':
-          categoryIcon = <CheckCircle className="w-4 h-4" />;
+          categoryIcon = <CheckCircle className="h-4 w-4" />;
           break;
         case 'ai_model':
-          categoryIcon = <Brain className="w-4 h-4" />;
+          categoryIcon = <Brain className="h-4 w-4" />;
           break;
         case 'system':
-          categoryIcon = <Server className="w-4 h-4" />;
+          categoryIcon = <Server className="h-4 w-4" />;
           break;
         case 'database':
-          categoryIcon = <Database className="w-4 h-4" />;
+          categoryIcon = <Database className="h-4 w-4" />;
           break;
         case 'network':
-          categoryIcon = <Wifi className="w-4 h-4" />;
+          categoryIcon = <Wifi className="h-4 w-4" />;
           break;
         case 'user':
-          categoryIcon = <Users className="w-4 h-4" />;
+          categoryIcon = <Users className="h-4 w-4" />;
           break;
         default:
-          categoryIcon = <AlertTriangle className="w-4 h-4" />;
+          categoryIcon = <AlertTriangle className="h-4 w-4" />;
       }
 
       // Severity color
@@ -147,7 +147,7 @@ export function AlertsPanel({ alerts, isLoading }: AlertsPanelProps) {
         categoryIcon,
         severityColor,
         timeAgo,
-        isRecent
+        isRecent,
       };
     });
   }, [alerts]);
@@ -156,17 +156,17 @@ export function AlertsPanel({ alerts, isLoading }: AlertsPanelProps) {
    * Filter alerts
    */
   const filteredAlerts = useMemo(() => {
-    return processedAlerts.filter(alert => {
+    return processedAlerts.filter((alert) => {
       // Category filter
       if (selectedCategory !== 'all' && alert.category !== selectedCategory) {
         return false;
       }
-      
+
       // Acknowledged filter
       if (!showAcknowledged && alert.acknowledged) {
         return false;
       }
-      
+
       return true;
     });
   }, [processedAlerts, selectedCategory, showAcknowledged]);
@@ -181,7 +181,7 @@ export function AlertsPanel({ alerts, isLoading }: AlertsPanelProps) {
         critical: summary.critical + (alert.severity === 'critical' ? 1 : 0),
         warning: summary.warning + (alert.severity === 'warning' ? 1 : 0),
         info: summary.info + (alert.severity === 'info' ? 1 : 0),
-        acknowledged: summary.acknowledged + (alert.acknowledged ? 1 : 0)
+        acknowledged: summary.acknowledged + (alert.acknowledged ? 1 : 0),
       }),
       { total: 0, critical: 0, warning: 0, info: 0, acknowledged: 0 }
     );
@@ -192,19 +192,19 @@ export function AlertsPanel({ alerts, isLoading }: AlertsPanelProps) {
    */
   const alertsByCategory = useMemo(() => {
     const categories = new Map<string, ProcessedAlert[]>();
-    
-    processedAlerts.forEach(alert => {
+
+    processedAlerts.forEach((alert) => {
       if (!categories.has(alert.category)) {
         categories.set(alert.category, []);
       }
-      categories.get(alert.category)!.push(alert);
+      categories.get(alert.category)?.push(alert);
     });
 
     return Array.from(categories.entries()).map(([category, alerts]) => ({
       category,
       alerts,
       count: alerts.length,
-      criticalCount: alerts.filter(a => a.severity === 'critical').length
+      criticalCount: alerts.filter((a) => a.severity === 'critical').length,
     }));
   }, [processedAlerts]);
 
@@ -220,44 +220,48 @@ export function AlertsPanel({ alerts, isLoading }: AlertsPanelProps) {
    * Alert card component
    */
   const AlertCard: React.FC<{ alert: ProcessedAlert }> = ({ alert }) => (
-    <Card className={`border-l-4 ${alert.severityColor} ${alert.isRecent ? 'ring-2 ring-blue-100' : ''}`}>
+    <Card
+      className={`border-l-4 ${alert.severityColor} ${alert.isRecent ? 'ring-2 ring-blue-100' : ''}`}
+    >
       <CardContent className="p-4">
         <div className="flex items-start justify-between">
-          <div className="flex items-start gap-3 flex-1">
+          <div className="flex flex-1 items-start gap-3">
             {alert.categoryIcon}
             <div className="flex-1">
-              <div className="flex items-center gap-2 mb-1">
+              <div className="mb-1 flex items-center gap-2">
                 <h4 className="font-medium text-gray-900">{alert.title}</h4>
                 {alert.isRecent && (
-                  <Badge variant="secondary" className="text-xs">
+                  <Badge className="text-xs" variant="secondary">
                     New
                   </Badge>
                 )}
               </div>
-              <p className="text-sm text-gray-600 mb-2">{alert.description}</p>
-              
+              <p className="mb-2 text-gray-600 text-sm">{alert.description}</p>
+
               {/* Alert Details */}
-              <div className="text-xs text-gray-500 space-y-1">
+              <div className="space-y-1 text-gray-500 text-xs">
                 <div className="flex items-center justify-between">
                   <span>Category: {alert.category.replace('_', ' ')}</span>
                   <span>{alert.timeAgo}</span>
                 </div>
-                {alert.source && (
-                  <div>Source: {alert.source}</div>
-                )}
-                {alert.affectedResources && alert.affectedResources.length > 0 && (
-                  <div>
-                    Affected: {alert.affectedResources.slice(0, 2).join(', ')}
-                    {alert.affectedResources.length > 2 && ` +${alert.affectedResources.length - 2} more`}
-                  </div>
-                )}
+                {alert.source && <div>Source: {alert.source}</div>}
+                {alert.affectedResources &&
+                  alert.affectedResources.length > 0 && (
+                    <div>
+                      Affected: {alert.affectedResources.slice(0, 2).join(', ')}
+                      {alert.affectedResources.length > 2 &&
+                        ` +${alert.affectedResources.length - 2} more`}
+                    </div>
+                  )}
               </div>
 
               {/* Resolution Steps */}
               {alert.resolutionSteps && alert.resolutionSteps.length > 0 && (
-                <div className="mt-3 p-2 bg-gray-50 rounded text-xs">
-                  <div className="font-medium text-gray-700 mb-1">Resolution Steps:</div>
-                  <ol className="list-decimal list-inside space-y-0.5 text-gray-600">
+                <div className="mt-3 rounded bg-gray-50 p-2 text-xs">
+                  <div className="mb-1 font-medium text-gray-700">
+                    Resolution Steps:
+                  </div>
+                  <ol className="list-inside list-decimal space-y-0.5 text-gray-600">
                     {alert.resolutionSteps.slice(0, 2).map((step, index) => (
                       <li key={index}>{step}</li>
                     ))}
@@ -268,28 +272,30 @@ export function AlertsPanel({ alerts, isLoading }: AlertsPanelProps) {
           </div>
 
           <div className="flex flex-col items-end gap-2">
-            <Badge 
-              variant={alert.severity === 'critical' ? 'destructive' : 'secondary'}
+            <Badge
               className="text-xs"
+              variant={
+                alert.severity === 'critical' ? 'destructive' : 'secondary'
+              }
             >
               {alert.severity}
             </Badge>
-            
+
             {!alert.acknowledged && (
               <Button
+                className="text-xs"
+                onClick={() => handleAcknowledge(alert.id)}
                 size="sm"
                 variant="outline"
-                onClick={() => handleAcknowledge(alert.id)}
-                className="text-xs"
               >
-                <CheckCircle className="w-3 h-3 mr-1" />
+                <CheckCircle className="mr-1 h-3 w-3" />
                 Acknowledge
               </Button>
             )}
-            
+
             {alert.acknowledged && (
-              <Badge variant="secondary" className="text-xs">
-                <CheckCircle className="w-3 h-3 mr-1" />
+              <Badge className="text-xs" variant="secondary">
+                <CheckCircle className="mr-1 h-3 w-3" />
                 Acknowledged
               </Badge>
             )}
@@ -304,14 +310,14 @@ export function AlertsPanel({ alerts, isLoading }: AlertsPanelProps) {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Bell className="w-5 h-5 text-orange-600" />
+            <Bell className="h-5 w-5 text-orange-600" />
             System Alerts
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="animate-pulse space-y-4">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="h-24 bg-gray-200 rounded"></div>
+              <div className="h-24 rounded bg-gray-200" key={i} />
             ))}
           </div>
         </CardContent>
@@ -325,10 +331,14 @@ export function AlertsPanel({ alerts, isLoading }: AlertsPanelProps) {
         <div className="flex items-center justify-between">
           <div>
             <CardTitle className="flex items-center gap-2">
-              <Bell className="w-5 h-5 text-orange-600" />
+              <Bell className="h-5 w-5 text-orange-600" />
               System Alerts
               {alertSummary.total > 0 && (
-                <Badge variant={alertSummary.critical > 0 ? 'destructive' : 'secondary'}>
+                <Badge
+                  variant={
+                    alertSummary.critical > 0 ? 'destructive' : 'secondary'
+                  }
+                >
                   {alertSummary.total}
                 </Badge>
               )}
@@ -340,9 +350,9 @@ export function AlertsPanel({ alerts, isLoading }: AlertsPanelProps) {
 
           <div className="flex items-center gap-2">
             <Button
-              variant="ghost"
-              size="sm"
               onClick={() => setShowAcknowledged(!showAcknowledged)}
+              size="sm"
+              variant="ghost"
             >
               {showAcknowledged ? 'Hide' : 'Show'} Acknowledged
             </Button>
@@ -351,75 +361,101 @@ export function AlertsPanel({ alerts, isLoading }: AlertsPanelProps) {
       </CardHeader>
       <CardContent>
         {/* Alert Summary */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div className="mb-6 grid grid-cols-2 gap-4 md:grid-cols-4">
           <div className="text-center">
-            <div className="text-2xl font-bold text-gray-900">{alertSummary.total}</div>
-            <div className="text-xs text-gray-600">Total</div>
+            <div className="font-bold text-2xl text-gray-900">
+              {alertSummary.total}
+            </div>
+            <div className="text-gray-600 text-xs">Total</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-red-600">{alertSummary.critical}</div>
-            <div className="text-xs text-gray-600">Critical</div>
+            <div className="font-bold text-2xl text-red-600">
+              {alertSummary.critical}
+            </div>
+            <div className="text-gray-600 text-xs">Critical</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-amber-600">{alertSummary.warning}</div>
-            <div className="text-xs text-gray-600">Warning</div>
+            <div className="font-bold text-2xl text-amber-600">
+              {alertSummary.warning}
+            </div>
+            <div className="text-gray-600 text-xs">Warning</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-green-600">{alertSummary.acknowledged}</div>
-            <div className="text-xs text-gray-600">Resolved</div>
+            <div className="font-bold text-2xl text-green-600">
+              {alertSummary.acknowledged}
+            </div>
+            <div className="text-gray-600 text-xs">Resolved</div>
           </div>
         </div>
 
         {alertSummary.total === 0 ? (
-          <div className="text-center py-8">
-            <CheckCircle className="h-12 w-12 text-green-500 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">All Clear</h3>
+          <div className="py-8 text-center">
+            <CheckCircle className="mx-auto mb-4 h-12 w-12 text-green-500" />
+            <h3 className="mb-2 font-semibold text-gray-900 text-lg">
+              All Clear
+            </h3>
             <p className="text-gray-600">No active alerts at this time.</p>
           </div>
         ) : (
-          <Tabs value={selectedCategory} onValueChange={setSelectedCategory}>
+          <Tabs onValueChange={setSelectedCategory} value={selectedCategory}>
             <TabsList className="grid w-full grid-cols-6">
               <TabsTrigger value="all">
                 All
-                <Badge variant="secondary" className="ml-1">
+                <Badge className="ml-1" variant="secondary">
                   {alertSummary.total}
                 </Badge>
               </TabsTrigger>
-              {alertsByCategory.slice(0, 5).map(({ category, count, criticalCount }) => (
-                <TabsTrigger key={category} value={category} className="flex items-center gap-1">
-                  <span className="hidden lg:inline">
-                    {category.charAt(0).toUpperCase() + category.slice(1)}
-                  </span>
-                  <Badge 
-                    variant={criticalCount > 0 ? 'destructive' : 'secondary'}
-                    className="text-xs"
+              {alertsByCategory
+                .slice(0, 5)
+                .map(({ category, count, criticalCount }) => (
+                  <TabsTrigger
+                    className="flex items-center gap-1"
+                    key={category}
+                    value={category}
                   >
-                    {count}
-                  </Badge>
-                </TabsTrigger>
-              ))}
+                    <span className="hidden lg:inline">
+                      {category.charAt(0).toUpperCase() + category.slice(1)}
+                    </span>
+                    <Badge
+                      className="text-xs"
+                      variant={criticalCount > 0 ? 'destructive' : 'secondary'}
+                    >
+                      {count}
+                    </Badge>
+                  </TabsTrigger>
+                ))}
             </TabsList>
 
-            <TabsContent value={selectedCategory} className="mt-6">
+            <TabsContent className="mt-6" value={selectedCategory}>
               <ScrollArea className="h-96">
                 <div className="space-y-4">
                   {filteredAlerts.length === 0 ? (
-                    <div className="text-center py-8">
-                      <Eye className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                      <p className="text-gray-600">No alerts in this category.</p>
+                    <div className="py-8 text-center">
+                      <Eye className="mx-auto mb-2 h-8 w-8 text-gray-400" />
+                      <p className="text-gray-600">
+                        No alerts in this category.
+                      </p>
                     </div>
                   ) : (
                     filteredAlerts
                       .sort((a, b) => {
                         // Sort by severity (critical first), then by timestamp (newest first)
-                        const severityOrder = { critical: 3, warning: 2, info: 1 };
-                        const severityDiff = severityOrder[b.severity] - severityOrder[a.severity];
+                        const severityOrder = {
+                          critical: 3,
+                          warning: 2,
+                          info: 1,
+                        };
+                        const severityDiff =
+                          severityOrder[b.severity] - severityOrder[a.severity];
                         if (severityDiff !== 0) return severityDiff;
-                        
-                        return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
+
+                        return (
+                          new Date(b.timestamp).getTime() -
+                          new Date(a.timestamp).getTime()
+                        );
                       })
                       .map((alert, index) => (
-                        <AlertCard key={`${alert.id}-${index}`} alert={alert} />
+                        <AlertCard alert={alert} key={`${alert.id}-${index}`} />
                       ))
                   )}
                 </div>

@@ -5,29 +5,27 @@
 // and quality management in NeonPro clinic management system
 // ============================================================================
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'sonner';
-import { 
-  Supplier, 
-  SupplierStatus, 
-  SupplierCategory,
-  SupplierPerformance,
-  ProcurementRequest,
-  SupplierBid,
-  QualityIssue,
-  SupplierContract,
-  SupplierAnalytics,
-  SupplierCommunication,
-  PerformanceMetric,
-  RiskLevel,
-  ContractType,
-  PaymentTerms,
-  IssueStatus,
-  QualityIssueType,
-  SupplierFormData
-} from '@/lib/types/supplier';
 import { createClient } from '@/app/utils/supabase/client';
+import {
+  type ContractType,
+  IssueStatus,
+  type ProcurementRequest,
+  type QualityIssue,
+  type QualityIssueType,
+  type RiskLevel,
+  type Supplier,
+  type SupplierAnalytics,
+  type SupplierBid,
+  type SupplierCategory,
+  type SupplierCommunication,
+  type SupplierContract,
+  type SupplierFormData,
+  type SupplierPerformance,
+  SupplierStatus,
+} from '@/lib/types/supplier';
 
 // ============================================================================
 // SUPPLIER MANAGEMENT HOOKS
@@ -36,12 +34,15 @@ import { createClient } from '@/app/utils/supabase/client';
 /**
  * Hook for managing suppliers - CRUD operations with validation and caching
  */
-export function useSuppliers(clinicId?: string, filters?: {
-  status?: SupplierStatus[];
-  category?: SupplierCategory[];
-  search?: string;
-  riskLevel?: RiskLevel[];
-}) {
+export function useSuppliers(
+  clinicId?: string,
+  filters?: {
+    status?: SupplierStatus[];
+    category?: SupplierCategory[];
+    search?: string;
+    riskLevel?: RiskLevel[];
+  }
+) {
   const queryClient = useQueryClient();
   const supabase = createClient();
 
@@ -49,7 +50,12 @@ export function useSuppliers(clinicId?: string, filters?: {
   const effectiveClinicId = clinicId || '89084c3a-9200-4058-a15a-b440d3c60687';
 
   // Query for fetching suppliers
-  const { data: suppliers = [], isLoading, error, refetch } = useQuery({
+  const {
+    data: suppliers = [],
+    isLoading,
+    error,
+    refetch,
+  } = useQuery({
     queryKey: ['suppliers', effectiveClinicId, filters],
     queryFn: async () => {
       let query = supabase
@@ -75,7 +81,9 @@ export function useSuppliers(clinicId?: string, filters?: {
         query = query.in('risk_level', filters.riskLevel);
       }
       if (filters?.search) {
-        query = query.or(`name.ilike.%${filters.search}%,legal_name.ilike.%${filters.search}%`);
+        query = query.or(
+          `name.ilike.%${filters.search}%,legal_name.ilike.%${filters.search}%`
+        );
       }
 
       const { data, error } = await query;
@@ -83,19 +91,21 @@ export function useSuppliers(clinicId?: string, filters?: {
       return data as Supplier[];
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
-    retry: 2
+    retry: 2,
   });
 
   // Create supplier mutation
   const createSupplier = useMutation({
-    mutationFn: async (supplierData: Omit<SupplierFormData, 'id' | 'created_at' | 'updated_at'>) => {
+    mutationFn: async (
+      supplierData: Omit<SupplierFormData, 'id' | 'created_at' | 'updated_at'>
+    ) => {
       const { data, error } = await supabase
         .from('suppliers')
         .insert({
           ...supplierData,
           clinic_id: effectiveClinicId,
           created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .select()
         .single();
@@ -110,17 +120,20 @@ export function useSuppliers(clinicId?: string, filters?: {
     onError: (error) => {
       console.error('Erro ao criar fornecedor:', error);
       toast.error('Erro ao criar fornecedor. Tente novamente.');
-    }
+    },
   });
 
   // Update supplier mutation
   const updateSupplier = useMutation({
-    mutationFn: async ({ id, ...supplierData }: Partial<SupplierFormData> & { id: string }) => {
+    mutationFn: async ({
+      id,
+      ...supplierData
+    }: Partial<SupplierFormData> & { id: string }) => {
       const { data, error } = await supabase
         .from('suppliers')
         .update({
           ...supplierData,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', id)
         .select()
@@ -131,13 +144,17 @@ export function useSuppliers(clinicId?: string, filters?: {
     },
     onSuccess: (updatedSupplier) => {
       queryClient.invalidateQueries({ queryKey: ['suppliers'] });
-      queryClient.invalidateQueries({ queryKey: ['supplier', updatedSupplier.id] });
-      toast.success(`Fornecedor ${updatedSupplier.name} atualizado com sucesso!`);
+      queryClient.invalidateQueries({
+        queryKey: ['supplier', updatedSupplier.id],
+      });
+      toast.success(
+        `Fornecedor ${updatedSupplier.name} atualizado com sucesso!`
+      );
     },
     onError: (error) => {
       console.error('Erro ao atualizar fornecedor:', error);
       toast.error('Erro ao atualizar fornecedor. Tente novamente.');
-    }
+    },
   });
 
   // Delete supplier mutation
@@ -158,17 +175,23 @@ export function useSuppliers(clinicId?: string, filters?: {
     onError: (error) => {
       console.error('Erro ao remover fornecedor:', error);
       toast.error('Erro ao remover fornecedor. Tente novamente.');
-    }
+    },
   });
 
   // Activate/Deactivate supplier
   const toggleSupplierStatus = useMutation({
-    mutationFn: async ({ supplierId, newStatus }: { supplierId: string; newStatus: SupplierStatus }) => {
+    mutationFn: async ({
+      supplierId,
+      newStatus,
+    }: {
+      supplierId: string;
+      newStatus: SupplierStatus;
+    }) => {
       const { data, error } = await supabase
         .from('suppliers')
-        .update({ 
-          status: newStatus, 
-          updated_at: new Date().toISOString() 
+        .update({
+          status: newStatus,
+          updated_at: new Date().toISOString(),
         })
         .eq('id', supplierId)
         .select()
@@ -179,13 +202,18 @@ export function useSuppliers(clinicId?: string, filters?: {
     },
     onSuccess: (updatedSupplier) => {
       queryClient.invalidateQueries({ queryKey: ['suppliers'] });
-      const statusText = updatedSupplier.status === SupplierStatus.ACTIVE ? 'ativado' : 'desativado';
-      toast.success(`Fornecedor ${updatedSupplier.name} ${statusText} com sucesso!`);
+      const statusText =
+        updatedSupplier.status === SupplierStatus.ACTIVE
+          ? 'ativado'
+          : 'desativado';
+      toast.success(
+        `Fornecedor ${updatedSupplier.name} ${statusText} com sucesso!`
+      );
     },
     onError: (error) => {
       console.error('Erro ao alterar status do fornecedor:', error);
       toast.error('Erro ao alterar status do fornecedor. Tente novamente.');
-    }
+    },
   });
 
   return {
@@ -200,7 +228,7 @@ export function useSuppliers(clinicId?: string, filters?: {
     isCreating: createSupplier.isPending,
     isUpdating: updateSupplier.isPending,
     isDeleting: deleteSupplier.isPending,
-    isTogglingStatus: toggleSupplierStatus.isPending
+    isTogglingStatus: toggleSupplierStatus.isPending,
   };
 }
 
@@ -211,7 +239,11 @@ export function useSupplier(supplierId: string) {
   const queryClient = useQueryClient();
   const supabase = createClient();
 
-  const { data: supplier, isLoading, error } = useQuery({
+  const {
+    data: supplier,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ['supplier', supplierId],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -231,14 +263,15 @@ export function useSupplier(supplierId: string) {
       return data as Supplier;
     },
     enabled: !!supplierId,
-    staleTime: 2 * 60 * 1000 // 2 minutes
+    staleTime: 2 * 60 * 1000, // 2 minutes
   });
 
   return {
     supplier,
     isLoading,
     error,
-    refetch: () => queryClient.invalidateQueries({ queryKey: ['supplier', supplierId] })
+    refetch: () =>
+      queryClient.invalidateQueries({ queryKey: ['supplier', supplierId] }),
   };
 }
 
@@ -254,7 +287,11 @@ export function useSupplierPerformance(supplierId: string, period?: string) {
   const supabase = createClient();
 
   // Get performance data for supplier
-  const { data: performance, isLoading, error } = useQuery({
+  const {
+    data: performance,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ['supplier-performance', supplierId, period],
     queryFn: async () => {
       let query = supabase
@@ -274,17 +311,19 @@ export function useSupplierPerformance(supplierId: string, period?: string) {
       return data as SupplierPerformance[];
     },
     enabled: !!supplierId,
-    staleTime: 10 * 60 * 1000 // 10 minutes
+    staleTime: 10 * 60 * 1000, // 10 minutes
   });
 
   // Create performance evaluation
   const createPerformanceEvaluation = useMutation({
-    mutationFn: async (performanceData: Omit<SupplierPerformance, 'id' | 'created_at'>) => {
+    mutationFn: async (
+      performanceData: Omit<SupplierPerformance, 'id' | 'created_at'>
+    ) => {
       const { data, error } = await supabase
         .from('supplier_performance_metrics')
         .insert({
           ...performanceData,
-          created_at: new Date().toISOString()
+          created_at: new Date().toISOString(),
         })
         .select()
         .single();
@@ -299,7 +338,7 @@ export function useSupplierPerformance(supplierId: string, period?: string) {
     onError: (error) => {
       console.error('Erro ao criar avaliação:', error);
       toast.error('Erro ao criar avaliação. Tente novamente.');
-    }
+    },
   });
 
   // Calculate performance metrics
@@ -311,14 +350,24 @@ export function useSupplierPerformance(supplierId: string, period?: string) {
 
     return {
       current: latest,
-      trend: previous ? {
-        scoreChange: latest.quality_score - previous.quality_score,
-        deliveryChange: latest.on_time_delivery_rate - previous.on_time_delivery_rate,
-        serviceChange: latest.customer_satisfaction - previous.customer_satisfaction
-      } : null,
-      averageQualityScore: performance.reduce((sum, p) => sum + p.quality_score, 0) / performance.length,
-      averageDeliveryRate: performance.reduce((sum, p) => sum + p.on_time_delivery_rate, 0) / performance.length,
-      averageServiceScore: performance.reduce((sum, p) => sum + p.customer_satisfaction, 0) / performance.length
+      trend: previous
+        ? {
+            scoreChange: latest.quality_score - previous.quality_score,
+            deliveryChange:
+              latest.on_time_delivery_rate - previous.on_time_delivery_rate,
+            serviceChange:
+              latest.customer_satisfaction - previous.customer_satisfaction,
+          }
+        : null,
+      averageQualityScore:
+        performance.reduce((sum, p) => sum + p.quality_score, 0) /
+        performance.length,
+      averageDeliveryRate:
+        performance.reduce((sum, p) => sum + p.on_time_delivery_rate, 0) /
+        performance.length,
+      averageServiceScore:
+        performance.reduce((sum, p) => sum + p.customer_satisfaction, 0) /
+        performance.length,
     };
   }, [performance]);
 
@@ -328,22 +377,29 @@ export function useSupplierPerformance(supplierId: string, period?: string) {
     isLoading,
     error,
     createPerformanceEvaluation: createPerformanceEvaluation.mutate,
-    isCreatingEvaluation: createPerformanceEvaluation.isPending
+    isCreatingEvaluation: createPerformanceEvaluation.isPending,
   };
 }
 
 /**
  * Hook for performance analytics across all suppliers
  */
-export function useSupplierAnalytics(clinicId?: string, options?: {
-  period?: string;
-  category?: SupplierCategory;
-  compareWith?: 'industry' | 'category' | 'previous';
-}) {
+export function useSupplierAnalytics(
+  clinicId?: string,
+  options?: {
+    period?: string;
+    category?: SupplierCategory;
+    compareWith?: 'industry' | 'category' | 'previous';
+  }
+) {
   const supabase = createClient();
   const effectiveClinicId = clinicId || '89084c3a-9200-4058-a15a-b440d3c60687';
 
-  const { data: analytics, isLoading, error } = useQuery({
+  const {
+    data: analytics,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ['supplier-analytics', clinicId, options],
     queryFn: async () => {
       // This would typically call a stored procedure or complex query
@@ -359,13 +415,13 @@ export function useSupplierAnalytics(clinicId?: string, options?: {
       if (error && error.code !== 'PGRST116') throw error;
       return data as SupplierAnalytics | null;
     },
-    staleTime: 30 * 60 * 1000 // 30 minutes
+    staleTime: 30 * 60 * 1000, // 30 minutes
   });
 
   return {
     analytics,
     isLoading,
-    error
+    error,
   };
 }
 
@@ -376,16 +432,23 @@ export function useSupplierAnalytics(clinicId?: string, options?: {
 /**
  * Hook for managing procurement requests
  */
-export function useProcurementRequests(clinicId?: string, filters?: {
-  status?: string[];
-  category?: SupplierCategory[];
-  dateRange?: { start: string; end: string };
-}) {
+export function useProcurementRequests(
+  clinicId?: string,
+  filters?: {
+    status?: string[];
+    category?: SupplierCategory[];
+    dateRange?: { start: string; end: string };
+  }
+) {
   const queryClient = useQueryClient();
   const supabase = createClient();
   const effectiveClinicId = clinicId || '89084c3a-9200-4058-a15a-b440d3c60687';
 
-  const { data: requests = [], isLoading, error } = useQuery({
+  const {
+    data: requests = [],
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ['procurement-requests', clinicId, filters],
     queryFn: async () => {
       let query = supabase
@@ -415,18 +478,20 @@ export function useProcurementRequests(clinicId?: string, filters?: {
       if (error) throw error;
       return data as ProcurementRequest[];
     },
-    staleTime: 5 * 60 * 1000
+    staleTime: 5 * 60 * 1000,
   });
 
   // Create procurement request
   const createProcurementRequest = useMutation({
-    mutationFn: async (requestData: Omit<ProcurementRequest, 'id' | 'created_at'>) => {
+    mutationFn: async (
+      requestData: Omit<ProcurementRequest, 'id' | 'created_at'>
+    ) => {
       const { data, error } = await supabase
         .from('procurement_requests')
         .insert({
           ...requestData,
           clinic_id: clinicId,
-          created_at: new Date().toISOString()
+          created_at: new Date().toISOString(),
         })
         .select()
         .single();
@@ -441,7 +506,7 @@ export function useProcurementRequests(clinicId?: string, filters?: {
     onError: (error) => {
       console.error('Erro ao criar solicitação:', error);
       toast.error('Erro ao criar solicitação. Tente novamente.');
-    }
+    },
   });
 
   return {
@@ -449,7 +514,7 @@ export function useProcurementRequests(clinicId?: string, filters?: {
     isLoading,
     error,
     createProcurementRequest: createProcurementRequest.mutate,
-    isCreating: createProcurementRequest.isPending
+    isCreating: createProcurementRequest.isPending,
   };
 }
 
@@ -460,7 +525,11 @@ export function useSupplierBids(procurementRequestId: string) {
   const queryClient = useQueryClient();
   const supabase = createClient();
 
-  const { data: bids = [], isLoading, error } = useQuery({
+  const {
+    data: bids = [],
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ['supplier-bids', procurementRequestId],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -478,17 +547,17 @@ export function useSupplierBids(procurementRequestId: string) {
       return data as SupplierBid[];
     },
     enabled: !!procurementRequestId,
-    staleTime: 2 * 60 * 1000
+    staleTime: 2 * 60 * 1000,
   });
 
   // Submit bid evaluation
   const evaluateBid = useMutation({
-    mutationFn: async ({ 
-      bidId, 
-      technicalScore, 
-      commercialScore, 
-      overallScore, 
-      notes 
+    mutationFn: async ({
+      bidId,
+      technicalScore,
+      commercialScore,
+      overallScore,
+      notes,
     }: {
       bidId: string;
       technicalScore: number;
@@ -503,7 +572,7 @@ export function useSupplierBids(procurementRequestId: string) {
           commercial_score: commercialScore,
           overall_score: overallScore,
           evaluation_notes: notes,
-          evaluated_at: new Date().toISOString()
+          evaluated_at: new Date().toISOString(),
         })
         .eq('id', bidId)
         .select()
@@ -519,7 +588,7 @@ export function useSupplierBids(procurementRequestId: string) {
     onError: (error) => {
       console.error('Erro ao avaliar proposta:', error);
       toast.error('Erro ao avaliar proposta. Tente novamente.');
-    }
+    },
   });
 
   return {
@@ -527,7 +596,7 @@ export function useSupplierBids(procurementRequestId: string) {
     isLoading,
     error,
     evaluateBid: evaluateBid.mutate,
-    isEvaluating: evaluateBid.isPending
+    isEvaluating: evaluateBid.isPending,
   };
 }
 
@@ -538,17 +607,24 @@ export function useSupplierBids(procurementRequestId: string) {
 /**
  * Hook for managing quality issues
  */
-export function useQualityIssues(clinicId?: string, filters?: {
-  supplierId?: string;
-  status?: IssueStatus[];
-  severity?: string[];
-  type?: QualityIssueType[];
-}) {
+export function useQualityIssues(
+  clinicId?: string,
+  filters?: {
+    supplierId?: string;
+    status?: IssueStatus[];
+    severity?: string[];
+    type?: QualityIssueType[];
+  }
+) {
   const queryClient = useQueryClient();
   const supabase = createClient();
   const effectiveClinicId = clinicId || '89084c3a-9200-4058-a15a-b440d3c60687';
 
-  const { data: issues = [], isLoading, error } = useQuery({
+  const {
+    data: issues = [],
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ['quality-issues', clinicId, filters],
     queryFn: async () => {
       let query = supabase
@@ -580,12 +656,17 @@ export function useQualityIssues(clinicId?: string, filters?: {
       if (error) throw error;
       return data as QualityIssue[];
     },
-    staleTime: 3 * 60 * 1000
+    staleTime: 3 * 60 * 1000,
   });
 
   // Create quality issue
   const createQualityIssue = useMutation({
-    mutationFn: async (issueData: Omit<QualityIssue, 'id' | 'reported_date' | 'created_at' | 'updated_at'>) => {
+    mutationFn: async (
+      issueData: Omit<
+        QualityIssue,
+        'id' | 'reported_date' | 'created_at' | 'updated_at'
+      >
+    ) => {
       const { data, error } = await supabase
         .from('quality_issues')
         .insert({
@@ -593,7 +674,7 @@ export function useQualityIssues(clinicId?: string, filters?: {
           clinic_id: clinicId,
           reported_date: new Date().toISOString(),
           created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .select()
         .single();
@@ -603,24 +684,30 @@ export function useQualityIssues(clinicId?: string, filters?: {
     },
     onSuccess: (newIssue) => {
       queryClient.invalidateQueries({ queryKey: ['quality-issues'] });
-      toast.success(`Problema de qualidade #${newIssue.issue_number} registrado com sucesso!`);
+      toast.success(
+        `Problema de qualidade #${newIssue.issue_number} registrado com sucesso!`
+      );
     },
     onError: (error) => {
       console.error('Erro ao registrar problema:', error);
       toast.error('Erro ao registrar problema. Tente novamente.');
-    }
+    },
   });
 
   // Update issue status
   const updateIssueStatus = useMutation({
-    mutationFn: async ({ issueId, newStatus, notes }: { 
-      issueId: string; 
-      newStatus: IssueStatus; 
-      notes?: string; 
+    mutationFn: async ({
+      issueId,
+      newStatus,
+      notes,
+    }: {
+      issueId: string;
+      newStatus: IssueStatus;
+      notes?: string;
     }) => {
       const updates: any = {
         status: newStatus,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       };
 
       // Set resolution date if resolving
@@ -645,12 +732,14 @@ export function useQualityIssues(clinicId?: string, filters?: {
     },
     onSuccess: (updatedIssue) => {
       queryClient.invalidateQueries({ queryKey: ['quality-issues'] });
-      toast.success(`Status do problema #${updatedIssue.issue_number} atualizado!`);
+      toast.success(
+        `Status do problema #${updatedIssue.issue_number} atualizado!`
+      );
     },
     onError: (error) => {
       console.error('Erro ao atualizar status:', error);
       toast.error('Erro ao atualizar status. Tente novamente.');
-    }
+    },
   });
 
   return {
@@ -660,7 +749,7 @@ export function useQualityIssues(clinicId?: string, filters?: {
     createQualityIssue: createQualityIssue.mutate,
     updateIssueStatus: updateIssueStatus.mutate,
     isCreating: createQualityIssue.isPending,
-    isUpdatingStatus: updateIssueStatus.isPending
+    isUpdatingStatus: updateIssueStatus.isPending,
   };
 }
 
@@ -671,17 +760,24 @@ export function useQualityIssues(clinicId?: string, filters?: {
 /**
  * Hook for managing supplier contracts
  */
-export function useSupplierContracts(clinicId?: string, filters?: {
-  supplierId?: string;
-  status?: string[];
-  type?: ContractType[];
-  expiringIn?: number; // days
-}) {
-  const queryClient = useQueryClient();
+export function useSupplierContracts(
+  clinicId?: string,
+  filters?: {
+    supplierId?: string;
+    status?: string[];
+    type?: ContractType[];
+    expiringIn?: number; // days
+  }
+) {
+  const _queryClient = useQueryClient();
   const supabase = createClient();
   const effectiveClinicId = clinicId || '89084c3a-9200-4058-a15a-b440d3c60687';
 
-  const { data: contracts = [], isLoading, error } = useQuery({
+  const {
+    data: contracts = [],
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ['supplier-contracts', clinicId, filters],
     queryFn: async () => {
       let query = supabase
@@ -714,7 +810,7 @@ export function useSupplierContracts(clinicId?: string, filters?: {
       if (error) throw error;
       return data as SupplierContract[];
     },
-    staleTime: 10 * 60 * 1000
+    staleTime: 10 * 60 * 1000,
   });
 
   // Get contracts expiring soon
@@ -722,10 +818,11 @@ export function useSupplierContracts(clinicId?: string, filters?: {
     const thirtyDaysFromNow = new Date();
     thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
 
-    return contracts.filter(contract => 
-      contract.end_date && 
-      new Date(contract.end_date) <= thirtyDaysFromNow &&
-      contract.status === 'active'
+    return contracts.filter(
+      (contract) =>
+        contract.end_date &&
+        new Date(contract.end_date) <= thirtyDaysFromNow &&
+        contract.status === 'active'
     );
   }, [contracts]);
 
@@ -733,7 +830,7 @@ export function useSupplierContracts(clinicId?: string, filters?: {
     contracts,
     expiringContracts,
     isLoading,
-    error
+    error,
   };
 }
 
@@ -748,7 +845,11 @@ export function useSupplierCommunications(supplierId: string) {
   const queryClient = useQueryClient();
   const supabase = createClient();
 
-  const { data: communications = [], isLoading, error } = useQuery({
+  const {
+    data: communications = [],
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ['supplier-communications', supplierId],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -764,17 +865,19 @@ export function useSupplierCommunications(supplierId: string) {
       return data as SupplierCommunication[];
     },
     enabled: !!supplierId,
-    staleTime: 2 * 60 * 1000
+    staleTime: 2 * 60 * 1000,
   });
 
   // Create communication record
   const createCommunication = useMutation({
-    mutationFn: async (communicationData: Omit<SupplierCommunication, 'id' | 'timestamp'>) => {
+    mutationFn: async (
+      communicationData: Omit<SupplierCommunication, 'id' | 'timestamp'>
+    ) => {
       const { data, error } = await supabase
         .from('supplier_communications')
         .insert({
           ...communicationData,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         })
         .select()
         .single();
@@ -789,7 +892,7 @@ export function useSupplierCommunications(supplierId: string) {
     onError: (error) => {
       console.error('Erro ao registrar comunicação:', error);
       toast.error('Erro ao registrar comunicação. Tente novamente.');
-    }
+    },
   });
 
   return {
@@ -797,7 +900,7 @@ export function useSupplierCommunications(supplierId: string) {
     isLoading,
     error,
     createCommunication: createCommunication.mutate,
-    isCreating: createCommunication.isPending
+    isCreating: createCommunication.isPending,
   };
 }
 
@@ -810,16 +913,23 @@ export function useSupplierCommunications(supplierId: string) {
  */
 export function useSupplierSearch() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategories, setSelectedCategories] = useState<SupplierCategory[]>([]);
-  const [selectedStatuses, setSelectedStatuses] = useState<SupplierStatus[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<
+    SupplierCategory[]
+  >([]);
+  const [selectedStatuses, setSelectedStatuses] = useState<SupplierStatus[]>(
+    []
+  );
   const [selectedRiskLevels, setSelectedRiskLevels] = useState<RiskLevel[]>([]);
 
-  const filters = useMemo(() => ({
-    search: searchTerm.trim() || undefined,
-    category: selectedCategories.length > 0 ? selectedCategories : undefined,
-    status: selectedStatuses.length > 0 ? selectedStatuses : undefined,
-    riskLevel: selectedRiskLevels.length > 0 ? selectedRiskLevels : undefined
-  }), [searchTerm, selectedCategories, selectedStatuses, selectedRiskLevels]);
+  const filters = useMemo(
+    () => ({
+      search: searchTerm.trim() || undefined,
+      category: selectedCategories.length > 0 ? selectedCategories : undefined,
+      status: selectedStatuses.length > 0 ? selectedStatuses : undefined,
+      riskLevel: selectedRiskLevels.length > 0 ? selectedRiskLevels : undefined,
+    }),
+    [searchTerm, selectedCategories, selectedStatuses, selectedRiskLevels]
+  );
 
   const clearFilters = useCallback(() => {
     setSearchTerm('');
@@ -839,7 +949,7 @@ export function useSupplierSearch() {
     setSelectedRiskLevels,
     filters,
     clearFilters,
-    hasActiveFilters: Object.values(filters).some(Boolean)
+    hasActiveFilters: Object.values(filters).some(Boolean),
   };
 }
 
@@ -858,15 +968,15 @@ export function useSupplierDashboard(clinicId: string) {
         averagePerformance: 0,
         qualityIssues: 0,
         expiringContracts: 0,
-        pendingEvaluations: 0
+        pendingEvaluations: 0,
       };
     },
-    staleTime: 15 * 60 * 1000 // 15 minutes
+    staleTime: 15 * 60 * 1000, // 15 minutes
   });
 
   return {
     stats,
-    isLoading
+    isLoading,
   };
 }
 
@@ -880,7 +990,7 @@ export function useSupplierProcurement(supplierId: string, clinicId?: string) {
     queryKey: ['supplier-procurement', supplierId, effectiveClinicId],
     queryFn: async () => {
       const supabase = createClient();
-      
+
       // Get procurement history
       const { data: procurements } = await supabase
         .from('supplier_products')
@@ -893,17 +1003,21 @@ export function useSupplierProcurement(supplierId: string, clinicId?: string) {
       return {
         procurements: procurements || [],
         totalOrders: procurements?.length || 0,
-        totalValue: procurements?.reduce((sum, p) => sum + (p.unit_price * p.minimum_order_quantity), 0) || 0,
+        totalValue:
+          procurements?.reduce(
+            (sum, p) => sum + p.unit_price * p.minimum_order_quantity,
+            0
+          ) || 0,
         averageOrderTime: 7, // placeholder
-        onTimeDeliveryRate: 0.85 // placeholder
+        onTimeDeliveryRate: 0.85, // placeholder
       };
     },
-    enabled: !!supplierId
+    enabled: !!supplierId,
   });
 
   return {
     procurementData,
-    isLoading
+    isLoading,
   };
 }
 
@@ -917,7 +1031,7 @@ export function useSupplierQuality(supplierId: string, clinicId?: string) {
     queryKey: ['supplier-quality', supplierId, effectiveClinicId],
     queryFn: async () => {
       const supabase = createClient();
-      
+
       // Get quality metrics
       const { data: performance } = await supabase
         .from('supplier_performance')
@@ -928,17 +1042,19 @@ export function useSupplierQuality(supplierId: string, clinicId?: string) {
 
       return {
         performance: performance || [],
-        averageRating: performance?.reduce((sum, p) => sum + p.overall_rating, 0) / (performance?.length || 1) || 0,
+        averageRating:
+          performance?.reduce((sum, p) => sum + p.overall_rating, 0) /
+            (performance?.length || 1) || 0,
         qualityTrend: 'stable', // placeholder
-        certificationStatus: 'valid' // placeholder
+        certificationStatus: 'valid', // placeholder
       };
     },
-    enabled: !!supplierId
+    enabled: !!supplierId,
   });
 
   return {
     qualityData,
-    isLoading
+    isLoading,
   };
 }
 
@@ -952,35 +1068,41 @@ export function useSupplierStats(clinicId?: string) {
     queryKey: ['supplier-stats', effectiveClinicId],
     queryFn: async () => {
       const supabase = createClient();
-      
+
       // Get supplier counts by status
       const { data: suppliers } = await supabase
         .from('suppliers')
         .select('status, category, risk_level');
 
       const totalSuppliers = suppliers?.length || 0;
-      const activeSuppliers = suppliers?.filter(s => s.status === 'active').length || 0;
-      const categoryCounts = suppliers?.reduce((acc, s) => {
-        acc[s.category] = (acc[s.category] || 0) + 1;
-        return acc;
-      }, {} as Record<string, number>) || {};
+      const activeSuppliers =
+        suppliers?.filter((s) => s.status === 'active').length || 0;
+      const categoryCounts =
+        suppliers?.reduce(
+          (acc, s) => {
+            acc[s.category] = (acc[s.category] || 0) + 1;
+            return acc;
+          },
+          {} as Record<string, number>
+        ) || {};
 
       return {
         totalSuppliers,
         activeSuppliers,
         categoryCounts,
         riskDistribution: {
-          low: suppliers?.filter(s => s.risk_level === 'low').length || 0,
-          medium: suppliers?.filter(s => s.risk_level === 'medium').length || 0,
-          high: suppliers?.filter(s => s.risk_level === 'high').length || 0
-        }
+          low: suppliers?.filter((s) => s.risk_level === 'low').length || 0,
+          medium:
+            suppliers?.filter((s) => s.risk_level === 'medium').length || 0,
+          high: suppliers?.filter((s) => s.risk_level === 'high').length || 0,
+        },
       };
     },
-    staleTime: 10 * 60 * 1000 // 10 minutes
+    staleTime: 10 * 60 * 1000, // 10 minutes
   });
 
   return {
     stats,
-    isLoading
+    isLoading,
   };
 }

@@ -1,4 +1,4 @@
-import crypto from 'crypto';
+import crypto from 'node:crypto';
 
 /**
  * Token Encryption Service for NeonPro OAuth Integration
@@ -9,7 +9,7 @@ import crypto from 'crypto';
 const ALGORITHM = 'aes-256-gcm';
 const IV_LENGTH = 16; // For GCM, this is always 16 bytes
 const SALT_LENGTH = 64; // 64 bytes salt for key derivation
-const TAG_LENGTH = 16; // GCM authentication tag length
+const _TAG_LENGTH = 16; // GCM authentication tag length
 const KEY_LENGTH = 32; // 256 bits key
 
 interface EncryptionResult {
@@ -32,7 +32,7 @@ export class TokenEncryptionService {
   }
 
   private static deriveKey(masterKey: string, salt: Buffer): Buffer {
-    return crypto.pbkdf2Sync(masterKey, salt, 100000, KEY_LENGTH, 'sha512');
+    return crypto.pbkdf2Sync(masterKey, salt, 100_000, KEY_LENGTH, 'sha512');
   }
 
   /**
@@ -40,27 +40,29 @@ export class TokenEncryptionService {
    */
   static encryptToken(token: string): EncryptionResult {
     try {
-      const masterKey = this.getEncryptionKey();
+      const masterKey = TokenEncryptionService.getEncryptionKey();
       const salt = crypto.randomBytes(SALT_LENGTH);
       const iv = crypto.randomBytes(IV_LENGTH);
-      const key = this.deriveKey(masterKey, salt);
-      
+      const key = TokenEncryptionService.deriveKey(masterKey, salt);
+
       const cipher = crypto.createCipher(ALGORITHM, key);
       cipher.setAAD(Buffer.from('neonpro-oauth-token'));
-      
+
       let encrypted = cipher.update(token, 'utf8', 'hex');
       encrypted += cipher.final('hex');
-      
+
       const tag = cipher.getAuthTag();
-      
+
       return {
         encrypted,
         iv: iv.toString('hex'),
         salt: salt.toString('hex'),
-        tag: tag.toString('hex')
+        tag: tag.toString('hex'),
       };
     } catch (error) {
-      throw new Error(`Token encryption failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Token encryption failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -69,22 +71,24 @@ export class TokenEncryptionService {
    */
   static decryptToken(encryptionData: EncryptionResult): string {
     try {
-      const masterKey = this.getEncryptionKey();
+      const masterKey = TokenEncryptionService.getEncryptionKey();
       const salt = Buffer.from(encryptionData.salt, 'hex');
-      const iv = Buffer.from(encryptionData.iv, 'hex');
+      const _iv = Buffer.from(encryptionData.iv, 'hex');
       const tag = Buffer.from(encryptionData.tag, 'hex');
-      const key = this.deriveKey(masterKey, salt);
-      
+      const key = TokenEncryptionService.deriveKey(masterKey, salt);
+
       const decipher = crypto.createDecipher(ALGORITHM, key);
       decipher.setAAD(Buffer.from('neonpro-oauth-token'));
       decipher.setAuthTag(tag);
-      
+
       let decrypted = decipher.update(encryptionData.encrypted, 'hex', 'utf8');
       decrypted += decipher.final('utf8');
-      
+
       return decrypted;
     } catch (error) {
-      throw new Error(`Token decryption failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Token decryption failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -95,12 +99,12 @@ export class TokenEncryptionService {
     if (a.length !== b.length) {
       return false;
     }
-    
+
     let result = 0;
     for (let i = 0; i < a.length; i++) {
       result |= a.charCodeAt(i) ^ b.charCodeAt(i);
     }
-    
+
     return result === 0;
   }
 

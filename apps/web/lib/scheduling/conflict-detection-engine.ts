@@ -7,26 +7,23 @@
  * ============================================================================
  */
 
-import { createClient, RealtimeChannel } from '@supabase/supabase-js';
+import type { RealtimeChannel } from '@supabase/supabase-js';
 import {
-  SchedulingConflict,
-  ConflictDetectionConfig,
-  ConflictDetectionResponse,
-  ConflictDetectionEvent,
-  RealtimeNotification,
-  SystemStatus,
+  type ConflictDetectionConfig,
   ConflictDetectionError,
-  EnhancedAppointment,
-  ConflictType,
-  SeverityLevel,
-  NotificationType,
-  ResolutionRecommendation,
-  StrategyType
+  type ConflictDetectionEvent,
+  type ConflictDetectionResponse,
+  type ConflictType,
+  type ResolutionRecommendation,
+  type SchedulingConflict,
+  type SeverityLevel,
+  type StrategyType,
+  type SystemStatus,
 } from './conflict-types';
 
 /**
  * Advanced Conflict Detection Engine with Real-time Capabilities
- * 
+ *
  * Features:
  * - PostgreSQL tstzrange-based overlap detection
  * - Real-time conflict monitoring via Supabase
@@ -39,14 +36,17 @@ export class ConflictDetectionEngine {
   private realtimeChannel: RealtimeChannel | null = null;
   private config: ConflictDetectionConfig;
   private isInitialized = false;
-  private eventListeners: Map<string, ((event: ConflictDetectionEvent) => void)[]> = new Map();
-  
+  private eventListeners: Map<
+    string,
+    ((event: ConflictDetectionEvent) => void)[]
+  > = new Map();
+
   // Performance monitoring
   private detectionMetrics = {
     totalDetections: 0,
     averageLatency: 0,
     successRate: 1.0,
-    lastDetectionAt: new Date()
+    lastDetectionAt: new Date(),
   };
 
   constructor(supabaseClient: any, config: ConflictDetectionConfig) {
@@ -61,15 +61,15 @@ export class ConflictDetectionEngine {
     try {
       // Validate database connection and schema
       await this.validateDatabaseSchema();
-      
+
       // Set up real-time monitoring if enabled
       if (this.config.enableRealTimeDetection) {
         await this.setupRealtimeMonitoring();
       }
-      
+
       // Initialize performance monitoring
       await this.initializePerformanceMonitoring();
-      
+
       this.isInitialized = true;
       console.log('Conflict Detection Engine initialized successfully');
     } catch (error) {
@@ -85,15 +85,19 @@ export class ConflictDetectionEngine {
   /**
    * Detect conflicts for a specific appointment or all active appointments
    */
-  async detectConflicts(appointmentId?: string): Promise<ConflictDetectionResponse> {
+  async detectConflicts(
+    appointmentId?: string
+  ): Promise<ConflictDetectionResponse> {
     const startTime = performance.now();
-    
+
     try {
       this.validateInitialization();
-      
+
       // Use PostgreSQL function for optimized conflict detection
-      const { data: conflicts, error } = await this.supabase
-        .rpc('detect_scheduling_conflicts', { target_appointment_id: appointmentId });
+      const { data: conflicts, error } = await this.supabase.rpc(
+        'detect_scheduling_conflicts',
+        { target_appointment_id: appointmentId }
+      );
 
       if (error) {
         throw new ConflictDetectionError(
@@ -106,27 +110,28 @@ export class ConflictDetectionEngine {
 
       // Enhance conflicts with additional analysis
       const enhancedConflicts = await this.enhanceConflictData(conflicts || []);
-      
+
       // Generate intelligent recommendations
-      const recommendations = await this.generateResolutionRecommendations(enhancedConflicts);
-      
+      const recommendations =
+        await this.generateResolutionRecommendations(enhancedConflicts);
+
       // Get current system status
       const systemStatus = await this.getSystemStatus();
-      
+
       const detectionLatency = performance.now() - startTime;
-      
+
       // Update performance metrics
       this.updateDetectionMetrics(detectionLatency, true);
-      
+
       // Validate performance thresholds
       this.validatePerformanceThresholds(detectionLatency);
-      
+
       const response: ConflictDetectionResponse = {
         conflicts: enhancedConflicts,
         totalCount: enhancedConflicts.length,
         detectionLatencyMs: detectionLatency,
         systemStatus,
-        recommendations
+        recommendations,
       };
 
       // Emit real-time event if conflicts detected
@@ -134,9 +139,17 @@ export class ConflictDetectionEngine {
         this.emitConflictEvent({
           type: 'conflict_detected',
           conflictId: enhancedConflicts[0].id,
-          appointmentIds: appointmentId ? [appointmentId] : enhancedConflicts.flatMap(c => [c.appointmentAId, c.appointmentBId]),
+          appointmentIds: appointmentId
+            ? [appointmentId]
+            : enhancedConflicts.flatMap((c) => [
+                c.appointmentAId,
+                c.appointmentBId,
+              ]),
           timestamp: new Date(),
-          metadata: { detectionLatency, totalConflicts: enhancedConflicts.length }
+          metadata: {
+            detectionLatency,
+            totalConflicts: enhancedConflicts.length,
+          },
         });
       }
 
@@ -144,11 +157,11 @@ export class ConflictDetectionEngine {
     } catch (error) {
       const detectionLatency = performance.now() - startTime;
       this.updateDetectionMetrics(detectionLatency, false);
-      
+
       if (error instanceof ConflictDetectionError) {
         throw error;
       }
-      
+
       throw new ConflictDetectionError(
         'Conflict detection failed',
         appointmentId,
@@ -163,7 +176,7 @@ export class ConflictDetectionEngine {
    */
   async startRealtimeMonitoring(appointmentIds: string[] = []): Promise<void> {
     this.validateInitialization();
-    
+
     if (!this.config.enableRealTimeDetection) {
       throw new ConflictDetectionError(
         'Real-time detection is disabled in configuration',
@@ -181,7 +194,7 @@ export class ConflictDetectionEngine {
           event: 'UPDATE',
           schema: 'public',
           table: 'appointments',
-          filter: appointmentIds.map(id => `id=eq.${id}`).join(',')
+          filter: appointmentIds.map((id) => `id=eq.${id}`).join(','),
         },
         this.handleAppointmentChange.bind(this)
       );
@@ -193,7 +206,7 @@ export class ConflictDetectionEngine {
       {
         event: 'INSERT',
         schema: 'public',
-        table: 'scheduling_conflicts'
+        table: 'scheduling_conflicts',
       },
       this.handleConflictInsert.bind(this)
     );
@@ -212,17 +225,23 @@ export class ConflictDetectionEngine {
   /**
    * Add event listener for conflict events
    */
-  addEventListener(eventType: string, listener: (event: ConflictDetectionEvent) => void): void {
+  addEventListener(
+    eventType: string,
+    listener: (event: ConflictDetectionEvent) => void
+  ): void {
     if (!this.eventListeners.has(eventType)) {
       this.eventListeners.set(eventType, []);
     }
-    this.eventListeners.get(eventType)!.push(listener);
+    this.eventListeners.get(eventType)?.push(listener);
   }
 
   /**
    * Remove event listener
    */
-  removeEventListener(eventType: string, listener: (event: ConflictDetectionEvent) => void): void {
+  removeEventListener(
+    eventType: string,
+    listener: (event: ConflictDetectionEvent) => void
+  ): void {
     const listeners = this.eventListeners.get(eventType);
     if (listeners) {
       const index = listeners.indexOf(listener);
@@ -238,8 +257,10 @@ export class ConflictDetectionEngine {
   getPerformanceMetrics() {
     return {
       ...this.detectionMetrics,
-      isHealthy: this.detectionMetrics.averageLatency <= this.config.performanceThresholds.maxDetectionLatencyMs,
-      configuredThresholds: this.config.performanceThresholds
+      isHealthy:
+        this.detectionMetrics.averageLatency <=
+        this.config.performanceThresholds.maxDetectionLatencyMs,
+      configuredThresholds: this.config.performanceThresholds,
     };
   }
 
@@ -263,7 +284,7 @@ export class ConflictDetectionEngine {
         'scheduling_conflicts',
         'conflict_resolution_strategies',
         'professional_availability_patterns',
-        'scheduling_ml_predictions'
+        'scheduling_ml_predictions',
       ]);
 
     if (tablesError || !tables || tables.length < 4) {
@@ -275,8 +296,10 @@ export class ConflictDetectionEngine {
     }
 
     // Verify conflict detection function exists
-    const { data: functions, error: functionsError } = await this.supabase
-      .rpc('detect_scheduling_conflicts', { target_appointment_id: null });
+    const { data: functions, error: functionsError } = await this.supabase.rpc(
+      'detect_scheduling_conflicts',
+      { target_appointment_id: null }
+    );
 
     if (functionsError && functionsError.code !== 'PGRST200') {
       throw new ConflictDetectionError(
@@ -291,7 +314,7 @@ export class ConflictDetectionEngine {
   private async setupRealtimeMonitoring(): Promise<void> {
     // Create real-time channel for conflict monitoring
     this.realtimeChannel = this.supabase.channel('conflict-detection', {
-      config: { presence: { key: 'conflict_engine' } }
+      config: { presence: { key: 'conflict_engine' } },
     });
 
     // Subscribe to channel
@@ -304,29 +327,33 @@ export class ConflictDetectionEngine {
     });
 
     // Set up PostgreSQL notifications listener
-    this.realtimeChannel.on('postgres_changes', {
-      event: '*',
-      schema: 'public',
-      table: 'scheduling_conflicts'
-    }, this.handleRealtimeConflictEvent.bind(this));
+    this.realtimeChannel.on(
+      'postgres_changes',
+      {
+        event: '*',
+        schema: 'public',
+        table: 'scheduling_conflicts',
+      },
+      this.handleRealtimeConflictEvent.bind(this)
+    );
   }
 
   private async initializePerformanceMonitoring(): Promise<void> {
     // Record system initialization
-    await this.supabase
-      .from('conflict_system_metrics')
-      .insert({
-        metric_type: 'system_initialized',
-        metric_value: Date.now(),
-        measurement_unit: 'timestamp',
-        context_data: {
-          config: this.config,
-          version: '1.0.0'
-        }
-      });
+    await this.supabase.from('conflict_system_metrics').insert({
+      metric_type: 'system_initialized',
+      metric_value: Date.now(),
+      measurement_unit: 'timestamp',
+      context_data: {
+        config: this.config,
+        version: '1.0.0',
+      },
+    });
   }
 
-  private async enhanceConflictData(rawConflicts: any[]): Promise<SchedulingConflict[]> {
+  private async enhanceConflictData(
+    rawConflicts: any[]
+  ): Promise<SchedulingConflict[]> {
     const enhancedConflicts: SchedulingConflict[] = [];
 
     for (const conflict of rawConflicts) {
@@ -351,9 +378,9 @@ export class ConflictDetectionEngine {
         resolutionDetails: {
           appointmentDetails: appointments,
           detectionMethod: 'tstzrange_overlap',
-          systemGenerated: true
+          systemGenerated: true,
         },
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       enhancedConflicts.push(enhancedConflict);
@@ -404,9 +431,9 @@ export class ConflictDetectionEngine {
           patient: 0.8,
           professional: 0.75,
           clinic: 0.85,
-          overall: 0.8
+          overall: 0.8,
         },
-        reasoning: `Recommended ${recommendedStrategy} based on conflict type ${conflict.conflictType} and severity ${conflict.severityLevel}`
+        reasoning: `Recommended ${recommendedStrategy} based on conflict type ${conflict.conflictType} and severity ${conflict.severityLevel}`,
       });
     }
 
@@ -416,12 +443,12 @@ export class ConflictDetectionEngine {
   private estimateExecutionTime(strategyType: StrategyType): number {
     // Estimated execution times in milliseconds based on research
     const estimations = {
-      'rule_based': 100,
-      'constraint_programming': 500,
-      'mip_optimization': 1200,
-      'genetic_algorithm': 2000,
-      'reinforcement_learning': 800,
-      'hybrid': 1500
+      rule_based: 100,
+      constraint_programming: 500,
+      mip_optimization: 1200,
+      genetic_algorithm: 2000,
+      reinforcement_learning: 800,
+      hybrid: 1500,
     };
 
     return estimations[strategyType] || 1000;
@@ -438,34 +465,43 @@ export class ConflictDetectionEngine {
     const { data: recentMetrics } = await this.supabase
       .from('conflict_system_metrics')
       .select('*')
-      .gte('recorded_at', new Date(Date.now() - 3600000)) // Last hour
+      .gte('recorded_at', new Date(Date.now() - 3_600_000)) // Last hour
       .order('recorded_at', { ascending: false })
       .limit(100);
 
-    const avgDetectionLatency = recentMetrics
-      ?.filter(m => m.metric_type === 'detection_latency')
-      .reduce((sum, m) => sum + m.metric_value, 0) / 
-      (recentMetrics?.filter(m => m.metric_type === 'detection_latency').length || 1);
+    const avgDetectionLatency =
+      recentMetrics
+        ?.filter((m) => m.metric_type === 'detection_latency')
+        .reduce((sum, m) => sum + m.metric_value, 0) /
+      (recentMetrics?.filter((m) => m.metric_type === 'detection_latency')
+        .length || 1);
 
-    const avgResolutionTime = recentMetrics
-      ?.filter(m => m.metric_type === 'resolution_time')
-      .reduce((sum, m) => sum + m.metric_value, 0) / 
-      (recentMetrics?.filter(m => m.metric_type === 'resolution_time').length || 1);
+    const avgResolutionTime =
+      recentMetrics
+        ?.filter((m) => m.metric_type === 'resolution_time')
+        .reduce((sum, m) => sum + m.metric_value, 0) /
+      (recentMetrics?.filter((m) => m.metric_type === 'resolution_time')
+        .length || 1);
 
     return {
-      isHealthy: (avgDetectionLatency || 0) <= this.config.performanceThresholds.maxDetectionLatencyMs,
+      isHealthy:
+        (avgDetectionLatency || 0) <=
+        this.config.performanceThresholds.maxDetectionLatencyMs,
       activeConflicts: activeConflicts || 0,
       averageDetectionLatency: avgDetectionLatency || 0,
       averageResolutionTime: avgResolutionTime || 0,
       systemLoad: Math.min((activeConflicts || 0) / 100, 1), // Normalize to 0-1
-      lastMaintenanceAt: new Date() // Would track actual maintenance in production
+      lastMaintenanceAt: new Date(), // Would track actual maintenance in production
     };
   }
 
   private handleAppointmentChange(payload: any): void {
     // Trigger conflict detection for changed appointment
-    this.detectConflicts(payload.new.id).catch(error => {
-      console.error('Failed to detect conflicts after appointment change:', error);
+    this.detectConflicts(payload.new.id).catch((error) => {
+      console.error(
+        'Failed to detect conflicts after appointment change:',
+        error
+      );
     });
   }
 
@@ -474,9 +510,12 @@ export class ConflictDetectionEngine {
     this.emitConflictEvent({
       type: 'conflict_detected',
       conflictId: payload.new.id,
-      appointmentIds: [payload.new.appointment_a_id, payload.new.appointment_b_id],
+      appointmentIds: [
+        payload.new.appointment_a_id,
+        payload.new.appointment_b_id,
+      ],
       timestamp: new Date(),
-      metadata: { source: 'realtime_insert' }
+      metadata: { source: 'realtime_insert' },
     });
   }
 
@@ -487,7 +526,7 @@ export class ConflictDetectionEngine {
 
   private emitConflictEvent(event: ConflictDetectionEvent): void {
     const listeners = this.eventListeners.get(event.type) || [];
-    listeners.forEach(listener => {
+    listeners.forEach((listener) => {
       try {
         listener(event);
       } catch (error) {
@@ -499,15 +538,16 @@ export class ConflictDetectionEngine {
   private updateDetectionMetrics(latency: number, success: boolean): void {
     this.detectionMetrics.totalDetections++;
     this.detectionMetrics.lastDetectionAt = new Date();
-    
+
     // Update average latency with exponential moving average
     const alpha = 0.1; // Smoothing factor
-    this.detectionMetrics.averageLatency = 
-      (alpha * latency) + ((1 - alpha) * this.detectionMetrics.averageLatency);
-    
+    this.detectionMetrics.averageLatency =
+      alpha * latency + (1 - alpha) * this.detectionMetrics.averageLatency;
+
     // Update success rate
-    this.detectionMetrics.successRate = 
-      (alpha * (success ? 1 : 0)) + ((1 - alpha) * this.detectionMetrics.successRate);
+    this.detectionMetrics.successRate =
+      alpha * (success ? 1 : 0) +
+      (1 - alpha) * this.detectionMetrics.successRate;
   }
 
   private validatePerformanceThresholds(latency: number): void {
@@ -515,7 +555,7 @@ export class ConflictDetectionEngine {
       console.warn(
         `Detection latency ${latency}ms exceeds threshold ${this.config.performanceThresholds.maxDetectionLatencyMs}ms`
       );
-      
+
       // Record performance warning
       this.supabase
         .from('conflict_system_metrics')
@@ -523,9 +563,13 @@ export class ConflictDetectionEngine {
           metric_type: 'performance_warning',
           metric_value: latency,
           measurement_unit: 'milliseconds',
-          context_data: { threshold: this.config.performanceThresholds.maxDetectionLatencyMs }
+          context_data: {
+            threshold: this.config.performanceThresholds.maxDetectionLatencyMs,
+          },
         })
-        .then(null, (error: any) => console.error('Failed to record performance warning:', error));
+        .then(null, (error: any) =>
+          console.error('Failed to record performance warning:', error)
+        );
     }
   }
 

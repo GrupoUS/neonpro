@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
 import { createClient } from '@supabase/supabase-js';
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { ReceiptInvoiceManager } from '@/lib/payments/receipts/receipt-invoice-manager';
 
 // Validation schemas
@@ -10,25 +10,33 @@ const SendEmailSchema = z.object({
 });
 
 const RegenerateSchema = z.object({
-  templateOptions: z.object({
-    template: z.enum(['modern', 'classic', 'minimal', 'corporate']).default('modern'),
-    colors: z.object({
-      primary: z.string(),
-      secondary: z.string(),
-      accent: z.string(),
-    }).optional(),
-    fonts: z.object({
-      header: z.string(),
-      body: z.string(),
-    }).optional(),
-  }).optional(),
+  templateOptions: z
+    .object({
+      template: z
+        .enum(['modern', 'classic', 'minimal', 'corporate'])
+        .default('modern'),
+      colors: z
+        .object({
+          primary: z.string(),
+          secondary: z.string(),
+          accent: z.string(),
+        })
+        .optional(),
+      fonts: z
+        .object({
+          header: z.string(),
+          body: z.string(),
+        })
+        .optional(),
+    })
+    .optional(),
 });
 
 // Initialize services
 function getReceiptInvoiceManager() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-  
+
   const companyInfo = {
     name: process.env.COMPANY_NAME || 'NeonPro',
     cnpj: process.env.COMPANY_CNPJ || '00.000.000/0001-00',
@@ -41,7 +49,7 @@ function getReceiptInvoiceManager() {
     website: process.env.COMPANY_WEBSITE,
     logo: process.env.COMPANY_LOGO,
   };
-  
+
   const nfseConfig = {
     enabled: process.env.NFSE_ENABLED === 'true',
     provider: (process.env.NFSE_PROVIDER as any) || 'ginfes',
@@ -51,12 +59,12 @@ function getReceiptInvoiceManager() {
     cityCode: process.env.NFSE_CITY_CODE,
     environment: (process.env.NFSE_ENVIRONMENT as any) || 'sandbox',
   };
-  
+
   const emailConfig = {
     enabled: process.env.EMAIL_ENABLED !== 'false',
     smtp: {
       host: process.env.SMTP_HOST || 'localhost',
-      port: parseInt(process.env.SMTP_PORT || '587'),
+      port: Number.parseInt(process.env.SMTP_PORT || '587', 10),
       secure: process.env.SMTP_SECURE === 'true',
       auth: {
         user: process.env.SMTP_USER || '',
@@ -88,7 +96,7 @@ function getReceiptInvoiceManager() {
       },
     },
   };
-  
+
   return new ReceiptInvoiceManager(
     supabaseUrl,
     supabaseKey,
@@ -108,7 +116,7 @@ export async function GET(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
-    
+
     // Check authentication
     const authHeader = request.headers.get('authorization');
     if (!authHeader) {
@@ -117,23 +125,24 @@ export async function GET(
         { status: 401 }
       );
     }
-    
-    const { data: { user }, error: authError } = await supabase.auth.getUser(
-      authHeader.replace('Bearer ', '')
-    );
-    
+
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser(authHeader.replace('Bearer ', ''));
+
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Invalid authentication' },
         { status: 401 }
       );
     }
-    
+
     const documentId = params.id;
-    
+
     const manager = getReceiptInvoiceManager();
     const document = await manager.getDocument(documentId);
-    
+
     return NextResponse.json({
       success: true,
       data: document,
@@ -160,7 +169,7 @@ export async function POST(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
-    
+
     // Check authentication
     const authHeader = request.headers.get('authorization');
     if (!authHeader) {
@@ -169,42 +178,43 @@ export async function POST(
         { status: 401 }
       );
     }
-    
-    const { data: { user }, error: authError } = await supabase.auth.getUser(
-      authHeader.replace('Bearer ', '')
-    );
-    
+
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser(authHeader.replace('Bearer ', ''));
+
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Invalid authentication' },
         { status: 401 }
       );
     }
-    
+
     const documentId = params.id;
     const url = new URL(request.url);
     const action = url.searchParams.get('action');
-    
+
     if (!action) {
       return NextResponse.json(
         { error: 'Action parameter is required' },
         { status: 400 }
       );
     }
-    
+
     const manager = getReceiptInvoiceManager();
-    
+
     switch (action) {
       case 'send-email': {
         const body = await request.json();
         const validatedData = SendEmailSchema.parse(body);
-        
+
         const result = await manager.sendEmail(
           documentId,
           validatedData.recipientEmail,
           validatedData.customMessage
         );
-        
+
         return NextResponse.json({
           success: result.success,
           data: {
@@ -213,14 +223,14 @@ export async function POST(
           },
         });
       }
-      
+
       case 'regenerate-pdf': {
         const body = await request.json();
         const validatedData = RegenerateSchema.parse(body);
-        
+
         // Get document data
         const document = await manager.getDocument(documentId);
-        
+
         // Regenerate PDF with new template options
         const templateOptions = {
           template: validatedData.templateOptions?.template || 'modern',
@@ -234,9 +244,12 @@ export async function POST(
             body: 'Helvetica',
           },
         };
-        
-        const result = await manager.generatePDF(document.data, templateOptions);
-        
+
+        const result = await manager.generatePDF(
+          document.data,
+          templateOptions
+        );
+
         return NextResponse.json({
           success: result.success,
           data: {
@@ -245,20 +258,20 @@ export async function POST(
           },
         });
       }
-      
+
       case 'generate-nfse': {
         // Get document data
         const document = await manager.getDocument(documentId);
-        
+
         if (document.type !== 'invoice') {
           return NextResponse.json(
             { error: 'NFSe can only be generated for invoices' },
             { status: 400 }
           );
         }
-        
+
         const result = await manager.generateNFSe(document.data);
-        
+
         return NextResponse.json({
           success: result.success,
           data: {
@@ -268,7 +281,7 @@ export async function POST(
           },
         });
       }
-      
+
       case 'download-pdf': {
         // Get document
         const { data: document, error } = await supabase
@@ -276,35 +289,35 @@ export async function POST(
           .select('pdf_path, number, type')
           .eq('id', documentId)
           .single();
-        
+
         if (error || !document) {
           return NextResponse.json(
             { error: 'Document not found' },
             { status: 404 }
           );
         }
-        
+
         if (!document.pdf_path) {
           return NextResponse.json(
             { error: 'PDF not available' },
             { status: 404 }
           );
         }
-        
+
         // Download PDF from storage
         const { data: pdfData, error: downloadError } = await supabase.storage
           .from('documents')
           .download(document.pdf_path);
-        
+
         if (downloadError) {
           return NextResponse.json(
             { error: 'Failed to download PDF' },
             { status: 500 }
           );
         }
-        
+
         const pdfBuffer = Buffer.from(await pdfData.arrayBuffer());
-        
+
         return new NextResponse(pdfBuffer, {
           headers: {
             'Content-Type': 'application/pdf',
@@ -312,43 +325,40 @@ export async function POST(
           },
         });
       }
-      
+
       case 'mark-paid': {
         const result = await manager.updateStatus(documentId, 'paid');
-        
+
         return NextResponse.json({
           success: true,
           data: result,
         });
       }
-      
+
       case 'mark-overdue': {
         const result = await manager.updateStatus(documentId, 'overdue');
-        
+
         return NextResponse.json({
           success: true,
           data: result,
         });
       }
-      
+
       case 'cancel': {
         const result = await manager.updateStatus(documentId, 'cancelled');
-        
+
         return NextResponse.json({
           success: true,
           data: result,
         });
       }
-      
+
       default:
-        return NextResponse.json(
-          { error: 'Invalid action' },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     }
   } catch (error) {
     console.error('Document action error:', error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -359,7 +369,7 @@ export async function POST(
         { status: 400 }
       );
     }
-    
+
     return NextResponse.json(
       {
         success: false,
@@ -380,7 +390,7 @@ export async function PUT(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
-    
+
     // Check authentication
     const authHeader = request.headers.get('authorization');
     if (!authHeader) {
@@ -389,21 +399,22 @@ export async function PUT(
         { status: 401 }
       );
     }
-    
-    const { data: { user }, error: authError } = await supabase.auth.getUser(
-      authHeader.replace('Bearer ', '')
-    );
-    
+
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser(authHeader.replace('Bearer ', ''));
+
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Invalid authentication' },
         { status: 401 }
       );
     }
-    
+
     const documentId = params.id;
     const body = await request.json();
-    
+
     // Update document data
     const { data, error } = await supabase
       .from('receipts_invoices')
@@ -414,9 +425,9 @@ export async function PUT(
       .eq('id', documentId)
       .select()
       .single();
-    
+
     if (error) throw error;
-    
+
     return NextResponse.json({
       success: true,
       data,
@@ -443,7 +454,7 @@ export async function DELETE(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
-    
+
     // Check authentication
     const authHeader = request.headers.get('authorization');
     if (!authHeader) {
@@ -452,34 +463,35 @@ export async function DELETE(
         { status: 401 }
       );
     }
-    
-    const { data: { user }, error: authError } = await supabase.auth.getUser(
-      authHeader.replace('Bearer ', '')
-    );
-    
+
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser(authHeader.replace('Bearer ', ''));
+
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Invalid authentication' },
         { status: 401 }
       );
     }
-    
+
     const documentId = params.id;
-    
+
     // Get document to check if it can be deleted
     const { data: document, error: fetchError } = await supabase
       .from('receipts_invoices')
       .select('status, pdf_path')
       .eq('id', documentId)
       .single();
-    
+
     if (fetchError || !document) {
       return NextResponse.json(
         { error: 'Document not found' },
         { status: 404 }
       );
     }
-    
+
     // Only allow deletion of draft documents
     if (document.status !== 'draft') {
       return NextResponse.json(
@@ -487,22 +499,20 @@ export async function DELETE(
         { status: 400 }
       );
     }
-    
+
     // Delete PDF from storage
     if (document.pdf_path) {
-      await supabase.storage
-        .from('documents')
-        .remove([document.pdf_path]);
+      await supabase.storage.from('documents').remove([document.pdf_path]);
     }
-    
+
     // Delete document
     const { error: deleteError } = await supabase
       .from('receipts_invoices')
       .delete()
       .eq('id', documentId);
-    
+
     if (deleteError) throw deleteError;
-    
+
     return NextResponse.json({
       success: true,
       message: 'Document deleted successfully',

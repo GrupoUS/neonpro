@@ -1,31 +1,29 @@
 // SMS Service for NeonPro
 // Comprehensive SMS service supporting multiple Brazilian providers
 
-import { createClient } from '@/app/utils/supabase/client';
 import type {
-  SMSProvider,
-  SMSProviderConfig,
-  SMSMessage,
-  SMSTemplate,
-  SMSOptIn,
   BulkSMSRequest,
   BulkSMSResponse,
+  MovileConfig,
   SendSMSResponse,
   SMSAnalytics,
-  SMSIntegrationStatus,
+  SMSDevConfig,
+  SMSDevWebhook,
+  SMSError,
+  SMSErrorCode,
   SMSListParams,
   SMSListResponse,
-  SMSError,
-  TwilioConfig,
-  SMSDevConfig,
-  ZenviaConfig,
-  MovileConfig,
-  TwilioWebhook,
-  SMSDevWebhook,
+  SMSMessage,
+  SMSOptIn,
+  SMSProvider,
+  SMSProviderConfig,
   SMSStatus,
-  SMSErrorCode,
-  SMS_ERROR_CODES
+  SMSTemplate,
+  TwilioConfig,
+  TwilioWebhook,
+  ZenviaConfig,
 } from '@/app/types/sms';
+import { createClient } from '@/app/utils/supabase/client';
 
 export class SMSService {
   private supabase = createClient();
@@ -46,7 +44,11 @@ export class SMSService {
       return data || [];
     } catch (error) {
       console.error('Error fetching SMS providers:', error);
-      throw this.createSMSError('PROVIDER_ERROR', 'Failed to fetch providers', error);
+      throw this.createSMSError(
+        'PROVIDER_ERROR',
+        'Failed to fetch providers',
+        error
+      );
     }
   }
 
@@ -65,14 +67,20 @@ export class SMSService {
       return data || null;
     } catch (error) {
       console.error('Error fetching active SMS provider:', error);
-      throw this.createSMSError('PROVIDER_ERROR', 'Failed to fetch active provider', error);
+      throw this.createSMSError(
+        'PROVIDER_ERROR',
+        'Failed to fetch active provider',
+        error
+      );
     }
   }
 
   /**
    * Create or update SMS provider configuration
    */
-  async upsertProvider(config: Omit<SMSProviderConfig, 'id' | 'created_at' | 'updated_at'>): Promise<SMSProviderConfig> {
+  async upsertProvider(
+    config: Omit<SMSProviderConfig, 'id' | 'created_at' | 'updated_at'>
+  ): Promise<SMSProviderConfig> {
     try {
       // Validate provider configuration
       await this.validateProviderConfig(config.provider, config.config);
@@ -89,7 +97,7 @@ export class SMSService {
         .from('sms_providers')
         .upsert({
           ...config,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .select()
         .single();
@@ -98,7 +106,11 @@ export class SMSService {
       return data;
     } catch (error) {
       console.error('Error upserting SMS provider:', error);
-      throw this.createSMSError('PROVIDER_ERROR', 'Failed to save provider configuration', error);
+      throw this.createSMSError(
+        'PROVIDER_ERROR',
+        'Failed to save provider configuration',
+        error
+      );
     }
   }
 
@@ -110,7 +122,7 @@ export class SMSService {
       const response = await this.sendMessage({
         provider_id: providerId,
         to: testPhone,
-        body: 'Teste de configuração NeonPro SMS - Esta é uma mensagem de teste para validar a integração.'
+        body: 'Teste de configuração NeonPro SMS - Esta é uma mensagem de teste para validar a integração.',
       });
 
       return response.status === 'queued' || response.status === 'sent';
@@ -136,13 +148,19 @@ export class SMSService {
       // Check opt-in status
       const optInStatus = await this.checkOptInStatus(params.to);
       if (optInStatus !== 'opted_in') {
-        throw this.createSMSError('OPT_OUT', 'Recipient has not opted in for SMS communication');
+        throw this.createSMSError(
+          'OPT_OUT',
+          'Recipient has not opted in for SMS communication'
+        );
       }
 
       // Get provider configuration
       const provider = await this.getProviderById(params.provider_id);
-      if (!provider || !provider.enabled) {
-        throw this.createSMSError('PROVIDER_ERROR', 'SMS provider not found or disabled');
+      if (!(provider && provider.enabled)) {
+        throw this.createSMSError(
+          'PROVIDER_ERROR',
+          'SMS provider not found or disabled'
+        );
       }
 
       // Process template if provided
@@ -150,12 +168,19 @@ export class SMSService {
       if (params.template_id) {
         const template = await this.getTemplate(params.template_id);
         if (template) {
-          messageBody = this.processTemplate(template.body, params.variables || {});
+          messageBody = this.processTemplate(
+            template.body,
+            params.variables || {}
+          );
         }
       }
 
       // Send via provider
-      const providerResponse = await this.sendViaProvider(provider, params.to, messageBody);
+      const providerResponse = await this.sendViaProvider(
+        provider,
+        params.to,
+        messageBody
+      );
 
       // Save message to database
       const message = await this.saveMessage({
@@ -168,7 +193,7 @@ export class SMSService {
         provider_message_id: providerResponse.id,
         direction: 'outbound',
         cost: providerResponse.cost,
-        parts: providerResponse.parts
+        parts: providerResponse.parts,
       });
 
       return {
@@ -178,12 +203,17 @@ export class SMSService {
         status: 'queued',
         cost: providerResponse.cost,
         parts: providerResponse.parts,
-        queued_at: new Date().toISOString()
+        queued_at: new Date().toISOString(),
       };
     } catch (error) {
       console.error('Error sending SMS:', error);
-      throw error instanceof Error && 'code' in error ? error : 
-        this.createSMSError('PROVIDER_ERROR', 'Failed to send SMS message', error);
+      throw error instanceof Error && 'code' in error
+        ? error
+        : this.createSMSError(
+            'PROVIDER_ERROR',
+            'Failed to send SMS message',
+            error
+          );
     }
   }
 
@@ -194,7 +224,7 @@ export class SMSService {
     try {
       const batchId = `bulk_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       const batchSize = request.batch_size || 10;
-      
+
       const results = {
         batch_id: batchId,
         total_messages: request.messages.length,
@@ -202,13 +232,13 @@ export class SMSService {
         failed_messages: 0,
         estimated_cost: 0,
         status: 'processing' as const,
-        errors: [] as Array<{ phone: string; error: string }>
+        errors: [] as Array<{ phone: string; error: string }>,
       };
 
       // Process messages in batches to respect rate limits
       for (let i = 0; i < request.messages.length; i += batchSize) {
         const batch = request.messages.slice(i, i + batchSize);
-        
+
         const batchPromises = batch.map(async (message) => {
           try {
             const response = await this.sendMessage({
@@ -216,33 +246,38 @@ export class SMSService {
               to: message.to,
               body: message.body,
               template_id: request.template_id,
-              variables: message.variables
+              variables: message.variables,
             });
-            
+
             results.queued_messages++;
             results.estimated_cost += response.cost || 0;
           } catch (error) {
             results.failed_messages++;
             results.errors.push({
               phone: message.to,
-              error: error instanceof Error ? error.message : 'Unknown error'
+              error: error instanceof Error ? error.message : 'Unknown error',
             });
           }
         });
 
         await Promise.allSettled(batchPromises);
-        
+
         // Rate limiting delay between batches
         if (i + batchSize < request.messages.length) {
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          await new Promise((resolve) => setTimeout(resolve, 1000));
         }
       }
 
-      results.status = results.failed_messages === 0 ? 'completed' : 'completed';
+      results.status =
+        results.failed_messages === 0 ? 'completed' : 'completed';
       return results;
     } catch (error) {
       console.error('Error sending bulk SMS:', error);
-      throw this.createSMSError('PROVIDER_ERROR', 'Failed to send bulk SMS messages', error);
+      throw this.createSMSError(
+        'PROVIDER_ERROR',
+        'Failed to send bulk SMS messages',
+        error
+      );
     }
   }
 
@@ -251,7 +286,11 @@ export class SMSService {
   /**
    * Send SMS via specific provider
    */
-  private async sendViaProvider(provider: SMSProviderConfig, to: string, body: string): Promise<{
+  private async sendViaProvider(
+    provider: SMSProviderConfig,
+    to: string,
+    body: string
+  ): Promise<{
     id: string;
     cost?: number;
     parts?: number;
@@ -266,34 +305,48 @@ export class SMSService {
       case 'movile':
         return this.sendViaMovile(provider.config as MovileConfig, to, body);
       default:
-        throw this.createSMSError('PROVIDER_ERROR', `Unsupported provider: ${provider.provider}`);
+        throw this.createSMSError(
+          'PROVIDER_ERROR',
+          `Unsupported provider: ${provider.provider}`
+        );
     }
   }
 
   /**
    * Send SMS via Twilio
    */
-  private async sendViaTwilio(config: TwilioConfig, to: string, body: string): Promise<{
+  private async sendViaTwilio(
+    config: TwilioConfig,
+    to: string,
+    body: string
+  ): Promise<{
     id: string;
     cost?: number;
     parts?: number;
   }> {
     try {
-      const auth = Buffer.from(`${config.account_sid}:${config.auth_token}`).toString('base64');
-      
-      const response = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${config.account_sid}/Messages.json`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Basic ${auth}`,
-          'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: new URLSearchParams({
-          To: to,
-          From: config.from_number,
-          Body: body,
-          ...(config.status_callback && { StatusCallback: config.status_callback })
-        })
-      });
+      const auth = Buffer.from(
+        `${config.account_sid}:${config.auth_token}`
+      ).toString('base64');
+
+      const response = await fetch(
+        `https://api.twilio.com/2010-04-01/Accounts/${config.account_sid}/Messages.json`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Basic ${auth}`,
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: new URLSearchParams({
+            To: to,
+            From: config.from_number,
+            Body: body,
+            ...(config.status_callback && {
+              StatusCallback: config.status_callback,
+            }),
+          }),
+        }
+      );
 
       if (!response.ok) {
         const error = await response.json();
@@ -303,8 +356,8 @@ export class SMSService {
       const data = await response.json();
       return {
         id: data.sid,
-        cost: parseFloat(data.price || '0'),
-        parts: parseInt(data.num_segments || '1')
+        cost: Number.parseFloat(data.price || '0'),
+        parts: Number.parseInt(data.num_segments || '1', 10),
       };
     } catch (error) {
       throw this.createSMSError('PROVIDER_ERROR', 'Twilio API error', error);
@@ -314,7 +367,11 @@ export class SMSService {
   /**
    * Send SMS via SMS Dev (ZENVIA)
    */
-  private async sendViaSMSDev(config: SMSDevConfig, to: string, body: string): Promise<{
+  private async sendViaSMSDev(
+    config: SMSDevConfig,
+    to: string,
+    body: string
+  ): Promise<{
     id: string;
     cost?: number;
     parts?: number;
@@ -324,14 +381,14 @@ export class SMSService {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${config.api_key}`
+          Authorization: `Bearer ${config.api_key}`,
         },
         body: JSON.stringify({
           number: to.replace('+', ''),
           message: body,
           sender: config.sender_id,
-          ...(config.callback_option && { callback: config.webhook_url })
-        })
+          ...(config.callback_option && { callback: config.webhook_url }),
+        }),
       });
 
       if (!response.ok) {
@@ -343,7 +400,7 @@ export class SMSService {
       return {
         id: data.id.toString(),
         cost: data.cost || 0,
-        parts: Math.ceil(body.length / 160)
+        parts: Math.ceil(body.length / 160),
       };
     } catch (error) {
       throw this.createSMSError('PROVIDER_ERROR', 'SMS Dev API error', error);
@@ -353,27 +410,36 @@ export class SMSService {
   /**
    * Send SMS via ZENVIA
    */
-  private async sendViaZenvia(config: ZenviaConfig, to: string, body: string): Promise<{
+  private async sendViaZenvia(
+    config: ZenviaConfig,
+    to: string,
+    body: string
+  ): Promise<{
     id: string;
     cost?: number;
     parts?: number;
   }> {
     try {
-      const response = await fetch('https://api.zenvia.com/v2/channels/sms/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-API-TOKEN': config.api_token
-        },
-        body: JSON.stringify({
-          from: config.from,
-          to: to,
-          contents: [{
-            type: 'text',
-            text: body
-          }]
-        })
-      });
+      const response = await fetch(
+        'https://api.zenvia.com/v2/channels/sms/messages',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-API-TOKEN': config.api_token,
+          },
+          body: JSON.stringify({
+            from: config.from,
+            to,
+            contents: [
+              {
+                type: 'text',
+                text: body,
+              },
+            ],
+          }),
+        }
+      );
 
       if (!response.ok) {
         const error = await response.json();
@@ -383,7 +449,7 @@ export class SMSService {
       const data = await response.json();
       return {
         id: data.id,
-        parts: Math.ceil(body.length / 160)
+        parts: Math.ceil(body.length / 160),
       };
     } catch (error) {
       throw this.createSMSError('PROVIDER_ERROR', 'ZENVIA API error', error);
@@ -393,24 +459,31 @@ export class SMSService {
   /**
    * Send SMS via Movile
    */
-  private async sendViaMovile(config: MovileConfig, to: string, body: string): Promise<{
+  private async sendViaMovile(
+    config: MovileConfig,
+    to: string,
+    body: string
+  ): Promise<{
     id: string;
     cost?: number;
     parts?: number;
   }> {
     try {
-      const response = await fetch('https://api-messaging.movile.com/v1/send-sms', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Basic ${Buffer.from(`${config.username}:${config.auth_token}`).toString('base64')}`
-        },
-        body: JSON.stringify({
-          destination: to.replace('+', ''),
-          messageText: body,
-          sender: config.sender_id
-        })
-      });
+      const response = await fetch(
+        'https://api-messaging.movile.com/v1/send-sms',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Basic ${Buffer.from(`${config.username}:${config.auth_token}`).toString('base64')}`,
+          },
+          body: JSON.stringify({
+            destination: to.replace('+', ''),
+            messageText: body,
+            sender: config.sender_id,
+          }),
+        }
+      );
 
       if (!response.ok) {
         const error = await response.json();
@@ -420,7 +493,7 @@ export class SMSService {
       const data = await response.json();
       return {
         id: data.id.toString(),
-        parts: Math.ceil(body.length / 160)
+        parts: Math.ceil(body.length / 160),
       };
     } catch (error) {
       throw this.createSMSError('PROVIDER_ERROR', 'Movile API error', error);
@@ -439,7 +512,7 @@ export class SMSService {
         limit = 20,
         sort = 'created_at',
         order = 'desc',
-        filters = {}
+        filters = {},
       } = params;
 
       let query = this.supabase
@@ -461,7 +534,9 @@ export class SMSService {
         query = query.eq('direction', filters.direction);
       }
       if (filters.phone_number) {
-        query = query.or(`to.ilike.%${filters.phone_number}%,from.ilike.%${filters.phone_number}%`);
+        query = query.or(
+          `to.ilike.%${filters.phone_number}%,from.ilike.%${filters.phone_number}%`
+        );
       }
       if (filters.date_from) {
         query = query.gte('created_at', filters.date_from);
@@ -490,12 +565,16 @@ export class SMSService {
           total: count || 0,
           total_pages: Math.ceil((count || 0) / limit),
           has_next: page * limit < (count || 0),
-          has_prev: page > 1
-        }
+          has_prev: page > 1,
+        },
       };
     } catch (error) {
       console.error('Error fetching SMS messages:', error);
-      throw this.createSMSError('PROVIDER_ERROR', 'Failed to fetch messages', error);
+      throw this.createSMSError(
+        'PROVIDER_ERROR',
+        'Failed to fetch messages',
+        error
+      );
     }
   }
 
@@ -514,7 +593,11 @@ export class SMSService {
       return data || null;
     } catch (error) {
       console.error('Error fetching SMS message:', error);
-      throw this.createSMSError('PROVIDER_ERROR', 'Failed to fetch message', error);
+      throw this.createSMSError(
+        'PROVIDER_ERROR',
+        'Failed to fetch message',
+        error
+      );
     }
   }
 
@@ -534,20 +617,26 @@ export class SMSService {
       return data || [];
     } catch (error) {
       console.error('Error fetching SMS templates:', error);
-      throw this.createSMSError('PROVIDER_ERROR', 'Failed to fetch templates', error);
+      throw this.createSMSError(
+        'PROVIDER_ERROR',
+        'Failed to fetch templates',
+        error
+      );
     }
   }
 
   /**
    * Create or update SMS template
    */
-  async upsertTemplate(template: Omit<SMSTemplate, 'id' | 'created_at' | 'updated_at'>): Promise<SMSTemplate> {
+  async upsertTemplate(
+    template: Omit<SMSTemplate, 'id' | 'created_at' | 'updated_at'>
+  ): Promise<SMSTemplate> {
     try {
       const { data, error } = await this.supabase
         .from('sms_templates')
         .upsert({
           ...template,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .select()
         .single();
@@ -556,7 +645,11 @@ export class SMSService {
       return data;
     } catch (error) {
       console.error('Error upserting SMS template:', error);
-      throw this.createSMSError('PROVIDER_ERROR', 'Failed to save template', error);
+      throw this.createSMSError(
+        'PROVIDER_ERROR',
+        'Failed to save template',
+        error
+      );
     }
   }
 
@@ -565,7 +658,9 @@ export class SMSService {
   /**
    * Check opt-in status for phone number
    */
-  async checkOptInStatus(phoneNumber: string): Promise<'opted_in' | 'opted_out' | 'pending'> {
+  async checkOptInStatus(
+    phoneNumber: string
+  ): Promise<'opted_in' | 'opted_out' | 'pending'> {
     try {
       const { data, error } = await this.supabase
         .from('sms_opt_ins')
@@ -587,7 +682,7 @@ export class SMSService {
   async updateOptInStatus(
     phoneNumber: string,
     status: 'opted_in' | 'opted_out',
-    source: string = 'manual',
+    source = 'manual',
     patientId?: string
   ): Promise<SMSOptIn> {
     try {
@@ -598,8 +693,9 @@ export class SMSService {
           patient_id: patientId,
           status,
           source,
-          [`${status === 'opted_in' ? 'opt_in' : 'opt_out'}_date`]: new Date().toISOString(),
-          updated_at: new Date().toISOString()
+          [`${status === 'opted_in' ? 'opt_in' : 'opt_out'}_date`]:
+            new Date().toISOString(),
+          updated_at: new Date().toISOString(),
         })
         .select()
         .single();
@@ -608,7 +704,11 @@ export class SMSService {
       return data;
     } catch (error) {
       console.error('Error updating opt-in status:', error);
-      throw this.createSMSError('PROVIDER_ERROR', 'Failed to update opt-in status', error);
+      throw this.createSMSError(
+        'PROVIDER_ERROR',
+        'Failed to update opt-in status',
+        error
+      );
     }
   }
 
@@ -627,11 +727,17 @@ export class SMSService {
           await this.processSMSDevWebhook(payload as SMSDevWebhook);
           break;
         default:
-          console.warn(`Webhook processing not implemented for provider: ${provider}`);
+          console.warn(
+            `Webhook processing not implemented for provider: ${provider}`
+          );
       }
     } catch (error) {
       console.error('Error processing SMS webhook:', error);
-      throw this.createSMSError('WEBHOOK_ERROR', 'Failed to process webhook', error);
+      throw this.createSMSError(
+        'WEBHOOK_ERROR',
+        'Failed to process webhook',
+        error
+      );
     }
   }
 
@@ -646,18 +752,21 @@ export class SMSService {
     period: 'day' | 'week' | 'month' = 'day'
   ): Promise<SMSAnalytics> {
     try {
-      const { data, error } = await this.supabase
-        .rpc('get_sms_analytics', {
-          start_date: startDate,
-          end_date: endDate,
-          period_type: period
-        });
+      const { data, error } = await this.supabase.rpc('get_sms_analytics', {
+        start_date: startDate,
+        end_date: endDate,
+        period_type: period,
+      });
 
       if (error) throw error;
       return data;
     } catch (error) {
       console.error('Error fetching SMS analytics:', error);
-      throw this.createSMSError('PROVIDER_ERROR', 'Failed to fetch analytics', error);
+      throw this.createSMSError(
+        'PROVIDER_ERROR',
+        'Failed to fetch analytics',
+        error
+      );
     }
   }
 
@@ -666,26 +775,41 @@ export class SMSService {
   /**
    * Validate provider configuration
    */
-  private async validateProviderConfig(provider: SMSProvider, config: any): Promise<void> {
+  private async validateProviderConfig(
+    provider: SMSProvider,
+    config: any
+  ): Promise<void> {
     switch (provider) {
       case 'twilio':
-        if (!config.account_sid || !config.auth_token || !config.from_number) {
-          throw this.createSMSError('INVALID_CONFIG', 'Twilio configuration incomplete');
+        if (!(config.account_sid && config.auth_token && config.from_number)) {
+          throw this.createSMSError(
+            'INVALID_CONFIG',
+            'Twilio configuration incomplete'
+          );
         }
         break;
       case 'sms_dev':
-        if (!config.api_key || !config.sender_id) {
-          throw this.createSMSError('INVALID_CONFIG', 'SMS Dev configuration incomplete');
+        if (!(config.api_key && config.sender_id)) {
+          throw this.createSMSError(
+            'INVALID_CONFIG',
+            'SMS Dev configuration incomplete'
+          );
         }
         break;
       case 'zenvia':
-        if (!config.api_token || !config.from) {
-          throw this.createSMSError('INVALID_CONFIG', 'ZENVIA configuration incomplete');
+        if (!(config.api_token && config.from)) {
+          throw this.createSMSError(
+            'INVALID_CONFIG',
+            'ZENVIA configuration incomplete'
+          );
         }
         break;
       case 'movile':
-        if (!config.username || !config.auth_token || !config.sender_id) {
-          throw this.createSMSError('INVALID_CONFIG', 'Movile configuration incomplete');
+        if (!(config.username && config.auth_token && config.sender_id)) {
+          throw this.createSMSError(
+            'INVALID_CONFIG',
+            'Movile configuration incomplete'
+          );
         }
         break;
     }
@@ -694,10 +818,16 @@ export class SMSService {
   /**
    * Process template with variables
    */
-  private processTemplate(template: string, variables: Record<string, string>): string {
+  private processTemplate(
+    template: string,
+    variables: Record<string, string>
+  ): string {
     let processed = template;
     for (const [key, value] of Object.entries(variables)) {
-      processed = processed.replace(new RegExp(`{{\\s*${key}\\s*}}`, 'g'), value);
+      processed = processed.replace(
+        new RegExp(`{{\\s*${key}\\s*}}`, 'g'),
+        value
+      );
     }
     return processed;
   }
@@ -723,13 +853,15 @@ export class SMSService {
   /**
    * Save message to database
    */
-  private async saveMessage(message: Omit<SMSMessage, 'id' | 'created_at' | 'updated_at'>): Promise<SMSMessage> {
+  private async saveMessage(
+    message: Omit<SMSMessage, 'id' | 'created_at' | 'updated_at'>
+  ): Promise<SMSMessage> {
     const { data, error } = await this.supabase
       .from('sms_messages')
       .insert({
         ...message,
         created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .select()
       .single();
@@ -776,7 +908,7 @@ export class SMSService {
       sent: 'sent',
       delivered: 'delivered',
       undelivered: 'undelivered',
-      failed: 'failed'
+      failed: 'failed',
     };
 
     await this.updateMessageStatus(
@@ -797,7 +929,7 @@ export class SMSService {
       DELETED: 'failed',
       UNDELIV: 'undelivered',
       ACCEPTD: 'sent',
-      UNKNOWN: 'failed'
+      UNKNOWN: 'failed',
     };
 
     await this.updateMessageStatus(
@@ -817,7 +949,7 @@ export class SMSService {
   ): Promise<void> {
     const updateData: any = {
       status,
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     };
 
     if (status === 'delivered') {
@@ -839,7 +971,11 @@ export class SMSService {
   /**
    * Create standardized SMS error
    */
-  private createSMSError(code: SMSErrorCode, message: string, details?: any): SMSError & Error {
+  private createSMSError(
+    code: SMSErrorCode,
+    message: string,
+    details?: any
+  ): SMSError & Error {
     const error = new Error(message) as SMSError & Error;
     error.code = code;
     error.message = message;

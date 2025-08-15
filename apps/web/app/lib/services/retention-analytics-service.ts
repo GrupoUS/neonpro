@@ -4,36 +4,31 @@
 // Core business logic for retention analytics, churn prediction, and retention strategies
 // =====================================================================================
 
-import { createClient } from '@/app/utils/supabase/client';
 import {
-  PatientRetentionMetrics,
-  ChurnPrediction,
-  RetentionStrategy,
-  RetentionPerformance,
-  RetentionAnalyticsDashboard,
-  ChurnRiskLevel,
+  type ChurnAnalysis,
   ChurnModelType,
-  RetentionStrategyType,
-  RetentionActionType,
+  type ChurnPrediction,
+  type ChurnPredictionSummary,
+  ChurnRiskLevel,
   CommunicationChannel,
-  RetentionOutcome,
-  CreatePatientRetentionMetrics,
-  UpdatePatientRetentionMetrics,
-  CreateChurnPrediction,
-  CreateRetentionStrategy,
-  UpdateRetentionStrategy,
-  RiskFactor,
-  RetentionAction,
+  type CreateChurnPrediction,
+  type CreatePatientRetentionMetrics,
+  type CreateRetentionStrategy,
   InterventionPriority,
-  ChurnOutcome,
-  ExecutionType,
-  RetentionOverview,
-  ChurnAnalysis,
-  StrategyPerformanceMetrics,
-  RetentionBySegment,
-  RetentionTrend,
-  ChurnPredictionSummary
+  type PatientRetentionMetrics,
+  type RetentionAction,
+  RetentionActionType,
+  type RetentionAnalyticsDashboard,
+  type RetentionBySegment,
+  RetentionOutcome,
+  type RetentionOverview,
+  type RetentionPerformance,
+  type RetentionStrategy,
+  type RetentionTrend,
+  type RiskFactor,
+  type StrategyPerformanceMetrics,
 } from '@/app/types/retention-analytics';
+import { createClient } from '@/app/utils/supabase/client';
 
 export class RetentionAnalyticsService {
   private supabase;
@@ -55,12 +50,13 @@ export class RetentionAnalyticsService {
   ): Promise<PatientRetentionMetrics> {
     try {
       // Get patient appointment history
-      const { data: appointments, error: appointmentsError } = await this.supabase
-        .from('appointments')
-        .select('*')
-        .eq('patient_id', patientId)
-        .eq('clinic_id', clinicId)
-        .order('date', { ascending: true });
+      const { data: appointments, error: appointmentsError } =
+        await this.supabase
+          .from('appointments')
+          .select('*')
+          .eq('patient_id', patientId)
+          .eq('clinic_id', clinicId)
+          .order('date', { ascending: true });
 
       if (appointmentsError) throw appointmentsError;
 
@@ -84,56 +80,80 @@ export class RetentionAnalyticsService {
       const now = new Date();
       const firstAppointment = appointments?.[0];
       const lastAppointment = appointments?.[appointments.length - 1];
-      
-      const daysSinceLastAppointment = lastAppointment 
-        ? Math.floor((now.getTime() - new Date(lastAppointment.date).getTime()) / (1000 * 60 * 60 * 24))
+
+      const daysSinceLastAppointment = lastAppointment
+        ? Math.floor(
+            (now.getTime() - new Date(lastAppointment.date).getTime()) /
+              (1000 * 60 * 60 * 24)
+          )
         : 0;
 
       const totalAppointments = appointments?.length || 0;
-      
+
       // Calculate appointment frequency (appointments per month)
       const daysSinceFirst = firstAppointment
-        ? Math.floor((now.getTime() - new Date(firstAppointment.date).getTime()) / (1000 * 60 * 60 * 24))
+        ? Math.floor(
+            (now.getTime() - new Date(firstAppointment.date).getTime()) /
+              (1000 * 60 * 60 * 24)
+          )
         : 1;
-      const appointmentFrequency = totalAppointments / Math.max(daysSinceFirst / 30, 1);
+      const appointmentFrequency =
+        totalAppointments / Math.max(daysSinceFirst / 30, 1);
 
       // Calculate engagement metrics
       const totalFollowups = responses?.length || 0;
-      const respondedFollowups = responses?.filter(r => r.response_text).length || 0;
-      const responseRate = totalFollowups > 0 ? respondedFollowups / totalFollowups : 0;
-      
-      const satisfactionScores = responses?.filter(r => r.satisfaction_rating).map(r => r.satisfaction_rating) || [];
-      const satisfactionScore = satisfactionScores.length > 0 
-        ? satisfactionScores.reduce((sum, score) => sum + score, 0) / satisfactionScores.length
-        : 0;
+      const respondedFollowups =
+        responses?.filter((r) => r.response_text).length || 0;
+      const responseRate =
+        totalFollowups > 0 ? respondedFollowups / totalFollowups : 0;
+
+      const satisfactionScores =
+        responses
+          ?.filter((r) => r.satisfaction_rating)
+          .map((r) => r.satisfaction_rating) || [];
+      const satisfactionScore =
+        satisfactionScores.length > 0
+          ? satisfactionScores.reduce((sum, score) => sum + score, 0) /
+            satisfactionScores.length
+          : 0;
 
       // Calculate financial metrics
-      const totalSpent = payments?.reduce((sum, payment) => sum + (payment.amount || 0), 0) || 0;
-      const averageTicket = totalAppointments > 0 ? totalSpent / totalAppointments : 0;
+      const totalSpent =
+        payments?.reduce((sum, payment) => sum + (payment.amount || 0), 0) || 0;
+      const averageTicket =
+        totalAppointments > 0 ? totalSpent / totalAppointments : 0;
       const lifetimeValue = totalSpent; // For now, same as total spent
 
       // Calculate payment punctuality (percentage of on-time payments)
-      const onTimePayments = payments?.filter(p => 
-        new Date(p.paid_at) <= new Date(p.due_date)
-      ).length || 0;
-      const paymentPunctuality = payments?.length > 0 ? onTimePayments / payments.length : 1;
+      const onTimePayments =
+        payments?.filter((p) => new Date(p.paid_at) <= new Date(p.due_date))
+          .length || 0;
+      const paymentPunctuality =
+        payments?.length > 0 ? onTimePayments / payments.length : 1;
 
       // Calculate behavioral metrics
-      const cancelledAppointments = appointments?.filter(a => a.status === 'cancelled').length || 0;
-      const cancellationRate = totalAppointments > 0 ? cancelledAppointments / totalAppointments : 0;
+      const cancelledAppointments =
+        appointments?.filter((a) => a.status === 'cancelled').length || 0;
+      const cancellationRate =
+        totalAppointments > 0 ? cancelledAppointments / totalAppointments : 0;
 
-      const noShowAppointments = appointments?.filter(a => a.status === 'no_show').length || 0;
-      const noShowRate = totalAppointments > 0 ? noShowAppointments / totalAppointments : 0;
+      const noShowAppointments =
+        appointments?.filter((a) => a.status === 'no_show').length || 0;
+      const noShowRate =
+        totalAppointments > 0 ? noShowAppointments / totalAppointments : 0;
 
       // Calculate rebooking rate (percentage of cancelled/no-show that rebooked)
       const rebookedCount = 0; // TODO: Implement rebooking tracking
-      const rebookingRate = (cancelledAppointments + noShowAppointments) > 0 
-        ? rebookedCount / (cancelledAppointments + noShowAppointments) 
-        : 0;
+      const rebookingRate =
+        cancelledAppointments + noShowAppointments > 0
+          ? rebookedCount / (cancelledAppointments + noShowAppointments)
+          : 0;
 
       // Calculate treatment completion rate
-      const completedTreatments = appointments?.filter(a => a.status === 'completed').length || 0;
-      const treatmentCompletionRate = totalAppointments > 0 ? completedTreatments / totalAppointments : 0;
+      const completedTreatments =
+        appointments?.filter((a) => a.status === 'completed').length || 0;
+      const treatmentCompletionRate =
+        totalAppointments > 0 ? completedTreatments / totalAppointments : 0;
 
       // Calculate churn risk score using multiple factors
       const churnRiskScore = this.calculateChurnRiskScore({
@@ -144,12 +164,15 @@ export class RetentionAnalyticsService {
         cancellationRate,
         noShowRate,
         treatmentCompletionRate,
-        paymentPunctuality
+        paymentPunctuality,
       });
 
       const churnRiskLevel = this.getChurnRiskLevel(churnRiskScore);
       const churnProbability = churnRiskScore;
-      const daysToPredicatedChurn = this.predictDaysToChurn(churnRiskScore, appointmentFrequency);
+      const daysToPredicatedChurn = this.predictDaysToChurn(
+        churnRiskScore,
+        appointmentFrequency
+      );
 
       const metrics: CreatePatientRetentionMetrics = {
         patient_id: patientId,
@@ -175,7 +198,7 @@ export class RetentionAnalyticsService {
         churn_risk_level: churnRiskLevel,
         churn_probability: churnProbability,
         days_to_predicted_churn: daysToPredicatedChurn,
-        last_calculated: now.toISOString()
+        last_calculated: now.toISOString(),
       };
 
       // Save or update metrics in database
@@ -256,18 +279,21 @@ export class RetentionAnalyticsService {
     try {
       // Get patient retention metrics
       let metrics = await this.getPatientRetentionMetrics(patientId, clinicId);
-      
+
       // Calculate metrics if they don't exist or are outdated
       if (!metrics || this.isMetricsOutdated(metrics)) {
-        metrics = await this.calculatePatientRetentionMetrics(patientId, clinicId);
+        metrics = await this.calculatePatientRetentionMetrics(
+          patientId,
+          clinicId
+        );
       }
 
       // Generate prediction using selected model
       const prediction = this.generatePredictionWithModel(metrics, modelType);
-      
+
       // Get risk factors
       const riskFactors = this.identifyRiskFactors(metrics);
-      
+
       // Generate recommended actions
       const recommendedActions = await this.generateRecommendedActions(
         metrics,
@@ -289,10 +315,12 @@ export class RetentionAnalyticsService {
         top_risk_factors: riskFactors,
         feature_scores: prediction.featureScores,
         recommended_actions: recommendedActions,
-        intervention_priority: this.getInterventionPriority(prediction.churnProbability),
+        intervention_priority: this.getInterventionPriority(
+          prediction.churnProbability
+        ),
         is_validated: false,
         actual_outcome: null,
-        prediction_accuracy: null
+        prediction_accuracy: null,
       };
 
       // Save prediction
@@ -358,7 +386,7 @@ export class RetentionAnalyticsService {
         patients_targeted: 0,
         patients_retained: 0,
         cost_per_retention: 0,
-        roi: 0
+        roi: 0,
       };
 
       const { data, error } = await this.supabase
@@ -392,7 +420,9 @@ export class RetentionAnalyticsService {
         query = query.eq('is_active', true);
       }
 
-      const { data, error } = await query.order('created_at', { ascending: false });
+      const { data, error } = await query.order('created_at', {
+        ascending: false,
+      });
 
       if (error) throw error;
       return data || [];
@@ -427,10 +457,16 @@ export class RetentionAnalyticsService {
       // Execute strategy for each patient
       for (const patientId of patientIds) {
         try {
-          const performance = await this.executeStrategyForPatient(strategy, patientId);
+          const performance = await this.executeStrategyForPatient(
+            strategy,
+            patientId
+          );
           performances.push(performance);
         } catch (error) {
-          console.error(`Error executing strategy for patient ${patientId}:`, error);
+          console.error(
+            `Error executing strategy for patient ${patientId}:`,
+            error
+          );
           // Continue with other patients
         }
       }
@@ -464,14 +500,14 @@ export class RetentionAnalyticsService {
         strategyPerformance,
         retentionBySegment,
         retentionTrends,
-        churnPredictionsSummary
+        churnPredictionsSummary,
       ] = await Promise.all([
         this.getRetentionOverview(clinicId, periodStart, periodEnd),
         this.getChurnAnalysis(clinicId, periodStart, periodEnd),
         this.getStrategyPerformanceMetrics(clinicId, periodStart, periodEnd),
         this.getRetentionBySegment(clinicId, periodStart, periodEnd),
         this.getRetentionTrends(clinicId, periodStart, periodEnd),
-        this.getChurnPredictionsSummary(clinicId, periodStart, periodEnd)
+        this.getChurnPredictionsSummary(clinicId, periodStart, periodEnd),
       ]);
 
       return {
@@ -484,7 +520,7 @@ export class RetentionAnalyticsService {
         retention_by_segment: retentionBySegment,
         retention_trends: retentionTrends,
         churn_predictions_summary: churnPredictionsSummary,
-        generated_at: new Date().toISOString()
+        generated_at: new Date().toISOString(),
       };
     } catch (error) {
       console.error('Error generating retention analytics dashboard:', error);
@@ -515,22 +551,25 @@ export class RetentionAnalyticsService {
       appointmentFrequency: 0.15,
       responseRate: 0.15,
       satisfactionScore: 0.15,
-      cancellationRate: 0.10,
-      noShowRate: 0.10,
+      cancellationRate: 0.1,
+      noShowRate: 0.1,
       treatmentCompletionRate: 0.05,
-      paymentPunctuality: 0.05
+      paymentPunctuality: 0.05,
     };
 
     // Normalize factors to 0-1 scale (higher = more risk)
     const normalizedFactors = {
-      daysSinceLastAppointment: Math.min(factors.daysSinceLastAppointment / 90, 1), // 90 days = max risk
+      daysSinceLastAppointment: Math.min(
+        factors.daysSinceLastAppointment / 90,
+        1
+      ), // 90 days = max risk
       appointmentFrequency: Math.max(0, 1 - factors.appointmentFrequency / 2), // 2 appointments/month = no risk
       responseRate: 1 - factors.responseRate,
       satisfactionScore: Math.max(0, 1 - factors.satisfactionScore / 10),
       cancellationRate: factors.cancellationRate,
       noShowRate: factors.noShowRate,
       treatmentCompletionRate: 1 - factors.treatmentCompletionRate,
-      paymentPunctuality: 1 - factors.paymentPunctuality
+      paymentPunctuality: 1 - factors.paymentPunctuality,
     };
 
     // Calculate weighted score
@@ -555,14 +594,17 @@ export class RetentionAnalyticsService {
   /**
    * Predict days to churn based on risk score and patterns
    */
-  private predictDaysToChurn(churnRiskScore: number, appointmentFrequency: number): number | null {
+  private predictDaysToChurn(
+    churnRiskScore: number,
+    appointmentFrequency: number
+  ): number | null {
     if (churnRiskScore < 0.3) return null; // Low risk, no prediction
 
     // Use inverse relationship: higher risk = sooner churn
     const baseChurnDays = 180; // 6 months base
     const riskMultiplier = 1 - churnRiskScore;
     const frequencyMultiplier = Math.max(0.5, appointmentFrequency / 2); // Regular patients stay longer
-    
+
     return Math.round(baseChurnDays * riskMultiplier * frequencyMultiplier);
   }
 
@@ -580,7 +622,7 @@ export class RetentionAnalyticsService {
    */
   private generatePredictionWithModel(
     metrics: PatientRetentionMetrics,
-    modelType: ChurnModelType
+    _modelType: ChurnModelType
   ): {
     churnProbability: number;
     confidenceScore: number;
@@ -594,20 +636,22 @@ export class RetentionAnalyticsService {
     const churnProbability = metrics.churn_risk_score;
     const confidenceScore = 0.85; // Static for now
     const riskLevel = metrics.churn_risk_level;
-    
+
     const daysUntilChurn = metrics.days_to_predicted_churn;
-    const predictedChurnDate = daysUntilChurn 
-      ? new Date(Date.now() + daysUntilChurn * 24 * 60 * 60 * 1000).toISOString()
+    const predictedChurnDate = daysUntilChurn
+      ? new Date(
+          Date.now() + daysUntilChurn * 24 * 60 * 60 * 1000
+        ).toISOString()
       : null;
 
     const featureScores = {
-      'days_since_last_appointment': metrics.days_since_last_appointment / 90,
-      'appointment_frequency': Math.max(0, 1 - metrics.appointment_frequency / 2),
-      'response_rate': 1 - metrics.response_rate,
-      'satisfaction_score': 1 - metrics.satisfaction_score / 10,
-      'cancellation_rate': metrics.cancellation_rate,
-      'no_show_rate': metrics.no_show_rate,
-      'payment_punctuality': 1 - metrics.payment_punctuality
+      days_since_last_appointment: metrics.days_since_last_appointment / 90,
+      appointment_frequency: Math.max(0, 1 - metrics.appointment_frequency / 2),
+      response_rate: 1 - metrics.response_rate,
+      satisfaction_score: 1 - metrics.satisfaction_score / 10,
+      cancellation_rate: metrics.cancellation_rate,
+      no_show_rate: metrics.no_show_rate,
+      payment_punctuality: 1 - metrics.payment_punctuality,
     };
 
     return {
@@ -616,7 +660,7 @@ export class RetentionAnalyticsService {
       riskLevel,
       predictedChurnDate,
       daysUntilChurn,
-      featureScores
+      featureScores,
     };
   }
 
@@ -630,36 +674,36 @@ export class RetentionAnalyticsService {
         importance: 0.25,
         current_value: metrics.days_since_last_appointment,
         threshold_value: 30,
-        description: 'Days since last appointment'
+        description: 'Days since last appointment',
       },
       {
         factor: 'appointment_frequency',
         importance: 0.15,
         current_value: metrics.appointment_frequency,
         threshold_value: 1,
-        description: 'Monthly appointment frequency'
+        description: 'Monthly appointment frequency',
       },
       {
         factor: 'response_rate',
         importance: 0.15,
         current_value: metrics.response_rate,
         threshold_value: 0.7,
-        description: 'Follow-up response rate'
+        description: 'Follow-up response rate',
       },
       {
         factor: 'satisfaction_score',
         importance: 0.15,
         current_value: metrics.satisfaction_score,
         threshold_value: 7,
-        description: 'Average satisfaction score'
+        description: 'Average satisfaction score',
       },
       {
         factor: 'cancellation_rate',
-        importance: 0.10,
+        importance: 0.1,
         current_value: metrics.cancellation_rate,
         threshold_value: 0.2,
-        description: 'Appointment cancellation rate'
-      }
+        description: 'Appointment cancellation rate',
+      },
     ];
 
     // Sort by importance and return top 5
@@ -671,18 +715,22 @@ export class RetentionAnalyticsService {
    */
   private async generateRecommendedActions(
     metrics: PatientRetentionMetrics,
-    churnProbability: number,
+    _churnProbability: number,
     riskLevel: ChurnRiskLevel
   ): Promise<RetentionAction[]> {
     const actions: RetentionAction[] = [];
 
     // High-risk patients get more aggressive interventions
-    if (riskLevel === ChurnRiskLevel.CRITICAL || riskLevel === ChurnRiskLevel.HIGH) {
+    if (
+      riskLevel === ChurnRiskLevel.CRITICAL ||
+      riskLevel === ChurnRiskLevel.HIGH
+    ) {
       actions.push({
         id: crypto.randomUUID(),
         action_type: RetentionActionType.SCHEDULE_CALL,
         title: 'Personal outreach call',
-        description: 'Schedule a personal call to address concerns and re-engage',
+        description:
+          'Schedule a personal call to address concerns and re-engage',
         channel: CommunicationChannel.PHONE,
         personalization_rules: [],
         delay_hours: 2,
@@ -692,7 +740,7 @@ export class RetentionAnalyticsService {
         exclusion_rules: [],
         success_rate: 0.65,
         cost: 25,
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
       });
 
       if (metrics.satisfaction_score < 7) {
@@ -710,7 +758,7 @@ export class RetentionAnalyticsService {
           exclusion_rules: [],
           success_rate: 0.45,
           cost: 5,
-          created_at: new Date().toISOString()
+          created_at: new Date().toISOString(),
         });
       }
     }
@@ -731,7 +779,7 @@ export class RetentionAnalyticsService {
         exclusion_rules: [],
         success_rate: 0.35,
         cost: 2,
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
       });
     }
 
@@ -741,7 +789,9 @@ export class RetentionAnalyticsService {
   /**
    * Get intervention priority based on churn probability
    */
-  private getInterventionPriority(churnProbability: number): InterventionPriority {
+  private getInterventionPriority(
+    churnProbability: number
+  ): InterventionPriority {
     if (churnProbability >= 0.8) return InterventionPriority.URGENT;
     if (churnProbability >= 0.6) return InterventionPriority.HIGH;
     if (churnProbability >= 0.3) return InterventionPriority.MEDIUM;
@@ -757,16 +807,22 @@ export class RetentionAnalyticsService {
   ): Promise<RetentionPerformance> {
     // This is a simplified implementation
     // In production, this would integrate with communication services
-    const executionId = crypto.randomUUID();
+    const _executionId = crypto.randomUUID();
     const executionDate = new Date().toISOString();
-    
-    const performance: Omit<RetentionPerformance, 'id' | 'created_at' | 'updated_at'> = {
+
+    const performance: Omit<
+      RetentionPerformance,
+      'id' | 'created_at' | 'updated_at'
+    > = {
       clinic_id: strategy.clinic_id,
       strategy_id: strategy.id,
       patient_id: patientId,
       execution_date: executionDate,
-      actions_executed: strategy.actions.map(a => a.id),
-      total_cost: strategy.actions.reduce((sum, action) => sum + action.cost, 0),
+      actions_executed: strategy.actions.map((a) => a.id),
+      total_cost: strategy.actions.reduce(
+        (sum, action) => sum + action.cost,
+        0
+      ),
       outcome: RetentionOutcome.PENDING,
       success: false,
       retention_period_days: 0,
@@ -777,7 +833,7 @@ export class RetentionAnalyticsService {
       engagement_change: 0,
       time_to_response: 0,
       cost_effectiveness: 0,
-      retention_probability_improvement: 0
+      retention_probability_improvement: 0,
     };
 
     const { data, error } = await this.supabase
@@ -797,14 +853,17 @@ export class RetentionAnalyticsService {
     strategyId: string,
     performances: RetentionPerformance[]
   ): Promise<void> {
-    const successful = performances.filter(p => p.success).length;
+    const successful = performances.filter((p) => p.success).length;
     const total = performances.length;
     const successRate = total > 0 ? successful / total : 0;
-    
+
     const totalCost = performances.reduce((sum, p) => sum + p.total_cost, 0);
     const costPerRetention = successful > 0 ? totalCost / successful : 0;
-    
-    const totalRevenue = performances.reduce((sum, p) => sum + p.revenue_generated, 0);
+
+    const totalRevenue = performances.reduce(
+      (sum, p) => sum + p.revenue_generated,
+      0
+    );
     const roi = totalCost > 0 ? (totalRevenue - totalCost) / totalCost : 0;
 
     await this.supabase
@@ -814,14 +873,18 @@ export class RetentionAnalyticsService {
         patients_targeted: total,
         patients_retained: successful,
         cost_per_retention: costPerRetention,
-        roi: roi,
-        updated_at: new Date().toISOString()
+        roi,
+        updated_at: new Date().toISOString(),
       })
       .eq('id', strategyId);
   }
 
   // Placeholder methods for dashboard analytics (would implement full logic)
-  private async getRetentionOverview(clinicId: string, periodStart: string, periodEnd: string): Promise<RetentionOverview> {
+  private async getRetentionOverview(
+    _clinicId: string,
+    _periodStart: string,
+    _periodEnd: string
+  ): Promise<RetentionOverview> {
     // Implementation would query actual data
     return {
       total_patients: 1250,
@@ -834,11 +897,15 @@ export class RetentionAnalyticsService {
       average_retention_period_days: 365,
       retention_rate_change: 0.05,
       churn_rate_change: -0.03,
-      ltv_change: 125
+      ltv_change: 125,
     };
   }
 
-  private async getChurnAnalysis(clinicId: string, periodStart: string, periodEnd: string): Promise<ChurnAnalysis> {
+  private async getChurnAnalysis(
+    _clinicId: string,
+    _periodStart: string,
+    _periodEnd: string
+  ): Promise<ChurnAnalysis> {
     // Implementation would analyze actual churn data
     return {
       churn_reasons: [],
@@ -846,26 +913,42 @@ export class RetentionAnalyticsService {
         [ChurnRiskLevel.LOW]: 10,
         [ChurnRiskLevel.MEDIUM]: 15,
         [ChurnRiskLevel.HIGH]: 12,
-        [ChurnRiskLevel.CRITICAL]: 8
+        [ChurnRiskLevel.CRITICAL]: 8,
       },
       churn_patterns: [],
-      seasonal_trends: []
+      seasonal_trends: [],
     };
   }
 
-  private async getStrategyPerformanceMetrics(clinicId: string, periodStart: string, periodEnd: string): Promise<StrategyPerformanceMetrics[]> {
+  private async getStrategyPerformanceMetrics(
+    _clinicId: string,
+    _periodStart: string,
+    _periodEnd: string
+  ): Promise<StrategyPerformanceMetrics[]> {
     return [];
   }
 
-  private async getRetentionBySegment(clinicId: string, periodStart: string, periodEnd: string): Promise<RetentionBySegment[]> {
+  private async getRetentionBySegment(
+    _clinicId: string,
+    _periodStart: string,
+    _periodEnd: string
+  ): Promise<RetentionBySegment[]> {
     return [];
   }
 
-  private async getRetentionTrends(clinicId: string, periodStart: string, periodEnd: string): Promise<RetentionTrend[]> {
+  private async getRetentionTrends(
+    _clinicId: string,
+    _periodStart: string,
+    _periodEnd: string
+  ): Promise<RetentionTrend[]> {
     return [];
   }
 
-  private async getChurnPredictionsSummary(clinicId: string, periodStart: string, periodEnd: string): Promise<ChurnPredictionSummary> {
+  private async getChurnPredictionsSummary(
+    _clinicId: string,
+    _periodStart: string,
+    _periodEnd: string
+  ): Promise<ChurnPredictionSummary> {
     return {
       total_predictions: 125,
       high_risk_patients: 25,
@@ -874,7 +957,7 @@ export class RetentionAnalyticsService {
       model_accuracy: 0.87,
       predictions_this_week: 18,
       interventions_triggered: 12,
-      successful_interventions: 8
+      successful_interventions: 8,
     };
   }
 }

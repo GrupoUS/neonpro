@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
-import { AuditLogger } from '../../auth/audit/audit-logger';
 import cron from 'node-cron';
+import { AuditLogger } from '../../auth/audit/audit-logger';
 
 export interface ScheduledNotification {
   id: string;
@@ -76,7 +76,7 @@ export class NotificationScheduler {
   private isRunning = false;
   private processingInterval: NodeJS.Timeout | null = null;
   private batchSize = 100;
-  private processingIntervalMs = 60000; // 1 minuto
+  private processingIntervalMs = 60_000; // 1 minuto
 
   constructor() {
     this.supabase = createClient(
@@ -112,8 +112,8 @@ export class NotificationScheduler {
       resource_type: 'notification_scheduler',
       details: {
         batch_size: this.batchSize,
-        processing_interval_ms: this.processingIntervalMs
-      }
+        processing_interval_ms: this.processingIntervalMs,
+      },
     });
 
     console.log('NotificationScheduler iniciado');
@@ -143,7 +143,7 @@ export class NotificationScheduler {
 
     await this.auditLogger.log({
       action: 'scheduler_stopped',
-      resource_type: 'notification_scheduler'
+      resource_type: 'notification_scheduler',
     });
 
     console.log('NotificationScheduler parado');
@@ -180,7 +180,7 @@ export class NotificationScheduler {
         created_at: new Date(),
         updated_at: new Date(),
         retry_count: 0,
-        max_retries: config.max_retries || 3
+        max_retries: config.max_retries || 3,
       };
 
       // Salvar no banco de dados
@@ -203,8 +203,8 @@ export class NotificationScheduler {
           channel: config.channel,
           scheduled_at: config.scheduled_at,
           recipient: config.recipient,
-          has_repeat: !!config.repeat_pattern
-        }
+          has_repeat: !!config.repeat_pattern,
+        },
       });
 
       return scheduleId;
@@ -223,7 +223,7 @@ export class NotificationScheduler {
         .from('scheduled_notifications')
         .update({
           status: 'cancelled',
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', scheduleId)
         .eq('status', 'pending');
@@ -239,7 +239,7 @@ export class NotificationScheduler {
       await this.auditLogger.log({
         action: 'notification_cancelled',
         resource_type: 'scheduled_notification',
-        resource_id: scheduleId
+        resource_id: scheduleId,
       });
     } catch (error) {
       throw new Error(`Erro ao cancelar notificação: ${error}`);
@@ -262,7 +262,7 @@ export class NotificationScheduler {
         .update({
           scheduled_at: newScheduledAt.toISOString(),
           status: 'pending',
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', scheduleId);
 
@@ -283,8 +283,8 @@ export class NotificationScheduler {
         resource_type: 'scheduled_notification',
         resource_id: scheduleId,
         details: {
-          new_scheduled_at: newScheduledAt
-        }
+          new_scheduled_at: newScheduledAt,
+        },
       });
     } catch (error) {
       throw new Error(`Erro ao reagendar notificação: ${error}`);
@@ -334,7 +334,10 @@ export class NotificationScheduler {
       }
 
       if (filters?.offset) {
-        query = query.range(filters.offset, filters.offset + (filters.limit || 50) - 1);
+        query = query.range(
+          filters.offset,
+          filters.offset + (filters.limit || 50) - 1
+        );
       }
 
       const { data, error } = await query;
@@ -367,21 +370,21 @@ export class NotificationScheduler {
         expired: 0,
         next_execution: null,
         channels: {},
-        priorities: {}
+        priorities: {},
       };
 
       // Calcular estatísticas
-      data.forEach(notification => {
+      data.forEach((notification) => {
         // Status
-        stats[notification.status as keyof SchedulerStats] = 
+        stats[notification.status as keyof SchedulerStats] =
           (stats[notification.status as keyof SchedulerStats] as number) + 1;
 
         // Canais
-        stats.channels[notification.channel] = 
+        stats.channels[notification.channel] =
           (stats.channels[notification.channel] || 0) + 1;
 
         // Prioridades
-        stats.priorities[notification.priority] = 
+        stats.priorities[notification.priority] =
           (stats.priorities[notification.priority] || 0) + 1;
 
         // Próxima execução
@@ -405,7 +408,7 @@ export class NotificationScheduler {
 
     try {
       const now = new Date();
-      
+
       // Buscar notificações pendentes que devem ser enviadas
       const { data: notifications, error } = await this.supabase
         .from('scheduled_notifications')
@@ -427,7 +430,10 @@ export class NotificationScheduler {
         try {
           await this.processNotification(notification);
         } catch (error) {
-          console.error(`Erro ao processar notificação ${notification.id}:`, error);
+          console.error(
+            `Erro ao processar notificação ${notification.id}:`,
+            error
+          );
           await this.handleNotificationError(notification, error as Error);
         }
       }
@@ -436,53 +442,55 @@ export class NotificationScheduler {
     }
   }
 
-  private async processNotification(notification: ScheduledNotification): Promise<void> {
-    try {
-      // Marcar como sendo processada
-      await this.supabase
-        .from('scheduled_notifications')
-        .update({ status: 'processing' })
-        .eq('id', notification.id);
+  private async processNotification(
+    notification: ScheduledNotification
+  ): Promise<void> {
+    // Marcar como sendo processada
+    await this.supabase
+      .from('scheduled_notifications')
+      .update({ status: 'processing' })
+      .eq('id', notification.id);
 
-      // Enviar notificação através do canal apropriado
-      await this.sendNotification(notification);
+    // Enviar notificação através do canal apropriado
+    await this.sendNotification(notification);
 
-      // Marcar como enviada
-      await this.supabase
-        .from('scheduled_notifications')
-        .update({
-          status: 'sent',
-          sent_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', notification.id);
+    // Marcar como enviada
+    await this.supabase
+      .from('scheduled_notifications')
+      .update({
+        status: 'sent',
+        sent_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', notification.id);
 
-      // Processar repetição se necessário
-      if (notification.repeat_pattern) {
-        await this.scheduleNextOccurrence(notification);
-      }
-
-      await this.auditLogger.log({
-        action: 'scheduled_notification_sent',
-        resource_type: 'scheduled_notification',
-        resource_id: notification.id,
-        details: {
-          channel: notification.channel,
-          recipient: notification.recipient
-        }
-      });
-    } catch (error) {
-      throw error;
+    // Processar repetição se necessário
+    if (notification.repeat_pattern) {
+      await this.scheduleNextOccurrence(notification);
     }
+
+    await this.auditLogger.log({
+      action: 'scheduled_notification_sent',
+      resource_type: 'scheduled_notification',
+      resource_id: notification.id,
+      details: {
+        channel: notification.channel,
+        recipient: notification.recipient,
+      },
+    });
   }
 
-  private async sendNotification(notification: ScheduledNotification): Promise<void> {
+  private async sendNotification(
+    notification: ScheduledNotification
+  ): Promise<void> {
     // Aqui seria feita a integração com o NotificationManager
     // Por enquanto, simular o envio
-    console.log(`Enviando notificação ${notification.id} via ${notification.channel} para ${notification.recipient}`);
-    
+    console.log(
+      `Enviando notificação ${notification.id} via ${notification.channel} para ${notification.recipient}`
+    );
+
     // Simular delay de envio
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
   }
 
   private async handleNotificationError(
@@ -490,11 +498,11 @@ export class NotificationScheduler {
     error: Error
   ): Promise<void> {
     const retryCount = notification.retry_count + 1;
-    
+
     if (retryCount <= notification.max_retries) {
       // Reagendar para retry
-      const nextRetry = new Date(Date.now() + (retryCount * 60000)); // Retry em 1, 2, 3 minutos
-      
+      const nextRetry = new Date(Date.now() + retryCount * 60_000); // Retry em 1, 2, 3 minutos
+
       await this.supabase
         .from('scheduled_notifications')
         .update({
@@ -502,7 +510,7 @@ export class NotificationScheduler {
           retry_count: retryCount,
           scheduled_at: nextRetry.toISOString(),
           error_message: error.message,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', notification.id);
     } else {
@@ -512,13 +520,15 @@ export class NotificationScheduler {
         .update({
           status: 'failed',
           error_message: error.message,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', notification.id);
     }
   }
 
-  private async scheduleNextOccurrence(notification: ScheduledNotification): Promise<void> {
+  private async scheduleNextOccurrence(
+    notification: ScheduledNotification
+  ): Promise<void> {
     if (!notification.repeat_pattern) return;
 
     const pattern = notification.repeat_pattern;
@@ -527,10 +537,15 @@ export class NotificationScheduler {
 
     switch (pattern.type) {
       case 'daily':
-        nextDate = new Date(currentDate.getTime() + (pattern.interval || 1) * 24 * 60 * 60 * 1000);
+        nextDate = new Date(
+          currentDate.getTime() + (pattern.interval || 1) * 24 * 60 * 60 * 1000
+        );
         break;
       case 'weekly':
-        nextDate = new Date(currentDate.getTime() + (pattern.interval || 1) * 7 * 24 * 60 * 60 * 1000);
+        nextDate = new Date(
+          currentDate.getTime() +
+            (pattern.interval || 1) * 7 * 24 * 60 * 60 * 1000
+        );
         break;
       case 'monthly':
         nextDate = new Date(currentDate);
@@ -560,18 +575,16 @@ export class NotificationScheduler {
       created_at: new Date(),
       updated_at: new Date(),
       sent_at: undefined,
-      error_message: undefined
+      error_message: undefined,
     };
 
-    await this.supabase
-      .from('scheduled_notifications')
-      .insert(newNotification);
+    await this.supabase.from('scheduled_notifications').insert(newNotification);
   }
 
   private async cleanupExpiredNotifications(): Promise<void> {
     try {
       const expiredDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000); // 30 dias atrás
-      
+
       const { error } = await this.supabase
         .from('scheduled_notifications')
         .update({ status: 'expired' })
@@ -583,38 +596,45 @@ export class NotificationScheduler {
       await this.auditLogger.log({
         action: 'expired_notifications_cleaned',
         resource_type: 'notification_scheduler',
-        details: { expired_before: expiredDate }
+        details: { expired_before: expiredDate },
       });
     } catch (error) {
       console.error('Erro ao limpar notificações expiradas:', error);
     }
   }
 
-  private async createCronJob(scheduleId: string, scheduledAt: Date): Promise<void> {
+  private async createCronJob(
+    scheduleId: string,
+    scheduledAt: Date
+  ): Promise<void> {
     const cronExpression = this.dateToCronExpression(scheduledAt);
-    
-    const job = cron.schedule(cronExpression, async () => {
-      try {
-        const { data: notification } = await this.supabase
-          .from('scheduled_notifications')
-          .select('*')
-          .eq('id', scheduleId)
-          .eq('status', 'pending')
-          .single();
 
-        if (notification) {
-          await this.processNotification(notification);
+    const job = cron.schedule(
+      cronExpression,
+      async () => {
+        try {
+          const { data: notification } = await this.supabase
+            .from('scheduled_notifications')
+            .select('*')
+            .eq('id', scheduleId)
+            .eq('status', 'pending')
+            .single();
+
+          if (notification) {
+            await this.processNotification(notification);
+          }
+
+          // Remover job após execução
+          job.stop();
+          this.cronJobs.delete(scheduleId);
+        } catch (error) {
+          console.error(`Erro no cron job ${scheduleId}:`, error);
         }
-        
-        // Remover job após execução
-        job.stop();
-        this.cronJobs.delete(scheduleId);
-      } catch (error) {
-        console.error(`Erro no cron job ${scheduleId}:`, error);
+      },
+      {
+        scheduled: false,
       }
-    }, {
-      scheduled: false
-    });
+    );
 
     this.cronJobs.set(scheduleId, job);
     job.start();
@@ -625,8 +645,8 @@ export class NotificationScheduler {
     const hour = date.getHours();
     const day = date.getDate();
     const month = date.getMonth() + 1;
-    const year = date.getFullYear();
-    
+    const _year = date.getFullYear();
+
     return `${minute} ${hour} ${day} ${month} *`;
   }
 
@@ -634,7 +654,7 @@ export class NotificationScheduler {
     const now = new Date();
     const diffMs = date.getTime() - now.getTime();
     const diffHours = diffMs / (1000 * 60 * 60);
-    
+
     return diffHours > 0 && diffHours <= 24; // Próximas 24 horas
   }
 
@@ -665,11 +685,17 @@ export class NotificationScheduler {
 
     // Validar padrão de repetição
     if (config.repeat_pattern) {
-      if (config.repeat_pattern.end_date && config.repeat_pattern.end_date <= config.scheduled_at) {
+      if (
+        config.repeat_pattern.end_date &&
+        config.repeat_pattern.end_date <= config.scheduled_at
+      ) {
         throw new Error('Data de fim deve ser posterior à data de agendamento');
       }
 
-      if (config.repeat_pattern.max_occurrences && config.repeat_pattern.max_occurrences <= 0) {
+      if (
+        config.repeat_pattern.max_occurrences &&
+        config.repeat_pattern.max_occurrences <= 0
+      ) {
         throw new Error('Número máximo de ocorrências deve ser positivo');
       }
     }

@@ -2,27 +2,25 @@
  * Current Subscription API
  * Epic: EPIC-001 - Advanced Subscription Management
  * Story: EPIC-001.1 - Subscription Middleware & Management System
- * 
+ *
  * GET /api/subscription/current - Get current user's subscription details
  * PUT /api/subscription/current - Update subscription settings
  */
 
-import { NextRequest, NextResponse } from 'next/server';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
+import { type NextRequest, NextResponse } from 'next/server';
 import type { Database } from '@/types/database';
-import { getSubscriptionContext } from '@/middleware/subscription/subscriptionUtils';
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const supabase = createRouteHandlerClient<Database>({ cookies });
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
     if (!session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Get user's clinic
@@ -56,7 +54,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({
         success: true,
         data: null,
-        message: 'No active subscription found'
+        message: 'No active subscription found',
       });
     }
 
@@ -73,22 +71,27 @@ export async function GET(request: NextRequest) {
         status_info: subscriptionStatus,
         usage_stats: usageStats,
         formatted_dates: {
-          current_period_start: subscription.current_period_start 
-            ? new Date(subscription.current_period_start).toLocaleDateString('pt-BR')
+          current_period_start: subscription.current_period_start
+            ? new Date(subscription.current_period_start).toLocaleDateString(
+                'pt-BR'
+              )
             : null,
           current_period_end: subscription.current_period_end
-            ? new Date(subscription.current_period_end).toLocaleDateString('pt-BR')
+            ? new Date(subscription.current_period_end).toLocaleDateString(
+                'pt-BR'
+              )
             : null,
           trial_end: subscription.trial_end
             ? new Date(subscription.trial_end).toLocaleDateString('pt-BR')
             : null,
           next_billing_date: subscription.next_billing_date
-            ? new Date(subscription.next_billing_date).toLocaleDateString('pt-BR')
-            : null
-        }
-      }
+            ? new Date(subscription.next_billing_date).toLocaleDateString(
+                'pt-BR'
+              )
+            : null,
+        },
+      },
     });
-
   } catch (error) {
     console.error('Current subscription API error:', error);
     return NextResponse.json(
@@ -101,13 +104,12 @@ export async function GET(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const supabase = createRouteHandlerClient<Database>({ cookies });
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
     if (!session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
@@ -130,7 +132,7 @@ export async function PUT(request: NextRequest) {
 
     // Update subscription settings
     const updateData: any = {};
-    
+
     if (cancel_at_period_end !== undefined) {
       updateData.cancel_at_period_end = cancel_at_period_end;
       if (cancel_at_period_end && cancellation_reason) {
@@ -157,11 +159,10 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: updatedSubscription,
-      message: cancel_at_period_end 
+      message: cancel_at_period_end
         ? 'Assinatura será cancelada no final do período atual'
-        : 'Configurações de assinatura atualizadas'
+        : 'Configurações de assinatura atualizadas',
     });
-
   } catch (error) {
     console.error('Update subscription API error:', error);
     return NextResponse.json(
@@ -181,7 +182,7 @@ async function calculateUsageStats(supabase: any, subscription: any) {
       let currentUsage = 0;
 
       switch (limitKey) {
-        case 'max_patients':
+        case 'max_patients': {
           const { count: patientCount } = await supabase
             .from('patients')
             .select('*', { count: 'exact', head: true })
@@ -189,12 +190,13 @@ async function calculateUsageStats(supabase: any, subscription: any) {
             .eq('is_active', true);
           currentUsage = patientCount || 0;
           break;
+        }
 
-        case 'max_appointments_per_month':
+        case 'max_appointments_per_month': {
           const startOfMonth = new Date();
           startOfMonth.setDate(1);
           startOfMonth.setHours(0, 0, 0, 0);
-          
+
           const { count: appointmentCount } = await supabase
             .from('appointments')
             .select('*', { count: 'exact', head: true })
@@ -202,8 +204,9 @@ async function calculateUsageStats(supabase: any, subscription: any) {
             .gte('appointment_date', startOfMonth.toISOString());
           currentUsage = appointmentCount || 0;
           break;
+        }
 
-        case 'max_users':
+        case 'max_users': {
           const { count: userCount } = await supabase
             .from('user_clinics')
             .select('*', { count: 'exact', head: true })
@@ -211,16 +214,21 @@ async function calculateUsageStats(supabase: any, subscription: any) {
             .eq('is_active', true);
           currentUsage = userCount || 0;
           break;
+        }
       }
 
       const limit = limits[limitKey];
-      const percentage = limit === -1 ? 0 : Math.round((currentUsage / limit) * 100);
+      const percentage =
+        limit === -1 ? 0 : Math.round((currentUsage / limit) * 100);
 
       stats[limitKey] = {
         current: currentUsage,
         limit: limit === -1 ? 'Unlimited' : limit,
         percentage,
-        remaining: limit === -1 ? Infinity : Math.max(0, limit - currentUsage)
+        remaining:
+          limit === -1
+            ? Number.POSITIVE_INFINITY
+            : Math.max(0, limit - currentUsage),
       };
     });
 
@@ -234,48 +242,50 @@ async function calculateUsageStats(supabase: any, subscription: any) {
 
 function getSubscriptionStatus(subscription: any) {
   const now = new Date();
-  
-  if (subscription.status === 'trial') {
-    if (subscription.trial_end) {
-      const trialEnd = new Date(subscription.trial_end);
-      const daysRemaining = Math.ceil((trialEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-      
-      if (daysRemaining <= 0) {
-        return {
-          status: 'trial_expired',
-          message: 'Período de teste expirado',
-          action_required: true
-        };
-      } else if (daysRemaining <= 3) {
-        return {
-          status: 'trial_ending',
-          message: `Teste expira em ${daysRemaining} dias`,
-          action_required: true
-        };
-      } else {
-        return {
-          status: 'trial_active',
-          message: `${daysRemaining} dias restantes no teste`,
-          action_required: false
-        };
-      }
+
+  if (subscription.status === 'trial' && subscription.trial_end) {
+    const trialEnd = new Date(subscription.trial_end);
+    const daysRemaining = Math.ceil(
+      (trialEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+    );
+
+    if (daysRemaining <= 0) {
+      return {
+        status: 'trial_expired',
+        message: 'Período de teste expirado',
+        action_required: true,
+      };
     }
+    if (daysRemaining <= 3) {
+      return {
+        status: 'trial_ending',
+        message: `Teste expira em ${daysRemaining} dias`,
+        action_required: true,
+      };
+    }
+    return {
+      status: 'trial_active',
+      message: `${daysRemaining} dias restantes no teste`,
+      action_required: false,
+    };
   }
 
   if (subscription.cancel_at_period_end && subscription.current_period_end) {
     const periodEnd = new Date(subscription.current_period_end);
-    const daysRemaining = Math.ceil((periodEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-    
+    const daysRemaining = Math.ceil(
+      (periodEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+    );
+
     return {
       status: 'canceling',
       message: `Assinatura será cancelada em ${daysRemaining} dias`,
-      action_required: false
+      action_required: false,
     };
   }
 
   return {
     status: 'active',
     message: 'Assinatura ativa',
-    action_required: false
+    action_required: false,
   };
 }

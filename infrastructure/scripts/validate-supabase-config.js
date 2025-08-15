@@ -6,42 +6,42 @@
  * Project: https://supabase.com/dashboard/project/gfkskrkbnawkuppazkpt
  */
 
-const fs = require("fs");
-const path = require("path");
-const chalk = require("chalk");
+const fs = require('node:fs');
+const path = require('node:path');
+const chalk = require('chalk');
 
 // Target Supabase project configuration
 const TARGET_CONFIG = {
-  project_id: "gfkskrkbnawkuppazkpt",
-  url: "https://gfkskrkbnawkuppazkpt.supabase.co",
-  dashboard: "https://supabase.com/dashboard/project/gfkskrkbnawkuppazkpt",
+  project_id: 'gfkskrkbnawkuppazkpt',
+  url: 'https://gfkskrkbnawkuppazkpt.supabase.co',
+  dashboard: 'https://supabase.com/dashboard/project/gfkskrkbnawkuppazkpt',
   anon_key:
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdma3NrcmtibmF3a3VwcGF6a3B0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc5NTExMzUsImV4cCI6MjA2MzUyNzEzNX0.hpJNATAkIwxQt_Z2Q-hxcxHX4wXszvc7eV24Sfs30ic",
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdma3NrcmtibmF3a3VwcGF6a3B0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc5NTExMzUsImV4cCI6MjA2MzUyNzEzNX0.hpJNATAkIwxQt_Z2Q-hxcxHX4wXszvc7eV24Sfs30ic',
 };
 
 // Files to validate
 const FILES_TO_CHECK = [
   {
-    path: ".env.local",
-    type: "env",
+    path: '.env.local',
+    type: 'env',
     required_vars: [
-      "NEXT_PUBLIC_SUPABASE_URL",
-      "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+      'NEXT_PUBLIC_SUPABASE_URL',
+      'NEXT_PUBLIC_SUPABASE_ANON_KEY',
     ],
   },
   {
-    path: "supabase-url-config.json",
-    type: "json",
+    path: 'supabase-url-config.json',
+    type: 'json',
     check_urls: true,
   },
   {
-    path: "app/utils/supabase/client.ts",
-    type: "typescript",
+    path: 'app/utils/supabase/client.ts',
+    type: 'typescript',
     check_env_vars: true,
   },
   {
-    path: "app/utils/supabase/server.ts",
-    type: "typescript",
+    path: 'app/utils/supabase/server.ts',
+    type: 'typescript',
     check_env_vars: true,
   },
 ];
@@ -53,21 +53,20 @@ class SupabaseConfigValidator {
     this.projectRoot = process.cwd();
   }
 
-  log(message, type = "info") {
+  log(message, type = 'info') {
     const timestamp = new Date().toISOString();
     const prefix = `[${timestamp}] [VIBECODE-VALIDATOR]`;
 
     switch (type) {
-      case "success":
+      case 'success':
         console.log(chalk.green(`${prefix} ✅ ${message}`));
         break;
-      case "error":
+      case 'error':
         console.log(chalk.red(`${prefix} ❌ ${message}`));
         break;
-      case "warning":
+      case 'warning':
         console.log(chalk.yellow(`${prefix} ⚠️  ${message}`));
         break;
-      case "info":
       default:
         console.log(chalk.blue(`${prefix} ℹ️  ${message}`));
         break;
@@ -82,7 +81,7 @@ class SupabaseConfigValidator {
       return false;
     }
 
-    const content = fs.readFileSync(fullPath, "utf8");
+    const content = fs.readFileSync(fullPath, 'utf8');
 
     // Check SUPABASE_URL
     const urlMatch = content.match(/NEXT_PUBLIC_SUPABASE_URL=(.+)/);
@@ -100,7 +99,7 @@ class SupabaseConfigValidator {
       return false;
     }
 
-    this.log(`Environment file ${filePath} is correctly configured`, "success");
+    this.log(`Environment file ${filePath} is correctly configured`, 'success');
     return true;
   }
 
@@ -113,27 +112,29 @@ class SupabaseConfigValidator {
     }
 
     try {
-      const content = JSON.parse(fs.readFileSync(fullPath, "utf8"));
+      const content = JSON.parse(fs.readFileSync(fullPath, 'utf8'));
 
       // Check if URLs contain correct project ID
       const checkUrls = (obj) => {
         for (const [key, value] of Object.entries(obj)) {
-          if (typeof value === "string" && value.includes("supabase.co")) {
+          if (typeof value === 'string' && value.includes('supabase.co')) {
             if (!value.includes(TARGET_CONFIG.project_id)) {
               this.warnings.push(
                 `URL in ${filePath}.${key} may be incorrect: ${value}`
               );
             }
-          } else if (typeof value === "object" && value !== null) {
+          } else if (typeof value === 'object' && value !== null) {
             checkUrls(value);
           } else if (Array.isArray(value)) {
             value.forEach((item) => {
-              if (typeof item === "string" && item.includes("supabase.co")) {
-                if (!item.includes(TARGET_CONFIG.project_id)) {
-                  this.warnings.push(
-                    `URL in ${filePath} array may be incorrect: ${item}`
-                  );
-                }
+              if (
+                typeof item === 'string' &&
+                item.includes('supabase.co') &&
+                !item.includes(TARGET_CONFIG.project_id)
+              ) {
+                this.warnings.push(
+                  `URL in ${filePath} array may be incorrect: ${item}`
+                );
               }
             });
           }
@@ -141,7 +142,7 @@ class SupabaseConfigValidator {
       };
 
       checkUrls(content);
-      this.log(`JSON config ${filePath} validated`, "success");
+      this.log(`JSON config ${filePath} validated`, 'success');
       return true;
     } catch (error) {
       this.errors.push(`Failed to parse JSON in ${filePath}: ${error.message}`);
@@ -157,41 +158,41 @@ class SupabaseConfigValidator {
       return false;
     }
 
-    const content = fs.readFileSync(fullPath, "utf8");
+    const content = fs.readFileSync(fullPath, 'utf8');
 
     // Check for correct environment variable usage
-    if (!content.includes("process.env.NEXT_PUBLIC_SUPABASE_URL")) {
+    if (!content.includes('process.env.NEXT_PUBLIC_SUPABASE_URL')) {
       this.errors.push(
         `${filePath} not using NEXT_PUBLIC_SUPABASE_URL environment variable`
       );
       return false;
     }
 
-    if (!content.includes("process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY")) {
+    if (!content.includes('process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY')) {
       this.errors.push(
         `${filePath} not using NEXT_PUBLIC_SUPABASE_ANON_KEY environment variable`
       );
       return false;
     }
 
-    this.log(`TypeScript file ${filePath} is correctly configured`, "success");
+    this.log(`TypeScript file ${filePath} is correctly configured`, 'success');
     return true;
   }
 
   async validateAll() {
-    this.log("Starting Supabase configuration validation...");
+    this.log('Starting Supabase configuration validation...');
     this.log(`Target Project: ${TARGET_CONFIG.project_id}`);
     this.log(`Target URL: ${TARGET_CONFIG.url}`);
 
     for (const fileConfig of FILES_TO_CHECK) {
       switch (fileConfig.type) {
-        case "env":
+        case 'env':
           await this.validateEnvFile(fileConfig.path);
           break;
-        case "json":
+        case 'json':
           await this.validateJsonConfig(fileConfig.path);
           break;
-        case "typescript":
+        case 'typescript':
           await this.validateTypeScriptFile(fileConfig.path);
           break;
       }
@@ -199,47 +200,47 @@ class SupabaseConfigValidator {
   }
 
   generateReport() {
-    console.log("\n" + "=".repeat(60));
-    console.log(chalk.bold.blue("VIBECODE SUPABASE CONFIGURATION REPORT"));
-    console.log("=".repeat(60));
+    console.log(`\n${'='.repeat(60)}`);
+    console.log(chalk.bold.blue('VIBECODE SUPABASE CONFIGURATION REPORT'));
+    console.log('='.repeat(60));
 
     console.log(`\n📊 Project: ${TARGET_CONFIG.project_id}`);
     console.log(`🌐 URL: ${TARGET_CONFIG.url}`);
     console.log(`🔗 Dashboard: ${TARGET_CONFIG.dashboard}\n`);
 
     if (this.errors.length === 0) {
-      this.log("All configurations are CORRECT! ✅", "success");
+      this.log('All configurations are CORRECT! ✅', 'success');
     } else {
-      this.log(`Found ${this.errors.length} error(s):`, "error");
+      this.log(`Found ${this.errors.length} error(s):`, 'error');
       this.errors.forEach((error) => console.log(chalk.red(`  • ${error}`)));
     }
 
     if (this.warnings.length > 0) {
-      this.log(`Found ${this.warnings.length} warning(s):`, "warning");
+      this.log(`Found ${this.warnings.length} warning(s):`, 'warning');
       this.warnings.forEach((warning) =>
         console.log(chalk.yellow(`  • ${warning}`))
       );
     }
 
-    console.log("\n" + "=".repeat(60));
+    console.log(`\n${'='.repeat(60)}`);
     return this.errors.length === 0;
   }
 
   async fixConfiguration() {
     if (this.errors.length === 0) {
       this.log(
-        "No fixes needed - configuration is already correct!",
-        "success"
+        'No fixes needed - configuration is already correct!',
+        'success'
       );
       return;
     }
 
-    this.log("Attempting to fix configuration issues...", "info");
+    this.log('Attempting to fix configuration issues...', 'info');
 
     // Fix .env.local if it exists and has issues
-    const envPath = path.join(this.projectRoot, ".env.local");
+    const envPath = path.join(this.projectRoot, '.env.local');
     if (fs.existsSync(envPath)) {
-      let content = fs.readFileSync(envPath, "utf8");
+      let content = fs.readFileSync(envPath, 'utf8');
 
       // Update SUPABASE_URL
       content = content.replace(
@@ -254,7 +255,7 @@ class SupabaseConfigValidator {
       );
 
       fs.writeFileSync(envPath, content);
-      this.log("Fixed .env.local configuration", "success");
+      this.log('Fixed .env.local configuration', 'success');
     }
   }
 }
@@ -267,7 +268,7 @@ async function main() {
   await validator.validateAll();
   const isValid = validator.generateReport();
 
-  if (args.includes("--fix") && !isValid) {
+  if (args.includes('--fix') && !isValid) {
     await validator.fixConfiguration();
 
     // Revalidate after fix

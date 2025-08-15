@@ -3,9 +3,9 @@
 // Epic 6 - Story 6.3: Comprehensive supplier management with performance tracking
 // =====================================================================================
 
+import { type NextRequest, NextResponse } from 'next/server';
 import { SupplierManagementService } from '@/app/lib/services/supplier-management-service';
 import { createCommunicationSchema } from '@/app/lib/validations/suppliers';
-import { NextRequest, NextResponse } from 'next/server';
 
 const supplierService = new SupplierManagementService();
 
@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const supplierId = searchParams.get('supplier_id');
-    
+
     if (!supplierId) {
       return NextResponse.json(
         { error: 'supplier_id é obrigatório' },
@@ -24,7 +24,8 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const communications = await supplierService.getSupplierCommunications(supplierId);
+    const communications =
+      await supplierService.getSupplierCommunications(supplierId);
     return NextResponse.json({ communications });
   } catch (error) {
     console.error('Erro ao buscar comunicações:', error);
@@ -51,7 +52,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const communication = await supplierService.createCommunication(validationResult.data);
+    const communication = await supplierService.createCommunication(
+      validationResult.data
+    );
 
     return NextResponse.json(communication, { status: 201 });
   } catch (error) {

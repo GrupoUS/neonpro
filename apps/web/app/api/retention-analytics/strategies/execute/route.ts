@@ -4,10 +4,10 @@
 // API endpoint for executing retention strategies
 // =====================================================================================
 
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
-import { RetentionAnalyticsService } from '@/app/lib/services/retention-analytics-service';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { RetentionAnalyticsService } from '@/app/lib/services/retention-analytics-service';
+import { createClient } from '@/app/utils/supabase/server';
 
 // =====================================================================================
 // VALIDATION SCHEMAS
@@ -16,7 +16,9 @@ import { z } from 'zod';
 const ExecuteStrategySchema = z.object({
   strategyId: z.string().uuid('Invalid strategy ID format'),
   clinicId: z.string().uuid('Invalid clinic ID format'),
-  patientIds: z.array(z.string().uuid()).min(1, 'At least one patient ID required'),
+  patientIds: z
+    .array(z.string().uuid())
+    .min(1, 'At least one patient ID required'),
   executeImmediately: z.boolean().default(false),
   scheduledAt: z.string().optional(),
   dryRun: z.boolean().default(false),
@@ -35,33 +37,33 @@ export async function POST(request: NextRequest) {
 
     if (!validation.success) {
       return NextResponse.json(
-        { 
-          error: 'Invalid execution data', 
-          details: validation.error.issues 
+        {
+          error: 'Invalid execution data',
+          details: validation.error.issues,
         },
         { status: 400 }
       );
     }
 
-    const { 
-      strategyId, 
-      clinicId, 
-      patientIds, 
-      executeImmediately, 
-      scheduledAt, 
+    const {
+      strategyId,
+      clinicId,
+      patientIds,
+      executeImmediately,
+      scheduledAt,
       dryRun,
-      notes 
+      notes,
     } = validation.data;
 
     // Verify authentication
     const supabase = await createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Verify clinic access and permissions
@@ -97,7 +99,7 @@ export async function POST(request: NextRequest) {
     // Verify strategy exists and belongs to clinic
     const retentionService = new RetentionAnalyticsService();
     const strategies = await retentionService.getRetentionStrategies(clinicId);
-    const strategy = strategies.find(s => s.id === strategyId);
+    const strategy = strategies.find((s) => s.id === strategyId);
 
     if (!strategy) {
       return NextResponse.json(
@@ -121,17 +123,19 @@ export async function POST(request: NextRequest) {
       .in('id', patientIds);
 
     if (validationError) {
-      throw new Error(`Failed to validate patients: ${validationError.message}`);
+      throw new Error(
+        `Failed to validate patients: ${validationError.message}`
+      );
     }
 
     if (validPatients.length !== patientIds.length) {
-      const invalidIds = patientIds.filter(id => 
-        !validPatients.some(p => p.id === id)
+      const invalidIds = patientIds.filter(
+        (id) => !validPatients.some((p) => p.id === id)
       );
       return NextResponse.json(
-        { 
+        {
           error: 'Some patients do not belong to the specified clinic',
-          invalidPatientIds: invalidIds
+          invalidPatientIds: invalidIds,
         },
         { status: 400 }
       );
@@ -141,7 +145,7 @@ export async function POST(request: NextRequest) {
     if (scheduledAt && !executeImmediately) {
       const scheduledDate = new Date(scheduledAt);
       const now = new Date();
-      
+
       if (scheduledDate <= now) {
         return NextResponse.json(
           { error: 'Scheduled execution time must be in the future' },
@@ -158,27 +162,31 @@ export async function POST(request: NextRequest) {
           id: strategy.id,
           name: strategy.name,
           type: strategy.strategy_type,
-          description: strategy.description
+          description: strategy.description,
         },
-        targets: validPatients.map(p => ({
+        targets: validPatients.map((p) => ({
           patientId: p.id,
           patientName: p.name,
-          actions: strategy.action_sequence.map(action => ({
+          actions: strategy.action_sequence.map((action) => ({
             type: action.type,
             description: action.description || `${action.type} action`,
             channel: action.channel,
-            estimated_execution_time: action.delay_minutes ? `${action.delay_minutes} minutes` : 'Immediate'
-          }))
+            estimated_execution_time: action.delay_minutes
+              ? `${action.delay_minutes} minutes`
+              : 'Immediate',
+          })),
         })),
         execution_plan: {
           total_patients: validPatients.length,
           total_actions: strategy.action_sequence.length * validPatients.length,
-          estimated_duration: strategy.action_sequence.reduce((sum, action) => 
-            sum + (action.delay_minutes || 0), 0
+          estimated_duration: strategy.action_sequence.reduce(
+            (sum, action) => sum + (action.delay_minutes || 0),
+            0
           ),
-          scheduled_for: scheduledAt || (executeImmediately ? 'Immediate' : 'Not scheduled'),
-          execution_type: 'Simulation (Dry Run)'
-        }
+          scheduled_for:
+            scheduledAt || (executeImmediately ? 'Immediate' : 'Not scheduled'),
+          execution_type: 'Simulation (Dry Run)',
+        },
       };
 
       return NextResponse.json({
@@ -186,13 +194,13 @@ export async function POST(request: NextRequest) {
         data: simulation,
         message: 'Strategy execution simulated successfully',
         isDryRun: true,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     }
 
     // Actual execution
     const executionResult = await retentionService.executeRetentionStrategy(
-      strategyId, 
+      strategyId,
       patientIds
     );
 
@@ -206,7 +214,7 @@ export async function POST(request: NextRequest) {
         patient_ids: patientIds,
         execution_status: executionResult.success ? 'completed' : 'failed',
         execution_results: executionResult,
-        notes: notes,
+        notes,
         scheduled_at: scheduledAt ? new Date(scheduledAt) : null,
         executed_at: executeImmediately ? new Date() : null,
       });
@@ -223,7 +231,7 @@ export async function POST(request: NextRequest) {
         strategy: {
           id: strategy.id,
           name: strategy.name,
-          type: strategy.strategy_type
+          type: strategy.strategy_type,
         },
         targets: validPatients,
         executionMetadata: {
@@ -231,20 +239,19 @@ export async function POST(request: NextRequest) {
           executed_at: new Date().toISOString(),
           scheduled_at: scheduledAt,
           immediate: executeImmediately,
-          notes: notes
-        }
+          notes,
+        },
       },
       message: `Strategy executed ${executionResult.success ? 'successfully' : 'with errors'} for ${validPatients.length} patients`,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
-
   } catch (error) {
     console.error('Error executing retention strategy:', error);
-    
+
     return NextResponse.json(
-      { 
+      {
         error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );

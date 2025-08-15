@@ -1,11 +1,20 @@
-import { describe, expect, test, beforeEach, afterEach, jest } from '@jest/globals';
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  jest,
+  test,
+} from '@jest/globals';
 import { NextRequest } from 'next/server';
 import { GET, POST } from '@/app/api/export/route';
 import { createClient } from '@/utils/supabase/server';
 
 // Mock Supabase client
 jest.mock('@/utils/supabase/server');
-const mockCreateClient = createClient as jest.MockedFunction<typeof createClient>;
+const mockCreateClient = createClient as jest.MockedFunction<
+  typeof createClient
+>;
 
 // Mock file system operations
 jest.mock('fs/promises');
@@ -18,8 +27,8 @@ jest.mock('jspdf', () => ({
     text: jest.fn(),
     addPage: jest.fn(),
     save: jest.fn(),
-    output: jest.fn().mockReturnValue('mock-pdf-data')
-  }))
+    output: jest.fn().mockReturnValue('mock-pdf-data'),
+  })),
 }));
 
 jest.mock('xlsx', () => ({
@@ -27,9 +36,9 @@ jest.mock('xlsx', () => ({
     json_to_sheet: jest.fn().mockReturnValue({}),
     book_new: jest.fn().mockReturnValue({}),
     book_append_sheet: jest.fn(),
-    sheet_to_csv: jest.fn().mockReturnValue('mock,csv,data')
+    sheet_to_csv: jest.fn().mockReturnValue('mock,csv,data'),
   },
-  write: jest.fn().mockReturnValue('mock-xlsx-data')
+  write: jest.fn().mockReturnValue('mock-xlsx-data'),
 }));
 
 describe('Export API Routes', () => {
@@ -39,12 +48,12 @@ describe('Export API Routes', () => {
     // Setup mock Supabase client
     mockSupabase = {
       auth: {
-        getUser: jest.fn()
+        getUser: jest.fn(),
       },
       from: jest.fn(),
-      rpc: jest.fn()
+      rpc: jest.fn(),
     };
-    
+
     mockCreateClient.mockResolvedValue(mockSupabase);
   });
 
@@ -58,7 +67,7 @@ describe('Export API Routes', () => {
       const mockUser = {
         id: 'user123',
         email: 'test@example.com',
-        user_metadata: { role: 'admin' }
+        user_metadata: { role: 'admin' },
       };
 
       const mockSubscriptions = [
@@ -71,13 +80,13 @@ describe('Export API Routes', () => {
           current_period_start: '2024-01-01T00:00:00Z',
           current_period_end: '2024-02-01T00:00:00Z',
           amount: 2900,
-          currency: 'usd'
-        }
+          currency: 'usd',
+        },
       ];
 
       mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: mockUser },
-        error: null
+        error: null,
       });
 
       const mockFrom = {
@@ -87,8 +96,8 @@ describe('Export API Routes', () => {
         lte: jest.fn().mockReturnThis(),
         order: jest.fn().mockResolvedValue({
           data: mockSubscriptions,
-          error: null
-        })
+          error: null,
+        }),
       };
 
       mockSupabase.from.mockReturnValue(mockFrom);
@@ -104,7 +113,9 @@ describe('Export API Routes', () => {
       // Assert
       expect(response.status).toBe(200);
       expect(response.headers.get('content-type')).toBe('text/csv');
-      expect(response.headers.get('content-disposition')).toContain('attachment');
+      expect(response.headers.get('content-disposition')).toContain(
+        'attachment'
+      );
       expect(mockSupabase.from).toHaveBeenCalledWith('subscriptions');
     });
 
@@ -113,29 +124,29 @@ describe('Export API Routes', () => {
       const mockUser = {
         id: 'user123',
         email: 'test@example.com',
-        user_metadata: { role: 'admin' }
+        user_metadata: { role: 'admin' },
       };
 
       const mockAnalytics = {
         subscriptionMetrics: {
           totalSubscriptions: 150,
           activeSubscriptions: 125,
-          mrr: 15000
+          mrr: 15_000,
         },
         trialMetrics: {
           totalTrials: 500,
-          conversionRate: 0.25
-        }
+          conversionRate: 0.25,
+        },
       };
 
       mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: mockUser },
-        error: null
+        error: null,
       });
 
       mockSupabase.rpc.mockResolvedValue({
         data: mockAnalytics,
-        error: null
+        error: null,
       });
 
       const request = new NextRequest(
@@ -149,7 +160,9 @@ describe('Export API Routes', () => {
       // Assert
       expect(response.status).toBe(200);
       expect(response.headers.get('content-type')).toBe('application/pdf');
-      expect(response.headers.get('content-disposition')).toContain('attachment');
+      expect(response.headers.get('content-disposition')).toContain(
+        'attachment'
+      );
     });
 
     test('should export trial data as Excel', async () => {
@@ -157,7 +170,7 @@ describe('Export API Routes', () => {
       const mockUser = {
         id: 'user123',
         email: 'test@example.com',
-        user_metadata: { role: 'admin' }
+        user_metadata: { role: 'admin' },
       };
 
       const mockTrials = [
@@ -168,13 +181,13 @@ describe('Export API Routes', () => {
           status: 'active',
           started_at: '2024-01-01T00:00:00Z',
           expires_at: '2024-01-15T00:00:00Z',
-          converted: false
-        }
+          converted: false,
+        },
       ];
 
       mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: mockUser },
-        error: null
+        error: null,
       });
 
       const mockFrom = {
@@ -184,8 +197,8 @@ describe('Export API Routes', () => {
         lte: jest.fn().mockReturnThis(),
         order: jest.fn().mockResolvedValue({
           data: mockTrials,
-          error: null
-        })
+          error: null,
+        }),
       };
 
       mockSupabase.from.mockReturnValue(mockFrom);
@@ -200,15 +213,19 @@ describe('Export API Routes', () => {
 
       // Assert
       expect(response.status).toBe(200);
-      expect(response.headers.get('content-type')).toBe('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-      expect(response.headers.get('content-disposition')).toContain('attachment');
+      expect(response.headers.get('content-type')).toBe(
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      );
+      expect(response.headers.get('content-disposition')).toContain(
+        'attachment'
+      );
     });
 
     test('should return 401 for unauthenticated requests', async () => {
       // Arrange
       mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: null },
-        error: { message: 'Invalid token' }
+        error: { message: 'Invalid token' },
       });
 
       const request = new NextRequest(
@@ -231,12 +248,12 @@ describe('Export API Routes', () => {
       const mockUser = {
         id: 'user123',
         email: 'test@example.com',
-        user_metadata: { role: 'user' } // Not admin
+        user_metadata: { role: 'user' }, // Not admin
       };
 
       mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: mockUser },
-        error: null
+        error: null,
       });
 
       const request = new NextRequest(
@@ -259,12 +276,12 @@ describe('Export API Routes', () => {
       const mockUser = {
         id: 'user123',
         email: 'test@example.com',
-        user_metadata: { role: 'admin' }
+        user_metadata: { role: 'admin' },
       };
 
       mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: mockUser },
-        error: null
+        error: null,
       });
 
       const request = new NextRequest(
@@ -287,12 +304,12 @@ describe('Export API Routes', () => {
       const mockUser = {
         id: 'user123',
         email: 'test@example.com',
-        user_metadata: { role: 'admin' }
+        user_metadata: { role: 'admin' },
       };
 
       mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: mockUser },
-        error: null
+        error: null,
       });
 
       const mockFrom = {
@@ -301,8 +318,8 @@ describe('Export API Routes', () => {
         lte: jest.fn().mockReturnThis(),
         order: jest.fn().mockResolvedValue({
           data: [],
-          error: null
-        })
+          error: null,
+        }),
       };
 
       mockSupabase.from.mockReturnValue(mockFrom);
@@ -326,20 +343,20 @@ describe('Export API Routes', () => {
       const mockUser = {
         id: 'user123',
         email: 'test@example.com',
-        user_metadata: { role: 'admin' }
+        user_metadata: { role: 'admin' },
       };
 
       mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: mockUser },
-        error: null
+        error: null,
       });
 
       const mockFrom = {
         select: jest.fn().mockReturnThis(),
         order: jest.fn().mockResolvedValue({
           data: null,
-          error: { message: 'Database connection failed' }
-        })
+          error: { message: 'Database connection failed' },
+        }),
       };
 
       mockSupabase.from.mockReturnValue(mockFrom);
@@ -366,7 +383,7 @@ describe('Export API Routes', () => {
       const mockUser = {
         id: 'user123',
         email: 'test@example.com',
-        user_metadata: { role: 'admin' }
+        user_metadata: { role: 'admin' },
       };
 
       const exportRequest = {
@@ -374,22 +391,22 @@ describe('Export API Routes', () => {
         format: 'csv',
         dateRange: {
           start: '2024-01-01',
-          end: '2024-01-31'
+          end: '2024-01-31',
         },
-        email: 'admin@example.com'
+        email: 'admin@example.com',
       };
 
       mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: mockUser },
-        error: null
+        error: null,
       });
 
       const mockFrom = {
         insert: jest.fn().mockReturnThis(),
         select: jest.fn().mockResolvedValue({
           data: [{ id: 'job_123', status: 'queued' }],
-          error: null
-        })
+          error: null,
+        }),
       };
 
       mockSupabase.from.mockReturnValue(mockFrom);
@@ -397,9 +414,9 @@ describe('Export API Routes', () => {
       const request = new NextRequest('http://localhost:3000/api/export', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(exportRequest)
+        body: JSON.stringify(exportRequest),
       });
 
       // Act
@@ -419,26 +436,26 @@ describe('Export API Routes', () => {
       const mockUser = {
         id: 'user123',
         email: 'test@example.com',
-        user_metadata: { role: 'admin' }
+        user_metadata: { role: 'admin' },
       };
 
       const invalidRequest = {
         types: [], // Empty array
         format: 'invalid',
-        email: 'invalid-email'
+        email: 'invalid-email',
       };
 
       mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: mockUser },
-        error: null
+        error: null,
       });
 
       const request = new NextRequest('http://localhost:3000/api/export', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(invalidRequest)
+        body: JSON.stringify(invalidRequest),
       });
 
       // Act
@@ -458,27 +475,29 @@ describe('Export API Routes', () => {
       const mockUser = {
         id: 'user123',
         email: 'test@example.com',
-        user_metadata: { role: 'admin' }
+        user_metadata: { role: 'admin' },
       };
 
       // Simulate large dataset
-      const largeDataset = Array(100000).fill(null).map((_, i) => ({
-        id: `sub_${i}`,
-        user_id: `user_${i}`,
-        status: 'active'
-      }));
+      const largeDataset = Array(100_000)
+        .fill(null)
+        .map((_, i) => ({
+          id: `sub_${i}`,
+          user_id: `user_${i}`,
+          status: 'active',
+        }));
 
       mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: mockUser },
-        error: null
+        error: null,
       });
 
       const mockFrom = {
         select: jest.fn().mockReturnThis(),
         order: jest.fn().mockResolvedValue({
           data: largeDataset,
-          error: null
-        })
+          error: null,
+        }),
       };
 
       mockSupabase.from.mockReturnValue(mockFrom);
@@ -503,38 +522,41 @@ describe('Export API Routes', () => {
       const mockUser = {
         id: 'user123',
         email: 'test@example.com',
-        user_metadata: { role: 'admin' }
+        user_metadata: { role: 'admin' },
       };
 
       mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: mockUser },
-        error: null
+        error: null,
       });
 
       const mockFrom = {
         select: jest.fn().mockReturnThis(),
         order: jest.fn().mockResolvedValue({
           data: [],
-          error: null
-        })
+          error: null,
+        }),
       };
 
       mockSupabase.from.mockReturnValue(mockFrom);
 
-      const requests = Array(5).fill(null).map(() => 
-        new NextRequest(
-          'http://localhost:3000/api/export?type=subscriptions&format=csv',
-          { method: 'GET' }
-        )
-      );
+      const requests = Array(5)
+        .fill(null)
+        .map(
+          () =>
+            new NextRequest(
+              'http://localhost:3000/api/export?type=subscriptions&format=csv',
+              { method: 'GET' }
+            )
+        );
 
       // Act
       const responses = await Promise.all(
-        requests.map(request => GET(request))
+        requests.map((request) => GET(request))
       );
 
       // Assert
-      responses.forEach(response => {
+      responses.forEach((response) => {
         expect([200, 429]).toContain(response.status);
       });
     });
@@ -544,26 +566,28 @@ describe('Export API Routes', () => {
       const mockUser = {
         id: 'user123',
         email: 'test@example.com',
-        user_metadata: { role: 'admin' }
+        user_metadata: { role: 'admin' },
       };
 
-      const moderateDataset = Array(5000).fill(null).map((_, i) => ({
-        id: `sub_${i}`,
-        user_id: `user_${i}`,
-        status: 'active'
-      }));
+      const moderateDataset = Array(5000)
+        .fill(null)
+        .map((_, i) => ({
+          id: `sub_${i}`,
+          user_id: `user_${i}`,
+          status: 'active',
+        }));
 
       mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: mockUser },
-        error: null
+        error: null,
       });
 
       const mockFrom = {
         select: jest.fn().mockReturnThis(),
         order: jest.fn().mockResolvedValue({
           data: moderateDataset,
-          error: null
-        })
+          error: null,
+        }),
       };
 
       mockSupabase.from.mockReturnValue(mockFrom);

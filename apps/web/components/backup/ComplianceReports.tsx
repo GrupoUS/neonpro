@@ -1,12 +1,40 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import {
+  AlertTriangle,
+  BarChart3,
+  CheckCircle,
+  Clock,
+  Download,
+  Eye,
+  FileText,
+  Filter,
+  Globe,
+  Lock,
+  Plus,
+  RefreshCw,
+  Search,
+  Shield,
+  Users,
+  XCircle,
+} from 'lucide-react';
+import type React from 'react';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import {
   Select,
   SelectContent,
@@ -22,37 +50,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import {
-  Shield,
-  FileText,
-  Download,
-  Calendar,
-  CheckCircle,
-  XCircle,
-  AlertTriangle,
-  Clock,
-  Filter,
-  Search,
-  RefreshCw,
-  Plus,
-  Eye,
-  BarChart3,
-  Users,
-  Lock,
-  Globe,
-  Archive,
-} from 'lucide-react';
-import { formatDate, formatBytes } from '@/lib/utils';
-import { toast } from 'sonner';
+import { Textarea } from '@/components/ui/textarea';
+import { formatDate } from '@/lib/utils';
 
 // Types
 interface ComplianceReport {
@@ -104,12 +103,16 @@ interface ComplianceMetrics {
 
 const ComplianceReports: React.FC = () => {
   const [reports, setReports] = useState<ComplianceReport[]>([]);
-  const [filteredReports, setFilteredReports] = useState<ComplianceReport[]>([]);
+  const [filteredReports, setFilteredReports] = useState<ComplianceReport[]>(
+    []
+  );
   const [templates, setTemplates] = useState<ComplianceTemplate[]>([]);
   const [metrics, setMetrics] = useState<ComplianceMetrics | null>(null);
   const [loading, setLoading] = useState(true);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
-  const [selectedReport, setSelectedReport] = useState<ComplianceReport | null>(null);
+  const [selectedReport, setSelectedReport] = useState<ComplianceReport | null>(
+    null
+  );
   const [showDetailsDialog, setShowDetailsDialog] = useState(false);
   const [filters, setFilters] = useState({
     type: '',
@@ -129,20 +132,16 @@ const ComplianceReports: React.FC = () => {
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [loadData]);
 
   useEffect(() => {
     applyFilters();
-  }, [reports, filters]);
+  }, [applyFilters]);
 
   const loadData = async () => {
     try {
       setLoading(true);
-      await Promise.all([
-        loadReports(),
-        loadTemplates(),
-        loadMetrics(),
-      ]);
+      await Promise.all([loadReports(), loadTemplates(), loadMetrics()]);
     } catch (error) {
       console.error('Erro ao carregar dados:', error);
       toast.error('Erro ao carregar dados de compliance');
@@ -179,28 +178,33 @@ const ComplianceReports: React.FC = () => {
     let filtered = [...reports];
 
     if (filters.type) {
-      filtered = filtered.filter(report => report.type === filters.type);
+      filtered = filtered.filter((report) => report.type === filters.type);
     }
 
     if (filters.status) {
-      filtered = filtered.filter(report => report.status === filters.status);
+      filtered = filtered.filter((report) => report.status === filters.status);
     }
 
     if (filters.dateFrom) {
       const fromDate = new Date(filters.dateFrom);
-      filtered = filtered.filter(report => new Date(report.created_at) >= fromDate);
+      filtered = filtered.filter(
+        (report) => new Date(report.created_at) >= fromDate
+      );
     }
 
     if (filters.dateTo) {
       const toDate = new Date(filters.dateTo);
-      filtered = filtered.filter(report => new Date(report.created_at) <= toDate);
+      filtered = filtered.filter(
+        (report) => new Date(report.created_at) <= toDate
+      );
     }
 
     if (filters.searchTerm) {
       const term = filters.searchTerm.toLowerCase();
-      filtered = filtered.filter(report => 
-        report.title.toLowerCase().includes(term) ||
-        report.id.toLowerCase().includes(term)
+      filtered = filtered.filter(
+        (report) =>
+          report.title.toLowerCase().includes(term) ||
+          report.id.toLowerCase().includes(term)
       );
     }
 
@@ -241,9 +245,12 @@ const ComplianceReports: React.FC = () => {
   const handleGenerateReport = async (reportId: string) => {
     try {
       toast.info('Gerando relatório...');
-      const response = await fetch(`/api/backup/compliance/reports/${reportId}/generate`, {
-        method: 'POST',
-      });
+      const response = await fetch(
+        `/api/backup/compliance/reports/${reportId}/generate`,
+        {
+          method: 'POST',
+        }
+      );
 
       if (response.ok) {
         toast.success('Relatório gerado com sucesso');
@@ -257,10 +264,15 @@ const ComplianceReports: React.FC = () => {
     }
   };
 
-  const handleDownloadReport = async (reportId: string, format: 'PDF' | 'XLSX' = 'PDF') => {
+  const handleDownloadReport = async (
+    reportId: string,
+    format: 'PDF' | 'XLSX' = 'PDF'
+  ) => {
     try {
-      const response = await fetch(`/api/backup/compliance/reports/${reportId}/download?format=${format}`);
-      
+      const response = await fetch(
+        `/api/backup/compliance/reports/${reportId}/download?format=${format}`
+      );
+
       if (response.ok) {
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
@@ -349,22 +361,22 @@ const ComplianceReports: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">Relatórios de Compliance</h2>
+          <h2 className="font-bold text-2xl">Relatórios de Compliance</h2>
           <p className="text-muted-foreground">
             Gerencie relatórios de conformidade e auditoria
           </p>
         </div>
         <div className="flex space-x-2">
           <Button onClick={loadData} variant="outline">
-            <RefreshCw className="h-4 w-4 mr-2" />
+            <RefreshCw className="mr-2 h-4 w-4" />
             Atualizar
           </Button>
-          <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
+          <Dialog onOpenChange={setShowCreateDialog} open={showCreateDialog}>
             <DialogTrigger asChild>
               <Button>
-                <Plus className="h-4 w-4 mr-2" />
+                <Plus className="mr-2 h-4 w-4" />
                 Novo Relatório
               </Button>
             </DialogTrigger>
@@ -380,17 +392,21 @@ const ComplianceReports: React.FC = () => {
                   <Label htmlFor="title">Título</Label>
                   <Input
                     id="title"
-                    value={newReport.title}
-                    onChange={(e) => setNewReport({ ...newReport, title: e.target.value })}
+                    onChange={(e) =>
+                      setNewReport({ ...newReport, title: e.target.value })
+                    }
                     placeholder="Ex: Relatório LGPD Mensal"
+                    value={newReport.title}
                   />
                 </div>
 
                 <div className="space-y-2">
                   <Label>Tipo de Compliance</Label>
                   <Select
+                    onValueChange={(value: any) =>
+                      setNewReport({ ...newReport, type: value })
+                    }
                     value={newReport.type}
-                    onValueChange={(value: any) => setNewReport({ ...newReport, type: value })}
                   >
                     <SelectTrigger>
                       <SelectValue />
@@ -410,18 +426,28 @@ const ComplianceReports: React.FC = () => {
                     <Label htmlFor="periodStart">Período Inicial</Label>
                     <Input
                       id="periodStart"
+                      onChange={(e) =>
+                        setNewReport({
+                          ...newReport,
+                          period_start: e.target.value,
+                        })
+                      }
                       type="date"
                       value={newReport.period_start}
-                      onChange={(e) => setNewReport({ ...newReport, period_start: e.target.value })}
                     />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="periodEnd">Período Final</Label>
                     <Input
                       id="periodEnd"
+                      onChange={(e) =>
+                        setNewReport({
+                          ...newReport,
+                          period_end: e.target.value,
+                        })
+                      }
                       type="date"
                       value={newReport.period_end}
-                      onChange={(e) => setNewReport({ ...newReport, period_end: e.target.value })}
                     />
                   </div>
                 </div>
@@ -429,8 +455,10 @@ const ComplianceReports: React.FC = () => {
                 <div className="space-y-2">
                   <Label>Template (Opcional)</Label>
                   <Select
+                    onValueChange={(value) =>
+                      setNewReport({ ...newReport, template_id: value })
+                    }
                     value={newReport.template_id}
-                    onValueChange={(value) => setNewReport({ ...newReport, template_id: value })}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione um template" />
@@ -449,20 +477,26 @@ const ComplianceReports: React.FC = () => {
                   <Label htmlFor="description">Descrição</Label>
                   <Textarea
                     id="description"
-                    value={newReport.description}
-                    onChange={(e) => setNewReport({ ...newReport, description: e.target.value })}
+                    onChange={(e) =>
+                      setNewReport({
+                        ...newReport,
+                        description: e.target.value,
+                      })
+                    }
                     placeholder="Descrição do relatório..."
                     rows={3}
+                    value={newReport.description}
                   />
                 </div>
 
                 <div className="flex justify-end space-x-2">
-                  <Button variant="outline" onClick={() => setShowCreateDialog(false)}>
+                  <Button
+                    onClick={() => setShowCreateDialog(false)}
+                    variant="outline"
+                  >
                     Cancelar
                   </Button>
-                  <Button onClick={handleCreateReport}>
-                    Criar Relatório
-                  </Button>
+                  <Button onClick={handleCreateReport}>Criar Relatório</Button>
                 </div>
               </div>
             </DialogContent>
@@ -472,15 +506,17 @@ const ComplianceReports: React.FC = () => {
 
       {/* Métricas de Compliance */}
       {metrics && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className={`text-2xl font-bold ${getComplianceScoreColor(metrics.overall_score)}`}>
+                  <p
+                    className={`font-bold text-2xl ${getComplianceScoreColor(metrics.overall_score)}`}
+                  >
                     {metrics.overall_score}%
                   </p>
-                  <p className="text-sm text-muted-foreground">Score Geral</p>
+                  <p className="text-muted-foreground text-sm">Score Geral</p>
                 </div>
                 <BarChart3 className="h-8 w-8 text-blue-500" />
               </div>
@@ -491,8 +527,10 @@ const ComplianceReports: React.FC = () => {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-2xl font-bold">{metrics.total_reports}</p>
-                  <p className="text-sm text-muted-foreground">Total de Relatórios</p>
+                  <p className="font-bold text-2xl">{metrics.total_reports}</p>
+                  <p className="text-muted-foreground text-sm">
+                    Total de Relatórios
+                  </p>
                 </div>
                 <FileText className="h-8 w-8 text-green-500" />
               </div>
@@ -503,8 +541,10 @@ const ComplianceReports: React.FC = () => {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-2xl font-bold">{metrics.pending_reports}</p>
-                  <p className="text-sm text-muted-foreground">Pendentes</p>
+                  <p className="font-bold text-2xl">
+                    {metrics.pending_reports}
+                  </p>
+                  <p className="text-muted-foreground text-sm">Pendentes</p>
                 </div>
                 <Clock className="h-8 w-8 text-yellow-500" />
               </div>
@@ -515,8 +555,12 @@ const ComplianceReports: React.FC = () => {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-2xl font-bold text-red-600">{metrics.critical_findings}</p>
-                  <p className="text-sm text-muted-foreground">Achados Críticos</p>
+                  <p className="font-bold text-2xl text-red-600">
+                    {metrics.critical_findings}
+                  </p>
+                  <p className="text-muted-foreground text-sm">
+                    Achados Críticos
+                  </p>
                 </div>
                 <AlertTriangle className="h-8 w-8 text-red-500" />
               </div>
@@ -529,22 +573,24 @@ const ComplianceReports: React.FC = () => {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center">
-            <Filter className="h-5 w-5 mr-2" />
+            <Filter className="mr-2 h-5 w-5" />
             Filtros
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
             <div className="space-y-2">
               <Label htmlFor="search">Buscar</Label>
               <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute top-3 left-3 h-4 w-4 text-muted-foreground" />
                 <Input
+                  className="pl-9"
                   id="search"
+                  onChange={(e) =>
+                    setFilters({ ...filters, searchTerm: e.target.value })
+                  }
                   placeholder="Título ou ID..."
                   value={filters.searchTerm}
-                  onChange={(e) => setFilters({ ...filters, searchTerm: e.target.value })}
-                  className="pl-9"
                 />
               </div>
             </div>
@@ -552,8 +598,10 @@ const ComplianceReports: React.FC = () => {
             <div className="space-y-2">
               <Label>Tipo</Label>
               <Select
+                onValueChange={(value) =>
+                  setFilters({ ...filters, type: value })
+                }
                 value={filters.type}
-                onValueChange={(value) => setFilters({ ...filters, type: value })}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Todos" />
@@ -572,8 +620,10 @@ const ComplianceReports: React.FC = () => {
             <div className="space-y-2">
               <Label>Status</Label>
               <Select
+                onValueChange={(value) =>
+                  setFilters({ ...filters, status: value })
+                }
                 value={filters.status}
-                onValueChange={(value) => setFilters({ ...filters, status: value })}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Todos" />
@@ -592,9 +642,11 @@ const ComplianceReports: React.FC = () => {
               <Label htmlFor="dateFrom">Data Inicial</Label>
               <Input
                 id="dateFrom"
+                onChange={(e) =>
+                  setFilters({ ...filters, dateFrom: e.target.value })
+                }
                 type="date"
                 value={filters.dateFrom}
-                onChange={(e) => setFilters({ ...filters, dateFrom: e.target.value })}
               />
             </div>
 
@@ -602,9 +654,11 @@ const ComplianceReports: React.FC = () => {
               <Label htmlFor="dateTo">Data Final</Label>
               <Input
                 id="dateTo"
+                onChange={(e) =>
+                  setFilters({ ...filters, dateTo: e.target.value })
+                }
                 type="date"
                 value={filters.dateTo}
-                onChange={(e) => setFilters({ ...filters, dateTo: e.target.value })}
               />
             </div>
           </div>
@@ -614,20 +668,20 @@ const ComplianceReports: React.FC = () => {
       {/* Lista de Relatórios */}
       <Card>
         <CardHeader>
-          <CardTitle>
-            Relatórios ({filteredReports.length})
-          </CardTitle>
+          <CardTitle>Relatórios ({filteredReports.length})</CardTitle>
         </CardHeader>
         <CardContent>
           {loading ? (
-            <div className="text-center py-8">
-              <RefreshCw className="h-8 w-8 animate-spin mx-auto mb-2" />
+            <div className="py-8 text-center">
+              <RefreshCw className="mx-auto mb-2 h-8 w-8 animate-spin" />
               <p>Carregando relatórios...</p>
             </div>
           ) : filteredReports.length === 0 ? (
-            <div className="text-center py-8">
-              <FileText className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-              <p className="text-muted-foreground">Nenhum relatório encontrado</p>
+            <div className="py-8 text-center">
+              <FileText className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
+              <p className="text-muted-foreground">
+                Nenhum relatório encontrado
+              </p>
             </div>
           ) : (
             <Table>
@@ -650,7 +704,7 @@ const ComplianceReports: React.FC = () => {
                         {getTypeIcon(report.type)}
                         <div>
                           <div className="font-medium">{report.title}</div>
-                          <div className="text-sm text-muted-foreground">
+                          <div className="text-muted-foreground text-sm">
                             {report.id.slice(0, 8)}...
                           </div>
                         </div>
@@ -674,7 +728,9 @@ const ComplianceReports: React.FC = () => {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <span className={`font-medium ${getComplianceScoreColor(report.metrics.compliance_score)}`}>
+                      <span
+                        className={`font-medium ${getComplianceScoreColor(report.metrics.compliance_score)}`}
+                      >
                         {report.metrics.compliance_score}%
                       </span>
                     </TableCell>
@@ -686,27 +742,27 @@ const ComplianceReports: React.FC = () => {
                     <TableCell>
                       <div className="flex items-center space-x-2">
                         <Button
-                          variant="ghost"
-                          size="sm"
                           onClick={() => {
                             setSelectedReport(report);
                             setShowDetailsDialog(true);
                           }}
+                          size="sm"
+                          variant="ghost"
                         >
                           <Eye className="h-4 w-4" />
                         </Button>
                         <Button
-                          variant="ghost"
-                          size="sm"
                           onClick={() => handleDownloadReport(report.id)}
+                          size="sm"
+                          variant="ghost"
                         >
                           <Download className="h-4 w-4" />
                         </Button>
                         {report.status === 'DRAFT' && (
                           <Button
-                            variant="ghost"
-                            size="sm"
                             onClick={() => handleGenerateReport(report.id)}
+                            size="sm"
+                            variant="ghost"
                           >
                             <RefreshCw className="h-4 w-4" />
                           </Button>
@@ -722,7 +778,7 @@ const ComplianceReports: React.FC = () => {
       </Card>
 
       {/* Dialog de Detalhes */}
-      <Dialog open={showDetailsDialog} onOpenChange={setShowDetailsDialog}>
+      <Dialog onOpenChange={setShowDetailsDialog} open={showDetailsDialog}>
         <DialogContent className="max-w-4xl">
           <DialogHeader>
             <DialogTitle>Detalhes do Relatório</DialogTitle>
@@ -731,23 +787,29 @@ const ComplianceReports: React.FC = () => {
             <div className="space-y-6">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-sm font-medium">Título</Label>
-                  <p className="text-sm text-muted-foreground">{selectedReport.title}</p>
+                  <Label className="font-medium text-sm">Título</Label>
+                  <p className="text-muted-foreground text-sm">
+                    {selectedReport.title}
+                  </p>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium">Tipo</Label>
-                  <p className="text-sm text-muted-foreground">{selectedReport.type}</p>
+                  <Label className="font-medium text-sm">Tipo</Label>
+                  <p className="text-muted-foreground text-sm">
+                    {selectedReport.type}
+                  </p>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium">Período</Label>
-                  <p className="text-sm text-muted-foreground">
+                  <Label className="font-medium text-sm">Período</Label>
+                  <p className="text-muted-foreground text-sm">
                     {formatDate(new Date(selectedReport.period_start))} -{' '}
                     {formatDate(new Date(selectedReport.period_end))}
                   </p>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium">Criado por</Label>
-                  <p className="text-sm text-muted-foreground">{selectedReport.generated_by}</p>
+                  <Label className="font-medium text-sm">Criado por</Label>
+                  <p className="text-muted-foreground text-sm">
+                    {selectedReport.generated_by}
+                  </p>
                 </div>
               </div>
 
@@ -755,30 +817,40 @@ const ComplianceReports: React.FC = () => {
                 <Card>
                   <CardContent className="pt-4">
                     <div className="text-center">
-                      <p className={`text-2xl font-bold ${getComplianceScoreColor(selectedReport.metrics.compliance_score)}`}>
+                      <p
+                        className={`font-bold text-2xl ${getComplianceScoreColor(selectedReport.metrics.compliance_score)}`}
+                      >
                         {selectedReport.metrics.compliance_score}%
                       </p>
-                      <p className="text-sm text-muted-foreground">Compliance</p>
+                      <p className="text-muted-foreground text-sm">
+                        Compliance
+                      </p>
                     </div>
                   </CardContent>
                 </Card>
                 <Card>
                   <CardContent className="pt-4">
                     <div className="text-center">
-                      <p className={`text-2xl font-bold ${getComplianceScoreColor(selectedReport.metrics.data_protection_score)}`}>
+                      <p
+                        className={`font-bold text-2xl ${getComplianceScoreColor(selectedReport.metrics.data_protection_score)}`}
+                      >
                         {selectedReport.metrics.data_protection_score}%
                       </p>
-                      <p className="text-sm text-muted-foreground">Proteção</p>
+                      <p className="text-muted-foreground text-sm">Proteção</p>
                     </div>
                   </CardContent>
                 </Card>
                 <Card>
                   <CardContent className="pt-4">
                     <div className="text-center">
-                      <p className={`text-2xl font-bold ${getComplianceScoreColor(selectedReport.metrics.availability_score)}`}>
+                      <p
+                        className={`font-bold text-2xl ${getComplianceScoreColor(selectedReport.metrics.availability_score)}`}
+                      >
                         {selectedReport.metrics.availability_score}%
                       </p>
-                      <p className="text-sm text-muted-foreground">Disponibilidade</p>
+                      <p className="text-muted-foreground text-sm">
+                        Disponibilidade
+                      </p>
                     </div>
                   </CardContent>
                 </Card>
@@ -786,22 +858,27 @@ const ComplianceReports: React.FC = () => {
 
               {selectedReport.findings.length > 0 && (
                 <div>
-                  <Label className="text-sm font-medium">Achados</Label>
-                  <div className="space-y-2 mt-2">
+                  <Label className="font-medium text-sm">Achados</Label>
+                  <div className="mt-2 space-y-2">
                     {selectedReport.findings.map((finding, index) => (
-                      <Alert key={index} className={getSeverityColor(finding.severity)}>
+                      <Alert
+                        className={getSeverityColor(finding.severity)}
+                        key={index}
+                      >
                         <AlertTriangle className="h-4 w-4" />
                         <AlertDescription>
-                          <div className="flex justify-between items-start">
+                          <div className="flex items-start justify-between">
                             <div className="flex-1">
-                              <strong>{finding.category}:</strong> {finding.description}
+                              <strong>{finding.category}:</strong>{' '}
+                              {finding.description}
                               {finding.recommendation && (
                                 <div className="mt-1 text-sm">
-                                  <strong>Recomendação:</strong> {finding.recommendation}
+                                  <strong>Recomendação:</strong>{' '}
+                                  {finding.recommendation}
                                 </div>
                               )}
                             </div>
-                            <Badge variant="outline" className="ml-2">
+                            <Badge className="ml-2" variant="outline">
                               {finding.severity}
                             </Badge>
                           </div>

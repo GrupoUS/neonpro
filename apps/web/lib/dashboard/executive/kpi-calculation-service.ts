@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { createClient } from '@/lib/supabase/client';
 import { logger } from '@/lib/logger';
+import { createClient } from '@/lib/supabase/client';
 
 // Types and Schemas
 export const KPIDefinitionSchema = z.object({
@@ -15,7 +15,7 @@ export const KPIDefinitionSchema = z.object({
   unit: z.string().max(50).optional(),
   isActive: z.boolean().default(true),
   createdAt: z.string().datetime(),
-  updatedAt: z.string().datetime()
+  updatedAt: z.string().datetime(),
 });
 
 export const KPIValueSchema = z.object({
@@ -28,7 +28,7 @@ export const KPIValueSchema = z.object({
   previousValue: z.number().optional(),
   targetValue: z.number().optional(),
   status: z.enum(['normal', 'warning', 'critical']).default('normal'),
-  calculatedAt: z.string().datetime()
+  calculatedAt: z.string().datetime(),
 });
 
 export const KPICalculationResultSchema = z.object({
@@ -42,7 +42,7 @@ export const KPICalculationResultSchema = z.object({
   trend: z.enum(['up', 'down', 'stable']).optional(),
   formattedValue: z.string(),
   formattedPreviousValue: z.string().optional(),
-  calculatedAt: z.string().datetime()
+  calculatedAt: z.string().datetime(),
 });
 
 export type KPIDefinition = z.infer<typeof KPIDefinitionSchema>;
@@ -67,7 +67,7 @@ export class KPICalculationService {
     try {
       const period = this.normalizePeriod(periodStart, periodEnd);
       const cacheKey = `clinic_${clinicId}_${period.start.toISOString()}_${period.end.toISOString()}`;
-      
+
       // Check cache
       const cached = this.getCachedResult(cacheKey);
       if (cached) {
@@ -97,7 +97,10 @@ export class KPICalculationService {
         );
         if (result) {
           results.push(result);
-          this.setCachedResult(`kpi_${kpiDef.id}_${period.start.toISOString()}`, result);
+          this.setCachedResult(
+            `kpi_${kpiDef.id}_${period.start.toISOString()}`,
+            result
+          );
         }
       }
 
@@ -143,19 +146,25 @@ export class KPICalculationService {
       );
 
       // Calculate variance and trend
-      const variance = previousValue !== null ? currentValue - previousValue : undefined;
-      const variancePercent = previousValue !== null && previousValue !== 0 
-        ? ((currentValue - previousValue) / Math.abs(previousValue)) * 100 
-        : undefined;
+      const variance =
+        previousValue !== null ? currentValue - previousValue : undefined;
+      const variancePercent =
+        previousValue !== null && previousValue !== 0
+          ? ((currentValue - previousValue) / Math.abs(previousValue)) * 100
+          : undefined;
 
       const trend = this.calculateTrend(currentValue, previousValue);
       const status = this.calculateStatus(currentValue, kpiDefinition);
 
       // Format values
-      const formattedValue = this.formatKPIValue(currentValue, kpiDefinition.unit);
-      const formattedPreviousValue = previousValue !== null 
-        ? this.formatKPIValue(previousValue, kpiDefinition.unit) 
-        : undefined;
+      const formattedValue = this.formatKPIValue(
+        currentValue,
+        kpiDefinition.unit
+      );
+      const formattedPreviousValue =
+        previousValue !== null
+          ? this.formatKPIValue(previousValue, kpiDefinition.unit)
+          : undefined;
 
       const result: KPICalculationResult = {
         kpi: {
@@ -170,7 +179,7 @@ export class KPICalculationService {
           unit: kpiDefinition.unit,
           isActive: kpiDefinition.is_active,
           createdAt: kpiDefinition.created_at,
-          updatedAt: kpiDefinition.updated_at
+          updatedAt: kpiDefinition.updated_at,
         },
         currentValue,
         previousValue,
@@ -181,12 +190,12 @@ export class KPICalculationService {
         trend,
         formattedValue,
         formattedPreviousValue,
-        calculatedAt: new Date().toISOString()
+        calculatedAt: new Date().toISOString(),
       };
 
       // Store in database
       await this.storeKPIValue(result);
-      
+
       // Cache result
       this.setCachedResult(cacheKey, result);
 
@@ -211,38 +220,82 @@ export class KPICalculationService {
 
       switch (method) {
         case 'financial.monthly_revenue':
-          return await this.calculateMonthlyRevenue(clinicId, periodStart, periodEnd);
-        
+          return await this.calculateMonthlyRevenue(
+            clinicId,
+            periodStart,
+            periodEnd
+          );
+
         case 'financial.average_ticket':
-          return await this.calculateAverageTicket(clinicId, periodStart, periodEnd);
-        
+          return await this.calculateAverageTicket(
+            clinicId,
+            periodStart,
+            periodEnd
+          );
+
         case 'financial.profit_margin':
-          return await this.calculateProfitMargin(clinicId, periodStart, periodEnd);
-        
+          return await this.calculateProfitMargin(
+            clinicId,
+            periodStart,
+            periodEnd
+          );
+
         case 'patients.new_patients':
-          return await this.calculateNewPatients(clinicId, periodStart, periodEnd);
-        
+          return await this.calculateNewPatients(
+            clinicId,
+            periodStart,
+            periodEnd
+          );
+
         case 'patients.retention_rate':
-          return await this.calculateRetentionRate(clinicId, periodStart, periodEnd);
-        
+          return await this.calculateRetentionRate(
+            clinicId,
+            periodStart,
+            periodEnd
+          );
+
         case 'patients.satisfaction_score':
-          return await this.calculateSatisfactionScore(clinicId, periodStart, periodEnd);
-        
+          return await this.calculateSatisfactionScore(
+            clinicId,
+            periodStart,
+            periodEnd
+          );
+
         case 'operations.occupancy_rate':
-          return await this.calculateOccupancyRate(clinicId, periodStart, periodEnd);
-        
+          return await this.calculateOccupancyRate(
+            clinicId,
+            periodStart,
+            periodEnd
+          );
+
         case 'operations.no_show_rate':
-          return await this.calculateNoShowRate(clinicId, periodStart, periodEnd);
-        
+          return await this.calculateNoShowRate(
+            clinicId,
+            periodStart,
+            periodEnd
+          );
+
         case 'operations.average_wait_time':
-          return await this.calculateAverageWaitTime(clinicId, periodStart, periodEnd);
-        
+          return await this.calculateAverageWaitTime(
+            clinicId,
+            periodStart,
+            periodEnd
+          );
+
         case 'staff.utilization_rate':
-          return await this.calculateStaffUtilization(clinicId, periodStart, periodEnd);
-        
+          return await this.calculateStaffUtilization(
+            clinicId,
+            periodStart,
+            periodEnd
+          );
+
         case 'staff.productivity_score':
-          return await this.calculateStaffProductivity(clinicId, periodStart, periodEnd);
-        
+          return await this.calculateStaffProductivity(
+            clinicId,
+            periodStart,
+            periodEnd
+          );
+
         default:
           logger.warn(`Unknown KPI calculation method: ${method}`);
           return null;
@@ -302,7 +355,11 @@ export class KPICalculationService {
     periodEnd: Date
   ): Promise<number> {
     // This would need cost data - simplified calculation
-    const revenue = await this.calculateMonthlyRevenue(clinicId, periodStart, periodEnd);
+    const revenue = await this.calculateMonthlyRevenue(
+      clinicId,
+      periodStart,
+      periodEnd
+    );
     // Assuming 30% cost ratio for now - this should come from actual cost data
     const estimatedCosts = revenue * 0.3;
     const profit = revenue - estimatedCosts;
@@ -337,7 +394,7 @@ export class KPICalculationService {
   ): Promise<number> {
     // Calculate patients who had appointments in both current and previous periods
     const previousPeriod = this.getPreviousPeriod(periodStart, periodEnd);
-    
+
     const { data: currentPatients, error: currentError } = await this.supabase
       .from('appointments')
       .select('patient_id')
@@ -356,12 +413,15 @@ export class KPICalculationService {
       return 0;
     }
 
-    const currentPatientIds = new Set(currentPatients.map(p => p.patient_id));
-    const previousPatientIds = new Set(previousPatients.map(p => p.patient_id));
-    
-    const retainedPatients = Array.from(previousPatientIds)
-      .filter(id => currentPatientIds.has(id)).length;
-    
+    const currentPatientIds = new Set(currentPatients.map((p) => p.patient_id));
+    const previousPatientIds = new Set(
+      previousPatients.map((p) => p.patient_id)
+    );
+
+    const retainedPatients = Array.from(previousPatientIds).filter((id) =>
+      currentPatientIds.has(id)
+    ).length;
+
     return (retainedPatients / previousPatientIds.size) * 100;
   }
 
@@ -383,9 +443,11 @@ export class KPICalculationService {
       return 0;
     }
 
-    const completedAppointments = appointments.filter(a => a.status === 'completed').length;
+    const completedAppointments = appointments.filter(
+      (a) => a.status === 'completed'
+    ).length;
     const completionRate = (completedAppointments / appointments.length) * 100;
-    
+
     // Convert completion rate to satisfaction score (simplified)
     return Math.min(completionRate * 0.05, 5); // Scale to 0-5
   }
@@ -410,7 +472,7 @@ export class KPICalculationService {
 
     // Simplified calculation - in reality would need room/staff availability data
     const totalSlots = appointments.length;
-    const bookedSlots = appointments.filter(a => 
+    const bookedSlots = appointments.filter((a) =>
       ['scheduled', 'confirmed', 'completed'].includes(a.status)
     ).length;
 
@@ -433,7 +495,7 @@ export class KPICalculationService {
       return 0;
     }
 
-    const noShows = appointments.filter(a => a.status === 'no_show').length;
+    const noShows = appointments.filter((a) => a.status === 'no_show').length;
     return (noShows / appointments.length) * 100;
   }
 
@@ -469,7 +531,11 @@ export class KPICalculationService {
   ): Promise<number> {
     // This would need staff schedule vs actual work data
     // Simplified calculation based on appointments
-    const occupancyRate = await this.calculateOccupancyRate(clinicId, periodStart, periodEnd);
+    const occupancyRate = await this.calculateOccupancyRate(
+      clinicId,
+      periodStart,
+      periodEnd
+    );
     return occupancyRate * 0.9; // Assuming 90% correlation
   }
 
@@ -489,7 +555,9 @@ export class KPICalculationService {
       return 0;
     }
 
-    const completedAppointments = appointments.filter(a => a.status === 'completed').length;
+    const completedAppointments = appointments.filter(
+      (a) => a.status === 'completed'
+    ).length;
     return (completedAppointments / appointments.length) * 100;
   }
 
@@ -497,11 +565,18 @@ export class KPICalculationService {
   private normalizePeriod(start?: Date, end?: Date) {
     const now = new Date();
     const defaultStart = new Date(now.getFullYear(), now.getMonth(), 1);
-    const defaultEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+    const defaultEnd = new Date(
+      now.getFullYear(),
+      now.getMonth() + 1,
+      0,
+      23,
+      59,
+      59
+    );
 
     return {
       start: start || defaultStart,
-      end: end || defaultEnd
+      end: end || defaultEnd,
     };
   }
 
@@ -509,11 +584,14 @@ export class KPICalculationService {
     const duration = end.getTime() - start.getTime();
     return {
       start: new Date(start.getTime() - duration),
-      end: new Date(start.getTime() - 1)
+      end: new Date(start.getTime() - 1),
     };
   }
 
-  private calculateTrend(current: number, previous: number | null): 'up' | 'down' | 'stable' {
+  private calculateTrend(
+    current: number,
+    previous: number | null
+  ): 'up' | 'down' | 'stable' {
     if (previous === null) return 'stable';
     if (current > previous) return 'up';
     if (current < previous) return 'down';
@@ -524,12 +602,16 @@ export class KPICalculationService {
     value: number,
     kpiDefinition: any
   ): 'normal' | 'warning' | 'critical' {
-    if (kpiDefinition.critical_threshold !== null) {
-      if (value <= kpiDefinition.critical_threshold) return 'critical';
-    }
-    if (kpiDefinition.warning_threshold !== null) {
-      if (value <= kpiDefinition.warning_threshold) return 'warning';
-    }
+    if (
+      kpiDefinition.critical_threshold !== null &&
+      value <= kpiDefinition.critical_threshold
+    )
+      return 'critical';
+    if (
+      kpiDefinition.warning_threshold !== null &&
+      value <= kpiDefinition.warning_threshold
+    )
+      return 'warning';
     return 'normal';
   }
 
@@ -539,20 +621,20 @@ export class KPICalculationService {
       case 'R$':
         return new Intl.NumberFormat('pt-BR', {
           style: 'currency',
-          currency: 'BRL'
+          currency: 'BRL',
         }).format(value);
-      
+
       case 'percent':
       case '%':
         return `${value.toFixed(1)}%`;
-      
+
       case 'decimal':
         return value.toFixed(2);
-      
+
       case 'count':
       case 'number':
         return Math.round(value).toString();
-      
+
       default:
         return value.toString();
     }
@@ -560,9 +642,8 @@ export class KPICalculationService {
 
   private async storeKPIValue(result: KPICalculationResult): Promise<void> {
     try {
-      await this.supabase
-        .from('kpi_values')
-        .upsert({
+      await this.supabase.from('kpi_values').upsert(
+        {
           id: crypto.randomUUID(),
           kpi_id: result.kpi.id,
           clinic_id: result.kpi.clinicId,
@@ -572,10 +653,12 @@ export class KPICalculationService {
           previous_value: result.previousValue,
           target_value: result.targetValue,
           status: result.status,
-          calculated_at: result.calculatedAt
-        }, {
-          onConflict: 'kpi_id,period_start,period_end'
-        });
+          calculated_at: result.calculatedAt,
+        },
+        {
+          onConflict: 'kpi_id,period_start,period_end',
+        }
+      );
     } catch (error) {
       logger.error('Error storing KPI value:', error);
     }

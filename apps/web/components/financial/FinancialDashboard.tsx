@@ -1,34 +1,35 @@
 /**
  * Financial Dashboard - Main Financial Dashboard Interface
  * NeonPro Healthcare System - Story 4.3 Architecture Alignment
- * 
+ *
  * Comprehensive financial dashboard with real-time KPIs, treatment profitability,
  * revenue analytics, and interactive data visualization for aesthetic clinics.
  */
 
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  AlertCircle,
+  Clock,
+  DollarSign,
+  Download,
+  RefreshCw,
+  TrendingDown,
+  TrendingUp,
+} from 'lucide-react';
+import type React from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { 
-  TrendingUp, 
-  TrendingDown, 
-  DollarSign, 
-  BarChart3, 
-  PieChart, 
-  Calendar,
-  Download,
-  Filter,
-  RefreshCw,
-  AlertCircle,
-  CheckCircle,
-  Clock,
-  Target
-} from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 // =================== TYPES ===================
 
@@ -99,14 +100,14 @@ const useDashboardData = (dateRange: { start: Date; end: Date }) => {
   });
 
   const fetchDashboardData = async () => {
-    setData(prev => ({ ...prev, isLoading: true }));
-    
+    setData((prev) => ({ ...prev, isLoading: true }));
+
     try {
       // Fetch financial analytics data
       const response = await fetch('/api/financial/analytics', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           startDate: dateRange.start.toISOString(),
           endDate: dateRange.end.toISOString(),
           includeForecasting: true,
@@ -119,23 +120,24 @@ const useDashboardData = (dateRange: { start: Date; end: Date }) => {
       }
 
       const analyticsData = await response.json();
-      
+
       setData({
         kpis: analyticsData.kpis || [],
         treatmentProfitability: analyticsData.treatmentProfitability || [],
-        revenueAnalytics: analyticsData.revenueAnalytics || data.revenueAnalytics,
+        revenueAnalytics:
+          analyticsData.revenueAnalytics || data.revenueAnalytics,
         lastUpdated: new Date(),
         isLoading: false,
       });
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
-      setData(prev => ({ ...prev, isLoading: false }));
+      setData((prev) => ({ ...prev, isLoading: false }));
     }
   };
 
   useEffect(() => {
     fetchDashboardData();
-  }, [dateRange]);
+  }, [fetchDashboardData]);
 
   return { data, refreshData: fetchDashboardData };
 };
@@ -177,40 +179,52 @@ const KPICard: React.FC<{ kpi: FinancialKPI }> = ({ kpi }) => {
     return 'bg-red-500';
   };
 
-  const progressValue = kpi.target > 0 ? Math.min((kpi.value / kpi.target) * 100, 100) : 0;
+  const progressValue =
+    kpi.target > 0 ? Math.min((kpi.value / kpi.target) * 100, 100) : 0;
 
   return (
     <Card className="relative">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium">
-          {kpi.name}
-        </CardTitle>
+        <CardTitle className="font-medium text-sm">{kpi.name}</CardTitle>
         {getTrendIcon(kpi.trend)}
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">
+        <div className="font-bold text-2xl">
           {formatValue(kpi.value, kpi.format)}
         </div>
-        <div className="flex items-center justify-between text-xs text-muted-foreground mt-2">
+        <div className="mt-2 flex items-center justify-between text-muted-foreground text-xs">
           <span>
-            {kpi.changePercentage > 0 ? '+' : ''}{kpi.changePercentage.toFixed(1)}% vs período anterior
+            {kpi.changePercentage > 0 ? '+' : ''}
+            {kpi.changePercentage.toFixed(1)}% vs período anterior
           </span>
-          <Badge variant={kpi.trend === 'up' ? 'default' : kpi.trend === 'down' ? 'destructive' : 'secondary'}>
-            {kpi.trend === 'up' ? 'Crescimento' : kpi.trend === 'down' ? 'Queda' : 'Estável'}
+          <Badge
+            variant={
+              kpi.trend === 'up'
+                ? 'default'
+                : kpi.trend === 'down'
+                  ? 'destructive'
+                  : 'secondary'
+            }
+          >
+            {kpi.trend === 'up'
+              ? 'Crescimento'
+              : kpi.trend === 'down'
+                ? 'Queda'
+                : 'Estável'}
           </Badge>
         </div>
-        
+
         {kpi.target > 0 && (
           <div className="mt-3">
-            <div className="flex justify-between text-xs text-muted-foreground mb-1">
+            <div className="mb-1 flex justify-between text-muted-foreground text-xs">
               <span>Progresso da Meta</span>
               <span>{formatValue(kpi.target, kpi.format)}</span>
             </div>
-            <Progress 
-              value={progressValue} 
+            <Progress
               className={`h-2 ${getProgressColor(kpi.value, kpi.target)}`}
+              value={progressValue}
             />
-            <div className="text-xs text-muted-foreground mt-1">
+            <div className="mt-1 text-muted-foreground text-xs">
               {progressValue.toFixed(0)}% da meta alcançada
             </div>
           </div>
@@ -220,12 +234,22 @@ const KPICard: React.FC<{ kpi: FinancialKPI }> = ({ kpi }) => {
   );
 };
 
-const TreatmentProfitabilityCard: React.FC<{ treatment: TreatmentProfitability }> = ({ treatment }) => {
-  const profitabilityColor = treatment.profitMargin >= 0.3 ? 'text-green-600' : 
-                            treatment.profitMargin >= 0.15 ? 'text-yellow-600' : 'text-red-600';
+const TreatmentProfitabilityCard: React.FC<{
+  treatment: TreatmentProfitability;
+}> = ({ treatment }) => {
+  const profitabilityColor =
+    treatment.profitMargin >= 0.3
+      ? 'text-green-600'
+      : treatment.profitMargin >= 0.15
+        ? 'text-yellow-600'
+        : 'text-red-600';
 
-  const roiColor = treatment.roi >= 0.25 ? 'text-green-600' : 
-                   treatment.roi >= 0.15 ? 'text-yellow-600' : 'text-red-600';
+  const roiColor =
+    treatment.roi >= 0.25
+      ? 'text-green-600'
+      : treatment.roi >= 0.15
+        ? 'text-yellow-600'
+        : 'text-red-600';
 
   const getTrendIcon = (trend: string) => {
     switch (trend) {
@@ -252,50 +276,61 @@ const TreatmentProfitabilityCard: React.FC<{ treatment: TreatmentProfitability }
       <CardContent className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <p className="text-sm text-muted-foreground">Receita Total</p>
-            <p className="text-xl font-semibold">
-              {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(treatment.totalRevenue)}
+            <p className="text-muted-foreground text-sm">Receita Total</p>
+            <p className="font-semibold text-xl">
+              {new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+              }).format(treatment.totalRevenue)}
             </p>
           </div>
           <div>
-            <p className="text-sm text-muted-foreground">Custos Totais</p>
-            <p className="text-xl font-semibold">
-              {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(treatment.totalCosts)}
+            <p className="text-muted-foreground text-sm">Custos Totais</p>
+            <p className="font-semibold text-xl">
+              {new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+              }).format(treatment.totalCosts)}
             </p>
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <p className="text-sm text-muted-foreground">Margem de Lucro</p>
-            <p className={`text-xl font-semibold ${profitabilityColor}`}>
+            <p className="text-muted-foreground text-sm">Margem de Lucro</p>
+            <p className={`font-semibold text-xl ${profitabilityColor}`}>
               {(treatment.profitMargin * 100).toFixed(1)}%
             </p>
           </div>
           <div>
-            <p className="text-sm text-muted-foreground">ROI</p>
-            <p className={`text-xl font-semibold ${roiColor}`}>
+            <p className="text-muted-foreground text-sm">ROI</p>
+            <p className={`font-semibold text-xl ${roiColor}`}>
               {(treatment.roi * 100).toFixed(1)}%
             </p>
           </div>
         </div>
 
         <div className="space-y-2">
-          <p className="text-sm font-medium">Ticket Médio</p>
+          <p className="font-medium text-sm">Ticket Médio</p>
           <div className="text-lg">
-            {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(treatment.averageRevenuePerTreatment)}
+            {new Intl.NumberFormat('pt-BR', {
+              style: 'currency',
+              currency: 'BRL',
+            }).format(treatment.averageRevenuePerTreatment)}
           </div>
         </div>
 
         {treatment.recommendations.length > 0 && (
           <div className="space-y-2">
-            <p className="text-sm font-medium flex items-center">
-              <AlertCircle className="h-4 w-4 mr-2" />
+            <p className="flex items-center font-medium text-sm">
+              <AlertCircle className="mr-2 h-4 w-4" />
               Recomendações
             </p>
             <ul className="space-y-1">
               {treatment.recommendations.slice(0, 2).map((rec, index) => (
-                <li key={index} className="text-xs text-muted-foreground">• {rec}</li>
+                <li className="text-muted-foreground text-xs" key={index}>
+                  • {rec}
+                </li>
               ))}
             </ul>
           </div>
@@ -305,33 +340,45 @@ const TreatmentProfitabilityCard: React.FC<{ treatment: TreatmentProfitability }
   );
 };
 
-const RevenueChart: React.FC<{ analytics: RevenueAnalytics }> = ({ analytics }) => {
+const RevenueChart: React.FC<{ analytics: RevenueAnalytics }> = ({
+  analytics,
+}) => {
   // This would integrate with a charting library like recharts or Chart.js
   // For now, showing a simplified representation
-  
+
   const topTreatments = Object.entries(analytics.revenueByTreatment)
-    .sort(([,a], [,b]) => b - a)
+    .sort(([, a], [, b]) => b - a)
     .slice(0, 5);
 
   const topSources = Object.entries(analytics.revenueBySource)
-    .sort(([,a], [,b]) => b - a)
+    .sort(([, a], [, b]) => b - a)
     .slice(0, 3);
 
   return (
     <div className="space-y-6">
       <div>
-        <h4 className="text-sm font-medium mb-3">Top Tratamentos por Receita</h4>
+        <h4 className="mb-3 font-medium text-sm">
+          Top Tratamentos por Receita
+        </h4>
         <div className="space-y-3">
           {topTreatments.map(([treatment, revenue]) => {
-            const percentage = analytics.totalRevenue > 0 ? (revenue / analytics.totalRevenue) * 100 : 0;
+            const percentage =
+              analytics.totalRevenue > 0
+                ? (revenue / analytics.totalRevenue) * 100
+                : 0;
             return (
-              <div key={treatment} className="space-y-1">
+              <div className="space-y-1" key={treatment}>
                 <div className="flex justify-between text-sm">
                   <span>{treatment}</span>
-                  <span>{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(revenue)}</span>
+                  <span>
+                    {new Intl.NumberFormat('pt-BR', {
+                      style: 'currency',
+                      currency: 'BRL',
+                    }).format(revenue)}
+                  </span>
                 </div>
-                <Progress value={percentage} className="h-2" />
-                <div className="text-xs text-muted-foreground text-right">
+                <Progress className="h-2" value={percentage} />
+                <div className="text-right text-muted-foreground text-xs">
                   {percentage.toFixed(1)}% do total
                 </div>
               </div>
@@ -341,21 +388,27 @@ const RevenueChart: React.FC<{ analytics: RevenueAnalytics }> = ({ analytics }) 
       </div>
 
       <div>
-        <h4 className="text-sm font-medium mb-3">Fontes de Receita</h4>
+        <h4 className="mb-3 font-medium text-sm">Fontes de Receita</h4>
         <div className="space-y-3">
           {topSources.map(([source, revenue]) => {
-            const percentage = analytics.totalRevenue > 0 ? (revenue / analytics.totalRevenue) * 100 : 0;
+            const percentage =
+              analytics.totalRevenue > 0
+                ? (revenue / analytics.totalRevenue) * 100
+                : 0;
             return (
-              <div key={source} className="flex justify-between items-center">
+              <div className="flex items-center justify-between" key={source}>
                 <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                  <div className="h-3 w-3 rounded-full bg-blue-500" />
                   <span className="text-sm">{source}</span>
                 </div>
                 <div className="text-right">
-                  <div className="text-sm font-medium">
-                    {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(revenue)}
+                  <div className="font-medium text-sm">
+                    {new Intl.NumberFormat('pt-BR', {
+                      style: 'currency',
+                      currency: 'BRL',
+                    }).format(revenue)}
                   </div>
-                  <div className="text-xs text-muted-foreground">
+                  <div className="text-muted-foreground text-xs">
                     {percentage.toFixed(1)}%
                   </div>
                 </div>
@@ -367,18 +420,29 @@ const RevenueChart: React.FC<{ analytics: RevenueAnalytics }> = ({ analytics }) 
 
       {analytics.forecast.length > 0 && (
         <div>
-          <h4 className="text-sm font-medium mb-3">Previsão de Receita</h4>
+          <h4 className="mb-3 font-medium text-sm">Previsão de Receita</h4>
           <div className="space-y-2">
             {analytics.forecast.slice(0, 3).map((forecast) => (
-              <div key={forecast.period} className="flex justify-between text-sm">
+              <div
+                className="flex justify-between text-sm"
+                key={forecast.period}
+              >
                 <span>{forecast.period}</span>
                 <div className="text-right">
                   <div>
-                    {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(forecast.predicted)}
+                    {new Intl.NumberFormat('pt-BR', {
+                      style: 'currency',
+                      currency: 'BRL',
+                    }).format(forecast.predicted)}
                   </div>
-                  <div className="text-xs text-muted-foreground">
-                    ±{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
-                      (forecast.confidence.upper - forecast.confidence.lower) / 2
+                  <div className="text-muted-foreground text-xs">
+                    ±
+                    {new Intl.NumberFormat('pt-BR', {
+                      style: 'currency',
+                      currency: 'BRL',
+                    }).format(
+                      (forecast.confidence.upper - forecast.confidence.lower) /
+                        2
                     )}
                   </div>
                 </div>
@@ -394,20 +458,22 @@ const RevenueChart: React.FC<{ analytics: RevenueAnalytics }> = ({ analytics }) 
 // =================== MAIN COMPONENT ===================
 
 export const FinancialDashboard: React.FC = () => {
-  const [dateRange, setDateRange] = useState({
+  const [dateRange, _setDateRange] = useState({
     start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 days ago
     end: new Date(),
   });
-  
+
   const [activeTab, setActiveTab] = useState('overview');
   const { data, refreshData } = useDashboardData(dateRange);
 
   const kpisByCategory = useMemo(() => {
     return {
-      revenue: data.kpis.filter(kpi => kpi.category === 'revenue'),
-      costs: data.kpis.filter(kpi => kpi.category === 'costs'),
-      profitability: data.kpis.filter(kpi => kpi.category === 'profitability'),
-      efficiency: data.kpis.filter(kpi => kpi.category === 'efficiency'),
+      revenue: data.kpis.filter((kpi) => kpi.category === 'revenue'),
+      costs: data.kpis.filter((kpi) => kpi.category === 'costs'),
+      profitability: data.kpis.filter(
+        (kpi) => kpi.category === 'profitability'
+      ),
+      efficiency: data.kpis.filter((kpi) => kpi.category === 'efficiency'),
     };
   }, [data.kpis]);
 
@@ -416,7 +482,7 @@ export const FinancialDashboard: React.FC = () => {
       const response = await fetch('/api/financial/reports/export', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           dateRange,
           format: 'pdf',
           sections: ['kpis', 'profitability', 'analytics'],
@@ -444,29 +510,37 @@ export const FinancialDashboard: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Dashboard Financeiro</h1>
+          <h1 className="font-bold text-3xl tracking-tight">
+            Dashboard Financeiro
+          </h1>
           <p className="text-muted-foreground">
             Análise financeira completa da sua clínica
           </p>
         </div>
         <div className="flex items-center space-x-2">
-          <Button variant="outline" onClick={refreshData} disabled={data.isLoading}>
-            <RefreshCw className={`h-4 w-4 mr-2 ${data.isLoading ? 'animate-spin' : ''}`} />
+          <Button
+            disabled={data.isLoading}
+            onClick={refreshData}
+            variant="outline"
+          >
+            <RefreshCw
+              className={`mr-2 h-4 w-4 ${data.isLoading ? 'animate-spin' : ''}`}
+            />
             Atualizar
           </Button>
-          <Button variant="outline" onClick={handleExportReport}>
-            <Download className="h-4 w-4 mr-2" />
+          <Button onClick={handleExportReport} variant="outline">
+            <Download className="mr-2 h-4 w-4" />
             Exportar
           </Button>
-          <div className="flex items-center text-sm text-muted-foreground">
-            <Clock className="h-4 w-4 mr-1" />
+          <div className="flex items-center text-muted-foreground text-sm">
+            <Clock className="mr-1 h-4 w-4" />
             Última atualização: {data.lastUpdated.toLocaleString('pt-BR')}
           </div>
         </div>
       </div>
 
       {/* Main Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
+      <Tabs onValueChange={setActiveTab} value={activeTab}>
         <TabsList>
           <TabsTrigger value="overview">Visão Geral</TabsTrigger>
           <TabsTrigger value="profitability">Rentabilidade</TabsTrigger>
@@ -474,10 +548,12 @@ export const FinancialDashboard: React.FC = () => {
           <TabsTrigger value="reports">Relatórios</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="overview" className="space-y-6">
+        <TabsContent className="space-y-6" value="overview">
           {/* KPI Cards */}
           <div>
-            <h2 className="text-xl font-semibold mb-4">Indicadores Principais</h2>
+            <h2 className="mb-4 font-semibold text-xl">
+              Indicadores Principais
+            </h2>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               {kpisByCategory.revenue.map((kpi) => (
                 <KPICard key={kpi.id} kpi={kpi} />
@@ -488,16 +564,22 @@ export const FinancialDashboard: React.FC = () => {
           {/* Secondary KPIs */}
           <div className="grid gap-6 md:grid-cols-2">
             <div>
-              <h3 className="text-lg font-medium mb-4">Custos e Rentabilidade</h3>
+              <h3 className="mb-4 font-medium text-lg">
+                Custos e Rentabilidade
+              </h3>
               <div className="grid gap-4">
-                {[...kpisByCategory.costs, ...kpisByCategory.profitability].map((kpi) => (
-                  <KPICard key={kpi.id} kpi={kpi} />
-                ))}
+                {[...kpisByCategory.costs, ...kpisByCategory.profitability].map(
+                  (kpi) => (
+                    <KPICard key={kpi.id} kpi={kpi} />
+                  )
+                )}
               </div>
             </div>
 
             <div>
-              <h3 className="text-lg font-medium mb-4">Eficiência Operacional</h3>
+              <h3 className="mb-4 font-medium text-lg">
+                Eficiência Operacional
+              </h3>
               <div className="grid gap-4">
                 {kpisByCategory.efficiency.map((kpi) => (
                   <KPICard key={kpi.id} kpi={kpi} />
@@ -507,18 +589,23 @@ export const FinancialDashboard: React.FC = () => {
           </div>
         </TabsContent>
 
-        <TabsContent value="profitability" className="space-y-6">
+        <TabsContent className="space-y-6" value="profitability">
           <div>
-            <h2 className="text-xl font-semibold mb-4">Análise de Rentabilidade por Tratamento</h2>
+            <h2 className="mb-4 font-semibold text-xl">
+              Análise de Rentabilidade por Tratamento
+            </h2>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {data.treatmentProfitability.map((treatment) => (
-                <TreatmentProfitabilityCard key={treatment.treatmentType} treatment={treatment} />
+                <TreatmentProfitabilityCard
+                  key={treatment.treatmentType}
+                  treatment={treatment}
+                />
               ))}
             </div>
           </div>
         </TabsContent>
 
-        <TabsContent value="analytics" className="space-y-6">
+        <TabsContent className="space-y-6" value="analytics">
           <div className="grid gap-6 md:grid-cols-2">
             <Card>
               <CardHeader>
@@ -541,22 +628,24 @@ export const FinancialDashboard: React.FC = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="flex justify-between items-center">
+                  <div className="flex items-center justify-between">
                     <span className="text-sm">Taxa de Crescimento</span>
                     <div className="flex items-center">
                       {data.revenueAnalytics.growthRate > 0 ? (
-                        <TrendingUp className="h-4 w-4 text-green-500 mr-1" />
+                        <TrendingUp className="mr-1 h-4 w-4 text-green-500" />
                       ) : (
-                        <TrendingDown className="h-4 w-4 text-red-500 mr-1" />
+                        <TrendingDown className="mr-1 h-4 w-4 text-red-500" />
                       )}
-                      <span className={`font-medium ${data.revenueAnalytics.growthRate > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                      <span
+                        className={`font-medium ${data.revenueAnalytics.growthRate > 0 ? 'text-green-600' : 'text-red-600'}`}
+                      >
                         {(data.revenueAnalytics.growthRate * 100).toFixed(1)}%
                       </span>
                     </div>
                   </div>
-                  <Progress 
-                    value={Math.abs(data.revenueAnalytics.growthRate) * 100} 
+                  <Progress
                     className={`h-2 ${data.revenueAnalytics.growthRate > 0 ? 'bg-green-500' : 'bg-red-500'}`}
+                    value={Math.abs(data.revenueAnalytics.growthRate) * 100}
                   />
                 </div>
               </CardContent>
@@ -564,7 +653,7 @@ export const FinancialDashboard: React.FC = () => {
           </div>
         </TabsContent>
 
-        <TabsContent value="reports" className="space-y-6">
+        <TabsContent className="space-y-6" value="reports">
           <Card>
             <CardHeader>
               <CardTitle>Relatórios Financeiros</CardTitle>
@@ -574,12 +663,13 @@ export const FinancialDashboard: React.FC = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <Button onClick={handleExportReport} className="w-full">
-                  <Download className="h-4 w-4 mr-2" />
+                <Button className="w-full" onClick={handleExportReport}>
+                  <Download className="mr-2 h-4 w-4" />
                   Gerar Relatório Completo (PDF)
                 </Button>
-                <p className="text-sm text-muted-foreground">
-                  O relatório incluirá todos os KPIs, análise de rentabilidade e projeções para o período selecionado.
+                <p className="text-muted-foreground text-sm">
+                  O relatório incluirá todos os KPIs, análise de rentabilidade e
+                  projeções para o período selecionado.
                 </p>
               </div>
             </CardContent>

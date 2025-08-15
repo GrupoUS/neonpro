@@ -1,7 +1,7 @@
 /**
  * NeonPro Backup & Recovery System Types
  * Story 1.8: Sistema de Backup e Recovery
- * 
+ *
  * Tipos e interfaces para o sistema completo de backup automático,
  * backup incremental, disaster recovery e monitoramento.
  */
@@ -14,22 +14,22 @@
  * Tipos de backup disponíveis
  */
 export enum BackupType {
-  FULL = 'FULL',           // Backup completo
+  FULL = 'FULL', // Backup completo
   INCREMENTAL = 'INCREMENTAL', // Backup incremental
   DIFFERENTIAL = 'DIFFERENTIAL', // Backup diferencial
-  SNAPSHOT = 'SNAPSHOT'     // Snapshot do sistema
+  SNAPSHOT = 'SNAPSHOT', // Snapshot do sistema
 }
 
 /**
  * Status do backup
  */
 export enum BackupStatus {
-  PENDING = 'PENDING',     // Aguardando execução
-  RUNNING = 'RUNNING',     // Em execução
+  PENDING = 'PENDING', // Aguardando execução
+  RUNNING = 'RUNNING', // Em execução
   COMPLETED = 'COMPLETED', // Concluído com sucesso
-  FAILED = 'FAILED',       // Falhou
+  FAILED = 'FAILED', // Falhou
   CANCELLED = 'CANCELLED', // Cancelado
-  EXPIRED = 'EXPIRED'      // Expirado
+  EXPIRED = 'EXPIRED', // Expirado
 }
 
 /**
@@ -39,19 +39,19 @@ export enum BackupPriority {
   LOW = 'LOW',
   MEDIUM = 'MEDIUM',
   HIGH = 'HIGH',
-  CRITICAL = 'CRITICAL'
+  CRITICAL = 'CRITICAL',
 }
 
 /**
  * Tipos de storage para backup
  */
 export enum StorageType {
-  LOCAL = 'LOCAL',         // Armazenamento local
-  S3 = 'S3',              // Amazon S3
-  AZURE = 'AZURE',         // Azure Blob Storage
-  GCS = 'GCS',            // Google Cloud Storage
-  FTP = 'FTP',            // FTP Server
-  SFTP = 'SFTP'           // SFTP Server
+  LOCAL = 'LOCAL', // Armazenamento local
+  S3 = 'S3', // Amazon S3
+  AZURE = 'AZURE', // Azure Blob Storage
+  GCS = 'GCS', // Google Cloud Storage
+  FTP = 'FTP', // FTP Server
+  SFTP = 'SFTP', // SFTP Server
 }
 
 /**
@@ -62,19 +62,19 @@ export enum RecoveryStatus {
   IN_PROGRESS = 'IN_PROGRESS',
   COMPLETED = 'COMPLETED',
   FAILED = 'FAILED',
-  PARTIAL = 'PARTIAL'
+  PARTIAL = 'PARTIAL',
 }
 
 /**
  * Tipos de dados para backup
  */
 export enum DataType {
-  DATABASE = 'DATABASE',   // Dados do banco
-  FILES = 'FILES',         // Arquivos do sistema
-  LOGS = 'LOGS',          // Logs da aplicação
-  CONFIG = 'CONFIG',       // Configurações
-  MEDIA = 'MEDIA',        // Arquivos de mídia
-  DOCUMENTS = 'DOCUMENTS'  // Documentos
+  DATABASE = 'DATABASE', // Dados do banco
+  FILES = 'FILES', // Arquivos do sistema
+  LOGS = 'LOGS', // Logs da aplicação
+  CONFIG = 'CONFIG', // Configurações
+  MEDIA = 'MEDIA', // Arquivos de mídia
+  DOCUMENTS = 'DOCUMENTS', // Documentos
 }
 
 // ============================================================================
@@ -107,10 +107,10 @@ export interface BackupConfig {
  */
 export interface BackupSchedule {
   frequency: 'HOURLY' | 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'CUSTOM';
-  interval?: number;        // Para frequência customizada
-  time?: string;           // Horário específico (HH:mm)
-  daysOfWeek?: number[];   // Dias da semana (0-6)
-  daysOfMonth?: number[];  // Dias do mês (1-31)
+  interval?: number; // Para frequência customizada
+  time?: string; // Horário específico (HH:mm)
+  daysOfWeek?: number[]; // Dias da semana (0-6)
+  daysOfMonth?: number[]; // Dias do mês (1-31)
   timezone: string;
   enabled: boolean;
 }
@@ -119,13 +119,13 @@ export interface BackupSchedule {
  * Política de retenção
  */
 export interface RetentionPolicy {
-  keepDaily: number;       // Quantos backups diários manter
-  keepWeekly: number;      // Quantos backups semanais manter
-  keepMonthly: number;     // Quantos backups mensais manter
-  keepYearly: number;      // Quantos backups anuais manter
-  maxAge: number;          // Idade máxima em dias
-  maxSize: number;         // Tamanho máximo em bytes
-  autoCleanup: boolean;    // Limpeza automática
+  keepDaily: number; // Quantos backups diários manter
+  keepWeekly: number; // Quantos backups semanais manter
+  keepMonthly: number; // Quantos backups mensais manter
+  keepYearly: number; // Quantos backups anuais manter
+  maxAge: number; // Idade máxima em dias
+  maxSize: number; // Tamanho máximo em bytes
+  autoCleanup: boolean; // Limpeza automática
 }
 
 /**
@@ -161,7 +161,7 @@ export interface StorageCredentials {
 export interface CompressionConfig {
   enabled: boolean;
   algorithm: 'gzip' | 'bzip2' | 'lz4' | 'zstd';
-  level: number;           // Nível de compressão (1-9)
+  level: number; // Nível de compressão (1-9)
 }
 
 /**
@@ -188,8 +188,8 @@ export interface BackupRecord {
   status: BackupStatus;
   startTime: Date;
   endTime?: Date;
-  duration?: number;       // Duração em segundos
-  size: number;           // Tamanho em bytes
+  duration?: number; // Duração em segundos
+  size: number; // Tamanho em bytes
   compressedSize?: number; // Tamanho comprimido
   filesCount: number;
   checksum: string;
@@ -208,7 +208,7 @@ export interface BackupMetadata {
   version: string;
   source: string;
   dataTypes: DataType[];
-  tables?: string[];       // Tabelas incluídas (para DB)
+  tables?: string[]; // Tabelas incluídas (para DB)
   excludedPaths?: string[]; // Caminhos excluídos
   environment: string;
   hostname: string;
@@ -229,8 +229,8 @@ export interface BackupProgress {
   totalFiles: number;
   bytesProcessed: number;
   totalBytes: number;
-  speed: number;          // Bytes por segundo
-  eta: number;           // Tempo estimado em segundos
+  speed: number; // Bytes por segundo
+  eta: number; // Tempo estimado em segundos
   startTime: Date;
   lastUpdate: Date;
 }
@@ -246,7 +246,7 @@ export interface RecoveryRequest {
   id: string;
   backupId: string;
   type: 'FULL' | 'PARTIAL' | 'POINT_IN_TIME';
-  targetTime?: Date;       // Para point-in-time recovery
+  targetTime?: Date; // Para point-in-time recovery
   targetPath: string;
   options: RecoveryOptions;
   requestedBy: string;
@@ -325,11 +325,11 @@ export interface StorageUsage {
  * Métricas de performance
  */
 export interface PerformanceMetrics {
-  averageSpeed: number;    // MB/s
+  averageSpeed: number; // MB/s
   compressionRatio: number; // Ratio de compressão
   deduplicationRatio: number; // Ratio de deduplicação
   networkUtilization: number; // % de utilização da rede
-  cpuUtilization: number;  // % de utilização da CPU
+  cpuUtilization: number; // % de utilização da CPU
   memoryUtilization: number; // % de utilização da memória
 }
 
@@ -384,7 +384,7 @@ export interface TestResults {
   endTime: Date;
   duration: number;
   status: 'PASSED' | 'FAILED' | 'WARNING';
-  score: number;          // Score de 0-100
+  score: number; // Score de 0-100
   details: TestDetail[];
   performance: TestPerformance;
   recommendations: string[];
@@ -407,11 +407,11 @@ export interface TestDetail {
  * Performance do teste
  */
 export interface TestPerformance {
-  restoreSpeed: number;    // MB/s
+  restoreSpeed: number; // MB/s
   integrityCheckTime: number; // segundos
-  memoryUsage: number;     // MB
-  cpuUsage: number;        // %
-  networkUsage: number;    // MB
+  memoryUsage: number; // MB
+  cpuUsage: number; // %
+  networkUsage: number; // MB
 }
 
 // ============================================================================
@@ -475,13 +475,13 @@ export interface SecurityConfig {
  * Configuração de performance
  */
 export interface PerformanceConfig {
-  maxBandwidth: number;    // MB/s
+  maxBandwidth: number; // MB/s
   compressionThreads: number;
   encryptionThreads: number;
-  networkTimeout: number;  // segundos
+  networkTimeout: number; // segundos
   retryAttempts: number;
-  retryDelay: number;      // segundos
-  chunkSize: number;       // bytes
+  retryDelay: number; // segundos
+  chunkSize: number; // bytes
 }
 
 /**
@@ -499,11 +499,11 @@ export interface MonitoringConfig {
  * Limites para alertas
  */
 export interface AlertThresholds {
-  failureRate: number;     // %
-  storageUsage: number;    // %
-  backupDuration: number;  // horas
-  missedBackups: number;   // quantidade
-  recoveryTime: number;    // horas
+  failureRate: number; // %
+  storageUsage: number; // %
+  backupDuration: number; // horas
+  missedBackups: number; // quantidade
+  recoveryTime: number; // horas
 }
 
 /**
@@ -511,8 +511,8 @@ export interface AlertThresholds {
  */
 export interface HealthCheckConfig {
   enabled: boolean;
-  interval: number;        // minutos
-  timeout: number;         // segundos
+  interval: number; // minutos
+  timeout: number; // segundos
   checks: ('STORAGE' | 'DATABASE' | 'NETWORK' | 'DISK_SPACE')[];
 }
 
@@ -587,7 +587,15 @@ export interface ApiResponse<T = any> {
  */
 export interface BackupEvent {
   id: string;
-  type: 'BACKUP_STARTED' | 'BACKUP_COMPLETED' | 'BACKUP_FAILED' | 'RECOVERY_STARTED' | 'RECOVERY_COMPLETED' | 'RECOVERY_FAILED' | 'ALERT_CREATED' | 'CONFIG_CHANGED';
+  type:
+    | 'BACKUP_STARTED'
+    | 'BACKUP_COMPLETED'
+    | 'BACKUP_FAILED'
+    | 'RECOVERY_STARTED'
+    | 'RECOVERY_COMPLETED'
+    | 'RECOVERY_FAILED'
+    | 'ALERT_CREATED'
+    | 'CONFIG_CHANGED';
   entityId: string;
   entityType: 'BACKUP' | 'RECOVERY' | 'CONFIG' | 'ALERT';
   data: Record<string, any>;

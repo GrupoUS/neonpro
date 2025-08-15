@@ -25,14 +25,14 @@ export interface SearchQuery {
   };
 }
 
-export type SearchType = 
-  | 'patients' 
-  | 'appointments' 
-  | 'medical_records' 
-  | 'lab_results' 
-  | 'medications' 
-  | 'documents' 
-  | 'insights' 
+export type SearchType =
+  | 'patients'
+  | 'appointments'
+  | 'medical_records'
+  | 'lab_results'
+  | 'medications'
+  | 'documents'
+  | 'insights'
   | 'timeline_events'
   | 'duplicates'
   | 'photos';

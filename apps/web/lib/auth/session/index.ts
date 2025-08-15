@@ -1,48 +1,44 @@
 /**
  * Session Management System - Main Export Index
- * 
+ *
  * This file serves as the main entry point for the NeonPro session management system,
  * providing a unified interface for all session-related functionality including
  * authentication, device management, security monitoring, and data cleanup.
- * 
+ *
  * @version 1.0.0
  * @author NeonPro Development Team
  * @created 2024
  */
 
-// Core Session Management
-export { UnifiedSessionSystem } from './core/SessionManager';
-export { SessionAuth } from './core/SessionAuth';
-export { DeviceManager } from './core/DeviceManager';
-export { SecurityEventLogger } from './core/SecurityEventLogger';
-export { NotificationService } from './core/NotificationService';
-export { DataCleanupService } from './core/DataCleanupService';
-
-// Configuration and Types
-export * from './config';
-export * from './types';
-export * from './utils';
-
-// React Hooks
-export { useSession } from './hooks/useSession';
-export { useDeviceManagement } from './hooks/useDeviceManagement';
-export { useSecurityMonitoring } from './hooks/useSecurityMonitoring';
-export { useNotifications } from './hooks/useNotifications';
-export { useDataCleanup } from './hooks/useDataCleanup';
-
+// Component Collections
+export {
+  defaultSessionConfig,
+  ManagementComponents,
+  SessionComponents,
+  StatusComponents,
+} from '../../../components/auth/session';
+export { DeviceManagement } from '../../../components/auth/session/DeviceManagement';
+export { SecurityDashboard } from '../../../components/auth/session/SecurityDashboard';
 // React Components
 export { SessionStatus } from '../../../components/auth/session/SessionStatus';
 export { SessionWarning } from '../../../components/auth/session/SessionWarning';
-export { DeviceManagement } from '../../../components/auth/session/DeviceManagement';
-export { SecurityDashboard } from '../../../components/auth/session/SecurityDashboard';
-
-// Component Collections
-export {
-  SessionComponents,
-  StatusComponents,
-  ManagementComponents,
-  defaultSessionConfig
-} from '../../../components/auth/session';
+// Configuration and Types
+export * from './config';
+export { DataCleanupService } from './core/DataCleanupService';
+export { DeviceManager } from './core/DeviceManager';
+export { NotificationService } from './core/NotificationService';
+export { SecurityEventLogger } from './core/SecurityEventLogger';
+export { SessionAuth } from './core/SessionAuth';
+// Core Session Management
+export { UnifiedSessionSystem } from './core/SessionManager';
+export { useDataCleanup } from './hooks/useDataCleanup';
+export { useDeviceManagement } from './hooks/useDeviceManagement';
+export { useNotifications } from './hooks/useNotifications';
+export { useSecurityMonitoring } from './hooks/useSecurityMonitoring';
+// React Hooks
+export { useSession } from './hooks/useSession';
+export * from './types';
+export * from './utils';
 
 // API Utilities
 export const API_ENDPOINTS = {
@@ -50,7 +46,7 @@ export const API_ENDPOINTS = {
   devices: '/api/auth/devices',
   security: '/api/auth/security',
   notifications: '/api/auth/notifications',
-  cleanup: '/api/auth/cleanup'
+  cleanup: '/api/auth/cleanup',
 } as const;
 
 // Session Management Factory
@@ -61,17 +57,17 @@ export class SessionManagementFactory {
    * Get or create the singleton instance of UnifiedSessionSystem
    */
   static getInstance(): UnifiedSessionSystem {
-    if (!this.instance) {
-      this.instance = new UnifiedSessionSystem();
+    if (!SessionManagementFactory.instance) {
+      SessionManagementFactory.instance = new UnifiedSessionSystem();
     }
-    return this.instance;
+    return SessionManagementFactory.instance;
   }
 
   /**
    * Reset the singleton instance (useful for testing)
    */
   static resetInstance(): void {
-    this.instance = null;
+    SessionManagementFactory.instance = null;
   }
 
   /**
@@ -88,27 +84,33 @@ export const sessionManager = SessionManagementFactory.getInstance();
 // Type guards and validators
 export const SessionValidators = {
   isValidSession: (session: any): session is SessionData => {
-    return session && 
-           typeof session.id === 'string' &&
-           typeof session.userId === 'string' &&
-           typeof session.status === 'string' &&
-           ['active', 'expired', 'terminated'].includes(session.status);
+    return (
+      session &&
+      typeof session.id === 'string' &&
+      typeof session.userId === 'string' &&
+      typeof session.status === 'string' &&
+      ['active', 'expired', 'terminated'].includes(session.status)
+    );
   },
 
   isValidDevice: (device: any): device is DeviceInfo => {
-    return device &&
-           typeof device.id === 'string' &&
-           typeof device.fingerprint === 'string' &&
-           typeof device.trusted === 'boolean';
+    return (
+      device &&
+      typeof device.id === 'string' &&
+      typeof device.fingerprint === 'string' &&
+      typeof device.trusted === 'boolean'
+    );
   },
 
   isValidSecurityEvent: (event: any): event is SecurityEvent => {
-    return event &&
-           typeof event.id === 'string' &&
-           typeof event.type === 'string' &&
-           typeof event.severity === 'string' &&
-           ['low', 'medium', 'high', 'critical'].includes(event.severity);
-  }
+    return (
+      event &&
+      typeof event.id === 'string' &&
+      typeof event.type === 'string' &&
+      typeof event.severity === 'string' &&
+      ['low', 'medium', 'high', 'critical'].includes(event.severity)
+    );
+  },
 };
 
 // Error classes
@@ -116,7 +118,7 @@ export class SessionError extends Error {
   constructor(
     message: string,
     public code: string,
-    public statusCode: number = 500
+    public statusCode = 500
   ) {
     super(message);
     this.name = 'SessionError';
@@ -127,7 +129,7 @@ export class DeviceError extends Error {
   constructor(
     message: string,
     public code: string,
-    public statusCode: number = 400
+    public statusCode = 400
   ) {
     super(message);
     this.name = 'DeviceError';
@@ -138,7 +140,7 @@ export class SecurityError extends Error {
   constructor(
     message: string,
     public code: string,
-    public statusCode: number = 403
+    public statusCode = 403
   ) {
     super(message);
     this.name = 'SecurityError';
@@ -157,7 +159,7 @@ export const SESSION_CONSTANTS = {
   LOCKOUT_DURATION: 15 * 60 * 1000, // 15 minutes
   PASSWORD_MIN_LENGTH: 8,
   SESSION_REFRESH_THRESHOLD: 60 * 60 * 1000, // 1 hour
-  DEVICE_FINGERPRINT_ALGORITHM: 'sha256'
+  DEVICE_FINGERPRINT_ALGORITHM: 'sha256',
 } as const;
 
 // Version information
@@ -166,7 +168,8 @@ export const SESSION_SYSTEM_VERSION = {
   minor: 0,
   patch: 0,
   build: Date.now(),
-  toString: () => `${SESSION_SYSTEM_VERSION.major}.${SESSION_SYSTEM_VERSION.minor}.${SESSION_SYSTEM_VERSION.patch}`
+  toString: () =>
+    `${SESSION_SYSTEM_VERSION.major}.${SESSION_SYSTEM_VERSION.minor}.${SESSION_SYSTEM_VERSION.patch}`,
 } as const;
 
 // Development utilities
@@ -198,9 +201,9 @@ export const DevUtils = {
       version: SESSION_SYSTEM_VERSION.toString(),
       currentSession: await session.getCurrentSession(),
       deviceCount: (await session.getDevices()).length,
-      recentEvents: await session.getSecurityEvents({ limit: 5 })
+      recentEvents: await session.getSecurityEvents({ limit: 5 }),
     };
-  }
+  },
 };
 
 // Export default instance for convenience
@@ -210,25 +213,25 @@ export default sessionManager;
  * Re-export commonly used types for convenience
  */
 export type {
-  SessionData,
-  DeviceInfo,
-  SecurityEvent,
-  NotificationData,
-  SessionConfig,
-  DeviceConfig,
-  SecurityConfig,
-  NotificationConfig,
-  CleanupConfig,
-  SessionActivity,
   AuditLog,
-  SessionMetrics,
-  DeviceMetrics,
-  SecurityMetrics,
-  NotificationMetrics,
+  CleanupConfig,
+  CleanupContextType,
   CleanupMetrics,
-  SessionContextType,
+  DeviceConfig,
   DeviceContextType,
-  SecurityContextType,
+  DeviceInfo,
+  DeviceMetrics,
+  NotificationConfig,
   NotificationContextType,
-  CleanupContextType
+  NotificationData,
+  NotificationMetrics,
+  SecurityConfig,
+  SecurityContextType,
+  SecurityEvent,
+  SecurityMetrics,
+  SessionActivity,
+  SessionConfig,
+  SessionContextType,
+  SessionData,
+  SessionMetrics,
 } from './types';

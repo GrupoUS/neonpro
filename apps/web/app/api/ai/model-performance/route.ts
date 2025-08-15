@@ -1,13 +1,16 @@
 /**
  * AI Model Performance API Route
  * GET /api/ai/model-performance
- * 
+ *
  * Provides access to ML model performance metrics and statistics
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
-import { ModelPerformanceService, AIABTestingService } from '@/lib/ai/duration-prediction';
+import {
+  AIABTestingService,
+  ModelPerformanceService,
+} from '@/lib/ai/duration-prediction';
 
 // Response types
 interface ModelPerformanceResponse {
@@ -40,8 +43,11 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     // Get current user
     const supabase = createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
     if (authError || !user) {
       return NextResponse.json(
         { success: false, error: 'Authentication required' },
@@ -59,7 +65,10 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     if (roleError || !userRole) {
       return NextResponse.json(
-        { success: false, error: 'Insufficient permissions. Admin or Manager role required.' },
+        {
+          success: false,
+          error: 'Insufficient permissions. Admin or Manager role required.',
+        },
         { status: 403 }
       );
     }
@@ -69,19 +78,21 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const abTestService = new AIABTestingService();
 
     // Get model performance data
-    const models = await performanceService.getModelPerformance(modelVersion || undefined);
+    const models = await performanceService.getModelPerformance(
+      modelVersion || undefined
+    );
 
     // Prepare response
     const response: ModelPerformanceResponse = {
       success: true,
-      models: models.map(model => ({
+      models: models.map((model) => ({
         version: model.version,
         accuracy: model.accuracy,
         mae: model.mae,
         rmse: model.rmse,
         confidenceThreshold: model.confidenceThreshold,
-        isActive: model.isActive
-      }))
+        isActive: model.isActive,
+      })),
     };
 
     // Include A/B testing statistics if requested
@@ -96,14 +107,14 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     }
 
     return NextResponse.json(response);
-
   } catch (error) {
     console.error('Model Performance API Error:', error);
-    
+
     return NextResponse.json(
       {
         success: false,
-        error: 'Internal server error occurred while retrieving model performance'
+        error:
+          'Internal server error occurred while retrieving model performance',
       },
       { status: 500 }
     );
@@ -117,11 +128,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const body = await request.json();
     const { modelVersion, action } = body;
 
-    if (!modelVersion || !action) {
+    if (!(modelVersion && action)) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Missing required fields: modelVersion, action'
+          error: 'Missing required fields: modelVersion, action',
         },
         { status: 400 }
       );
@@ -129,8 +140,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     // Get current user
     const supabase = createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
     if (authError || !user) {
       return NextResponse.json(
         { success: false, error: 'Authentication required' },
@@ -148,7 +162,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     if (roleError || !userRole) {
       return NextResponse.json(
-        { success: false, error: 'Insufficient permissions. Admin role required.' },
+        {
+          success: false,
+          error: 'Insufficient permissions. Admin role required.',
+        },
         { status: 403 }
       );
     }
@@ -156,10 +173,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const performanceService = new ModelPerformanceService();
 
     switch (action) {
-      case 'update_performance':
+      case 'update_performance': {
         // Update model performance metrics
-        const updatedModel = await performanceService.updateModelPerformance(modelVersion);
-        
+        const updatedModel =
+          await performanceService.updateModelPerformance(modelVersion);
+
         return NextResponse.json({
           success: true,
           message: 'Model performance updated successfully',
@@ -169,19 +187,21 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
             mae: updatedModel.mae,
             rmse: updatedModel.rmse,
             confidenceThreshold: updatedModel.confidenceThreshold,
-            isActive: updatedModel.isActive
-          }
+            isActive: updatedModel.isActive,
+          },
         });
+      }
 
-      case 'deploy_model':
+      case 'deploy_model': {
         // Deploy new model version
         const { hyperparameters, featureImportance, trainingDataCount } = body;
-        
-        if (!hyperparameters || !featureImportance || !trainingDataCount) {
+
+        if (!(hyperparameters && featureImportance && trainingDataCount)) {
           return NextResponse.json(
             {
               success: false,
-              error: 'Missing required fields for model deployment: hyperparameters, featureImportance, trainingDataCount'
+              error:
+                'Missing required fields for model deployment: hyperparameters, featureImportance, trainingDataCount',
             },
             { status: 400 }
           );
@@ -196,26 +216,27 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
         return NextResponse.json({
           success: true,
-          message: `Model ${modelVersion} deployed successfully`
+          message: `Model ${modelVersion} deployed successfully`,
         });
+      }
 
       default:
         return NextResponse.json(
           {
             success: false,
-            error: `Unsupported action: ${action}. Supported actions: update_performance, deploy_model`
+            error: `Unsupported action: ${action}. Supported actions: update_performance, deploy_model`,
           },
           { status: 400 }
         );
     }
-
   } catch (error) {
     console.error('Model Performance POST API Error:', error);
-    
+
     return NextResponse.json(
       {
         success: false,
-        error: 'Internal server error occurred while processing model performance request'
+        error:
+          'Internal server error occurred while processing model performance request',
       },
       { status: 500 }
     );
@@ -225,14 +246,20 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 // Handle unsupported HTTP methods
 export async function PUT() {
   return NextResponse.json(
-    { success: false, error: 'Method not allowed. Use GET to retrieve or POST to update.' },
+    {
+      success: false,
+      error: 'Method not allowed. Use GET to retrieve or POST to update.',
+    },
     { status: 405 }
   );
 }
 
 export async function DELETE() {
   return NextResponse.json(
-    { success: false, error: 'Method not allowed. Use GET to retrieve or POST to update.' },
+    {
+      success: false,
+      error: 'Method not allowed. Use GET to retrieve or POST to update.',
+    },
     { status: 405 }
   );
 }

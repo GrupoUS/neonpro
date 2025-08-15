@@ -2,19 +2,22 @@
 // Story 7.1: Executive Dashboard Implementation
 // GET/PUT /api/executive-dashboard/widgets
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
 import { executiveDashboardService } from '@/src/lib/services/executive-dashboard';
 
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Check authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
       return NextResponse.json(
-        { error: 'Authentication required' }, 
+        { error: 'Authentication required' },
         { status: 401 }
       );
     }
@@ -25,7 +28,7 @@ export async function GET(request: NextRequest) {
 
     if (!clinicId) {
       return NextResponse.json(
-        { error: 'clinic_id parameter is required' }, 
+        { error: 'clinic_id parameter is required' },
         { status: 400 }
       );
     }
@@ -40,7 +43,7 @@ export async function GET(request: NextRequest) {
 
     if (!professional) {
       return NextResponse.json(
-        { error: 'Access denied to this clinic' }, 
+        { error: 'Access denied to this clinic' },
         { status: 403 }
       );
     }
@@ -57,17 +60,16 @@ export async function GET(request: NextRequest) {
       metadata: {
         clinic_id: clinicId,
         user_id: user.id,
-        count: widgets.length
-      }
+        count: widgets.length,
+      },
     });
-
   } catch (error) {
     console.error('Widgets API error:', error);
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to fetch widgets',
-        details: error instanceof Error ? error.message : 'Unknown error'
-      }, 
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
       { status: 500 }
     );
   }

@@ -1,20 +1,29 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Switch } from '@/components/ui/switch';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+  AlertTriangle,
+  Calendar,
+  CheckCircle,
+  Clock,
+  Database,
+  HardDrive,
+  Pause,
+  Plus,
+  Settings,
+  Shield,
+} from 'lucide-react';
+import type React from 'react';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import {
   Dialog,
   DialogContent,
@@ -24,6 +33,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
 import {
   Table,
   TableBody,
@@ -32,23 +51,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import {
-  Clock,
-  Plus,
-  Play,
-  Pause,
-  Trash2,
-  Settings,
-  Calendar,
-  Database,
-  HardDrive,
-  Shield,
-  AlertTriangle,
-  CheckCircle,
-} from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
 import { formatDate, formatTime } from '@/lib/utils';
-import { toast } from 'sonner';
 
 // Types
 interface BackupConfig {
@@ -102,7 +106,7 @@ const BackupScheduler: React.FC = () => {
 
   useEffect(() => {
     loadConfigs();
-  }, []);
+  }, [loadConfigs]);
 
   const loadConfigs = async () => {
     try {
@@ -169,7 +173,9 @@ const BackupScheduler: React.FC = () => {
       });
 
       if (response.ok) {
-        toast.success(`Configuração ${enabled ? 'ativada' : 'desativada'} com sucesso`);
+        toast.success(
+          `Configuração ${enabled ? 'ativada' : 'desativada'} com sucesso`
+        );
         loadConfigs();
       } else {
         toast.error('Erro ao atualizar configuração');
@@ -221,17 +227,17 @@ const BackupScheduler: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">Agendador de Backup</h2>
+          <h2 className="font-bold text-2xl">Agendador de Backup</h2>
           <p className="text-muted-foreground">
             Configure e gerencie agendamentos automáticos de backup
           </p>
         </div>
-        <Dialog open={showNewDialog} onOpenChange={setShowNewDialog}>
+        <Dialog onOpenChange={setShowNewDialog} open={showNewDialog}>
           <DialogTrigger asChild>
             <Button>
-              <Plus className="h-4 w-4 mr-2" />
+              <Plus className="mr-2 h-4 w-4" />
               Nova Configuração
             </Button>
           </DialogTrigger>
@@ -247,16 +253,20 @@ const BackupScheduler: React.FC = () => {
                 <Label htmlFor="name">Nome</Label>
                 <Input
                   id="name"
-                  value={newConfig.name}
-                  onChange={(e) => setNewConfig({ ...newConfig, name: e.target.value })}
+                  onChange={(e) =>
+                    setNewConfig({ ...newConfig, name: e.target.value })
+                  }
                   placeholder="Ex: Backup Diário Completo"
+                  value={newConfig.name}
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="type">Tipo de Backup</Label>
                 <Select
+                  onValueChange={(value: any) =>
+                    setNewConfig({ ...newConfig, type: value })
+                  }
                   value={newConfig.type}
-                  onValueChange={(value: any) => setNewConfig({ ...newConfig, type: value })}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -273,8 +283,10 @@ const BackupScheduler: React.FC = () => {
               <div className="space-y-2">
                 <Label htmlFor="frequency">Frequência</Label>
                 <Select
+                  onValueChange={(value: any) =>
+                    setNewConfig({ ...newConfig, schedule_frequency: value })
+                  }
                   value={newConfig.schedule_frequency}
-                  onValueChange={(value: any) => setNewConfig({ ...newConfig, schedule_frequency: value })}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -292,16 +304,23 @@ const BackupScheduler: React.FC = () => {
                 <Label htmlFor="time">Horário</Label>
                 <Input
                   id="time"
+                  onChange={(e) =>
+                    setNewConfig({
+                      ...newConfig,
+                      schedule_time: e.target.value,
+                    })
+                  }
                   type="time"
                   value={newConfig.schedule_time}
-                  onChange={(e) => setNewConfig({ ...newConfig, schedule_time: e.target.value })}
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="provider">Armazenamento</Label>
                 <Select
+                  onValueChange={(value: any) =>
+                    setNewConfig({ ...newConfig, storage_provider: value })
+                  }
                   value={newConfig.storage_provider}
-                  onValueChange={(value: any) => setNewConfig({ ...newConfig, storage_provider: value })}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -318,37 +337,42 @@ const BackupScheduler: React.FC = () => {
                 <Label htmlFor="retention">Retenção (dias)</Label>
                 <Input
                   id="retention"
-                  type="number"
-                  min="1"
                   max="365"
+                  min="1"
+                  onChange={(e) =>
+                    setNewConfig({
+                      ...newConfig,
+                      retention_daily: Number.parseInt(e.target.value, 10),
+                    })
+                  }
+                  type="number"
                   value={newConfig.retention_daily}
-                  onChange={(e) => setNewConfig({ ...newConfig, retention_daily: parseInt(e.target.value) })}
                 />
               </div>
               <div className="col-span-2 space-y-2">
                 <Label htmlFor="description">Descrição</Label>
                 <Textarea
                   id="description"
-                  value={newConfig.description}
-                  onChange={(e) => setNewConfig({ ...newConfig, description: e.target.value })}
+                  onChange={(e) =>
+                    setNewConfig({ ...newConfig, description: e.target.value })
+                  }
                   placeholder="Descrição opcional da configuração..."
+                  value={newConfig.description}
                 />
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setShowNewDialog(false)}>
+              <Button onClick={() => setShowNewDialog(false)} variant="outline">
                 Cancelar
               </Button>
-              <Button onClick={handleCreateConfig}>
-                Criar Configuração
-              </Button>
+              <Button onClick={handleCreateConfig}>Criar Configuração</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>
 
       {loading ? (
-        <div className="text-center py-8">
+        <div className="py-8 text-center">
           <p>Carregando configurações...</p>
         </div>
       ) : (
@@ -361,8 +385,8 @@ const BackupScheduler: React.FC = () => {
           </CardHeader>
           <CardContent>
             {configs.length === 0 ? (
-              <div className="text-center py-8">
-                <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+              <div className="py-8 text-center">
+                <Calendar className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
                 <p className="text-muted-foreground">
                   Nenhuma configuração de backup encontrada
                 </p>
@@ -389,7 +413,7 @@ const BackupScheduler: React.FC = () => {
                           <div>
                             <div className="font-medium">{config.name}</div>
                             {config.description && (
-                              <div className="text-sm text-muted-foreground">
+                              <div className="text-muted-foreground text-sm">
                                 {config.description}
                               </div>
                             )}
@@ -402,7 +426,7 @@ const BackupScheduler: React.FC = () => {
                       <TableCell>
                         {config.schedule_frequency}
                         {config.schedule_time && (
-                          <div className="text-sm text-muted-foreground">
+                          <div className="text-muted-foreground text-sm">
                             às {config.schedule_time}
                           </div>
                         )}
@@ -426,7 +450,9 @@ const BackupScheduler: React.FC = () => {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge variant={getPriorityColor(config.priority) as any}>
+                        <Badge
+                          variant={getPriorityColor(config.priority) as any}
+                        >
                           {config.priority}
                         </Badge>
                       </TableCell>
@@ -434,9 +460,11 @@ const BackupScheduler: React.FC = () => {
                         <div className="flex items-center space-x-2">
                           <Switch
                             checked={config.enabled}
-                            onCheckedChange={(checked) => handleToggleConfig(config.id, checked)}
+                            onCheckedChange={(checked) =>
+                              handleToggleConfig(config.id, checked)
+                            }
                           />
-                          <Button variant="ghost" size="sm">
+                          <Button size="sm" variant="ghost">
                             <Settings className="h-4 w-4" />
                           </Button>
                         </div>

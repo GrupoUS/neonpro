@@ -12,7 +12,12 @@ export interface SMSProviderConfig {
   name: string;
   provider: SMSProvider;
   enabled: boolean;
-  config: TwilioConfig | SMSDevConfig | ZenviaConfig | MovileConfig | CustomConfig;
+  config:
+    | TwilioConfig
+    | SMSDevConfig
+    | ZenviaConfig
+    | MovileConfig
+    | CustomConfig;
   webhook_url?: string;
   created_at: string;
   updated_at: string;
@@ -85,13 +90,13 @@ export interface SMSMessage {
   metadata?: Record<string, any>;
 }
 
-export type SMSStatus = 
-  | 'queued' 
-  | 'sending' 
-  | 'sent' 
-  | 'delivered' 
-  | 'undelivered' 
-  | 'failed' 
+export type SMSStatus =
+  | 'queued'
+  | 'sending'
+  | 'sent'
+  | 'delivered'
+  | 'undelivered'
+  | 'failed'
   | 'rejected'
   | 'read'
   | 'received'; // Para mensagens recebidas
@@ -225,11 +230,13 @@ export interface SMSOptIn {
 
 // ==================== VALIDATION SCHEMAS ====================
 
-const PhoneNumberSchema = z.string()
+const PhoneNumberSchema = z
+  .string()
   .regex(/^\+55\d{10,11}$/, 'Número deve estar no formato +55XXXXXXXXXXX')
   .describe('Número de telefone brasileiro no formato internacional');
 
-const SMSMessageBodySchema = z.string()
+const SMSMessageBodySchema = z
+  .string()
   .min(1, 'Mensagem não pode estar vazia')
   .max(1600, 'Mensagem muito longa (máximo 1600 caracteres)')
   .describe('Corpo da mensagem SMS');
@@ -239,7 +246,7 @@ const SMSTemplateSchema = z.object({
   body: z.string().min(1, 'Corpo da template é obrigatório').max(1600),
   category: z.enum(['marketing', 'transactional', 'otp', 'notification']),
   language: z.string().default('pt-BR'),
-  variables: z.array(z.string()).default([])
+  variables: z.array(z.string()).default([]),
 });
 
 const SendSMSSchema = z.object({
@@ -248,19 +255,24 @@ const SendSMSSchema = z.object({
   body: SMSMessageBodySchema,
   template_id: z.string().uuid().optional(),
   variables: z.record(z.string()).optional(),
-  scheduled_at: z.string().datetime().optional()
+  scheduled_at: z.string().datetime().optional(),
 });
 
 const BulkSMSSchema = z.object({
   provider_id: z.string().uuid('ID do provedor inválido'),
-  messages: z.array(z.object({
-    to: PhoneNumberSchema,
-    body: SMSMessageBodySchema,
-    variables: z.record(z.string()).optional()
-  })).min(1, 'Lista de mensagens não pode estar vazia').max(1000, 'Máximo 1000 mensagens por lote'),
+  messages: z
+    .array(
+      z.object({
+        to: PhoneNumberSchema,
+        body: SMSMessageBodySchema,
+        variables: z.record(z.string()).optional(),
+      })
+    )
+    .min(1, 'Lista de mensagens não pode estar vazia')
+    .max(1000, 'Máximo 1000 mensagens por lote'),
   template_id: z.string().uuid().optional(),
   scheduled_at: z.string().datetime().optional(),
-  batch_size: z.number().min(1).max(100).default(10)
+  batch_size: z.number().min(1).max(100).default(10),
 });
 
 // ==================== API RESPONSE TYPES ====================
@@ -315,10 +327,11 @@ export const SMS_ERROR_CODES = {
   BLACKLISTED: 'number_blacklisted',
   OPT_OUT: 'recipient_opted_out',
   NETWORK_ERROR: 'network_error',
-  WEBHOOK_ERROR: 'webhook_processing_error'
+  WEBHOOK_ERROR: 'webhook_processing_error',
 } as const;
 
-export type SMSErrorCode = typeof SMS_ERROR_CODES[keyof typeof SMS_ERROR_CODES];
+export type SMSErrorCode =
+  (typeof SMS_ERROR_CODES)[keyof typeof SMS_ERROR_CODES];
 
 // ==================== FILTER & PAGINATION ====================
 
@@ -411,5 +424,5 @@ export {
   SMSMessageBodySchema,
   SMSTemplateSchema,
   SendSMSSchema,
-  BulkSMSSchema
+  BulkSMSSchema,
 };

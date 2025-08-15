@@ -4,9 +4,9 @@ import { z } from 'zod';
 // REPORT TYPES & ENUMS
 // =============================================================================
 
-export type ReportType = 
+export type ReportType =
   | 'stock_movement'
-  | 'stock_valuation' 
+  | 'stock_valuation'
   | 'expiring_items'
   | 'low_stock'
   | 'transfers'
@@ -16,11 +16,28 @@ export type ReportType =
 
 export type ReportFormat = 'pdf' | 'excel' | 'csv' | 'json';
 
-export type ReportPeriod = 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'yearly' | 'custom';
+export type ReportPeriod =
+  | 'daily'
+  | 'weekly'
+  | 'monthly'
+  | 'quarterly'
+  | 'yearly'
+  | 'custom';
 
-export type MovementType = 'in' | 'out' | 'transfer' | 'adjustment' | 'return' | 'waste';
+export type MovementType =
+  | 'in'
+  | 'out'
+  | 'transfer'
+  | 'adjustment'
+  | 'return'
+  | 'waste';
 
-export type ReportStatus = 'pending' | 'generating' | 'completed' | 'failed' | 'scheduled';
+export type ReportStatus =
+  | 'pending'
+  | 'generating'
+  | 'completed'
+  | 'failed'
+  | 'scheduled';
 
 // =============================================================================
 // REPORT FILTERS & PARAMETERS
@@ -85,21 +102,30 @@ export interface StockMovementSummary {
   total_value_out: number;
   net_movement: number;
   net_value: number;
-  by_type: Record<MovementType, {
-    count: number;
-    quantity: number;
-    value: number;
-  }>;
-  by_category: Record<string, {
-    count: number;
-    quantity: number;
-    value: number;
-  }>;
-  by_location: Record<string, {
-    count: number;
-    quantity: number;
-    value: number;
-  }>;
+  by_type: Record<
+    MovementType,
+    {
+      count: number;
+      quantity: number;
+      value: number;
+    }
+  >;
+  by_category: Record<
+    string,
+    {
+      count: number;
+      quantity: number;
+      value: number;
+    }
+  >;
+  by_location: Record<
+    string,
+    {
+      count: number;
+      quantity: number;
+      value: number;
+    }
+  >;
 }
 
 // =============================================================================
@@ -128,24 +154,33 @@ export interface StockValuationSummary {
   total_quantity: number;
   total_value: number;
   average_unit_cost: number;
-  by_category: Record<string, {
-    items: number;
-    quantity: number;
-    value: number;
-    percentage: number;
-  }>;
-  by_location: Record<string, {
-    items: number;
-    quantity: number;
-    value: number;
-    percentage: number;
-  }>;
-  by_status: Record<string, {
-    items: number;
-    quantity: number;
-    value: number;
-    percentage: number;
-  }>;
+  by_category: Record<
+    string,
+    {
+      items: number;
+      quantity: number;
+      value: number;
+      percentage: number;
+    }
+  >;
+  by_location: Record<
+    string,
+    {
+      items: number;
+      quantity: number;
+      value: number;
+      percentage: number;
+    }
+  >;
+  by_status: Record<
+    string,
+    {
+      items: number;
+      quantity: number;
+      value: number;
+      percentage: number;
+    }
+  >;
 }
 
 // =============================================================================
@@ -172,21 +207,30 @@ export interface ExpiringItemsReportData {
 export interface ExpiringItemsSummary {
   total_expiring_items: number;
   total_expiring_value: number;
-  by_urgency: Record<string, {
-    items: number;
-    quantity: number;
-    value: number;
-  }>;
-  by_category: Record<string, {
-    items: number;
-    quantity: number;
-    value: number;
-  }>;
-  by_location: Record<string, {
-    items: number;
-    quantity: number;
-    value: number;
-  }>;
+  by_urgency: Record<
+    string,
+    {
+      items: number;
+      quantity: number;
+      value: number;
+    }
+  >;
+  by_category: Record<
+    string,
+    {
+      items: number;
+      quantity: number;
+      value: number;
+    }
+  >;
+  by_location: Record<
+    string,
+    {
+      items: number;
+      quantity: number;
+      value: number;
+    }
+  >;
   upcoming_expirations_30_days: number;
   upcoming_expirations_60_days: number;
   upcoming_expirations_90_days: number;
@@ -223,19 +267,28 @@ export interface TransferReportSummary {
   pending_transfers: number;
   total_value_transferred: number;
   average_transfer_value: number;
-  by_status: Record<string, {
-    count: number;
-    value: number;
-  }>;
-  by_route: Record<string, {
-    count: number;
-    value: number;
-    avg_time: number;
-  }>;
-  by_category: Record<string, {
-    count: number;
-    value: number;
-  }>;
+  by_status: Record<
+    string,
+    {
+      count: number;
+      value: number;
+    }
+  >;
+  by_route: Record<
+    string,
+    {
+      count: number;
+      value: number;
+      avg_time: number;
+    }
+  >;
+  by_category: Record<
+    string,
+    {
+      count: number;
+      value: number;
+    }
+  >;
   most_transferred_items: Array<{
     item_name: string;
     count: number;
@@ -409,7 +462,9 @@ export const ReportFiltersSchema = z.object({
   category: z.string().optional(),
   item_id: z.string().optional(),
   supplier_id: z.string().optional(),
-  movement_type: z.enum(['in', 'out', 'transfer', 'adjustment', 'return', 'waste']).optional(),
+  movement_type: z
+    .enum(['in', 'out', 'transfer', 'adjustment', 'return', 'waste'])
+    .optional(),
   min_value: z.number().min(0).optional(),
   max_value: z.number().min(0).optional(),
   include_zero_stock: z.boolean().optional(),
@@ -417,7 +472,16 @@ export const ReportFiltersSchema = z.object({
 });
 
 export const ReportParametersSchema = z.object({
-  type: z.enum(['stock_movement', 'stock_valuation', 'expiring_items', 'low_stock', 'transfers', 'location_performance', 'supplier_analysis', 'category_analysis']),
+  type: z.enum([
+    'stock_movement',
+    'stock_valuation',
+    'expiring_items',
+    'low_stock',
+    'transfers',
+    'location_performance',
+    'supplier_analysis',
+    'category_analysis',
+  ]),
   filters: ReportFiltersSchema,
   format: z.enum(['pdf', 'excel', 'csv', 'json']),
   groupBy: z.array(z.string()).optional(),

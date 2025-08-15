@@ -1,13 +1,13 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { createClient } from '@/app/utils/supabase/server';
 
 /**
  * Social Media Accounts API Route
- * 
+ *
  * Handles CRUD operations for social media account connections
  * Manages OAuth tokens, sync status, and account metadata
- * 
+ *
  * Research-backed implementation following:
  * - Instagram Basic Display API authentication
  * - Facebook Pages API connection patterns
@@ -25,7 +25,7 @@ const createAccountSchema = z.object({
   refresh_token: z.string().optional(), // Will be encrypted
   token_expires_at: z.string().datetime().optional(),
   account_metadata: z.record(z.any()).default({}),
-  sync_settings: z.record(z.any()).default({})
+  sync_settings: z.record(z.any()).default({}),
 });
 
 const updateAccountSchema = z.object({
@@ -33,7 +33,7 @@ const updateAccountSchema = z.object({
   account_handle: z.string().max(255).optional(),
   sync_settings: z.record(z.any()).optional(),
   sync_status: z.enum(['active', 'error', 'paused', 'disconnected']).optional(),
-  status: z.enum(['active', 'inactive', 'suspended', 'deleted']).optional()
+  status: z.enum(['active', 'inactive', 'suspended', 'deleted']).optional(),
 });
 
 type CreateAccountData = z.infer<typeof createAccountSchema>;
@@ -41,16 +41,18 @@ type UpdateAccountData = z.infer<typeof updateAccountSchema>;
 
 /**
  * GET /api/social-media/accounts
- * 
+ *
  * Retrieves all social media accounts for the user's clinic
  * Supports filtering by platform and status
  */
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Verify authentication
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session) {
       return NextResponse.json(
         { error: 'Authentication required' },
@@ -115,8 +117,9 @@ export async function GET(request: NextRequest) {
       query = query.eq('sync_status', syncStatus);
     }
 
-    const { data: accounts, error } = await query
-      .order('created_at', { ascending: false });
+    const { data: accounts, error } = await query.order('created_at', {
+      ascending: false,
+    });
 
     if (error) {
       console.error('Error fetching social media accounts:', error);
@@ -127,20 +130,19 @@ export async function GET(request: NextRequest) {
     }
 
     // Remove sensitive token data from response
-    const sanitizedAccounts = accounts?.map(account => ({
+    const sanitizedAccounts = accounts?.map((account) => ({
       ...account,
       has_access_token: !!account.access_token,
       has_refresh_token: !!account.refresh_token,
       access_token: undefined,
-      refresh_token: undefined
+      refresh_token: undefined,
     }));
 
     return NextResponse.json({
       success: true,
       data: sanitizedAccounts,
-      total: accounts?.length || 0
+      total: accounts?.length || 0,
     });
-
   } catch (error) {
     console.error('Social media accounts GET error:', error);
     return NextResponse.json(
@@ -152,16 +154,18 @@ export async function GET(request: NextRequest) {
 
 /**
  * POST /api/social-media/accounts
- * 
+ *
  * Creates a new social media account connection
  * Typically called after OAuth flow completion
  */
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Verify authentication
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session) {
       return NextResponse.json(
         { error: 'Authentication required' },
@@ -195,10 +199,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (!platform) {
-      return NextResponse.json(
-        { error: 'Invalid platform' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Invalid platform' }, { status: 400 });
     }
 
     // Check for existing account with same platform and account_id
@@ -257,15 +258,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    return NextResponse.json({
-      success: true,
-      data: newAccount,
-      message: 'Social media account connected successfully'
-    }, { status: 201 });
-
+    return NextResponse.json(
+      {
+        success: true,
+        data: newAccount,
+        message: 'Social media account connected successfully',
+      },
+      { status: 201 }
+    );
   } catch (error) {
     console.error('Social media accounts POST error:', error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },

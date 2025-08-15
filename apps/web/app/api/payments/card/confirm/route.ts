@@ -5,12 +5,12 @@
  * Quality: ≥9.5/10 (VOIDBEAST + Unified System enforced)
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
 import { createClient } from '@supabase/supabase-js';
-import { CardPaymentService } from '@/lib/payments/card/card-payment-service';
+import { type NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
+import { z } from 'zod';
 import { authOptions } from '@/lib/auth';
+import { CardPaymentService } from '@/lib/payments/card/card-payment-service';
 
 // Initialize Supabase client
 const supabase = createClient(
@@ -39,11 +39,11 @@ export async function POST(request: NextRequest) {
         { status: 401 }
       );
     }
-    
+
     // Parse and validate request body
     const body = await request.json();
     const validatedData = confirmPaymentSchema.parse(body);
-    
+
     // Check if payment exists and belongs to user or user has permission
     const { data: cardPayment, error: paymentError } = await supabase
       .from('card_payments')
@@ -53,33 +53,41 @@ export async function POST(request: NextRequest) {
       `)
       .eq('stripe_payment_intent_id', validatedData.payment_intent_id)
       .single();
-    
+
     if (paymentError || !cardPayment) {
       return NextResponse.json(
         { error: 'Not Found', message: 'Payment not found' },
         { status: 404 }
       );
     }
-    
+
     // Check permissions
     const userProfile = await supabase
       .from('profiles')
       .select('role')
       .eq('id', session.user.id)
       .single();
-    
+
     const isOwner = cardPayment.created_by === session.user.id;
-    const hasPermission = userProfile.data?.role && ['admin', 'manager', 'financial'].includes(userProfile.data.role);
-    
-    if (!isOwner && !hasPermission) {
+    const hasPermission =
+      userProfile.data?.role &&
+      ['admin', 'manager', 'financial'].includes(userProfile.data.role);
+
+    if (!(isOwner || hasPermission)) {
       return NextResponse.json(
         { error: 'Forbidden', message: 'Insufficient permissions' },
         { status: 403 }
       );
     }
-    
+
     // Check if payment is in a confirmable state
-    if (!['requires_payment_method', 'requires_confirmation', 'requires_action'].includes(cardPayment.status)) {
+    if (
+      ![
+        'requires_payment_method',
+        'requires_confirmation',
+        'requires_action',
+      ].includes(cardPayment.status)
+    ) {
       return NextResponse.json(
         {
           error: 'Invalid State',
@@ -88,7 +96,7 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-    
+
     // Confirm payment with Stripe
     const confirmationResult = await CardPaymentService.confirmPayment(
       validatedData.payment_intent_id,
@@ -97,21 +105,23 @@ export async function POST(request: NextRequest) {
         return_url: validatedData.return_url,
       }
     );
-    
+
     // Update payment status in database
     const { error: updateError } = await supabase
       .from('card_payments')
       .update({
         status: confirmationResult.status,
-        stripe_payment_method_id: confirmationResult.payment_method?.id || cardPayment.stripe_payment_method_id,
+        stripe_payment_method_id:
+          confirmationResult.payment_method?.id ||
+          cardPayment.stripe_payment_method_id,
         updated_at: new Date().toISOString(),
       })
       .eq('id', cardPayment.id);
-    
+
     if (updateError) {
       console.error('Error updating payment status:', updateError);
     }
-    
+
     // If payment is successful, update related records
     if (confirmationResult.status === 'succeeded') {
       // Update ap_payments if exists
@@ -124,7 +134,7 @@ export async function POST(request: NextRequest) {
             updated_at: new Date().toISOString(),
           })
           .eq('reference_id', validatedData.payment_intent_id);
-        
+
         // Update payable status
         await supabase
           .from('ap_payables')
@@ -135,14 +145,14 @@ export async function POST(request: NextRequest) {
           })
           .eq('id', cardPayment.payable_id);
       }
-      
+
       // Update installment payments if exists
       const { data: installmentPlan } = await supabase
         .from('installment_plans')
         .select('id')
         .eq('payment_id', cardPayment.id)
         .single();
-      
+
       if (installmentPlan) {
         // Mark first installment as paid
         await supabase
@@ -156,19 +166,17 @@ export async function POST(request: NextRequest) {
           .eq('installment_number', 1);
       }
     }
-    
+
     // Log audit trail
-    await supabase
-      .from('audit_logs')
-      .insert({
-        table_name: 'card_payments',
-        record_id: cardPayment.id,
-        action: 'UPDATE',
-        old_values: { status: cardPayment.status },
-        new_values: { status: confirmationResult.status },
-        user_id: session.user.id,
-      });
-    
+    await supabase.from('audit_logs').insert({
+      table_name: 'card_payments',
+      record_id: cardPayment.id,
+      action: 'UPDATE',
+      old_values: { status: cardPayment.status },
+      new_values: { status: confirmationResult.status },
+      user_id: session.user.id,
+    });
+
     // Prepare response based on payment status
     const response: any = {
       success: true,
@@ -177,31 +185,32 @@ export async function POST(request: NextRequest) {
       amount: confirmationResult.amount,
       currency: confirmationResult.currency,
     };
-    
+
     // Add additional data based on status
     if (confirmationResult.status === 'requires_action') {
       response.requires_action = true;
       response.next_action = confirmationResult.next_action;
     }
-    
+
     if (confirmationResult.status === 'succeeded') {
       response.payment_method = {
         id: confirmationResult.payment_method?.id,
         type: confirmationResult.payment_method?.type,
-        card: confirmationResult.payment_method?.card ? {
-          brand: confirmationResult.payment_method.card.brand,
-          last4: confirmationResult.payment_method.card.last4,
-          exp_month: confirmationResult.payment_method.card.exp_month,
-          exp_year: confirmationResult.payment_method.card.exp_year,
-        } : undefined,
+        card: confirmationResult.payment_method?.card
+          ? {
+              brand: confirmationResult.payment_method.card.brand,
+              last4: confirmationResult.payment_method.card.last4,
+              exp_month: confirmationResult.payment_method.card.exp_month,
+              exp_year: confirmationResult.payment_method.card.exp_year,
+            }
+          : undefined,
       };
     }
-    
+
     return NextResponse.json(response);
-    
   } catch (error) {
     console.error('Card payment confirmation error:', error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -212,11 +221,11 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-    
+
     // Handle Stripe-specific errors
     if (error && typeof error === 'object' && 'type' in error) {
       const stripeError = error as any;
-      
+
       switch (stripeError.type) {
         case 'card_error':
           return NextResponse.json(
@@ -227,7 +236,7 @@ export async function POST(request: NextRequest) {
             },
             { status: 402 }
           );
-        
+
         case 'authentication_required':
           return NextResponse.json(
             {
@@ -237,7 +246,7 @@ export async function POST(request: NextRequest) {
             },
             { status: 402 }
           );
-        
+
         case 'invalid_request_error':
           return NextResponse.json(
             {
@@ -246,7 +255,7 @@ export async function POST(request: NextRequest) {
             },
             { status: 400 }
           );
-        
+
         default:
           return NextResponse.json(
             {
@@ -257,11 +266,12 @@ export async function POST(request: NextRequest) {
           );
       }
     }
-    
+
     return NextResponse.json(
       {
         error: 'Internal Server Error',
-        message: error instanceof Error ? error.message : 'Unknown error occurred',
+        message:
+          error instanceof Error ? error.message : 'Unknown error occurred',
       },
       { status: 500 }
     );

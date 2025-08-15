@@ -4,16 +4,16 @@
 // =====================================================================================
 
 import type {
-    AutomationStep,
-    CampaignAnalytics,
-    CampaignAutomation,
-    CampaignExecution,
-    CampaignMetrics,
-    CampaignTemplate,
-    CreateCampaignData,
-    CreateTemplateData,
-    ExecuteCampaignData,
-    MarketingCampaign
+  AutomationStep,
+  CampaignAnalytics,
+  CampaignAutomation,
+  CampaignExecution,
+  CampaignMetrics,
+  CampaignTemplate,
+  CreateCampaignData,
+  CreateTemplateData,
+  ExecuteCampaignData,
+  MarketingCampaign,
 } from '@/app/types/marketing-campaigns';
 import { createClient } from '@/app/utils/supabase/server';
 
@@ -72,7 +72,10 @@ export class MarketingCampaignsService {
     }
 
     if (filters?.offset) {
-      query = query.range(filters.offset, (filters.offset + (filters.limit || 10)) - 1);
+      query = query.range(
+        filters.offset,
+        filters.offset + (filters.limit || 10) - 1
+      );
     }
 
     const { data, error } = await query;
@@ -124,35 +127,39 @@ export class MarketingCampaignsService {
   /**
    * Create new marketing campaign
    */
-  async createCampaign(campaignData: CreateCampaignData): Promise<MarketingCampaign> {
+  async createCampaign(
+    campaignData: CreateCampaignData
+  ): Promise<MarketingCampaign> {
     const { data, error } = await this.supabase
       .from('marketing_campaigns')
-      .insert([{
-        name: campaignData.name,
-        description: campaignData.description,
-        campaign_type: campaignData.campaignType,
-        status: campaignData.status || 'draft',
-        priority: campaignData.priority || 'normal',
-        target_segments: campaignData.targetSegments || [],
-        include_criteria: campaignData.includeCriteria,
-        exclude_criteria: campaignData.excludeCriteria,
-        scheduled_start: campaignData.scheduledStart,
-        scheduled_end: campaignData.scheduledEnd,
-        timezone: campaignData.timezone || 'America/Sao_Paulo',
-        template_id: campaignData.templateId,
-        subject: campaignData.subject,
-        content: campaignData.content,
-        personalization_level: campaignData.personalizationLevel || 'basic',
-        personalization_data: campaignData.personalizationData || {},
-        trigger_type: campaignData.triggerType,
-        trigger_config: campaignData.triggerConfig,
-        auto_optimization: campaignData.autoOptimization || false,
-        requires_consent: campaignData.requiresConsent || true,
-        consent_types: campaignData.consentTypes || [],
-        respect_unsubscribe: campaignData.respectUnsubscribe || true,
-        created_by: campaignData.createdBy,
-        clinic_id: campaignData.clinicId
-      }])
+      .insert([
+        {
+          name: campaignData.name,
+          description: campaignData.description,
+          campaign_type: campaignData.campaignType,
+          status: campaignData.status || 'draft',
+          priority: campaignData.priority || 'normal',
+          target_segments: campaignData.targetSegments || [],
+          include_criteria: campaignData.includeCriteria,
+          exclude_criteria: campaignData.excludeCriteria,
+          scheduled_start: campaignData.scheduledStart,
+          scheduled_end: campaignData.scheduledEnd,
+          timezone: campaignData.timezone || 'America/Sao_Paulo',
+          template_id: campaignData.templateId,
+          subject: campaignData.subject,
+          content: campaignData.content,
+          personalization_level: campaignData.personalizationLevel || 'basic',
+          personalization_data: campaignData.personalizationData || {},
+          trigger_type: campaignData.triggerType,
+          trigger_config: campaignData.triggerConfig,
+          auto_optimization: campaignData.autoOptimization,
+          requires_consent: true,
+          consent_types: campaignData.consentTypes || [],
+          respect_unsubscribe: true,
+          created_by: campaignData.createdBy,
+          clinic_id: campaignData.clinicId,
+        },
+      ])
       .select()
       .single();
 
@@ -167,7 +174,10 @@ export class MarketingCampaignsService {
   /**
    * Update campaign
    */
-  async updateCampaign(id: string, updates: Partial<CreateCampaignData>): Promise<MarketingCampaign> {
+  async updateCampaign(
+    id: string,
+    updates: Partial<CreateCampaignData>
+  ): Promise<MarketingCampaign> {
     const { data, error } = await this.supabase
       .from('marketing_campaigns')
       .update(updates)
@@ -245,7 +255,9 @@ export class MarketingCampaignsService {
   /**
    * Create campaign template
    */
-  async createTemplate(templateData: CreateTemplateData): Promise<CampaignTemplate> {
+  async createTemplate(
+    templateData: CreateTemplateData
+  ): Promise<CampaignTemplate> {
     const { data, error } = await this.supabase
       .from('campaign_templates')
       .insert([templateData])
@@ -267,7 +279,10 @@ export class MarketingCampaignsService {
   /**
    * Execute campaign manually
    */
-  async executeCampaign(campaignId: string, executionData: ExecuteCampaignData): Promise<CampaignExecution> {
+  async executeCampaign(
+    campaignId: string,
+    _executionData: ExecuteCampaignData
+  ): Promise<CampaignExecution> {
     // First, validate campaign exists and is executable
     const campaign = await this.getCampaignById(campaignId);
     if (!campaign) {
@@ -296,16 +311,18 @@ export class MarketingCampaignsService {
     // Create execution record
     const { data: execution, error } = await this.supabase
       .from('campaign_executions')
-      .insert([{
-        campaign_id: campaignId,
-        execution_date: new Date().toISOString(),
-        total_recipients: recipients.length,
-        target_segments: campaign.targetSegments,
-        final_content: personalizedContent.content,
-        final_subject: personalizedContent.subject,
-        delivery_status: 'pending',
-        personalization_applied: campaign.personalizationLevel !== 'none'
-      }])
+      .insert([
+        {
+          campaign_id: campaignId,
+          execution_date: new Date().toISOString(),
+          total_recipients: recipients.length,
+          target_segments: campaign.targetSegments,
+          final_content: personalizedContent.content,
+          final_subject: personalizedContent.subject,
+          delivery_status: 'pending',
+          personalization_applied: campaign.personalizationLevel !== 'none',
+        },
+      ])
       .select()
       .single();
 
@@ -315,17 +332,23 @@ export class MarketingCampaignsService {
     }
 
     // Create recipient records
-    const recipientRecords = recipients.map(recipient => ({
+    const recipientRecords = recipients.map((recipient) => ({
       execution_id: execution.id,
       patient_id: recipient.id,
       email: recipient.email,
       phone: recipient.phone,
       whatsapp: recipient.whatsapp,
       personalization_data: recipient.personalizationData || {},
-      final_content: this.personalizeContent(personalizedContent.content, recipient),
-      final_subject: this.personalizeContent(personalizedContent.subject || '', recipient),
+      final_content: this.personalizeContent(
+        personalizedContent.content,
+        recipient
+      ),
+      final_subject: this.personalizeContent(
+        personalizedContent.subject || '',
+        recipient
+      ),
       delivery_status: 'pending',
-      consent_status: recipient.consentStatus || 'pending'
+      consent_status: recipient.consentStatus || 'pending',
     }));
 
     const { error: recipientsError } = await this.supabase
@@ -347,9 +370,9 @@ export class MarketingCampaignsService {
    * Get target recipients based on segments and criteria
    */
   private async getTargetRecipients(
-    targetSegments: string[],
-    includeCriteria?: any,
-    excludeCriteria?: any
+    _targetSegments: string[],
+    _includeCriteria?: any,
+    _excludeCriteria?: any
   ): Promise<any[]> {
     // This would integrate with patient segmentation service
     // For now, return mock data
@@ -361,7 +384,7 @@ export class MarketingCampaignsService {
         whatsapp: '+5511999999001',
         name: 'Maria Silva',
         personalizationData: { name: 'Maria', lastTreatment: 'Facial' },
-        consentStatus: 'granted'
+        consentStatus: 'granted',
       },
       {
         id: '33333333-3333-3333-3333-333333333333',
@@ -370,8 +393,8 @@ export class MarketingCampaignsService {
         whatsapp: '+5511999999002',
         name: 'João Santos',
         personalizationData: { name: 'João', lastTreatment: 'Peeling' },
-        consentStatus: 'granted'
-      }
+        consentStatus: 'granted',
+      },
     ];
   }
 
@@ -381,7 +404,7 @@ export class MarketingCampaignsService {
   private async applyPersonalization(
     content: string,
     subject: string | null,
-    level: string,
+    _level: string,
     data: any
   ): Promise<{ content: string; subject: string | null }> {
     // Basic personalization - replace template variables
@@ -392,7 +415,7 @@ export class MarketingCampaignsService {
       clinic_name: 'Clínica Estética Beauty',
       clinic_phone: '(11) 99999-9999',
       clinic_email: 'contato@clinicabeauty.com',
-      ...data
+      ...data,
     };
 
     // Replace variables in content
@@ -405,13 +428,16 @@ export class MarketingCampaignsService {
     if (personalizedSubject) {
       Object.entries(defaultData).forEach(([key, value]) => {
         const regex = new RegExp(`{{${key}}}`, 'g');
-        personalizedSubject = personalizedSubject!.replace(regex, String(value));
+        personalizedSubject = personalizedSubject?.replace(
+          regex,
+          String(value)
+        );
       });
     }
 
     return {
       content: personalizedContent,
-      subject: personalizedSubject
+      subject: personalizedSubject,
     };
   }
 
@@ -422,10 +448,12 @@ export class MarketingCampaignsService {
     let content = template;
 
     // Replace recipient-specific variables
-    Object.entries(recipient.personalizationData || {}).forEach(([key, value]) => {
-      const regex = new RegExp(`{{${key}}}`, 'g');
-      content = content.replace(regex, String(value));
-    });
+    Object.entries(recipient.personalizationData || {}).forEach(
+      ([key, value]) => {
+        const regex = new RegExp(`{{${key}}}`, 'g');
+        content = content.replace(regex, String(value));
+      }
+    );
 
     return content;
   }
@@ -433,13 +461,16 @@ export class MarketingCampaignsService {
   /**
    * Start delivery process
    */
-  private async startDelivery(executionId: string, campaignType: string): Promise<void> {
+  private async startDelivery(
+    executionId: string,
+    campaignType: string
+  ): Promise<void> {
     // Update execution status
     await this.supabase
       .from('campaign_executions')
       .update({
         delivery_status: 'sent',
-        delivery_started_at: new Date().toISOString()
+        delivery_started_at: new Date().toISOString(),
       })
       .eq('id', executionId);
 
@@ -449,7 +480,9 @@ export class MarketingCampaignsService {
     // - WhatsApp: Twilio WhatsApp, Facebook API, etc.
     // - Push: Firebase, OneSignal, etc.
 
-    console.log(`Starting delivery for execution ${executionId} of type ${campaignType}`);
+    console.log(
+      `Starting delivery for execution ${executionId} of type ${campaignType}`
+    );
   }
 
   // =====================================================================================
@@ -463,17 +496,29 @@ export class MarketingCampaignsService {
     const [campaign, executions, metrics] = await Promise.all([
       this.getCampaignById(campaignId),
       this.getCampaignExecutions(campaignId),
-      this.getCampaignMetrics(campaignId)
+      this.getCampaignMetrics(campaignId),
     ]);
 
     if (!campaign) {
       throw new Error('Campaign not found');
     }
 
-    const totalSent = executions.reduce((sum, exec) => sum + (exec.successfulSends || 0), 0);
-    const totalOpened = executions.reduce((sum, exec) => sum + (exec.openCount || 0), 0);
-    const totalClicked = executions.reduce((sum, exec) => sum + (exec.clickCount || 0), 0);
-    const totalConverted = executions.reduce((sum, exec) => sum + (exec.conversionCount || 0), 0);
+    const totalSent = executions.reduce(
+      (sum, exec) => sum + (exec.successfulSends || 0),
+      0
+    );
+    const totalOpened = executions.reduce(
+      (sum, exec) => sum + (exec.openCount || 0),
+      0
+    );
+    const totalClicked = executions.reduce(
+      (sum, exec) => sum + (exec.clickCount || 0),
+      0
+    );
+    const totalConverted = executions.reduce(
+      (sum, exec) => sum + (exec.conversionCount || 0),
+      0
+    );
 
     return {
       campaignId,
@@ -484,30 +529,33 @@ export class MarketingCampaignsService {
       totalOpened,
       totalClicked,
       totalConverted,
-      deliveryRate: totalSent > 0 ? (totalSent / campaign.totalRecipients) * 100 : 0,
+      deliveryRate:
+        totalSent > 0 ? (totalSent / campaign.totalRecipients) * 100 : 0,
       openRate: totalSent > 0 ? (totalOpened / totalSent) * 100 : 0,
       clickRate: totalSent > 0 ? (totalClicked / totalSent) * 100 : 0,
       conversionRate: totalSent > 0 ? (totalConverted / totalSent) * 100 : 0,
-      executions: executions.map(exec => ({
+      executions: executions.map((exec) => ({
         id: exec.id,
         executionDate: exec.executionDate,
         recipients: exec.totalRecipients,
         sent: exec.successfulSends || 0,
         opened: exec.openCount || 0,
         clicked: exec.clickCount || 0,
-        converted: exec.conversionCount || 0
+        converted: exec.conversionCount || 0,
       })),
       timeline: this.generateTimelineData(executions),
       segmentPerformance: await this.getSegmentPerformance(campaignId),
       deviceBreakdown: metrics?.deviceBreakdown || {},
-      locationBreakdown: metrics?.locationBreakdown || {}
+      locationBreakdown: metrics?.locationBreakdown || {},
     };
   }
 
   /**
    * Get campaign executions
    */
-  private async getCampaignExecutions(campaignId: string): Promise<CampaignExecution[]> {
+  private async getCampaignExecutions(
+    campaignId: string
+  ): Promise<CampaignExecution[]> {
     const { data, error } = await this.supabase
       .from('campaign_executions')
       .select('*')
@@ -525,7 +573,9 @@ export class MarketingCampaignsService {
   /**
    * Get campaign metrics
    */
-  private async getCampaignMetrics(campaignId: string): Promise<CampaignMetrics | null> {
+  private async getCampaignMetrics(
+    campaignId: string
+  ): Promise<CampaignMetrics | null> {
     const { data, error } = await this.supabase
       .from('campaign_metrics')
       .select('*')
@@ -544,25 +594,43 @@ export class MarketingCampaignsService {
    * Generate timeline data for analytics
    */
   private generateTimelineData(executions: CampaignExecution[]): any[] {
-    return executions.map(exec => ({
+    return executions.map((exec) => ({
       date: exec.executionDate,
       sent: exec.successfulSends || 0,
       opened: exec.openCount || 0,
       clicked: exec.clickCount || 0,
-      converted: exec.conversionCount || 0
+      converted: exec.conversionCount || 0,
     }));
   }
 
   /**
    * Get segment performance data
    */
-  private async getSegmentPerformance(campaignId: string): Promise<any[]> {
+  private async getSegmentPerformance(_campaignId: string): Promise<any[]> {
     // This would analyze performance by segment
     // For now, return mock data
     return [
-      { segment: 'novos_pacientes', sent: 150, opened: 89, clicked: 34, converted: 12 },
-      { segment: 'pacientes_ativos', sent: 200, opened: 145, clicked: 67, converted: 23 },
-      { segment: 'pacientes_vip', sent: 50, opened: 42, clicked: 28, converted: 15 }
+      {
+        segment: 'novos_pacientes',
+        sent: 150,
+        opened: 89,
+        clicked: 34,
+        converted: 12,
+      },
+      {
+        segment: 'pacientes_ativos',
+        sent: 200,
+        opened: 145,
+        clicked: 67,
+        converted: 23,
+      },
+      {
+        segment: 'pacientes_vip',
+        sent: 50,
+        opened: 42,
+        clicked: 28,
+        converted: 15,
+      },
     ];
   }
 
@@ -596,7 +664,9 @@ export class MarketingCampaignsService {
   /**
    * Create campaign automation
    */
-  async createAutomation(automationData: Omit<CampaignAutomation, 'id' | 'createdAt' | 'updatedAt'>): Promise<CampaignAutomation> {
+  async createAutomation(
+    automationData: Omit<CampaignAutomation, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<CampaignAutomation> {
     const { data, error } = await this.supabase
       .from('campaign_automations')
       .insert([automationData])
@@ -614,7 +684,10 @@ export class MarketingCampaignsService {
   /**
    * Process automation triggers
    */
-  async processAutomationTriggers(eventType: string, eventData: any): Promise<void> {
+  async processAutomationTriggers(
+    eventType: string,
+    eventData: any
+  ): Promise<void> {
     // Get active automations that match the event
     const { data: automations, error } = await this.supabase
       .from('campaign_automations')
@@ -622,7 +695,10 @@ export class MarketingCampaignsService {
       .eq('is_active', true);
 
     if (error) {
-      console.error('Error fetching automations for trigger processing:', error);
+      console.error(
+        'Error fetching automations for trigger processing:',
+        error
+      );
       return;
     }
 
@@ -635,7 +711,11 @@ export class MarketingCampaignsService {
       );
 
       if (shouldTrigger) {
-        await this.executeAutomationSteps(automation.id, automation.steps, eventData);
+        await this.executeAutomationSteps(
+          automation.id,
+          automation.steps,
+          eventData
+        );
       }
     }
   }
@@ -643,9 +723,13 @@ export class MarketingCampaignsService {
   /**
    * Evaluate automation conditions
    */
-  private evaluateAutomationConditions(conditions: any[], eventType: string, eventData: any): boolean {
+  private evaluateAutomationConditions(
+    conditions: any[],
+    eventType: string,
+    _eventData: any
+  ): boolean {
     // Implement condition evaluation logic
-    return conditions.some(condition => {
+    return conditions.some((condition) => {
       if (condition.trigger === eventType) {
         // Additional condition checks would go here
         return true;
@@ -657,12 +741,18 @@ export class MarketingCampaignsService {
   /**
    * Execute automation steps
    */
-  private async executeAutomationSteps(automationId: string, steps: AutomationStep[], eventData: any): Promise<void> {
+  private async executeAutomationSteps(
+    _automationId: string,
+    steps: AutomationStep[],
+    eventData: any
+  ): Promise<void> {
     for (const step of steps) {
       // Schedule or execute step based on delay
       if (step.delayHours && step.delayHours > 0) {
         // Schedule for later execution
-        console.log(`Scheduling step ${step.step} for ${step.delayHours} hours from now`);
+        console.log(
+          `Scheduling step ${step.step} for ${step.delayHours} hours from now`
+        );
       } else {
         // Execute immediately
         await this.executeAutomationStep(step, eventData);
@@ -673,13 +763,18 @@ export class MarketingCampaignsService {
   /**
    * Execute individual automation step
    */
-  private async executeAutomationStep(step: AutomationStep, eventData: any): Promise<void> {
+  private async executeAutomationStep(
+    step: AutomationStep,
+    _eventData: any
+  ): Promise<void> {
     switch (step.type) {
       case 'send_email':
       case 'send_sms':
       case 'send_whatsapp':
         // Execute send action
-        console.log(`Executing ${step.type} step with template ${step.template}`);
+        console.log(
+          `Executing ${step.type} step with template ${step.template}`
+        );
         break;
       case 'add_to_segment':
         // Add patient to segment

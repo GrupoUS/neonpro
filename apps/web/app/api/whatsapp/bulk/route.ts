@@ -1,7 +1,7 @@
 // WhatsApp Bulk Message API Route
 // Handles sending bulk template messages to multiple recipients
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { whatsAppService } from '@/app/lib/services/whatsapp-service';
 import { createClient } from '@/app/utils/supabase/server';
 
@@ -11,12 +11,12 @@ export async function POST(request: NextRequest) {
     console.log('WhatsApp bulk message request:', body);
 
     // Validate required fields
-    const { 
-      templateName, 
-      parameters = {}, 
+    const {
+      templateName,
+      parameters = {},
       recipientType,
       selectedPatients = [],
-      customPhoneNumbers = []
+      customPhoneNumbers = [],
     } = body;
 
     if (!templateName) {
@@ -26,27 +26,36 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!recipientType || !['all_patients', 'selected_patients', 'custom_list'].includes(recipientType)) {
+    if (
+      !(
+        recipientType &&
+        ['all_patients', 'selected_patients', 'custom_list'].includes(
+          recipientType
+        )
+      )
+    ) {
       return NextResponse.json(
-        { error: 'Valid recipient type is required (all_patients, selected_patients, custom_list)' },
+        {
+          error:
+            'Valid recipient type is required (all_patients, selected_patients, custom_list)',
+        },
         { status: 400 }
       );
     }
 
     // Verify user authentication
     const supabase = await createClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
     if (!session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Check if WhatsApp is configured
     const config = await whatsAppService.getConfig();
-    if (!config || !config.isActive) {
+    if (!(config && config.isActive)) {
       return NextResponse.json(
         { error: 'WhatsApp is not configured or inactive' },
         { status: 400 }
@@ -68,11 +77,13 @@ export async function POST(request: NextRequest) {
         throw new Error('Failed to fetch patient opt-ins');
       }
 
-      phoneNumbers = optIns?.map(opt => opt.phone_number) || [];
+      phoneNumbers = optIns?.map((opt) => opt.phone_number) || [];
     } else if (recipientType === 'selected_patients') {
       if (!selectedPatients.length) {
         return NextResponse.json(
-          { error: 'Selected patients are required for selected_patients type' },
+          {
+            error: 'Selected patients are required for selected_patients type',
+          },
           { status: 400 }
         );
       }
@@ -89,7 +100,7 @@ export async function POST(request: NextRequest) {
         throw new Error('Failed to fetch selected patient opt-ins');
       }
 
-      phoneNumbers = optIns?.map(opt => opt.phone_number) || [];
+      phoneNumbers = optIns?.map((opt) => opt.phone_number) || [];
     } else if (recipientType === 'custom_list') {
       if (!customPhoneNumbers.length) {
         return NextResponse.json(
@@ -106,7 +117,9 @@ export async function POST(request: NextRequest) {
         })
       );
 
-      phoneNumbers = optInChecks.filter((phone): phone is string => phone !== null);
+      phoneNumbers = optInChecks.filter(
+        (phone): phone is string => phone !== null
+      );
     }
 
     if (!phoneNumbers.length) {
@@ -141,18 +154,17 @@ export async function POST(request: NextRequest) {
         totalRecipients: phoneNumbers.length,
         sent: results.sent,
         failed: results.failed,
-        errors: results.errors
+        errors: results.errors,
       },
-      message: `Bulk sending completed: ${results.sent} sent, ${results.failed} failed`
+      message: `Bulk sending completed: ${results.sent} sent, ${results.failed} failed`,
     });
-
   } catch (error) {
     console.error('Error sending bulk WhatsApp messages:', error);
-    
+
     return NextResponse.json(
-      { 
+      {
         error: error instanceof Error ? error.message : 'Internal server error',
-        details: error instanceof Error ? error.stack : undefined
+        details: error instanceof Error ? error.stack : undefined,
       },
       { status: 500 }
     );

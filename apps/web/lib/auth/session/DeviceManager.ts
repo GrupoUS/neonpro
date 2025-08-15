@@ -1,27 +1,32 @@
 /**
  * Device Manager - Device Registration and Trust Management
- * 
+ *
  * Handles device registration, fingerprinting, trust management,
  * and suspicious activity detection for enhanced security.
- * 
+ *
  * @version 1.0.0
  * @author NeonPro Development Team
  * @created 2024
  */
 
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { generateDeviceFingerprint, validateUUID, removeUndefined, parseUserAgent } from './utils';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import type {
+  AuthenticationResponse,
   DeviceConfig,
   DeviceData,
   DeviceRegistrationRequest,
   DeviceStats,
-  AuthenticationResponse
 } from './types';
+import {
+  generateDeviceFingerprint,
+  parseUserAgent,
+  removeUndefined,
+  validateUUID,
+} from './utils';
 
 /**
  * Device Manager Class
- * 
+ *
  * Core device management operations:
  * - Device registration and fingerprinting
  * - Trust management and verification
@@ -35,7 +40,7 @@ export class DeviceManager {
 
   constructor(config: DeviceConfig) {
     this.config = config;
-    
+
     this.supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -45,7 +50,9 @@ export class DeviceManager {
   /**
    * Register or update a device
    */
-  async registerDevice(request: DeviceRegistrationRequest): Promise<AuthenticationResponse> {
+  async registerDevice(
+    request: DeviceRegistrationRequest
+  ): Promise<AuthenticationResponse> {
     try {
       // Validate input
       if (!validateUUID(request.userId)) {
@@ -53,23 +60,25 @@ export class DeviceManager {
           success: false,
           error: {
             code: 'INVALID_USER_ID',
-            message: 'Invalid user ID format'
+            message: 'Invalid user ID format',
           },
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       }
 
       // Generate or validate fingerprint
-      const fingerprint = request.fingerprint || generateDeviceFingerprint({
-        userAgent: request.userAgent,
-        screen: request.screen,
-        timezone: request.timezone,
-        language: request.language
-      });
+      const fingerprint =
+        request.fingerprint ||
+        generateDeviceFingerprint({
+          userAgent: request.userAgent,
+          screen: request.screen,
+          timezone: request.timezone,
+          language: request.language,
+        });
 
       // Check if device already exists
       const existingDevice = await this.getDeviceByFingerprint(fingerprint);
-      
+
       if (existingDevice.success && existingDevice.data) {
         // Update existing device
         return this.updateExistingDevice(existingDevice.data, request);
@@ -83,7 +92,7 @@ export class DeviceManager {
 
       // Parse user agent for device info
       const userAgentInfo = parseUserAgent(request.userAgent);
-      
+
       // Create new device
       const deviceId = crypto.randomUUID();
       const deviceData = removeUndefined({
@@ -105,9 +114,11 @@ export class DeviceManager {
         blocked: false,
         last_seen: new Date().toISOString(),
         last_ip_address: request.ipAddress,
-        last_location: request.location ? JSON.stringify(request.location) : null,
+        last_location: request.location
+          ? JSON.stringify(request.location)
+          : null,
         created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       });
 
       const { data, error } = await this.supabase
@@ -122,9 +133,9 @@ export class DeviceManager {
           error: {
             code: 'DEVICE_REGISTRATION_FAILED',
             message: 'Failed to register device',
-            details: { error: error.message }
+            details: { error: error.message },
           },
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       }
 
@@ -137,18 +148,19 @@ export class DeviceManager {
       return {
         success: true,
         data: device,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
-
     } catch (error) {
       return {
         success: false,
         error: {
           code: 'DEVICE_REGISTRATION_ERROR',
           message: 'Internal error registering device',
-          details: { error: error instanceof Error ? error.message : 'Unknown error' }
+          details: {
+            error: error instanceof Error ? error.message : 'Unknown error',
+          },
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -156,7 +168,9 @@ export class DeviceManager {
   /**
    * Get device by fingerprint
    */
-  async getDeviceByFingerprint(fingerprint: string): Promise<AuthenticationResponse> {
+  async getDeviceByFingerprint(
+    fingerprint: string
+  ): Promise<AuthenticationResponse> {
     try {
       const { data, error } = await this.supabase
         .from('devices')
@@ -169,9 +183,9 @@ export class DeviceManager {
           success: false,
           error: {
             code: 'DEVICE_NOT_FOUND',
-            message: 'Device not found'
+            message: 'Device not found',
           },
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       }
 
@@ -180,18 +194,19 @@ export class DeviceManager {
       return {
         success: true,
         data: device,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
-
     } catch (error) {
       return {
         success: false,
         error: {
           code: 'GET_DEVICE_ERROR',
           message: 'Error retrieving device',
-          details: { error: error instanceof Error ? error.message : 'Unknown error' }
+          details: {
+            error: error instanceof Error ? error.message : 'Unknown error',
+          },
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -206,9 +221,9 @@ export class DeviceManager {
           success: false,
           error: {
             code: 'INVALID_DEVICE_ID',
-            message: 'Invalid device ID format'
+            message: 'Invalid device ID format',
           },
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       }
 
@@ -223,9 +238,9 @@ export class DeviceManager {
           success: false,
           error: {
             code: 'DEVICE_NOT_FOUND',
-            message: 'Device not found'
+            message: 'Device not found',
           },
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       }
 
@@ -234,18 +249,19 @@ export class DeviceManager {
       return {
         success: true,
         data: device,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
-
     } catch (error) {
       return {
         success: false,
         error: {
           code: 'GET_DEVICE_ERROR',
           message: 'Error retrieving device',
-          details: { error: error instanceof Error ? error.message : 'Unknown error' }
+          details: {
+            error: error instanceof Error ? error.message : 'Unknown error',
+          },
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -260,9 +276,9 @@ export class DeviceManager {
           success: false,
           error: {
             code: 'INVALID_USER_ID',
-            message: 'Invalid user ID format'
+            message: 'Invalid user ID format',
           },
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       }
 
@@ -277,29 +293,30 @@ export class DeviceManager {
           success: false,
           error: {
             code: 'GET_DEVICES_FAILED',
-            message: 'Failed to retrieve user devices'
+            message: 'Failed to retrieve user devices',
           },
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       }
 
-      const devices = data.map(row => this.convertToDeviceData(row));
+      const devices = data.map((row) => this.convertToDeviceData(row));
 
       return {
         success: true,
         data: devices,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
-
     } catch (error) {
       return {
         success: false,
         error: {
           code: 'GET_DEVICES_ERROR',
           message: 'Error retrieving user devices',
-          details: { error: error instanceof Error ? error.message : 'Unknown error' }
+          details: {
+            error: error instanceof Error ? error.message : 'Unknown error',
+          },
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -307,16 +324,19 @@ export class DeviceManager {
   /**
    * Trust a device
    */
-  async trustDevice(deviceId: string, trustDuration?: number): Promise<AuthenticationResponse> {
+  async trustDevice(
+    deviceId: string,
+    trustDuration?: number
+  ): Promise<AuthenticationResponse> {
     try {
       if (!validateUUID(deviceId)) {
         return {
           success: false,
           error: {
             code: 'INVALID_DEVICE_ID',
-            message: 'Invalid device ID format'
+            message: 'Invalid device ID format',
           },
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       }
 
@@ -328,7 +348,7 @@ export class DeviceManager {
         .update({
           trusted: true,
           trust_expires_at: trustExpiresAt,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', deviceId)
         .select()
@@ -339,9 +359,9 @@ export class DeviceManager {
           success: false,
           error: {
             code: 'DEVICE_TRUST_FAILED',
-            message: 'Failed to trust device'
+            message: 'Failed to trust device',
           },
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       }
 
@@ -350,18 +370,19 @@ export class DeviceManager {
       return {
         success: true,
         data: device,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
-
     } catch (error) {
       return {
         success: false,
         error: {
           code: 'DEVICE_TRUST_ERROR',
           message: 'Error trusting device',
-          details: { error: error instanceof Error ? error.message : 'Unknown error' }
+          details: {
+            error: error instanceof Error ? error.message : 'Unknown error',
+          },
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -376,9 +397,9 @@ export class DeviceManager {
           success: false,
           error: {
             code: 'INVALID_DEVICE_ID',
-            message: 'Invalid device ID format'
+            message: 'Invalid device ID format',
           },
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       }
 
@@ -387,7 +408,7 @@ export class DeviceManager {
         .update({
           trusted: false,
           trust_expires_at: null,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', deviceId)
         .select()
@@ -398,9 +419,9 @@ export class DeviceManager {
           success: false,
           error: {
             code: 'DEVICE_TRUST_REVOKE_FAILED',
-            message: 'Failed to revoke device trust'
+            message: 'Failed to revoke device trust',
           },
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       }
 
@@ -409,18 +430,19 @@ export class DeviceManager {
       return {
         success: true,
         data: device,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
-
     } catch (error) {
       return {
         success: false,
         error: {
           code: 'DEVICE_TRUST_REVOKE_ERROR',
           message: 'Error revoking device trust',
-          details: { error: error instanceof Error ? error.message : 'Unknown error' }
+          details: {
+            error: error instanceof Error ? error.message : 'Unknown error',
+          },
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -428,16 +450,19 @@ export class DeviceManager {
   /**
    * Block a device
    */
-  async blockDevice(deviceId: string, reason: string): Promise<AuthenticationResponse> {
+  async blockDevice(
+    deviceId: string,
+    reason: string
+  ): Promise<AuthenticationResponse> {
     try {
       if (!validateUUID(deviceId)) {
         return {
           success: false,
           error: {
             code: 'INVALID_DEVICE_ID',
-            message: 'Invalid device ID format'
+            message: 'Invalid device ID format',
           },
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       }
 
@@ -449,7 +474,7 @@ export class DeviceManager {
           trust_expires_at: null,
           block_reason: reason,
           blocked_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', deviceId)
         .select()
@@ -460,9 +485,9 @@ export class DeviceManager {
           success: false,
           error: {
             code: 'DEVICE_BLOCK_FAILED',
-            message: 'Failed to block device'
+            message: 'Failed to block device',
           },
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       }
 
@@ -471,18 +496,19 @@ export class DeviceManager {
       return {
         success: true,
         data: device,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
-
     } catch (error) {
       return {
         success: false,
         error: {
           code: 'DEVICE_BLOCK_ERROR',
           message: 'Error blocking device',
-          details: { error: error instanceof Error ? error.message : 'Unknown error' }
+          details: {
+            error: error instanceof Error ? error.message : 'Unknown error',
+          },
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -497,9 +523,9 @@ export class DeviceManager {
           success: false,
           error: {
             code: 'INVALID_DEVICE_ID',
-            message: 'Invalid device ID format'
+            message: 'Invalid device ID format',
           },
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       }
 
@@ -509,7 +535,7 @@ export class DeviceManager {
           blocked: false,
           block_reason: null,
           blocked_at: null,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', deviceId)
         .select()
@@ -520,9 +546,9 @@ export class DeviceManager {
           success: false,
           error: {
             code: 'DEVICE_UNBLOCK_FAILED',
-            message: 'Failed to unblock device'
+            message: 'Failed to unblock device',
           },
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       }
 
@@ -531,18 +557,19 @@ export class DeviceManager {
       return {
         success: true,
         data: device,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
-
     } catch (error) {
       return {
         success: false,
         error: {
           code: 'DEVICE_UNBLOCK_ERROR',
           message: 'Error unblocking device',
-          details: { error: error instanceof Error ? error.message : 'Unknown error' }
+          details: {
+            error: error instanceof Error ? error.message : 'Unknown error',
+          },
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -550,10 +577,15 @@ export class DeviceManager {
   /**
    * Initiate device trust verification
    */
-  async initiateDeviceTrust(deviceId: string, verificationMethod: 'email' | 'sms'): Promise<AuthenticationResponse> {
+  async initiateDeviceTrust(
+    deviceId: string,
+    verificationMethod: 'email' | 'sms'
+  ): Promise<AuthenticationResponse> {
     try {
       // Generate verification code
-      const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+      const verificationCode = Math.floor(
+        100_000 + Math.random() * 900_000
+      ).toString();
       const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString(); // 10 minutes
 
       // Store verification code
@@ -564,7 +596,7 @@ export class DeviceManager {
           verification_code: verificationCode,
           method: verificationMethod,
           expires_at: expiresAt,
-          created_at: new Date().toISOString()
+          created_at: new Date().toISOString(),
         });
 
       if (error) {
@@ -572,9 +604,9 @@ export class DeviceManager {
           success: false,
           error: {
             code: 'VERIFICATION_INIT_FAILED',
-            message: 'Failed to initiate device verification'
+            message: 'Failed to initiate device verification',
           },
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       }
 
@@ -586,20 +618,21 @@ export class DeviceManager {
         data: {
           verificationMethod,
           expiresAt,
-          message: `Verification code sent via ${verificationMethod}`
+          message: `Verification code sent via ${verificationMethod}`,
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
-
     } catch (error) {
       return {
         success: false,
         error: {
           code: 'VERIFICATION_INIT_ERROR',
           message: 'Error initiating device verification',
-          details: { error: error instanceof Error ? error.message : 'Unknown error' }
+          details: {
+            error: error instanceof Error ? error.message : 'Unknown error',
+          },
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -607,7 +640,10 @@ export class DeviceManager {
   /**
    * Verify device trust with code
    */
-  async verifyDeviceTrust(deviceId: string, verificationCode: string): Promise<AuthenticationResponse> {
+  async verifyDeviceTrust(
+    deviceId: string,
+    verificationCode: string
+  ): Promise<AuthenticationResponse> {
     try {
       // Check verification code
       const { data: verification, error: verifyError } = await this.supabase
@@ -623,15 +659,15 @@ export class DeviceManager {
           success: false,
           error: {
             code: 'INVALID_VERIFICATION_CODE',
-            message: 'Invalid or expired verification code'
+            message: 'Invalid or expired verification code',
           },
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       }
 
       // Trust the device
       const trustResult = await this.trustDevice(deviceId);
-      
+
       if (!trustResult.success) {
         return trustResult;
       }
@@ -647,20 +683,21 @@ export class DeviceManager {
         data: {
           device: trustResult.data,
           verified: true,
-          verifiedAt: new Date().toISOString()
+          verifiedAt: new Date().toISOString(),
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
-
     } catch (error) {
       return {
         success: false,
         error: {
           code: 'VERIFICATION_ERROR',
           message: 'Error verifying device trust',
-          details: { error: error instanceof Error ? error.message : 'Unknown error' }
+          details: {
+            error: error instanceof Error ? error.message : 'Unknown error',
+          },
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -671,13 +708,13 @@ export class DeviceManager {
   async revokeExpiredTrust(): Promise<AuthenticationResponse> {
     try {
       const now = new Date().toISOString();
-      
+
       const { data, error } = await this.supabase
         .from('devices')
         .update({
           trusted: false,
           trust_expires_at: null,
-          updated_at: now
+          updated_at: now,
         })
         .eq('trusted', true)
         .lt('trust_expires_at', now)
@@ -688,9 +725,9 @@ export class DeviceManager {
           success: false,
           error: {
             code: 'TRUST_REVOKE_FAILED',
-            message: 'Failed to revoke expired trust'
+            message: 'Failed to revoke expired trust',
           },
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       }
 
@@ -698,20 +735,21 @@ export class DeviceManager {
         success: true,
         data: {
           revokedCount: data?.length || 0,
-          revokedAt: now
+          revokedAt: now,
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
-
     } catch (error) {
       return {
         success: false,
         error: {
           code: 'TRUST_REVOKE_ERROR',
           message: 'Error revoking expired trust',
-          details: { error: error instanceof Error ? error.message : 'Unknown error' }
+          details: {
+            error: error instanceof Error ? error.message : 'Unknown error',
+          },
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -719,11 +757,13 @@ export class DeviceManager {
   /**
    * Clean up inactive devices
    */
-  async cleanupInactiveDevices(inactiveDays: number = 90): Promise<AuthenticationResponse> {
+  async cleanupInactiveDevices(
+    inactiveDays = 90
+  ): Promise<AuthenticationResponse> {
     try {
       const cutoffDate = new Date();
       cutoffDate.setDate(cutoffDate.getDate() - inactiveDays);
-      
+
       const { data, error } = await this.supabase
         .from('devices')
         .delete()
@@ -735,9 +775,9 @@ export class DeviceManager {
           success: false,
           error: {
             code: 'DEVICE_CLEANUP_FAILED',
-            message: 'Failed to cleanup inactive devices'
+            message: 'Failed to cleanup inactive devices',
           },
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       }
 
@@ -746,20 +786,21 @@ export class DeviceManager {
         data: {
           deletedCount: data?.length || 0,
           cutoffDate: cutoffDate.toISOString(),
-          cleanupDate: new Date().toISOString()
+          cleanupDate: new Date().toISOString(),
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
-
     } catch (error) {
       return {
         success: false,
         error: {
           code: 'DEVICE_CLEANUP_ERROR',
           message: 'Error cleaning up inactive devices',
-          details: { error: error instanceof Error ? error.message : 'Unknown error' }
+          details: {
+            error: error instanceof Error ? error.message : 'Unknown error',
+          },
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -779,27 +820,38 @@ export class DeviceManager {
       }
 
       const now = new Date();
-      const trustedDevices = devices.filter(d => d.trusted && (!d.trust_expires_at || new Date(d.trust_expires_at) > now));
-      const blockedDevices = devices.filter(d => d.blocked);
-      const recentDevices = devices.filter(d => {
+      const trustedDevices = devices.filter(
+        (d) =>
+          d.trusted &&
+          (!d.trust_expires_at || new Date(d.trust_expires_at) > now)
+      );
+      const blockedDevices = devices.filter((d) => d.blocked);
+      const recentDevices = devices.filter((d) => {
         const lastSeen = new Date(d.last_seen);
-        const daysDiff = (now.getTime() - lastSeen.getTime()) / (1000 * 60 * 60 * 24);
+        const daysDiff =
+          (now.getTime() - lastSeen.getTime()) / (1000 * 60 * 60 * 24);
         return daysDiff <= 30;
       });
 
       // Group by device type
-      const deviceTypes = devices.reduce((acc, device) => {
-        const type = device.type || 'unknown';
-        acc[type] = (acc[type] || 0) + 1;
-        return acc;
-      }, {} as Record<string, number>);
+      const deviceTypes = devices.reduce(
+        (acc, device) => {
+          const type = device.type || 'unknown';
+          acc[type] = (acc[type] || 0) + 1;
+          return acc;
+        },
+        {} as Record<string, number>
+      );
 
       // Group by OS
-      const operatingSystems = devices.reduce((acc, device) => {
-        const os = device.os || 'unknown';
-        acc[os] = (acc[os] || 0) + 1;
-        return acc;
-      }, {} as Record<string, number>);
+      const operatingSystems = devices.reduce(
+        (acc, device) => {
+          const os = device.os || 'unknown';
+          acc[os] = (acc[os] || 0) + 1;
+          return acc;
+        },
+        {} as Record<string, number>
+      );
 
       return {
         total: devices.length,
@@ -808,27 +860,35 @@ export class DeviceManager {
         recent: recentDevices.length,
         deviceTypes,
         operatingSystems,
-        generatedAt: now.toISOString()
+        generatedAt: now.toISOString(),
       };
-
     } catch (error) {
-      throw new Error(`Error generating device statistics: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Error generating device statistics: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
   /**
    * Private helper methods
    */
-  private async updateExistingDevice(existingDevice: DeviceData, request: DeviceRegistrationRequest): Promise<AuthenticationResponse> {
+  private async updateExistingDevice(
+    existingDevice: DeviceData,
+    request: DeviceRegistrationRequest
+  ): Promise<AuthenticationResponse> {
     try {
       const updateData = removeUndefined({
         name: request.name || existingDevice.name,
         ip_address: request.ipAddress,
-        location: request.location ? JSON.stringify(request.location) : undefined,
+        location: request.location
+          ? JSON.stringify(request.location)
+          : undefined,
         last_seen: new Date().toISOString(),
         last_ip_address: request.ipAddress,
-        last_location: request.location ? JSON.stringify(request.location) : undefined,
-        updated_at: new Date().toISOString()
+        last_location: request.location
+          ? JSON.stringify(request.location)
+          : undefined,
+        updated_at: new Date().toISOString(),
       });
 
       const { data, error } = await this.supabase
@@ -843,9 +903,9 @@ export class DeviceManager {
           success: false,
           error: {
             code: 'DEVICE_UPDATE_FAILED',
-            message: 'Failed to update existing device'
+            message: 'Failed to update existing device',
           },
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       }
 
@@ -854,23 +914,26 @@ export class DeviceManager {
       return {
         success: true,
         data: device,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
-
     } catch (error) {
       return {
         success: false,
         error: {
           code: 'DEVICE_UPDATE_ERROR',
           message: 'Error updating existing device',
-          details: { error: error instanceof Error ? error.message : 'Unknown error' }
+          details: {
+            error: error instanceof Error ? error.message : 'Unknown error',
+          },
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     }
   }
 
-  private async checkDeviceLimit(userId: string): Promise<AuthenticationResponse> {
+  private async checkDeviceLimit(
+    userId: string
+  ): Promise<AuthenticationResponse> {
     try {
       const { data: devices, error } = await this.supabase
         .from('devices')
@@ -882,41 +945,48 @@ export class DeviceManager {
           success: false,
           error: {
             code: 'DEVICE_LIMIT_CHECK_FAILED',
-            message: 'Failed to check device limit'
+            message: 'Failed to check device limit',
           },
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       }
 
       const deviceCount = devices?.length || 0;
-      
+
       if (deviceCount >= this.config.maxDevicesPerUser) {
         return {
           success: false,
           error: {
             code: 'MAX_DEVICES_EXCEEDED',
             message: `Maximum devices per user (${this.config.maxDevicesPerUser}) exceeded`,
-            details: { currentDevices: deviceCount, maxAllowed: this.config.maxDevicesPerUser }
+            details: {
+              currentDevices: deviceCount,
+              maxAllowed: this.config.maxDevicesPerUser,
+            },
           },
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       }
 
       return {
         success: true,
-        data: { currentDevices: deviceCount, maxAllowed: this.config.maxDevicesPerUser },
-        timestamp: new Date().toISOString()
+        data: {
+          currentDevices: deviceCount,
+          maxAllowed: this.config.maxDevicesPerUser,
+        },
+        timestamp: new Date().toISOString(),
       };
-
     } catch (error) {
       return {
         success: false,
         error: {
           code: 'DEVICE_LIMIT_CHECK_ERROR',
           message: 'Error checking device limit',
-          details: { error: error instanceof Error ? error.message : 'Unknown error' }
+          details: {
+            error: error instanceof Error ? error.message : 'Unknown error',
+          },
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -931,7 +1001,7 @@ export class DeviceManager {
           .eq('user_id', device.userId)
           .eq('trusted', true);
 
-        const sameNetworkTrusted = trustedDevices?.some(td => 
+        const sameNetworkTrusted = trustedDevices?.some((td) =>
           this.isSameNetwork(device.ipAddress!, td.ip_address)
         );
 
@@ -948,11 +1018,14 @@ export class DeviceManager {
     // Simple same network check (same /24 subnet)
     const parts1 = ip1.split('.');
     const parts2 = ip2.split('.');
-    
-    return parts1.length === 4 && parts2.length === 4 &&
-           parts1[0] === parts2[0] &&
-           parts1[1] === parts2[1] &&
-           parts1[2] === parts2[2];
+
+    return (
+      parts1.length === 4 &&
+      parts2.length === 4 &&
+      parts1[0] === parts2[0] &&
+      parts1[1] === parts2[1] &&
+      parts1[2] === parts2[2]
+    );
   }
 
   private convertToDeviceData(row: any): DeviceData {
@@ -977,9 +1050,11 @@ export class DeviceManager {
       blockedAt: row.blocked_at,
       lastSeen: row.last_seen,
       lastIpAddress: row.last_ip_address,
-      lastLocation: row.last_location ? JSON.parse(row.last_location) : undefined,
+      lastLocation: row.last_location
+        ? JSON.parse(row.last_location)
+        : undefined,
       createdAt: row.created_at,
-      updatedAt: row.updated_at
+      updatedAt: row.updated_at,
     };
   }
 }

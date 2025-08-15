@@ -3,9 +3,9 @@
 // Epic 6 - Story 6.3: Comprehensive supplier management with performance tracking
 // =====================================================================================
 
+import { type NextRequest, NextResponse } from 'next/server';
 import { SupplierManagementService } from '@/app/lib/services/supplier-management-service';
 import { createContractSchema } from '@/app/lib/validations/suppliers';
-import { NextRequest, NextResponse } from 'next/server';
 
 const supplierService = new SupplierManagementService();
 
@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
     const clinicId = searchParams.get('clinic_id');
     const supplierId = searchParams.get('supplier_id');
     const action = searchParams.get('action');
-    
+
     if (!clinicId) {
       return NextResponse.json(
         { error: 'clinic_id é obrigatório' },
@@ -27,8 +27,14 @@ export async function GET(request: NextRequest) {
     }
 
     if (action === 'renewal-alerts') {
-      const daysAhead = parseInt(searchParams.get('days_ahead') || '90');
-      const alerts = await supplierService.getContractRenewalAlerts(clinicId, daysAhead);
+      const daysAhead = Number.parseInt(
+        searchParams.get('days_ahead') || '90',
+        10
+      );
+      const alerts = await supplierService.getContractRenewalAlerts(
+        clinicId,
+        daysAhead
+      );
       return NextResponse.json({ alerts });
     }
 
@@ -66,19 +72,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const contract = await supplierService.createContract(validationResult.data);
+    const contract = await supplierService.createContract(
+      validationResult.data
+    );
 
     return NextResponse.json(contract, { status: 201 });
   } catch (error) {
     console.error('Erro ao criar contrato:', error);
-    
+
     if (error instanceof Error && error.message.includes('já existe')) {
-      return NextResponse.json(
-        { error: error.message },
-        { status: 409 }
-      );
+      return NextResponse.json({ error: error.message }, { status: 409 });
     }
-    
+
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }

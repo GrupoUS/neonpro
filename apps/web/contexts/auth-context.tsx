@@ -1,13 +1,12 @@
-"use client";
+'use client';
 
-import type React from "react";
-
-import { createClient } from "@/app/utils/supabase/client";
-import { createContext, useContext, useEffect, useState } from "react";
-import { enhancedSessionManager } from "@/lib/auth/enhanced-session-manager";
-import { oauthErrorHandler } from "@/lib/auth/oauth-error-handler";
-import { securityAuditLogger } from "@/lib/auth/security-audit-logger";
-import { permissionValidator } from "@/lib/auth/permission-validator";
+import type React from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
+import { createClient } from '@/app/utils/supabase/client';
+import { enhancedSessionManager } from '@/lib/auth/enhanced-session-manager';
+import { oauthErrorHandler } from '@/lib/auth/oauth-error-handler';
+import { permissionValidator } from '@/lib/auth/permission-validator';
+import { securityAuditLogger } from '@/lib/auth/security-audit-logger';
 
 // Supabase Auth types for strict TypeScript compliance
 interface User {
@@ -89,21 +88,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Real auth state setup
     const initializeAuth = async () => {
       try {
-        console.log("🔄 Initializing auth context...");
+        console.log('🔄 Initializing auth context...');
         const {
           data: { session },
         } = await supabase.auth.getSession();
 
-        console.log("📊 Initial session check:", !!session);
+        console.log('📊 Initial session check:', !!session);
         if (session) {
-          console.log("✅ Initial session found, setting user");
+          console.log('✅ Initial session found, setting user');
           setSession(session as Session);
           setUser(session.user as User);
         } else {
-          console.log("❌ No initial session found");
+          console.log('❌ No initial session found');
         }
       } catch (error) {
-        console.error("❌ Auth initialization error:", error);
+        console.error('❌ Auth initialization error:', error);
       } finally {
         setLoading(false);
       }
@@ -116,17 +115,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(
       async (event: string, session: Session | null) => {
-        console.log("🔄 Auth state change:", event, !!session);
+        console.log('🔄 Auth state change:', event, !!session);
 
         if (session) {
           console.log(
-            "✅ Session detected, setting user:",
+            '✅ Session detected, setting user:',
             session.user?.email
           );
           setSession(session as Session);
           setUser(session.user as User);
         } else {
-          console.log("❌ No session, clearing user");
+          console.log('❌ No session, clearing user');
           setSession(null);
           setUser(null);
         }
@@ -149,9 +148,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signUp = async (email: string, password: string, name?: string) => {
     try {
-      console.log("=== Starting Sign Up ===");
-      console.log("Email:", email);
-      console.log("Redirect URL:", `${window.location.origin}/auth/callback`);
+      console.log('=== Starting Sign Up ===');
+      console.log('Email:', email);
+      console.log('Redirect URL:', `${window.location.origin}/auth/callback`);
 
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -161,26 +160,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           data: name
             ? {
                 full_name: name,
-                name: name, // Fallback para compatibilidade
+                name, // Fallback para compatibilidade
               }
             : undefined,
         },
       });
 
-      console.log("=== Sign Up Results ===");
-      console.log("Success:", !error);
-      console.log("User created:", !!data.user);
-      console.log("Session created:", !!data.session);
+      console.log('=== Sign Up Results ===');
+      console.log('Success:', !error);
+      console.log('User created:', !!data.user);
+      console.log('Session created:', !!data.session);
       if (error) {
-        console.error("Sign up error:", error);
+        console.error('Sign up error:', error);
       }
 
       // Auth state will be updated by the onAuthStateChange listener
       return { error };
     } catch (err: unknown) {
-      console.error("Unexpected sign up error:", err);
+      console.error('Unexpected sign up error:', err);
       const authError: AuthError = {
-        message: err instanceof Error ? err.message : "Unknown error occurred",
+        message: err instanceof Error ? err.message : 'Unknown error occurred',
         __isAuthError: true,
       };
       return { error: authError };
@@ -191,18 +190,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       // Log logout attempt
       if (user) {
-        await securityAuditLogger.logSessionEvent(
-          'session_logout',
-          user.id,
-          { method: 'manual' }
-        );
+        await securityAuditLogger.logSessionEvent('session_logout', user.id, {
+          method: 'manual',
+        });
       }
-      
+
       // Enhanced secure logout
       if (session) {
         await enhancedSessionManager.secureLogout(session.access_token);
       }
-      
+
       await supabase.auth.signOut();
       setSession(null);
       setUser(null);
@@ -217,48 +214,44 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signInWithGoogle = async (): Promise<{ error: AuthError | null }> => {
     try {
-      console.log("=== Initiating Enhanced Google OAuth (Popup) ===");
+      console.log('=== Initiating Enhanced Google OAuth (Popup) ===');
       const startTime = Date.now();
-      
+
       // Log OAuth attempt
-      await securityAuditLogger.logOAuthEvent(
-        'oauth_attempt',
-        'google',
-        null,
-        { method: 'popup', userAgent: navigator.userAgent }
-      );
+      await securityAuditLogger.logOAuthEvent('oauth_attempt', 'google', null, {
+        method: 'popup',
+        userAgent: navigator.userAgent,
+      });
 
       // Optimized OAuth call with faster settings
       const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
+        provider: 'google',
         options: {
           redirectTo: `${window.location.origin}/auth/popup-callback`,
           queryParams: {
-            access_type: "offline",
-            prompt: "select_account", // Faster than 'consent' for returning users
+            access_type: 'offline',
+            prompt: 'select_account', // Faster than 'consent' for returning users
           },
           skipBrowserRedirect: true,
         },
       });
 
       if (error) {
-        console.error("Error initiating OAuth:", error);
-        
+        console.error('Error initiating OAuth:', error);
+
         // Log OAuth error
-        await securityAuditLogger.logOAuthEvent(
-          'oauth_error',
-          'google',
-          null,
-          { error: error.message, step: 'initiation' }
-        );
-        
+        await securityAuditLogger.logOAuthEvent('oauth_error', 'google', null, {
+          error: error.message,
+          step: 'initiation',
+        });
+
         // Handle OAuth error with enhanced error handler
         const handledError = await oauthErrorHandler.handleOAuthError(error, {
           provider: 'google',
           method: 'popup',
-          step: 'initiation'
+          step: 'initiation',
         });
-        
+
         return { error: handledError };
       }
 
@@ -272,15 +265,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Preload popup with optimized features
         const popup = window.open(
           data.url,
-          "neonpro-google-oauth",
+          'neonpro-google-oauth',
           `popup=yes,width=${width},height=${height},left=${left},top=${top},scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no`
         );
 
         if (!popup) {
-          console.error("Popup blocked by browser");
+          console.error('Popup blocked by browser');
           const authError: AuthError = {
             message:
-              "Por favor, permita popups para este site fazer login com Google",
+              'Por favor, permita popups para este site fazer login com Google',
             __isAuthError: true,
           };
           return { error: authError };
@@ -298,7 +291,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
                 if (!resolved) {
                   // Shorter wait time for faster response
-                  console.log("🔄 Popup closed, checking session...");
+                  console.log('🔄 Popup closed, checking session...');
                   await new Promise((resolve) => setTimeout(resolve, 500));
 
                   // Quick session check
@@ -313,10 +306,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     resolved = true;
                     resolve({ error: null });
                   } else {
-                    console.log("❌ Popup closed without authentication");
+                    console.log('❌ Popup closed without authentication');
                     resolved = true;
                     const authError: AuthError = {
-                      message: "Authentication cancelled",
+                      message: 'Authentication cancelled',
                       __isAuthError: true,
                     };
                     resolve({ error: authError });
@@ -341,7 +334,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 }
               }
             } catch (err) {
-              console.error("❌ Error checking popup status:", err);
+              console.error('❌ Error checking popup status:', err);
             }
           }, 300); // Faster polling for quicker response
 
@@ -356,7 +349,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               console.warn(`⚠️ OAuth timeout after ${totalTime}ms`);
               resolved = true;
               const authError: AuthError = {
-                message: "Authentication timeout - try again",
+                message: 'Authentication timeout - try again',
                 __isAuthError: true,
               };
               resolve({ error: authError });
@@ -366,15 +359,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       const authError: AuthError = {
-        message: "No authentication URL received",
+        message: 'No authentication URL received',
         __isAuthError: true,
       };
       return { error: authError };
     } catch (error: unknown) {
-      console.error("Unexpected Google OAuth error:", error);
+      console.error('Unexpected Google OAuth error:', error);
       const authError: AuthError = {
         message:
-          error instanceof Error ? error.message : "Unknown Google OAuth error",
+          error instanceof Error ? error.message : 'Unknown Google OAuth error',
         __isAuthError: true,
       };
       return { error: authError };
@@ -384,16 +377,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Manual refresh session method for critical operations
   const refreshSession = async (): Promise<{ error: AuthError | null }> => {
     try {
-      console.log("🔄 Manual session refresh requested");
+      console.log('🔄 Manual session refresh requested');
       const { data, error } = await supabase.auth.refreshSession();
 
       if (error) {
-        console.error("❌ Session refresh failed:", error);
+        console.error('❌ Session refresh failed:', error);
         return { error };
       }
 
       if (data?.session) {
-        console.log("✅ Session refreshed successfully");
+        console.log('✅ Session refreshed successfully');
         setSession(data.session as Session);
         setUser(data.session.user as User);
         return { error: null };
@@ -401,12 +394,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       return { error: null };
     } catch (error: unknown) {
-      console.error("Unexpected session refresh error:", error);
+      console.error('Unexpected session refresh error:', error);
       const authError: AuthError = {
         message:
           error instanceof Error
             ? error.message
-            : "Unknown session refresh error",
+            : 'Unknown session refresh error',
         __isAuthError: true,
       };
       return { error: authError };
@@ -419,7 +412,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     error: AuthError | null;
   }> => {
     try {
-      console.log("🔍 Checking for valid session");
+      console.log('🔍 Checking for valid session');
 
       // Get current session
       const {
@@ -428,12 +421,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } = await supabase.auth.getSession();
 
       if (error) {
-        console.error("❌ Error getting session:", error);
+        console.error('❌ Error getting session:', error);
         return { session: null, error };
       }
 
       if (!session) {
-        console.log("❌ No session found");
+        console.log('❌ No session found');
         return { session: null, error: null };
       }
 
@@ -444,7 +437,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (timeUntilExpiry < 300) {
         // Less than 5 minutes
-        console.log("⚠️ Token expires soon, refreshing...");
+        console.log('⚠️ Token expires soon, refreshing...');
         const refreshResult = await refreshSession();
 
         if (refreshResult.error) {
@@ -458,15 +451,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return { session: newSession, error: null };
       }
 
-      console.log("✅ Session is valid");
+      console.log('✅ Session is valid');
       return { session, error: null };
     } catch (error: unknown) {
-      console.error("Unexpected error checking session validity:", error);
+      console.error('Unexpected error checking session validity:', error);
       const authError: AuthError = {
         message:
           error instanceof Error
             ? error.message
-            : "Unknown session validation error",
+            : 'Unknown session validation error',
         __isAuthError: true,
       };
       return { session: null, error: authError };
@@ -474,9 +467,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   // Permission validation methods
-  const checkPermission = async (resource: string, action: string): Promise<boolean> => {
+  const checkPermission = async (
+    resource: string,
+    action: string
+  ): Promise<boolean> => {
     if (!user) return false;
-    
+
     try {
       const result = await permissionValidator.checkPermission(
         user.id,
@@ -492,7 +488,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const getUserPermissions = async () => {
     if (!user) return null;
-    
+
     try {
       return await permissionValidator.getUserPermissions(user.id);
     } catch (error) {
@@ -503,10 +499,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const hasRole = async (role: string): Promise<boolean> => {
     if (!user) return false;
-    
+
     try {
       const permissions = await permissionValidator.getUserPermissions(user.id);
-      return permissions?.roles?.some((r: any) => r.name === role) || false;
+      return permissions?.roles?.some((r: any) => r.name === role);
     } catch (error) {
       console.error('Error checking role:', error);
       return false;

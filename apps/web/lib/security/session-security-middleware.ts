@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { IntegratedSessionSecurity } from './integrated-session-security';
 import { createClient } from '@supabase/supabase-js';
+import { type NextRequest, NextResponse } from 'next/server';
+import { IntegratedSessionSecurity } from './integrated-session-security';
 
 /**
  * Session Security Middleware
@@ -35,9 +35,9 @@ const DEFAULT_CONFIG: MiddlewareConfig = {
     '/api/auth/register',
     '/api/auth/callback',
     '/api/health',
-    '/api/public'
+    '/api/public',
   ],
-  maxConcurrentSessions: 3
+  maxConcurrentSessions: 3,
 };
 
 export class SessionSecurityMiddleware {
@@ -48,7 +48,7 @@ export class SessionSecurityMiddleware {
   constructor(config: Partial<MiddlewareConfig> = {}) {
     this.config = { ...DEFAULT_CONFIG, ...config };
     this.security = new IntegratedSessionSecurity();
-    
+
     // Initialize Supabase client
     this.supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -83,16 +83,17 @@ export class SessionSecurityMiddleware {
 
       // Handle security check result
       return this.handleSecurityResult(request, securityResult);
-
     } catch (error) {
       console.error('Session security middleware error:', error);
-      
+
       // Log security event
       await this.logSecurityEvent({
         eventType: 'middleware_error',
         riskScore: 5,
-        eventDetails: { error: error instanceof Error ? error.message : 'Unknown error' },
-        request
+        eventDetails: {
+          error: error instanceof Error ? error.message : 'Unknown error',
+        },
+        request,
       });
 
       // In case of error, allow request but log the incident
@@ -120,7 +121,7 @@ export class SessionSecurityMiddleware {
           allowed: false,
           action: 'block',
           riskScore: 10,
-          reason: 'CSRF token validation failed'
+          reason: 'CSRF token validation failed',
         };
       }
     }
@@ -133,16 +134,19 @@ export class SessionSecurityMiddleware {
         userId
       );
       totalRiskScore += hijackResult.riskScore;
-      
-      if (hijackResult.action === 'block' || hijackResult.action === 'terminate') {
+
+      if (
+        hijackResult.action === 'block' ||
+        hijackResult.action === 'terminate'
+      ) {
         return {
           allowed: false,
           action: hijackResult.action,
           riskScore: hijackResult.riskScore,
-          reason: hijackResult.reason
+          reason: hijackResult.reason,
         };
       }
-      
+
       if (hijackResult.reason) {
         reasons.push(hijackResult.reason);
       }
@@ -156,10 +160,10 @@ export class SessionSecurityMiddleware {
           allowed: false,
           action: 'terminate',
           riskScore: 8,
-          reason: 'Session timeout exceeded'
+          reason: 'Session timeout exceeded',
         };
       }
-      
+
       if (timeoutResult.warning) {
         headers['X-Session-Warning'] = timeoutResult.warning;
       }
@@ -181,7 +185,7 @@ export class SessionSecurityMiddleware {
         allowed: false,
         action: 'block',
         riskScore: 6,
-        reason: 'Rate limit exceeded'
+        reason: 'Rate limit exceeded',
       };
     }
 
@@ -198,7 +202,7 @@ export class SessionSecurityMiddleware {
       action,
       riskScore: totalRiskScore,
       reason: reasons.length > 0 ? reasons.join('; ') : undefined,
-      headers
+      headers,
     };
   }
 
@@ -210,9 +214,10 @@ export class SessionSecurityMiddleware {
     sessionId: string
   ): Promise<{ valid: boolean; reason?: string }> {
     try {
-      const token = request.headers.get('X-CSRF-Token') || 
-                   request.headers.get('x-csrf-token');
-      
+      const token =
+        request.headers.get('X-CSRF-Token') ||
+        request.headers.get('x-csrf-token');
+
       if (!token) {
         return { valid: false, reason: 'Missing CSRF token' };
       }
@@ -223,7 +228,7 @@ export class SessionSecurityMiddleware {
       );
 
       return { valid: isValid };
-    } catch (error) {
+    } catch (_error) {
       return { valid: false, reason: 'CSRF validation error' };
     }
   }
@@ -241,22 +246,23 @@ export class SessionSecurityMiddleware {
     reason?: string;
   }> {
     try {
-      const result = await this.security.hijackingProtection.validateSessionFingerprint(
-        request,
-        sessionId,
-        userId
-      );
+      const result =
+        await this.security.hijackingProtection.validateSessionFingerprint(
+          request,
+          sessionId,
+          userId
+        );
 
       return {
         riskScore: result.riskScore,
         action: result.action,
-        reason: result.reason
+        reason: result.reason,
       };
-    } catch (error) {
+    } catch (_error) {
       return {
         riskScore: 5,
         action: 'allow',
-        reason: 'Hijacking check error'
+        reason: 'Hijacking check error',
       };
     }
   }
@@ -281,19 +287,18 @@ export class SessionSecurityMiddleware {
       if (result.requiresReauth) {
         return {
           valid: true,
-          warning: 'Session requires reauthentication'
+          warning: 'Session requires reauthentication',
         };
       }
 
-      const warning = await this.security.timeoutManager.getTimeoutWarning(
-        sessionId
-      );
+      const warning =
+        await this.security.timeoutManager.getTimeoutWarning(sessionId);
 
       return {
         valid: true,
-        warning: warning || undefined
+        warning: warning || undefined,
       };
-    } catch (error) {
+    } catch (_error) {
       return { valid: true }; // Allow on error, but log it
     }
   }
@@ -305,13 +310,16 @@ export class SessionSecurityMiddleware {
     userId: string
   ): Promise<{ allowed: boolean }> {
     try {
-      const sessions = await this.security.hijackingProtection.detectConcurrentSessions(
-        userId,
-        this.config.maxConcurrentSessions || 3
-      );
+      const sessions =
+        await this.security.hijackingProtection.detectConcurrentSessions(
+          userId,
+          this.config.maxConcurrentSessions || 3
+        );
 
-      return { allowed: sessions.length <= (this.config.maxConcurrentSessions || 3) };
-    } catch (error) {
+      return {
+        allowed: sessions.length <= (this.config.maxConcurrentSessions || 3),
+      };
+    } catch (_error) {
       return { allowed: true }; // Allow on error
     }
   }
@@ -320,14 +328,14 @@ export class SessionSecurityMiddleware {
    * Check rate limiting
    */
   private async checkRateLimit(
-    request: NextRequest,
-    userId?: string
+    _request: NextRequest,
+    _userId?: string
   ): Promise<{ allowed: boolean }> {
     try {
       // This would integrate with your existing rate limiting logic
       // For now, return true as placeholder
       return { allowed: true };
-    } catch (error) {
+    } catch (_error) {
       return { allowed: true };
     }
   }
@@ -340,9 +348,9 @@ export class SessionSecurityMiddleware {
     result: SecurityCheckResult
   ): NextResponse {
     // Add security headers
-    const response = result.allowed ? 
-      NextResponse.next() : 
-      this.createErrorResponse(result.reason || 'Security check failed', 403);
+    const response = result.allowed
+      ? NextResponse.next()
+      : this.createErrorResponse(result.reason || 'Security check failed', 403);
 
     // Add custom headers
     if (result.headers) {
@@ -357,10 +365,11 @@ export class SessionSecurityMiddleware {
     // Log security event if risk score is high
     if (result.riskScore >= 5) {
       this.logSecurityEvent({
-        eventType: result.action === 'block' ? 'access_blocked' : 'suspicious_activity',
+        eventType:
+          result.action === 'block' ? 'access_blocked' : 'suspicious_activity',
         riskScore: result.riskScore,
         eventDetails: { reason: result.reason, action: result.action },
-        request
+        request,
       });
     }
 
@@ -371,9 +380,7 @@ export class SessionSecurityMiddleware {
    * Utility methods
    */
   private shouldSkipPath(pathname: string): boolean {
-    return this.config.skipPaths?.some(path => 
-      pathname.startsWith(path)
-    ) || false;
+    return this.config.skipPaths?.some((path) => pathname.startsWith(path));
   }
 
   private requiresCSRFCheck(request: NextRequest): boolean {
@@ -398,18 +405,20 @@ export class SessionSecurityMiddleware {
     return request.headers.get('x-session-id');
   }
 
-  private async extractUserId(request: NextRequest): Promise<string | undefined> {
+  private async extractUserId(
+    request: NextRequest
+  ): Promise<string | undefined> {
     try {
       const authHeader = request.headers.get('authorization');
       if (!authHeader?.startsWith('Bearer ')) {
-        return undefined;
+        return;
       }
 
       // This would integrate with your auth system
       // For now, return undefined as placeholder
-      return undefined;
-    } catch (error) {
-      return undefined;
+      return;
+    } catch (_error) {
+      return;
     }
   }
 
@@ -428,17 +437,15 @@ export class SessionSecurityMiddleware {
   }): Promise<void> {
     try {
       const { eventType, riskScore, eventDetails, request } = params;
-      
-      await this.supabase
-        .from('security_events')
-        .insert({
-          event_type: eventType,
-          risk_score: riskScore,
-          event_details: eventDetails,
-          ip_address: this.getClientIP(request),
-          user_agent: request.headers.get('user-agent'),
-          timestamp: new Date().toISOString()
-        });
+
+      await this.supabase.from('security_events').insert({
+        event_type: eventType,
+        risk_score: riskScore,
+        event_details: eventDetails,
+        ip_address: this.getClientIP(request),
+        user_agent: request.headers.get('user-agent'),
+        timestamp: new Date().toISOString(),
+      });
     } catch (error) {
       console.error('Failed to log security event:', error);
     }

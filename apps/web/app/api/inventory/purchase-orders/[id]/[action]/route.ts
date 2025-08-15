@@ -1,29 +1,29 @@
 // Purchase Order Approval API Endpoint
 // POST /api/inventory/purchase-orders/[id]/approve - Approve purchase order
 // POST /api/inventory/purchase-orders/[id]/reject - Reject purchase order
-import { createClient } from '@/app/utils/supabase/server';
-import { NextRequest, NextResponse } from 'next/server';
+
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { createClient } from '@/app/utils/supabase/server';
 
 const approvalActionSchema = z.object({
   action: z.enum(['approve', 'reject']),
   notes: z.string().optional(),
   approved_by: z.string().min(1, 'Approver ID is required'),
-  approval_level: z.number().min(1).max(3).optional().default(1) // Support multi-level approval
+  approval_level: z.number().min(1).max(3).optional().default(1), // Support multi-level approval
 });
 
 interface RouteParams {
   params: { id: string; action: string };
 }
 
-export async function POST(
-  request: NextRequest,
-  { params }: RouteParams
-) {
+export async function POST(request: NextRequest, { params }: RouteParams) {
   try {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -31,7 +31,7 @@ export async function POST(
     const body = await request.json();
     const validatedData = approvalActionSchema.parse({
       ...body,
-      action: params.action
+      action: params.action,
     });
 
     // Check if purchase order exists and is in the right status
@@ -43,16 +43,25 @@ export async function POST(
 
     if (fetchError) {
       if (fetchError.code === 'PGRST116') {
-        return NextResponse.json({ error: 'Purchase order not found' }, { status: 404 });
+        return NextResponse.json(
+          { error: 'Purchase order not found' },
+          { status: 404 }
+        );
       }
-      return NextResponse.json({ error: 'Failed to fetch purchase order' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Failed to fetch purchase order' },
+        { status: 500 }
+      );
     }
 
     // Check if PO is in pending_approval status
     if (existingPO.status !== 'pending_approval') {
-      return NextResponse.json({ 
-        error: `Purchase order must be in pending_approval status. Current status: ${existingPO.status}` 
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          error: `Purchase order must be in pending_approval status. Current status: ${existingPO.status}`,
+        },
+        { status: 400 }
+      );
     }
 
     // Check user permissions for approval
@@ -65,9 +74,14 @@ export async function POST(
     );
 
     if (!canApprove.allowed) {
-      return NextResponse.json({ 
-        error: canApprove.reason || 'Insufficient permissions to approve this purchase order' 
-      }, { status: 403 });
+      return NextResponse.json(
+        {
+          error:
+            canApprove.reason ||
+            'Insufficient permissions to approve this purchase order',
+        },
+        { status: 403 }
+      );
     }
 
     // Determine new status based on action and approval level
@@ -76,8 +90,10 @@ export async function POST(
 
     if (validatedData.action === 'approve') {
       // Check if this is the final approval level
-      const requiredApprovalLevel = getRequiredApprovalLevel(existingPO.total_amount);
-      
+      const requiredApprovalLevel = getRequiredApprovalLevel(
+        existingPO.total_amount
+      );
+
       if (validatedData.approval_level >= requiredApprovalLevel) {
         newStatus = 'approved';
         approvalNotes = `Approved by ${user.email} (Level ${validatedData.approval_level}). ${approvalNotes}`;
@@ -97,7 +113,7 @@ export async function POST(
       .update({
         status: newStatus,
         notes: approvalNotes,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', params.id)
       .select()
@@ -105,7 +121,10 @@ export async function POST(
 
     if (updateError) {
       console.error('Error updating purchase order:', updateError);
-      return NextResponse.json({ error: 'Failed to update purchase order' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Failed to update purchase order' },
+        { status: 500 }
+      );
     }
 
     // Log approval action
@@ -117,7 +136,7 @@ export async function POST(
         approved_by: user.id,
         approval_level: validatedData.approval_level,
         notes: validatedData.notes,
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
       });
 
     if (logError) {
@@ -139,21 +158,26 @@ export async function POST(
         level: validatedData.approval_level,
         approved_by: user.email,
         timestamp: new Date().toISOString(),
-        final_approval: newStatus === 'approved'
+        final_approval: newStatus === 'approved',
       },
-      message: `Purchase order ${validatedData.action}d successfully`
+      message: `Purchase order ${validatedData.action}d successfully`,
     });
-
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ 
-        error: 'Validation error', 
-        details: error.errors 
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          error: 'Validation error',
+          details: error.errors,
+        },
+        { status: 400 }
+      );
     }
 
     console.error('Error in purchase order approval:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
 
@@ -199,34 +223,37 @@ async function checkApprovalPermissions(
     const approvalThresholds = {
       1: { maxAmount: 1000, requiredRole: ['manager', 'admin'] },
       2: { maxAmount: 5000, requiredRole: ['admin', 'director'] },
-      3: { maxAmount: Infinity, requiredRole: ['director', 'owner'] }
+      3: {
+        maxAmount: Number.POSITIVE_INFINITY,
+        requiredRole: ['director', 'owner'],
+      },
     };
 
-    const threshold = approvalThresholds[approvalLevel as keyof typeof approvalThresholds];
-    
+    const threshold =
+      approvalThresholds[approvalLevel as keyof typeof approvalThresholds];
+
     if (!threshold) {
       return { allowed: false, reason: 'Invalid approval level' };
     }
 
     // Check amount threshold
     if (amount > threshold.maxAmount) {
-      return { 
-        allowed: false, 
-        reason: `Amount exceeds limit for approval level ${approvalLevel}` 
+      return {
+        allowed: false,
+        reason: `Amount exceeds limit for approval level ${approvalLevel}`,
       };
     }
 
     // Check role permissions
     const userRole = clinicPermission.role || userProfile.role;
     if (!threshold.requiredRole.includes(userRole)) {
-      return { 
-        allowed: false, 
-        reason: `Insufficient role permissions. Required: ${threshold.requiredRole.join(' or ')}` 
+      return {
+        allowed: false,
+        reason: `Insufficient role permissions. Required: ${threshold.requiredRole.join(' or ')}`,
       };
     }
 
     return { allowed: true };
-
   } catch (error) {
     console.error('Error checking approval permissions:', error);
     return { allowed: false, reason: 'Error checking permissions' };
@@ -261,18 +288,20 @@ async function sendApprovalNotification(
       recipient_id: purchaseOrder.created_by,
       title: `Purchase Order ${action.charAt(0).toUpperCase() + action.slice(1)}`,
       message: `Purchase Order ${purchaseOrder.order_number} has been ${action}`,
-      type: action === 'approved' ? 'purchase_order_approved' : 'purchase_order_rejected',
+      type:
+        action === 'approved'
+          ? 'purchase_order_approved'
+          : 'purchase_order_rejected',
       reference_id: purchaseOrder.id,
       data: {
         order_number: purchaseOrder.order_number,
         total_amount: purchaseOrder.total_amount,
-        action: action
+        action,
       },
-      created_at: new Date().toISOString()
+      created_at: new Date().toISOString(),
     };
 
     await supabase.from('notifications').insert(notification);
-
   } catch (error) {
     console.error('Error sending approval notification:', error);
   }

@@ -2,9 +2,7 @@
 // Epic 7.2: Automated Marketing Campaigns + Personalization
 // Author: VoidBeast Agent
 
-import {
-    CampaignAnalytics
-} from '@/app/types/campaigns';
+import type { CampaignAnalytics } from '@/app/types/campaigns';
 import { createClient } from '@/app/utils/supabase/server';
 
 export class MarketingCampaignService {
@@ -19,19 +17,23 @@ export class MarketingCampaignService {
     try {
       const { data: campaign, error } = await this.supabase
         .from('marketing_campaigns')
-        .insert([{
-          ...data,
-          automation_level: data.automation_level || 0.80, // Ensure ≥80% automation
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        }])
+        .insert([
+          {
+            ...data,
+            automation_level: data.automation_level || 0.8, // Ensure ≥80% automation
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+        ])
         .select()
         .single();
 
       if (error) throw error;
 
       // Create audit trail
-      await this.createAuditEntry(campaign.id, 'CAMPAIGN_CREATED', { campaign_data: data });
+      await this.createAuditEntry(campaign.id, 'CAMPAIGN_CREATED', {
+        campaign_data: data,
+      });
 
       return { success: true, data: campaign };
     } catch (error) {
@@ -42,9 +44,7 @@ export class MarketingCampaignService {
 
   async getCampaigns(filters: any = {}) {
     try {
-      let query = this.supabase
-        .from('marketing_campaigns')
-        .select(`
+      let query = this.supabase.from('marketing_campaigns').select(`
           *,
           campaign_templates (name, template_type),
           campaign_performance_metrics (
@@ -91,22 +91,24 @@ export class MarketingCampaignService {
       const offset = (page - 1) * limit;
 
       query = query
-        .order(filters.sort || 'created_at', { ascending: filters.order === 'asc' })
+        .order(filters.sort || 'created_at', {
+          ascending: filters.order === 'asc',
+        })
         .range(offset, offset + limit - 1);
 
       const { data: campaigns, error, count } = await query;
 
       if (error) throw error;
 
-      return { 
-        success: true, 
+      return {
+        success: true,
         data: campaigns,
         pagination: {
           total: count || 0,
           page,
           limit,
-          pages: Math.ceil((count || 0) / limit)
-        }
+          pages: Math.ceil((count || 0) / limit),
+        },
       };
     } catch (error) {
       console.error('Error fetching campaigns:', error);
@@ -134,12 +136,12 @@ export class MarketingCampaignService {
       // Get campaign analytics
       const analytics = await this.getCampaignAnalytics(id);
 
-      return { 
-        success: true, 
-        data: { 
-          ...campaign, 
-          analytics: analytics.success ? analytics.data : null 
-        } 
+      return {
+        success: true,
+        data: {
+          ...campaign,
+          analytics: analytics.success ? analytics.data : null,
+        },
       };
     } catch (error) {
       console.error('Error fetching campaign:', error);
@@ -153,7 +155,7 @@ export class MarketingCampaignService {
         .from('marketing_campaigns')
         .update({
           ...data,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', id)
         .select()
@@ -162,7 +164,9 @@ export class MarketingCampaignService {
       if (error) throw error;
 
       // Create audit trail
-      await this.createAuditEntry(id, 'CAMPAIGN_UPDATED', { update_data: data });
+      await this.createAuditEntry(id, 'CAMPAIGN_UPDATED', {
+        update_data: data,
+      });
 
       return { success: true, data: campaign };
     } catch (error) {
@@ -202,7 +206,9 @@ export class MarketingCampaignService {
       const campaign = campaignResult.data;
 
       // Get target patients based on segmentation
-      const targetPatients = await this.getTargetPatients(campaign.target_segments);
+      const targetPatients = await this.getTargetPatients(
+        campaign.target_segments
+      );
 
       // Create executions for each delivery channel
       const executions = [];
@@ -210,11 +216,15 @@ export class MarketingCampaignService {
         const executionData = {
           campaign_id: campaignId,
           execution_type: executionType,
-          target_patient_ids: targetPatients.map(p => p.id),
+          target_patient_ids: targetPatients.map((p) => p.id),
           delivery_channel: channel,
-          personalized_content: await this.personalizeContent(campaign, targetPatients, channel),
+          personalized_content: await this.personalizeContent(
+            campaign,
+            targetPatients,
+            channel
+          ),
           execution_status: 'pending',
-          scheduled_at: new Date().toISOString()
+          scheduled_at: new Date().toISOString(),
         };
 
         const { data: execution, error } = await this.supabase
@@ -231,10 +241,10 @@ export class MarketingCampaignService {
       await this.updateCampaign(campaignId, { status: 'running' });
 
       // Create audit trail
-      await this.createAuditEntry(campaignId, 'CAMPAIGN_EXECUTED', { 
+      await this.createAuditEntry(campaignId, 'CAMPAIGN_EXECUTED', {
         execution_type: executionType,
         target_count: targetPatients.length,
-        channels: campaign.delivery_channels
+        channels: campaign.delivery_channels,
       });
 
       return { success: true, data: executions };
@@ -249,10 +259,12 @@ export class MarketingCampaignService {
     try {
       const { data: abTest, error } = await this.supabase
         .from('campaign_ab_tests')
-        .insert([{
-          ...data,
-          created_at: new Date().toISOString()
-        }])
+        .insert([
+          {
+            ...data,
+            created_at: new Date().toISOString(),
+          },
+        ])
         .select()
         .single();
 
@@ -277,14 +289,19 @@ export class MarketingCampaignService {
       if (error) throw error;
 
       // Split traffic and execute variations
-      const variations = Object.keys(abTest.variations);
+      const _variations = Object.keys(abTest.variations);
       const trafficSplit = abTest.traffic_split;
-      
+
       // Get target audience
-      const targetPatients = await this.getTargetPatients(abTest.marketing_campaigns.target_segments);
-      
+      const targetPatients = await this.getTargetPatients(
+        abTest.marketing_campaigns.target_segments
+      );
+
       // Split patients into variations
-      const patientGroups = this.splitPatientsForABTest(targetPatients, trafficSplit);
+      const patientGroups = this.splitPatientsForABTest(
+        targetPatients,
+        trafficSplit
+      );
 
       // Execute each variation
       const executions = [];
@@ -292,12 +309,12 @@ export class MarketingCampaignService {
         const executionData = {
           campaign_id: abTest.campaign_id,
           execution_type: 'test',
-          target_patient_ids: patients.map(p => p.id),
+          target_patient_ids: patients.map((p) => p.id),
           content_variation_id: variationId,
           delivery_channel: abTest.marketing_campaigns.delivery_channels[0], // Use first channel for test
           personalized_content: abTest.variations[variationId],
           execution_status: 'pending',
-          scheduled_at: new Date().toISOString()
+          scheduled_at: new Date().toISOString(),
         };
 
         const { data: execution, error: execError } = await this.supabase
@@ -315,7 +332,7 @@ export class MarketingCampaignService {
         .from('campaign_ab_tests')
         .update({
           status: 'running',
-          started_at: new Date().toISOString()
+          started_at: new Date().toISOString(),
         })
         .eq('id', testId);
 
@@ -348,11 +365,13 @@ export class MarketingCampaignService {
     try {
       const { data: profile, error } = await this.supabase
         .from('patient_personalization_profiles')
-        .upsert([{
-          patient_id: patientId,
-          ...data,
-          last_updated: new Date().toISOString()
-        }])
+        .upsert([
+          {
+            patient_id: patientId,
+            ...data,
+            last_updated: new Date().toISOString(),
+          },
+        ])
         .select()
         .single();
 
@@ -392,10 +411,12 @@ export class MarketingCampaignService {
     try {
       const { data: consent, error } = await this.supabase
         .from('marketing_consent')
-        .upsert([{
-          ...data,
-          created_at: new Date().toISOString()
-        }])
+        .upsert([
+          {
+            ...data,
+            created_at: new Date().toISOString(),
+          },
+        ])
         .select()
         .single();
 
@@ -408,14 +429,18 @@ export class MarketingCampaignService {
     }
   }
 
-  async withdrawConsent(patientId: string, consentType: string, reason?: string) {
+  async withdrawConsent(
+    patientId: string,
+    consentType: string,
+    reason?: string
+  ) {
     try {
       const { data: consent, error } = await this.supabase
         .from('marketing_consent')
         .update({
           consent_status: false,
           withdrawal_date: new Date().toISOString(),
-          withdrawal_reason: reason
+          withdrawal_reason: reason,
         })
         .eq('patient_id', patientId)
         .eq('consent_type', consentType)
@@ -432,7 +457,9 @@ export class MarketingCampaignService {
   }
 
   // Performance Analytics
-  async getCampaignAnalytics(campaignId: string): Promise<{ success: boolean; data?: CampaignAnalytics; error?: string }> {
+  async getCampaignAnalytics(
+    campaignId: string
+  ): Promise<{ success: boolean; data?: CampaignAnalytics; error?: string }> {
     try {
       // Get campaign performance metrics
       const { data: metrics, error: metricsError } = await this.supabase
@@ -444,12 +471,24 @@ export class MarketingCampaignService {
 
       // Calculate aggregated analytics
       const totalRecipients = metrics.reduce((sum, m) => sum + m.total_sent, 0);
-      const totalDelivered = metrics.reduce((sum, m) => sum + m.total_delivered, 0);
+      const _totalDelivered = metrics.reduce(
+        (sum, m) => sum + m.total_delivered,
+        0
+      );
       const totalOpened = metrics.reduce((sum, m) => sum + m.total_opened, 0);
       const totalClicked = metrics.reduce((sum, m) => sum + m.total_clicked, 0);
-      const totalConverted = metrics.reduce((sum, m) => sum + m.total_converted, 0);
-      const totalUnsubscribed = metrics.reduce((sum, m) => sum + m.total_unsubscribed, 0);
-      const totalRevenue = metrics.reduce((sum, m) => sum + (m.revenue_generated || 0), 0);
+      const totalConverted = metrics.reduce(
+        (sum, m) => sum + m.total_converted,
+        0
+      );
+      const totalUnsubscribed = metrics.reduce(
+        (sum, m) => sum + m.total_unsubscribed,
+        0
+      );
+      const totalRevenue = metrics.reduce(
+        (sum, m) => sum + (m.revenue_generated || 0),
+        0
+      );
 
       // Get campaign details for automation rate
       const { data: campaign, error: campaignError } = await this.supabase
@@ -467,17 +506,24 @@ export class MarketingCampaignService {
         engagement_metrics: {
           open_rate: totalRecipients > 0 ? totalOpened / totalRecipients : 0,
           click_rate: totalRecipients > 0 ? totalClicked / totalRecipients : 0,
-          conversion_rate: totalRecipients > 0 ? totalConverted / totalRecipients : 0,
-          unsubscribe_rate: totalRecipients > 0 ? totalUnsubscribed / totalRecipients : 0
+          conversion_rate:
+            totalRecipients > 0 ? totalConverted / totalRecipients : 0,
+          unsubscribe_rate:
+            totalRecipients > 0 ? totalUnsubscribed / totalRecipients : 0,
         },
         channel_performance: this.aggregateChannelPerformance(metrics),
-        personalization_impact: await this.calculatePersonalizationImpact(campaignId),
+        personalization_impact:
+          await this.calculatePersonalizationImpact(campaignId),
         roi_analysis: {
           revenue_generated: totalRevenue,
-          cost_per_acquisition: totalConverted > 0 ? totalRevenue / totalConverted : 0,
-          return_on_investment: totalRevenue > 0 ? (totalRevenue - (totalRecipients * 0.10)) / (totalRecipients * 0.10) : 0
+          cost_per_acquisition:
+            totalConverted > 0 ? totalRevenue / totalConverted : 0,
+          return_on_investment:
+            totalRevenue > 0
+              ? (totalRevenue - totalRecipients * 0.1) / (totalRecipients * 0.1)
+              : 0,
         },
-        compliance_status: await this.getComplianceStatus(campaignId)
+        compliance_status: await this.getComplianceStatus(campaignId),
       };
 
       return { success: true, data: analytics };
@@ -488,7 +534,7 @@ export class MarketingCampaignService {
   }
 
   // Helper Methods
-  private async getTargetPatients(segments: any) {
+  private async getTargetPatients(_segments: any) {
     // This would integrate with the patient segmentation service
     // For now, return a simplified implementation
     const { data: patients, error } = await this.supabase
@@ -499,13 +545,17 @@ export class MarketingCampaignService {
     if (error) throw error;
 
     // Apply segmentation logic here
-    return patients.filter(patient => {
+    return patients.filter((_patient) => {
       // Implement segmentation filtering based on segments criteria
       return true; // Simplified - would have actual segmentation logic
     });
   }
 
-  private async personalizeContent(campaign: any, patients: any[], channel: string) {
+  private async personalizeContent(
+    campaign: any,
+    patients: any[],
+    channel: string
+  ) {
     // AI-powered content personalization would be implemented here
     // For now, return basic personalized content
     return {
@@ -513,19 +563,19 @@ export class MarketingCampaignService {
       personalization: {
         channel,
         patient_count: patients.length,
-        generated_at: new Date().toISOString()
-      }
+        generated_at: new Date().toISOString(),
+      },
     };
   }
 
   private splitPatientsForABTest(patients: any[], trafficSplit: any) {
     const groups: Record<string, any[]> = {};
     const variations = Object.keys(trafficSplit);
-    
+
     patients.forEach((patient, index) => {
       const variationIndex = index % variations.length;
       const variation = variations[variationIndex];
-      
+
       if (!groups[variation]) {
         groups[variation] = [];
       }
@@ -537,18 +587,18 @@ export class MarketingCampaignService {
 
   private aggregateChannelPerformance(metrics: any[]) {
     const channelData: Record<string, any> = {};
-    
-    metrics.forEach(metric => {
+
+    metrics.forEach((metric) => {
       if (!channelData[metric.channel]) {
         channelData[metric.channel] = {
           total_sent: 0,
           total_delivered: 0,
           total_opened: 0,
           total_clicked: 0,
-          total_converted: 0
+          total_converted: 0,
         };
       }
-      
+
       channelData[metric.channel].total_sent += metric.total_sent;
       channelData[metric.channel].total_delivered += metric.total_delivered;
       channelData[metric.channel].total_opened += metric.total_opened;
@@ -559,34 +609,38 @@ export class MarketingCampaignService {
     return channelData;
   }
 
-  private async calculatePersonalizationImpact(campaignId: string) {
+  private async calculatePersonalizationImpact(_campaignId: string) {
     // Calculate the impact of personalization on campaign performance
     return {
       personalized_vs_generic: 1.15, // 15% improvement
       ai_recommendations_used: 0.85, // 85% of recommendations applied
-      engagement_lift: 0.12 // 12% engagement increase
+      engagement_lift: 0.12, // 12% engagement increase
     };
   }
 
-  private async getComplianceStatus(campaignId: string) {
+  private async getComplianceStatus(_campaignId: string) {
     // Check LGPD compliance status
     return {
       consent_rate: 0.95, // 95% consent rate
       lgpd_compliant: true,
-      audit_score: 9.2 // Out of 10
+      audit_score: 9.2, // Out of 10
     };
   }
 
-  private async createAuditEntry(campaignId: string, action: string, details: any) {
+  private async createAuditEntry(
+    campaignId: string,
+    action: string,
+    details: any
+  ) {
     try {
-      await this.supabase
-        .from('campaign_audit_trail')
-        .insert([{
+      await this.supabase.from('campaign_audit_trail').insert([
+        {
           campaign_id: campaignId,
           action,
           action_details: details,
-          timestamp: new Date().toISOString()
-        }]);
+          timestamp: new Date().toISOString(),
+        },
+      ]);
     } catch (error) {
       console.error('Error creating audit entry:', error);
     }

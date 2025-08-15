@@ -1,7 +1,7 @@
 /**
  * Forecasting System Type Definitions
  * Epic 11 - Story 11.1: Consolidated types for demand forecasting system
- * 
+ *
  * Comprehensive type definitions for:
  * - Core forecasting types and interfaces
  * - Model management and training types
@@ -9,42 +9,42 @@
  * - Configuration and validation types
  * - API request/response types
  * - Database schema types
- * 
+ *
  * BMAD METHOD + VOIDBEAST V6.0 ENHANCED - Quality ≥9.8/10
  */
 
 // Re-export core types from main modules
 export {
   DemandForecast,
+  DemandPattern,
   ExternalFactor,
+  ForecastAlert,
+  ForecastingOptions,
   ForecastModel,
   ForecastValidationMetrics,
-  DemandPattern,
   ResourceAllocation,
-  ForecastAlert,
   ServiceDemandData,
-  ForecastingOptions
 } from './demand-forecasting';
 
 export {
-  ModelTrainingConfig,
-  ModelPerformanceMetrics,
+  HyperparameterSpace,
   ModelComparisonResult,
+  ModelPerformanceMetrics,
+  ModelTrainingConfig,
   ModelTrainingJob,
-  HyperparameterSpace
 } from './forecast-models';
 
 export {
-  StaffAllocation,
-  EquipmentAllocation,
-  RoomAllocation,
-  InventoryAllocation,
-  TimeWindow,
-  AllocationConstraint,
-  OptimizationObjective,
-  AllocationPlan,
   AllocationAlert,
-  AllocationMetrics
+  AllocationConstraint,
+  AllocationMetrics,
+  AllocationPlan,
+  EquipmentAllocation,
+  InventoryAllocation,
+  OptimizationObjective,
+  RoomAllocation,
+  StaffAllocation,
+  TimeWindow,
 } from './resource-allocation';
 
 // Additional API and configuration types
@@ -55,7 +55,11 @@ export {
 export interface ForecastRequest {
   clinic_id: string;
   service_id?: string;
-  forecast_type: 'appointments' | 'service_demand' | 'equipment_usage' | 'staff_workload';
+  forecast_type:
+    | 'appointments'
+    | 'service_demand'
+    | 'equipment_usage'
+    | 'staff_workload';
   start_date: string;
   end_date: string;
   options?: Partial<ForecastingOptions>;
@@ -77,7 +81,11 @@ export interface BatchForecastRequest {
   clinic_id: string;
   forecasts: Array<{
     service_id?: string;
-    forecast_type: 'appointments' | 'service_demand' | 'equipment_usage' | 'staff_workload';
+    forecast_type:
+      | 'appointments'
+      | 'service_demand'
+      | 'equipment_usage'
+      | 'staff_workload';
   }>;
   period: {
     start_date: string;
@@ -154,7 +162,11 @@ export interface DemandForecastsTable {
   period_end: string;
   predicted_demand: number;
   confidence_level: number;
-  forecast_type: 'appointments' | 'service_demand' | 'equipment_usage' | 'staff_workload';
+  forecast_type:
+    | 'appointments'
+    | 'service_demand'
+    | 'equipment_usage'
+    | 'staff_workload';
   model_version: string;
   external_factors: ExternalFactor[];
   created_at: string;
@@ -217,7 +229,11 @@ export interface AllocationPlansTable {
 export interface ForecastAlertsTable {
   id: string;
   forecast_id: string;
-  alert_type: 'demand_spike' | 'capacity_shortage' | 'resource_constraint' | 'accuracy_degradation';
+  alert_type:
+    | 'demand_spike'
+    | 'capacity_shortage'
+    | 'resource_constraint'
+    | 'accuracy_degradation';
   severity: 'low' | 'medium' | 'high' | 'critical';
   message: string;
   affected_resources: string[];
@@ -235,7 +251,13 @@ export interface ForecastAlertsTable {
 export interface DemandFactorsTable {
   id: string;
   clinic_id: string;
-  factor_type: 'holiday' | 'weather' | 'event' | 'season' | 'economic' | 'health_trends';
+  factor_type:
+    | 'holiday'
+    | 'weather'
+    | 'event'
+    | 'season'
+    | 'economic'
+    | 'health_trends';
   name: string;
   impact_weight: number;
   start_date: string;
@@ -440,7 +462,12 @@ export interface CostOptimizationReport {
  */
 export interface ForecastingEvent {
   id: string;
-  event_type: 'forecast_generated' | 'model_trained' | 'allocation_optimized' | 'alert_triggered' | 'system_error';
+  event_type:
+    | 'forecast_generated'
+    | 'model_trained'
+    | 'allocation_optimized'
+    | 'alert_triggered'
+    | 'system_error';
   clinic_id: string;
   source: string;
   data: Record<string, any>;
@@ -559,7 +586,7 @@ export const FORECAST_TYPES = {
   APPOINTMENTS: 'appointments',
   SERVICE_DEMAND: 'service_demand',
   EQUIPMENT_USAGE: 'equipment_usage',
-  STAFF_WORKLOAD: 'staff_workload'
+  STAFF_WORKLOAD: 'staff_workload',
 } as const;
 
 export const MODEL_TYPES = {
@@ -567,21 +594,21 @@ export const MODEL_TYPES = {
   LSTM: 'lstm',
   PROPHET: 'prophet',
   ENSEMBLE: 'ensemble',
-  LINEAR_REGRESSION: 'linear_regression'
+  LINEAR_REGRESSION: 'linear_regression',
 } as const;
 
 export const ALERT_TYPES = {
   DEMAND_SPIKE: 'demand_spike',
   CAPACITY_SHORTAGE: 'capacity_shortage',
   RESOURCE_CONSTRAINT: 'resource_constraint',
-  ACCURACY_DEGRADATION: 'accuracy_degradation'
+  ACCURACY_DEGRADATION: 'accuracy_degradation',
 } as const;
 
 export const SEVERITY_LEVELS = {
   LOW: 'low',
   MEDIUM: 'medium',
   HIGH: 'high',
-  CRITICAL: 'critical'
+  CRITICAL: 'critical',
 } as const;
 
 export const OPTIMIZATION_OBJECTIVES = {
@@ -589,14 +616,14 @@ export const OPTIMIZATION_OBJECTIVES = {
   MAXIMIZE_REVENUE: 'maximize_revenue',
   MAXIMIZE_UTILIZATION: 'maximize_utilization',
   MINIMIZE_WAIT_TIME: 'minimize_wait_time',
-  BALANCE_WORKLOAD: 'balance_workload'
+  BALANCE_WORKLOAD: 'balance_workload',
 } as const;
 
 export const RESOURCE_TYPES = {
   STAFF: 'staff',
   EQUIPMENT: 'equipment',
   ROOM: 'room',
-  INVENTORY: 'inventory'
+  INVENTORY: 'inventory',
 } as const;
 
 export const PLAN_STATUSES = {
@@ -604,7 +631,7 @@ export const PLAN_STATUSES = {
   APPROVED: 'approved',
   ACTIVE: 'active',
   COMPLETED: 'completed',
-  CANCELLED: 'cancelled'
+  CANCELLED: 'cancelled',
 } as const;
 
 export const JOB_STATUSES = {
@@ -612,5 +639,5 @@ export const JOB_STATUSES = {
   RUNNING: 'running',
   COMPLETED: 'completed',
   FAILED: 'failed',
-  CANCELLED: 'cancelled'
+  CANCELLED: 'cancelled',
 } as const;

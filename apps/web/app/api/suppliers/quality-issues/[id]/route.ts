@@ -3,9 +3,9 @@
 // Epic 6 - Story 6.3: Comprehensive supplier management with performance tracking
 // =====================================================================================
 
-import { SupplierManagementService } from '@/app/lib/services/supplier-management-service';
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { SupplierManagementService } from '@/app/lib/services/supplier-management-service';
 
 const supplierService = new SupplierManagementService();
 
@@ -18,20 +18,14 @@ interface RouteParams {
 // =====================================================================================
 // PUT /api/suppliers/quality-issues/[id] - Update quality issue
 // =====================================================================================
-export async function PUT(
-  request: NextRequest,
-  { params }: RouteParams
-) {
+export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
     const body = await request.json();
 
     // Basic validation for update
     const validationResult = z.any().safeParse(body);
     if (!validationResult.success) {
-      return NextResponse.json(
-        { error: 'Dados inválidos' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Dados inválidos' }, { status: 400 });
     }
 
     const issue = await supplierService.updateQualityIssue(

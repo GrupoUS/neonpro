@@ -1,16 +1,22 @@
 // SSO Logout Route
 // Story 1.3: SSO Integration - Session Termination & Token Revocation
 
-import { NextRequest, NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { ssoManager } from '@/lib/auth/sso/sso-manager';
 import { logger } from '@/lib/logger';
-import { cookies } from 'next/headers';
-import { z } from 'zod';
 
 const logoutSchema = z.object({
   redirect_to: z.string().url().optional(),
-  revoke_tokens: z.string().transform(val => val === 'true').optional(),
-  global_logout: z.string().transform(val => val === 'true').optional(),
+  revoke_tokens: z
+    .string()
+    .transform((val) => val === 'true')
+    .optional(),
+  global_logout: z
+    .string()
+    .transform((val) => val === 'true')
+    .optional(),
 });
 
 export async function POST(request: NextRequest) {
@@ -43,7 +49,11 @@ export async function POST(request: NextRequest) {
       logoutOptions = { ...logoutOptions, ...queryValidation.data };
     }
 
-    const { redirect_to, revoke_tokens = true, global_logout = false } = logoutOptions;
+    const {
+      redirect_to,
+      revoke_tokens = true,
+      global_logout = false,
+    } = logoutOptions;
 
     let sessionId = null;
     let provider = null;
@@ -60,7 +70,9 @@ export async function POST(request: NextRequest) {
         provider = userData.provider;
         userId = userData.id;
       } catch (error) {
-        logger.warn('SSO logout: Failed to parse user cookie', { error: error.message });
+        logger.warn('SSO logout: Failed to parse user cookie', {
+          error: error.message,
+        });
       }
     }
 
@@ -113,7 +125,7 @@ export async function POST(request: NextRequest) {
 
     // Determine redirect URL
     let redirectUrl = '/auth/login';
-    
+
     if (redirect_to) {
       try {
         // Validate redirect URL is safe (same origin)
@@ -122,7 +134,10 @@ export async function POST(request: NextRequest) {
           redirectUrl = redirect_to;
         }
       } catch (error) {
-        logger.warn('SSO logout: Invalid redirect URL', { redirect_to, error: error.message });
+        logger.warn('SSO logout: Invalid redirect URL', {
+          redirect_to,
+          error: error.message,
+        });
       }
     }
 
@@ -149,7 +164,8 @@ export async function POST(request: NextRequest) {
       {
         error: 'LOGOUT_FAILED',
         message: 'Failed to complete logout',
-        details: process.env.NODE_ENV === 'development' ? error.message : undefined,
+        details:
+          process.env.NODE_ENV === 'development' ? error.message : undefined,
       },
       { status: 500 }
     );

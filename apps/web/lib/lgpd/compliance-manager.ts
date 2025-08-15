@@ -1,34 +1,25 @@
+import crypto from 'node:crypto';
 import { createClient } from '@supabase/supabase-js';
-import crypto from 'crypto';
-import {
+import type {
+  AuditLog,
+  BreachIncident,
+  ComplianceAssessment,
   ConsentRecord,
   ConsentRequest,
-  DataSubjectRequest,
-  CreateDataSubjectRequest,
-  AuditLog,
   CreateAuditLog,
-  BreachIncident,
   CreateBreachIncident,
-  ComplianceAssessment,
-  ComplianceViolation,
-  LegalDocument,
-  DataSharingAgreement,
-  LGPDDashboardMetrics,
-  ComplianceMetrics,
+  CreateDataSubjectRequest,
+  DataSubjectRequest,
   LGPDConfiguration,
-  LGPDEvent,
+  LGPDDashboardMetrics,
   LGPDDataType,
+  LGPDEvent,
   LGPDPurpose,
-  LGPDLegalBasis,
-  DataSubjectRequestType,
-  DataSubjectRequestStatus,
-  BreachSeverity,
-  ComplianceStatus
 } from '@/types/lgpd';
 
 /**
  * LGPD Compliance Manager
- * 
+ *
  * Comprehensive LGPD compliance automation system providing:
  * - Automated consent management
  * - Data subject rights automation
@@ -65,10 +56,16 @@ export class LGPDComplianceManager {
   ): Promise<ConsentRecord> {
     try {
       // Check if consent already exists
-      const existingConsent = await this.getActiveConsent(userId, request.data_type, request.purpose);
-      
-      if (existingConsent && existingConsent.consent_given) {
-        throw new Error('Consent already granted for this data type and purpose');
+      const existingConsent = await this.getActiveConsent(
+        userId,
+        request.data_type,
+        request.purpose
+      );
+
+      if (existingConsent?.consent_given) {
+        throw new Error(
+          'Consent already granted for this data type and purpose'
+        );
       }
 
       // Create consent record
@@ -77,7 +74,10 @@ export class LGPDComplianceManager {
         data_type: request.data_type,
         purpose: request.purpose,
         consent_given: request.consent_given,
-        consent_text: this.generateConsentText(request.data_type, request.purpose),
+        consent_text: this.generateConsentText(
+          request.data_type,
+          request.purpose
+        ),
         version: '1.0',
         legal_basis: request.legal_basis || 'consent',
         granted_at: new Date(),
@@ -85,7 +85,7 @@ export class LGPDComplianceManager {
         ip_address: metadata?.ip_address,
         user_agent: metadata?.user_agent,
         created_at: new Date(),
-        updated_at: new Date()
+        updated_at: new Date(),
       };
 
       const { data, error } = await this.supabase
@@ -101,8 +101,11 @@ export class LGPDComplianceManager {
         user_id: userId,
         action: 'consent_granted',
         resource: 'lgpd_consent_records',
-        data_affected: { data_type: request.data_type, purpose: request.purpose },
-        legal_basis: 'consent'
+        data_affected: {
+          data_type: request.data_type,
+          purpose: request.purpose,
+        },
+        legal_basis: 'consent',
       });
 
       // Emit compliance event
@@ -111,7 +114,7 @@ export class LGPDComplianceManager {
         user_id: userId,
         data: { consent_id: data.id, data_type: request.data_type },
         timestamp: new Date(),
-        compliance_impact: 'low'
+        compliance_impact: 'low',
       });
 
       return data as ConsentRecord;
@@ -135,7 +138,7 @@ export class LGPDComplianceManager {
         .update({
           consent_given: false,
           withdrawn_at: new Date(),
-          updated_at: new Date()
+          updated_at: new Date(),
         })
         .eq('id', consentId)
         .eq('user_id', userId)
@@ -150,7 +153,7 @@ export class LGPDComplianceManager {
         action: 'consent_withdrawn',
         resource: 'lgpd_consent_records',
         data_affected: { consent_id: consentId, reason },
-        legal_basis: 'consent'
+        legal_basis: 'consent',
       });
 
       // Trigger data cleanup if required
@@ -164,7 +167,7 @@ export class LGPDComplianceManager {
         user_id: userId,
         data: { consent_id: consentId, data_type: data.data_type },
         timestamp: new Date(),
-        compliance_impact: 'medium'
+        compliance_impact: 'medium',
       });
     } catch (error) {
       console.error('Error withdrawing consent:', error);
@@ -194,7 +197,7 @@ export class LGPDComplianceManager {
         .single();
 
       if (error && error.code !== 'PGRST116') throw error;
-      return data as ConsentRecord || null;
+      return (data as ConsentRecord) || null;
     } catch (error) {
       console.error('Error getting active consent:', error);
       return null;
@@ -244,7 +247,7 @@ export class LGPDComplianceManager {
         deadline,
         verification_completed: false,
         created_at: new Date(),
-        updated_at: new Date()
+        updated_at: new Date(),
       };
 
       const { data, error } = await this.supabase
@@ -260,8 +263,11 @@ export class LGPDComplianceManager {
         user_id: userId,
         action: 'data_subject_request_created',
         resource: 'lgpd_data_subject_requests',
-        data_affected: { request_type: request.request_type, request_id: data.id },
-        legal_basis: 'legal_obligation'
+        data_affected: {
+          request_type: request.request_type,
+          request_id: data.id,
+        },
+        legal_basis: 'legal_obligation',
       });
 
       // Schedule automated processing
@@ -273,7 +279,7 @@ export class LGPDComplianceManager {
         user_id: userId,
         data: { request_id: data.id, request_type: request.request_type },
         timestamp: new Date(),
-        compliance_impact: 'medium'
+        compliance_impact: 'medium',
       });
 
       return data as DataSubjectRequest;
@@ -325,7 +331,7 @@ export class LGPDComplianceManager {
         .update({
           status: 'fulfilled',
           fulfilled_at: new Date(),
-          updated_at: new Date()
+          updated_at: new Date(),
         })
         .eq('id', requestId);
 
@@ -334,8 +340,11 @@ export class LGPDComplianceManager {
         user_id: request.user_id,
         action: 'data_subject_request_fulfilled',
         resource: 'lgpd_data_subject_requests',
-        data_affected: { request_id: requestId, request_type: request.request_type },
-        legal_basis: 'legal_obligation'
+        data_affected: {
+          request_id: requestId,
+          request_type: request.request_type,
+        },
+        legal_basis: 'legal_obligation',
       });
 
       // Emit compliance event
@@ -344,21 +353,22 @@ export class LGPDComplianceManager {
         user_id: request.user_id,
         data: { request_id: requestId, request_type: request.request_type },
         timestamp: new Date(),
-        compliance_impact: 'low'
+        compliance_impact: 'low',
       });
     } catch (error) {
       console.error('Error processing data subject request:', error);
-      
+
       // Mark as rejected with error
       await this.supabase
         .from('lgpd_data_subject_requests')
         .update({
           status: 'rejected',
-          rejection_reason: error instanceof Error ? error.message : 'Processing error',
-          updated_at: new Date()
+          rejection_reason:
+            error instanceof Error ? error.message : 'Processing error',
+          updated_at: new Date(),
         })
         .eq('id', requestId);
-      
+
       throw error;
     }
   }
@@ -373,17 +383,19 @@ export class LGPDComplianceManager {
   async createAuditLog(logData: CreateAuditLog): Promise<AuditLog> {
     try {
       const timestamp = new Date();
-      const previousHash = this.auditChain.length > 0 
-        ? this.auditChain[this.auditChain.length - 1] 
-        : null;
+      const previousHash =
+        this.auditChain.length > 0
+          ? this.auditChain[this.auditChain.length - 1]
+          : null;
 
       // Create hash for integrity
       const hashData = {
         ...logData,
         timestamp: timestamp.toISOString(),
-        previous_hash: previousHash
+        previous_hash: previousHash,
       };
-      const hash = crypto.createHash('sha256')
+      const hash = crypto
+        .createHash('sha256')
         .update(JSON.stringify(hashData))
         .digest('hex');
 
@@ -392,7 +404,7 @@ export class LGPDComplianceManager {
         timestamp,
         hash,
         previous_hash: previousHash,
-        created_at: new Date()
+        created_at: new Date(),
       };
 
       const { data, error } = await this.supabase
@@ -416,7 +428,10 @@ export class LGPDComplianceManager {
   /**
    * Verify audit trail integrity
    */
-  async verifyAuditTrailIntegrity(startDate?: Date, endDate?: Date): Promise<{
+  async verifyAuditTrailIntegrity(
+    startDate?: Date,
+    endDate?: Date
+  ): Promise<{
     isValid: boolean;
     corruptedEntries: string[];
     totalEntries: number;
@@ -452,10 +467,11 @@ export class LGPDComplianceManager {
           user_agent: log.user_agent,
           session_id: log.session_id,
           timestamp: log.timestamp,
-          previous_hash: previousHash
+          previous_hash: previousHash,
         };
 
-        const expectedHash = crypto.createHash('sha256')
+        const expectedHash = crypto
+          .createHash('sha256')
           .update(JSON.stringify(hashData))
           .digest('hex');
 
@@ -469,7 +485,7 @@ export class LGPDComplianceManager {
       return {
         isValid: corruptedEntries.length === 0,
         corruptedEntries,
-        totalEntries: logs.length
+        totalEntries: logs.length,
       };
     } catch (error) {
       console.error('Error verifying audit trail integrity:', error);
@@ -491,7 +507,7 @@ export class LGPDComplianceManager {
         detected_at: new Date(),
         reported_to_authority: false,
         created_at: new Date(),
-        updated_at: new Date()
+        updated_at: new Date(),
       };
 
       const { data, error } = await this.supabase
@@ -515,7 +531,7 @@ export class LGPDComplianceManager {
         action: 'breach_reported',
         resource: 'lgpd_breach_incidents',
         data_affected: { incident_id: data.id, severity: incident.severity },
-        legal_basis: 'legal_obligation'
+        legal_basis: 'legal_obligation',
       });
 
       // Emit compliance event
@@ -523,7 +539,7 @@ export class LGPDComplianceManager {
         type: 'breach_detected',
         data: { incident_id: data.id, severity: incident.severity },
         timestamp: new Date(),
-        compliance_impact: 'high'
+        compliance_impact: 'high',
       });
 
       return data as BreachIncident;
@@ -540,13 +556,13 @@ export class LGPDComplianceManager {
     try {
       // Implementation would integrate with ANPD API
       // For now, we'll log the notification requirement
-      
+
       await this.supabase
         .from('lgpd_breach_incidents')
         .update({
           reported_to_authority: true,
           authority_notified_at: new Date(),
-          updated_at: new Date()
+          updated_at: new Date(),
         })
         .eq('id', incidentId);
 
@@ -555,7 +571,7 @@ export class LGPDComplianceManager {
         action: 'authority_notified',
         resource: 'lgpd_breach_incidents',
         data_affected: { incident_id: incidentId },
-        legal_basis: 'legal_obligation'
+        legal_basis: 'legal_obligation',
       });
     } catch (error) {
       console.error('Error notifying authorities:', error);
@@ -573,16 +589,21 @@ export class LGPDComplianceManager {
   async runComplianceAssessment(): Promise<ComplianceAssessment> {
     try {
       const assessmentDate = new Date();
-      
+
       // Calculate compliance scores
       const consentScore = await this.calculateConsentManagementScore();
       const dataRightsScore = await this.calculateDataSubjectRightsScore();
       const auditScore = await this.calculateAuditTrailScore();
       const retentionScore = await this.calculateRetentionPolicyScore();
       const breachScore = await this.calculateBreachResponseScore();
-      
+
       const overallScore = Math.round(
-        (consentScore + dataRightsScore + auditScore + retentionScore + breachScore) / 5
+        (consentScore +
+          dataRightsScore +
+          auditScore +
+          retentionScore +
+          breachScore) /
+          5
       );
 
       // Identify gaps and recommendations
@@ -603,7 +624,7 @@ export class LGPDComplianceManager {
         assessor: 'LGPD Compliance Manager',
         status: overallScore >= 80 ? 'compliant' : 'non_compliant',
         created_at: new Date(),
-        updated_at: new Date()
+        updated_at: new Date(),
       };
 
       const { data, error } = await this.supabase
@@ -619,7 +640,7 @@ export class LGPDComplianceManager {
         action: 'compliance_assessment_completed',
         resource: 'lgpd_compliance_assessments',
         data_affected: { assessment_id: data.id, overall_score: overallScore },
-        legal_basis: 'legal_obligation'
+        legal_basis: 'legal_obligation',
       });
 
       return data as ComplianceAssessment;
@@ -634,13 +655,14 @@ export class LGPDComplianceManager {
    */
   async getDashboardMetrics(): Promise<LGPDDashboardMetrics> {
     try {
-      const [consents, requests, violations, incidents, auditLogs] = await Promise.all([
-        this.getConsentMetrics(),
-        this.getDataSubjectRequestMetrics(),
-        this.getViolationMetrics(),
-        this.getBreachMetrics(),
-        this.getAuditLogMetrics()
-      ]);
+      const [consents, requests, violations, incidents, auditLogs] =
+        await Promise.all([
+          this.getConsentMetrics(),
+          this.getDataSubjectRequestMetrics(),
+          this.getViolationMetrics(),
+          this.getBreachMetrics(),
+          this.getAuditLogMetrics(),
+        ]);
 
       const latestAssessment = await this.getLatestComplianceAssessment();
 
@@ -654,7 +676,7 @@ export class LGPDComplianceManager {
         recentViolations: violations.recent,
         breachIncidents: incidents.total,
         auditLogEntries: auditLogs.total,
-        retentionPolicyCompliance: await this.calculateRetentionCompliance()
+        retentionPolicyCompliance: await this.calculateRetentionCompliance(),
       };
     } catch (error) {
       console.error('Error getting dashboard metrics:', error);
@@ -666,7 +688,10 @@ export class LGPDComplianceManager {
   // UTILITY METHODS
   // ============================================================================
 
-  private generateConsentText(dataType: LGPDDataType, purpose: LGPDPurpose): string {
+  private generateConsentText(
+    dataType: LGPDDataType,
+    purpose: LGPDPurpose
+  ): string {
     return `Eu autorizo o processamento dos meus dados de ${dataType} para a finalidade de ${purpose}, conforme descrito na política de privacidade.`;
   }
 
@@ -686,9 +711,14 @@ export class LGPDComplianceManager {
     return expiry;
   }
 
-  private async triggerDataCleanup(userId: string, dataType: LGPDDataType): Promise<void> {
+  private async triggerDataCleanup(
+    userId: string,
+    dataType: LGPDDataType
+  ): Promise<void> {
     // Implementation would trigger data cleanup based on data type
-    console.log(`Triggering data cleanup for user ${userId}, data type: ${dataType}`);
+    console.log(
+      `Triggering data cleanup for user ${userId}, data type: ${dataType}`
+    );
   }
 
   private async scheduleRequestProcessing(requestId: string): Promise<void> {
@@ -696,22 +726,30 @@ export class LGPDComplianceManager {
     console.log(`Scheduling processing for request ${requestId}`);
   }
 
-  private async fulfillAccessRequest(request: DataSubjectRequest): Promise<void> {
+  private async fulfillAccessRequest(
+    request: DataSubjectRequest
+  ): Promise<void> {
     // Implementation would gather and export user data
     console.log(`Fulfilling access request for user ${request.user_id}`);
   }
 
-  private async fulfillDeletionRequest(request: DataSubjectRequest): Promise<void> {
+  private async fulfillDeletionRequest(
+    request: DataSubjectRequest
+  ): Promise<void> {
     // Implementation would delete user data
     console.log(`Fulfilling deletion request for user ${request.user_id}`);
   }
 
-  private async fulfillPortabilityRequest(request: DataSubjectRequest): Promise<void> {
+  private async fulfillPortabilityRequest(
+    request: DataSubjectRequest
+  ): Promise<void> {
     // Implementation would export user data in portable format
     console.log(`Fulfilling portability request for user ${request.user_id}`);
   }
 
-  private async fulfillRectificationRequest(request: DataSubjectRequest): Promise<void> {
+  private async fulfillRectificationRequest(
+    request: DataSubjectRequest
+  ): Promise<void> {
     // Implementation would correct user data
     console.log(`Fulfilling rectification request for user ${request.user_id}`);
   }
@@ -753,12 +791,15 @@ export class LGPDComplianceManager {
 
   private async identifyComplianceGaps(): Promise<string[]> {
     // Implementation would identify compliance gaps
-    return ['Consent renewal automation needed', 'Data minimization review required'];
+    return [
+      'Consent renewal automation needed',
+      'Data minimization review required',
+    ];
   }
 
   private async generateRecommendations(gaps: string[]): Promise<string[]> {
     // Implementation would generate recommendations based on gaps
-    return gaps.map(gap => `Address: ${gap}`);
+    return gaps.map((gap) => `Address: ${gap}`);
   }
 
   private calculateNextAssessmentDate(): Date {
@@ -781,11 +822,12 @@ export class LGPDComplianceManager {
     const { data } = await this.supabase
       .from('lgpd_consent_records')
       .select('consent_given, withdrawn_at');
-    
+
     return {
       total: data?.length || 0,
-      active: data?.filter(c => c.consent_given && !c.withdrawn_at).length || 0,
-      withdrawn: data?.filter(c => c.withdrawn_at).length || 0
+      active:
+        data?.filter((c) => c.consent_given && !c.withdrawn_at).length || 0,
+      withdrawn: data?.filter((c) => c.withdrawn_at).length || 0,
     };
   }
 
@@ -793,24 +835,24 @@ export class LGPDComplianceManager {
     const { data } = await this.supabase
       .from('lgpd_data_subject_requests')
       .select('status');
-    
+
     return {
-      pending: data?.filter(r => r.status === 'pending').length || 0,
-      fulfilled: data?.filter(r => r.status === 'fulfilled').length || 0
+      pending: data?.filter((r) => r.status === 'pending').length || 0,
+      fulfilled: data?.filter((r) => r.status === 'fulfilled').length || 0,
     };
   }
 
   private async getViolationMetrics() {
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    
+
     const { data } = await this.supabase
       .from('lgpd_compliance_violations')
       .select('detected_at')
       .gte('detected_at', thirtyDaysAgo.toISOString());
-    
+
     return {
-      recent: data?.length || 0
+      recent: data?.length || 0,
     };
   }
 
@@ -818,19 +860,17 @@ export class LGPDComplianceManager {
     const { data } = await this.supabase
       .from('lgpd_breach_incidents')
       .select('id');
-    
+
     return {
-      total: data?.length || 0
+      total: data?.length || 0,
     };
   }
 
   private async getAuditLogMetrics() {
-    const { data } = await this.supabase
-      .from('lgpd_audit_logs')
-      .select('id');
-    
+    const { data } = await this.supabase.from('lgpd_audit_logs').select('id');
+
     return {
-      total: data?.length || 0
+      total: data?.length || 0,
     };
   }
 
@@ -841,8 +881,8 @@ export class LGPDComplianceManager {
       .order('assessment_date', { ascending: false })
       .limit(1)
       .single();
-    
-    return data as ComplianceAssessment || null;
+
+    return (data as ComplianceAssessment) || null;
   }
 
   private async calculateRetentionCompliance(): Promise<number> {

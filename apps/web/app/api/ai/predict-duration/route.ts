@@ -1,14 +1,17 @@
 /**
  * AI Duration Prediction API Route
  * POST /api/ai/predict-duration
- * 
+ *
  * Provides AI-powered appointment duration predictions with A/B testing support
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
-import { AIDurationPredictionService, AIABTestingService } from '@/lib/ai/duration-prediction';
 import type { PredictionFeatures } from '@/lib/ai/duration-prediction';
+import {
+  AIABTestingService,
+  AIDurationPredictionService,
+} from '@/lib/ai/duration-prediction';
 
 // Request/Response types
 interface PredictDurationRequest {
@@ -46,13 +49,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     // Parse request body
     const body: PredictDurationRequest = await request.json();
-    
+
     // Validate required fields
-    if (!body.appointmentId || !body.treatmentType || !body.professionalId) {
+    if (!(body.appointmentId && body.treatmentType && body.professionalId)) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Missing required fields: appointmentId, treatmentType, professionalId'
+          error:
+            'Missing required fields: appointmentId, treatmentType, professionalId',
         },
         { status: 400 }
       );
@@ -60,8 +64,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     // Get current user
     const supabase = createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
     if (authError || !user) {
       return NextResponse.json(
         { success: false, error: 'Authentication required' },
@@ -90,7 +97,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     // Check A/B test assignment
     const shouldUseAI = await abTestService.shouldUseAIPredictions(user.id);
-    const testGroup = shouldUseAI ? 'ai_prediction' : 'control';
+    const _testGroup = shouldUseAI ? 'ai_prediction' : 'control';
 
     // Prepare prediction features
     const features: PredictionFeatures = {
@@ -103,14 +110,17 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       timeOfDay: body.timeOfDay,
       dayOfWeek: body.dayOfWeek,
       historicalDuration: body.historicalDuration,
-      specialRequirements: body.specialRequirements
+      specialRequirements: body.specialRequirements,
     };
 
     if (shouldUseAI) {
       // Use AI prediction
       try {
-        const prediction = await aiService.predictDuration(body.appointmentId, features);
-        
+        const prediction = await aiService.predictDuration(
+          body.appointmentId,
+          features
+        );
+
         return NextResponse.json({
           success: true,
           prediction: {
@@ -119,15 +129,18 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
             modelVersion: prediction.modelVersion,
             uncertaintyRange: prediction.uncertaintyRange,
             isAIPrediction: true,
-            testGroup: 'ai_prediction'
-          }
+            testGroup: 'ai_prediction',
+          },
         });
       } catch (aiError) {
         // Fallback to baseline if AI prediction fails
-        console.error('AI prediction failed, falling back to baseline:', aiError);
-        
+        console.error(
+          'AI prediction failed, falling back to baseline:',
+          aiError
+        );
+
         const fallbackDuration = getFallbackDuration(body.treatmentType);
-        
+
         return NextResponse.json({
           success: true,
           fallbackDuration,
@@ -137,17 +150,17 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
             modelVersion: 'fallback',
             uncertaintyRange: {
               min: Math.round(fallbackDuration * 0.8),
-              max: Math.round(fallbackDuration * 1.2)
+              max: Math.round(fallbackDuration * 1.2),
             },
             isAIPrediction: false,
-            testGroup: 'ai_prediction'
-          }
+            testGroup: 'ai_prediction',
+          },
         });
       }
     } else {
       // Control group - use baseline duration
       const baselineDuration = getFallbackDuration(body.treatmentType);
-      
+
       return NextResponse.json({
         success: true,
         prediction: {
@@ -156,21 +169,21 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           modelVersion: 'baseline',
           uncertaintyRange: {
             min: Math.round(baselineDuration * 0.8),
-            max: Math.round(baselineDuration * 1.2)
+            max: Math.round(baselineDuration * 1.2),
           },
           isAIPrediction: false,
-          testGroup: 'control'
-        }
+          testGroup: 'control',
+        },
       });
     }
-
   } catch (error) {
     console.error('AI Duration Prediction API Error:', error);
-    
+
     return NextResponse.json(
       {
         success: false,
-        error: 'Internal server error occurred while processing prediction request'
+        error:
+          'Internal server error occurred while processing prediction request',
       },
       { status: 500 }
     );
@@ -182,16 +195,16 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
  */
 function getFallbackDuration(treatmentType: string): number {
   const fallbackDurations: Record<string, number> = {
-    'consultation': 30,
-    'cleaning': 45,
-    'treatment': 60,
-    'surgery': 120,
-    'checkup': 20,
-    'emergency': 90,
-    'follow_up': 25
+    consultation: 30,
+    cleaning: 45,
+    treatment: 60,
+    surgery: 120,
+    checkup: 20,
+    emergency: 90,
+    follow_up: 25,
   };
 
-  return fallbackDurations[treatmentType] || fallbackDurations['consultation'];
+  return fallbackDurations[treatmentType] || fallbackDurations.consultation;
 }
 
 // Handle unsupported HTTP methods

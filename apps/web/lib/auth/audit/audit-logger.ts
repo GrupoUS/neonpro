@@ -1,5 +1,5 @@
-import { SupabaseClient } from '@supabase/supabase-js';
-import { Database } from '@/types/database';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import type { Database } from '@/types/database';
 
 export interface AuditLogEntry {
   user_id: string;
@@ -19,12 +19,10 @@ export class AuditLogger {
 
   async log(entry: AuditLogEntry): Promise<void> {
     try {
-      await this.supabase
-        .from('audit_logs')
-        .insert({
-          ...entry,
-          created_at: new Date().toISOString()
-        });
+      await this.supabase.from('audit_logs').insert({
+        ...entry,
+        created_at: new Date().toISOString(),
+      });
     } catch (error) {
       // Log errors to console but don't throw to prevent disrupting main flow
       console.error('Failed to write audit log:', error);

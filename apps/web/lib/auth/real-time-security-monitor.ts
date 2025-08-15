@@ -1,7 +1,7 @@
 /**
  * Real-Time Security Monitor
  * Story 1.4 - Task 5: Real-time security monitoring and alerting
- * 
+ *
  * Features:
  * - Real-time threat detection
  * - WebSocket-based monitoring
@@ -12,9 +12,11 @@
  */
 
 import { createClient } from '@supabase/supabase-js';
-import { UserRole } from '@/types/auth';
 import { SecurityAuditLogger } from './security-audit-logger';
-import { SuspiciousActivityDetector, SuspiciousActivityAlert } from './suspicious-activity-detector';
+import type {
+  SuspiciousActivityAlert,
+  SuspiciousActivityDetector,
+} from './suspicious-activity-detector';
 
 export interface SecurityMetrics {
   timestamp: Date;
@@ -49,7 +51,13 @@ export interface SecurityThreshold {
   isEnabled: boolean;
   cooldownMinutes: number;
   actions: {
-    type: 'email' | 'sms' | 'webhook' | 'block_ip' | 'terminate_sessions' | 'escalate';
+    type:
+      | 'email'
+      | 'sms'
+      | 'webhook'
+      | 'block_ip'
+      | 'terminate_sessions'
+      | 'escalate';
     target: string;
     delay: number;
   }[];
@@ -57,7 +65,12 @@ export interface SecurityThreshold {
 
 export interface SecurityIncident {
   incidentId: string;
-  type: 'threshold_breach' | 'suspicious_activity' | 'system_anomaly' | 'compliance_violation' | 'manual';
+  type:
+    | 'threshold_breach'
+    | 'suspicious_activity'
+    | 'system_anomaly'
+    | 'compliance_violation'
+    | 'manual';
   severity: 'low' | 'medium' | 'high' | 'critical';
   title: string;
   description: string;
@@ -132,9 +145,9 @@ const DEFAULT_THRESHOLDS: SecurityThreshold[] = [
       {
         type: 'email',
         target: 'security@company.com',
-        delay: 0
-      }
-    ]
+        delay: 0,
+      },
+    ],
   },
   {
     metricName: 'suspiciousActivities',
@@ -148,14 +161,14 @@ const DEFAULT_THRESHOLDS: SecurityThreshold[] = [
       {
         type: 'email',
         target: 'security@company.com',
-        delay: 0
+        delay: 0,
       },
       {
         type: 'escalate',
         target: 'security-team',
-        delay: 300
-      }
-    ]
+        delay: 300,
+      },
+    ],
   },
   {
     metricName: 'systemLoad.cpu',
@@ -169,9 +182,9 @@ const DEFAULT_THRESHOLDS: SecurityThreshold[] = [
       {
         type: 'webhook',
         target: '/api/alerts/system-load',
-        delay: 0
-      }
-    ]
+        delay: 0,
+      },
+    ],
   },
   {
     metricName: 'activeUsers',
@@ -185,10 +198,10 @@ const DEFAULT_THRESHOLDS: SecurityThreshold[] = [
       {
         type: 'webhook',
         target: '/api/alerts/high-load',
-        delay: 0
-      }
-    ]
-  }
+        delay: 0,
+      },
+    ],
+  },
 ];
 
 const DEFAULT_CONFIG: MonitoringConfig = {
@@ -202,30 +215,29 @@ const DEFAULT_CONFIG: MonitoringConfig = {
     email: {
       enabled: true,
       recipients: ['admin@company.com'],
-      template: 'security-alert'
+      template: 'security-alert',
     },
     webhook: {
       enabled: false,
       url: '',
-      secret: ''
+      secret: '',
     },
     dashboard: {
       enabled: true,
-      refreshInterval: 5
-    }
+      refreshInterval: 5,
+    },
   },
   compliance: {
     lgpdEnabled: true,
     auditTrailEnabled: true,
     dataRetentionDays: 365,
-    anonymizationEnabled: true
-  }
+    anonymizationEnabled: true,
+  },
 };
 
 export class RealTimeSecurityMonitor {
   private supabase;
   private auditLogger: SecurityAuditLogger;
-  private activityDetector: SuspiciousActivityDetector;
   private config: MonitoringConfig;
   private metricsInterval?: NodeJS.Timeout;
   private websocketServer?: any; // WebSocket server instance
@@ -244,7 +256,7 @@ export class RealTimeSecurityMonitor {
     this.auditLogger = new SecurityAuditLogger(supabaseUrl, supabaseKey);
     this.activityDetector = activityDetector;
     this.config = { ...DEFAULT_CONFIG, ...customConfig };
-    
+
     if (this.config.enabled) {
       this.startMonitoring();
     }
@@ -257,18 +269,17 @@ export class RealTimeSecurityMonitor {
     try {
       // Start metrics collection
       this.startMetricsCollection();
-      
+
       // Initialize WebSocket server for real-time updates
       await this.initializeWebSocket();
-      
+
       // Load existing incidents
       await this.loadActiveIncidents();
-      
+
       // Set up activity detector integration
       this.setupActivityDetectorIntegration();
-      
+
       console.log('Real-time security monitoring started');
-      
     } catch (error) {
       console.error('Failed to start monitoring:', error);
       throw error;
@@ -283,12 +294,12 @@ export class RealTimeSecurityMonitor {
       clearInterval(this.metricsInterval);
       this.metricsInterval = undefined;
     }
-    
+
     if (this.websocketServer) {
       this.websocketServer.close();
       this.websocketServer = undefined;
     }
-    
+
     this.connectedClients.clear();
     console.log('Real-time security monitoring stopped');
   }
@@ -308,12 +319,11 @@ export class RealTimeSecurityMonitor {
         averageResponseTime: await this.getAverageResponseTime(),
         systemLoad: await this.getSystemLoad(),
         networkTraffic: await this.getNetworkTraffic(),
-        securityEvents: await this.getSecurityEventsStats()
+        securityEvents: await this.getSecurityEventsStats(),
       };
 
       this.lastMetrics = metrics;
       return metrics;
-      
     } catch (error) {
       console.error('Failed to get current metrics:', error);
       throw error;
@@ -325,7 +335,7 @@ export class RealTimeSecurityMonitor {
    */
   async getMetricsHistory(
     timeRange: { start: Date; end: Date },
-    interval: 'minute' | 'hour' | 'day' = 'hour'
+    _interval: 'minute' | 'hour' | 'day' = 'hour'
   ): Promise<SecurityMetrics[]> {
     try {
       const { data, error } = await this.supabase
@@ -340,7 +350,6 @@ export class RealTimeSecurityMonitor {
       }
 
       return (data || []).map(this.mapDatabaseToMetrics);
-      
     } catch (error) {
       console.error('Failed to get metrics history:', error);
       throw error;
@@ -363,32 +372,31 @@ export class RealTimeSecurityMonitor {
             timestamp: new Date(),
             action: 'incident_created',
             user: 'system',
-            details: 'Incident automatically created by security monitor'
-          }
-        ]
+            details: 'Incident automatically created by security monitor',
+          },
+        ],
       };
 
       // Store incident
       await this.storeIncident(fullIncident);
-      
+
       // Add to active incidents
       this.activeIncidents.set(fullIncident.incidentId, fullIncident);
-      
+
       // Broadcast to connected clients
       this.broadcastToClients('incident_created', fullIncident);
-      
+
       // Log security event
       await this.auditLogger.logSecurityEvent({
         eventType: 'security_incident_created',
         metadata: {
           incidentId: fullIncident.incidentId,
           type: fullIncident.type,
-          severity: fullIncident.severity
-        }
+          severity: fullIncident.severity,
+        },
       });
 
       return fullIncident;
-      
     } catch (error) {
       console.error('Failed to create incident:', error);
       throw error;
@@ -401,7 +409,7 @@ export class RealTimeSecurityMonitor {
   async updateIncident(
     incidentId: string,
     updates: Partial<SecurityIncident>,
-    user: string = 'system'
+    user = 'system'
   ): Promise<SecurityIncident> {
     try {
       const existingIncident = this.activeIncidents.get(incidentId);
@@ -418,22 +426,21 @@ export class RealTimeSecurityMonitor {
             timestamp: new Date(),
             action: 'incident_updated',
             user,
-            details: `Incident updated: ${Object.keys(updates).join(', ')}`
-          }
-        ]
+            details: `Incident updated: ${Object.keys(updates).join(', ')}`,
+          },
+        ],
       };
 
       // Update storage
       await this.storeIncident(updatedIncident);
-      
+
       // Update active incidents
       this.activeIncidents.set(incidentId, updatedIncident);
-      
+
       // Broadcast update
       this.broadcastToClients('incident_updated', updatedIncident);
-      
+
       return updatedIncident;
-      
     } catch (error) {
       console.error('Failed to update incident:', error);
       throw error;
@@ -452,21 +459,26 @@ export class RealTimeSecurityMonitor {
       const updates: Partial<SecurityIncident> = {
         status: 'resolved',
         resolvedAt: new Date(),
-        timeline: [{
-          timestamp: new Date(),
-          action: 'incident_resolved',
-          user,
-          details: resolution
-        }]
+        timeline: [
+          {
+            timestamp: new Date(),
+            action: 'incident_resolved',
+            user,
+            details: resolution,
+          },
+        ],
       };
 
-      const resolvedIncident = await this.updateIncident(incidentId, updates, user);
-      
+      const resolvedIncident = await this.updateIncident(
+        incidentId,
+        updates,
+        user
+      );
+
       // Remove from active incidents
       this.activeIncidents.delete(incidentId);
-      
+
       return resolvedIncident;
-      
     } catch (error) {
       console.error('Failed to resolve incident:', error);
       throw error;
@@ -506,7 +518,6 @@ export class RealTimeSecurityMonitor {
       }
 
       return this.mapDatabaseToIncident(data);
-      
     } catch (error) {
       console.error('Failed to get incident:', error);
       throw error;
@@ -553,7 +564,10 @@ export class RealTimeSecurityMonitor {
       }
 
       if (options?.offset) {
-        query = query.range(options.offset, (options.offset + (options.limit || 50)) - 1);
+        query = query.range(
+          options.offset,
+          options.offset + (options.limit || 50) - 1
+        );
       }
 
       const { data, error } = await query;
@@ -563,7 +577,6 @@ export class RealTimeSecurityMonitor {
       }
 
       return (data || []).map(this.mapDatabaseToIncident);
-      
     } catch (error) {
       console.error('Failed to get incidents:', error);
       throw error;
@@ -575,7 +588,7 @@ export class RealTimeSecurityMonitor {
    */
   updateConfig(newConfig: Partial<MonitoringConfig>): void {
     this.config = { ...this.config, ...newConfig };
-    
+
     // Restart monitoring if needed
     if (this.config.enabled && !this.metricsInterval) {
       this.startMetricsCollection();
@@ -596,22 +609,26 @@ export class RealTimeSecurityMonitor {
    */
   addWebSocketClient(client: any): void {
     this.connectedClients.add(client);
-    
+
     // Send current metrics to new client
     if (this.lastMetrics) {
-      client.send(JSON.stringify({
-        type: 'metrics_update',
-        data: this.lastMetrics
-      }));
+      client.send(
+        JSON.stringify({
+          type: 'metrics_update',
+          data: this.lastMetrics,
+        })
+      );
     }
-    
+
     // Send active incidents
     const activeIncidents = this.getActiveIncidents();
     if (activeIncidents.length > 0) {
-      client.send(JSON.stringify({
-        type: 'incidents_update',
-        data: activeIncidents
-      }));
+      client.send(
+        JSON.stringify({
+          type: 'incidents_update',
+          data: activeIncidents,
+        })
+      );
     }
   }
 
@@ -625,7 +642,10 @@ export class RealTimeSecurityMonitor {
   /**
    * Get monitoring statistics
    */
-  async getMonitoringStatistics(timeRange: { start: Date; end: Date }): Promise<{
+  async getMonitoringStatistics(timeRange: {
+    start: Date;
+    end: Date;
+  }): Promise<{
     totalIncidents: number;
     incidentsBySeverity: Record<SecurityIncident['severity'], number>;
     incidentsByType: Record<SecurityIncident['type'], number>;
@@ -638,52 +658,55 @@ export class RealTimeSecurityMonitor {
     try {
       const incidents = await this.getIncidents({ timeRange });
       const metrics = await this.getMetricsHistory(timeRange);
-      
-      const incidentsBySeverity: Record<SecurityIncident['severity'], number> = {
-        low: 0,
-        medium: 0,
-        high: 0,
-        critical: 0
-      };
-      
+
+      const incidentsBySeverity: Record<SecurityIncident['severity'], number> =
+        {
+          low: 0,
+          medium: 0,
+          high: 0,
+          critical: 0,
+        };
+
       const incidentsByType: Record<SecurityIncident['type'], number> = {
         threshold_breach: 0,
         suspicious_activity: 0,
         system_anomaly: 0,
         compliance_violation: 0,
-        manual: 0
+        manual: 0,
       };
-      
+
       let totalResolutionTime = 0;
       let resolvedIncidents = 0;
       let falsePositives = 0;
-      
+
       for (const incident of incidents) {
         incidentsBySeverity[incident.severity]++;
         incidentsByType[incident.type]++;
-        
+
         if (incident.status === 'resolved' && incident.resolvedAt) {
-          const resolutionTime = incident.resolvedAt.getTime() - incident.detectedAt.getTime();
+          const resolutionTime =
+            incident.resolvedAt.getTime() - incident.detectedAt.getTime();
           totalResolutionTime += resolutionTime;
           resolvedIncidents++;
         }
-        
+
         if (incident.status === 'false_positive') {
           falsePositives++;
         }
       }
-      
+
       return {
         totalIncidents: incidents.length,
         incidentsBySeverity,
         incidentsByType,
-        averageResolutionTime: resolvedIncidents > 0 ? totalResolutionTime / resolvedIncidents : 0,
-        falsePositiveRate: incidents.length > 0 ? falsePositives / incidents.length : 0,
+        averageResolutionTime:
+          resolvedIncidents > 0 ? totalResolutionTime / resolvedIncidents : 0,
+        falsePositiveRate:
+          incidents.length > 0 ? falsePositives / incidents.length : 0,
         systemUptime: this.calculateSystemUptime(timeRange),
         alertsTriggered: this.calculateAlertsTriggered(timeRange),
-        metricsCollected: metrics.length
+        metricsCollected: metrics.length,
       };
-      
     } catch (error) {
       console.error('Failed to get monitoring statistics:', error);
       throw error;
@@ -696,16 +719,15 @@ export class RealTimeSecurityMonitor {
     this.metricsInterval = setInterval(async () => {
       try {
         const metrics = await this.getCurrentMetrics();
-        
+
         // Store metrics
         await this.storeMetrics(metrics);
-        
+
         // Check thresholds
         await this.checkThresholds(metrics);
-        
+
         // Broadcast to clients
         this.broadcastToClients('metrics_update', metrics);
-        
       } catch (error) {
         console.error('Metrics collection failed:', error);
       }
@@ -721,13 +743,12 @@ export class RealTimeSecurityMonitor {
   private async loadActiveIncidents(): Promise<void> {
     try {
       const activeIncidents = await this.getIncidents({
-        status: ['open', 'investigating']
+        status: ['open', 'investigating'],
       });
-      
+
       for (const incident of activeIncidents) {
         this.activeIncidents.set(incident.incidentId, incident);
       }
-      
     } catch (error) {
       console.error('Failed to load active incidents:', error);
     }
@@ -780,7 +801,7 @@ export class RealTimeSecurityMonitor {
   private async getFailedLoginsCount(): Promise<number> {
     try {
       const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
-      
+
       const { count, error } = await this.supabase
         .from('session_security_events')
         .select('*', { count: 'exact', head: true })
@@ -802,7 +823,7 @@ export class RealTimeSecurityMonitor {
   private async getSuspiciousActivitiesCount(): Promise<number> {
     try {
       const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
-      
+
       const { count, error } = await this.supabase
         .from('suspicious_activity_alerts')
         .select('*', { count: 'exact', head: true })
@@ -839,23 +860,27 @@ export class RealTimeSecurityMonitor {
     return {
       cpu: Math.random() * 100,
       memory: Math.random() * 100,
-      disk: Math.random() * 100
+      disk: Math.random() * 100,
     };
   }
 
-  private async getNetworkTraffic(): Promise<SecurityMetrics['networkTraffic']> {
+  private async getNetworkTraffic(): Promise<
+    SecurityMetrics['networkTraffic']
+  > {
     // This would get actual network metrics
     // For now, return placeholder values
     return {
-      inbound: Math.random() * 1000000, // bytes
-      outbound: Math.random() * 1000000 // bytes
+      inbound: Math.random() * 1_000_000, // bytes
+      outbound: Math.random() * 1_000_000, // bytes
     };
   }
 
-  private async getSecurityEventsStats(): Promise<SecurityMetrics['securityEvents']> {
+  private async getSecurityEventsStats(): Promise<
+    SecurityMetrics['securityEvents']
+  > {
     try {
       const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
-      
+
       const { data, error } = await this.supabase
         .from('session_security_events')
         .select('event_type, severity')
@@ -878,7 +903,7 @@ export class RealTimeSecurityMonitor {
       return {
         total: events.length,
         byType,
-        bySeverity
+        bySeverity,
       };
     } catch (error) {
       console.error('Failed to get security events stats:', error);
@@ -891,17 +916,24 @@ export class RealTimeSecurityMonitor {
       return;
     }
 
-    for (const threshold of this.config.thresholds.filter(t => t.isEnabled)) {
+    for (const threshold of this.config.thresholds.filter((t) => t.isEnabled)) {
       try {
         const value = this.getMetricValue(metrics, threshold.metricName);
-        const breached = this.compareValues(value, threshold.operator, threshold.value);
-        
+        const breached = this.compareValues(
+          value,
+          threshold.operator,
+          threshold.value
+        );
+
         if (breached && !this.isInCooldown(threshold)) {
           await this.handleThresholdBreach(threshold, value, metrics);
           this.setCooldown(threshold);
         }
       } catch (error) {
-        console.error(`Failed to check threshold ${threshold.metricName}:`, error);
+        console.error(
+          `Failed to check threshold ${threshold.metricName}:`,
+          error
+        );
       }
     }
   }
@@ -909,22 +941,28 @@ export class RealTimeSecurityMonitor {
   private getMetricValue(metrics: SecurityMetrics, metricName: string): any {
     const parts = metricName.split('.');
     let value: any = metrics;
-    
+
     for (const part of parts) {
       value = value?.[part];
     }
-    
+
     return value;
   }
 
   private compareValues(value: any, operator: string, threshold: any): boolean {
     switch (operator) {
-      case 'gt': return value > threshold;
-      case 'lt': return value < threshold;
-      case 'eq': return value === threshold;
-      case 'gte': return value >= threshold;
-      case 'lte': return value <= threshold;
-      default: return false;
+      case 'gt':
+        return value > threshold;
+      case 'lt':
+        return value < threshold;
+      case 'eq':
+        return value === threshold;
+      case 'gte':
+        return value >= threshold;
+      case 'lte':
+        return value <= threshold;
+      default:
+        return false;
     }
   }
 
@@ -933,8 +971,10 @@ export class RealTimeSecurityMonitor {
     if (!lastAlert) {
       return false;
     }
-    
-    const cooldownEnd = new Date(lastAlert.getTime() + threshold.cooldownMinutes * 60 * 1000);
+
+    const cooldownEnd = new Date(
+      lastAlert.getTime() + threshold.cooldownMinutes * 60 * 1000
+    );
     return new Date() < cooldownEnd;
   }
 
@@ -959,31 +999,33 @@ export class RealTimeSecurityMonitor {
         evidence: {
           threshold,
           currentValue: value,
-          metrics
+          metrics,
         },
         impact: {
           affectedUsers: [],
           affectedSystems: [],
           dataExposure: false,
-          serviceDisruption: threshold.severity === 'critical'
+          serviceDisruption: threshold.severity === 'critical',
         },
         response: {
           containmentActions: [],
           investigationNotes: [],
           remediationSteps: [],
-          lessonsLearned: []
-        }
+          lessonsLearned: [],
+        },
       });
 
       // Execute threshold actions
       for (const action of threshold.actions) {
         if (action.delay > 0) {
-          setTimeout(() => this.executeThresholdAction(action, incident), action.delay * 1000);
+          setTimeout(
+            () => this.executeThresholdAction(action, incident),
+            action.delay * 1000
+          );
         } else {
           await this.executeThresholdAction(action, incident);
         }
       }
-      
     } catch (error) {
       console.error('Failed to handle threshold breach:', error);
     }
@@ -1006,40 +1048,52 @@ export class RealTimeSecurityMonitor {
           break;
         // Add other action types as needed
       }
-      
+
       // Log action execution
       await this.auditLogger.logSecurityEvent({
         eventType: 'threshold_action_executed',
         metadata: {
           incidentId: incident.incidentId,
           actionType: action.type,
-          target: action.target
-        }
+          target: action.target,
+        },
       });
-      
     } catch (error) {
       console.error('Failed to execute threshold action:', error);
     }
   }
 
-  private async sendEmailAlert(recipient: string, incident: SecurityIncident): Promise<void> {
+  private async sendEmailAlert(
+    recipient: string,
+    incident: SecurityIncident
+  ): Promise<void> {
     // Email sending implementation would go here
-    console.log(`Email alert sent to ${recipient} for incident ${incident.incidentId}`);
+    console.log(
+      `Email alert sent to ${recipient} for incident ${incident.incidentId}`
+    );
   }
 
-  private async sendWebhookAlert(url: string, incident: SecurityIncident): Promise<void> {
+  private async sendWebhookAlert(
+    url: string,
+    incident: SecurityIncident
+  ): Promise<void> {
     // Webhook sending implementation would go here
-    console.log(`Webhook alert sent to ${url} for incident ${incident.incidentId}`);
+    console.log(
+      `Webhook alert sent to ${url} for incident ${incident.incidentId}`
+    );
   }
 
-  private async escalateIncident(incident: SecurityIncident, target: string): Promise<void> {
+  private async escalateIncident(
+    incident: SecurityIncident,
+    target: string
+  ): Promise<void> {
     // Incident escalation implementation would go here
     console.log(`Incident ${incident.incidentId} escalated to ${target}`);
   }
 
   private broadcastToClients(type: string, data: any): void {
     const message = JSON.stringify({ type, data });
-    
+
     for (const client of this.connectedClients) {
       try {
         client.send(message);
@@ -1052,20 +1106,18 @@ export class RealTimeSecurityMonitor {
 
   private async storeMetrics(metrics: SecurityMetrics): Promise<void> {
     try {
-      const { error } = await this.supabase
-        .from('security_metrics')
-        .insert({
-          timestamp: metrics.timestamp.toISOString(),
-          active_users: metrics.activeUsers,
-          active_sessions: metrics.activeSessions,
-          failed_logins: metrics.failedLogins,
-          suspicious_activities: metrics.suspiciousActivities,
-          blocked_ips: metrics.blockedIPs,
-          average_response_time: metrics.averageResponseTime,
-          system_load: metrics.systemLoad,
-          network_traffic: metrics.networkTraffic,
-          security_events: metrics.securityEvents
-        });
+      const { error } = await this.supabase.from('security_metrics').insert({
+        timestamp: metrics.timestamp.toISOString(),
+        active_users: metrics.activeUsers,
+        active_sessions: metrics.activeSessions,
+        failed_logins: metrics.failedLogins,
+        suspicious_activities: metrics.suspiciousActivities,
+        blocked_ips: metrics.blockedIPs,
+        average_response_time: metrics.averageResponseTime,
+        system_load: metrics.systemLoad,
+        network_traffic: metrics.networkTraffic,
+        security_events: metrics.securityEvents,
+      });
 
       if (error) {
         console.error('Failed to store metrics:', error);
@@ -1077,25 +1129,23 @@ export class RealTimeSecurityMonitor {
 
   private async storeIncident(incident: SecurityIncident): Promise<void> {
     try {
-      const { error } = await this.supabase
-        .from('security_incidents')
-        .upsert({
-          incident_id: incident.incidentId,
-          type: incident.type,
-          severity: incident.severity,
-          title: incident.title,
-          description: incident.description,
-          detected_at: incident.detectedAt.toISOString(),
-          resolved_at: incident.resolvedAt?.toISOString(),
-          status: incident.status,
-          assigned_to: incident.assignedTo,
-          metrics: incident.metrics,
-          alerts: incident.alerts,
-          evidence: incident.evidence,
-          timeline: incident.timeline,
-          impact: incident.impact,
-          response: incident.response
-        });
+      const { error } = await this.supabase.from('security_incidents').upsert({
+        incident_id: incident.incidentId,
+        type: incident.type,
+        severity: incident.severity,
+        title: incident.title,
+        description: incident.description,
+        detected_at: incident.detectedAt.toISOString(),
+        resolved_at: incident.resolvedAt?.toISOString(),
+        status: incident.status,
+        assigned_to: incident.assignedTo,
+        metrics: incident.metrics,
+        alerts: incident.alerts,
+        evidence: incident.evidence,
+        timeline: incident.timeline,
+        impact: incident.impact,
+        response: incident.response,
+      });
 
       if (error) {
         console.error('Failed to store incident:', error);
@@ -1116,7 +1166,7 @@ export class RealTimeSecurityMonitor {
       averageResponseTime: data.average_response_time,
       systemLoad: data.system_load,
       networkTraffic: data.network_traffic,
-      securityEvents: data.security_events
+      securityEvents: data.security_events,
     };
   }
 
@@ -1136,17 +1186,23 @@ export class RealTimeSecurityMonitor {
       evidence: data.evidence,
       timeline: data.timeline,
       impact: data.impact,
-      response: data.response
+      response: data.response,
     };
   }
 
-  private calculateSystemUptime(timeRange: { start: Date; end: Date }): number {
+  private calculateSystemUptime(_timeRange: {
+    start: Date;
+    end: Date;
+  }): number {
     // This would calculate actual system uptime
     // For now, return a placeholder value (99.9%)
     return 0.999;
   }
 
-  private calculateAlertsTriggered(timeRange: { start: Date; end: Date }): number {
+  private calculateAlertsTriggered(_timeRange: {
+    start: Date;
+    end: Date;
+  }): number {
     // This would count actual alerts triggered
     // For now, return a placeholder value
     return 0;

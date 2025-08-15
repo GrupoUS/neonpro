@@ -1,10 +1,10 @@
 // app/auth/popup-callback/route.ts
 // Rota para lidar com callbacks OAuth em janelas popup
-import { createClient } from "@/app/utils/supabase/server";
+import { createClient } from '@/app/utils/supabase/server';
 
 // Helper function para criar resposta de erro consistente
 function createErrorResponse(message: string) {
-  console.log("Returning error response:", message);
+  console.log('Returning error response:', message);
   return new Response(
     `
     <!DOCTYPE html>
@@ -40,19 +40,19 @@ function createErrorResponse(message: string) {
     </html>
   `,
     {
-      headers: { "Content-Type": "text/html" },
+      headers: { 'Content-Type': 'text/html' },
     }
   );
 }
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const code = searchParams.get("code");
+  const code = searchParams.get('code');
 
   // Log para debugging
-  console.log("=== Popup Callback Received ===");
-  console.log("Code present:", !!code);
-  console.log("Full URL:", request.url);
+  console.log('=== Popup Callback Received ===');
+  console.log('Code present:', !!code);
+  console.log('Full URL:', request.url);
 
   if (code) {
     const supabase = await createClient();
@@ -60,18 +60,22 @@ export async function GET(request: Request) {
     try {
       const { error } = await supabase.auth.exchangeCodeForSession(code);
 
-      if (!error) {
-        console.log("✅ OAuth code exchange successful");
-        // Verificar se a sessão foi criada
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
-        console.log("Session created:", !!session);
+      if (error) {
+        // Log do erro para debugging
+        console.error('❌ OAuth code exchange failed:', error);
+        return createErrorResponse(`OAuth exchange failed: ${error.message}`);
+      }
+      console.log('✅ OAuth code exchange successful');
+      // Verificar se a sessão foi criada
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      console.log('Session created:', !!session);
 
-        // Em caso de sucesso, retorna uma página que fecha o popup
-        // e comunica com a janela pai
-        return new Response(
-          `
+      // Em caso de sucesso, retorna uma página que fecha o popup
+      // e comunica com a janela pai
+      return new Response(
+        `
         <!DOCTYPE html>
         <html>
           <head>
@@ -111,23 +115,18 @@ export async function GET(request: Request) {
           </body>
         </html>
       `,
-          {
-            headers: { "Content-Type": "text/html" },
-          }
-        );
-      } else {
-        // Log do erro para debugging
-        console.error("❌ OAuth code exchange failed:", error);
-        return createErrorResponse("OAuth exchange failed: " + error.message);
-      }
+        {
+          headers: { 'Content-Type': 'text/html' },
+        }
+      );
     } catch (err) {
       // Tratamento de erros inesperados
-      console.error("❌ Unexpected error in popup callback:", err);
-      return createErrorResponse("Unexpected error occurred");
+      console.error('❌ Unexpected error in popup callback:', err);
+      return createErrorResponse('Unexpected error occurred');
     }
   }
 
   // Se não há código, retorna erro
-  console.log("❌ No authorization code provided");
-  return createErrorResponse("No authorization code provided");
+  console.log('❌ No authorization code provided');
+  return createErrorResponse('No authorization code provided');
 }

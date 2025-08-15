@@ -3,7 +3,7 @@ export enum LogLevel {
   ERROR = 'error',
   WARN = 'warn',
   INFO = 'info',
-  DEBUG = 'debug'
+  DEBUG = 'debug',
 }
 
 export interface LogEntry {
@@ -19,25 +19,25 @@ export class Logger {
       level,
       message,
       timestamp: new Date(),
-      metadata
+      metadata,
     };
-    
+
     console.log(JSON.stringify(entry));
   }
 
   static error(message: string, metadata?: Record<string, any>) {
-    this.log(LogLevel.ERROR, message, metadata);
+    Logger.log(LogLevel.ERROR, message, metadata);
   }
 
   static warn(message: string, metadata?: Record<string, any>) {
-    this.log(LogLevel.WARN, message, metadata);
+    Logger.log(LogLevel.WARN, message, metadata);
   }
 
   static info(message: string, metadata?: Record<string, any>) {
-    this.log(LogLevel.INFO, message, metadata);
+    Logger.log(LogLevel.INFO, message, metadata);
   }
 
   static debug(message: string, metadata?: Record<string, any>) {
-    this.log(LogLevel.DEBUG, message, metadata);
+    Logger.log(LogLevel.DEBUG, message, metadata);
   }
 }

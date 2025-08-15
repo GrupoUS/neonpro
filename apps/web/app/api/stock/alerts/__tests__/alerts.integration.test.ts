@@ -2,10 +2,17 @@
 // Story 11.4: Alertas e Relatórios de Estoque
 // Integration tests for stock alerts API endpoints
 
-import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  jest,
+} from '@jest/globals';
 import { NextRequest } from 'next/server';
-import { GET, POST, PUT, DELETE } from '../route';
 import { POST as AcknowledgePost } from '../acknowledge/route';
+import { DELETE, GET, POST, PUT } from '../route';
 
 // =====================================================
 // TEST SETUP AND MOCKS
@@ -15,15 +22,15 @@ import { POST as AcknowledgePost } from '../acknowledge/route';
 jest.mock('@supabase/auth-helpers-nextjs', () => ({
   createRouteHandlerClient: jest.fn(() => ({
     auth: {
-      getSession: jest.fn()
+      getSession: jest.fn(),
     },
-    from: jest.fn()
-  }))
+    from: jest.fn(),
+  })),
 }));
 
 // Mock cookies
 jest.mock('next/headers', () => ({
-  cookies: jest.fn()
+  cookies: jest.fn(),
 }));
 
 // Mock console to avoid noise in tests
@@ -45,8 +52,8 @@ afterEach(() => {
 const mockSession = {
   user: {
     id: '123e4567-e89b-12d3-a456-426614174001',
-    email: 'test@example.com'
-  }
+    email: 'test@example.com',
+  },
 };
 
 const mockClinicId = '123e4567-e89b-12d3-a456-426614174000';
@@ -63,7 +70,7 @@ const mockAlertConfig = {
   is_active: true,
   notification_channels: ['in_app', 'email'],
   created_at: '2024-01-01T00:00:00Z',
-  updated_at: '2024-01-01T00:00:00Z'
+  updated_at: '2024-01-01T00:00:00Z',
 };
 
 const mockAlert = {
@@ -80,11 +87,14 @@ const mockAlert = {
   metadata: {},
   triggered_at: '2024-01-01T12:00:00Z',
   acknowledged_at: null,
-  created_at: '2024-01-01T12:00:00Z'
+  created_at: '2024-01-01T12:00:00Z',
 };
 
 // Helper function to create mock request
-function createMockRequest(url: string, options: RequestInit = {}): NextRequest {
+function createMockRequest(
+  url: string,
+  options: RequestInit = {}
+): NextRequest {
   return new NextRequest(url, options);
 }
 
@@ -102,17 +112,17 @@ function createMockSupabaseClient(mockData: any = {}) {
     order: jest.fn().mockReturnThis(),
     range: jest.fn().mockReturnThis(),
     single: jest.fn(),
-    count: jest.fn()
+    count: jest.fn(),
   };
 
   const mockSupabase = {
     auth: {
-      getSession: jest.fn().mockResolvedValue({ 
-        data: { session: mockSession }, 
-        error: null 
-      })
+      getSession: jest.fn().mockResolvedValue({
+        data: { session: mockSession },
+        error: null,
+      }),
     },
-    from: jest.fn().mockReturnValue(mockQuery)
+    from: jest.fn().mockReturnValue(mockQuery),
   };
 
   // Configure mock responses
@@ -123,7 +133,10 @@ function createMockSupabaseClient(mockData: any = {}) {
     mockQuery.single.mockResolvedValue({ data: mockData.alert, error: null });
   }
   if (mockData.userClinic) {
-    mockQuery.single.mockResolvedValue({ data: mockData.userClinic, error: null });
+    mockQuery.single.mockResolvedValue({
+      data: mockData.userClinic,
+      error: null,
+    });
   }
 
   return { mockSupabase, mockQuery };
@@ -137,29 +150,33 @@ describe('GET /api/stock/alerts', () => {
   it('should return paginated alert configurations', async () => {
     // Arrange
     const { mockSupabase, mockQuery } = createMockSupabaseClient();
-    const { createRouteHandlerClient } = require('@supabase/auth-helpers-nextjs');
+    const {
+      createRouteHandlerClient,
+    } = require('@supabase/auth-helpers-nextjs');
     createRouteHandlerClient.mockReturnValue(mockSupabase);
 
     // Mock user clinic
     mockSupabase.from.mockReturnValueOnce({
       ...mockQuery,
-      single: jest.fn().mockResolvedValue({ 
-        data: { clinic_id: mockClinicId }, 
-        error: null 
-      })
+      single: jest.fn().mockResolvedValue({
+        data: { clinic_id: mockClinicId },
+        error: null,
+      }),
     });
 
     // Mock alert configs
     mockSupabase.from.mockReturnValueOnce({
       ...mockQuery,
-      count: jest.fn().mockResolvedValue({ 
-        data: [mockAlertConfig], 
-        error: null, 
-        count: 1 
-      })
+      count: jest.fn().mockResolvedValue({
+        data: [mockAlertConfig],
+        error: null,
+        count: 1,
+      }),
     });
 
-    const request = createMockRequest('http://localhost:3000/api/stock/alerts?page=1&limit=10');
+    const request = createMockRequest(
+      'http://localhost:3000/api/stock/alerts?page=1&limit=10'
+    );
 
     // Act
     const response = await GET(request);
@@ -172,26 +189,28 @@ describe('GET /api/stock/alerts', () => {
     expect(data.data.configs[0]).toMatchObject({
       id: mockAlertConfig.id,
       alertType: mockAlertConfig.alert_type,
-      severityLevel: mockAlertConfig.severity_level
+      severityLevel: mockAlertConfig.severity_level,
     });
     expect(data.data.pagination).toMatchObject({
       page: 1,
       limit: 10,
-      total: 1
+      total: 1,
     });
   });
 
   it('should handle authentication errors', async () => {
     // Arrange
-    const { createRouteHandlerClient } = require('@supabase/auth-helpers-nextjs');
+    const {
+      createRouteHandlerClient,
+    } = require('@supabase/auth-helpers-nextjs');
     createRouteHandlerClient.mockReturnValue({
       auth: {
-        getSession: jest.fn().mockResolvedValue({ 
-          data: { session: null }, 
-          error: new Error('Auth error') 
-        })
+        getSession: jest.fn().mockResolvedValue({
+          data: { session: null },
+          error: new Error('Auth error'),
+        }),
       },
-      from: jest.fn()
+      from: jest.fn(),
     });
 
     const request = createMockRequest('http://localhost:3000/api/stock/alerts');
@@ -209,10 +228,14 @@ describe('GET /api/stock/alerts', () => {
   it('should handle query parameter validation', async () => {
     // Arrange
     const { mockSupabase } = createMockSupabaseClient();
-    const { createRouteHandlerClient } = require('@supabase/auth-helpers-nextjs');
+    const {
+      createRouteHandlerClient,
+    } = require('@supabase/auth-helpers-nextjs');
     createRouteHandlerClient.mockReturnValue(mockSupabase);
 
-    const request = createMockRequest('http://localhost:3000/api/stock/alerts?page=invalid&limit=999');
+    const request = createMockRequest(
+      'http://localhost:3000/api/stock/alerts?page=invalid&limit=999'
+    );
 
     // Act
     const response = await GET(request);
@@ -233,25 +256,27 @@ describe('POST /api/stock/alerts', () => {
   it('should create new alert configuration', async () => {
     // Arrange
     const { mockSupabase, mockQuery } = createMockSupabaseClient();
-    const { createRouteHandlerClient } = require('@supabase/auth-helpers-nextjs');
+    const {
+      createRouteHandlerClient,
+    } = require('@supabase/auth-helpers-nextjs');
     createRouteHandlerClient.mockReturnValue(mockSupabase);
 
     // Mock user clinic
     mockSupabase.from.mockReturnValueOnce({
       ...mockQuery,
-      single: jest.fn().mockResolvedValue({ 
-        data: { clinic_id: mockClinicId }, 
-        error: null 
-      })
+      single: jest.fn().mockResolvedValue({
+        data: { clinic_id: mockClinicId },
+        error: null,
+      }),
     });
 
     // Mock config creation
     mockSupabase.from.mockReturnValueOnce({
       ...mockQuery,
-      single: jest.fn().mockResolvedValue({ 
-        data: mockAlertConfig, 
-        error: null 
-      })
+      single: jest.fn().mockResolvedValue({
+        data: mockAlertConfig,
+        error: null,
+      }),
     });
 
     const requestBody = {
@@ -261,14 +286,17 @@ describe('POST /api/stock/alerts', () => {
       severityLevel: 'medium',
       isActive: true,
       notificationChannels: ['in_app', 'email'],
-      productId: mockProductId
+      productId: mockProductId,
     };
 
-    const request = createMockRequest('http://localhost:3000/api/stock/alerts', {
-      method: 'POST',
-      body: JSON.stringify(requestBody),
-      headers: { 'Content-Type': 'application/json' }
-    });
+    const request = createMockRequest(
+      'http://localhost:3000/api/stock/alerts',
+      {
+        method: 'POST',
+        body: JSON.stringify(requestBody),
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
 
     // Act
     const response = await POST(request);
@@ -280,27 +308,32 @@ describe('POST /api/stock/alerts', () => {
     expect(data.data.config).toMatchObject({
       id: mockAlertConfig.id,
       alertType: 'low_stock',
-      severityLevel: 'medium'
+      severityLevel: 'medium',
     });
   });
 
   it('should validate request body', async () => {
     // Arrange
     const { mockSupabase } = createMockSupabaseClient();
-    const { createRouteHandlerClient } = require('@supabase/auth-helpers-nextjs');
+    const {
+      createRouteHandlerClient,
+    } = require('@supabase/auth-helpers-nextjs');
     createRouteHandlerClient.mockReturnValue(mockSupabase);
 
     const invalidRequestBody = {
       alertType: 'invalid_type',
       thresholdValue: -5, // Invalid negative value
-      severityLevel: 'invalid_severity'
+      severityLevel: 'invalid_severity',
     };
 
-    const request = createMockRequest('http://localhost:3000/api/stock/alerts', {
-      method: 'POST',
-      body: JSON.stringify(invalidRequestBody),
-      headers: { 'Content-Type': 'application/json' }
-    });
+    const request = createMockRequest(
+      'http://localhost:3000/api/stock/alerts',
+      {
+        method: 'POST',
+        body: JSON.stringify(invalidRequestBody),
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
 
     // Act
     const response = await POST(request);
@@ -315,25 +348,27 @@ describe('POST /api/stock/alerts', () => {
   it('should handle database errors', async () => {
     // Arrange
     const { mockSupabase, mockQuery } = createMockSupabaseClient();
-    const { createRouteHandlerClient } = require('@supabase/auth-helpers-nextjs');
+    const {
+      createRouteHandlerClient,
+    } = require('@supabase/auth-helpers-nextjs');
     createRouteHandlerClient.mockReturnValue(mockSupabase);
 
     // Mock user clinic
     mockSupabase.from.mockReturnValueOnce({
       ...mockQuery,
-      single: jest.fn().mockResolvedValue({ 
-        data: { clinic_id: mockClinicId }, 
-        error: null 
-      })
+      single: jest.fn().mockResolvedValue({
+        data: { clinic_id: mockClinicId },
+        error: null,
+      }),
     });
 
     // Mock database error
     mockSupabase.from.mockReturnValueOnce({
       ...mockQuery,
-      single: jest.fn().mockResolvedValue({ 
-        data: null, 
-        error: { message: 'Database error', code: '23505' } 
-      })
+      single: jest.fn().mockResolvedValue({
+        data: null,
+        error: { message: 'Database error', code: '23505' },
+      }),
     });
 
     const requestBody = {
@@ -342,14 +377,17 @@ describe('POST /api/stock/alerts', () => {
       thresholdUnit: 'quantity',
       severityLevel: 'medium',
       isActive: true,
-      notificationChannels: ['in_app']
+      notificationChannels: ['in_app'],
     };
 
-    const request = createMockRequest('http://localhost:3000/api/stock/alerts', {
-      method: 'POST',
-      body: JSON.stringify(requestBody),
-      headers: { 'Content-Type': 'application/json' }
-    });
+    const request = createMockRequest(
+      'http://localhost:3000/api/stock/alerts',
+      {
+        method: 'POST',
+        body: JSON.stringify(requestBody),
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
 
     // Act
     const response = await POST(request);
@@ -370,37 +408,42 @@ describe('PUT /api/stock/alerts/[id]', () => {
   it('should update alert configuration', async () => {
     // Arrange
     const { mockSupabase, mockQuery } = createMockSupabaseClient();
-    const { createRouteHandlerClient } = require('@supabase/auth-helpers-nextjs');
+    const {
+      createRouteHandlerClient,
+    } = require('@supabase/auth-helpers-nextjs');
     createRouteHandlerClient.mockReturnValue(mockSupabase);
 
     // Mock user clinic
     mockSupabase.from.mockReturnValueOnce({
       ...mockQuery,
-      single: jest.fn().mockResolvedValue({ 
-        data: { clinic_id: mockClinicId }, 
-        error: null 
-      })
+      single: jest.fn().mockResolvedValue({
+        data: { clinic_id: mockClinicId },
+        error: null,
+      }),
     });
 
     // Mock config update
     const updatedConfig = { ...mockAlertConfig, is_active: false };
     mockSupabase.from.mockReturnValueOnce({
       ...mockQuery,
-      single: jest.fn().mockResolvedValue({ 
-        data: updatedConfig, 
-        error: null 
-      })
+      single: jest.fn().mockResolvedValue({
+        data: updatedConfig,
+        error: null,
+      }),
     });
 
     const requestBody = {
-      isActive: false
+      isActive: false,
     };
 
-    const request = createMockRequest(`http://localhost:3000/api/stock/alerts/${mockAlertConfig.id}`, {
-      method: 'PUT',
-      body: JSON.stringify(requestBody),
-      headers: { 'Content-Type': 'application/json' }
-    });
+    const request = createMockRequest(
+      `http://localhost:3000/api/stock/alerts/${mockAlertConfig.id}`,
+      {
+        method: 'PUT',
+        body: JSON.stringify(requestBody),
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
 
     // Act
     const response = await PUT(request);
@@ -421,30 +464,35 @@ describe('DELETE /api/stock/alerts/[id]', () => {
   it('should delete alert configuration', async () => {
     // Arrange
     const { mockSupabase, mockQuery } = createMockSupabaseClient();
-    const { createRouteHandlerClient } = require('@supabase/auth-helpers-nextjs');
+    const {
+      createRouteHandlerClient,
+    } = require('@supabase/auth-helpers-nextjs');
     createRouteHandlerClient.mockReturnValue(mockSupabase);
 
     // Mock user clinic
     mockSupabase.from.mockReturnValueOnce({
       ...mockQuery,
-      single: jest.fn().mockResolvedValue({ 
-        data: { clinic_id: mockClinicId }, 
-        error: null 
-      })
+      single: jest.fn().mockResolvedValue({
+        data: { clinic_id: mockClinicId },
+        error: null,
+      }),
     });
 
     // Mock config deletion
     mockSupabase.from.mockReturnValueOnce({
       ...mockQuery,
-      single: jest.fn().mockResolvedValue({ 
-        data: { id: mockAlertConfig.id }, 
-        error: null 
-      })
+      single: jest.fn().mockResolvedValue({
+        data: { id: mockAlertConfig.id },
+        error: null,
+      }),
     });
 
-    const request = createMockRequest(`http://localhost:3000/api/stock/alerts/${mockAlertConfig.id}`, {
-      method: 'DELETE'
-    });
+    const request = createMockRequest(
+      `http://localhost:3000/api/stock/alerts/${mockAlertConfig.id}`,
+      {
+        method: 'DELETE',
+      }
+    );
 
     // Act
     const response = await DELETE(request);
@@ -465,43 +513,48 @@ describe('POST /api/stock/alerts/acknowledge', () => {
   it('should acknowledge alert successfully', async () => {
     // Arrange
     const { mockSupabase, mockQuery } = createMockSupabaseClient();
-    const { createRouteHandlerClient } = require('@supabase/auth-helpers-nextjs');
+    const {
+      createRouteHandlerClient,
+    } = require('@supabase/auth-helpers-nextjs');
     createRouteHandlerClient.mockReturnValue(mockSupabase);
 
     // Mock user clinic
     mockSupabase.from.mockReturnValueOnce({
       ...mockQuery,
-      single: jest.fn().mockResolvedValue({ 
-        data: { clinic_id: mockClinicId }, 
-        error: null 
-      })
+      single: jest.fn().mockResolvedValue({
+        data: { clinic_id: mockClinicId },
+        error: null,
+      }),
     });
 
     // Mock alert acknowledgment
-    const acknowledgedAlert = { 
-      ...mockAlert, 
+    const acknowledgedAlert = {
+      ...mockAlert,
       status: 'acknowledged',
-      acknowledged_at: '2024-01-01T13:00:00Z'
+      acknowledged_at: '2024-01-01T13:00:00Z',
     };
-    
+
     mockSupabase.from.mockReturnValueOnce({
       ...mockQuery,
-      single: jest.fn().mockResolvedValue({ 
-        data: acknowledgedAlert, 
-        error: null 
-      })
+      single: jest.fn().mockResolvedValue({
+        data: acknowledgedAlert,
+        error: null,
+      }),
     });
 
     const requestBody = {
       alertId: mockAlert.id,
-      notes: 'Issue resolved'
+      notes: 'Issue resolved',
     };
 
-    const request = createMockRequest('http://localhost:3000/api/stock/alerts/acknowledge', {
-      method: 'POST',
-      body: JSON.stringify(requestBody),
-      headers: { 'Content-Type': 'application/json' }
-    });
+    const request = createMockRequest(
+      'http://localhost:3000/api/stock/alerts/acknowledge',
+      {
+        method: 'POST',
+        body: JSON.stringify(requestBody),
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
 
     // Act
     const response = await AcknowledgePost(request);
@@ -518,14 +571,17 @@ describe('POST /api/stock/alerts/acknowledge', () => {
     // Arrange
     const invalidRequestBody = {
       // Missing required alertId
-      notes: 'Some notes'
+      notes: 'Some notes',
     };
 
-    const request = createMockRequest('http://localhost:3000/api/stock/alerts/acknowledge', {
-      method: 'POST',
-      body: JSON.stringify(invalidRequestBody),
-      headers: { 'Content-Type': 'application/json' }
-    });
+    const request = createMockRequest(
+      'http://localhost:3000/api/stock/alerts/acknowledge',
+      {
+        method: 'POST',
+        body: JSON.stringify(invalidRequestBody),
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
 
     // Act
     const response = await AcknowledgePost(request);
@@ -553,38 +609,43 @@ describe('End-to-End Alert Workflow', () => {
 
     // For now, we'll test the API endpoints in sequence
     const { mockSupabase, mockQuery } = createMockSupabaseClient();
-    const { createRouteHandlerClient } = require('@supabase/auth-helpers-nextjs');
+    const {
+      createRouteHandlerClient,
+    } = require('@supabase/auth-helpers-nextjs');
     createRouteHandlerClient.mockReturnValue(mockSupabase);
 
     // Step 1: Create configuration
     mockSupabase.from.mockReturnValueOnce({
       ...mockQuery,
-      single: jest.fn().mockResolvedValue({ 
-        data: { clinic_id: mockClinicId }, 
-        error: null 
-      })
+      single: jest.fn().mockResolvedValue({
+        data: { clinic_id: mockClinicId },
+        error: null,
+      }),
     });
 
     mockSupabase.from.mockReturnValueOnce({
       ...mockQuery,
-      single: jest.fn().mockResolvedValue({ 
-        data: mockAlertConfig, 
-        error: null 
-      })
+      single: jest.fn().mockResolvedValue({
+        data: mockAlertConfig,
+        error: null,
+      }),
     });
 
-    const createRequest = createMockRequest('http://localhost:3000/api/stock/alerts', {
-      method: 'POST',
-      body: JSON.stringify({
-        alertType: 'low_stock',
-        thresholdValue: 10,
-        thresholdUnit: 'quantity',
-        severityLevel: 'medium',
-        isActive: true,
-        notificationChannels: ['in_app']
-      }),
-      headers: { 'Content-Type': 'application/json' }
-    });
+    const createRequest = createMockRequest(
+      'http://localhost:3000/api/stock/alerts',
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          alertType: 'low_stock',
+          thresholdValue: 10,
+          thresholdUnit: 'quantity',
+          severityLevel: 'medium',
+          isActive: true,
+          notificationChannels: ['in_app'],
+        }),
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
 
     const createResponse = await POST(createRequest);
     const createData = await createResponse.json();
@@ -595,32 +656,35 @@ describe('End-to-End Alert Workflow', () => {
     // Step 2: Acknowledge alert (simulating that an alert was generated)
     mockSupabase.from.mockReturnValueOnce({
       ...mockQuery,
-      single: jest.fn().mockResolvedValue({ 
-        data: { clinic_id: mockClinicId }, 
-        error: null 
-      })
+      single: jest.fn().mockResolvedValue({
+        data: { clinic_id: mockClinicId },
+        error: null,
+      }),
     });
 
-    const acknowledgedAlert = { 
-      ...mockAlert, 
-      status: 'acknowledged'
+    const acknowledgedAlert = {
+      ...mockAlert,
+      status: 'acknowledged',
     };
-    
+
     mockSupabase.from.mockReturnValueOnce({
       ...mockQuery,
-      single: jest.fn().mockResolvedValue({ 
-        data: acknowledgedAlert, 
-        error: null 
-      })
+      single: jest.fn().mockResolvedValue({
+        data: acknowledgedAlert,
+        error: null,
+      }),
     });
 
-    const ackRequest = createMockRequest('http://localhost:3000/api/stock/alerts/acknowledge', {
-      method: 'POST',
-      body: JSON.stringify({
-        alertId: mockAlert.id
-      }),
-      headers: { 'Content-Type': 'application/json' }
-    });
+    const ackRequest = createMockRequest(
+      'http://localhost:3000/api/stock/alerts/acknowledge',
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          alertId: mockAlert.id,
+        }),
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
 
     const ackResponse = await AcknowledgePost(ackRequest);
     const ackData = await ackResponse.json();

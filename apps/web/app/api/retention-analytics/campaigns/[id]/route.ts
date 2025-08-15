@@ -3,9 +3,9 @@
 // API endpoint for executing individual retention campaigns
 // =====================================================================================
 
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { createClient } from '@/app/utils/supabase/server';
 
 // =====================================================================================
 // VALIDATION SCHEMAS
@@ -22,36 +22,51 @@ const UpdateCampaignSchema = z.object({
   name: z.string().min(1).optional(),
   description: z.string().optional(),
   targetSegments: z.array(z.string()).optional(),
-  triggerConditions: z.object({
-    churnProbabilityThreshold: z.number().min(0).max(1),
-    daysSinceLastVisit: z.number().min(1),
-    minimumLTV: z.number().min(0).optional(),
-    riskLevel: z.enum(['low', 'medium', 'high']),
-  }).optional(),
-  interventionStrategy: z.object({
-    type: z.enum(['email', 'sms', 'phone_call', 'in_app', 'multi_channel']),
-    template: z.string().min(1),
-    scheduling: z.object({
-      immediate: z.boolean().default(false),
-      delayHours: z.number().min(0).optional(),
-      maxRetries: z.number().min(1).max(5).default(3),
-      retryIntervalHours: z.number().min(1).default(24),
-    }),
-    personalization: z.object({
-      includeName: z.boolean().default(true),
-      includeLastService: z.boolean().default(true),
-      includeSpecialOffer: z.boolean().default(false),
-      customVariables: z.record(z.string()).optional(),
-    }),
-  }).optional(),
-  measurementCriteria: z.object({
-    successMetrics: z.array(z.enum(['return_visit', 'booking_scheduled', 'payment_made', 'engagement_rate'])),
-    trackingPeriodDays: z.number().min(1).max(365).default(30),
-    abtestEnabled: z.boolean().default(false),
-    abtestSplitPercentage: z.number().min(10).max(90).optional(),
-  }).optional(),
+  triggerConditions: z
+    .object({
+      churnProbabilityThreshold: z.number().min(0).max(1),
+      daysSinceLastVisit: z.number().min(1),
+      minimumLTV: z.number().min(0).optional(),
+      riskLevel: z.enum(['low', 'medium', 'high']),
+    })
+    .optional(),
+  interventionStrategy: z
+    .object({
+      type: z.enum(['email', 'sms', 'phone_call', 'in_app', 'multi_channel']),
+      template: z.string().min(1),
+      scheduling: z.object({
+        immediate: z.boolean().default(false),
+        delayHours: z.number().min(0).optional(),
+        maxRetries: z.number().min(1).max(5).default(3),
+        retryIntervalHours: z.number().min(1).default(24),
+      }),
+      personalization: z.object({
+        includeName: z.boolean().default(true),
+        includeLastService: z.boolean().default(true),
+        includeSpecialOffer: z.boolean().default(false),
+        customVariables: z.record(z.string()).optional(),
+      }),
+    })
+    .optional(),
+  measurementCriteria: z
+    .object({
+      successMetrics: z.array(
+        z.enum([
+          'return_visit',
+          'booking_scheduled',
+          'payment_made',
+          'engagement_rate',
+        ])
+      ),
+      trackingPeriodDays: z.number().min(1).max(365).default(30),
+      abtestEnabled: z.boolean().default(false),
+      abtestSplitPercentage: z.number().min(10).max(90).optional(),
+    })
+    .optional(),
   isActive: z.boolean().optional(),
-  status: z.enum(['draft', 'active', 'paused', 'completed', 'archived']).optional(),
+  status: z
+    .enum(['draft', 'active', 'paused', 'completed', 'archived'])
+    .optional(),
 });
 
 // =====================================================================================
@@ -59,7 +74,7 @@ const UpdateCampaignSchema = z.object({
 // =====================================================================================
 
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
@@ -95,11 +110,18 @@ export async function GET(
     // Calculate performance metrics
     const metrics = campaign.campaign_metrics[0] || {};
     const performance = {
-      deliveryRate: metrics.sent > 0 ? (metrics.delivered / metrics.sent) * 100 : 0,
-      openRate: metrics.delivered > 0 ? (metrics.opened / metrics.delivered) * 100 : 0,
-      clickRate: metrics.opened > 0 ? (metrics.clicked / metrics.opened) * 100 : 0,
-      conversionRate: metrics.sent > 0 ? (metrics.conversions / metrics.sent) * 100 : 0,
-      roi: metrics.costs > 0 ? ((metrics.revenue - metrics.costs) / metrics.costs) * 100 : 0,
+      deliveryRate:
+        metrics.sent > 0 ? (metrics.delivered / metrics.sent) * 100 : 0,
+      openRate:
+        metrics.delivered > 0 ? (metrics.opened / metrics.delivered) * 100 : 0,
+      clickRate:
+        metrics.opened > 0 ? (metrics.clicked / metrics.opened) * 100 : 0,
+      conversionRate:
+        metrics.sent > 0 ? (metrics.conversions / metrics.sent) * 100 : 0,
+      roi:
+        metrics.costs > 0
+          ? ((metrics.revenue - metrics.costs) / metrics.costs) * 100
+          : 0,
     };
 
     // Get eligible patients count
@@ -107,7 +129,10 @@ export async function GET(
       .from('retention_analytics')
       .select('*', { count: 'exact', head: true })
       .eq('clinic_id', campaign.clinic_id)
-      .gte('churn_probability', campaign.trigger_conditions.churnProbabilityThreshold)
+      .gte(
+        'churn_probability',
+        campaign.trigger_conditions.churnProbabilityThreshold
+      )
       .eq('risk_level', campaign.trigger_conditions.riskLevel);
 
     return NextResponse.json({
@@ -118,15 +143,14 @@ export async function GET(
         eligiblePatientsCount: eligiblePatients || 0,
       },
     });
-
   } catch (error) {
     console.error('GET /api/retention-analytics/campaigns/[id] error:', error);
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: 'Failed to fetch campaign details',
-        message: error instanceof Error ? error.message : 'Unknown error'
-      }, 
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
       { status: 500 }
     );
   }
@@ -147,9 +171,9 @@ export async function PATCH(
 
     if (!validation.success) {
       return NextResponse.json(
-        { 
-          error: 'Invalid campaign data', 
-          details: validation.error.issues 
+        {
+          error: 'Invalid campaign data',
+          details: validation.error.issues,
         },
         { status: 400 }
       );
@@ -178,15 +202,17 @@ export async function PATCH(
       data: campaign,
       message: 'Campaign updated successfully',
     });
-
   } catch (error) {
-    console.error('PATCH /api/retention-analytics/campaigns/[id] error:', error);
+    console.error(
+      'PATCH /api/retention-analytics/campaigns/[id] error:',
+      error
+    );
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: 'Failed to update campaign',
-        message: error instanceof Error ? error.message : 'Unknown error'
-      }, 
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
       { status: 500 }
     );
   }
@@ -207,15 +233,16 @@ export async function POST(
 
     if (!validation.success) {
       return NextResponse.json(
-        { 
-          error: 'Invalid execution data', 
-          details: validation.error.issues 
+        {
+          error: 'Invalid execution data',
+          details: validation.error.issues,
         },
         { status: 400 }
       );
     }
 
-    const { patientIds, dryRun, scheduledAt, overrideConditions } = validation.data;
+    const { patientIds, dryRun, scheduledAt, overrideConditions } =
+      validation.data;
     const supabase = await createClient();
 
     // Get campaign details
@@ -232,7 +259,7 @@ export async function POST(
       );
     }
 
-    if (!campaign.is_active && !overrideConditions) {
+    if (!(campaign.is_active || overrideConditions)) {
       return NextResponse.json(
         { error: 'Campaign is not active' },
         { status: 400 }
@@ -250,7 +277,9 @@ export async function POST(
         .in('id', patientIds);
 
       if (patientsError) {
-        throw new Error(`Failed to fetch target patients: ${patientsError.message}`);
+        throw new Error(
+          `Failed to fetch target patients: ${patientsError.message}`
+        );
       }
 
       targetPatients = patients;
@@ -266,14 +295,19 @@ export async function POST(
           patients!inner(id, name, email, phone, clinic_id)
         `)
         .eq('clinic_id', campaign.clinic_id)
-        .gte('churn_probability', campaign.trigger_conditions.churnProbabilityThreshold)
+        .gte(
+          'churn_probability',
+          campaign.trigger_conditions.churnProbabilityThreshold
+        )
         .eq('risk_level', campaign.trigger_conditions.riskLevel);
 
       if (patientsError) {
-        throw new Error(`Failed to fetch eligible patients: ${patientsError.message}`);
+        throw new Error(
+          `Failed to fetch eligible patients: ${patientsError.message}`
+        );
       }
 
-      targetPatients = patients.map(p => p.patients);
+      targetPatients = patients.map((p) => p.patients);
     }
 
     if (targetPatients.length === 0) {
@@ -300,7 +334,7 @@ export async function POST(
           dryRun,
           targetConditions: campaign.trigger_conditions,
           interventionType: campaign.intervention_strategy.type,
-          patientsTargeted: targetPatients.map(p => ({
+          patientsTargeted: targetPatients.map((p) => ({
             id: p.id,
             name: p.name,
             email: p.email,
@@ -312,7 +346,9 @@ export async function POST(
       .single();
 
     if (executionError) {
-      throw new Error(`Failed to create execution record: ${executionError.message}`);
+      throw new Error(
+        `Failed to create execution record: ${executionError.message}`
+      );
     }
 
     // If not a dry run, update campaign metrics
@@ -347,20 +383,19 @@ export async function POST(
         dryRun,
         scheduledAt: execution.executed_at,
         interventionType: campaign.intervention_strategy.type,
-        message: dryRun 
-          ? 'Dry run completed successfully' 
+        message: dryRun
+          ? 'Dry run completed successfully'
           : 'Campaign executed successfully',
       },
     });
-
   } catch (error) {
     console.error('POST /api/retention-analytics/campaigns/[id] error:', error);
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: 'Failed to execute campaign',
-        message: error instanceof Error ? error.message : 'Unknown error'
-      }, 
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
       { status: 500 }
     );
   }
@@ -371,7 +406,7 @@ export async function POST(
 // =====================================================================================
 
 export async function DELETE(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
@@ -387,12 +422,17 @@ export async function DELETE(
       .limit(1);
 
     if (executionsError) {
-      throw new Error(`Failed to check active executions: ${executionsError.message}`);
+      throw new Error(
+        `Failed to check active executions: ${executionsError.message}`
+      );
     }
 
     if (activeExecutions && activeExecutions.length > 0) {
       return NextResponse.json(
-        { error: 'Cannot delete campaign with active executions. Archive it instead.' },
+        {
+          error:
+            'Cannot delete campaign with active executions. Archive it instead.',
+        },
         { status: 400 }
       );
     }
@@ -411,15 +451,17 @@ export async function DELETE(
       success: true,
       message: 'Campaign deleted successfully',
     });
-
   } catch (error) {
-    console.error('DELETE /api/retention-analytics/campaigns/[id] error:', error);
+    console.error(
+      'DELETE /api/retention-analytics/campaigns/[id] error:',
+      error
+    );
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: 'Failed to delete campaign',
-        message: error instanceof Error ? error.message : 'Unknown error'
-      }, 
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
       { status: 500 }
     );
   }

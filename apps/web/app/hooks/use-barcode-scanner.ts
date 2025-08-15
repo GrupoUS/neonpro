@@ -4,155 +4,179 @@
  * Quality: ≥9.5/10 with comprehensive error handling and real-time updates
  */
 
-import { useState, useCallback, useEffect, useRef } from 'react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { barcodeService, type ScanResult, type BarcodeData, type BulkScanOperation } from '@/app/lib/services/barcode-service'
-import { toast } from 'sonner'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { toast } from 'sonner';
+import {
+  type BulkScanOperation,
+  barcodeService,
+  type ScanResult,
+} from '@/app/lib/services/barcode-service';
 
 // Barcode Generation Hook
 export function useBarcodeGeneration() {
-  const queryClient = useQueryClient()
-  
+  const queryClient = useQueryClient();
+
   const generateBarcode = useMutation({
     mutationFn: async (options: {
-      item_id: string
-      barcode_type: 'EAN13' | 'CODE128' | 'CODE39'
-      include_qr: boolean
-      batch_number?: string
-      expiration_date?: string
-      location_id?: string
+      item_id: string;
+      barcode_type: 'EAN13' | 'CODE128' | 'CODE39';
+      include_qr: boolean;
+      batch_number?: string;
+      expiration_date?: string;
+      location_id?: string;
     }) => {
-      const result = await barcodeService.generateBarcode(options)
+      const result = await barcodeService.generateBarcode(options);
       if (!result.success) {
-        throw new Error(result.error)
+        throw new Error(result.error);
       }
-      return result
+      return result;
     },
-    onSuccess: (data, variables) => {
-      toast.success('Código de barras gerado com sucesso!')
+    onSuccess: (_data, variables) => {
+      toast.success('Código de barras gerado com sucesso!');
       // Invalidate related queries
-      queryClient.invalidateQueries({ queryKey: ['barcode-data', variables.item_id] })
-      queryClient.invalidateQueries({ queryKey: ['inventory-items'] })
+      queryClient.invalidateQueries({
+        queryKey: ['barcode-data', variables.item_id],
+      });
+      queryClient.invalidateQueries({ queryKey: ['inventory-items'] });
     },
     onError: (error) => {
-      console.error('Erro ao gerar barcode:', error)
-      toast.error(`Falha ao gerar código: ${error.message}`)
-    }
-  })
+      console.error('Erro ao gerar barcode:', error);
+      toast.error(`Falha ao gerar código: ${error.message}`);
+    },
+  });
 
   return {
     generateBarcode: generateBarcode.mutate,
     isGenerating: generateBarcode.isPending,
     error: generateBarcode.error,
-    data: generateBarcode.data
-  }
+    data: generateBarcode.data,
+  };
 }
 
 // Barcode Scanning Hook
 export function useBarcodeScanner() {
-  const [isScanning, setIsScanning] = useState(false)
-  const [scanHistory, setScanHistory] = useState<ScanResult[]>([])
-  const [lastScanResult, setLastScanResult] = useState<ScanResult | null>(null)
-  
-  const scanBarcode = useCallback(async (options: {
-    value: string
-    format?: string
-    location_id?: string
-    user_id: string
-    device_info?: string
-  }): Promise<ScanResult> => {
-    setIsScanning(true)
-    
-    try {
-      const result = await barcodeService.scanBarcode(options)
-      
-      setLastScanResult(result)
-      setScanHistory(prev => [result, ...prev.slice(0, 19)]) // Keep last 20 scans
-      
-      if (result.success) {
-        toast.success(`Item escaneado: ${result.data?.item_name}`)
-      } else {
-        toast.error(`Erro no scan: ${result.error}`)
+  const [isScanning, setIsScanning] = useState(false);
+  const [scanHistory, setScanHistory] = useState<ScanResult[]>([]);
+  const [lastScanResult, setLastScanResult] = useState<ScanResult | null>(null);
+
+  const scanBarcode = useCallback(
+    async (options: {
+      value: string;
+      format?: string;
+      location_id?: string;
+      user_id: string;
+      device_info?: string;
+    }): Promise<ScanResult> => {
+      setIsScanning(true);
+
+      try {
+        const result = await barcodeService.scanBarcode(options);
+
+        setLastScanResult(result);
+        setScanHistory((prev) => [result, ...prev.slice(0, 19)]); // Keep last 20 scans
+
+        if (result.success) {
+          toast.success(`Item escaneado: ${result.data?.item_name}`);
+        } else {
+          toast.error(`Erro no scan: ${result.error}`);
+        }
+
+        return result;
+      } catch (error) {
+        const errorResult: ScanResult = {
+          success: false,
+          error: error instanceof Error ? error.message : 'Erro desconhecido',
+        };
+
+        setLastScanResult(errorResult);
+        toast.error(`Falha no scan: ${errorResult.error}`);
+
+        return errorResult;
+      } finally {
+        setIsScanning(false);
       }
-      
-      return result
-    } catch (error) {
-      const errorResult: ScanResult = {
-        success: false,
-        error: error instanceof Error ? error.message : 'Erro desconhecido'
-      }
-      
-      setLastScanResult(errorResult)
-      toast.error(`Falha no scan: ${errorResult.error}`)
-      
-      return errorResult
-    } finally {
-      setIsScanning(false)
-    }
-  }, [])
+    },
+    []
+  );
 
   const clearHistory = useCallback(() => {
-    setScanHistory([])
-    setLastScanResult(null)
-  }, [])
+    setScanHistory([]);
+    setLastScanResult(null);
+  }, []);
 
   return {
     scanBarcode,
     isScanning,
     scanHistory,
     lastScanResult,
-    clearHistory
-  }
+    clearHistory,
+  };
 }
 
 // Bulk Scanning Hook
 export function useBulkScanning() {
-  const [activeOperation, setActiveOperation] = useState<BulkScanOperation | null>(null)
-  const [operationProgress, setOperationProgress] = useState(0)
-  
+  const [activeOperation, setActiveOperation] =
+    useState<BulkScanOperation | null>(null);
+  const [operationProgress, setOperationProgress] = useState(0);
+
   const startBulkOperation = useMutation({
     mutationFn: async (options: {
-      operation_type: 'stock_count' | 'item_verification' | 'location_transfer' | 'expiration_check'
-      user_id: string
-      location_id?: string
-      items?: string[]
+      operation_type:
+        | 'stock_count'
+        | 'item_verification'
+        | 'location_transfer'
+        | 'expiration_check';
+      user_id: string;
+      location_id?: string;
+      items?: string[];
     }) => {
-      const result = await barcodeService.startBulkScanOperation(options)
+      const result = await barcodeService.startBulkScanOperation(options);
       if (!result.success) {
-        throw new Error(result.error)
+        throw new Error(result.error);
       }
-      return result
+      return result;
     },
-    onSuccess: (data) => {
-      toast.success('Operação em lote iniciada com sucesso!')
+    onSuccess: (_data) => {
+      toast.success('Operação em lote iniciada com sucesso!');
       // You would fetch the operation details here in a real implementation
     },
     onError: (error) => {
-      console.error('Erro ao iniciar operação bulk:', error)
-      toast.error(`Falha ao iniciar operação: ${error.message}`)
-    }
-  })
+      console.error('Erro ao iniciar operação bulk:', error);
+      toast.error(`Falha ao iniciar operação: ${error.message}`);
+    },
+  });
 
-  const processBulkScan = useCallback(async (
-    operationId: string, 
-    scanValue: string, 
-    userId: string
-  ): Promise<ScanResult> => {
-    try {
-      const result = await barcodeService.processBulkScan(operationId, scanValue, userId)
-      
-      // Update progress
-      if (activeOperation) {
-        const newProgress = ((activeOperation.scanned_items + 1) / activeOperation.total_items) * 100
-        setOperationProgress(newProgress)
+  const processBulkScan = useCallback(
+    async (
+      operationId: string,
+      scanValue: string,
+      userId: string
+    ): Promise<ScanResult> => {
+      try {
+        const result = await barcodeService.processBulkScan(
+          operationId,
+          scanValue,
+          userId
+        );
+
+        // Update progress
+        if (activeOperation) {
+          const newProgress =
+            ((activeOperation.scanned_items + 1) /
+              activeOperation.total_items) *
+            100;
+          setOperationProgress(newProgress);
+        }
+
+        return result;
+      } catch (error) {
+        console.error('Erro no bulk scan:', error);
+        throw error;
       }
-      
-      return result
-    } catch (error) {
-      console.error('Erro no bulk scan:', error)
-      throw error
-    }
-  }, [activeOperation])
+    },
+    [activeOperation]
+  );
 
   return {
     startBulkOperation: startBulkOperation.mutate,
@@ -160,8 +184,8 @@ export function useBulkScanning() {
     processBulkScan,
     activeOperation,
     operationProgress,
-    setActiveOperation
-  }
+    setActiveOperation,
+  };
 }
 
 // Barcode Data Hook
@@ -169,86 +193,87 @@ export function useBarcodeData(itemId: string) {
   return useQuery({
     queryKey: ['barcode-data', itemId],
     queryFn: () => barcodeService.getBarcodeData(itemId),
-    enabled: !!itemId
-  })
+    enabled: !!itemId,
+  });
 }
 
 // Camera Scanner Hook (for web-based scanning)
 export function useCameraScanner() {
-  const [isActive, setIsActive] = useState(false)
-  const [stream, setStream] = useState<MediaStream | null>(null)
-  const [error, setError] = useState<string | null>(null)
-  const videoRef = useRef<HTMLVideoElement>(null)
+  const [isActive, setIsActive] = useState(false);
+  const [stream, setStream] = useState<MediaStream | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   const startCamera = useCallback(async () => {
     try {
-      setError(null)
-      
+      setError(null);
+
       const mediaStream = await navigator.mediaDevices.getUserMedia({
         video: {
           facingMode: 'environment', // Use back camera on mobile
           width: { ideal: 1280 },
-          height: { ideal: 720 }
-        }
-      })
-      
-      setStream(mediaStream)
-      setIsActive(true)
-      
+          height: { ideal: 720 },
+        },
+      });
+
+      setStream(mediaStream);
+      setIsActive(true);
+
       if (videoRef.current) {
-        videoRef.current.srcObject = mediaStream
+        videoRef.current.srcObject = mediaStream;
       }
-      
-      toast.success('Câmera iniciada com sucesso!')
+
+      toast.success('Câmera iniciada com sucesso!');
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao acessar câmera'
-      setError(errorMessage)
-      toast.error(`Erro na câmera: ${errorMessage}`)
+      const errorMessage =
+        err instanceof Error ? err.message : 'Erro ao acessar câmera';
+      setError(errorMessage);
+      toast.error(`Erro na câmera: ${errorMessage}`);
     }
-  }, [])
+  }, []);
 
   const stopCamera = useCallback(() => {
     if (stream) {
-      stream.getTracks().forEach(track => track.stop())
-      setStream(null)
+      stream.getTracks().forEach((track) => track.stop());
+      setStream(null);
     }
-    setIsActive(false)
-    
+    setIsActive(false);
+
     if (videoRef.current) {
-      videoRef.current.srcObject = null
+      videoRef.current.srcObject = null;
     }
-    
-    toast.info('Câmera desligada')
-  }, [stream])
+
+    toast.info('Câmera desligada');
+  }, [stream]);
 
   const captureFrame = useCallback((): string | null => {
-    if (!videoRef.current || !isActive) {
-      return null
+    if (!(videoRef.current && isActive)) {
+      return null;
     }
 
-    const canvas = document.createElement('canvas')
-    const context = canvas.getContext('2d')
-    
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+
     if (!context) {
-      return null
+      return null;
     }
 
-    canvas.width = videoRef.current.videoWidth
-    canvas.height = videoRef.current.videoHeight
-    
-    context.drawImage(videoRef.current, 0, 0)
-    
-    return canvas.toDataURL('image/jpeg', 0.8)
-  }, [isActive])
+    canvas.width = videoRef.current.videoWidth;
+    canvas.height = videoRef.current.videoHeight;
+
+    context.drawImage(videoRef.current, 0, 0);
+
+    return canvas.toDataURL('image/jpeg', 0.8);
+  }, [isActive]);
 
   // Cleanup on unmount
   useEffect(() => {
     return () => {
       if (stream) {
-        stream.getTracks().forEach(track => track.stop())
+        stream.getTracks().forEach((track) => track.stop());
       }
-    }
-  }, [stream])
+    };
+  }, [stream]);
 
   return {
     isActive,
@@ -257,149 +282,162 @@ export function useCameraScanner() {
     videoRef,
     startCamera,
     stopCamera,
-    captureFrame
-  }
+    captureFrame,
+  };
 }
 
 // Barcode Validation Hook
 export function useBarcodeValidation() {
   const validateBarcode = useCallback((barcode: string, type: string) => {
-    return barcodeService.validateBarcodeFormat(barcode, type)
-  }, [])
+    return barcodeService.validateBarcodeFormat(barcode, type);
+  }, []);
 
   const validateBarcodeAsync = useMutation({
-    mutationFn: async ({ barcode, type }: { barcode: string; type: string }) => {
-      const result = barcodeService.validateBarcodeFormat(barcode, type)
+    mutationFn: async ({
+      barcode,
+      type,
+    }: {
+      barcode: string;
+      type: string;
+    }) => {
+      const result = barcodeService.validateBarcodeFormat(barcode, type);
       if (!result.valid) {
-        throw new Error(result.error)
+        throw new Error(result.error);
       }
-      return result
+      return result;
     },
     onError: (error) => {
-      toast.error(`Código inválido: ${error.message}`)
+      toast.error(`Código inválido: ${error.message}`);
     },
     onSuccess: () => {
-      toast.success('Código válido!')
-    }
-  })
+      toast.success('Código válido!');
+    },
+  });
 
   return {
     validateBarcode,
     validateBarcodeAsync: validateBarcodeAsync.mutate,
     isValidating: validateBarcodeAsync.isPending,
-    validationError: validateBarcodeAsync.error
-  }
+    validationError: validateBarcodeAsync.error,
+  };
 }
 
 // QR Code Management Hook
 export function useQRCodeManager() {
-  const [qrData, setQrData] = useState<any>(null)
-  const [qrCode, setQrCode] = useState<string>('')
+  const [qrData, setQrData] = useState<any>(null);
+  const [qrCode, setQrCode] = useState<string>('');
 
   const generateQRCode = useCallback(async (data: any) => {
     try {
       // In a real implementation, this would use a QR code library
-      const qrString = JSON.stringify(data)
-      setQrData(data)
-      setQrCode(qrString)
-      
-      toast.success('QR Code gerado com sucesso!')
-      return qrString
+      const qrString = JSON.stringify(data);
+      setQrData(data);
+      setQrCode(qrString);
+
+      toast.success('QR Code gerado com sucesso!');
+      return qrString;
     } catch (error) {
-      console.error('Erro ao gerar QR:', error)
-      toast.error('Falha ao gerar QR Code')
-      throw error
+      console.error('Erro ao gerar QR:', error);
+      toast.error('Falha ao gerar QR Code');
+      throw error;
     }
-  }, [])
+  }, []);
 
   const parseQRCode = useCallback((qrString: string) => {
     try {
-      const parsed = JSON.parse(qrString)
-      setQrData(parsed)
-      return parsed
+      const parsed = JSON.parse(qrString);
+      setQrData(parsed);
+      return parsed;
     } catch (error) {
-      console.error('Erro ao parsear QR:', error)
-      toast.error('QR Code inválido')
-      return null
+      console.error('Erro ao parsear QR:', error);
+      toast.error('QR Code inválido');
+      return null;
     }
-  }, [])
+  }, []);
 
   const clearQRData = useCallback(() => {
-    setQrData(null)
-    setQrCode('')
-  }, [])
+    setQrData(null);
+    setQrCode('');
+  }, []);
 
   return {
     qrData,
     qrCode,
     generateQRCode,
     parseQRCode,
-    clearQRData
-  }
+    clearQRData,
+  };
 }
 
 // Print Labels Hook
 export function useLabelPrinting() {
-  const [isPrinting, setIsPrinting] = useState(false)
+  const [isPrinting, setIsPrinting] = useState(false);
 
-  const printLabel = useCallback(async (options: {
-    item_id: string
-    barcode: string
-    qr_code?: string
-    item_name: string
-    batch_number?: string
-    expiration_date?: string
-    copies?: number
-  }) => {
-    setIsPrinting(true)
-    
-    try {
-      // In a real implementation, this would interface with a label printer
-      // For now, we'll create a printable HTML version
-      
-      const printWindow = window.open('', '_blank')
-      if (!printWindow) {
-        throw new Error('Bloqueador de pop-up ativado')
+  const printLabel = useCallback(
+    async (options: {
+      item_id: string;
+      barcode: string;
+      qr_code?: string;
+      item_name: string;
+      batch_number?: string;
+      expiration_date?: string;
+      copies?: number;
+    }) => {
+      setIsPrinting(true);
+
+      try {
+        // In a real implementation, this would interface with a label printer
+        // For now, we'll create a printable HTML version
+
+        const printWindow = window.open('', '_blank');
+        if (!printWindow) {
+          throw new Error('Bloqueador de pop-up ativado');
+        }
+
+        const labelHTML = createLabelHTML(options);
+        printWindow.document.write(labelHTML);
+        printWindow.document.close();
+
+        // Auto-print after a short delay
+        setTimeout(() => {
+          printWindow.print();
+          printWindow.close();
+        }, 1000);
+
+        toast.success(
+          `Etiqueta enviada para impressão (${options.copies || 1} cópia(s))`
+        );
+      } catch (error) {
+        console.error('Erro na impressão:', error);
+        toast.error(
+          `Falha na impressão: ${error instanceof Error ? error.message : 'Erro desconhecido'}`
+        );
+      } finally {
+        setIsPrinting(false);
       }
-
-      const labelHTML = createLabelHTML(options)
-      printWindow.document.write(labelHTML)
-      printWindow.document.close()
-      
-      // Auto-print after a short delay
-      setTimeout(() => {
-        printWindow.print()
-        printWindow.close()
-      }, 1000)
-      
-      toast.success(`Etiqueta enviada para impressão (${options.copies || 1} cópia(s))`)
-    } catch (error) {
-      console.error('Erro na impressão:', error)
-      toast.error(`Falha na impressão: ${error instanceof Error ? error.message : 'Erro desconhecido'}`)
-    } finally {
-      setIsPrinting(false)
-    }
-  }, [])
+    },
+    []
+  );
 
   return {
     printLabel,
-    isPrinting
-  }
+    isPrinting,
+  };
 }
 
 // Helper function for label HTML generation
 function createLabelHTML(options: {
-  item_id: string
-  barcode: string
-  qr_code?: string
-  item_name: string
-  batch_number?: string
-  expiration_date?: string
-  copies?: number
+  item_id: string;
+  barcode: string;
+  qr_code?: string;
+  item_name: string;
+  batch_number?: string;
+  expiration_date?: string;
+  copies?: number;
 }): string {
-  const copies = options.copies || 1
-  let labelsHTML = ''
-  
+  const copies = options.copies || 1;
+  let labelsHTML = '';
+
   for (let i = 0; i < copies; i++) {
     labelsHTML += `
       <div class="label" style="
@@ -430,15 +468,19 @@ function createLabelHTML(options: {
           </div>
         </div>
         
-        ${options.qr_code ? `
+        ${
+          options.qr_code
+            ? `
           <div style="text-align: center; margin-top: 5px;">
             <div style="font-size: 8px; background: #000; color: #fff; padding: 2px;">
               QR: ${options.qr_code.substring(0, 20)}...
             </div>
           </div>
-        ` : ''}
+        `
+            : ''
+        }
       </div>
-    `
+    `;
   }
 
   return `
@@ -461,5 +503,5 @@ function createLabelHTML(options: {
       ${labelsHTML}
     </body>
     </html>
-  `
+  `;
 }

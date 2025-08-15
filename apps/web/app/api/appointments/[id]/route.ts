@@ -2,27 +2,29 @@
 // API route for appointment details and updates
 // Story 1.1 Task 5 - Appointment Details Modal/Sidebar
 
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
-import { 
-  AppointmentDetailsResponse, 
+import { type NextRequest, NextResponse } from 'next/server';
+import type {
+  AppointmentDetailsResponse,
+  UpdateAppointmentFormData,
   UpdateAppointmentResponse,
-  UpdateAppointmentFormData 
 } from '@/app/lib/types/appointments';
+import { createClient } from '@/app/utils/supabase/server';
 
 /**
  * GET /api/appointments/[id]
  * Fetch detailed appointment information with related data
  */
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const supabase = await createClient();
-    
+
     // Verify authentication
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session) {
       return NextResponse.json(
         { success: false, error_message: 'Authentication required' },
@@ -70,11 +72,10 @@ export async function GET(
 
     const response: AppointmentDetailsResponse = {
       success: true,
-      data: appointmentWithDetails
+      data: appointmentWithDetails,
     };
 
     return NextResponse.json(response);
-
   } catch (error) {
     console.error('Error fetching appointment details:', error);
     return NextResponse.json(
@@ -82,8 +83,8 @@ export async function GET(
       { status: 500 }
     );
   }
-}/**
- * PATCH /api/appointments/[id] 
+} /**
+ * PATCH /api/appointments/[id]
  * Update appointment with conflict validation and audit logging
  */
 export async function PATCH(
@@ -92,9 +93,11 @@ export async function PATCH(
 ) {
   try {
     const supabase = await createClient();
-    
+
     // Verify authentication
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session?.user) {
       return NextResponse.json(
         { success: false, error_message: 'Authentication required' },
@@ -109,10 +112,14 @@ export async function PATCH(
     // Convert dates to ISO strings if they exist
     const processedData = {
       ...updateData,
-      start_time: updateData.start_time ? new Date(updateData.start_time).toISOString() : undefined,
-      end_time: updateData.end_time ? new Date(updateData.end_time).toISOString() : undefined,
+      start_time: updateData.start_time
+        ? new Date(updateData.start_time).toISOString()
+        : undefined,
+      end_time: updateData.end_time
+        ? new Date(updateData.end_time).toISOString()
+        : undefined,
       updated_by: session.user.id,
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     };
 
     // Use stored procedure for update with validation
@@ -127,15 +134,16 @@ export async function PATCH(
       p_notes: processedData.notes || null,
       p_internal_notes: processedData.internal_notes || null,
       p_change_reason: processedData.change_reason || null,
-      p_updated_by: session.user.id
-    });    if (error) {
+      p_updated_by: session.user.id,
+    });
+    if (error) {
       // Handle specific validation errors
       if (error.message?.includes('conflict')) {
         return NextResponse.json(
-          { 
-            success: false, 
+          {
+            success: false,
             error_message: 'Scheduling conflict detected',
-            error_details: error.message 
+            error_details: error.message,
           },
           { status: 409 }
         );
@@ -143,10 +151,10 @@ export async function PATCH(
 
       if (error.message?.includes('business_hours')) {
         return NextResponse.json(
-          { 
-            success: false, 
+          {
+            success: false,
             error_message: 'Appointment outside business hours',
-            error_details: error.message 
+            error_details: error.message,
           },
           { status: 400 }
         );
@@ -170,7 +178,7 @@ export async function PATCH(
 
     if (fetchError || !updatedAppointment) {
       throw new Error('Failed to fetch updated appointment');
-    }    // Transform to AppointmentWithDetails format  
+    } // Transform to AppointmentWithDetails format
     const appointmentWithDetails = {
       ...updatedAppointment,
       patient_name: updatedAppointment.patients.full_name,
@@ -186,11 +194,10 @@ export async function PATCH(
 
     const response: UpdateAppointmentResponse = {
       success: true,
-      data: appointmentWithDetails
+      data: appointmentWithDetails,
     };
 
     return NextResponse.json(response);
-
   } catch (error) {
     console.error('Error updating appointment:', error);
     return NextResponse.json(
@@ -202,7 +209,7 @@ export async function PATCH(
 
 /**
  * DELETE /api/appointments/[id]
- * Soft delete appointment with reason tracking  
+ * Soft delete appointment with reason tracking
  */
 export async function DELETE(
   request: NextRequest,
@@ -210,9 +217,11 @@ export async function DELETE(
 ) {
   try {
     const supabase = await createClient();
-    
+
     // Verify authentication
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session?.user) {
       return NextResponse.json(
         { success: false, error_message: 'Authentication required' },
@@ -228,7 +237,7 @@ export async function DELETE(
     const { data, error } = await supabase.rpc('sp_delete_appointment', {
       p_appointment_id: appointmentId,
       p_delete_reason: reason || 'Cancelled by user',
-      p_deleted_by: session.user.id
+      p_deleted_by: session.user.id,
     });
 
     if (error) {
@@ -237,9 +246,8 @@ export async function DELETE(
 
     return NextResponse.json({
       success: true,
-      message: 'Appointment cancelled successfully'
+      message: 'Appointment cancelled successfully',
     });
-
   } catch (error) {
     console.error('Error deleting appointment:', error);
     return NextResponse.json(

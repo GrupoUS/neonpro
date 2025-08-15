@@ -1,9 +1,13 @@
-import { NotificationConfig, NotificationResult, NotificationChannelEnum } from './notification-manager';
-import { EmailProvider } from '../channels/email-provider';
-import { SMSProvider } from '../channels/sms-provider';
-import { PushProvider } from '../channels/push-provider';
-import { WhatsAppProvider } from '../channels/whatsapp-provider';
 import { AuditLogger } from '../../auth/audit/audit-logger';
+import { EmailProvider } from '../channels/email-provider';
+import { PushProvider } from '../channels/push-provider';
+import { SMSProvider } from '../channels/sms-provider';
+import { WhatsAppProvider } from '../channels/whatsapp-provider';
+import {
+  NotificationChannelEnum,
+  type NotificationConfig,
+  type NotificationResult,
+} from './notification-manager';
 
 export interface ChannelConfig {
   enabled: boolean;
@@ -51,7 +55,7 @@ export class ChannelProvider {
     this.auditLogger = new AuditLogger();
     this.channelConfigs = new Map();
     this.metrics = new Map();
-    
+
     this.initializeChannelConfigs();
     this.initializeMetrics();
   }
@@ -61,7 +65,7 @@ export class ChannelProvider {
    */
   async send(config: NotificationConfig): Promise<NotificationResult> {
     const startTime = Date.now();
-    
+
     try {
       // Verificar se canal está habilitado
       const channelConfig = this.channelConfigs.get(config.channel);
@@ -74,7 +78,7 @@ export class ChannelProvider {
 
       // Selecionar provider apropriado
       const provider = this.getProvider(config.channel);
-      
+
       // Enviar notificação
       const result = await provider.send({
         to: await this.getRecipientContact(config.recipient_id, config.channel),
@@ -84,8 +88,8 @@ export class ChannelProvider {
           notification_id: config.id,
           type: config.type,
           priority: config.priority,
-          ...config.metadata
-        }
+          ...config.metadata,
+        },
       });
 
       // Atualizar métricas
@@ -99,8 +103,8 @@ export class ChannelProvider {
         details: {
           channel: config.channel,
           status: result.status,
-          delivery_time_ms: Date.now() - startTime
-        }
+          delivery_time_ms: Date.now() - startTime,
+        },
       });
 
       return {
@@ -112,7 +116,7 @@ export class ChannelProvider {
         error_message: result.error_message,
         retry_count: 0,
         cost: channelConfig.cost_per_message,
-        engagement: result.engagement
+        engagement: result.engagement,
       };
     } catch (error) {
       // Tentar fallback se configurado
@@ -131,10 +135,12 @@ export class ChannelProvider {
   /**
    * Envia notificação com fallback automático
    */
-  async sendWithFallback(config: NotificationConfig): Promise<NotificationResult> {
+  async sendWithFallback(
+    config: NotificationConfig
+  ): Promise<NotificationResult> {
     const channelConfig = this.channelConfigs.get(config.channel);
     const fallbackChannels = channelConfig?.fallback_channels || [];
-    
+
     try {
       return await this.send(config);
     } catch (primaryError) {
@@ -143,7 +149,7 @@ export class ChannelProvider {
         try {
           const fallbackConfig = { ...config, channel: fallbackChannel };
           const result = await this.send(fallbackConfig);
-          
+
           // Log do uso de fallback
           await this.auditLogger.log({
             action: 'notification_fallback_used',
@@ -152,17 +158,14 @@ export class ChannelProvider {
             details: {
               original_channel: config.channel,
               fallback_channel: fallbackChannel,
-              primary_error: (primaryError as Error).message
-            }
+              primary_error: (primaryError as Error).message,
+            },
           });
-          
+
           return result;
-        } catch (fallbackError) {
-          // Continuar para próximo fallback
-          continue;
-        }
+        } catch (_fallbackError) {}
       }
-      
+
       // Se todos os fallbacks falharam, lançar erro original
       throw primaryError;
     }
@@ -171,7 +174,9 @@ export class ChannelProvider {
   /**
    * Obtém métricas de um canal específico
    */
-  getChannelMetrics(channel: NotificationChannelEnum): ChannelMetrics | undefined {
+  getChannelMetrics(
+    channel: NotificationChannelEnum
+  ): ChannelMetrics | undefined {
     return this.metrics.get(channel);
   }
 
@@ -189,23 +194,26 @@ export class ChannelProvider {
     channel: NotificationChannelEnum,
     config: Partial<ChannelConfig>
   ): Promise<void> {
-    const currentConfig = this.channelConfigs.get(channel) || this.getDefaultChannelConfig();
+    const currentConfig =
+      this.channelConfigs.get(channel) || this.getDefaultChannelConfig();
     const updatedConfig = { ...currentConfig, ...config };
-    
+
     this.channelConfigs.set(channel, updatedConfig);
-    
+
     await this.auditLogger.log({
       action: 'channel_config_updated',
       resource_type: 'channel_config',
       resource_id: channel,
-      details: { updated_config: config }
+      details: { updated_config: config },
     });
   }
 
   /**
    * Obtém configuração de um canal
    */
-  getChannelConfig(channel: NotificationChannelEnum): ChannelConfig | undefined {
+  getChannelConfig(
+    channel: NotificationChannelEnum
+  ): ChannelConfig | undefined {
     return this.channelConfigs.get(channel);
   }
 
@@ -218,20 +226,20 @@ export class ChannelProvider {
     error_message?: string;
   }> {
     const startTime = Date.now();
-    
+
     try {
       const provider = this.getProvider(channel);
       await provider.test();
-      
+
       return {
         success: true,
-        response_time_ms: Date.now() - startTime
+        response_time_ms: Date.now() - startTime,
       };
     } catch (error) {
       return {
         success: false,
         response_time_ms: Date.now() - startTime,
-        error_message: (error as Error).message
+        error_message: (error as Error).message,
       };
     }
   }
@@ -239,39 +247,46 @@ export class ChannelProvider {
   /**
    * Obtém status de saúde de todos os canais
    */
-  async getChannelsHealthStatus(): Promise<Record<string, {
-    status: 'healthy' | 'degraded' | 'down';
-    last_check: Date;
-    response_time_ms?: number;
-    error_rate_24h: number;
-    uptime_percentage: number;
-  }>> {
+  async getChannelsHealthStatus(): Promise<
+    Record<
+      string,
+      {
+        status: 'healthy' | 'degraded' | 'down';
+        last_check: Date;
+        response_time_ms?: number;
+        error_rate_24h: number;
+        uptime_percentage: number;
+      }
+    >
+  > {
     const healthStatus: Record<string, any> = {};
-    
+
     for (const channel of Object.values(NotificationChannelEnum)) {
       const metrics = this.metrics.get(channel);
       const testResult = await this.testChannel(channel);
-      
-      const errorRate = metrics ? 
-        (metrics.total_failed / (metrics.total_sent || 1)) * 100 : 0;
-      
+
+      const errorRate = metrics
+        ? (metrics.total_failed / (metrics.total_sent || 1)) * 100
+        : 0;
+
       let status: 'healthy' | 'degraded' | 'down' = 'healthy';
       if (!testResult.success) {
         status = 'down';
       } else if (errorRate > 10 || testResult.response_time_ms > 5000) {
         status = 'degraded';
       }
-      
+
       healthStatus[channel] = {
         status,
         last_check: new Date(),
         response_time_ms: testResult.response_time_ms,
         error_rate_24h: errorRate,
-        uptime_percentage: metrics ? 
-          ((metrics.total_delivered / (metrics.total_sent || 1)) * 100) : 100
+        uptime_percentage: metrics
+          ? (metrics.total_delivered / (metrics.total_sent || 1)) * 100
+          : 100,
       };
     }
-    
+
     return healthStatus;
   }
 
@@ -286,14 +301,14 @@ export class ChannelProvider {
         rate_limit: {
           requests_per_minute: 100,
           requests_per_hour: 1000,
-          requests_per_day: 10000
+          requests_per_day: 10_000,
         },
         retry_config: {
           max_retries: 3,
           retry_delay_ms: 1000,
-          exponential_backoff: true
+          exponential_backoff: true,
         },
-        cost_per_message: 0.01
+        cost_per_message: 0.01,
       },
       [NotificationChannelEnum.SMS]: {
         enabled: true,
@@ -302,14 +317,14 @@ export class ChannelProvider {
         rate_limit: {
           requests_per_minute: 50,
           requests_per_hour: 500,
-          requests_per_day: 2000
+          requests_per_day: 2000,
         },
         retry_config: {
           max_retries: 2,
           retry_delay_ms: 2000,
-          exponential_backoff: true
+          exponential_backoff: true,
         },
-        cost_per_message: 0.05
+        cost_per_message: 0.05,
       },
       [NotificationChannelEnum.PUSH]: {
         enabled: true,
@@ -318,30 +333,33 @@ export class ChannelProvider {
         rate_limit: {
           requests_per_minute: 200,
           requests_per_hour: 2000,
-          requests_per_day: 20000
+          requests_per_day: 20_000,
         },
         retry_config: {
           max_retries: 3,
           retry_delay_ms: 500,
-          exponential_backoff: true
+          exponential_backoff: true,
         },
-        cost_per_message: 0.001
+        cost_per_message: 0.001,
       },
       [NotificationChannelEnum.WHATSAPP]: {
         enabled: false, // Desabilitado por padrão até configuração
         priority: 4,
-        fallback_channels: [NotificationChannelEnum.SMS, NotificationChannelEnum.EMAIL],
+        fallback_channels: [
+          NotificationChannelEnum.SMS,
+          NotificationChannelEnum.EMAIL,
+        ],
         rate_limit: {
           requests_per_minute: 30,
           requests_per_hour: 300,
-          requests_per_day: 1000
+          requests_per_day: 1000,
         },
         retry_config: {
           max_retries: 2,
           retry_delay_ms: 3000,
-          exponential_backoff: true
+          exponential_backoff: true,
         },
-        cost_per_message: 0.03
+        cost_per_message: 0.03,
       },
       [NotificationChannelEnum.IN_APP]: {
         enabled: true,
@@ -349,15 +367,15 @@ export class ChannelProvider {
         rate_limit: {
           requests_per_minute: 500,
           requests_per_hour: 5000,
-          requests_per_day: 50000
+          requests_per_day: 50_000,
         },
         retry_config: {
           max_retries: 1,
           retry_delay_ms: 100,
-          exponential_backoff: false
+          exponential_backoff: false,
         },
-        cost_per_message: 0
-      }
+        cost_per_message: 0,
+      },
     };
 
     for (const [channel, config] of Object.entries(defaultConfigs)) {
@@ -375,7 +393,7 @@ export class ChannelProvider {
         delivery_rate: 0,
         average_delivery_time_ms: 0,
         total_cost: 0,
-        last_updated: new Date()
+        last_updated: new Date(),
       });
     }
   }
@@ -401,7 +419,7 @@ export class ChannelProvider {
   ): Promise<string> {
     // Implementar lógica para obter contato do destinatário baseado no canal
     // Por exemplo: email, telefone, device token, etc.
-    
+
     // Esta é uma implementação simplificada
     // Na prática, você buscaria no banco de dados do usuário
     switch (channel) {
@@ -417,14 +435,16 @@ export class ChannelProvider {
     }
   }
 
-  private async checkRateLimit(channel: NotificationChannelEnum): Promise<void> {
+  private async checkRateLimit(
+    channel: NotificationChannelEnum
+  ): Promise<void> {
     const config = this.channelConfigs.get(channel);
     if (!config?.rate_limit) return;
 
     // Implementar verificação de rate limiting
     // Esta é uma implementação simplificada
     // Na prática, você usaria Redis ou similar para controle distribuído
-    
+
     const metrics = this.metrics.get(channel);
     if (!metrics) return;
 
@@ -441,62 +461,64 @@ export class ChannelProvider {
     if (!metrics) return;
 
     metrics.total_sent++;
-    
+
     if (result.status === 'sent' || result.status === 'delivered') {
       metrics.total_delivered++;
     } else {
       metrics.total_failed++;
     }
 
-    metrics.delivery_rate = (metrics.total_delivered / metrics.total_sent) * 100;
-    
+    metrics.delivery_rate =
+      (metrics.total_delivered / metrics.total_sent) * 100;
+
     // Atualizar tempo médio de entrega
-    metrics.average_delivery_time_ms = 
+    metrics.average_delivery_time_ms =
       (metrics.average_delivery_time_ms + deliveryTimeMs) / 2;
-    
+
     // Atualizar custo total
     const channelConfig = this.channelConfigs.get(channel);
     if (channelConfig?.cost_per_message) {
       metrics.total_cost += channelConfig.cost_per_message;
     }
-    
+
     metrics.last_updated = new Date();
-    
+
     this.metrics.set(channel, metrics);
   }
 
   private async updateFailureMetrics(
     channel: NotificationChannelEnum,
-    error: Error
+    _error: Error
   ): Promise<void> {
     const metrics = this.metrics.get(channel);
     if (!metrics) return;
 
     metrics.total_failed++;
-    metrics.delivery_rate = (metrics.total_delivered / (metrics.total_sent + 1)) * 100;
+    metrics.delivery_rate =
+      (metrics.total_delivered / (metrics.total_sent + 1)) * 100;
     metrics.last_updated = new Date();
-    
+
     this.metrics.set(channel, metrics);
   }
 
   private async tryFallback(
     config: NotificationConfig,
-    error: Error
+    _error: Error
   ): Promise<NotificationResult | null> {
     const channelConfig = this.channelConfigs.get(config.channel);
     const fallbackChannels = channelConfig?.fallback_channels;
-    
+
     if (!fallbackChannels || fallbackChannels.length === 0) {
       return null;
     }
 
     // Tentar primeiro canal de fallback
     const fallbackChannel = fallbackChannels[0];
-    
+
     try {
       const fallbackConfig = { ...config, channel: fallbackChannel };
       return await this.send(fallbackConfig);
-    } catch (fallbackError) {
+    } catch (_fallbackError) {
       return null;
     }
   }
@@ -508,14 +530,14 @@ export class ChannelProvider {
       rate_limit: {
         requests_per_minute: 10,
         requests_per_hour: 100,
-        requests_per_day: 1000
+        requests_per_day: 1000,
       },
       retry_config: {
         max_retries: 1,
         retry_delay_ms: 1000,
-        exponential_backoff: false
+        exponential_backoff: false,
       },
-      cost_per_message: 0
+      cost_per_message: 0,
     };
   }
 }

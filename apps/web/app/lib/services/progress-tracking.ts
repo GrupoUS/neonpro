@@ -1,40 +1,42 @@
 // Story 10.2: Progress Tracking through Computer Vision Service
 // Backend service for progress tracking system
 
-import type {
-    CreateMultiSessionAnalysisRequest,
-    CreateProgressAlertRequest,
-    CreateProgressMilestoneRequest,
-    CreateProgressPredictionRequest,
-    CreateProgressTrackingRequest,
-    CVProgressAnalysis,
-    MultiSessionAnalysis,
-    ProgressAlert,
-    ProgressAlertFilters,
-    ProgressDashboardStats,
-    ProgressMilestone,
-    ProgressMilestoneFilters,
-    ProgressPrediction,
-    ProgressTracking,
-    ProgressTrackingFilters,
-    ProgressTrendData,
-    TrackingMetric,
-    TrackingMetricRequest,
-    UpdateProgressTrackingRequest
-} from '@/app/types/progress-tracking';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import type {
+  CreateMultiSessionAnalysisRequest,
+  CreateProgressAlertRequest,
+  CreateProgressMilestoneRequest,
+  CreateProgressPredictionRequest,
+  CreateProgressTrackingRequest,
+  CVProgressAnalysis,
+  MultiSessionAnalysis,
+  ProgressAlert,
+  ProgressAlertFilters,
+  ProgressDashboardStats,
+  ProgressMilestone,
+  ProgressMilestoneFilters,
+  ProgressPrediction,
+  ProgressTracking,
+  ProgressTrackingFilters,
+  ProgressTrendData,
+  TrackingMetric,
+  TrackingMetricRequest,
+  UpdateProgressTrackingRequest,
+} from '@/app/types/progress-tracking';
 
 class ProgressTrackingService {
   private supabase = createClientComponentClient();
 
   // Progress Tracking Management
-  async createProgressTracking(data: CreateProgressTrackingRequest): Promise<ProgressTracking> {
+  async createProgressTracking(
+    data: CreateProgressTrackingRequest
+  ): Promise<ProgressTracking> {
     const user = await this.getCurrentUser();
-    
+
     const trackingData = {
       ...data,
       created_by: user.id,
-      updated_by: user.id
+      updated_by: user.id,
     };
 
     const { data: tracking, error } = await this.supabase
@@ -101,7 +103,7 @@ class ProgressTrackingService {
 
     return {
       data: data || [],
-      total: count || 0
+      total: count || 0,
     };
   }
 
@@ -116,14 +118,17 @@ class ProgressTrackingService {
     return data;
   }
 
-  async updateProgressTracking(id: string, data: UpdateProgressTrackingRequest): Promise<ProgressTracking> {
+  async updateProgressTracking(
+    id: string,
+    data: UpdateProgressTrackingRequest
+  ): Promise<ProgressTracking> {
     const user = await this.getCurrentUser();
 
     const { data: tracking, error } = await this.supabase
       .from('progress_tracking')
       .update({
         ...data,
-        updated_by: user.id
+        updated_by: user.id,
       })
       .eq('id', id)
       .select()
@@ -143,13 +148,15 @@ class ProgressTrackingService {
   }
 
   // Progress Milestones Management
-  async createProgressMilestone(data: CreateProgressMilestoneRequest): Promise<ProgressMilestone> {
+  async createProgressMilestone(
+    data: CreateProgressMilestoneRequest
+  ): Promise<ProgressMilestone> {
     const user = await this.getCurrentUser();
 
     const milestoneData = {
       ...data,
       created_by: user.id,
-      updated_by: user.id
+      updated_by: user.id,
     };
 
     const { data: milestone, error } = await this.supabase
@@ -207,11 +214,15 @@ class ProgressTrackingService {
 
     return {
       data: data || [],
-      total: count || 0
+      total: count || 0,
     };
   }
 
-  async validateMilestone(id: string, validationStatus: 'confirmed' | 'false_positive', notes?: string): Promise<ProgressMilestone> {
+  async validateMilestone(
+    id: string,
+    validationStatus: 'confirmed' | 'false_positive',
+    notes?: string
+  ): Promise<ProgressMilestone> {
     const user = await this.getCurrentUser();
 
     const { data: milestone, error } = await this.supabase
@@ -220,7 +231,7 @@ class ProgressTrackingService {
         validation_status: validationStatus,
         validated_by: user.id,
         validation_notes: notes,
-        updated_by: user.id
+        updated_by: user.id,
       })
       .eq('id', id)
       .select()
@@ -231,13 +242,15 @@ class ProgressTrackingService {
   }
 
   // Progress Predictions Management
-  async createProgressPrediction(data: CreateProgressPredictionRequest): Promise<ProgressPrediction> {
+  async createProgressPrediction(
+    data: CreateProgressPredictionRequest
+  ): Promise<ProgressPrediction> {
     const user = await this.getCurrentUser();
 
     const predictionData = {
       ...data,
       created_by: user.id,
-      updated_by: user.id
+      updated_by: user.id,
     };
 
     const { data: prediction, error } = await this.supabase
@@ -250,7 +263,9 @@ class ProgressTrackingService {
     return prediction;
   }
 
-  async getProgressPredictions(patientId?: string): Promise<ProgressPrediction[]> {
+  async getProgressPredictions(
+    patientId?: string
+  ): Promise<ProgressPrediction[]> {
     let query = this.supabase
       .from('progress_predictions')
       .select('*')
@@ -265,7 +280,11 @@ class ProgressTrackingService {
     return data || [];
   }
 
-  async verifyPrediction(id: string, actualOutcome: Record<string, any>, accuracyScore: number): Promise<ProgressPrediction> {
+  async verifyPrediction(
+    id: string,
+    actualOutcome: Record<string, any>,
+    accuracyScore: number
+  ): Promise<ProgressPrediction> {
     const user = await this.getCurrentUser();
 
     const { data: prediction, error } = await this.supabase
@@ -275,7 +294,7 @@ class ProgressTrackingService {
         accuracy_score: accuracyScore,
         verified_at: new Date().toISOString(),
         verified_by: user.id,
-        updated_by: user.id
+        updated_by: user.id,
       })
       .eq('id', id)
       .select()
@@ -286,11 +305,15 @@ class ProgressTrackingService {
   }
 
   // Multi-Session Analysis
-  async createMultiSessionAnalysis(data: CreateMultiSessionAnalysisRequest): Promise<MultiSessionAnalysis> {
+  async createMultiSessionAnalysis(
+    data: CreateMultiSessionAnalysisRequest
+  ): Promise<MultiSessionAnalysis> {
     const user = await this.getCurrentUser();
 
     // Calculate progression score and trend direction
-    const trackingData = await this.getTrackingDataForSessions(data.session_ids);
+    const trackingData = await this.getTrackingDataForSessions(
+      data.session_ids
+    );
     const analysis = this.calculateProgressionAnalysis(trackingData);
 
     const analysisData = {
@@ -300,7 +323,7 @@ class ProgressTrackingService {
       statistical_significance: analysis.statisticalSignificance,
       analysis_data: analysis.detailedData,
       created_by: user.id,
-      updated_by: user.id
+      updated_by: user.id,
     };
 
     const { data: result, error } = await this.supabase
@@ -313,7 +336,9 @@ class ProgressTrackingService {
     return result;
   }
 
-  async getMultiSessionAnalyses(patientId?: string): Promise<MultiSessionAnalysis[]> {
+  async getMultiSessionAnalyses(
+    patientId?: string
+  ): Promise<MultiSessionAnalysis[]> {
     let query = this.supabase
       .from('multi_session_analysis')
       .select('*')
@@ -329,13 +354,15 @@ class ProgressTrackingService {
   }
 
   // Progress Alerts Management
-  async createProgressAlert(data: CreateProgressAlertRequest): Promise<ProgressAlert> {
+  async createProgressAlert(
+    data: CreateProgressAlertRequest
+  ): Promise<ProgressAlert> {
     const user = await this.getCurrentUser();
 
     const alertData = {
       ...data,
       created_by: user.id,
-      updated_by: user.id
+      updated_by: user.id,
     };
 
     const { data: alert, error } = await this.supabase
@@ -399,7 +426,7 @@ class ProgressTrackingService {
 
     return {
       data: data || [],
-      total: count || 0
+      total: count || 0,
     };
   }
 
@@ -412,7 +439,7 @@ class ProgressTrackingService {
         is_read: true,
         read_at: new Date().toISOString(),
         read_by: user.id,
-        updated_by: user.id
+        updated_by: user.id,
       })
       .eq('id', id)
       .select()
@@ -422,7 +449,10 @@ class ProgressTrackingService {
     return alert;
   }
 
-  async markAlertActionTaken(id: string, actionNotes?: string): Promise<ProgressAlert> {
+  async markAlertActionTaken(
+    id: string,
+    actionNotes?: string
+  ): Promise<ProgressAlert> {
     const user = await this.getCurrentUser();
 
     const { data: alert, error } = await this.supabase
@@ -430,7 +460,7 @@ class ProgressTrackingService {
       .update({
         action_taken: true,
         action_notes: actionNotes,
-        updated_by: user.id
+        updated_by: user.id,
       })
       .eq('id', id)
       .select()
@@ -441,13 +471,15 @@ class ProgressTrackingService {
   }
 
   // Tracking Metrics Management
-  async createTrackingMetric(data: TrackingMetricRequest): Promise<TrackingMetric> {
+  async createTrackingMetric(
+    data: TrackingMetricRequest
+  ): Promise<TrackingMetric> {
     const user = await this.getCurrentUser();
 
     const metricData = {
       ...data,
       created_by: user.id,
-      updated_by: user.id
+      updated_by: user.id,
     };
 
     const { data: metric, error } = await this.supabase
@@ -477,9 +509,14 @@ class ProgressTrackingService {
   }
 
   // Analytics and Dashboard
-  async getProgressDashboardStats(patientId?: string): Promise<ProgressDashboardStats> {
-    const baseQuery = patientId 
-      ? this.supabase.from('progress_tracking').select('*').eq('patient_id', patientId)
+  async getProgressDashboardStats(
+    patientId?: string
+  ): Promise<ProgressDashboardStats> {
+    const baseQuery = patientId
+      ? this.supabase
+          .from('progress_tracking')
+          .select('*')
+          .eq('patient_id', patientId)
       : this.supabase.from('progress_tracking').select('*');
 
     const [
@@ -487,46 +524,69 @@ class ProgressTrackingService {
       { data: activeData },
       { data: milestoneData },
       { data: alertData },
-      { data: predictionData }
+      { data: predictionData },
     ] = await Promise.all([
       baseQuery,
-      this.supabase.from('progress_tracking')
+      this.supabase
+        .from('progress_tracking')
         .select('treatment_type')
-        .eq(patientId ? 'patient_id' : 'validation_status', patientId || 'validated')
+        .eq(
+          patientId ? 'patient_id' : 'validation_status',
+          patientId || 'validated'
+        )
         .not('progress_score', 'eq', 100),
-      this.supabase.from('progress_milestones')
+      this.supabase
+        .from('progress_milestones')
         .select('*')
-        .eq(patientId ? 'patient_id' : 'validation_status', patientId || 'confirmed'),
-      this.supabase.from('progress_alerts')
+        .eq(
+          patientId ? 'patient_id' : 'validation_status',
+          patientId || 'confirmed'
+        ),
+      this.supabase
+        .from('progress_alerts')
         .select('alert_priority')
         .eq('is_read', false)
         .eq('alert_priority', 'urgent'),
-      this.supabase.from('progress_predictions')
+      this.supabase
+        .from('progress_predictions')
         .select('accuracy_score')
-        .not('accuracy_score', 'is', null)
+        .not('accuracy_score', 'is', null),
     ]);
 
-    const averageProgress = activeData && activeData.length > 0
-      ? activeData.reduce((sum, item) => sum + (item as any).progress_score, 0) / activeData.length
-      : 0;
+    const averageProgress =
+      activeData && activeData.length > 0
+        ? activeData.reduce(
+            (sum, item) => sum + (item as any).progress_score,
+            0
+          ) / activeData.length
+        : 0;
 
-    const predictionsAccuracy = predictionData && predictionData.length > 0
-      ? predictionData.reduce((sum, item) => sum + (item as any).accuracy_score, 0) / predictionData.length
-      : 0;
+    const predictionsAccuracy =
+      predictionData && predictionData.length > 0
+        ? predictionData.reduce(
+            (sum, item) => sum + (item as any).accuracy_score,
+            0
+          ) / predictionData.length
+        : 0;
 
     return {
       total_trackings: totalTrackings || 0,
-      active_treatments: new Set(activeData?.map((item: any) => item.treatment_type)).size,
+      active_treatments: new Set(
+        activeData?.map((item: any) => item.treatment_type)
+      ).size,
       average_progress: Math.round(averageProgress * 10) / 10,
       milestone_achievements: milestoneData?.length || 0,
       pending_validations: 0, // Would need separate query
       urgent_alerts: alertData?.length || 0,
       predictions_accuracy: Math.round(predictionsAccuracy * 10) / 10,
-      treatment_completion_rate: 0 // Would need separate calculation
+      treatment_completion_rate: 0, // Would need separate calculation
     };
   }
 
-  async getProgressTrendData(patientId: string, treatmentType?: string): Promise<ProgressTrendData[]> {
+  async getProgressTrendData(
+    patientId: string,
+    treatmentType?: string
+  ): Promise<ProgressTrendData[]> {
     let query = this.supabase
       .from('progress_tracking')
       .select('*')
@@ -542,25 +602,28 @@ class ProgressTrackingService {
     if (error) throw error;
 
     // Group data by treatment type and area
-    const groupedData = (data || []).reduce((acc, tracking) => {
-      const key = `${tracking.treatment_type}-${tracking.treatment_area}`;
-      if (!acc[key]) {
-        acc[key] = {
-          treatment_type: tracking.treatment_type,
-          treatment_area: tracking.treatment_area,
-          progress_points: [],
-          trend_direction: 'stable' as any
-        };
-      }
-      
-      acc[key].progress_points.push({
-        date: tracking.tracking_date,
-        score: tracking.progress_score,
-        confidence: tracking.confidence_score
-      });
+    const groupedData = (data || []).reduce(
+      (acc, tracking) => {
+        const key = `${tracking.treatment_type}-${tracking.treatment_area}`;
+        if (!acc[key]) {
+          acc[key] = {
+            treatment_type: tracking.treatment_type,
+            treatment_area: tracking.treatment_area,
+            progress_points: [],
+            trend_direction: 'stable' as any,
+          };
+        }
 
-      return acc;
-    }, {} as Record<string, ProgressTrendData>);
+        acc[key].progress_points.push({
+          date: tracking.tracking_date,
+          score: tracking.progress_score,
+          confidence: tracking.confidence_score,
+        });
+
+        return acc;
+      },
+      {} as Record<string, ProgressTrendData>
+    );
 
     // Calculate trend direction for each group
     Object.values(groupedData).forEach((trendData) => {
@@ -589,8 +652,12 @@ class ProgressTrackingService {
 
   // Computer Vision Analysis
   async processProgressAnalysis(
-    imageData: string,
-    analysisType: 'healing' | 'aesthetic' | 'treatment_response' | 'maintenance',
+    _imageData: string,
+    analysisType:
+      | 'healing'
+      | 'aesthetic'
+      | 'treatment_response'
+      | 'maintenance',
     baselineId?: string
   ): Promise<CVProgressAnalysis> {
     // This would integrate with actual computer vision service
@@ -606,30 +673,32 @@ class ProgressTrackingService {
           measurements: {
             area: 150.2,
             perimeter: 45.8,
-            improvement: baselineId ? 23.5 : 0
-          }
-        }
+            improvement: baselineId ? 23.5 : 0,
+          },
+        },
       ],
       overall_score: 85.2,
       confidence_score: 89.1,
-      comparison_data: baselineId ? {
-        baseline_id: baselineId,
-        improvement_percentage: 23.5,
-        change_areas: ['primary_treatment_zone', 'surrounding_tissue']
-      } : undefined,
+      comparison_data: baselineId
+        ? {
+            baseline_id: baselineId,
+            improvement_percentage: 23.5,
+            change_areas: ['primary_treatment_zone', 'surrounding_tissue'],
+          }
+        : undefined,
       quality_indicators: {
         image_quality: 88.5,
         lighting_conditions: 91.2,
         angle_consistency: 87.8,
-        focus_score: 93.1
+        focus_score: 93.1,
       },
       annotations: [
         {
           type: 'measurement',
           coordinates: { x: 200, y: 240 },
-          data: { measurement_type: 'area', value: 150.2, unit: 'mm²' }
-        }
-      ]
+          data: { measurement_type: 'area', value: 150.2, unit: 'mm²' },
+        },
+      ],
     };
 
     return simulatedAnalysis;
@@ -637,12 +706,17 @@ class ProgressTrackingService {
 
   // Private helper methods
   private async getCurrentUser() {
-    const { data: { user }, error } = await this.supabase.auth.getUser();
+    const {
+      data: { user },
+      error,
+    } = await this.supabase.auth.getUser();
     if (error || !user) throw new Error('User not authenticated');
     return user;
   }
 
-  private async getTrackingDataForSessions(sessionIds: string[]): Promise<ProgressTracking[]> {
+  private async getTrackingDataForSessions(
+    sessionIds: string[]
+  ): Promise<ProgressTracking[]> {
     const { data, error } = await this.supabase
       .from('progress_tracking')
       .select('*')
@@ -659,11 +733,11 @@ class ProgressTrackingService {
         progressionScore: 0,
         trendDirection: 'stable' as any,
         statisticalSignificance: 0,
-        detailedData: {}
+        detailedData: {},
       };
     }
 
-    const scores = trackingData.map(t => t.progress_score);
+    const scores = trackingData.map((t) => t.progress_score);
     const firstScore = scores[0];
     const lastScore = scores[scores.length - 1];
     const progressionScore = lastScore - firstScore;
@@ -678,8 +752,15 @@ class ProgressTrackingService {
     }
 
     // Calculate statistical significance (simplified)
-    const variance = scores.reduce((sum, score) => sum + Math.pow(score - (firstScore + lastScore) / 2, 2), 0) / scores.length;
-    const statisticalSignificance = Math.min(100, Math.abs(progressionScore) * 10 / Math.sqrt(variance));
+    const variance =
+      scores.reduce(
+        (sum, score) => sum + (score - (firstScore + lastScore) / 2) ** 2,
+        0
+      ) / scores.length;
+    const statisticalSignificance = Math.min(
+      100,
+      (Math.abs(progressionScore) * 10) / Math.sqrt(variance)
+    );
 
     return {
       progressionScore: Math.abs(progressionScore),
@@ -688,8 +769,8 @@ class ProgressTrackingService {
       detailedData: {
         score_progression: scores,
         variance,
-        improvement_rate: progressionScore / trackingData.length
-      }
+        improvement_rate: progressionScore / trackingData.length,
+      },
     };
   }
 }

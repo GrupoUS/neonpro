@@ -1,10 +1,9 @@
 // Real-time Security Monitoring System
 // Advanced threat detection and automated response for session security
 
-import { UserSession, SecurityEvent, SuspiciousActivity } from '@/types/session';
 import { SessionConfig } from '@/lib/auth/config/session-config';
+import type { AnomalyAlert } from '@/lib/auth/suspicious/suspicious-activity-detector';
 import { SessionUtils } from '@/lib/auth/utils/session-utils';
-import { getSuspiciousActivityDetector, AnomalyAlert } from '@/lib/auth/suspicious/suspicious-activity-detector';
 
 export interface SecurityThreat {
   id: string;
@@ -23,7 +22,7 @@ export interface SecurityThreat {
   falsePositive: boolean;
 }
 
-export type ThreatType = 
+export type ThreatType =
   | 'brute_force_attack'
   | 'credential_stuffing'
   | 'session_hijacking'
@@ -41,7 +40,7 @@ export type ThreatType =
 
 export type ThreatSeverity = 'low' | 'medium' | 'high' | 'critical';
 
-export type ThreatSource = 
+export type ThreatSource =
   | 'external_ip'
   | 'internal_user'
   | 'automated_bot'
@@ -64,7 +63,7 @@ export interface ThreatIndicator {
   timestamp: number;
 }
 
-export type IndicatorType = 
+export type IndicatorType =
   | 'ip_address'
   | 'user_agent'
   | 'session_id'
@@ -75,7 +74,12 @@ export type IndicatorType =
   | 'location'
   | 'device_fingerprint';
 
-export type ThreatStatus = 'active' | 'investigating' | 'mitigated' | 'resolved' | 'false_positive';
+export type ThreatStatus =
+  | 'active'
+  | 'investigating'
+  | 'mitigated'
+  | 'resolved'
+  | 'false_positive';
 
 export interface MitigationAction {
   id: string;
@@ -87,7 +91,7 @@ export interface MitigationAction {
   details: Record<string, any>;
 }
 
-export type MitigationType = 
+export type MitigationType =
   | 'block_ip'
   | 'suspend_session'
   | 'require_mfa'
@@ -126,7 +130,13 @@ export interface MonitoringRule {
 
 export interface RuleCondition {
   field: string;
-  operator: 'equals' | 'contains' | 'greater_than' | 'less_than' | 'in_range' | 'regex';
+  operator:
+    | 'equals'
+    | 'contains'
+    | 'greater_than'
+    | 'less_than'
+    | 'in_range'
+    | 'regex';
   value: any;
   weight: number; // 0-1
 }
@@ -153,19 +163,21 @@ export interface SecurityAlert {
   acknowledgedAt?: number;
 }
 
-export type AlertType = 'threat_detected' | 'mitigation_failed' | 'system_compromise' | 'data_breach';
+export type AlertType =
+  | 'threat_detected'
+  | 'mitigation_failed'
+  | 'system_compromise'
+  | 'data_breach';
 export type AlertChannel = 'email' | 'sms' | 'slack' | 'webhook' | 'dashboard';
 
 export class SecurityMonitor {
-  private config: SessionConfig;
   private utils: SessionUtils;
-  private suspiciousActivityDetector = getSuspiciousActivityDetector();
   private activeThreats: Map<string, SecurityThreat> = new Map();
   private monitoringRules: Map<string, MonitoringRule> = new Map();
   private securityMetrics: SecurityMetrics;
   private alertQueue: SecurityAlert[] = [];
   private monitoringInterval: NodeJS.Timeout | null = null;
-  private isMonitoring: boolean = false;
+  private isMonitoring = false;
   private eventListeners: Map<string, Function[]> = new Map();
 
   constructor() {
@@ -188,7 +200,7 @@ export class SecurityMonitor {
       threatsByType: {} as Record<ThreatType, number>,
       threatsBySeverity: {} as Record<ThreatSeverity, number>,
       mitigationSuccess: 0,
-      lastUpdated: Date.now()
+      lastUpdated: Date.now(),
     };
   }
 
@@ -203,16 +215,30 @@ export class SecurityMonitor {
         description: 'Detects multiple failed login attempts from same IP',
         threatType: 'brute_force_attack',
         conditions: [
-          { field: 'failed_attempts', operator: 'greater_than', value: 5, weight: 0.8 },
-          { field: 'time_window', operator: 'less_than', value: 300000, weight: 0.6 } // 5 minutes
+          {
+            field: 'failed_attempts',
+            operator: 'greater_than',
+            value: 5,
+            weight: 0.8,
+          },
+          {
+            field: 'time_window',
+            operator: 'less_than',
+            value: 300_000,
+            weight: 0.6,
+          }, // 5 minutes
         ],
         actions: [
-          { type: 'block_ip', parameters: { duration: 3600000 }, delay: 0 }, // 1 hour
-          { type: 'alert_admin', parameters: { priority: 'high' }, delay: 1000 }
+          { type: 'block_ip', parameters: { duration: 3_600_000 }, delay: 0 }, // 1 hour
+          {
+            type: 'alert_admin',
+            parameters: { priority: 'high' },
+            delay: 1000,
+          },
         ],
         enabled: true,
         priority: 1,
-        cooldown: 60000 // 1 minute
+        cooldown: 60_000, // 1 minute
       },
       {
         id: 'session_hijacking_detection',
@@ -220,17 +246,32 @@ export class SecurityMonitor {
         description: 'Detects suspicious session usage patterns',
         threatType: 'session_hijacking',
         conditions: [
-          { field: 'location_change', operator: 'equals', value: true, weight: 0.7 },
-          { field: 'device_change', operator: 'equals', value: true, weight: 0.6 },
-          { field: 'user_agent_change', operator: 'equals', value: true, weight: 0.5 }
+          {
+            field: 'location_change',
+            operator: 'equals',
+            value: true,
+            weight: 0.7,
+          },
+          {
+            field: 'device_change',
+            operator: 'equals',
+            value: true,
+            weight: 0.6,
+          },
+          {
+            field: 'user_agent_change',
+            operator: 'equals',
+            value: true,
+            weight: 0.5,
+          },
         ],
         actions: [
           { type: 'suspend_session', parameters: {}, delay: 0 },
-          { type: 'require_mfa', parameters: {}, delay: 1000 }
+          { type: 'require_mfa', parameters: {}, delay: 1000 },
         ],
         enabled: true,
         priority: 2,
-        cooldown: 30000
+        cooldown: 30_000,
       },
       {
         id: 'privilege_escalation_detection',
@@ -238,17 +279,35 @@ export class SecurityMonitor {
         description: 'Detects unauthorized access to privileged resources',
         threatType: 'privilege_escalation',
         conditions: [
-          { field: 'unauthorized_endpoint', operator: 'equals', value: true, weight: 0.9 },
-          { field: 'role_mismatch', operator: 'equals', value: true, weight: 0.8 }
+          {
+            field: 'unauthorized_endpoint',
+            operator: 'equals',
+            value: true,
+            weight: 0.9,
+          },
+          {
+            field: 'role_mismatch',
+            operator: 'equals',
+            value: true,
+            weight: 0.8,
+          },
         ],
         actions: [
           { type: 'suspend_session', parameters: {}, delay: 0 },
-          { type: 'alert_admin', parameters: { priority: 'critical' }, delay: 500 },
-          { type: 'log_incident', parameters: { category: 'security' }, delay: 1000 }
+          {
+            type: 'alert_admin',
+            parameters: { priority: 'critical' },
+            delay: 500,
+          },
+          {
+            type: 'log_incident',
+            parameters: { category: 'security' },
+            delay: 1000,
+          },
         ],
         enabled: true,
         priority: 3,
-        cooldown: 0 // No cooldown for critical threats
+        cooldown: 0, // No cooldown for critical threats
       },
       {
         id: 'automated_bot_detection',
@@ -256,17 +315,36 @@ export class SecurityMonitor {
         description: 'Detects bot-like behavior patterns',
         threatType: 'malicious_automation',
         conditions: [
-          { field: 'request_frequency', operator: 'greater_than', value: 100, weight: 0.7 },
-          { field: 'mouse_movement_pattern', operator: 'equals', value: 'bot_like', weight: 0.8 },
-          { field: 'typing_pattern', operator: 'equals', value: 'automated', weight: 0.6 }
+          {
+            field: 'request_frequency',
+            operator: 'greater_than',
+            value: 100,
+            weight: 0.7,
+          },
+          {
+            field: 'mouse_movement_pattern',
+            operator: 'equals',
+            value: 'bot_like',
+            weight: 0.8,
+          },
+          {
+            field: 'typing_pattern',
+            operator: 'equals',
+            value: 'automated',
+            weight: 0.6,
+          },
         ],
         actions: [
-          { type: 'rate_limit', parameters: { limit: 10, window: 60000 }, delay: 0 },
-          { type: 'require_mfa', parameters: {}, delay: 2000 }
+          {
+            type: 'rate_limit',
+            parameters: { limit: 10, window: 60_000 },
+            delay: 0,
+          },
+          { type: 'require_mfa', parameters: {}, delay: 2000 },
         ],
         enabled: true,
         priority: 4,
-        cooldown: 120000 // 2 minutes
+        cooldown: 120_000, // 2 minutes
       },
       {
         id: 'data_exfiltration_detection',
@@ -274,22 +352,41 @@ export class SecurityMonitor {
         description: 'Detects unusual data access patterns',
         threatType: 'data_exfiltration',
         conditions: [
-          { field: 'data_volume', operator: 'greater_than', value: 1000000, weight: 0.8 }, // 1MB
-          { field: 'access_frequency', operator: 'greater_than', value: 50, weight: 0.6 },
-          { field: 'off_hours_access', operator: 'equals', value: true, weight: 0.5 }
+          {
+            field: 'data_volume',
+            operator: 'greater_than',
+            value: 1_000_000,
+            weight: 0.8,
+          }, // 1MB
+          {
+            field: 'access_frequency',
+            operator: 'greater_than',
+            value: 50,
+            weight: 0.6,
+          },
+          {
+            field: 'off_hours_access',
+            operator: 'equals',
+            value: true,
+            weight: 0.5,
+          },
         ],
         actions: [
           { type: 'quarantine_user', parameters: {}, delay: 0 },
           { type: 'backup_data', parameters: {}, delay: 1000 },
-          { type: 'alert_admin', parameters: { priority: 'critical' }, delay: 500 }
+          {
+            type: 'alert_admin',
+            parameters: { priority: 'critical' },
+            delay: 500,
+          },
         ],
         enabled: true,
         priority: 5,
-        cooldown: 0
-      }
+        cooldown: 0,
+      },
     ];
 
-    rules.forEach(rule => {
+    rules.forEach((rule) => {
       this.monitoringRules.set(rule.id, rule);
     });
   }
@@ -303,7 +400,7 @@ export class SecurityMonitor {
     this.isMonitoring = true;
     this.monitoringInterval = setInterval(() => {
       this.performSecurityScan();
-    }, 10000); // Scan every 10 seconds
+    }, 10_000); // Scan every 10 seconds
 
     console.log('Security monitoring started');
     this.emit('monitoring_started', { timestamp: Date.now() });
@@ -332,7 +429,7 @@ export class SecurityMonitor {
     try {
       // Get recent anomalies from suspicious activity detector
       const recentAnomalies = await this.getRecentAnomalies();
-      
+
       // Analyze each anomaly for potential threats
       for (const anomaly of recentAnomalies) {
         await this.analyzeAnomalyForThreats(anomaly);
@@ -349,7 +446,6 @@ export class SecurityMonitor {
 
       // Send pending alerts
       await this.processPendingAlerts();
-
     } catch (error) {
       console.error('Error in security scan:', error);
     }
@@ -371,7 +467,7 @@ export class SecurityMonitor {
     try {
       const threatType = this.mapAnomalyToThreatType(anomaly.alertType);
       const threat = await this.createThreatFromAnomaly(anomaly, threatType);
-      
+
       if (threat) {
         await this.processThreat(threat);
       }
@@ -396,7 +492,7 @@ export class SecurityMonitor {
         target: {
           type: 'user',
           id: anomaly.userId,
-          details: { sessionId: anomaly.sessionId }
+          details: { sessionId: anomaly.sessionId },
         },
         description: `Security threat detected: ${anomaly.description}`,
         indicators: this.extractThreatIndicators(anomaly),
@@ -405,7 +501,7 @@ export class SecurityMonitor {
         status: 'active',
         detectedAt: Date.now(),
         mitigationActions: [],
-        falsePositive: false
+        falsePositive: false,
       };
 
       return threat;
@@ -443,7 +539,9 @@ export class SecurityMonitor {
       // Emit threat detected event
       this.emit('threat_detected', threat);
 
-      console.log(`Security threat detected: ${threat.type} (Risk: ${threat.riskScore})`);
+      console.log(
+        `Security threat detected: ${threat.type} (Risk: ${threat.riskScore})`
+      );
     } catch (error) {
       console.error('Error processing threat:', error);
     }
@@ -452,16 +550,22 @@ export class SecurityMonitor {
   /**
    * Execute rule actions for threat
    */
-  private async executeRuleActions(rule: MonitoringRule, threat: SecurityThreat): Promise<void> {
+  private async executeRuleActions(
+    rule: MonitoringRule,
+    threat: SecurityThreat
+  ): Promise<void> {
     for (const action of rule.actions) {
       try {
         // Apply delay if specified
         if (action.delay > 0) {
-          await new Promise(resolve => setTimeout(resolve, action.delay));
+          await new Promise((resolve) => setTimeout(resolve, action.delay));
         }
 
         // Check condition if specified
-        if (action.condition && !this.evaluateCondition(action.condition, threat)) {
+        if (
+          action.condition &&
+          !this.evaluateCondition(action.condition, threat)
+        ) {
           continue;
         }
 
@@ -497,7 +601,7 @@ export class SecurityMonitor {
         automated: true,
         executedAt: Date.now(),
         result: 'pending',
-        details: parameters
+        details: parameters,
       };
 
       switch (type) {
@@ -507,7 +611,10 @@ export class SecurityMonitor {
           break;
 
         case 'suspend_session':
-          await this.suspendSession(threat.target.details.sessionId, `Security threat: ${threat.type}`);
+          await this.suspendSession(
+            threat.target.details.sessionId,
+            `Security threat: ${threat.type}`
+          );
           action.result = 'success';
           break;
 
@@ -566,7 +673,7 @@ export class SecurityMonitor {
         automated: true,
         executedAt: Date.now(),
         result: 'failed',
-        details: { error: error.message, ...parameters }
+        details: { error: error.message, ...parameters },
       };
     }
   }
@@ -574,26 +681,32 @@ export class SecurityMonitor {
   /**
    * Mitigation action implementations
    */
-  private async blockIpAddress(threat: SecurityThreat, parameters: Record<string, any>): Promise<void> {
-    const ipIndicator = threat.indicators.find(i => i.type === 'ip_address');
+  private async blockIpAddress(
+    threat: SecurityThreat,
+    parameters: Record<string, any>
+  ): Promise<void> {
+    const ipIndicator = threat.indicators.find((i) => i.type === 'ip_address');
     if (ipIndicator) {
       await fetch('/api/security/block-ip', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ip: ipIndicator.value,
-          duration: parameters.duration || 3600000,
-          reason: `Security threat: ${threat.type}`
-        })
+          duration: parameters.duration || 3_600_000,
+          reason: `Security threat: ${threat.type}`,
+        }),
       });
     }
   }
 
-  private async suspendSession(sessionId: string, reason: string): Promise<void> {
+  private async suspendSession(
+    sessionId: string,
+    reason: string
+  ): Promise<void> {
     await fetch('/api/session/suspend', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ sessionId, reason })
+      body: JSON.stringify({ sessionId, reason }),
     });
   }
 
@@ -601,19 +714,22 @@ export class SecurityMonitor {
     await fetch('/api/session/require-mfa', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ sessionId })
+      body: JSON.stringify({ sessionId }),
     });
   }
 
-  private async applyRateLimit(threat: SecurityThreat, parameters: Record<string, any>): Promise<void> {
+  private async applyRateLimit(
+    threat: SecurityThreat,
+    parameters: Record<string, any>
+  ): Promise<void> {
     await fetch('/api/security/rate-limit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         userId: threat.target.id,
         limit: parameters.limit || 10,
-        window: parameters.window || 60000
-      })
+        window: parameters.window || 60_000,
+      }),
     });
   }
 
@@ -621,23 +737,29 @@ export class SecurityMonitor {
     await fetch('/api/users/quarantine', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId })
+      body: JSON.stringify({ userId }),
     });
   }
 
-  private async alertAdministrators(threat: SecurityThreat, parameters: Record<string, any>): Promise<void> {
+  private async alertAdministrators(
+    threat: SecurityThreat,
+    parameters: Record<string, any>
+  ): Promise<void> {
     await fetch('/api/security/alert-admins', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         threatId: threat.id,
         priority: parameters.priority || 'medium',
-        message: threat.description
-      })
+        message: threat.description,
+      }),
     });
   }
 
-  private async logIncident(threat: SecurityThreat, parameters: Record<string, any>): Promise<void> {
+  private async logIncident(
+    threat: SecurityThreat,
+    parameters: Record<string, any>
+  ): Promise<void> {
     await fetch('/api/security/incidents', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -645,8 +767,8 @@ export class SecurityMonitor {
         threatId: threat.id,
         category: parameters.category || 'security',
         severity: threat.severity,
-        details: threat
-      })
+        details: threat,
+      }),
     });
   }
 
@@ -654,7 +776,7 @@ export class SecurityMonitor {
     await fetch('/api/users/backup', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId })
+      body: JSON.stringify({ userId }),
     });
   }
 
@@ -667,7 +789,7 @@ export class SecurityMonitor {
     await fetch('/api/users/force-logout', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId })
+      body: JSON.stringify({ userId }),
     });
   }
 
@@ -676,18 +798,18 @@ export class SecurityMonitor {
    */
   private mapAnomalyToThreatType(anomalyType: string): ThreatType {
     const mapping: Record<string, ThreatType> = {
-      'unusual_typing_pattern': 'suspicious_behavior',
-      'abnormal_mouse_behavior': 'malicious_automation',
-      'suspicious_navigation': 'unauthorized_access',
-      'unusual_api_usage': 'privilege_escalation',
-      'off_hours_access': 'insider_threat',
-      'location_anomaly': 'account_takeover',
-      'device_anomaly': 'session_hijacking',
-      'rapid_actions': 'malicious_automation',
-      'bot_like_behavior': 'malicious_automation',
-      'credential_stuffing': 'credential_stuffing',
-      'session_hijacking': 'session_hijacking',
-      'privilege_escalation': 'privilege_escalation'
+      unusual_typing_pattern: 'suspicious_behavior',
+      abnormal_mouse_behavior: 'malicious_automation',
+      suspicious_navigation: 'unauthorized_access',
+      unusual_api_usage: 'privilege_escalation',
+      off_hours_access: 'insider_threat',
+      location_anomaly: 'account_takeover',
+      device_anomaly: 'session_hijacking',
+      rapid_actions: 'malicious_automation',
+      bot_like_behavior: 'malicious_automation',
+      credential_stuffing: 'credential_stuffing',
+      session_hijacking: 'session_hijacking',
+      privilege_escalation: 'privilege_escalation',
     };
     return mapping[anomalyType] || 'suspicious_behavior';
   }
@@ -702,18 +824,20 @@ export class SecurityMonitor {
 
   private extractThreatIndicators(anomaly: AnomalyAlert): ThreatIndicator[] {
     const indicators: ThreatIndicator[] = [];
-    
+
     // Extract indicators from anomaly evidence
     if (anomaly.evidence.comparisonData) {
-      Object.entries(anomaly.evidence.comparisonData).forEach(([key, value]) => {
-        indicators.push({
-          type: this.mapFieldToIndicatorType(key),
-          value: String(value),
-          confidence: anomaly.evidence.statisticalSignificance,
-          source: 'anomaly_detector',
-          timestamp: anomaly.timestamp
-        });
-      });
+      Object.entries(anomaly.evidence.comparisonData).forEach(
+        ([key, value]) => {
+          indicators.push({
+            type: this.mapFieldToIndicatorType(key),
+            value: String(value),
+            confidence: anomaly.evidence.statisticalSignificance,
+            source: 'anomaly_detector',
+            timestamp: anomaly.timestamp,
+          });
+        }
+      );
     }
 
     return indicators;
@@ -721,22 +845,22 @@ export class SecurityMonitor {
 
   private mapFieldToIndicatorType(field: string): IndicatorType {
     const mapping: Record<string, IndicatorType> = {
-      'ip': 'ip_address',
-      'userAgent': 'user_agent',
-      'sessionId': 'session_id',
-      'userId': 'user_id',
-      'endpoint': 'endpoint',
-      'behavior': 'behavior_pattern',
-      'time': 'time_pattern',
-      'location': 'location',
-      'device': 'device_fingerprint'
+      ip: 'ip_address',
+      userAgent: 'user_agent',
+      sessionId: 'session_id',
+      userId: 'user_id',
+      endpoint: 'endpoint',
+      behavior: 'behavior_pattern',
+      time: 'time_pattern',
+      location: 'location',
+      device: 'device_fingerprint',
     };
     return mapping[field] || 'behavior_pattern';
   }
 
   private findApplicableRules(threat: SecurityThreat): MonitoringRule[] {
     return Array.from(this.monitoringRules.values())
-      .filter(rule => rule.enabled && rule.threatType === threat.type)
+      .filter((rule) => rule.enabled && rule.threatType === threat.type)
       .sort((a, b) => a.priority - b.priority);
   }
 
@@ -745,7 +869,10 @@ export class SecurityMonitor {
     return Date.now() - rule.lastTriggered >= rule.cooldown;
   }
 
-  private evaluateCondition(condition: string, threat: SecurityThreat): boolean {
+  private evaluateCondition(
+    condition: string,
+    _threat: SecurityThreat
+  ): boolean {
     try {
       // Simple condition evaluation - in production, use a proper expression evaluator
       return eval(condition.replace(/threat\./g, 'threat.'));
@@ -767,57 +894,72 @@ export class SecurityMonitor {
   private updateSecurityMetrics(): void {
     const now = Date.now();
     const activeThreats = Array.from(this.activeThreats.values());
-    
+
     this.securityMetrics = {
       totalThreats: activeThreats.length,
-      activeThreats: activeThreats.filter(t => t.status === 'active').length,
-      resolvedThreats: activeThreats.filter(t => t.status === 'resolved').length,
-      falsePositives: activeThreats.filter(t => t.falsePositive).length,
+      activeThreats: activeThreats.filter((t) => t.status === 'active').length,
+      resolvedThreats: activeThreats.filter((t) => t.status === 'resolved')
+        .length,
+      falsePositives: activeThreats.filter((t) => t.falsePositive).length,
       averageResponseTime: this.calculateAverageResponseTime(activeThreats),
       threatsByType: this.groupThreatsByType(activeThreats),
       threatsBySeverity: this.groupThreatsBySeverity(activeThreats),
       mitigationSuccess: this.calculateMitigationSuccess(activeThreats),
-      lastUpdated: now
+      lastUpdated: now,
     };
   }
 
   private calculateAverageResponseTime(threats: SecurityThreat[]): number {
-    const resolvedThreats = threats.filter(t => t.resolvedAt);
+    const resolvedThreats = threats.filter((t) => t.resolvedAt);
     if (resolvedThreats.length === 0) return 0;
-    
+
     const totalTime = resolvedThreats.reduce((sum, t) => {
       return sum + (t.resolvedAt! - t.detectedAt);
     }, 0);
-    
+
     return totalTime / resolvedThreats.length;
   }
 
-  private groupThreatsByType(threats: SecurityThreat[]): Record<ThreatType, number> {
+  private groupThreatsByType(
+    threats: SecurityThreat[]
+  ): Record<ThreatType, number> {
     const groups: Record<ThreatType, number> = {} as Record<ThreatType, number>;
-    threats.forEach(threat => {
+    threats.forEach((threat) => {
       groups[threat.type] = (groups[threat.type] || 0) + 1;
     });
     return groups;
   }
 
-  private groupThreatsBySeverity(threats: SecurityThreat[]): Record<ThreatSeverity, number> {
-    const groups: Record<ThreatSeverity, number> = {} as Record<ThreatSeverity, number>;
-    threats.forEach(threat => {
+  private groupThreatsBySeverity(
+    threats: SecurityThreat[]
+  ): Record<ThreatSeverity, number> {
+    const groups: Record<ThreatSeverity, number> = {} as Record<
+      ThreatSeverity,
+      number
+    >;
+    threats.forEach((threat) => {
       groups[threat.severity] = (groups[threat.severity] || 0) + 1;
     });
     return groups;
   }
 
   private calculateMitigationSuccess(threats: SecurityThreat[]): number {
-    const threatsWithActions = threats.filter(t => t.mitigationActions.length > 0);
+    const threatsWithActions = threats.filter(
+      (t) => t.mitigationActions.length > 0
+    );
     if (threatsWithActions.length === 0) return 0;
-    
+
     const successfulActions = threatsWithActions.reduce((sum, t) => {
-      return sum + t.mitigationActions.filter(a => a.result === 'success').length;
+      return (
+        sum + t.mitigationActions.filter((a) => a.result === 'success').length
+      );
     }, 0);
-    
-    const totalActions = threatsWithActions.reduce((sum, t) => sum + t.mitigationActions.length, 0);
-    
+
+    const totalActions = threatsWithActions.reduce(
+      (sum, t) => sum + t.mitigationActions.length,
+      0
+    );
+
     return totalActions > 0 ? (successfulActions / totalActions) * 100 : 0;
   }
 
@@ -832,7 +974,7 @@ export class SecurityMonitor {
       recipients: ['security@company.com'], // Configure as needed
       channels: ['email', 'dashboard'],
       sentAt: Date.now(),
-      acknowledged: false
+      acknowledged: false,
     };
 
     this.alertQueue.push(alert);
@@ -850,7 +992,7 @@ export class SecurityMonitor {
       await fetch('/api/security/alerts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(alert)
+        body: JSON.stringify(alert),
       });
     } catch (error) {
       console.error('Error sending security alert:', error);
@@ -875,9 +1017,9 @@ export class SecurityMonitor {
             threatType: threat.type,
             riskScore: threat.riskScore,
             indicators: threat.indicators,
-            mitigationActions: threat.mitigationActions
-          }
-        })
+            mitigationActions: threat.mitigationActions,
+          },
+        }),
       });
     } catch (error) {
       console.error('Error logging security event:', error);
@@ -891,7 +1033,7 @@ export class SecurityMonitor {
     if (!this.eventListeners.has(event)) {
       this.eventListeners.set(event, []);
     }
-    this.eventListeners.get(event)!.push(callback);
+    this.eventListeners.get(event)?.push(callback);
   }
 
   public off(event: string, callback: Function): void {
@@ -907,7 +1049,7 @@ export class SecurityMonitor {
   private emit(event: string, data: any): void {
     const listeners = this.eventListeners.get(event);
     if (listeners) {
-      listeners.forEach(callback => {
+      listeners.forEach((callback) => {
         try {
           callback(data);
         } catch (error) {
@@ -921,15 +1063,16 @@ export class SecurityMonitor {
    * Public API methods
    */
   public getActiveThreats(): SecurityThreat[] {
-    return Array.from(this.activeThreats.values())
-      .filter(threat => threat.status === 'active');
+    return Array.from(this.activeThreats.values()).filter(
+      (threat) => threat.status === 'active'
+    );
   }
 
   public getThreatById(threatId: string): SecurityThreat | undefined {
     return this.activeThreats.get(threatId);
   }
 
-  public resolveThreat(threatId: string, falsePositive: boolean = false): boolean {
+  public resolveThreat(threatId: string, falsePositive = false): boolean {
     const threat = this.activeThreats.get(threatId);
     if (threat) {
       threat.status = 'resolved';

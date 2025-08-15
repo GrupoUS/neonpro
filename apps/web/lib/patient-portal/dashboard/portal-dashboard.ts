@@ -1,7 +1,7 @@
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { AuditLogger } from '../../audit/audit-logger';
-import { LGPDManager } from '../../lgpd/lgpd-manager';
-import { SessionManager, SessionData } from '../auth/session-manager';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import type { AuditLogger } from '../../audit/audit-logger';
+import type { LGPDManager } from '../../lgpd/lgpd-manager';
+import type { SessionManager } from '../auth/session-manager';
 
 // Dashboard configuration
 export interface DashboardConfig {
@@ -37,7 +37,7 @@ export interface PatientInfo {
   memberSince: Date;
   lastLogin: Date;
   clinicName: string;
-}// Appointment summary
+} // Appointment summary
 export interface AppointmentSummary {
   id: string;
   date: Date;
@@ -72,7 +72,7 @@ export interface UploadSummary {
   isProcessed: boolean;
   isVerified: boolean;
   fileSize: number;
-}// Task summary
+} // Task summary
 export interface TaskSummary {
   id: string;
   title: string;
@@ -130,10 +130,16 @@ export interface PatientPreferences {
     marketingConsent: boolean;
     dataSharing: boolean;
   };
-}// Dashboard widget data
+} // Dashboard widget data
 export interface DashboardWidget {
   id: string;
-  type: 'appointments' | 'progress' | 'uploads' | 'notifications' | 'stats' | 'tasks';
+  type:
+    | 'appointments'
+    | 'progress'
+    | 'uploads'
+    | 'notifications'
+    | 'stats'
+    | 'tasks';
   title: string;
   data: any;
   isVisible: boolean;
@@ -144,7 +150,6 @@ export interface DashboardWidget {
 export class PortalDashboard {
   private supabase: SupabaseClient;
   private auditLogger: AuditLogger;
-  private lgpdManager: LGPDManager;
   private sessionManager: SessionManager;
   private config: DashboardConfig;
   private cache: Map<string, { data: any; timestamp: Date }> = new Map();
@@ -160,7 +165,7 @@ export class PortalDashboard {
     this.supabase = createClient(supabaseUrl, supabaseKey);
     this.auditLogger = auditLogger;
     this.lgpdManager = lgpdManager;
-    this.sessionManager = sessionManager;    
+    this.sessionManager = sessionManager;
     this.config = {
       refreshInterval: 30, // 30 seconds
       maxRecentItems: 5,
@@ -168,18 +173,25 @@ export class PortalDashboard {
       cacheTimeout: 5, // 5 minutes
       defaultLanguage: 'pt-BR',
       defaultTheme: 'light',
-      ...config
+      ...config,
     };
   }
 
   /**
    * Get complete dashboard data for a patient
    */
-  async getDashboardData(patientId: string, sessionToken: string): Promise<PatientDashboardData> {
+  async getDashboardData(
+    patientId: string,
+    sessionToken: string
+  ): Promise<PatientDashboardData> {
     try {
       // Validate session
-      const sessionValidation = await this.sessionManager.validateSession(sessionToken);
-      if (!sessionValidation.isValid || sessionValidation.session?.patientId !== patientId) {
+      const sessionValidation =
+        await this.sessionManager.validateSession(sessionToken);
+      if (
+        !sessionValidation.isValid ||
+        sessionValidation.session?.patientId !== patientId
+      ) {
         throw new Error('Invalid session or unauthorized access');
       }
 
@@ -191,14 +203,24 @@ export class PortalDashboard {
       }
 
       // Fetch all dashboard data in parallel
-      const [patient, appointments, progress, uploads, tasks, notifications, stats, preferences] = await Promise.all([        this.getPatientInfo(patientId),
+      const [
+        patient,
+        appointments,
+        progress,
+        uploads,
+        tasks,
+        notifications,
+        stats,
+        preferences,
+      ] = await Promise.all([
+        this.getPatientInfo(patientId),
         this.getAppointments(patientId),
         this.getTreatmentProgress(patientId),
         this.getRecentUploads(patientId),
         this.getPendingTasks(patientId),
         this.getNotifications(patientId),
         this.getDashboardStats(patientId),
-        this.getPatientPreferences(patientId)
+        this.getPatientPreferences(patientId),
       ]);
 
       const dashboardData: PatientDashboardData = {
@@ -210,7 +232,7 @@ export class PortalDashboard {
         pendingTasks: tasks,
         notifications,
         quickStats: stats,
-        preferences
+        preferences,
       };
 
       // Cache the data
@@ -220,10 +242,17 @@ export class PortalDashboard {
       await this.auditLogger.log({
         action: 'dashboard_accessed',
         userId: patientId,
-        userType: 'patient',        details: {
+        userType: 'patient',
+        details: {
           timestamp: new Date(),
-          dataTypes: ['appointments', 'progress', 'uploads', 'tasks', 'notifications']
-        }
+          dataTypes: [
+            'appointments',
+            'progress',
+            'uploads',
+            'tasks',
+            'notifications',
+          ],
+        },
       });
 
       return dashboardData;
@@ -232,7 +261,7 @@ export class PortalDashboard {
         action: 'dashboard_access_failed',
         userId: patientId,
         userType: 'patient',
-        details: { error: error.message }
+        details: { error: error.message },
       });
       throw error;
     }
@@ -250,7 +279,7 @@ export class PortalDashboard {
         emergency_contact_name, emergency_contact_phone
       `)
       .eq('id', patientId)
-      .single();    
+      .single();
     if (error) throw error;
     return data;
   }
@@ -264,7 +293,7 @@ export class PortalDashboard {
   }> {
     const now = new Date();
     const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-    
+
     // Get upcoming appointments
     const { data: upcomingData, error: upcomingError } = await this.supabase
       .from('appointments')
@@ -279,7 +308,7 @@ export class PortalDashboard {
       .order('appointment_date', { ascending: true })
       .limit(this.config.maxRecentItems);
 
-    if (upcomingError) throw upcomingError;    
+    if (upcomingError) throw upcomingError;
     // Get recent appointments
     const { data: recentData, error: recentError } = await this.supabase
       .from('appointments')
@@ -298,8 +327,10 @@ export class PortalDashboard {
     if (recentError) throw recentError;
 
     // Transform data to AppointmentSummary format
-    const upcoming = upcomingData?.map(apt => this.transformAppointment(apt)) || [];
-    const recent = recentData?.map(apt => this.transformAppointment(apt)) || [];
+    const upcoming =
+      upcomingData?.map((apt) => this.transformAppointment(apt)) || [];
+    const recent =
+      recentData?.map((apt) => this.transformAppointment(apt)) || [];
 
     return { upcoming, recent };
   }
@@ -308,9 +339,13 @@ export class PortalDashboard {
    * Transform appointment data to AppointmentSummary
    */
   private transformAppointment(apt: any): AppointmentSummary {
-    const appointmentDate = new Date(`${apt.appointment_date}T${apt.appointment_time}`);
-    const now = new Date();    const hoursUntilAppointment = (appointmentDate.getTime() - now.getTime()) / (1000 * 60 * 60);
-    
+    const appointmentDate = new Date(
+      `${apt.appointment_date}T${apt.appointment_time}`
+    );
+    const now = new Date();
+    const hoursUntilAppointment =
+      (appointmentDate.getTime() - now.getTime()) / (1000 * 60 * 60);
+
     return {
       id: apt.id,
       date: new Date(apt.appointment_date),
@@ -321,14 +356,16 @@ export class PortalDashboard {
       location: apt.location || 'Clínica',
       canReschedule: hoursUntilAppointment > 24 && apt.status === 'scheduled',
       canCancel: hoursUntilAppointment > 24 && apt.status === 'scheduled',
-      estimatedDuration: apt.estimated_duration || 60
+      estimatedDuration: apt.estimated_duration || 60,
     };
   }
 
   /**
    * Get treatment progress for patient
    */
-  private async getTreatmentProgress(patientId: string): Promise<TreatmentProgressSummary[]> {
+  private async getTreatmentProgress(
+    patientId: string
+  ): Promise<TreatmentProgressSummary[]> {
     const { data, error } = await this.supabase
       .from('treatment_progress')
       .select(`
@@ -339,19 +376,23 @@ export class PortalDashboard {
       .eq('patient_id', patientId)
       .eq('status', 'active')
       .order('last_update', { ascending: false })
-      .limit(this.config.maxRecentItems);    
+      .limit(this.config.maxRecentItems);
     if (error) throw error;
-    
-    return data?.map(progress => ({
-      id: progress.id,
-      treatmentName: progress.treatment_name,
-      progressPercentage: progress.progress_percentage,
-      currentSession: progress.current_session,
-      totalSessions: progress.total_sessions,
-      nextSessionDate: progress.next_session_date ? new Date(progress.next_session_date) : undefined,
-      lastUpdate: new Date(progress.last_update),
-      status: progress.status
-    })) || [];
+
+    return (
+      data?.map((progress) => ({
+        id: progress.id,
+        treatmentName: progress.treatment_name,
+        progressPercentage: progress.progress_percentage,
+        currentSession: progress.current_session,
+        totalSessions: progress.total_sessions,
+        nextSessionDate: progress.next_session_date
+          ? new Date(progress.next_session_date)
+          : undefined,
+        lastUpdate: new Date(progress.last_update),
+        status: progress.status,
+      })) || []
+    );
   }
 
   /**
@@ -370,14 +411,17 @@ export class PortalDashboard {
 
     if (error) throw error;
 
-    return data?.map(upload => ({      id: upload.id,
-      filename: upload.filename,
-      category: upload.category,
-      uploadDate: new Date(upload.upload_date),
-      isProcessed: upload.is_processed,
-      isVerified: upload.is_verified,
-      fileSize: upload.file_size
-    })) || [];
+    return (
+      data?.map((upload) => ({
+        id: upload.id,
+        filename: upload.filename,
+        category: upload.category,
+        uploadDate: new Date(upload.upload_date),
+        isProcessed: upload.is_processed,
+        isVerified: upload.is_verified,
+        fileSize: upload.file_size,
+      })) || []
+    );
   }
 
   /**
@@ -395,14 +439,15 @@ export class PortalDashboard {
       .eq('patient_id', patientId)
       .eq('completed', false);
 
-    evaluations?.forEach(eval => {
+    evaluations?.forEach((eval) => {
       tasks.push({
         id: `eval_${eval.id}`,
         title: `Avaliação: ${eval.evaluation_type}`,
         description: 'Complete sua avaliação pendente',
-        dueDate: eval.due_date ? new Date(eval.due_date) : undefined,        priority: 'medium',
+        dueDate: eval.due_date ? new Date(eval.due_date) : undefined,
+        priority: 'medium',
         type: 'evaluation',
-        completed: false
+        completed: false,
       });
     });
 
@@ -412,7 +457,9 @@ export class PortalDashboard {
   /**
    * Get notifications for patient
    */
-  private async getNotifications(patientId: string): Promise<NotificationSummary[]> {
+  private async getNotifications(
+    patientId: string
+  ): Promise<NotificationSummary[]> {
     const { data, error } = await this.supabase
       .from('notifications')
       .select(`
@@ -425,15 +472,18 @@ export class PortalDashboard {
 
     if (error) throw error;
 
-    return data?.map(notification => ({
-      id: notification.id,
-      title: notification.title,
-      message: notification.message,
-      type: notification.type,
-      isRead: notification.is_read,
-      createdAt: new Date(notification.created_at),
-      actionUrl: notification.action_url,      actionText: notification.action_text
-    })) || [];
+    return (
+      data?.map((notification) => ({
+        id: notification.id,
+        title: notification.title,
+        message: notification.message,
+        type: notification.type,
+        isRead: notification.is_read,
+        createdAt: new Date(notification.created_at),
+        actionUrl: notification.action_url,
+        actionText: notification.action_text,
+      })) || []
+    );
   }
 
   /**
@@ -463,14 +513,16 @@ export class PortalDashboard {
     const pendingTasks = await this.getPendingTasks(patientId);
 
     // Get average rating
-    const { data: ratings } = await this.supabase      .from('patient_evaluations')
+    const { data: ratings } = await this.supabase
+      .from('patient_evaluations')
       .select('rating')
       .eq('patient_id', patientId)
       .not('rating', 'is', null);
 
-    const averageRating = ratings?.length > 0 
-      ? ratings.reduce((sum, r) => sum + r.rating, 0) / ratings.length 
-      : 0;
+    const averageRating =
+      ratings?.length > 0
+        ? ratings.reduce((sum, r) => sum + r.rating, 0) / ratings.length
+        : 0;
 
     // Get membership days
     const { data: patient } = await this.supabase
@@ -479,8 +531,11 @@ export class PortalDashboard {
       .eq('id', patientId)
       .single();
 
-    const membershipDays = patient?.membership_start_date 
-      ? Math.floor((Date.now() - new Date(patient.membership_start_date).getTime()) / (1000 * 60 * 60 * 24))
+    const membershipDays = patient?.membership_start_date
+      ? Math.floor(
+          (Date.now() - new Date(patient.membership_start_date).getTime()) /
+            (1000 * 60 * 60 * 24)
+        )
       : 0;
 
     return {
@@ -489,14 +544,17 @@ export class PortalDashboard {
       uploadedDocuments: uploadedDocuments || 0,
       pendingTasks: pendingTasks.length,
       averageRating,
-      membershipDays
+      membershipDays,
     };
   }
 
   /**
    * Get patient preferences
    */
-  private async getPatientPreferences(patientId: string): Promise<PatientPreferences> {    const { data, error } = await this.supabase
+  private async getPatientPreferences(
+    patientId: string
+  ): Promise<PatientPreferences> {
+    const { data, error } = await this.supabase
       .from('patient_portal_preferences')
       .select('*')
       .eq('patient_id', patientId)
@@ -516,24 +574,25 @@ export class PortalDashboard {
           push: true,
           appointmentReminders: true,
           treatmentUpdates: true,
-          promotional: false
+          promotional: false,
         },
         accessibility: {
           highContrast: false,
           largeText: false,
           screenReader: false,
-          reducedMotion: false
+          reducedMotion: false,
         },
         privacy: {
           shareProgressPhotos: false,
           allowTestimonials: false,
           marketingConsent: false,
-          dataSharing: false
-        }
+          dataSharing: false,
+        },
       };
     }
 
-    return data.preferences;  }
+    return data.preferences;
+  }
 
   /**
    * Get cached data if still valid
@@ -544,7 +603,7 @@ export class PortalDashboard {
 
     const now = new Date();
     const cacheAge = (now.getTime() - cached.timestamp.getTime()) / (1000 * 60); // minutes
-    
+
     if (cacheAge > this.config.cacheTimeout) {
       this.cache.delete(key);
       return null;
@@ -559,7 +618,7 @@ export class PortalDashboard {
   private setCachedData(key: string, data: any): void {
     this.cache.set(key, {
       data,
-      timestamp: new Date()
+      timestamp: new Date(),
     });
   }
 
@@ -568,17 +627,12 @@ export class PortalDashboard {
    */
   public clearCache(patientId?: string): void {
     if (patientId) {
-      const keysToDelete = Array.from(this.cache.keys())
-        .filter(key => key.includes(patientId));
-      keysToDelete.forEach(key => this.cache.delete(key));
+      const keysToDelete = Array.from(this.cache.keys()).filter((key) =>
+        key.includes(patientId)
+      );
+      keysToDelete.forEach((key) => this.cache.delete(key));
     } else {
       this.cache.clear();
     }
   }
 }
-
-// Required imports
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { AuditLogger } from '../../audit/audit-logger';
-import { LGPDManager } from '../../lgpd/lgpd-manager';
-import { SessionManager } from '../auth/session-manager';

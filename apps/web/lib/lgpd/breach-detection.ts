@@ -1,7 +1,7 @@
 /**
  * LGPD Data Breach Detection System
  * Implements real-time monitoring and detection of data breaches
- * 
+ *
  * Features:
  * - Real-time breach detection and monitoring
  * - Automated incident response workflows
@@ -10,12 +10,12 @@
  * - Forensic data collection and preservation
  * - Compliance timeline tracking
  * - Integration with security monitoring systems
- * 
+ *
  * @version 1.0.0
  * @author NeonPro Development Team
  */
 
-import { EventEmitter } from 'events';
+import { EventEmitter } from 'node:events';
 
 // ============================================================================
 // BREACH DETECTION TYPES & INTERFACES
@@ -36,18 +36,18 @@ export enum BreachType {
   PRIVILEGE_ESCALATION = 'privilege_escalation',
   DATA_CORRUPTION = 'data_corruption',
   SERVICE_DISRUPTION = 'service_disruption',
-  CONFIGURATION_ERROR = 'configuration_error'
+  CONFIGURATION_ERROR = 'configuration_error',
 }
 
 /**
  * Breach Severity Levels
  */
 export enum BreachSeverity {
-  CRITICAL = 'critical',     // Immediate ANPD notification required
-  HIGH = 'high',             // 72-hour notification required
-  MEDIUM = 'medium',         // Internal investigation required
-  LOW = 'low',               // Monitoring and documentation
-  INFORMATIONAL = 'informational' // Log for analysis
+  CRITICAL = 'critical', // Immediate ANPD notification required
+  HIGH = 'high', // 72-hour notification required
+  MEDIUM = 'medium', // Internal investigation required
+  LOW = 'low', // Monitoring and documentation
+  INFORMATIONAL = 'informational', // Log for analysis
 }
 
 /**
@@ -60,7 +60,7 @@ export enum BreachStatus {
   CONTAINED = 'contained',
   MITIGATED = 'mitigated',
   RESOLVED = 'resolved',
-  FALSE_POSITIVE = 'false_positive'
+  FALSE_POSITIVE = 'false_positive',
 }
 
 /**
@@ -76,7 +76,7 @@ export enum AffectedDataCategory {
   COMMUNICATION_DATA = 'communication_data',
   BEHAVIORAL_DATA = 'behavioral_data',
   AUTHENTICATION_DATA = 'authentication_data',
-  CHILDREN_DATA = 'children_data'
+  CHILDREN_DATA = 'children_data',
 }
 
 /**
@@ -90,7 +90,7 @@ export enum DetectionSource {
   INTERNAL_AUDIT = 'internal_audit',
   EXTERNAL_NOTIFICATION = 'external_notification',
   SYSTEM_LOG = 'system_log',
-  ANOMALY_DETECTION = 'anomaly_detection'
+  ANOMALY_DETECTION = 'anomaly_detection',
 }
 
 /**
@@ -108,7 +108,7 @@ export interface BreachIncident {
   confirmedAt?: Date;
   containedAt?: Date;
   resolvedAt?: Date;
-  
+
   // Affected data information
   affectedData: {
     categories: AffectedDataCategory[];
@@ -118,7 +118,7 @@ export interface BreachIncident {
     systems: string[];
     locations: string[];
   };
-  
+
   // Technical details
   technicalDetails: {
     attackVector?: string;
@@ -136,7 +136,7 @@ export interface BreachIncident {
       confidence: number;
     }[];
   };
-  
+
   // Impact assessment
   impact: {
     dataSubjectsAffected: number;
@@ -149,7 +149,7 @@ export interface BreachIncident {
     operationalImpact: string;
     complianceImpact: string[];
   };
-  
+
   // Response actions
   response: {
     immediateActions: {
@@ -162,7 +162,7 @@ export interface BreachIncident {
     mitigationSteps: string[];
     recoveryActions: string[];
   };
-  
+
   // Notifications and reporting
   notifications: {
     anpdNotified: boolean;
@@ -177,7 +177,7 @@ export interface BreachIncident {
       method: string;
     }[];
   };
-  
+
   // Investigation details
   investigation: {
     leadInvestigator: string;
@@ -196,7 +196,7 @@ export interface BreachIncident {
       source: string;
     }[];
   };
-  
+
   // Compliance tracking
   compliance: {
     lgpdArticles: string[];
@@ -210,7 +210,7 @@ export interface BreachIncident {
     legalReview: boolean;
     legalReviewDate?: Date;
   };
-  
+
   // Metadata
   createdBy: string;
   assignedTo: string;
@@ -230,7 +230,7 @@ export interface DetectionRule {
   category: string;
   severity: BreachSeverity;
   enabled: boolean;
-  
+
   // Rule conditions
   conditions: {
     type: 'threshold' | 'pattern' | 'anomaly' | 'correlation';
@@ -240,20 +240,20 @@ export interface DetectionRule {
       unit: 'minutes' | 'hours' | 'days';
     };
   }[];
-  
+
   // Data sources
   dataSources: {
     type: string;
     location: string;
     fields: string[];
   }[];
-  
+
   // Actions to take when rule triggers
   actions: {
     type: 'alert' | 'block' | 'quarantine' | 'notify';
     parameters: Record<string, any>;
   }[];
-  
+
   // Metadata
   createdBy: string;
   lastTriggered?: Date;
@@ -272,14 +272,14 @@ export interface MonitoringAlert {
   ruleName: string;
   severity: BreachSeverity;
   status: 'open' | 'investigating' | 'resolved' | 'false_positive';
-  
+
   // Alert details
   title: string;
   description: string;
   detectedAt: Date;
   acknowledgedAt?: Date;
   resolvedAt?: Date;
-  
+
   // Context information
   context: {
     sourceSystem: string;
@@ -287,7 +287,7 @@ export interface MonitoringAlert {
     indicators: Record<string, any>;
     metadata: Record<string, any>;
   };
-  
+
   // Response tracking
   assignedTo?: string;
   escalatedTo?: string;
@@ -298,10 +298,10 @@ export interface MonitoringAlert {
     takenBy: string;
     result: string;
   }[];
-  
+
   // Related incidents
   relatedIncidents: string[];
-  
+
   createdAt: Date;
   updatedAt: Date;
 }
@@ -316,8 +316,16 @@ export interface BreachDetectionEvents {
   'breach:resolved': { incident: BreachIncident };
   'alert:triggered': { alert: MonitoringAlert };
   'alert:escalated': { alert: MonitoringAlert };
-  'notification:required': { incident: BreachIncident; type: string; deadline: Date };
-  'compliance:deadline_approaching': { incident: BreachIncident; deadline: Date; hoursRemaining: number };
+  'notification:required': {
+    incident: BreachIncident;
+    type: string;
+    deadline: Date;
+  };
+  'compliance:deadline_approaching': {
+    incident: BreachIncident;
+    deadline: Date;
+    hoursRemaining: number;
+  };
 }
 
 // ============================================================================
@@ -326,7 +334,7 @@ export interface BreachDetectionEvents {
 
 /**
  * Data Breach Detection and Response System
- * 
+ *
  * Provides comprehensive breach detection including:
  * - Real-time monitoring and alerting
  * - Automated incident response
@@ -364,8 +372,8 @@ export class BreachDetectionSystem extends EventEmitter {
       alertThresholds: {
         critical: 1,
         high: 3,
-        medium: 10
-      }
+        medium: 10,
+      },
     }
   ) {
     super();
@@ -392,7 +400,7 @@ export class BreachDetectionSystem extends EventEmitter {
       if (this.config.realTimeMonitoring) {
         this.startMonitoringInterval();
       }
-      
+
       this.startComplianceCheckInterval();
 
       this.isInitialized = true;
@@ -400,9 +408,8 @@ export class BreachDetectionSystem extends EventEmitter {
         timestamp: new Date(),
         rulesLoaded: this.rules.size,
         incidentsLoaded: this.incidents.size,
-        alertsLoaded: this.alerts.size
+        alertsLoaded: this.alerts.size,
       });
-
     } catch (error) {
       throw new Error(`Failed to initialize breach detection system: ${error}`);
     }
@@ -422,7 +429,7 @@ export class BreachDetectionSystem extends EventEmitter {
       ...incidentData,
       id: this.generateId('incident'),
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     // Validate incident data
@@ -454,7 +461,7 @@ export class BreachDetectionSystem extends EventEmitter {
       type: incident.type,
       severity: incident.severity,
       affectedRecords: incident.affectedData.estimatedRecords,
-      createdBy: incident.createdBy
+      createdBy: incident.createdBy,
     });
 
     return incident;
@@ -495,14 +502,14 @@ export class BreachDetectionSystem extends EventEmitter {
     incident.investigation.timeline.push({
       timestamp: new Date(),
       event: `Status changed from ${previousStatus} to ${status}`,
-      source: updatedBy
+      source: updatedBy,
     });
 
     if (notes) {
       incident.investigation.timeline.push({
         timestamp: new Date(),
         event: `Notes: ${notes}`,
-        source: updatedBy
+        source: updatedBy,
       });
     }
 
@@ -525,7 +532,7 @@ export class BreachDetectionSystem extends EventEmitter {
       incidentId,
       previousStatus,
       newStatus: status,
-      updatedBy
+      updatedBy,
     });
 
     return incident;
@@ -536,7 +543,10 @@ export class BreachDetectionSystem extends EventEmitter {
    */
   async createAlert(
     ruleId: string,
-    alertData: Omit<MonitoringAlert, 'id' | 'ruleId' | 'ruleName' | 'createdAt' | 'updatedAt'>
+    alertData: Omit<
+      MonitoringAlert,
+      'id' | 'ruleId' | 'ruleName' | 'createdAt' | 'updatedAt'
+    >
   ): Promise<MonitoringAlert> {
     if (!this.isInitialized) {
       await this.initialize();
@@ -555,7 +565,7 @@ export class BreachDetectionSystem extends EventEmitter {
       responseActions: [],
       relatedIncidents: [],
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     this.alerts.set(alert.id, alert);
@@ -577,7 +587,7 @@ export class BreachDetectionSystem extends EventEmitter {
       alertId: alert.id,
       ruleId,
       severity: alert.severity,
-      sourceSystem: alert.context.sourceSystem
+      sourceSystem: alert.context.sourceSystem,
     });
 
     return alert;
@@ -617,11 +627,11 @@ export class BreachDetectionSystem extends EventEmitter {
             indicators: event.data,
             metadata: {
               eventType: event.type,
-              originalSeverity: event.severity
-            }
-          }
+              originalSeverity: event.severity,
+            },
+          },
         });
-        
+
         triggeredAlerts.push(alert);
       }
     }
@@ -642,23 +652,26 @@ export class BreachDetectionSystem extends EventEmitter {
 
     if (filters) {
       if (filters.status) {
-        incidents = incidents.filter(i => i.status === filters.status);
+        incidents = incidents.filter((i) => i.status === filters.status);
       }
       if (filters.severity) {
-        incidents = incidents.filter(i => i.severity === filters.severity);
+        incidents = incidents.filter((i) => i.severity === filters.severity);
       }
       if (filters.type) {
-        incidents = incidents.filter(i => i.type === filters.type);
+        incidents = incidents.filter((i) => i.type === filters.type);
       }
       if (filters.dateRange) {
-        incidents = incidents.filter(i => 
-          i.detectedAt >= filters.dateRange!.start && 
-          i.detectedAt <= filters.dateRange!.end
+        incidents = incidents.filter(
+          (i) =>
+            i.detectedAt >= filters.dateRange?.start &&
+            i.detectedAt <= filters.dateRange?.end
         );
       }
     }
 
-    return incidents.sort((a, b) => b.detectedAt.getTime() - a.detectedAt.getTime());
+    return incidents.sort(
+      (a, b) => b.detectedAt.getTime() - a.detectedAt.getTime()
+    );
   }
 
   /**
@@ -673,17 +686,19 @@ export class BreachDetectionSystem extends EventEmitter {
 
     if (filters) {
       if (filters.status) {
-        alerts = alerts.filter(a => a.status === filters.status);
+        alerts = alerts.filter((a) => a.status === filters.status);
       }
       if (filters.severity) {
-        alerts = alerts.filter(a => a.severity === filters.severity);
+        alerts = alerts.filter((a) => a.severity === filters.severity);
       }
       if (filters.ruleId) {
-        alerts = alerts.filter(a => a.ruleId === filters.ruleId);
+        alerts = alerts.filter((a) => a.ruleId === filters.ruleId);
       }
     }
 
-    return alerts.sort((a, b) => b.detectedAt.getTime() - a.detectedAt.getTime());
+    return alerts.sort(
+      (a, b) => b.detectedAt.getTime() - a.detectedAt.getTime()
+    );
   }
 
   /**
@@ -725,7 +740,7 @@ export class BreachDetectionSystem extends EventEmitter {
     const report = {
       reportId,
       content,
-      generatedAt: new Date()
+      generatedAt: new Date(),
     };
 
     await this.saveReport(report);
@@ -733,7 +748,7 @@ export class BreachDetectionSystem extends EventEmitter {
     this.logActivity('user', 'breach_report_generated', {
       incidentId,
       reportType,
-      reportId
+      reportId,
     });
 
     return report;
@@ -746,15 +761,40 @@ export class BreachDetectionSystem extends EventEmitter {
     let score = 0;
 
     // Data sensitivity scoring
-    if (incident.affectedData.categories.includes(AffectedDataCategory.SENSITIVE_PERSONAL)) score += 30;
-    if (incident.affectedData.categories.includes(AffectedDataCategory.FINANCIAL_DATA)) score += 25;
-    if (incident.affectedData.categories.includes(AffectedDataCategory.HEALTH_DATA)) score += 25;
-    if (incident.affectedData.categories.includes(AffectedDataCategory.BIOMETRIC_DATA)) score += 20;
-    if (incident.affectedData.categories.includes(AffectedDataCategory.CHILDREN_DATA)) score += 20;
+    if (
+      incident.affectedData.categories.includes(
+        AffectedDataCategory.SENSITIVE_PERSONAL
+      )
+    )
+      score += 30;
+    if (
+      incident.affectedData.categories.includes(
+        AffectedDataCategory.FINANCIAL_DATA
+      )
+    )
+      score += 25;
+    if (
+      incident.affectedData.categories.includes(
+        AffectedDataCategory.HEALTH_DATA
+      )
+    )
+      score += 25;
+    if (
+      incident.affectedData.categories.includes(
+        AffectedDataCategory.BIOMETRIC_DATA
+      )
+    )
+      score += 20;
+    if (
+      incident.affectedData.categories.includes(
+        AffectedDataCategory.CHILDREN_DATA
+      )
+    )
+      score += 20;
 
     // Volume scoring
-    if (incident.affectedData.estimatedRecords > 100000) score += 20;
-    else if (incident.affectedData.estimatedRecords > 10000) score += 15;
+    if (incident.affectedData.estimatedRecords > 100_000) score += 20;
+    else if (incident.affectedData.estimatedRecords > 10_000) score += 15;
     else if (incident.affectedData.estimatedRecords > 1000) score += 10;
     else if (incident.affectedData.estimatedRecords > 100) score += 5;
 
@@ -788,94 +828,105 @@ export class BreachDetectionSystem extends EventEmitter {
    */
   private setComplianceDeadlines(incident: BreachIncident): void {
     const now = new Date();
-    
+
     // ANPD notification deadline (72 hours for high-risk breaches)
-    if (incident.severity === BreachSeverity.CRITICAL || incident.severity === BreachSeverity.HIGH) {
-      const anpdDeadline = new Date(now.getTime() + (72 * 60 * 60 * 1000));
+    if (
+      incident.severity === BreachSeverity.CRITICAL ||
+      incident.severity === BreachSeverity.HIGH
+    ) {
+      const anpdDeadline = new Date(now.getTime() + 72 * 60 * 60 * 1000);
       incident.compliance.notificationDeadlines.push({
         authority: 'ANPD',
         deadline: anpdDeadline,
-        completed: false
+        completed: false,
       });
     }
 
     // Data subject notification deadline (varies based on risk)
-    const dataSubjectDeadline = new Date(now.getTime() + (30 * 24 * 60 * 60 * 1000)); // 30 days default
+    const dataSubjectDeadline = new Date(
+      now.getTime() + 30 * 24 * 60 * 60 * 1000
+    ); // 30 days default
     incident.compliance.notificationDeadlines.push({
       authority: 'Data Subjects',
       deadline: dataSubjectDeadline,
-      completed: false
+      completed: false,
     });
   }
 
   /**
    * Start forensic collection
    */
-  private async startForensicCollection(incident: BreachIncident): Promise<void> {
+  private async startForensicCollection(
+    incident: BreachIncident
+  ): Promise<void> {
     // Collect system logs
     incident.investigation.forensicEvidence.push({
       type: 'system_logs',
       location: '/var/log/security',
-      collectedAt: new Date()
+      collectedAt: new Date(),
     });
 
     // Collect network traffic
     incident.investigation.forensicEvidence.push({
       type: 'network_traffic',
       location: '/var/log/network',
-      collectedAt: new Date()
+      collectedAt: new Date(),
     });
 
     // Collect application logs
     incident.investigation.forensicEvidence.push({
       type: 'application_logs',
       location: '/var/log/application',
-      collectedAt: new Date()
+      collectedAt: new Date(),
     });
 
     this.logActivity('system', 'forensic_collection_started', {
       incidentId: incident.id,
-      evidenceCount: incident.investigation.forensicEvidence.length
+      evidenceCount: incident.investigation.forensicEvidence.length,
     });
   }
 
   /**
    * Trigger immediate response
    */
-  private async triggerImmediateResponse(incident: BreachIncident): Promise<void> {
+  private async triggerImmediateResponse(
+    incident: BreachIncident
+  ): Promise<void> {
     // Add immediate containment actions based on incident type
     switch (incident.type) {
       case BreachType.UNAUTHORIZED_ACCESS:
         incident.response.immediateActions.push({
           action: 'Disable compromised user accounts',
           assignedTo: 'security_team',
-          status: 'pending'
+          status: 'pending',
         });
         break;
       case BreachType.SYSTEM_COMPROMISE:
         incident.response.immediateActions.push({
           action: 'Isolate affected systems',
           assignedTo: 'security_team',
-          status: 'pending'
+          status: 'pending',
         });
         break;
       case BreachType.DATA_EXFILTRATION:
         incident.response.immediateActions.push({
           action: 'Block suspicious network traffic',
           assignedTo: 'network_team',
-          status: 'pending'
+          status: 'pending',
         });
         break;
     }
 
     // Auto-notification if enabled
-    if (this.config.autoNotificationEnabled && 
-        (incident.severity === BreachSeverity.CRITICAL || incident.severity === BreachSeverity.HIGH)) {
-      
+    if (
+      this.config.autoNotificationEnabled &&
+      (incident.severity === BreachSeverity.CRITICAL ||
+        incident.severity === BreachSeverity.HIGH)
+    ) {
       this.emit('notification:required', {
         incident,
         type: 'immediate',
-        deadline: new Date(Date.now() + (60 * 60 * 1000)) // 1 hour
+        deadline: new Date(Date.now() + 60 * 60 * 1000), // 1 hour
       });
     }
   }
@@ -883,7 +934,10 @@ export class BreachDetectionSystem extends EventEmitter {
   /**
    * Evaluate detection rule against event
    */
-  private async evaluateRule(rule: DetectionRule, event: any): Promise<boolean> {
+  private async evaluateRule(
+    rule: DetectionRule,
+    event: any
+  ): Promise<boolean> {
     // Simple rule evaluation - in a real implementation this would be more sophisticated
     for (const condition of rule.conditions) {
       switch (condition.type) {
@@ -914,10 +968,10 @@ export class BreachDetectionSystem extends EventEmitter {
     const field = condition.parameters.field;
     const threshold = condition.parameters.threshold;
     const operator = condition.parameters.operator || '>=';
-    
+
     const value = this.getNestedValue(event.data, field);
     if (value === undefined) return false;
-    
+
     switch (operator) {
       case '>=':
         return value >= threshold;
@@ -939,25 +993,31 @@ export class BreachDetectionSystem extends EventEmitter {
    */
   private evaluatePatternCondition(condition: any, event: any): boolean {
     const field = condition.parameters.field;
-    const pattern = new RegExp(condition.parameters.pattern, condition.parameters.flags || 'i');
-    
+    const pattern = new RegExp(
+      condition.parameters.pattern,
+      condition.parameters.flags || 'i'
+    );
+
     const value = this.getNestedValue(event.data, field);
     if (typeof value !== 'string') return false;
-    
+
     return pattern.test(value);
   }
 
   /**
    * Evaluate anomaly condition
    */
-  private async evaluateAnomalyCondition(condition: any, event: any): Promise<boolean> {
+  private async evaluateAnomalyCondition(
+    condition: any,
+    event: any
+  ): Promise<boolean> {
     // Simple anomaly detection - in a real implementation this would use ML
     const field = condition.parameters.field;
-    const threshold = condition.parameters.threshold || 2; // Standard deviations
-    
+    const _threshold = condition.parameters.threshold || 2; // Standard deviations
+
     const value = this.getNestedValue(event.data, field);
     if (typeof value !== 'number') return false;
-    
+
     // For demo purposes, consider values > 1000 as anomalous
     return value > 1000;
   }
@@ -966,20 +1026,23 @@ export class BreachDetectionSystem extends EventEmitter {
    * Check for auto-escalation
    */
   private async checkAutoEscalation(alert: MonitoringAlert): Promise<void> {
-    const threshold = this.config.alertThresholds[alert.severity as keyof typeof this.config.alertThresholds];
-    
+    const threshold =
+      this.config.alertThresholds[
+        alert.severity as keyof typeof this.config.alertThresholds
+      ];
+
     if (threshold && this.shouldEscalate(alert, threshold)) {
       alert.escalatedAt = new Date();
       alert.escalatedTo = 'security_manager';
-      
+
       await this.saveAlert(alert);
-      
+
       this.emit('alert:escalated', { alert });
-      
+
       this.logActivity('system', 'alert_escalated', {
         alertId: alert.id,
         severity: alert.severity,
-        escalatedTo: alert.escalatedTo
+        escalatedTo: alert.escalatedTo,
       });
     }
   }
@@ -989,14 +1052,14 @@ export class BreachDetectionSystem extends EventEmitter {
    */
   private shouldEscalate(alert: MonitoringAlert, threshold: number): boolean {
     // Count similar alerts in the last hour
-    const oneHourAgo = new Date(Date.now() - (60 * 60 * 1000));
-    const similarAlerts = Array.from(this.alerts.values())
-      .filter(a => 
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+    const similarAlerts = Array.from(this.alerts.values()).filter(
+      (a) =>
         a.ruleId === alert.ruleId &&
         a.detectedAt >= oneHourAgo &&
         a.status === 'open'
-      );
-    
+    );
+
     return similarAlerts.length >= threshold;
   }
 
@@ -1009,32 +1072,34 @@ export class BreachDetectionSystem extends EventEmitter {
       organizationInfo: {
         name: 'NeonPro',
         cnpj: '00.000.000/0001-00',
-        dpo: 'dpo@neonpro.com'
+        dpo: 'dpo@neonpro.com',
       },
       incidentDetails: {
         type: incident.type,
         detectedAt: incident.detectedAt,
         description: incident.description,
         affectedDataCategories: incident.affectedData.categories,
-        estimatedAffectedRecords: incident.affectedData.estimatedRecords
+        estimatedAffectedRecords: incident.affectedData.estimatedRecords,
       },
       riskAssessment: {
         severity: incident.severity,
         businessImpact: incident.impact.businessImpact,
-        dataSubjectsAffected: incident.impact.dataSubjectsAffected
+        dataSubjectsAffected: incident.impact.dataSubjectsAffected,
       },
       responseActions: {
         containmentMeasures: incident.response.containmentMeasures,
-        mitigationSteps: incident.response.mitigationSteps
+        mitigationSteps: incident.response.mitigationSteps,
       },
-      timeline: incident.investigation.timeline
+      timeline: incident.investigation.timeline,
     };
   }
 
   /**
    * Generate internal report
    */
-  private generateInternalReport(incident: BreachIncident): Record<string, any> {
+  private generateInternalReport(
+    incident: BreachIncident
+  ): Record<string, any> {
     return {
       executiveSummary: {
         incidentId: incident.id,
@@ -1042,72 +1107,88 @@ export class BreachDetectionSystem extends EventEmitter {
         severity: incident.severity,
         status: incident.status,
         detectedAt: incident.detectedAt,
-        affectedRecords: incident.affectedData.estimatedRecords
+        affectedRecords: incident.affectedData.estimatedRecords,
       },
       technicalDetails: incident.technicalDetails,
       impactAssessment: incident.impact,
       responseActions: incident.response,
       investigation: incident.investigation,
       lessonsLearned: [],
-      recommendations: []
+      recommendations: [],
     };
   }
 
   /**
    * Generate data subject report
    */
-  private generateDataSubjectReport(incident: BreachIncident): Record<string, any> {
+  private generateDataSubjectReport(
+    incident: BreachIncident
+  ): Record<string, any> {
     return {
       incidentSummary: {
         what: 'A security incident occurred that may have affected your personal data',
         when: incident.detectedAt,
-        dataTypes: incident.affectedData.dataTypes
+        dataTypes: incident.affectedData.dataTypes,
       },
       riskToIndividuals: {
         likelihood: this.assessRiskToIndividuals(incident),
-        potentialConsequences: this.getPotentialConsequences(incident)
+        potentialConsequences: this.getPotentialConsequences(incident),
       },
       actionsTaken: {
         containment: incident.response.containmentMeasures,
-        mitigation: incident.response.mitigationSteps
+        mitigation: incident.response.mitigationSteps,
       },
       recommendedActions: this.getRecommendedActionsForDataSubjects(incident),
       contactInformation: {
         dpo: 'dpo@neonpro.com',
-        supportTeam: 'security@neonpro.com'
-      }
+        supportTeam: 'security@neonpro.com',
+      },
     };
   }
 
   /**
    * Generate forensic report
    */
-  private generateForensicReport(incident: BreachIncident): Record<string, any> {
+  private generateForensicReport(
+    incident: BreachIncident
+  ): Record<string, any> {
     return {
       incidentOverview: {
         id: incident.id,
         type: incident.type,
         detectedAt: incident.detectedAt,
-        investigator: incident.investigation.leadInvestigator
+        investigator: incident.investigation.leadInvestigator,
       },
       technicalAnalysis: incident.technicalDetails,
       evidenceCollection: incident.investigation.forensicEvidence,
       timeline: incident.investigation.timeline,
       findings: incident.investigation.findings,
       rootCause: incident.investigation.rootCause,
-      recommendations: []
+      recommendations: [],
     };
   }
 
   /**
    * Assess risk to individuals
    */
-  private assessRiskToIndividuals(incident: BreachIncident): 'low' | 'medium' | 'high' {
-    if (incident.affectedData.categories.includes(AffectedDataCategory.SENSITIVE_PERSONAL) ||
-        incident.affectedData.categories.includes(AffectedDataCategory.FINANCIAL_DATA)) {
+  private assessRiskToIndividuals(
+    incident: BreachIncident
+  ): 'low' | 'medium' | 'high' {
+    if (
+      incident.affectedData.categories.includes(
+        AffectedDataCategory.SENSITIVE_PERSONAL
+      ) ||
+      incident.affectedData.categories.includes(
+        AffectedDataCategory.FINANCIAL_DATA
+      )
+    ) {
       return 'high';
     }
-    if (incident.affectedData.categories.includes(AffectedDataCategory.PERSONAL_IDENTIFIERS)) {
+    if (
+      incident.affectedData.categories.includes(
+        AffectedDataCategory.PERSONAL_IDENTIFIERS
+      )
+    ) {
       return 'medium';
     }
     return 'low';
@@ -1118,38 +1199,60 @@ export class BreachDetectionSystem extends EventEmitter {
    */
   private getPotentialConsequences(incident: BreachIncident): string[] {
     const consequences: string[] = [];
-    
-    if (incident.affectedData.categories.includes(AffectedDataCategory.FINANCIAL_DATA)) {
+
+    if (
+      incident.affectedData.categories.includes(
+        AffectedDataCategory.FINANCIAL_DATA
+      )
+    ) {
       consequences.push('Financial fraud or identity theft');
     }
-    if (incident.affectedData.categories.includes(AffectedDataCategory.SENSITIVE_PERSONAL)) {
+    if (
+      incident.affectedData.categories.includes(
+        AffectedDataCategory.SENSITIVE_PERSONAL
+      )
+    ) {
       consequences.push('Discrimination or reputational damage');
     }
-    if (incident.affectedData.categories.includes(AffectedDataCategory.AUTHENTICATION_DATA)) {
+    if (
+      incident.affectedData.categories.includes(
+        AffectedDataCategory.AUTHENTICATION_DATA
+      )
+    ) {
       consequences.push('Unauthorized account access');
     }
-    
+
     return consequences;
   }
 
   /**
    * Get recommended actions for data subjects
    */
-  private getRecommendedActionsForDataSubjects(incident: BreachIncident): string[] {
+  private getRecommendedActionsForDataSubjects(
+    incident: BreachIncident
+  ): string[] {
     const actions: string[] = [];
-    
-    if (incident.affectedData.categories.includes(AffectedDataCategory.AUTHENTICATION_DATA)) {
+
+    if (
+      incident.affectedData.categories.includes(
+        AffectedDataCategory.AUTHENTICATION_DATA
+      )
+    ) {
       actions.push('Change your password immediately');
       actions.push('Enable two-factor authentication');
     }
-    if (incident.affectedData.categories.includes(AffectedDataCategory.FINANCIAL_DATA)) {
+    if (
+      incident.affectedData.categories.includes(
+        AffectedDataCategory.FINANCIAL_DATA
+      )
+    ) {
       actions.push('Monitor your financial accounts for suspicious activity');
       actions.push('Consider placing a fraud alert on your credit report');
     }
-    
+
     actions.push('Monitor your account for unusual activity');
     actions.push('Contact us if you notice any suspicious activity');
-    
+
     return actions;
   }
 
@@ -1157,18 +1260,24 @@ export class BreachDetectionSystem extends EventEmitter {
    * Start monitoring interval
    */
   private startMonitoringInterval(): void {
-    this.monitoringInterval = setInterval(async () => {
-      await this.performMonitoringCheck();
-    }, this.config.monitoringIntervalMinutes * 60 * 1000);
+    this.monitoringInterval = setInterval(
+      async () => {
+        await this.performMonitoringCheck();
+      },
+      this.config.monitoringIntervalMinutes * 60 * 1000
+    );
   }
 
   /**
    * Start compliance check interval
    */
   private startComplianceCheckInterval(): void {
-    this.complianceCheckInterval = setInterval(async () => {
-      await this.performComplianceCheck();
-    }, this.config.complianceCheckIntervalHours * 60 * 60 * 1000);
+    this.complianceCheckInterval = setInterval(
+      async () => {
+        await this.performComplianceCheck();
+      },
+      this.config.complianceCheckIntervalHours * 60 * 60 * 1000
+    );
   }
 
   /**
@@ -1177,33 +1286,33 @@ export class BreachDetectionSystem extends EventEmitter {
   private async performMonitoringCheck(): Promise<void> {
     try {
       // Check for system health
-      const openAlerts = Array.from(this.alerts.values())
-        .filter(a => a.status === 'open');
-      
+      const openAlerts = Array.from(this.alerts.values()).filter(
+        (a) => a.status === 'open'
+      );
+
       if (openAlerts.length > 100) {
         this.logActivity('system', 'high_alert_volume', {
           openAlerts: openAlerts.length,
-          timestamp: new Date()
+          timestamp: new Date(),
         });
       }
-      
+
       // Check for stale incidents
-      const staleIncidents = Array.from(this.incidents.values())
-        .filter(i => {
-          const daysSinceUpdate = (Date.now() - i.updatedAt.getTime()) / (1000 * 60 * 60 * 24);
-          return i.status === BreachStatus.INVESTIGATING && daysSinceUpdate > 7;
-        });
-      
+      const staleIncidents = Array.from(this.incidents.values()).filter((i) => {
+        const daysSinceUpdate =
+          (Date.now() - i.updatedAt.getTime()) / (1000 * 60 * 60 * 24);
+        return i.status === BreachStatus.INVESTIGATING && daysSinceUpdate > 7;
+      });
+
       if (staleIncidents.length > 0) {
         this.logActivity('system', 'stale_incidents_detected', {
           staleIncidents: staleIncidents.length,
-          incidents: staleIncidents.map(i => i.id)
+          incidents: staleIncidents.map((i) => i.id),
         });
       }
-      
     } catch (error) {
       this.logActivity('system', 'monitoring_check_error', {
-        error: String(error)
+        error: String(error),
       });
     }
   }
@@ -1215,28 +1324,27 @@ export class BreachDetectionSystem extends EventEmitter {
     try {
       const now = new Date();
       const twentyFourHours = 24 * 60 * 60 * 1000;
-      
+
       // Check for approaching deadlines
       for (const incident of this.incidents.values()) {
         for (const deadline of incident.compliance.notificationDeadlines) {
           if (!deadline.completed) {
             const timeRemaining = deadline.deadline.getTime() - now.getTime();
             const hoursRemaining = Math.floor(timeRemaining / (60 * 60 * 1000));
-            
+
             if (timeRemaining <= twentyFourHours && timeRemaining > 0) {
               this.emit('compliance:deadline_approaching', {
                 incident,
                 deadline: deadline.deadline,
-                hoursRemaining
+                hoursRemaining,
               });
             }
           }
         }
       }
-      
     } catch (error) {
       this.logActivity('system', 'compliance_check_error', {
-        error: String(error)
+        error: String(error),
       });
     }
   }
@@ -1248,11 +1356,11 @@ export class BreachDetectionSystem extends EventEmitter {
     if (!incident.title || incident.title.trim().length === 0) {
       throw new Error('Incident title is required');
     }
-    
+
     if (!incident.description || incident.description.trim().length === 0) {
       throw new Error('Incident description is required');
     }
-    
+
     if (incident.affectedData.estimatedRecords < 0) {
       throw new Error('Affected records count cannot be negative');
     }
@@ -1279,32 +1387,38 @@ export class BreachDetectionSystem extends EventEmitter {
         category: 'authentication',
         severity: BreachSeverity.MEDIUM,
         enabled: true,
-        conditions: [{
-          type: 'threshold',
-          parameters: {
-            field: 'failed_attempts',
-            threshold: 5,
-            operator: '>='
+        conditions: [
+          {
+            type: 'threshold',
+            parameters: {
+              field: 'failed_attempts',
+              threshold: 5,
+              operator: '>=',
+            },
+            timeWindow: { value: 15, unit: 'minutes' },
           },
-          timeWindow: { value: 15, unit: 'minutes' }
-        }],
-        dataSources: [{
-          type: 'auth_logs',
-          location: '/var/log/auth.log',
-          fields: ['ip_address', 'failed_attempts', 'timestamp']
-        }],
-        actions: [{
-          type: 'alert',
-          parameters: { priority: 'high' }
-        }],
+        ],
+        dataSources: [
+          {
+            type: 'auth_logs',
+            location: '/var/log/auth.log',
+            fields: ['ip_address', 'failed_attempts', 'timestamp'],
+          },
+        ],
+        actions: [
+          {
+            type: 'alert',
+            parameters: { priority: 'high' },
+          },
+        ],
         createdBy: 'system',
         triggerCount: 0,
         falsePositiveRate: 0.1,
         createdAt: new Date(),
-        updatedAt: new Date()
-      }
+        updatedAt: new Date(),
+      },
     ];
-    
+
     for (const rule of sampleRules) {
       this.rules.set(rule.id, rule);
     }
@@ -1351,14 +1465,18 @@ export class BreachDetectionSystem extends EventEmitter {
   /**
    * Save report
    */
-  private async saveReport(report: any): Promise<void> {
+  private async saveReport(_report: any): Promise<void> {
     // In a real implementation, this would save to database
   }
 
   /**
    * Log activity
    */
-  private logActivity(actor: string, action: string, details: Record<string, any>): void {
+  private logActivity(
+    actor: string,
+    action: string,
+    details: Record<string, any>
+  ): void {
     // In a real implementation, this would log to audit trail
     console.log(`[BreachDetection] ${actor} - ${action}:`, details);
   }
@@ -1378,17 +1496,17 @@ export class BreachDetectionSystem extends EventEmitter {
       clearInterval(this.monitoringInterval);
       this.monitoringInterval = null;
     }
-    
+
     if (this.complianceCheckInterval) {
       clearInterval(this.complianceCheckInterval);
       this.complianceCheckInterval = null;
     }
-    
+
     this.removeAllListeners();
     this.isInitialized = false;
-    
+
     this.logActivity('system', 'breach_detection_shutdown', {
-      timestamp: new Date()
+      timestamp: new Date(),
     });
   }
 
@@ -1400,34 +1518,43 @@ export class BreachDetectionSystem extends EventEmitter {
     details: Record<string, any>;
   } {
     const issues: string[] = [];
-    
+
     if (!this.isInitialized) {
       issues.push('Breach detection system not initialized');
     }
-    
+
     if (this.config.realTimeMonitoring && !this.monitoringInterval) {
       issues.push('Real-time monitoring not running');
     }
-    
+
     if (!this.complianceCheckInterval) {
       issues.push('Compliance checking not running');
     }
-    
-    const enabledRules = Array.from(this.rules.values()).filter(r => r.enabled);
+
+    const enabledRules = Array.from(this.rules.values()).filter(
+      (r) => r.enabled
+    );
     if (enabledRules.length === 0) {
       issues.push('No enabled detection rules');
     }
-    
-    const openIncidents = Array.from(this.incidents.values())
-      .filter(i => i.status !== BreachStatus.RESOLVED && i.status !== BreachStatus.FALSE_POSITIVE);
-    
+
+    const openIncidents = Array.from(this.incidents.values()).filter(
+      (i) =>
+        i.status !== BreachStatus.RESOLVED &&
+        i.status !== BreachStatus.FALSE_POSITIVE
+    );
+
     if (openIncidents.length > 50) {
       issues.push(`High number of open incidents: ${openIncidents.length}`);
     }
-    
-    const status = issues.length === 0 ? 'healthy' : 
-                  issues.length <= 2 ? 'degraded' : 'unhealthy';
-    
+
+    const status =
+      issues.length === 0
+        ? 'healthy'
+        : issues.length <= 2
+          ? 'degraded'
+          : 'unhealthy';
+
     return {
       status,
       details: {
@@ -1438,8 +1565,8 @@ export class BreachDetectionSystem extends EventEmitter {
         openIncidents: openIncidents.length,
         alertsCount: this.alerts.size,
         realTimeMonitoring: this.config.realTimeMonitoring,
-        issues
-      }
+        issues,
+      },
     };
   }
 }
@@ -1456,5 +1583,5 @@ export type {
   BreachIncident,
   MonitoringAlert,
   DetectionRule,
-  BreachDetectionEvents
+  BreachDetectionEvents,
 };

@@ -1,7 +1,14 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { createContext, useContext, ReactNode } from 'react';
+import {
+  createContext,
+  type ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 
 // =====================================================================================
 // GLOBAL STATE MANAGEMENT HOOK
@@ -30,18 +37,20 @@ interface GlobalStateProviderProps {
   persistKeys?: string[]; // Keys to persist in localStorage
 }
 
-export function GlobalStateProvider({ 
-  children, 
-  persistKeys = [] 
+export function GlobalStateProvider({
+  children,
+  persistKeys = [],
 }: GlobalStateProviderProps) {
   const stateRef = useRef<Map<string, any>>(new Map());
-  const subscribersRef = useRef<Map<string, Set<(value: any) => void>>>(new Map());
-  const [, forceUpdate] = useState({});
+  const subscribersRef = useRef<Map<string, Set<(value: any) => void>>>(
+    new Map()
+  );
+  const [, _forceUpdate] = useState({});
 
   // Initialize persisted state
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      persistKeys.forEach(key => {
+      persistKeys.forEach((key) => {
         try {
           const stored = localStorage.getItem(`neonpro_state_${key}`);
           if (stored) {
@@ -58,82 +67,95 @@ export function GlobalStateProvider({
     return stateRef.current.get(key);
   }, []);
 
-  const setState = useCallback(<T>(key: string, value: T | StateUpdater<T>) => {
-    const currentValue = stateRef.current.get(key);
-    const newValue = typeof value === 'function' 
-      ? (value as StateUpdater<T>)(currentValue)
-      : value;
+  const setState = useCallback(
+    <T>(key: string, value: T | StateUpdater<T>) => {
+      const currentValue = stateRef.current.get(key);
+      const newValue =
+        typeof value === 'function'
+          ? (value as StateUpdater<T>)(currentValue)
+          : value;
 
-    stateRef.current.set(key, newValue);
+      stateRef.current.set(key, newValue);
 
-    // Persist if key is in persistKeys
-    if (persistKeys.includes(key) && typeof window !== 'undefined') {
-      try {
-        localStorage.setItem(`neonpro_state_${key}`, JSON.stringify(newValue));
-      } catch (error) {
-        console.warn(`Failed to persist state for key: ${key}`, error);
-      }
-    }
-
-    // Notify subscribers
-    const subscribers = subscribersRef.current.get(key);
-    if (subscribers) {
-      subscribers.forEach(callback => {
+      // Persist if key is in persistKeys
+      if (persistKeys.includes(key) && typeof window !== 'undefined') {
         try {
-          callback(newValue);
+          localStorage.setItem(
+            `neonpro_state_${key}`,
+            JSON.stringify(newValue)
+          );
         } catch (error) {
-          console.error(`Error in state subscriber for key: ${key}`, error);
+          console.warn(`Failed to persist state for key: ${key}`, error);
         }
-      });
-    }
-  }, [persistKeys]);
-
-  const subscribe = useCallback((key: string, callback: (value: any) => void) => {
-    if (!subscribersRef.current.has(key)) {
-      subscribersRef.current.set(key, new Set());
-    }
-    
-    const subscribers = subscribersRef.current.get(key)!;
-    subscribers.add(callback);
-
-    // Return unsubscribe function
-    return () => {
-      subscribers.delete(callback);
-      if (subscribers.size === 0) {
-        subscribersRef.current.delete(key);
       }
-    };
-  }, []);
 
-  const clearState = useCallback((key: string) => {
-    stateRef.current.delete(key);
-    
-    if (persistKeys.includes(key) && typeof window !== 'undefined') {
-      localStorage.removeItem(`neonpro_state_${key}`);
-    }
+      // Notify subscribers
+      const subscribers = subscribersRef.current.get(key);
+      if (subscribers) {
+        subscribers.forEach((callback) => {
+          try {
+            callback(newValue);
+          } catch (error) {
+            console.error(`Error in state subscriber for key: ${key}`, error);
+          }
+        });
+      }
+    },
+    [persistKeys]
+  );
 
-    // Notify subscribers
-    const subscribers = subscribersRef.current.get(key);
-    if (subscribers) {
-      subscribers.forEach(callback => callback(undefined));
-    }
-  }, [persistKeys]);
+  const subscribe = useCallback(
+    (key: string, callback: (value: any) => void) => {
+      if (!subscribersRef.current.has(key)) {
+        subscribersRef.current.set(key, new Set());
+      }
+
+      const subscribers = subscribersRef.current.get(key)!;
+      subscribers.add(callback);
+
+      // Return unsubscribe function
+      return () => {
+        subscribers.delete(callback);
+        if (subscribers.size === 0) {
+          subscribersRef.current.delete(key);
+        }
+      };
+    },
+    []
+  );
+
+  const clearState = useCallback(
+    (key: string) => {
+      stateRef.current.delete(key);
+
+      if (persistKeys.includes(key) && typeof window !== 'undefined') {
+        localStorage.removeItem(`neonpro_state_${key}`);
+      }
+
+      // Notify subscribers
+      const subscribers = subscribersRef.current.get(key);
+      if (subscribers) {
+        subscribers.forEach((callback) => callback(undefined));
+      }
+    },
+    [persistKeys]
+  );
 
   const clearAllState = useCallback(() => {
     const keys = Array.from(stateRef.current.keys());
     stateRef.current.clear();
-    
+
     if (typeof window !== 'undefined') {
-      persistKeys.forEach(key => {
+      persistKeys.forEach((key) => {
         localStorage.removeItem(`neonpro_state_${key}`);
       });
     }
 
     // Notify all subscribers
-    keys.forEach(key => {
+    keys.forEach((key) => {
       const subscribers = subscribersRef.current.get(key);
       if (subscribers) {
-        subscribers.forEach(callback => callback(undefined));
+        subscribers.forEach((callback) => callback(undefined));
       }
     });
   }, [persistKeys]);
@@ -143,14 +165,11 @@ export function GlobalStateProvider({
     setState,
     subscribe,
     clearState,
-    clearAllState
+    clearAllState,
   };
 
-  return (
-    <GlobalStateContext.Provider value={contextValue}>
-      {children}
-    </GlobalStateContext.Provider>
-  );
+  return (<GlobalStateContext.Provider value =
+    { contextValue } > { children } < /.>CGPSaabdeeeillnooorrttttvx);
 }
 
 // =====================================================================================
@@ -158,11 +177,11 @@ export function GlobalStateProvider({
 // =====================================================================================
 
 export function useGlobalState<T>(
-  key: string, 
+  key: string,
   initialValue?: T
 ): [T | undefined, StateSetter<T>] {
   const context = useContext(GlobalStateContext);
-  
+
   if (!context) {
     throw new Error('useGlobalState must be used within a GlobalStateProvider');
   }
@@ -189,9 +208,12 @@ export function useGlobalState<T>(
     }
   }, [key, initialValue, getState, setState]);
 
-  const setGlobalState = useCallback<StateSetter<T>>((value) => {
-    setState(key, value);
-  }, [key, setState]);
+  const setGlobalState = useCallback<StateSetter<T>>(
+    (value) => {
+      setState(key, value);
+    },
+    [key, setState]
+  );
 
   return [localState, setGlobalState];
 }
@@ -207,7 +229,7 @@ export function useUserPreferences() {
     language: 'pt-BR',
     notifications: true,
     autoSave: true,
-    compactMode: false
+    compactMode: false,
   });
 }
 
@@ -216,9 +238,9 @@ export function useAppSettings() {
   return useGlobalState('appSettings', {
     sidebarCollapsed: false,
     defaultView: 'dashboard' as string,
-    refreshInterval: 30000,
+    refreshInterval: 30_000,
     maxRetries: 3,
-    timeout: 10000
+    timeout: 10_000,
   });
 }
 
@@ -246,49 +268,58 @@ export function useOperationState(operationKey: string) {
   const [loadingStates, setLoadingStates] = useLoadingStates();
   const [errorStates, setErrorStates] = useErrorStates();
 
-  const setLoading = useCallback((loading: boolean) => {
-    setLoadingStates(prev => ({ ...prev, [operationKey]: loading }));
-  }, [operationKey, setLoadingStates]);
+  const setLoading = useCallback(
+    (loading: boolean) => {
+      setLoadingStates((prev) => ({ ...prev, [operationKey]: loading }));
+    },
+    [operationKey, setLoadingStates]
+  );
 
-  const setError = useCallback((error: string | null) => {
-    setErrorStates(prev => ({ ...prev, [operationKey]: error }));
-  }, [operationKey, setErrorStates]);
+  const setError = useCallback(
+    (error: string | null) => {
+      setErrorStates((prev) => ({ ...prev, [operationKey]: error }));
+    },
+    [operationKey, setErrorStates]
+  );
 
   const clearError = useCallback(() => {
     setError(null);
   }, [setError]);
 
   return {
-    isLoading: loadingStates?.[operationKey] || false,
+    isLoading: loadingStates?.[operationKey],
     error: errorStates?.[operationKey] || null,
     setLoading,
     setError,
-    clearError
+    clearError,
   };
 }
 
 // Hook for temporary state that auto-clears
 export function useTemporaryState<T>(
-  key: string, 
-  initialValue: T, 
-  timeoutMs: number = 5000
+  key: string,
+  initialValue: T,
+  timeoutMs = 5000
 ) {
   const [state, setState] = useGlobalState(key, initialValue);
   const timeoutRef = useRef<NodeJS.Timeout>();
 
-  const setTemporaryState = useCallback((value: T | StateUpdater<T>) => {
-    setState(value);
-    
-    // Clear existing timeout
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-    
-    // Set new timeout to reset state
-    timeoutRef.current = setTimeout(() => {
-      setState(initialValue);
-    }, timeoutMs);
-  }, [setState, initialValue, timeoutMs]);
+  const setTemporaryState = useCallback(
+    (value: T | StateUpdater<T>) => {
+      setState(value);
+
+      // Clear existing timeout
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+
+      // Set new timeout to reset state
+      timeoutRef.current = setTimeout(() => {
+        setState(initialValue);
+      }, timeoutMs);
+    },
+    [setState, initialValue, timeoutMs]
+  );
 
   // Cleanup timeout on unmount
   useEffect(() => {

@@ -1,7 +1,7 @@
 /**
  * LGPD Data Subject Rights Management System
  * Implements automated handling of data subject rights requests
- * 
+ *
  * Features:
  * - Automated request processing for all LGPD rights
  * - Data portability with multiple export formats
@@ -11,13 +11,12 @@
  * - Objection handling with legal basis validation
  * - Automated decision-making opt-out
  * - Request tracking and status management
- * 
+ *
  * @version 1.0.0
  * @author NeonPro Development Team
  */
 
-import { EventEmitter } from 'events';
-import { z } from 'zod';
+import { EventEmitter } from 'node:events';
 
 // ============================================================================
 // DATA SUBJECT RIGHTS TYPES & INTERFACES
@@ -27,15 +26,15 @@ import { z } from 'zod';
  * LGPD Data Subject Rights
  */
 export enum DataSubjectRight {
-  ACCESS = 'access',                    // Art. 9, I - Confirmação e acesso
-  RECTIFICATION = 'rectification',      // Art. 9, III - Correção
-  ERASURE = 'erasure',                 // Art. 9, VI - Eliminação
-  PORTABILITY = 'portability',         // Art. 9, V - Portabilidade
-  RESTRICTION = 'restriction',         // Art. 9, IV - Limitação do tratamento
-  OBJECTION = 'objection',             // Art. 9, II - Oposição
+  ACCESS = 'access', // Art. 9, I - Confirmação e acesso
+  RECTIFICATION = 'rectification', // Art. 9, III - Correção
+  ERASURE = 'erasure', // Art. 9, VI - Eliminação
+  PORTABILITY = 'portability', // Art. 9, V - Portabilidade
+  RESTRICTION = 'restriction', // Art. 9, IV - Limitação do tratamento
+  OBJECTION = 'objection', // Art. 9, II - Oposição
   AUTOMATED_DECISION_OPT_OUT = 'automated_decision_opt_out', // Art. 9, VII
-  INFORMATION = 'information',         // Art. 9, VIII - Informações sobre compartilhamento
-  CONSENT_WITHDRAWAL = 'consent_withdrawal' // Art. 8, §5º
+  INFORMATION = 'information', // Art. 9, VIII - Informações sobre compartilhamento
+  CONSENT_WITHDRAWAL = 'consent_withdrawal', // Art. 8, §5º
 }
 
 /**
@@ -47,7 +46,7 @@ export enum RequestStatus {
   COMPLETED = 'completed',
   REJECTED = 'rejected',
   CANCELLED = 'cancelled',
-  EXPIRED = 'expired'
+  EXPIRED = 'expired',
 }
 
 /**
@@ -57,7 +56,7 @@ export enum RequestPriority {
   LOW = 'low',
   MEDIUM = 'medium',
   HIGH = 'high',
-  URGENT = 'urgent'
+  URGENT = 'urgent',
 }
 
 /**
@@ -67,7 +66,7 @@ export enum ExportFormat {
   JSON = 'json',
   CSV = 'csv',
   XML = 'xml',
-  PDF = 'pdf'
+  PDF = 'pdf',
 }
 
 /**
@@ -246,7 +245,10 @@ export interface RightsRequestEvents {
   'data:rectified': { userId: string; changes: Record<string, any> };
   'data:erased': { userId: string; dataTypes: string[] };
   'data:restricted': { userId: string; restrictions: string[] };
-  'audit:violation': { violation: string; severity: 'low' | 'medium' | 'high' | 'critical' };
+  'audit:violation': {
+    violation: string;
+    severity: 'low' | 'medium' | 'high' | 'critical';
+  };
 }
 
 // ============================================================================
@@ -255,7 +257,7 @@ export interface RightsRequestEvents {
 
 /**
  * Data Subject Rights Management System
- * 
+ *
  * Provides comprehensive management of LGPD data subject rights including:
  * - Automated request processing and verification
  * - Data access and portability with multiple formats
@@ -290,7 +292,7 @@ export class DataSubjectRightsManager extends EventEmitter {
       processingIntervalMinutes: 5,
       cleanupIntervalHours: 24,
       supportedFormats: [ExportFormat.JSON, ExportFormat.CSV, ExportFormat.PDF],
-      defaultLanguage: 'pt'
+      defaultLanguage: 'pt',
     }
   ) {
     super();
@@ -317,9 +319,8 @@ export class DataSubjectRightsManager extends EventEmitter {
 
       this.isInitialized = true;
       this.addAuditEntry('system', 'rights_manager_initialized', {
-        timestamp: new Date()
+        timestamp: new Date(),
       });
-
     } catch (error) {
       throw new Error(`Failed to initialize rights manager: ${error}`);
     }
@@ -346,41 +347,49 @@ export class DataSubjectRightsManager extends EventEmitter {
       requestType,
       status: RequestStatus.PENDING,
       priority: this.determinePriority(requestType, requestData),
-      description: this.generateDescription(requestType, this.config.defaultLanguage),
+      description: this.generateDescription(
+        requestType,
+        this.config.defaultLanguage
+      ),
       requestData,
       verification: {
         method: 'email',
-        verified: !this.config.verificationRequired
+        verified: !this.config.verificationRequired,
       },
       processing: {
-        automatedProcessing: this.canAutoProcess(requestType)
+        automatedProcessing: this.canAutoProcess(requestType),
       },
       response: {
-        deliveryMethod: 'download'
+        deliveryMethod: 'download',
       },
       compliance: {
         legalBasis: this.getLegalBasis(requestType),
         complianceNotes: [],
-        reviewRequired: this.requiresReview(requestType)
+        reviewRequired: this.requiresReview(requestType),
       },
-      auditTrail: [{
-        id: this.generateId(),
-        action: 'request_created',
-        actor: { type: 'user', id: userId },
-        timestamp: new Date(),
-        details: { requestType, priority: this.determinePriority(requestType, requestData) },
-        ipAddress: metadata.ipAddress,
-        userAgent: metadata.userAgent
-      }],
+      auditTrail: [
+        {
+          id: this.generateId(),
+          action: 'request_created',
+          actor: { type: 'user', id: userId },
+          timestamp: new Date(),
+          details: {
+            requestType,
+            priority: this.determinePriority(requestType, requestData),
+          },
+          ipAddress: metadata.ipAddress,
+          userAgent: metadata.userAgent,
+        },
+      ],
       metadata: {
         ipAddress: metadata.ipAddress,
         userAgent: metadata.userAgent,
         requestSource: metadata.requestSource,
         language: metadata.language || this.config.defaultLanguage,
-        urgencyJustification: metadata.urgencyJustification
+        urgencyJustification: metadata.urgencyJustification,
       },
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     // Store request
@@ -421,7 +430,7 @@ export class DataSubjectRightsManager extends EventEmitter {
 
     // Perform verification logic here
     const verified = await this.performVerification(request, verificationData);
-    
+
     if (verified) {
       request.verification.verified = true;
       request.verification.verificationDate = new Date();
@@ -437,7 +446,7 @@ export class DataSubjectRightsManager extends EventEmitter {
         timestamp: new Date(),
         details: { method: verificationData.method },
         ipAddress: request.metadata.ipAddress,
-        userAgent: request.metadata.userAgent
+        userAgent: request.metadata.userAgent,
       });
 
       // Add to processing queue
@@ -470,8 +479,11 @@ export class DataSubjectRightsManager extends EventEmitter {
       await this.saveRequest(request);
 
       // Gather user data
-      const userData = await this.gatherUserData(request.userId, request.requestData);
-      
+      const userData = await this.gatherUserData(
+        request.userId,
+        request.requestData
+      );
+
       // Create access response
       const response: DataAccessResponse = {
         personalData: userData.personalData,
@@ -484,8 +496,8 @@ export class DataSubjectRightsManager extends EventEmitter {
           generatedAt: new Date(),
           format: request.requestData.exportFormat || ExportFormat.JSON,
           language: request.metadata.language,
-          requestId: request.id
-        }
+          requestId: request.id,
+        },
       };
 
       // Complete request
@@ -494,11 +506,10 @@ export class DataSubjectRightsManager extends EventEmitter {
       // Emit event
       this.emit('data:accessed', {
         userId: request.userId,
-        dataTypes: Object.keys(userData.personalData)
+        dataTypes: Object.keys(userData.personalData),
       });
 
       return response;
-
     } catch (error) {
       await this.rejectRequest(request.id, `Processing failed: ${error}`);
       throw error;
@@ -508,7 +519,9 @@ export class DataSubjectRightsManager extends EventEmitter {
   /**
    * Process a data portability request
    */
-  async processPortabilityRequest(requestId: string): Promise<DataPortabilityPackage> {
+  async processPortabilityRequest(
+    requestId: string
+  ): Promise<DataPortabilityPackage> {
     const request = this.requests.get(requestId);
     if (!request || request.requestType !== DataSubjectRight.PORTABILITY) {
       throw new Error('Invalid portability request');
@@ -521,32 +534,37 @@ export class DataSubjectRightsManager extends EventEmitter {
       await this.saveRequest(request);
 
       // Create portability package
-      const userData = await this.gatherPortableData(request.userId, request.requestData);
+      const userData = await this.gatherPortableData(
+        request.userId,
+        request.requestData
+      );
       const format = request.requestData.exportFormat || ExportFormat.JSON;
-      
+
       const portabilityPackage: DataPortabilityPackage = {
         userData,
         metadata: {
           exportDate: new Date(),
           format,
           version: '1.0',
-          checksum: this.generateChecksum(userData)
+          checksum: this.generateChecksum(userData),
         },
         structure: await this.generateDataStructure(userData),
         compliance: {
           lgpdCompliant: true,
           dataMinimization: true,
-          purposeLimitation: true
-        }
+          purposeLimitation: true,
+        },
       };
 
       // Complete request
       await this.completeRequest(request, portabilityPackage);
 
       return portabilityPackage;
-
     } catch (error) {
-      await this.rejectRequest(request.id, `Portability processing failed: ${error}`);
+      await this.rejectRequest(
+        request.id,
+        `Portability processing failed: ${error}`
+      );
       throw error;
     }
   }
@@ -578,9 +596,8 @@ export class DataSubjectRightsManager extends EventEmitter {
       // Emit event
       this.emit('data:rectified', {
         userId: request.userId,
-        changes
+        changes,
       });
-
     } catch (error) {
       await this.rejectRequest(request.id, `Rectification failed: ${error}`);
       throw error;
@@ -622,9 +639,8 @@ export class DataSubjectRightsManager extends EventEmitter {
       // Emit event
       this.emit('data:erased', {
         userId: request.userId,
-        dataTypes: erasedData
+        dataTypes: erasedData,
       });
-
     } catch (error) {
       await this.rejectRequest(request.id, `Erasure failed: ${error}`);
       throw error;
@@ -659,9 +675,8 @@ export class DataSubjectRightsManager extends EventEmitter {
       // Emit event
       this.emit('data:restricted', {
         userId: request.userId,
-        restrictions
+        restrictions,
       });
-
     } catch (error) {
       await this.rejectRequest(request.id, `Restriction failed: ${error}`);
       throw error;
@@ -680,7 +695,7 @@ export class DataSubjectRightsManager extends EventEmitter {
    */
   getUserRequests(userId: string): DataSubjectRightsRequest[] {
     return Array.from(this.requests.values())
-      .filter(request => request.userId === userId)
+      .filter((request) => request.userId === userId)
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
   }
 
@@ -689,7 +704,7 @@ export class DataSubjectRightsManager extends EventEmitter {
    */
   getRequestsByStatus(status: RequestStatus): DataSubjectRightsRequest[] {
     return Array.from(this.requests.values())
-      .filter(request => request.status === status)
+      .filter((request) => request.status === status)
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
   }
 
@@ -717,7 +732,7 @@ export class DataSubjectRightsManager extends EventEmitter {
       timestamp: new Date(),
       details: { reason },
       ipAddress: request.metadata.ipAddress,
-      userAgent: request.metadata.userAgent
+      userAgent: request.metadata.userAgent,
     });
 
     await this.saveRequest(request);
@@ -746,7 +761,7 @@ export class DataSubjectRightsManager extends EventEmitter {
       timestamp: new Date(),
       details: { responseSize: JSON.stringify(responseData).length },
       ipAddress: 'system',
-      userAgent: 'system'
+      userAgent: 'system',
     });
 
     await this.saveRequest(request);
@@ -756,7 +771,10 @@ export class DataSubjectRightsManager extends EventEmitter {
   /**
    * Reject a request
    */
-  private async rejectRequest(requestId: string, reason: string): Promise<void> {
+  private async rejectRequest(
+    requestId: string,
+    reason: string
+  ): Promise<void> {
     const request = this.requests.get(requestId);
     if (!request) {
       throw new Error('Request not found');
@@ -774,7 +792,7 @@ export class DataSubjectRightsManager extends EventEmitter {
       timestamp: new Date(),
       details: { reason },
       ipAddress: 'system',
-      userAgent: 'system'
+      userAgent: 'system',
     });
 
     await this.saveRequest(request);
@@ -785,26 +803,33 @@ export class DataSubjectRightsManager extends EventEmitter {
    * Start processing interval
    */
   private startProcessingInterval(): void {
-    this.processingInterval = setInterval(async () => {
-      await this.processQueue();
-    }, this.config.processingIntervalMinutes * 60 * 1000);
+    this.processingInterval = setInterval(
+      async () => {
+        await this.processQueue();
+      },
+      this.config.processingIntervalMinutes * 60 * 1000
+    );
   }
 
   /**
    * Start cleanup interval
    */
   private startCleanupInterval(): void {
-    this.cleanupInterval = setInterval(async () => {
-      await this.cleanupExpiredRequests();
-    }, this.config.cleanupIntervalHours * 60 * 60 * 1000);
+    this.cleanupInterval = setInterval(
+      async () => {
+        await this.cleanupExpiredRequests();
+      },
+      this.config.cleanupIntervalHours * 60 * 60 * 1000
+    );
   }
 
   /**
    * Process request queue
    */
   private async processQueue(): Promise<void> {
-    const processingCount = Array.from(this.requests.values())
-      .filter(r => r.status === RequestStatus.IN_PROGRESS).length;
+    const processingCount = Array.from(this.requests.values()).filter(
+      (r) => r.status === RequestStatus.IN_PROGRESS
+    ).length;
 
     if (processingCount >= this.config.maxConcurrentRequests) {
       return;
@@ -818,7 +843,7 @@ export class DataSubjectRightsManager extends EventEmitter {
     for (const requestId of requestsToProcess) {
       try {
         const request = this.requests.get(requestId);
-        if (!request || !request.verification.verified) {
+        if (!(request && request.verification.verified)) {
           continue;
         }
 
@@ -855,7 +880,8 @@ export class DataSubjectRightsManager extends EventEmitter {
     for (const request of this.requests.values()) {
       // Check if request has expired
       const expiryDate = new Date(
-        request.createdAt.getTime() + this.config.processingTimeoutDays * 24 * 60 * 60 * 1000
+        request.createdAt.getTime() +
+          this.config.processingTimeoutDays * 24 * 60 * 60 * 1000
       );
 
       if (now > expiryDate && request.status === RequestStatus.PENDING) {
@@ -881,24 +907,36 @@ export class DataSubjectRightsManager extends EventEmitter {
   }
 
   // Helper methods (implementation details)
-  private determinePriority(requestType: DataSubjectRight, requestData: any): RequestPriority {
+  private determinePriority(
+    requestType: DataSubjectRight,
+    _requestData: any
+  ): RequestPriority {
     if (requestType === DataSubjectRight.ERASURE) return RequestPriority.HIGH;
-    if (requestType === DataSubjectRight.OBJECTION) return RequestPriority.MEDIUM;
+    if (requestType === DataSubjectRight.OBJECTION)
+      return RequestPriority.MEDIUM;
     return RequestPriority.LOW;
   }
 
-  private generateDescription(requestType: DataSubjectRight, language: 'pt' | 'en'): string {
+  private generateDescription(
+    requestType: DataSubjectRight,
+    language: 'pt' | 'en'
+  ): string {
     const descriptions = {
       pt: {
         [DataSubjectRight.ACCESS]: 'Solicitação de acesso aos dados pessoais',
-        [DataSubjectRight.RECTIFICATION]: 'Solicitação de correção de dados pessoais',
-        [DataSubjectRight.ERASURE]: 'Solicitação de eliminação de dados pessoais',
+        [DataSubjectRight.RECTIFICATION]:
+          'Solicitação de correção de dados pessoais',
+        [DataSubjectRight.ERASURE]:
+          'Solicitação de eliminação de dados pessoais',
         [DataSubjectRight.PORTABILITY]: 'Solicitação de portabilidade de dados',
-        [DataSubjectRight.RESTRICTION]: 'Solicitação de limitação do tratamento',
+        [DataSubjectRight.RESTRICTION]:
+          'Solicitação de limitação do tratamento',
         [DataSubjectRight.OBJECTION]: 'Oposição ao tratamento de dados',
-        [DataSubjectRight.AUTOMATED_DECISION_OPT_OUT]: 'Opt-out de decisões automatizadas',
-        [DataSubjectRight.INFORMATION]: 'Solicitação de informações sobre compartilhamento',
-        [DataSubjectRight.CONSENT_WITHDRAWAL]: 'Retirada de consentimento'
+        [DataSubjectRight.AUTOMATED_DECISION_OPT_OUT]:
+          'Opt-out de decisões automatizadas',
+        [DataSubjectRight.INFORMATION]:
+          'Solicitação de informações sobre compartilhamento',
+        [DataSubjectRight.CONSENT_WITHDRAWAL]: 'Retirada de consentimento',
       },
       en: {
         [DataSubjectRight.ACCESS]: 'Personal data access request',
@@ -907,10 +945,11 @@ export class DataSubjectRightsManager extends EventEmitter {
         [DataSubjectRight.PORTABILITY]: 'Data portability request',
         [DataSubjectRight.RESTRICTION]: 'Processing restriction request',
         [DataSubjectRight.OBJECTION]: 'Data processing objection',
-        [DataSubjectRight.AUTOMATED_DECISION_OPT_OUT]: 'Automated decision-making opt-out',
+        [DataSubjectRight.AUTOMATED_DECISION_OPT_OUT]:
+          'Automated decision-making opt-out',
         [DataSubjectRight.INFORMATION]: 'Data sharing information request',
-        [DataSubjectRight.CONSENT_WITHDRAWAL]: 'Consent withdrawal'
-      }
+        [DataSubjectRight.CONSENT_WITHDRAWAL]: 'Consent withdrawal',
+      },
     };
     return descriptions[language][requestType];
   }
@@ -919,7 +958,7 @@ export class DataSubjectRightsManager extends EventEmitter {
     return [
       DataSubjectRight.ACCESS,
       DataSubjectRight.PORTABILITY,
-      DataSubjectRight.INFORMATION
+      DataSubjectRight.INFORMATION,
     ].includes(requestType);
   }
 
@@ -933,7 +972,7 @@ export class DataSubjectRightsManager extends EventEmitter {
       [DataSubjectRight.OBJECTION]: 'LGPD Art. 9, II',
       [DataSubjectRight.AUTOMATED_DECISION_OPT_OUT]: 'LGPD Art. 9, VII',
       [DataSubjectRight.INFORMATION]: 'LGPD Art. 9, VIII',
-      [DataSubjectRight.CONSENT_WITHDRAWAL]: 'LGPD Art. 8, §5º'
+      [DataSubjectRight.CONSENT_WITHDRAWAL]: 'LGPD Art. 8, §5º',
     };
     return legalBasis[requestType];
   }
@@ -942,19 +981,22 @@ export class DataSubjectRightsManager extends EventEmitter {
     return [
       DataSubjectRight.ERASURE,
       DataSubjectRight.OBJECTION,
-      DataSubjectRight.RESTRICTION
+      DataSubjectRight.RESTRICTION,
     ].includes(requestType);
   }
 
   private async performVerification(
-    request: DataSubjectRightsRequest,
-    verificationData: any
+    _request: DataSubjectRightsRequest,
+    _verificationData: any
   ): Promise<boolean> {
     // Implementation would depend on verification method
     return true;
   }
 
-  private async gatherUserData(userId: string, requestData: any): Promise<any> {
+  private async gatherUserData(
+    _userId: string,
+    _requestData: any
+  ): Promise<any> {
     // Implementation would gather actual user data
     return {
       personalData: {},
@@ -962,21 +1004,29 @@ export class DataSubjectRightsManager extends EventEmitter {
       consents: [],
       dataSharing: [],
       automatedDecisions: [],
-      retentionPolicies: []
+      retentionPolicies: [],
     };
   }
 
-  private async gatherPortableData(userId: string, requestData: any): Promise<any> {
+  private async gatherPortableData(
+    _userId: string,
+    _requestData: any
+  ): Promise<any> {
     // Implementation would gather portable user data
     return {};
   }
 
-  private async rectifyUserData(userId: string, rectificationData: any): Promise<any> {
+  private async rectifyUserData(
+    _userId: string,
+    _rectificationData: any
+  ): Promise<any> {
     // Implementation would perform data rectification
     return {};
   }
 
-  private async validateErasureRequest(request: DataSubjectRightsRequest): Promise<{
+  private async validateErasureRequest(
+    _request: DataSubjectRightsRequest
+  ): Promise<{
     allowed: boolean;
     reason?: string;
   }> {
@@ -985,32 +1035,32 @@ export class DataSubjectRightsManager extends EventEmitter {
   }
 
   private async eraseUserData(
-    userId: string,
-    specificData?: string[],
-    reason?: string
+    _userId: string,
+    _specificData?: string[],
+    _reason?: string
   ): Promise<string[]> {
     // Implementation would perform data erasure
     return [];
   }
 
   private async applyProcessingRestrictions(
-    userId: string,
-    specificData?: string[],
-    reason?: string
+    _userId: string,
+    _specificData?: string[],
+    _reason?: string
   ): Promise<string[]> {
     // Implementation would apply processing restrictions
     return [];
   }
 
-  private generateDataStructure(userData: any): Promise<any> {
+  private generateDataStructure(_userData: any): Promise<any> {
     // Implementation would generate data structure metadata
     return Promise.resolve({
       tables: [],
-      relationships: []
+      relationships: [],
     });
   }
 
-  private generateChecksum(data: any): string {
+  private generateChecksum(_data: any): string {
     // Implementation would generate data checksum
     return 'checksum';
   }
@@ -1019,11 +1069,11 @@ export class DataSubjectRightsManager extends EventEmitter {
     // Implementation would load requests from database
   }
 
-  private async saveRequest(request: DataSubjectRightsRequest): Promise<void> {
+  private async saveRequest(_request: DataSubjectRightsRequest): Promise<void> {
     // Implementation would save request to database
   }
 
-  private addAuditEntry(actor: string, action: string, details: any): void {
+  private addAuditEntry(_actor: string, _action: string, _details: any): void {
     // Implementation would add audit entry
   }
 
@@ -1061,20 +1111,25 @@ export class DataSubjectRightsManager extends EventEmitter {
     details: Record<string, any>;
   } {
     const issues: string[] = [];
-    
+
     if (!this.isInitialized) {
       issues.push('Rights manager not initialized');
     }
 
-    const pendingRequests = Array.from(this.requests.values())
-      .filter(r => r.status === RequestStatus.PENDING).length;
-    
+    const pendingRequests = Array.from(this.requests.values()).filter(
+      (r) => r.status === RequestStatus.PENDING
+    ).length;
+
     if (pendingRequests > 100) {
       issues.push(`High number of pending requests: ${pendingRequests}`);
     }
 
-    const status = issues.length === 0 ? 'healthy' : 
-                  issues.length <= 2 ? 'degraded' : 'unhealthy';
+    const status =
+      issues.length === 0
+        ? 'healthy'
+        : issues.length <= 2
+          ? 'degraded'
+          : 'unhealthy';
 
     return {
       status,
@@ -1083,8 +1138,8 @@ export class DataSubjectRightsManager extends EventEmitter {
         totalRequests: this.requests.size,
         pendingRequests,
         queueLength: this.processingQueue.length,
-        issues
-      }
+        issues,
+      },
     };
   }
 }
@@ -1102,5 +1157,5 @@ export type {
   DataAccessResponse,
   DataPortabilityPackage,
   RequestAuditEntry,
-  RightsRequestEvents
+  RightsRequestEvents,
 };

@@ -2,32 +2,38 @@
  * Treatment & Procedure Documentation Types
  * Based on HL7 FHIR R4 standards for healthcare interoperability
  * Compliant with LGPD for Brazilian healthcare data protection
- * 
+ *
  * Resources: CarePlan, Procedure, DocumentReference/Observation
  * Created: January 26, 2025
  * Story: 3.2 - Treatment & Procedure Documentation
  */
 
-import { FHIRCodeableConcept, FHIRMeta, FHIRNarrative, FHIRReference, FHIRPeriod } from './fhir';
+import type {
+  FHIRCodeableConcept,
+  FHIRMeta,
+  FHIRNarrative,
+  FHIRPeriod,
+  FHIRReference,
+} from './fhir';
 
 // ===============================================
 // TREATMENT PLAN TYPES (FHIR CarePlan Resource)
 // ===============================================
 
-export type TreatmentPlanStatus = 
-  | 'draft' 
-  | 'active' 
-  | 'on-hold' 
-  | 'revoked' 
-  | 'completed' 
-  | 'entered-in-error' 
+export type TreatmentPlanStatus =
+  | 'draft'
+  | 'active'
+  | 'on-hold'
+  | 'revoked'
+  | 'completed'
+  | 'entered-in-error'
   | 'unknown';
 
-export type TreatmentPlanIntent = 
-  | 'proposal' 
-  | 'plan' 
-  | 'order' 
-  | 'option' 
+export type TreatmentPlanIntent =
+  | 'proposal'
+  | 'plan'
+  | 'order'
+  | 'option'
   | 'directive';
 
 export interface TreatmentPlanActivity {
@@ -36,7 +42,15 @@ export interface TreatmentPlanActivity {
   detail?: {
     category?: FHIRCodeableConcept;
     code?: FHIRCodeableConcept;
-    status?: 'not-started' | 'scheduled' | 'in-progress' | 'on-hold' | 'completed' | 'cancelled' | 'stopped' | 'unknown';
+    status?:
+      | 'not-started'
+      | 'scheduled'
+      | 'in-progress'
+      | 'on-hold'
+      | 'completed'
+      | 'cancelled'
+      | 'stopped'
+      | 'unknown';
     statusReason?: FHIRCodeableConcept;
     doNotPerform?: boolean;
     scheduled?: {
@@ -67,7 +81,7 @@ export interface TreatmentPlan {
   id: string;
   patient_id: string;
   provider_id: string;
-  
+
   // FHIR CarePlan Core Fields
   fhir_id: string;
   status: TreatmentPlanStatus;
@@ -75,31 +89,31 @@ export interface TreatmentPlan {
   category: FHIRCodeableConcept[];
   title: string;
   description?: string;
-  
+
   // Clinical Context
   subject_reference: string; // Reference to Patient
   encounter_reference?: string; // Reference to Encounter
   period_start?: string; // ISO 8601 datetime
   period_end?: string; // ISO 8601 datetime
-  
+
   // Care Team & Goals
   care_team: FHIRReference[]; // Array of care team members
   goals: FHIRReference[]; // Array of goal references
   activities: TreatmentPlanActivity[]; // Array of planned activities
-  
+
   // Supporting Information
   supporting_info: FHIRReference[]; // Supporting documentation
   addresses: FHIRReference[]; // Conditions addressed
-  
+
   // FHIR Metadata
   fhir_meta: FHIRMeta;
   fhir_text: FHIRNarrative;
-  
+
   // LGPD Compliance
   data_consent_given: boolean;
   data_consent_date?: string;
   data_retention_until?: string;
-  
+
   // Audit & Versioning
   version: number;
   replaces?: string; // Previous version UUID
@@ -113,14 +127,14 @@ export interface TreatmentPlan {
 // PROCEDURE TYPES (FHIR Procedure Resource)
 // ===============================================
 
-export type ProcedureStatus = 
-  | 'preparation' 
-  | 'in-progress' 
-  | 'not-done' 
-  | 'on-hold' 
-  | 'stopped' 
-  | 'completed' 
-  | 'entered-in-error' 
+export type ProcedureStatus =
+  | 'preparation'
+  | 'in-progress'
+  | 'not-done'
+  | 'on-hold'
+  | 'stopped'
+  | 'completed'
+  | 'entered-in-error'
   | 'unknown';
 
 export interface ProcedurePerformer {
@@ -134,23 +148,23 @@ export interface Procedure {
   patient_id: string;
   provider_id: string;
   treatment_plan_id?: string;
-  
+
   // FHIR Procedure Core Fields
   fhir_id: string;
   status: ProcedureStatus;
   status_reason?: FHIRCodeableConcept;
-  
+
   // Procedure Classification
   category?: FHIRCodeableConcept; // Classification of procedure
   code: FHIRCodeableConcept; // What was done
-  
+
   // Clinical Context
   subject_reference: string; // Reference to Patient
   encounter_reference?: string; // Reference to Encounter
   performed_datetime?: string; // ISO 8601 datetime
   performed_period_start?: string; // ISO 8601 datetime
   performed_period_end?: string; // ISO 8601 datetime
-  
+
   // Procedure Details
   recorder_reference?: string; // Who recorded the procedure
   asserter_reference?: string; // Who asserted the procedure
@@ -163,21 +177,21 @@ export interface Procedure {
   report: FHIRReference[]; // Any reports generated
   complications: FHIRCodeableConcept[]; // Complications during procedure
   follow_up: FHIRCodeableConcept[]; // Follow-up instructions
-  
+
   // Supporting Documentation
   notes?: string;
   used_reference: FHIRReference[]; // Items used during procedure
   used_code: FHIRCodeableConcept[]; // Coded items used
-  
+
   // FHIR Metadata
   fhir_meta: FHIRMeta;
   fhir_text: FHIRNarrative;
-  
+
   // LGPD Compliance
   data_consent_given: boolean;
   data_consent_date?: string;
   data_retention_until?: string;
-  
+
   // Audit & Versioning
   version: number;
   created_at: string;
@@ -192,10 +206,10 @@ export interface Procedure {
 
 export type ClinicalNoteStatus = 'current' | 'superseded' | 'entered-in-error';
 
-export type ConfidentialityLevel = 
+export type ConfidentialityLevel =
   | 'U' // Unrestricted
   | 'L' // Low
-  | 'M' // Moderate  
+  | 'M' // Moderate
   | 'N' // Normal
   | 'R' // Restricted
   | 'V'; // Very Restricted
@@ -211,44 +225,44 @@ export interface ClinicalNote {
   provider_id: string;
   treatment_plan_id?: string;
   procedure_id?: string;
-  
+
   // FHIR DocumentReference/Observation Fields
   fhir_id: string;
   status: ClinicalNoteStatus;
-  
+
   // Note Classification
   category?: FHIRCodeableConcept; // Type of note (progress, assessment, plan, etc.)
   type: FHIRCodeableConcept; // Specific note type
   subject_reference: string; // Reference to Patient
   encounter_reference?: string; // Reference to Encounter
-  
+
   // Note Content
   title: string;
   content: string;
   content_type: string; // MIME type (text/plain, text/html, etc.)
-  
+
   // Clinical Context
   authored_time: string; // ISO 8601 datetime
   author_reference: string; // Reference to Provider
   authenticator_reference?: string; // Reference to authenticating provider
-  
+
   // Related Information
   relates_to: ClinicalNoteRelatesTo[]; // Related documents/notes
   context_reference?: string; // Context encounter
-  
+
   // Security & Access
   security_label: FHIRCodeableConcept[]; // Security classifications
   confidentiality: ConfidentialityLevel;
-  
+
   // FHIR Metadata
   fhir_meta: FHIRMeta;
   fhir_text: FHIRNarrative;
-  
+
   // LGPD Compliance
   data_consent_given: boolean;
   data_consent_date?: string;
   data_retention_until?: string;
-  
+
   // Audit & Versioning
   version: number;
   replaces?: string; // Previous version UUID

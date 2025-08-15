@@ -5,10 +5,7 @@
   "description": "NeonPro - Enhanced Architecture Monorepo for Aesthetic Clinic Management",
   "private": true,
   "type": "module",
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
+  "workspaces": ["apps/*", "packages/*"],
   "scripts": {
     "build": "pnpm run --recursive build",
     "dev": "pnpm run --parallel dev",

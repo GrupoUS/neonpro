@@ -1,14 +1,14 @@
+import { type NextRequest, NextResponse } from 'next/server';
 import { PredictiveAnalyticsService } from '@/app/lib/services/predictive-analytics';
 import { createPredictionSchema } from '@/app/lib/validations/predictive-analytics';
-import { NextRequest, NextResponse } from 'next/server';
 
 const service = new PredictiveAnalyticsService();
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const skip = parseInt(searchParams.get('skip') || '0');
-    const limit = parseInt(searchParams.get('limit') || '10');
+    const skip = Number.parseInt(searchParams.get('skip') || '0', 10);
+    const limit = Number.parseInt(searchParams.get('limit') || '10', 10);
     const model_id = searchParams.get('model_id') || undefined;
     const status = searchParams.get('status') || undefined;
     const date_from = searchParams.get('date_from') || undefined;
@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
       model_id,
       status,
       date_from,
-      date_to
+      date_to,
     });
 
     return NextResponse.json(result);

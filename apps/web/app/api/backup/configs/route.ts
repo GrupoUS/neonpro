@@ -3,10 +3,10 @@
  * Story 1.8: Sistema de Backup e Recovery
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { BackupManager } from '@/lib/backup/backup-manager';
 import { createClient } from '@/lib/supabase/server';
-import { z } from 'zod';
 
 // Schema de validação para configuração de backup
 const backupConfigSchema = z.object({
@@ -14,7 +14,13 @@ const backupConfigSchema = z.object({
   description: z.string().optional(),
   enabled: z.boolean().default(true),
   type: z.enum(['FULL', 'INCREMENTAL', 'DIFFERENTIAL', 'DATABASE', 'FILES']),
-  schedule_frequency: z.enum(['HOURLY', 'DAILY', 'WEEKLY', 'MONTHLY', 'CUSTOM']),
+  schedule_frequency: z.enum([
+    'HOURLY',
+    'DAILY',
+    'WEEKLY',
+    'MONTHLY',
+    'CUSTOM',
+  ]),
   schedule_time: z.string().optional(),
   schedule_cron: z.string().optional(),
   storage_provider: z.enum(['LOCAL', 'S3', 'GCS', 'AZURE']),
@@ -40,15 +46,17 @@ const backupManager = new BackupManager();
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
     if (!user) {
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '20');
+    const page = Number.parseInt(searchParams.get('page') || '1', 10);
+    const limit = Number.parseInt(searchParams.get('limit') || '20', 10);
     const enabled = searchParams.get('enabled');
     const type = searchParams.get('type');
     const provider = searchParams.get('provider');
@@ -81,14 +89,16 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
     if (!user) {
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
     const body = await request.json();
-    
+
     // Validar dados de entrada
     const validatedData = backupConfigSchema.parse(body);
 
@@ -98,15 +108,15 @@ export async function POST(request: NextRequest) {
       createdBy: user.id,
     });
 
-    return NextResponse.json(result, { 
-      status: result.success ? 201 : 400 
+    return NextResponse.json(result, {
+      status: result.success ? 201 : 400,
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { 
-          error: 'Dados inválidos', 
-          details: error.errors 
+        {
+          error: 'Dados inválidos',
+          details: error.errors,
         },
         { status: 400 }
       );

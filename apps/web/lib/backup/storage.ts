@@ -1,29 +1,37 @@
 /**
  * NeonPro Storage Provider
  * Story 1.8: Sistema de Backup e Recovery
- * 
+ *
  * Gerenciador de provedores de armazenamento para backups,
  * suportando local, AWS S3, Google Cloud e Azure.
  */
 
-import { promises as fs } from 'fs';
+import { promises as fs } from 'node:fs';
 import path from 'path';
-import { 
-  StorageConfig, 
-  StorageType, 
-  UploadProgress, 
-  DownloadProgress,
-  StorageMetrics,
-  ApiResponse
-} from './types';
 import { auditLogger } from '../auth/audit/audit-logger';
+import {
+  type ApiResponse,
+  type DownloadProgress,
+  type StorageConfig,
+  type StorageMetrics,
+  StorageType,
+  type UploadProgress,
+} from './types';
 
 /**
  * Interface para provedores de storage
  */
 interface IStorageProvider {
-  upload(localPath: string, remotePath: string, onProgress?: (progress: UploadProgress) => void): Promise<string>;
-  download(remotePath: string, localPath: string, onProgress?: (progress: DownloadProgress) => void): Promise<string>;
+  upload(
+    localPath: string,
+    remotePath: string,
+    onProgress?: (progress: UploadProgress) => void
+  ): Promise<string>;
+  download(
+    remotePath: string,
+    localPath: string,
+    onProgress?: (progress: DownloadProgress) => void
+  ): Promise<string>;
   delete(remotePath: string): Promise<void>;
   exists(remotePath: string): Promise<boolean>;
   list(prefix?: string): Promise<string[]>;
@@ -49,21 +57,25 @@ class LocalStorageProvider implements IStorageProvider {
     }
   }
 
-  async upload(localPath: string, remotePath: string, onProgress?: (progress: UploadProgress) => void): Promise<string> {
+  async upload(
+    localPath: string,
+    remotePath: string,
+    onProgress?: (progress: UploadProgress) => void
+  ): Promise<string> {
     const targetPath = path.join(this.basePath, remotePath);
     const targetDir = path.dirname(targetPath);
-    
+
     // Criar diretório se não existir
     await fs.mkdir(targetDir, { recursive: true });
-    
+
     // Copiar arquivo
     const stats = await fs.stat(localPath);
     const totalSize = stats.size;
-    let uploadedSize = 0;
-    
+    const _uploadedSize = 0;
+
     const readStream = await fs.readFile(localPath);
     await fs.writeFile(targetPath, readStream);
-    
+
     if (onProgress) {
       onProgress({
         uploadId: crypto.randomUUID(),
@@ -73,26 +85,30 @@ class LocalStorageProvider implements IStorageProvider {
         percentage: 100,
         speed: totalSize,
         eta: 0,
-        status: 'COMPLETED'
+        status: 'COMPLETED',
       });
     }
-    
+
     return targetPath;
   }
 
-  async download(remotePath: string, localPath: string, onProgress?: (progress: DownloadProgress) => void): Promise<string> {
+  async download(
+    remotePath: string,
+    localPath: string,
+    onProgress?: (progress: DownloadProgress) => void
+  ): Promise<string> {
     const sourcePath = path.join(this.basePath, remotePath);
-    
-    if (!await this.exists(remotePath)) {
+
+    if (!(await this.exists(remotePath))) {
       throw new Error(`Arquivo não encontrado: ${remotePath}`);
     }
-    
+
     const stats = await fs.stat(sourcePath);
     const totalSize = stats.size;
-    
+
     const data = await fs.readFile(sourcePath);
     await fs.writeFile(localPath, data);
-    
+
     if (onProgress) {
       onProgress({
         downloadId: crypto.randomUUID(),
@@ -102,10 +118,10 @@ class LocalStorageProvider implements IStorageProvider {
         percentage: 100,
         speed: totalSize,
         eta: 0,
-        status: 'COMPLETED'
+        status: 'COMPLETED',
       });
     }
-    
+
     return localPath;
   }
 
@@ -125,11 +141,13 @@ class LocalStorageProvider implements IStorageProvider {
   }
 
   async list(prefix?: string): Promise<string[]> {
-    const searchPath = prefix ? path.join(this.basePath, prefix) : this.basePath;
-    
+    const searchPath = prefix
+      ? path.join(this.basePath, prefix)
+      : this.basePath;
+
     try {
       const files = await fs.readdir(searchPath, { recursive: true });
-      return files.filter(file => typeof file === 'string') as string[];
+      return files.filter((file) => typeof file === 'string') as string[];
     } catch {
       return [];
     }
@@ -139,7 +157,7 @@ class LocalStorageProvider implements IStorageProvider {
     const files = await this.list();
     let totalSize = 0;
     let totalFiles = 0;
-    
+
     for (const file of files) {
       try {
         const filePath = path.join(this.basePath, file);
@@ -152,7 +170,7 @@ class LocalStorageProvider implements IStorageProvider {
         // Ignorar arquivos inacessíveis
       }
     }
-    
+
     return {
       totalSize,
       totalFiles,
@@ -161,7 +179,7 @@ class LocalStorageProvider implements IStorageProvider {
       lastBackup: new Date(),
       oldestBackup: new Date(),
       compressionRatio: 1.0,
-      transferSpeed: 0
+      transferSpeed: 0,
     };
   }
 }
@@ -170,9 +188,6 @@ class LocalStorageProvider implements IStorageProvider {
  * Provider para AWS S3
  */
 class S3StorageProvider implements IStorageProvider {
-  private config: StorageConfig;
-  private s3Client: any; // AWS SDK client
-
   constructor(config: StorageConfig) {
     this.config = config;
     this.initializeS3Client();
@@ -190,27 +205,35 @@ class S3StorageProvider implements IStorageProvider {
     // });
   }
 
-  async upload(localPath: string, remotePath: string, onProgress?: (progress: UploadProgress) => void): Promise<string> {
+  async upload(
+    _localPath: string,
+    _remotePath: string,
+    _onProgress?: (progress: UploadProgress) => void
+  ): Promise<string> {
     // Implementar upload para S3
     throw new Error('S3 upload não implementado ainda');
   }
 
-  async download(remotePath: string, localPath: string, onProgress?: (progress: DownloadProgress) => void): Promise<string> {
+  async download(
+    _remotePath: string,
+    _localPath: string,
+    _onProgress?: (progress: DownloadProgress) => void
+  ): Promise<string> {
     // Implementar download do S3
     throw new Error('S3 download não implementado ainda');
   }
 
-  async delete(remotePath: string): Promise<void> {
+  async delete(_remotePath: string): Promise<void> {
     // Implementar delete do S3
     throw new Error('S3 delete não implementado ainda');
   }
 
-  async exists(remotePath: string): Promise<boolean> {
+  async exists(_remotePath: string): Promise<boolean> {
     // Implementar verificação de existência no S3
     return false;
   }
 
-  async list(prefix?: string): Promise<string[]> {
+  async list(_prefix?: string): Promise<string[]> {
     // Implementar listagem do S3
     return [];
   }
@@ -225,7 +248,7 @@ class S3StorageProvider implements IStorageProvider {
       lastBackup: new Date(),
       oldestBackup: new Date(),
       compressionRatio: 1.0,
-      transferSpeed: 0
+      transferSpeed: 0,
     };
   }
 }
@@ -234,9 +257,6 @@ class S3StorageProvider implements IStorageProvider {
  * Provider para Google Cloud Storage
  */
 class GCSStorageProvider implements IStorageProvider {
-  private config: StorageConfig;
-  private gcsClient: any; // Google Cloud Storage client
-
   constructor(config: StorageConfig) {
     this.config = config;
     this.initializeGCSClient();
@@ -251,27 +271,35 @@ class GCSStorageProvider implements IStorageProvider {
     // });
   }
 
-  async upload(localPath: string, remotePath: string, onProgress?: (progress: UploadProgress) => void): Promise<string> {
+  async upload(
+    _localPath: string,
+    _remotePath: string,
+    _onProgress?: (progress: UploadProgress) => void
+  ): Promise<string> {
     // Implementar upload para GCS
     throw new Error('GCS upload não implementado ainda');
   }
 
-  async download(remotePath: string, localPath: string, onProgress?: (progress: DownloadProgress) => void): Promise<string> {
+  async download(
+    _remotePath: string,
+    _localPath: string,
+    _onProgress?: (progress: DownloadProgress) => void
+  ): Promise<string> {
     // Implementar download do GCS
     throw new Error('GCS download não implementado ainda');
   }
 
-  async delete(remotePath: string): Promise<void> {
+  async delete(_remotePath: string): Promise<void> {
     // Implementar delete do GCS
     throw new Error('GCS delete não implementado ainda');
   }
 
-  async exists(remotePath: string): Promise<boolean> {
+  async exists(_remotePath: string): Promise<boolean> {
     // Implementar verificação de existência no GCS
     return false;
   }
 
-  async list(prefix?: string): Promise<string[]> {
+  async list(_prefix?: string): Promise<string[]> {
     // Implementar listagem do GCS
     return [];
   }
@@ -286,7 +314,7 @@ class GCSStorageProvider implements IStorageProvider {
       lastBackup: new Date(),
       oldestBackup: new Date(),
       compressionRatio: 1.0,
-      transferSpeed: 0
+      transferSpeed: 0,
     };
   }
 }
@@ -295,9 +323,6 @@ class GCSStorageProvider implements IStorageProvider {
  * Provider para Azure Blob Storage
  */
 class AzureStorageProvider implements IStorageProvider {
-  private config: StorageConfig;
-  private azureClient: any; // Azure Blob Storage client
-
   constructor(config: StorageConfig) {
     this.config = config;
     this.initializeAzureClient();
@@ -311,27 +336,35 @@ class AzureStorageProvider implements IStorageProvider {
     // );
   }
 
-  async upload(localPath: string, remotePath: string, onProgress?: (progress: UploadProgress) => void): Promise<string> {
+  async upload(
+    _localPath: string,
+    _remotePath: string,
+    _onProgress?: (progress: UploadProgress) => void
+  ): Promise<string> {
     // Implementar upload para Azure
     throw new Error('Azure upload não implementado ainda');
   }
 
-  async download(remotePath: string, localPath: string, onProgress?: (progress: DownloadProgress) => void): Promise<string> {
+  async download(
+    _remotePath: string,
+    _localPath: string,
+    _onProgress?: (progress: DownloadProgress) => void
+  ): Promise<string> {
     // Implementar download do Azure
     throw new Error('Azure download não implementado ainda');
   }
 
-  async delete(remotePath: string): Promise<void> {
+  async delete(_remotePath: string): Promise<void> {
     // Implementar delete do Azure
     throw new Error('Azure delete não implementado ainda');
   }
 
-  async exists(remotePath: string): Promise<boolean> {
+  async exists(_remotePath: string): Promise<boolean> {
     // Implementar verificação de existência no Azure
     return false;
   }
 
-  async list(prefix?: string): Promise<string[]> {
+  async list(_prefix?: string): Promise<string[]> {
     // Implementar listagem do Azure
     return [];
   }
@@ -346,7 +379,7 @@ class AzureStorageProvider implements IStorageProvider {
       lastBackup: new Date(),
       oldestBackup: new Date(),
       compressionRatio: 1.0,
-      transferSpeed: 0
+      transferSpeed: 0,
     };
   }
 }
@@ -388,28 +421,34 @@ export class StorageProvider {
   /**
    * Fazer upload de arquivo
    */
-  async upload(localPath: string, config: StorageConfig, remotePath?: string): Promise<ApiResponse<string>> {
+  async upload(
+    localPath: string,
+    config: StorageConfig,
+    remotePath?: string
+  ): Promise<ApiResponse<string>> {
     try {
       const providerName = `${config.type}-${Date.now()}`;
       this.registerProvider(providerName, config);
-      
+
       const provider = this.providers.get(providerName);
       if (!provider) {
         throw new Error('Provider não encontrado');
       }
 
       const fileName = path.basename(localPath);
-      const targetPath = remotePath || `backups/${new Date().toISOString().split('T')[0]}/${fileName}`;
-      
+      const targetPath =
+        remotePath ||
+        `backups/${new Date().toISOString().split('T')[0]}/${fileName}`;
+
       const uploadId = crypto.randomUUID();
-      
+
       // Callback de progresso
       const onProgress = (progress: UploadProgress) => {
         this.activeUploads.set(uploadId, progress);
       };
 
       const result = await provider.upload(localPath, targetPath, onProgress);
-      
+
       // Remover do tracking
       this.activeUploads.delete(uploadId);
       this.providers.delete(providerName);
@@ -418,12 +457,12 @@ export class StorageProvider {
         action: 'BACKUP_UPLOADED',
         entityType: 'BACKUP',
         entityId: uploadId,
-        details: { 
-          localPath, 
-          remotePath: result, 
-          storageType: config.type 
+        details: {
+          localPath,
+          remotePath: result,
+          storageType: config.type,
         },
-        userId: 'system'
+        userId: 'system',
       });
 
       return {
@@ -431,7 +470,7 @@ export class StorageProvider {
         data: result,
         message: 'Upload realizado com sucesso',
         timestamp: new Date(),
-        requestId: crypto.randomUUID()
+        requestId: crypto.randomUUID(),
       };
     } catch (error) {
       return {
@@ -439,7 +478,7 @@ export class StorageProvider {
         error: error.message,
         message: 'Erro ao fazer upload',
         timestamp: new Date(),
-        requestId: crypto.randomUUID()
+        requestId: crypto.randomUUID(),
       };
     }
   }
@@ -447,25 +486,29 @@ export class StorageProvider {
   /**
    * Fazer download de arquivo
    */
-  async download(remotePath: string, localPath: string, config: StorageConfig): Promise<ApiResponse<string>> {
+  async download(
+    remotePath: string,
+    localPath: string,
+    config: StorageConfig
+  ): Promise<ApiResponse<string>> {
     try {
       const providerName = `${config.type}-${Date.now()}`;
       this.registerProvider(providerName, config);
-      
+
       const provider = this.providers.get(providerName);
       if (!provider) {
         throw new Error('Provider não encontrado');
       }
 
       const downloadId = crypto.randomUUID();
-      
+
       // Callback de progresso
       const onProgress = (progress: DownloadProgress) => {
         this.activeDownloads.set(downloadId, progress);
       };
 
       const result = await provider.download(remotePath, localPath, onProgress);
-      
+
       // Remover do tracking
       this.activeDownloads.delete(downloadId);
       this.providers.delete(providerName);
@@ -474,12 +517,12 @@ export class StorageProvider {
         action: 'BACKUP_DOWNLOADED',
         entityType: 'BACKUP',
         entityId: downloadId,
-        details: { 
-          remotePath, 
-          localPath: result, 
-          storageType: config.type 
+        details: {
+          remotePath,
+          localPath: result,
+          storageType: config.type,
         },
-        userId: 'system'
+        userId: 'system',
       });
 
       return {
@@ -487,7 +530,7 @@ export class StorageProvider {
         data: result,
         message: 'Download realizado com sucesso',
         timestamp: new Date(),
-        requestId: crypto.randomUUID()
+        requestId: crypto.randomUUID(),
       };
     } catch (error) {
       return {
@@ -495,7 +538,7 @@ export class StorageProvider {
         error: error.message,
         message: 'Erro ao fazer download',
         timestamp: new Date(),
-        requestId: crypto.randomUUID()
+        requestId: crypto.randomUUID(),
       };
     }
   }
@@ -503,11 +546,14 @@ export class StorageProvider {
   /**
    * Verificar se arquivo existe
    */
-  async exists(remotePath: string, config: StorageConfig): Promise<ApiResponse<boolean>> {
+  async exists(
+    remotePath: string,
+    config: StorageConfig
+  ): Promise<ApiResponse<boolean>> {
     try {
       const providerName = `${config.type}-${Date.now()}`;
       this.registerProvider(providerName, config);
-      
+
       const provider = this.providers.get(providerName);
       if (!provider) {
         throw new Error('Provider não encontrado');
@@ -520,7 +566,7 @@ export class StorageProvider {
         success: true,
         data: exists,
         timestamp: new Date(),
-        requestId: crypto.randomUUID()
+        requestId: crypto.randomUUID(),
       };
     } catch (error) {
       return {
@@ -528,7 +574,7 @@ export class StorageProvider {
         error: error.message,
         message: 'Erro ao verificar existência',
         timestamp: new Date(),
-        requestId: crypto.randomUUID()
+        requestId: crypto.randomUUID(),
       };
     }
   }
@@ -536,11 +582,14 @@ export class StorageProvider {
   /**
    * Listar arquivos
    */
-  async list(config: StorageConfig, prefix?: string): Promise<ApiResponse<string[]>> {
+  async list(
+    config: StorageConfig,
+    prefix?: string
+  ): Promise<ApiResponse<string[]>> {
     try {
       const providerName = `${config.type}-${Date.now()}`;
       this.registerProvider(providerName, config);
-      
+
       const provider = this.providers.get(providerName);
       if (!provider) {
         throw new Error('Provider não encontrado');
@@ -553,7 +602,7 @@ export class StorageProvider {
         success: true,
         data: files,
         timestamp: new Date(),
-        requestId: crypto.randomUUID()
+        requestId: crypto.randomUUID(),
       };
     } catch (error) {
       return {
@@ -561,7 +610,7 @@ export class StorageProvider {
         error: error.message,
         message: 'Erro ao listar arquivos',
         timestamp: new Date(),
-        requestId: crypto.randomUUID()
+        requestId: crypto.randomUUID(),
       };
     }
   }
@@ -569,11 +618,13 @@ export class StorageProvider {
   /**
    * Obter métricas de storage
    */
-  async getMetrics(config: StorageConfig): Promise<ApiResponse<StorageMetrics>> {
+  async getMetrics(
+    config: StorageConfig
+  ): Promise<ApiResponse<StorageMetrics>> {
     try {
       const providerName = `${config.type}-${Date.now()}`;
       this.registerProvider(providerName, config);
-      
+
       const provider = this.providers.get(providerName);
       if (!provider) {
         throw new Error('Provider não encontrado');
@@ -586,7 +637,7 @@ export class StorageProvider {
         success: true,
         data: metrics,
         timestamp: new Date(),
-        requestId: crypto.randomUUID()
+        requestId: crypto.randomUUID(),
       };
     } catch (error) {
       return {
@@ -594,7 +645,7 @@ export class StorageProvider {
         error: error.message,
         message: 'Erro ao obter métricas',
         timestamp: new Date(),
-        requestId: crypto.randomUUID()
+        requestId: crypto.randomUUID(),
       };
     }
   }
@@ -602,11 +653,14 @@ export class StorageProvider {
   /**
    * Deletar arquivo
    */
-  async delete(remotePath: string, config: StorageConfig): Promise<ApiResponse> {
+  async delete(
+    remotePath: string,
+    config: StorageConfig
+  ): Promise<ApiResponse> {
     try {
       const providerName = `${config.type}-${Date.now()}`;
       this.registerProvider(providerName, config);
-      
+
       const provider = this.providers.get(providerName);
       if (!provider) {
         throw new Error('Provider não encontrado');
@@ -619,18 +673,18 @@ export class StorageProvider {
         action: 'BACKUP_DELETED',
         entityType: 'BACKUP',
         entityId: crypto.randomUUID(),
-        details: { 
-          remotePath, 
-          storageType: config.type 
+        details: {
+          remotePath,
+          storageType: config.type,
         },
-        userId: 'system'
+        userId: 'system',
       });
 
       return {
         success: true,
         message: 'Arquivo deletado com sucesso',
         timestamp: new Date(),
-        requestId: crypto.randomUUID()
+        requestId: crypto.randomUUID(),
       };
     } catch (error) {
       return {
@@ -638,7 +692,7 @@ export class StorageProvider {
         error: error.message,
         message: 'Erro ao deletar arquivo',
         timestamp: new Date(),
-        requestId: crypto.randomUUID()
+        requestId: crypto.randomUUID(),
       };
     }
   }
@@ -678,7 +732,7 @@ export class StorageProvider {
     try {
       const providerName = `test-${config.type}-${Date.now()}`;
       this.registerProvider(providerName, config);
-      
+
       const provider = this.providers.get(providerName);
       if (!provider) {
         throw new Error('Provider não encontrado');
@@ -693,7 +747,7 @@ export class StorageProvider {
         data: true,
         message: 'Conexão testada com sucesso',
         timestamp: new Date(),
-        requestId: crypto.randomUUID()
+        requestId: crypto.randomUUID(),
       };
     } catch (error) {
       return {
@@ -702,7 +756,7 @@ export class StorageProvider {
         error: error.message,
         message: 'Falha no teste de conexão',
         timestamp: new Date(),
-        requestId: crypto.randomUUID()
+        requestId: crypto.randomUUID(),
       };
     }
   }

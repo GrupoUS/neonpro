@@ -30,7 +30,7 @@ export class PerformanceMonitor {
       PerformanceMonitor.instance = new PerformanceMonitor();
     }
     return PerformanceMonitor.instance;
-  }  /**
+  } /**
    * Start performance measurement for operation
    */
   startMeasurement(operation: string): string {
@@ -42,23 +42,23 @@ export class PerformanceMonitor {
   /**
    * End performance measurement and record metrics
    */
-  endMeasurement(measurementId: string, success: boolean = true): PerformanceMetrics {
+  endMeasurement(measurementId: string, success = true): PerformanceMetrics {
     const endMark = `${measurementId}-end`;
     performance.mark(endMark);
-    
+
     const measure = performance.measure(
-      measurementId, 
-      `${measurementId}-start`, 
+      measurementId,
+      `${measurementId}-start`,
       endMark
     );
-    
+
     const metric: PerformanceMetrics = {
       timestamp: Date.now(),
       operation: measurementId.split('-')[0],
       duration: measure.duration,
       memory: this.getMemoryUsage(),
       errors: success ? 0 : 1,
-      success
+      success,
     };
 
     this.metrics.push(metric);
@@ -69,18 +69,19 @@ export class PerformanceMonitor {
   /**
    * Get current memory usage in MB
    */
-  private getMemoryUsage(): number {    if (typeof window !== 'undefined' && 'memory' in performance) {
+  private getMemoryUsage(): number {
+    if (typeof window !== 'undefined' && 'memory' in performance) {
       // Browser environment
       const memory = (performance as any).memory;
       return memory.usedJSHeapSize / (1024 * 1024);
     }
-    
+
     if (typeof process !== 'undefined' && process.memoryUsage) {
       // Node.js environment
       const usage = process.memoryUsage();
       return usage.heapUsed / (1024 * 1024);
     }
-    
+
     return 0;
   }
 
@@ -88,25 +89,28 @@ export class PerformanceMonitor {
    * Calculate performance benchmark for operation
    */
   getBenchmark(operation: string): PerformanceBenchmark | null {
-    const operationMetrics = this.metrics.filter(m => m.operation === operation);
-    
+    const operationMetrics = this.metrics.filter(
+      (m) => m.operation === operation
+    );
+
     if (operationMetrics.length === 0) return null;
 
-    const avgResponseTime = operationMetrics.reduce(
-      (sum, m) => sum + m.duration, 0
-    ) / operationMetrics.length;
+    const avgResponseTime =
+      operationMetrics.reduce((sum, m) => sum + m.duration, 0) /
+      operationMetrics.length;
 
-    const avgMemory = operationMetrics.reduce(
-      (sum, m) => sum + m.memory, 0
-    ) / operationMetrics.length;
+    const avgMemory =
+      operationMetrics.reduce((sum, m) => sum + m.memory, 0) /
+      operationMetrics.length;
 
-    const errorCount = operationMetrics.filter(m => !m.success).length;
-    const errorRate = (errorCount / operationMetrics.length) * 100;    const benchmark: PerformanceBenchmark = {
+    const errorCount = operationMetrics.filter((m) => !m.success).length;
+    const errorRate = (errorCount / operationMetrics.length) * 100;
+    const benchmark: PerformanceBenchmark = {
       responseTime: avgResponseTime,
       throughput: operationMetrics.length,
       memoryUsage: avgMemory,
       errorRate,
-      cacheHitRate: 0 // Will be calculated by cache monitor
+      cacheHitRate: 0, // Will be calculated by cache monitor
     };
 
     this.benchmarks.set(operation, benchmark);
@@ -125,7 +129,7 @@ export class PerformanceMonitor {
    */
   private cleanOldMetrics(): void {
     const oneHourAgo = Date.now() - 60 * 60 * 1000;
-    this.metrics = this.metrics.filter(m => m.timestamp > oneHourAgo);
+    this.metrics = this.metrics.filter((m) => m.timestamp > oneHourAgo);
   }
 
   /**
@@ -133,9 +137,9 @@ export class PerformanceMonitor {
    */
   generateReport(): Record<string, PerformanceBenchmark> {
     const report: Record<string, PerformanceBenchmark> = {};
-    
-    const operations = [...new Set(this.metrics.map(m => m.operation))];
-    operations.forEach(op => {
+
+    const operations = [...new Set(this.metrics.map((m) => m.operation))];
+    operations.forEach((op) => {
       const benchmark = this.getBenchmark(op);
       if (benchmark) report[op] = benchmark;
     });

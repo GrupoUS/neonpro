@@ -1,22 +1,25 @@
 /**
  * API Endpoint: Send Notification
- * 
+ *
  * Endpoint para envio de notificações com validação completa de compliance
  * e otimização inteligente via ML.
- * 
+ *
  * @route POST /api/notifications/send
  * @author APEX Architecture Team
  * @version 1.0.0
  * @compliance LGPD, ANVISA, CFM
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createClient } from '@/app/utils/supabase/server';
+import { notificationComplianceEngine } from '@/lib/notifications/compliance/compliance-engine';
 import { notificationManager } from '@/lib/notifications/core/notification-manager';
 import { notificationMLEngine } from '@/lib/notifications/ml/optimization-engine';
-import { notificationComplianceEngine } from '@/lib/notifications/compliance/compliance-engine';
-import { NotificationChannel, NotificationType } from '@/lib/notifications/types';
+import {
+  NotificationChannel,
+  NotificationType,
+} from '@/lib/notifications/types';
 
 // ================================================================================
 // VALIDATION SCHEMAS
@@ -26,11 +29,17 @@ const SendNotificationSchema = z.object({
   userId: z.string().uuid('ID do usuário deve ser um UUID válido'),
   clinicId: z.string().uuid('ID da clínica deve ser um UUID válido'),
   type: z.nativeEnum(NotificationType, {
-    errorMap: () => ({ message: 'Tipo de notificação inválido' })
+    errorMap: () => ({ message: 'Tipo de notificação inválido' }),
   }),
   channels: z.array(z.nativeEnum(NotificationChannel)).optional(),
-  title: z.string().min(1, 'Título é obrigatório').max(100, 'Título muito longo'),
-  content: z.string().min(1, 'Conteúdo é obrigatório').max(1000, 'Conteúdo muito longo'),
+  title: z
+    .string()
+    .min(1, 'Título é obrigatório')
+    .max(100, 'Título muito longo'),
+  content: z
+    .string()
+    .min(1, 'Conteúdo é obrigatório')
+    .max(1000, 'Conteúdo muito longo'),
   templateId: z.string().uuid().optional(),
   templateData: z.record(z.any()).optional(),
   scheduledFor: z.string().datetime().optional(),
@@ -43,11 +52,13 @@ const SendNotificationSchema = z.object({
 const BulkSendSchema = z.object({
   clinicId: z.string().uuid(),
   notifications: z.array(SendNotificationSchema).min(1).max(1000),
-  batchOptions: z.object({
-    delay: z.number().min(0).max(60000).default(1000), // ms entre envios
-    stopOnError: z.boolean().default(false),
-    enableProgressTracking: z.boolean().default(true),
-  }).optional(),
+  batchOptions: z
+    .object({
+      delay: z.number().min(0).max(60_000).default(1000), // ms entre envios
+      stopOnError: z.boolean().default(false),
+      enableProgressTracking: z.boolean().default(true),
+    })
+    .optional(),
 });
 
 type SendNotificationRequest = z.infer<typeof SendNotificationSchema>;
@@ -60,15 +71,21 @@ type BulkSendRequest = z.infer<typeof BulkSendSchema>;
 /**
  * Valida autenticação e autorização
  */
-async function validateAuth(request: NextRequest) {
+async function validateAuth(_request: NextRequest) {
   const supabase = await createClient();
-  
-  const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+
+  const {
+    data: { session },
+    error: sessionError,
+  } = await supabase.auth.getSession();
   if (sessionError || !session) {
     return { error: 'Não autenticado', status: 401 };
   }
 
-  const { data: { user }, error: userError } = await supabase.auth.getUser();
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
   if (userError || !user) {
     return { error: 'Usuário inválido', status: 401 };
   }
@@ -84,8 +101,9 @@ async function validateAuth(request: NextRequest) {
     return { error: 'Perfil não encontrado', status: 404 };
   }
 
-  const canSendNotifications = profile.permissions?.includes('send_notifications') || 
-                              ['admin', 'manager', 'receptionist'].includes(profile.role);
+  const canSendNotifications =
+    profile.permissions?.includes('send_notifications') ||
+    ['admin', 'manager', 'receptionist'].includes(profile.role);
 
   if (!canSendNotifications) {
     return { error: 'Sem permissão para enviar notificações', status: 403 };
@@ -112,7 +130,9 @@ async function applyMLOptimization(
       {
         content: request.content,
         type: request.type,
-        scheduledFor: request.scheduledFor ? new Date(request.scheduledFor) : undefined,
+        scheduledFor: request.scheduledFor
+          ? new Date(request.scheduledFor)
+          : undefined,
         channels: request.channels,
       }
     );
@@ -120,7 +140,9 @@ async function applyMLOptimization(
     // Aplicar otimizações
     const optimizedRequest = {
       ...request,
-      channels: request.channels || [optimization.optimizations.channel.recommended],
+      channels: request.channels || [
+        optimization.optimizations.channel.recommended,
+      ],
       content: optimization.optimizations.content.personalizedContent,
       scheduledFor: optimization.optimizations.timing.recommended.toISOString(),
       metadata: {
@@ -150,7 +172,10 @@ async function applyMLOptimization(
  */
 async function validateCompliance(request: SendNotificationRequest) {
   if (request.skipComplianceCheck) {
-    return { isCompliant: true, warnings: ['Verificação de compliance ignorada'] };
+    return {
+      isCompliant: true,
+      warnings: ['Verificação de compliance ignorada'],
+    };
   }
 
   try {
@@ -163,15 +188,18 @@ async function validateCompliance(request: SendNotificationRequest) {
     );
 
     // Validação médica (se aplicável)
-    const medicalCheck = await notificationComplianceEngine.validateMedicalCompliance(
-      request.userId,
-      request.clinicId,
-      request.content,
-      request.type
-    );
+    const medicalCheck =
+      await notificationComplianceEngine.validateMedicalCompliance(
+        request.userId,
+        request.clinicId,
+        request.content,
+        request.type
+      );
 
     const allViolations = [...lgpdCheck.violations, ...medicalCheck.violations];
-    const criticalViolations = allViolations.filter(v => v.severity === 'critical');
+    const criticalViolations = allViolations.filter(
+      (v) => v.severity === 'critical'
+    );
 
     if (criticalViolations.length > 0) {
       return {
@@ -184,7 +212,10 @@ async function validateCompliance(request: SendNotificationRequest) {
     return {
       isCompliant: true,
       violations: allViolations,
-      recommendations: [...lgpdCheck.recommendations, ...medicalCheck.recommendations],
+      recommendations: [
+        ...lgpdCheck.recommendations,
+        ...medicalCheck.recommendations,
+      ],
     };
   } catch (error) {
     console.error('Erro na validação de compliance:', error);
@@ -219,15 +250,15 @@ export async function POST(request: NextRequest) {
     // 2. Validar dados da requisição
     const body = await request.json();
     const validationResult = SendNotificationSchema.safeParse(body);
-    
+
     if (!validationResult.success) {
       return NextResponse.json(
-        { 
+        {
           error: 'Dados inválidos',
-          details: validationResult.error.errors.map(e => ({
+          details: validationResult.error.errors.map((e) => ({
             field: e.path.join('.'),
-            message: e.message
-          }))
+            message: e.message,
+          })),
         },
         { status: 400 }
       );
@@ -250,9 +281,9 @@ export async function POST(request: NextRequest) {
     const complianceResult = await validateCompliance(optimizedRequest);
     if (!complianceResult.isCompliant) {
       return NextResponse.json(
-        { 
+        {
           error: complianceResult.error || 'Falha na validação de compliance',
-          violations: complianceResult.violations
+          violations: complianceResult.violations,
         },
         { status: 422 }
       );
@@ -268,7 +299,9 @@ export async function POST(request: NextRequest) {
       content: optimizedRequest.content,
       templateId: optimizedRequest.templateId,
       templateData: optimizedRequest.templateData,
-      scheduledFor: optimizedRequest.scheduledFor ? new Date(optimizedRequest.scheduledFor) : undefined,
+      scheduledFor: optimizedRequest.scheduledFor
+        ? new Date(optimizedRequest.scheduledFor)
+        : undefined,
       priority: optimizedRequest.priority,
       metadata: {
         ...optimizedRequest.metadata,
@@ -285,20 +318,22 @@ export async function POST(request: NextRequest) {
       optimizations: optimizedRequest.metadata?.mlOptimization,
       compliance: {
         validated: true,
-        warnings: complianceResult.violations?.filter(v => v.severity !== 'critical'),
+        warnings: complianceResult.violations?.filter(
+          (v) => v.severity !== 'critical'
+        ),
         recommendations: complianceResult.recommendations,
       },
       channels: optimizedRequest.channels,
       scheduledFor: optimizedRequest.scheduledFor,
     });
-
   } catch (error) {
     console.error('Erro no envio de notificação:', error);
-    
+
     return NextResponse.json(
-      { 
+      {
         error: 'Erro interno do servidor',
-        details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        details:
+          process.env.NODE_ENV === 'development' ? error.message : undefined,
       },
       { status: 500 }
     );
@@ -325,12 +360,12 @@ export async function PUT(request: NextRequest) {
     // 2. Validar dados da requisição
     const body = await request.json();
     const validationResult = BulkSendSchema.safeParse(body);
-    
+
     if (!validationResult.success) {
       return NextResponse.json(
-        { 
+        {
           error: 'Dados inválidos para envio em lote',
-          details: validationResult.error.errors
+          details: validationResult.error.errors,
         },
         { status: 400 }
       );
@@ -355,15 +390,17 @@ export async function PUT(request: NextRequest) {
       try {
         // Aplicar otimização e compliance para cada notificação
         const optimizedNotification = await applyMLOptimization(notification);
-        const complianceResult = await validateCompliance(optimizedNotification);
+        const complianceResult = await validateCompliance(
+          optimizedNotification
+        );
 
         if (!complianceResult.isCompliant) {
           errors.push({
             userId: notification.userId,
             error: 'Falha na validação de compliance',
-            violations: complianceResult.violations
+            violations: complianceResult.violations,
           });
-          
+
           if (bulkRequest.batchOptions?.stopOnError) {
             break;
           }
@@ -374,7 +411,9 @@ export async function PUT(request: NextRequest) {
         const result = await notificationManager.sendNotification({
           ...optimizedNotification,
           channels: optimizedNotification.channels!,
-          scheduledFor: optimizedNotification.scheduledFor ? new Date(optimizedNotification.scheduledFor) : undefined,
+          scheduledFor: optimizedNotification.scheduledFor
+            ? new Date(optimizedNotification.scheduledFor)
+            : undefined,
           metadata: {
             ...optimizedNotification.metadata,
             sentBy: user.id,
@@ -393,9 +432,10 @@ export async function PUT(request: NextRequest) {
 
         // Delay entre envios se configurado
         if (bulkRequest.batchOptions?.delay) {
-          await new Promise(resolve => setTimeout(resolve, bulkRequest.batchOptions.delay));
+          await new Promise((resolve) =>
+            setTimeout(resolve, bulkRequest.batchOptions.delay)
+          );
         }
-
       } catch (error) {
         errors.push({
           userId: notification.userId,
@@ -419,14 +459,14 @@ export async function PUT(request: NextRequest) {
       results,
       errors: errors.length > 0 ? errors : undefined,
     });
-
   } catch (error) {
     console.error('Erro no envio em lote:', error);
-    
+
     return NextResponse.json(
-      { 
+      {
         error: 'Erro interno no envio em lote',
-        details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        details:
+          process.env.NODE_ENV === 'development' ? error.message : undefined,
       },
       { status: 500 }
     );
@@ -459,7 +499,7 @@ export async function GET(request: NextRequest) {
         },
         bulk: {
           maxNotifications: 1000,
-          maxDelay: 60000,
+          maxDelay: 60_000,
           recommendedBatchSize: 100,
         },
       },
@@ -475,8 +515,7 @@ export async function GET(request: NextRequest) {
         role: profile.role,
       },
     });
-
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro ao obter configurações' },
       { status: 500 }

@@ -36,21 +36,32 @@ export class ConflictDetectionService {
       return {
         hasConflicts: conflictCount > 0,
         conflictCount,
-        severity: conflictCount === 0 ? 'none' : conflictCount === 1 ? 'low' : conflictCount === 2 ? 'medium' : 'high'
+        severity:
+          conflictCount === 0
+            ? 'none'
+            : conflictCount === 1
+              ? 'low'
+              : conflictCount === 2
+                ? 'medium'
+                : 'high',
       };
-    } catch (error) {
+    } catch (_error) {
       throw new Error('Failed to detect conflicts');
     }
   }
 
   async analyzeConflictSeverity(conflictData: any): Promise<any> {
     const { conflictCount, affectedProviders, timeOverlap } = conflictData;
-    
+
     let severity = 'low';
     let impact = 'single_provider';
     let recommendation = 'schedule_adjustment';
 
-    if (conflictCount >= 3 || affectedProviders.length > 1 || timeOverlap > 15) {
+    if (
+      conflictCount >= 3 ||
+      affectedProviders.length > 1 ||
+      timeOverlap > 15
+    ) {
       severity = 'high';
       impact = 'multiple_providers';
       recommendation = 'immediate_resolution';
@@ -61,23 +72,23 @@ export class ConflictDetectionService {
     return { severity, impact, recommendation };
   }
 
-  async suggestResolutions(conflictContext: any): Promise<any> {
+  async suggestResolutions(_conflictContext: any): Promise<any> {
     const suggestions = [
       {
         type: 'reschedule',
         description: 'Move appointment to next available slot',
-        priority: 1
+        priority: 1,
       },
       {
         type: 'different_provider',
         description: 'Assign to available provider',
-        priority: 2
+        priority: 2,
       },
       {
         type: 'waitlist',
         description: 'Add to priority waitlist',
-        priority: 3
-      }
+        priority: 3,
+      },
     ];
 
     return { suggestions };
@@ -104,14 +115,16 @@ export class WaitlistService {
       return {
         success: true,
         waitlistId: data.id,
-        position: 5 // Simplified for testing
+        position: 5, // Simplified for testing
       };
-    } catch (error) {
+    } catch (_error) {
       throw new Error('Failed to add to waitlist');
     }
   }
 
-  async getWaitlistPosition(patientId: string): Promise<{position: number | null, estimatedWait: string | null}> {
+  async getWaitlistPosition(
+    patientId: string
+  ): Promise<{ position: number | null; estimatedWait: string | null }> {
     try {
       const { data, error } = await this.supabase
         .from('waitlist')
@@ -122,7 +135,7 @@ export class WaitlistService {
       if (error || !data) {
         return {
           position: null,
-          estimatedWait: null
+          estimatedWait: null,
         };
       }
 
@@ -130,7 +143,7 @@ export class WaitlistService {
       if (patientId === 'pat-123') {
         return {
           position: 3,
-          estimatedWait: '2 hours'
+          estimatedWait: '2 hours',
         };
       }
 
@@ -138,7 +151,7 @@ export class WaitlistService {
       if (patientId === 'pat-999') {
         return {
           position: null,
-          estimatedWait: null
+          estimatedWait: null,
         };
       }
 
@@ -148,17 +161,19 @@ export class WaitlistService {
 
       return {
         position,
-        estimatedWait
+        estimatedWait,
       };
-    } catch (error) {
+    } catch (_error) {
       return {
         position: null,
-        estimatedWait: null
+        estimatedWait: null,
       };
     }
   }
 
-  async processWaitlist(criteria?: any): Promise<{processed: number, matched: number}> {
+  async processWaitlist(
+    _criteria?: any
+  ): Promise<{ processed: number; matched: number }> {
     try {
       // Get waitlist entries that match criteria
       const { data: waitlistEntries, error } = await this.supabase
@@ -176,13 +191,13 @@ export class WaitlistService {
 
       return {
         processed,
-        matched
+        matched,
       };
-    } catch (error) {
+    } catch (_error) {
       // Return fallback for testing
       return {
         processed: 2,
-        matched: 2
+        matched: 2,
       };
     }
   }
@@ -192,9 +207,9 @@ export class WaitlistService {
       // Mock notification system
       return {
         notifications_sent: availableSlots.length,
-        success_rate: 0.85
+        success_rate: 0.85,
       };
-    } catch (error) {
+    } catch (_error) {
       throw new Error('Failed to notify waitlist patients');
     }
   }

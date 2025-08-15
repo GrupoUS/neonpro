@@ -5,14 +5,12 @@
 
 import { createClient } from '@supabase/supabase-js';
 import type {
+  DrillDownRequest,
+  DrillDownResult,
   FinancialKPI,
   KPICalculationRequest,
   KPICalculationResult,
   KPIThreshold,
-  KPIAlert,
-  KPIHistory,
-  DrillDownRequest,
-  DrillDownResult,
 } from '@/lib/types/kpi-types';
 
 export class KPIEngine {
@@ -28,19 +26,21 @@ export class KPIEngine {
   }
 
   // Core KPI Calculation Methods
-  async calculateKPIs(request: KPICalculationRequest): Promise<KPICalculationResult[]> {
+  async calculateKPIs(
+    request: KPICalculationRequest
+  ): Promise<KPICalculationResult[]> {
     const startTime = Date.now();
-    
+
     try {
       // Get KPIs to calculate
-      const kpisToCalculate = request.kpi_ids 
+      const kpisToCalculate = request.kpi_ids
         ? await this.getKPIsByIds(request.kpi_ids)
         : await this.getAllKPIs();
 
       const results: KPICalculationResult[] = [];
 
       // Calculate each KPI in parallel for performance
-      const calculations = kpisToCalculate.map(kpi => 
+      const calculations = kpisToCalculate.map((kpi) =>
         this.calculateSingleKPI(kpi, request)
       );
 
@@ -58,7 +58,6 @@ export class KPIEngine {
 
       console.log(`KPI calculation completed in ${Date.now() - startTime}ms`);
       return results;
-
     } catch (error) {
       console.error('KPI calculation error:', error);
       throw error;
@@ -66,45 +65,86 @@ export class KPIEngine {
   }
 
   private async calculateSingleKPI(
-    kpi: FinancialKPI, 
+    kpi: FinancialKPI,
     request: KPICalculationRequest
   ): Promise<KPICalculationResult> {
     const { start_date, end_date } = request.time_period;
     let calculatedValue = 0;
     let dataPointsUsed = 0;
-    let breakdown: Array<{ dimension: string; value: number; percentage: number }> = [];
+    let breakdown: Array<{
+      dimension: string;
+      value: number;
+      percentage: number;
+    }> = [];
 
     try {
       switch (kpi.kpi_category) {
         case 'revenue':
-          ({ value: calculatedValue, dataPoints: dataPointsUsed, breakdown } = 
-            await this.calculateRevenueKPI(kpi, start_date, end_date, request.filters));
+          ({
+            value: calculatedValue,
+            dataPoints: dataPointsUsed,
+            breakdown,
+          } = await this.calculateRevenueKPI(
+            kpi,
+            start_date,
+            end_date,
+            request.filters
+          ));
           break;
-        
+
         case 'profitability':
-          ({ value: calculatedValue, dataPoints: dataPointsUsed, breakdown } = 
-            await this.calculateProfitabilityKPI(kpi, start_date, end_date, request.filters));
+          ({
+            value: calculatedValue,
+            dataPoints: dataPointsUsed,
+            breakdown,
+          } = await this.calculateProfitabilityKPI(
+            kpi,
+            start_date,
+            end_date,
+            request.filters
+          ));
           break;
-        
+
         case 'operational':
-          ({ value: calculatedValue, dataPoints: dataPointsUsed, breakdown } = 
-            await this.calculateOperationalKPI(kpi, start_date, end_date, request.filters));
+          ({
+            value: calculatedValue,
+            dataPoints: dataPointsUsed,
+            breakdown,
+          } = await this.calculateOperationalKPI(
+            kpi,
+            start_date,
+            end_date,
+            request.filters
+          ));
           break;
-        
+
         case 'financial_health':
-          ({ value: calculatedValue, dataPoints: dataPointsUsed, breakdown } = 
-            await this.calculateFinancialHealthKPI(kpi, start_date, end_date, request.filters));
+          ({
+            value: calculatedValue,
+            dataPoints: dataPointsUsed,
+            breakdown,
+          } = await this.calculateFinancialHealthKPI(
+            kpi,
+            start_date,
+            end_date,
+            request.filters
+          ));
           break;
       }
 
       // Calculate variance and trend
-      const previousValue = request.include_variance ? 
-        await this.getPreviousPeriodValue(kpi, start_date, end_date) : undefined;
-      
-      const variancePercent = previousValue ? 
-        ((calculatedValue - previousValue) / previousValue) * 100 : undefined;
+      const previousValue = request.include_variance
+        ? await this.getPreviousPeriodValue(kpi, start_date, end_date)
+        : undefined;
 
-      const trendDirection = this.determineTrendDirection(calculatedValue, previousValue);
+      const variancePercent = previousValue
+        ? ((calculatedValue - previousValue) / previousValue) * 100
+        : undefined;
+
+      const trendDirection = this.determineTrendDirection(
+        calculatedValue,
+        previousValue
+      );
 
       return {
         kpi_id: kpi.id,
@@ -115,10 +155,12 @@ export class KPIEngine {
         trend_direction: trendDirection,
         calculation_timestamp: new Date().toISOString(),
         data_points_used: dataPointsUsed,
-        confidence_score: this.calculateConfidenceScore(dataPointsUsed, kpi.kpi_category),
+        confidence_score: this.calculateConfidenceScore(
+          dataPointsUsed,
+          kpi.kpi_category
+        ),
         breakdown,
       };
-
     } catch (error) {
       console.error(`Error calculating KPI ${kpi.kpi_name}:`, error);
       return {
@@ -135,9 +177,9 @@ export class KPIEngine {
 
   // Revenue KPI Calculations
   private async calculateRevenueKPI(
-    kpi: FinancialKPI, 
-    startDate: string, 
-    endDate: string, 
+    kpi: FinancialKPI,
+    startDate: string,
+    endDate: string,
     filters?: any
   ) {
     const cacheKey = `revenue_${kpi.kpi_name}_${startDate}_${endDate}`;
@@ -159,16 +201,23 @@ export class KPIEngine {
     if (error) throw error;
 
     let value = 0;
-    const breakdown: Array<{ dimension: string; value: number; percentage: number }> = [];
+    const breakdown: Array<{
+      dimension: string;
+      value: number;
+      percentage: number;
+    }> = [];
 
     if (kpi.kpi_name === 'Total Revenue') {
       value = invoices.reduce((sum, inv) => sum + inv.amount, 0);
-      
+
       // Create breakdown by service type
-      const serviceBreakdown = invoices.reduce((acc, inv) => {
-        acc[inv.service_type] = (acc[inv.service_type] || 0) + inv.amount;
-        return acc;
-      }, {} as Record<string, number>);
+      const serviceBreakdown = invoices.reduce(
+        (acc, inv) => {
+          acc[inv.service_type] = (acc[inv.service_type] || 0) + inv.amount;
+          return acc;
+        },
+        {} as Record<string, number>
+      );
 
       Object.entries(serviceBreakdown).forEach(([service, amount]) => {
         breakdown.push({
@@ -177,14 +226,13 @@ export class KPIEngine {
           percentage: (amount / value) * 100,
         });
       });
-
     } else if (kpi.kpi_name === 'Revenue Per Patient') {
       const { data: patients } = await this.supabase
         .from('patients')
         .select('id')
         .gte('created_at', startDate)
         .lte('created_at', endDate);
-      
+
       const totalRevenue = invoices.reduce((sum, inv) => sum + inv.amount, 0);
       value = patients?.length ? totalRevenue / patients.length : 0;
     }
@@ -196,10 +244,10 @@ export class KPIEngine {
 
   // Profitability KPI Calculations
   private async calculateProfitabilityKPI(
-    kpi: FinancialKPI, 
-    startDate: string, 
-    endDate: string, 
-    filters?: any
+    kpi: FinancialKPI,
+    startDate: string,
+    endDate: string,
+    _filters?: any
   ) {
     const cacheKey = `profitability_${kpi.kpi_name}_${startDate}_${endDate}`;
     const cached = this.getFromCache(cacheKey);
@@ -220,15 +268,24 @@ export class KPIEngine {
       .gte('created_at', startDate)
       .lte('created_at', endDate);
 
-    const totalRevenue = invoices?.reduce((sum, inv) => sum + inv.amount, 0) || 0;
-    const totalDirectCosts = invoices?.reduce((sum, inv) => sum + (inv.direct_costs || 0), 0) || 0;
-    const totalExpenses = expenses?.reduce((sum, exp) => sum + exp.amount, 0) || 0;
+    const totalRevenue =
+      invoices?.reduce((sum, inv) => sum + inv.amount, 0) || 0;
+    const totalDirectCosts =
+      invoices?.reduce((sum, inv) => sum + (inv.direct_costs || 0), 0) || 0;
+    const totalExpenses =
+      expenses?.reduce((sum, exp) => sum + exp.amount, 0) || 0;
 
     let value = 0;
-    const breakdown: Array<{ dimension: string; value: number; percentage: number }> = [];
+    const breakdown: Array<{
+      dimension: string;
+      value: number;
+      percentage: number;
+    }> = [];
 
     if (kpi.kpi_name === 'Gross Profit Margin') {
-      value = totalRevenue ? ((totalRevenue - totalDirectCosts) / totalRevenue) * 100 : 0;
+      value = totalRevenue
+        ? ((totalRevenue - totalDirectCosts) / totalRevenue) * 100
+        : 0;
     } else if (kpi.kpi_name === 'EBITDA') {
       value = totalRevenue - totalDirectCosts - totalExpenses;
     } else if (kpi.kpi_name === 'Net Profit Margin') {
@@ -237,10 +294,14 @@ export class KPIEngine {
     }
 
     // Create expense breakdown
-    const expenseBreakdown = expenses?.reduce((acc, exp) => {
-      acc[exp.category] = (acc[exp.category] || 0) + exp.amount;
-      return acc;
-    }, {} as Record<string, number>) || {};
+    const expenseBreakdown =
+      expenses?.reduce(
+        (acc, exp) => {
+          acc[exp.category] = (acc[exp.category] || 0) + exp.amount;
+          return acc;
+        },
+        {} as Record<string, number>
+      ) || {};
 
     Object.entries(expenseBreakdown).forEach(([category, amount]) => {
       breakdown.push({
@@ -250,10 +311,10 @@ export class KPIEngine {
       });
     });
 
-    const result = { 
-      value, 
-      dataPoints: (invoices?.length || 0) + (expenses?.length || 0), 
-      breakdown 
+    const result = {
+      value,
+      dataPoints: (invoices?.length || 0) + (expenses?.length || 0),
+      breakdown,
     };
     this.setCache(cacheKey, result);
     return result;
@@ -261,10 +322,10 @@ export class KPIEngine {
 
   // Operational KPI Calculations
   private async calculateOperationalKPI(
-    kpi: FinancialKPI, 
-    startDate: string, 
-    endDate: string, 
-    filters?: any
+    kpi: FinancialKPI,
+    startDate: string,
+    endDate: string,
+    _filters?: any
   ) {
     const cacheKey = `operational_${kpi.kpi_name}_${startDate}_${endDate}`;
     const cached = this.getFromCache(cacheKey);
@@ -272,7 +333,11 @@ export class KPIEngine {
 
     let value = 0;
     let dataPoints = 0;
-    const breakdown: Array<{ dimension: string; value: number; percentage: number }> = [];
+    const breakdown: Array<{
+      dimension: string;
+      value: number;
+      percentage: number;
+    }> = [];
 
     if (kpi.kpi_name === 'Patient Retention Rate') {
       const { data: patients } = await this.supabase
@@ -285,12 +350,15 @@ export class KPIEngine {
         .gte('created_at', startDate)
         .lte('created_at', endDate);
 
-      const returningPatients = new Set(appointments?.map(a => a.patient_id) || []);
+      const returningPatients = new Set(
+        appointments?.map((a) => a.patient_id) || []
+      );
       const totalPatients = patients?.length || 0;
-      
-      value = totalPatients ? (returningPatients.size / totalPatients) * 100 : 0;
-      dataPoints = totalPatients;
 
+      value = totalPatients
+        ? (returningPatients.size / totalPatients) * 100
+        : 0;
+      dataPoints = totalPatients;
     } else if (kpi.kpi_name === 'Appointment Utilization') {
       const { data: appointments } = await this.supabase
         .from('appointments')
@@ -299,11 +367,11 @@ export class KPIEngine {
         .lte('created_at', endDate);
 
       const totalSlots = appointments?.length || 0;
-      const bookedSlots = appointments?.filter(a => a.status !== 'cancelled')?.length || 0;
-      
+      const bookedSlots =
+        appointments?.filter((a) => a.status !== 'cancelled')?.length || 0;
+
       value = totalSlots ? (bookedSlots / totalSlots) * 100 : 0;
       dataPoints = totalSlots;
-
     } else if (kpi.kpi_name === 'Cost Per Patient Acquisition') {
       const { data: expenses } = await this.supabase
         .from('expenses')
@@ -318,9 +386,10 @@ export class KPIEngine {
         .gte('created_at', startDate)
         .lte('created_at', endDate);
 
-      const marketingCosts = expenses?.reduce((sum, exp) => sum + exp.amount, 0) || 0;
+      const marketingCosts =
+        expenses?.reduce((sum, exp) => sum + exp.amount, 0) || 0;
       const newPatientCount = newPatients?.length || 0;
-      
+
       value = newPatientCount ? marketingCosts / newPatientCount : 0;
       dataPoints = newPatientCount;
     }
@@ -332,10 +401,10 @@ export class KPIEngine {
 
   // Financial Health KPI Calculations
   private async calculateFinancialHealthKPI(
-    kpi: FinancialKPI, 
-    startDate: string, 
-    endDate: string, 
-    filters?: any
+    kpi: FinancialKPI,
+    startDate: string,
+    endDate: string,
+    _filters?: any
   ) {
     const cacheKey = `financial_health_${kpi.kpi_name}_${startDate}_${endDate}`;
     const cached = this.getFromCache(cacheKey);
@@ -343,7 +412,11 @@ export class KPIEngine {
 
     let value = 0;
     let dataPoints = 0;
-    const breakdown: Array<{ dimension: string; value: number; percentage: number }> = [];
+    const breakdown: Array<{
+      dimension: string;
+      value: number;
+      percentage: number;
+    }> = [];
 
     if (kpi.kpi_name === 'Cash Flow Ratio') {
       // Simplified calculation - would need more complex cash flow tracking
@@ -360,16 +433,17 @@ export class KPIEngine {
         .gte('created_at', startDate)
         .lte('created_at', endDate);
 
-      const operatingCashFlow = (revenue?.reduce((sum, r) => sum + r.amount, 0) || 0) -
-                               (expenses?.reduce((sum, e) => sum + e.amount, 0) || 0);
-      
+      const operatingCashFlow =
+        (revenue?.reduce((sum, r) => sum + r.amount, 0) || 0) -
+        (expenses?.reduce((sum, e) => sum + e.amount, 0) || 0);
+
       // Assuming current liabilities as 30% of monthly expenses
-      const monthlyExpenses = expenses?.reduce((sum, e) => sum + e.amount, 0) || 0;
+      const monthlyExpenses =
+        expenses?.reduce((sum, e) => sum + e.amount, 0) || 0;
       const currentLiabilities = monthlyExpenses * 0.3;
-      
+
       value = currentLiabilities ? operatingCashFlow / currentLiabilities : 0;
       dataPoints = (revenue?.length || 0) + (expenses?.length || 0);
-
     } else if (kpi.kpi_name === 'Accounts Receivable Turnover') {
       const { data: invoices } = await this.supabase
         .from('invoices')
@@ -377,10 +451,13 @@ export class KPIEngine {
         .gte('created_at', startDate)
         .lte('created_at', endDate);
 
-      const totalRevenue = invoices?.reduce((sum, inv) => sum + inv.amount, 0) || 0;
-      const pendingReceivables = invoices?.filter(inv => inv.status === 'pending')
-                                          ?.reduce((sum, inv) => sum + inv.amount, 0) || 0;
-      
+      const totalRevenue =
+        invoices?.reduce((sum, inv) => sum + inv.amount, 0) || 0;
+      const pendingReceivables =
+        invoices
+          ?.filter((inv) => inv.status === 'pending')
+          ?.reduce((sum, inv) => sum + inv.amount, 0) || 0;
+
       value = pendingReceivables ? totalRevenue / pendingReceivables : 0;
       dataPoints = invoices?.length || 0;
     }
@@ -391,9 +468,11 @@ export class KPIEngine {
   }
 
   // Drill-down Analysis
-  async performDrillDown(request: DrillDownRequest): Promise<DrillDownResult[]> {
+  async performDrillDown(
+    request: DrillDownRequest
+  ): Promise<DrillDownResult[]> {
     const startTime = Date.now();
-    
+
     try {
       const kpi = await this.getKPIById(request.kpi_id);
       if (!kpi) throw new Error('KPI not found');
@@ -414,12 +493,15 @@ export class KPIEngine {
           results = await this.drillDownByPatientSegment(kpi, request);
           break;
         default:
-          throw new Error(`Unsupported drill-down dimension: ${request.dimension}`);
+          throw new Error(
+            `Unsupported drill-down dimension: ${request.dimension}`
+          );
       }
 
-      console.log(`Drill-down analysis completed in ${Date.now() - startTime}ms`);
+      console.log(
+        `Drill-down analysis completed in ${Date.now() - startTime}ms`
+      );
       return results.slice(0, request.limit || 50);
-
     } catch (error) {
       console.error('Drill-down analysis error:', error);
       throw error;
@@ -427,20 +509,26 @@ export class KPIEngine {
   }
 
   // Helper Methods
-  private determineTrendDirection(current: number, previous?: number): 'increasing' | 'decreasing' | 'stable' {
+  private determineTrendDirection(
+    current: number,
+    previous?: number
+  ): 'increasing' | 'decreasing' | 'stable' {
     if (!previous) return 'stable';
     const threshold = 0.05; // 5% threshold for stability
     const change = Math.abs((current - previous) / previous);
-    
+
     if (change < threshold) return 'stable';
     return current > previous ? 'increasing' : 'decreasing';
   }
 
-  private calculateConfidenceScore(dataPoints: number, category: string): number {
+  private calculateConfidenceScore(
+    dataPoints: number,
+    category: string
+  ): number {
     // Simple confidence scoring based on data points and category
     const baseScore = Math.min(dataPoints / 100, 1); // More data points = higher confidence
     const categoryMultiplier = category === 'revenue' ? 1.2 : 1.0; // Revenue data typically more reliable
-    
+
     return Math.min(baseScore * categoryMultiplier, 1) * 100;
   }
 
@@ -448,16 +536,16 @@ export class KPIEngine {
   private getFromCache(key: string): any | null {
     const cached = this.cache.get(key);
     if (!cached) return null;
-    
+
     if (Date.now() - cached.timestamp > cached.ttl) {
       this.cache.delete(key);
       return null;
     }
-    
+
     return cached.data;
   }
 
-  private setCache(key: string, data: any, ttlMinutes: number = 5): void {
+  private setCache(key: string, data: any, ttlMinutes = 5): void {
     this.cache.set(key, {
       data,
       timestamp: Date.now(),
@@ -471,7 +559,7 @@ export class KPIEngine {
       .from('financial_kpis')
       .select('*')
       .in('id', ids);
-    
+
     if (error) throw error;
     return data || [];
   }
@@ -481,7 +569,7 @@ export class KPIEngine {
       .from('financial_kpis')
       .select('*')
       .order('kpi_category', { ascending: true });
-    
+
     if (error) throw error;
     return data || [];
   }
@@ -492,13 +580,15 @@ export class KPIEngine {
       .select('*')
       .eq('id', id)
       .single();
-    
+
     if (error) return null;
     return data;
   }
 
-  private async updateKPIValues(results: KPICalculationResult[]): Promise<void> {
-    const updates = results.map(result => ({
+  private async updateKPIValues(
+    results: KPICalculationResult[]
+  ): Promise<void> {
+    const updates = results.map((result) => ({
       id: result.kpi_id,
       current_value: result.calculated_value,
       previous_value: result.previous_value || null,
@@ -515,8 +605,10 @@ export class KPIEngine {
     }
   }
 
-  private async recordKPIHistory(results: KPICalculationResult[]): Promise<void> {
-    const historyRecords = results.map(result => ({
+  private async recordKPIHistory(
+    results: KPICalculationResult[]
+  ): Promise<void> {
+    const historyRecords = results.map((result) => ({
       kpi_id: result.kpi_id,
       value: result.calculated_value,
       recorded_at: result.calculation_timestamp,
@@ -527,12 +619,12 @@ export class KPIEngine {
       },
     }));
 
-    await this.supabase
-      .from('kpi_history')
-      .insert(historyRecords);
+    await this.supabase.from('kpi_history').insert(historyRecords);
   }
 
-  private async checkThresholds(results: KPICalculationResult[]): Promise<void> {
+  private async checkThresholds(
+    results: KPICalculationResult[]
+  ): Promise<void> {
     for (const result of results) {
       const { data: thresholds } = await this.supabase
         .from('kpi_thresholds')
@@ -543,8 +635,11 @@ export class KPIEngine {
       if (!thresholds?.length) continue;
 
       for (const threshold of thresholds) {
-        const breached = this.checkThresholdBreach(result.calculated_value, threshold);
-        
+        const breached = this.checkThresholdBreach(
+          result.calculated_value,
+          threshold
+        );
+
         if (breached) {
           await this.createAlert(result, threshold);
         }
@@ -552,20 +647,32 @@ export class KPIEngine {
     }
   }
 
-  private checkThresholdBreach(value: number, threshold: KPIThreshold): boolean {
+  private checkThresholdBreach(
+    value: number,
+    threshold: KPIThreshold
+  ): boolean {
     const { threshold_value, comparison_operator } = threshold;
-    
+
     switch (comparison_operator) {
-      case 'gt': return value > threshold_value;
-      case 'lt': return value < threshold_value;
-      case 'eq': return value === threshold_value;
-      case 'gte': return value >= threshold_value;
-      case 'lte': return value <= threshold_value;
-      default: return false;
+      case 'gt':
+        return value > threshold_value;
+      case 'lt':
+        return value < threshold_value;
+      case 'eq':
+        return value === threshold_value;
+      case 'gte':
+        return value >= threshold_value;
+      case 'lte':
+        return value <= threshold_value;
+      default:
+        return false;
     }
   }
 
-  private async createAlert(result: KPICalculationResult, threshold: KPIThreshold): Promise<void> {
+  private async createAlert(
+    result: KPICalculationResult,
+    threshold: KPIThreshold
+  ): Promise<void> {
     const alert = {
       kpi_id: result.kpi_id,
       threshold_id: threshold.id,
@@ -576,20 +683,18 @@ export class KPIEngine {
       is_acknowledged: false,
     };
 
-    await this.supabase
-      .from('kpi_alerts')
-      .insert(alert);
+    await this.supabase.from('kpi_alerts').insert(alert);
   }
 
   private async getPreviousPeriodValue(
-    kpi: FinancialKPI, 
-    startDate: string, 
+    kpi: FinancialKPI,
+    startDate: string,
     endDate: string
   ): Promise<number | undefined> {
     const start = new Date(startDate);
     const end = new Date(endDate);
     const periodLength = end.getTime() - start.getTime();
-    
+
     const previousStart = new Date(start.getTime() - periodLength);
     const previousEnd = new Date(start.getTime());
 
@@ -606,22 +711,34 @@ export class KPIEngine {
   }
 
   // Drill-down implementations (simplified)
-  private async drillDownByTime(kpi: FinancialKPI, request: DrillDownRequest): Promise<DrillDownResult[]> {
+  private async drillDownByTime(
+    _kpi: FinancialKPI,
+    _request: DrillDownRequest
+  ): Promise<DrillDownResult[]> {
     // Implementation would vary based on aggregation level (day, week, month, etc.)
     return [];
   }
 
-  private async drillDownByServiceType(kpi: FinancialKPI, request: DrillDownRequest): Promise<DrillDownResult[]> {
+  private async drillDownByServiceType(
+    _kpi: FinancialKPI,
+    _request: DrillDownRequest
+  ): Promise<DrillDownResult[]> {
     // Implementation for service type breakdown
     return [];
   }
 
-  private async drillDownByProvider(kpi: FinancialKPI, request: DrillDownRequest): Promise<DrillDownResult[]> {
+  private async drillDownByProvider(
+    _kpi: FinancialKPI,
+    _request: DrillDownRequest
+  ): Promise<DrillDownResult[]> {
     // Implementation for provider breakdown
     return [];
   }
 
-  private async drillDownByPatientSegment(kpi: FinancialKPI, request: DrillDownRequest): Promise<DrillDownResult[]> {
+  private async drillDownByPatientSegment(
+    _kpi: FinancialKPI,
+    _request: DrillDownRequest
+  ): Promise<DrillDownResult[]> {
     // Implementation for patient segment breakdown
     return [];
   }

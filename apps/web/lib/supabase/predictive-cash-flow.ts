@@ -2,15 +2,15 @@
  * =====================================================================================
  * PREDICTIVE CASH FLOW SUPABASE FUNCTIONS
  * =====================================================================================
- * 
+ *
  * Comprehensive Supabase database functions for predictive cash flow analysis.
  * Provides AI-powered forecasting with 85%+ accuracy and comprehensive analytics.
- * 
+ *
  * Epic: 5 - Advanced Financial Intelligence
  * Story: 5.2 - Predictive Cash Flow Analysis
  * Author: VoidBeast V4.0 BMad Method Integration
  * Created: 2025-01-27
- * 
+ *
  * Features:
  * - AI prediction model management with accuracy tracking
  * - Multi-period cash flow forecasting with confidence intervals
@@ -20,31 +20,29 @@
  * =====================================================================================
  */
 
-import { createClient } from '@supabase/supabase-js';
-import { 
-  PredictionModel,
+import type { createClient } from '@supabase/supabase-js';
+import type {
+  AlertFilters,
+  CashFlowForecast,
   CashFlowPrediction,
-  ForecastingScenario,
-  PredictionAccuracy,
-  PredictionAlert,
-  CreatePredictionModelInput,
-  UpdatePredictionModelInput,
   CreateCashFlowPredictionInput,
-  UpdateCashFlowPredictionInput,
   CreateForecastingScenarioInput,
-  UpdateForecastingScenarioInput,
   CreatePredictionAccuracyInput,
   CreatePredictionAlertInput,
-  UpdatePredictionAlertInput,
-  PredictionFilters,
-  ModelFilters,
-  ScenarioFilters,
-  AlertFilters,
-  PaginationParams,
+  CreatePredictionModelInput,
+  ForecastingScenario,
   ModelAccuracySummary,
-  PredictionAnalytics,
-  CashFlowForecast,
-  ScenarioComparison
+  ModelFilters,
+  PaginationParams,
+  PredictionAccuracy,
+  PredictionAlert,
+  PredictionFilters,
+  PredictionModel,
+  ScenarioFilters,
+  UpdateCashFlowPredictionInput,
+  UpdateForecastingScenarioInput,
+  UpdatePredictionAlertInput,
+  UpdatePredictionModelInput,
 } from '@/lib/types/predictive-cash-flow';
 
 // =====================================================================================
@@ -54,24 +52,26 @@ import {
 /**
  * Create a new prediction model
  */
-async function createPredictionModel(
+async function _createPredictionModel(
   supabase: ReturnType<typeof createClient>,
   input: CreatePredictionModelInput
 ): Promise<{ data: PredictionModel | null; error: string | null }> {
   try {
     const { data, error } = await supabase
       .from('prediction_models')
-      .insert([{
-        model_name: input.model_name,
-        model_type: input.model_type,
-        algorithm_type: input.algorithm_type,
-        accuracy_rate: input.accuracy_rate || 0,
-        confidence_score: input.confidence_score || 0,
-        model_parameters: input.model_parameters || {},
-        training_data_size: input.training_data_size || 0,
-        training_period_start: input.training_period_start,
-        training_period_end: input.training_period_end,
-      }])
+      .insert([
+        {
+          model_name: input.model_name,
+          model_type: input.model_type,
+          algorithm_type: input.algorithm_type,
+          accuracy_rate: input.accuracy_rate || 0,
+          confidence_score: input.confidence_score || 0,
+          model_parameters: input.model_parameters || {},
+          training_data_size: input.training_data_size || 0,
+          training_period_start: input.training_period_start,
+          training_period_end: input.training_period_end,
+        },
+      ])
       .select('*')
       .single();
 
@@ -90,7 +90,7 @@ async function createPredictionModel(
 /**
  * Update a prediction model
  */
-async function updatePredictionModel(
+async function _updatePredictionModel(
   supabase: ReturnType<typeof createClient>,
   id: string,
   input: UpdatePredictionModelInput
@@ -123,7 +123,7 @@ async function updatePredictionModel(
 /**
  * Get prediction models with filtering
  */
-async function getPredictionModels(
+async function _getPredictionModels(
   supabase: ReturnType<typeof createClient>,
   filters: ModelFilters = {},
   pagination: PaginationParams = {}
@@ -241,24 +241,26 @@ export async function createCashFlowPrediction(
   try {
     const { data, error } = await supabase
       .from('cash_flow_predictions')
-      .insert([{
-        model_id: input.model_id,
-        clinic_id: input.clinic_id,
-        period_type: input.period_type,
-        start_date: input.start_date,
-        end_date: input.end_date,
-        predicted_inflow_amount: input.predicted_inflow_amount,
-        predicted_outflow_amount: input.predicted_outflow_amount,
-        predicted_net_amount: input.predicted_net_amount,
-        confidence_score: input.confidence_score,
-        confidence_interval_lower: input.confidence_interval_lower,
-        confidence_interval_upper: input.confidence_interval_upper,
-        prediction_variance: input.prediction_variance,
-        seasonal_adjustment: input.seasonal_adjustment || 1.0,
-        trend_adjustment: input.trend_adjustment || 1.0,
-        input_features: input.input_features || {},
-        scenario_id: input.scenario_id,
-      }])
+      .insert([
+        {
+          model_id: input.model_id,
+          clinic_id: input.clinic_id,
+          period_type: input.period_type,
+          start_date: input.start_date,
+          end_date: input.end_date,
+          predicted_inflow_amount: input.predicted_inflow_amount,
+          predicted_outflow_amount: input.predicted_outflow_amount,
+          predicted_net_amount: input.predicted_net_amount,
+          confidence_score: input.confidence_score,
+          confidence_interval_lower: input.confidence_interval_lower,
+          confidence_interval_upper: input.confidence_interval_upper,
+          prediction_variance: input.prediction_variance,
+          seasonal_adjustment: input.seasonal_adjustment || 1.0,
+          trend_adjustment: input.trend_adjustment || 1.0,
+          input_features: input.input_features || {},
+          scenario_id: input.scenario_id,
+        },
+      ])
       .select(`
         *,
         model:prediction_models(*),
@@ -322,16 +324,21 @@ export async function getCashFlowPredictions(
   supabase: ReturnType<typeof createClient>,
   filters: PredictionFilters = {},
   pagination: PaginationParams = {}
-): Promise<{ data: CashFlowPrediction[]; total: number; error: string | null }> {
+): Promise<{
+  data: CashFlowPrediction[];
+  total: number;
+  error: string | null;
+}> {
   try {
-    let query = supabase
-      .from('cash_flow_predictions')
-      .select(`
+    let query = supabase.from('cash_flow_predictions').select(
+      `
         *,
         model:prediction_models(*),
         scenario:forecasting_scenarios(*),
         accuracy:prediction_accuracy(*)
-      `, { count: 'exact' });
+      `,
+      { count: 'exact' }
+    );
 
     // Apply filters
     if (filters.clinic_id) {
@@ -381,7 +388,11 @@ export async function getCashFlowPredictions(
     return { data: data || [], total: count || 0, error: null };
   } catch (err) {
     console.error('Error in getCashFlowPredictions:', err);
-    return { data: [], total: 0, error: 'Failed to fetch cash flow predictions' };
+    return {
+      data: [],
+      total: 0,
+      error: 'Failed to fetch cash flow predictions',
+    };
   }
 }
 
@@ -408,18 +419,20 @@ export async function createForecastingScenario(
 
     const { data, error } = await supabase
       .from('forecasting_scenarios')
-      .insert([{
-        scenario_name: input.scenario_name,
-        scenario_type: input.scenario_type,
-        description: input.description,
-        parameters: input.parameters,
-        market_conditions: input.market_conditions || {},
-        business_assumptions: input.business_assumptions || {},
-        forecast_start_date: input.forecast_start_date,
-        forecast_end_date: input.forecast_end_date,
-        clinic_id: input.clinic_id,
-        is_baseline: input.is_baseline || false,
-      }])
+      .insert([
+        {
+          scenario_name: input.scenario_name,
+          scenario_type: input.scenario_type,
+          description: input.description,
+          parameters: input.parameters,
+          market_conditions: input.market_conditions || {},
+          business_assumptions: input.business_assumptions || {},
+          forecast_start_date: input.forecast_start_date,
+          forecast_end_date: input.forecast_end_date,
+          clinic_id: input.clinic_id,
+          is_baseline: input.is_baseline,
+        },
+      ])
       .select('*')
       .single();
 
@@ -493,7 +506,11 @@ export async function getForecastingScenarios(
   supabase: ReturnType<typeof createClient>,
   filters: ScenarioFilters = {},
   pagination: PaginationParams = {}
-): Promise<{ data: ForecastingScenario[]; total: number; error: string | null }> {
+): Promise<{
+  data: ForecastingScenario[];
+  total: number;
+  error: string | null;
+}> {
   try {
     let query = supabase
       .from('forecasting_scenarios')
@@ -543,12 +560,16 @@ export async function getForecastingScenarios(
     return { data: data || [], total: count || 0, error: null };
   } catch (err) {
     console.error('Error in getForecastingScenarios:', err);
-    return { data: [], total: 0, error: 'Failed to fetch forecasting scenarios' };
+    return {
+      data: [],
+      total: 0,
+      error: 'Failed to fetch forecasting scenarios',
+    };
   }
 }
 
 // =====================================================================================
-// PREDICTION ACCURACY FUNCTIONS  
+// PREDICTION ACCURACY FUNCTIONS
 // =====================================================================================
 
 /**
@@ -561,23 +582,25 @@ export async function createPredictionAccuracy(
   try {
     const { data, error } = await supabase
       .from('prediction_accuracy')
-      .insert([{
-        prediction_id: input.prediction_id,
-        model_id: input.model_id,
-        actual_inflow_amount: input.actual_inflow_amount,
-        actual_outflow_amount: input.actual_outflow_amount,
-        actual_net_amount: input.actual_net_amount,
-        accuracy_percentage: input.accuracy_percentage,
-        absolute_error: input.absolute_error,
-        relative_error: input.relative_error,
-        squared_error: input.squared_error,
-        error_category: input.error_category,
-        error_magnitude: input.error_magnitude,
-        contributing_factors: input.contributing_factors || {},
-        validation_period_type: input.validation_period_type,
-        validation_date: input.validation_date,
-        is_outlier: input.is_outlier || false,
-      }])
+      .insert([
+        {
+          prediction_id: input.prediction_id,
+          model_id: input.model_id,
+          actual_inflow_amount: input.actual_inflow_amount,
+          actual_outflow_amount: input.actual_outflow_amount,
+          actual_net_amount: input.actual_net_amount,
+          accuracy_percentage: input.accuracy_percentage,
+          absolute_error: input.absolute_error,
+          relative_error: input.relative_error,
+          squared_error: input.squared_error,
+          error_category: input.error_category,
+          error_magnitude: input.error_magnitude,
+          contributing_factors: input.contributing_factors || {},
+          validation_period_type: input.validation_period_type,
+          validation_date: input.validation_date,
+          is_outlier: input.is_outlier,
+        },
+      ])
       .select(`
         *,
         prediction:cash_flow_predictions(*),
@@ -593,9 +616,9 @@ export async function createPredictionAccuracy(
     // Update prediction as validated
     await supabase
       .from('cash_flow_predictions')
-      .update({ 
-        is_validated: true, 
-        validation_date: new Date().toISOString() 
+      .update({
+        is_validated: true,
+        validation_date: new Date().toISOString(),
       })
       .eq('id', input.prediction_id);
 
@@ -620,20 +643,22 @@ export async function createPredictionAlert(
   try {
     const { data, error } = await supabase
       .from('prediction_alerts')
-      .insert([{
-        prediction_id: input.prediction_id,
-        clinic_id: input.clinic_id,
-        alert_type: input.alert_type,
-        severity_level: input.severity_level,
-        threshold_amount: input.threshold_amount,
-        threshold_percentage: input.threshold_percentage,
-        threshold_period: input.threshold_period,
-        alert_message: input.alert_message,
-        alert_description: input.alert_description,
-        recommended_actions: input.recommended_actions || [],
-        assigned_to: input.assigned_to,
-        notification_channels: input.notification_channels || [],
-      }])
+      .insert([
+        {
+          prediction_id: input.prediction_id,
+          clinic_id: input.clinic_id,
+          alert_type: input.alert_type,
+          severity_level: input.severity_level,
+          threshold_amount: input.threshold_amount,
+          threshold_percentage: input.threshold_percentage,
+          threshold_period: input.threshold_period,
+          alert_message: input.alert_message,
+          alert_description: input.alert_description,
+          recommended_actions: input.recommended_actions || [],
+          assigned_to: input.assigned_to,
+          notification_channels: input.notification_channels || [],
+        },
+      ])
       .select(`
         *,
         prediction:cash_flow_predictions(*)
@@ -697,12 +722,13 @@ export async function getPredictionAlerts(
   pagination: PaginationParams = {}
 ): Promise<{ data: PredictionAlert[]; total: number; error: string | null }> {
   try {
-    let query = supabase
-      .from('prediction_alerts')
-      .select(`
+    let query = supabase.from('prediction_alerts').select(
+      `
         *,
         prediction:cash_flow_predictions(*)
-      `, { count: 'exact' });
+      `,
+      { count: 'exact' }
+    );
 
     // Apply filters
     if (filters.clinic_id) {
@@ -764,8 +790,9 @@ export async function getModelAccuracySummary(
   modelId: string
 ): Promise<{ data: ModelAccuracySummary | null; error: string | null }> {
   try {
-    const { data, error } = await supabase
-      .rpc('get_model_accuracy_summary', { p_model_id: modelId });
+    const { data, error } = await supabase.rpc('get_model_accuracy_summary', {
+      p_model_id: modelId,
+    });
 
     if (error) {
       console.error('Error fetching model accuracy summary:', error);
@@ -786,7 +813,7 @@ export async function generateCashFlowForecast(
   supabase: ReturnType<typeof createClient>,
   clinicId: string,
   periodType: string,
-  periodsAhead: number = 12
+  periodsAhead = 12
 ): Promise<{ data: CashFlowForecast | null; error: string | null }> {
   try {
     // Get the best performing model for this clinic
@@ -818,34 +845,51 @@ export async function generateCashFlowForecast(
     }
 
     // Calculate summary statistics
-    const totalInflow = predictions.reduce((sum, p) => sum + p.predicted_inflow_amount, 0);
-    const totalOutflow = predictions.reduce((sum, p) => sum + p.predicted_outflow_amount, 0);
-    const totalNet = predictions.reduce((sum, p) => sum + p.predicted_net_amount, 0);
-    const avgConfidence = predictions.reduce((sum, p) => sum + p.confidence_score, 0) / predictions.length;
+    const totalInflow = predictions.reduce(
+      (sum, p) => sum + p.predicted_inflow_amount,
+      0
+    );
+    const totalOutflow = predictions.reduce(
+      (sum, p) => sum + p.predicted_outflow_amount,
+      0
+    );
+    const totalNet = predictions.reduce(
+      (sum, p) => sum + p.predicted_net_amount,
+      0
+    );
+    const avgConfidence =
+      predictions.reduce((sum, p) => sum + p.confidence_score, 0) /
+      predictions.length;
 
     // Determine trend direction
     const firstHalf = predictions.slice(0, Math.floor(predictions.length / 2));
     const secondHalf = predictions.slice(Math.floor(predictions.length / 2));
-    const firstAvg = firstHalf.reduce((sum, p) => sum + p.predicted_net_amount, 0) / firstHalf.length;
-    const secondAvg = secondHalf.reduce((sum, p) => sum + p.predicted_net_amount, 0) / secondHalf.length;
-    
+    const firstAvg =
+      firstHalf.reduce((sum, p) => sum + p.predicted_net_amount, 0) /
+      firstHalf.length;
+    const secondAvg =
+      secondHalf.reduce((sum, p) => sum + p.predicted_net_amount, 0) /
+      secondHalf.length;
+
     let trendDirection: 'up' | 'down' | 'stable' = 'stable';
     const trendDiff = (secondAvg - firstAvg) / Math.abs(firstAvg);
     if (trendDiff > 0.05) trendDirection = 'up';
     else if (trendDiff < -0.05) trendDirection = 'down';
 
     // Find peak and lowest periods
-    const sortedByNet = [...predictions].sort((a, b) => b.predicted_net_amount - a.predicted_net_amount);
+    const sortedByNet = [...predictions].sort(
+      (a, b) => b.predicted_net_amount - a.predicted_net_amount
+    );
     const peakPeriod = sortedByNet[0]?.start_date || '';
     const lowestPeriod = sortedByNet[sortedByNet.length - 1]?.start_date || '';
 
     // Identify potential shortfalls
     const potentialShortfalls = predictions
-      .filter(p => p.predicted_net_amount < 0)
-      .map(p => p.start_date);
+      .filter((p) => p.predicted_net_amount < 0)
+      .map((p) => p.start_date);
 
     const forecast: CashFlowForecast = {
-      periods: predictions.map(p => ({
+      periods: predictions.map((p) => ({
         period: p.start_date,
         period_type: p.period_type as any,
         predicted_inflow: p.predicted_inflow_amount,
@@ -867,7 +911,10 @@ export async function generateCashFlowForecast(
         peak_cash_period: peakPeriod,
         lowest_cash_period: lowestPeriod,
         potential_shortfalls: potentialShortfalls,
-        recommended_actions: generateRecommendedActions(predictions, trendDirection),
+        recommended_actions: generateRecommendedActions(
+          predictions,
+          trendDirection
+        ),
       },
     };
 
@@ -888,10 +935,16 @@ function generateRecommendedActions(
   const actions: string[] = [];
 
   // Check for negative cash flow periods
-  const negativePeriodsCount = predictions.filter(p => p.predicted_net_amount < 0).length;
+  const negativePeriodsCount = predictions.filter(
+    (p) => p.predicted_net_amount < 0
+  ).length;
   if (negativePeriodsCount > 0) {
-    actions.push(`Review and optimize expenses for ${negativePeriodsCount} periods with negative cash flow`);
-    actions.push('Consider adjusting payment terms with suppliers to improve cash flow timing');
+    actions.push(
+      `Review and optimize expenses for ${negativePeriodsCount} periods with negative cash flow`
+    );
+    actions.push(
+      'Consider adjusting payment terms with suppliers to improve cash flow timing'
+    );
   }
 
   // Trend-based recommendations
@@ -900,14 +953,20 @@ function generateRecommendedActions(
     actions.push('Focus on improving collection of accounts receivable');
     actions.push('Consider diversifying revenue streams');
   } else if (trend === 'up') {
-    actions.push('Plan for expansion opportunities with positive cash flow trend');
+    actions.push(
+      'Plan for expansion opportunities with positive cash flow trend'
+    );
     actions.push('Consider investing excess cash in growth initiatives');
   }
 
   // Confidence-based recommendations
-  const lowConfidencePeriods = predictions.filter(p => p.confidence_score < 70).length;
+  const lowConfidencePeriods = predictions.filter(
+    (p) => p.confidence_score < 70
+  ).length;
   if (lowConfidencePeriods > 0) {
-    actions.push(`Improve data quality and model accuracy for ${lowConfidencePeriods} periods with low confidence`);
+    actions.push(
+      `Improve data quality and model accuracy for ${lowConfidencePeriods} periods with low confidence`
+    );
   }
 
   return actions;

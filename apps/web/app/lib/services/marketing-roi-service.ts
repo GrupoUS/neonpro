@@ -1,7 +1,7 @@
 /**
  * Marketing ROI Analysis Service
  * Comprehensive ROI calculation and optimization service for marketing campaigns and treatments
- * 
+ *
  * Features:
  * - Marketing campaign ROI tracking and optimization
  * - Treatment profitability analysis with cost optimization
@@ -12,34 +12,29 @@
  * - Executive dashboard analytics and reporting
  */
 
-import { createClient } from '@/app/utils/supabase/server';
 import {
-  MarketingCampaign,
-  TreatmentROI,
-  CustomerAcquisitionCost,
-  CustomerLifetimeValue,
-  ROIAlert,
-  ROIMonitoringRule,
-  OptimizationRecommendation,
-  ROIDashboardMetrics,
-  ROITrendData,
-  ROIComparison,
-  ROIForecast,
-  MarketingChannel,
-  CampaignType,
-  CampaignStatus,
   AlertType,
-  OptimizationArea,
+  CampaignStatus,
+  type CreateMarketingCampaignRequest,
+  type CreateOptimizationRecommendationRequest,
+  type CreateROIAlertRequest,
+  type CustomerAcquisitionCost,
+  type CustomerLifetimeValue,
+  type MarketingCampaign,
+  MarketingChannel,
+  type MarketingROIFilters,
+  type OptimizationRecommendation,
+  type ROIAlert,
+  type ROIDashboardMetrics,
+  type ROIForecast,
   ROIMetricType,
-  CreateMarketingCampaignRequest,
-  UpdateCampaignMetricsRequest,
-  CreateROIAlertRequest,
-  CreateOptimizationRecommendationRequest,
-  MarketingROIFilters,
-  TreatmentROIFilters,
-  ROIMetric,
-  ROIInsight
+  type ROIMonitoringRule,
+  type ROITrendData,
+  type TreatmentROI,
+  type TreatmentROIFilters,
+  type UpdateCampaignMetricsRequest,
 } from '@/app/types/marketing-roi';
+import { createClient } from '@/app/utils/supabase/server';
 
 export class MarketingROIService {
   private supabase;
@@ -64,7 +59,9 @@ export class MarketingROIService {
         clinic_id: clinicId,
         ...campaignData,
         start_date: new Date(campaignData.start_date),
-        end_date: campaignData.end_date ? new Date(campaignData.end_date) : undefined,
+        end_date: campaignData.end_date
+          ? new Date(campaignData.end_date)
+          : undefined,
         status: CampaignStatus.DRAFT,
         actual_spend: 0,
         impressions: 0,
@@ -79,7 +76,7 @@ export class MarketingROIService {
         payback_period_days: 0,
         created_at: new Date(),
         updated_at: new Date(),
-        created_by: userId
+        created_by: userId,
       };
 
       const { data, error } = await this.supabase
@@ -125,7 +122,7 @@ export class MarketingROIService {
         .update({
           ...metrics,
           ...updatedMetrics,
-          updated_at: new Date()
+          updated_at: new Date(),
         })
         .eq('id', campaignId)
         .select()
@@ -151,33 +148,43 @@ export class MarketingROIService {
     newMetrics: UpdateCampaignMetricsRequest
   ): Promise<Partial<MarketingCampaign>> {
     const actualSpend = newMetrics.actual_spend ?? campaign.actual_spend;
-    const revenueGenerated = newMetrics.revenue_generated ?? campaign.revenue_generated;
-    const profitGenerated = newMetrics.profit_generated ?? campaign.profit_generated;
+    const revenueGenerated =
+      newMetrics.revenue_generated ?? campaign.revenue_generated;
+    const profitGenerated =
+      newMetrics.profit_generated ?? campaign.profit_generated;
     const conversions = newMetrics.conversions ?? campaign.conversions;
 
     // Basic ROI calculations
-    const roiPercentage = actualSpend > 0 ? ((revenueGenerated - actualSpend) / actualSpend) * 100 : 0;
-    const profitROIPercentage = actualSpend > 0 ? (profitGenerated / actualSpend) * 100 : 0;
+    const roiPercentage =
+      actualSpend > 0
+        ? ((revenueGenerated - actualSpend) / actualSpend) * 100
+        : 0;
+    const profitROIPercentage =
+      actualSpend > 0 ? (profitGenerated / actualSpend) * 100 : 0;
 
     // CAC calculation
     const cac = conversions > 0 ? actualSpend / conversions : 0;
 
     // Estimate LTV for new customers (simplified - in real implementation, use historical data)
-    const estimatedLTV = await this.estimateCustomerLTV(campaign.clinic_id, campaign.channel);
+    const estimatedLTV = await this.estimateCustomerLTV(
+      campaign.clinic_id,
+      campaign.channel
+    );
     const ltvCacRatio = cac > 0 ? estimatedLTV / cac : 0;
 
     // Payback period calculation (days to recover CAC)
     const monthlyRevenuePerCustomer = estimatedLTV / 12; // Assuming 12-month lifespan
-    const paybackPeriodDays = cac > 0 && monthlyRevenuePerCustomer > 0 
-      ? (cac / (monthlyRevenuePerCustomer / 30)) 
-      : 0;
+    const paybackPeriodDays =
+      cac > 0 && monthlyRevenuePerCustomer > 0
+        ? cac / (monthlyRevenuePerCustomer / 30)
+        : 0;
 
     return {
       roi_percentage: roiPercentage,
       profit_roi_percentage: profitROIPercentage,
       ltv_cac_ratio: ltvCacRatio,
       payback_period_days: Math.round(paybackPeriodDays),
-      cost_per_acquisition: cac
+      cost_per_acquisition: cac,
     };
   }
 
@@ -230,7 +237,7 @@ export class MarketingROIService {
 
       return {
         campaigns: data || [],
-        total: count || 0
+        total: count || 0,
       };
     } catch (error) {
       console.error('Error fetching campaigns:', error);
@@ -251,30 +258,52 @@ export class MarketingROIService {
   ): Promise<TreatmentROI> {
     try {
       // Get treatment data and costs
-      const treatmentData = await this.getTreatmentFinancialData(treatmentId, periodStart, periodEnd);
-      
+      const treatmentData = await this.getTreatmentFinancialData(
+        treatmentId,
+        periodStart,
+        periodEnd
+      );
+
       // Calculate costs
-      const totalCosts = treatmentData.direct_costs + treatmentData.indirect_costs + 
-                        treatmentData.labor_costs + treatmentData.material_costs + 
-                        treatmentData.equipment_costs + treatmentData.overhead_costs;
+      const totalCosts =
+        treatmentData.direct_costs +
+        treatmentData.indirect_costs +
+        treatmentData.labor_costs +
+        treatmentData.material_costs +
+        treatmentData.equipment_costs +
+        treatmentData.overhead_costs;
 
       // Calculate profitability metrics
       const grossProfit = treatmentData.total_revenue - totalCosts;
-      const grossMarginPercentage = treatmentData.total_revenue > 0 
-        ? (grossProfit / treatmentData.total_revenue) * 100 
-        : 0;
-      const roiPercentage = totalCosts > 0 ? (grossProfit / totalCosts) * 100 : 0;
-      const profitPerProcedure = treatmentData.procedures_count > 0 
-        ? grossProfit / treatmentData.procedures_count 
-        : 0;
+      const grossMarginPercentage =
+        treatmentData.total_revenue > 0
+          ? (grossProfit / treatmentData.total_revenue) * 100
+          : 0;
+      const roiPercentage =
+        totalCosts > 0 ? (grossProfit / totalCosts) * 100 : 0;
+      const profitPerProcedure =
+        treatmentData.procedures_count > 0
+          ? grossProfit / treatmentData.procedures_count
+          : 0;
 
       // Get comparative metrics
-      const clinicAverageROI = await this.getClinicAverageROI(clinicId, periodStart, periodEnd);
-      const industryBenchmarkROI = await this.getIndustryBenchmarkROI(treatmentData.treatment_name);
-      const ranking = await this.getTreatmentRanking(clinicId, treatmentId, roiPercentage);
+      const clinicAverageROI = await this.getClinicAverageROI(
+        clinicId,
+        periodStart,
+        periodEnd
+      );
+      const industryBenchmarkROI = await this.getIndustryBenchmarkROI(
+        treatmentData.treatment_name
+      );
+      const ranking = await this.getTreatmentRanking(
+        clinicId,
+        treatmentId,
+        roiPercentage
+      );
 
       // Calculate optimization potential
-      const optimizationAnalysis = await this.analyzeOptimizationPotential(treatmentData);
+      const optimizationAnalysis =
+        await this.analyzeOptimizationPotential(treatmentData);
 
       const treatmentROI: TreatmentROI = {
         id: crypto.randomUUID(),
@@ -294,7 +323,7 @@ export class MarketingROIService {
         period_start: periodStart,
         period_end: periodEnd,
         created_at: new Date(),
-        updated_at: new Date()
+        updated_at: new Date(),
       };
 
       // Save to database
@@ -381,13 +410,17 @@ export class MarketingROIService {
 
       if (campaignError) throw campaignError;
 
-      const totalSpend = campaigns?.reduce((sum, c) => sum + c.actual_spend, 0) || 0;
-      const totalCustomers = campaigns?.reduce((sum, c) => sum + c.conversions, 0) || 0;
-      const totalLeads = campaigns?.reduce((sum, c) => sum + c.leads_generated, 0) || 0;
+      const totalSpend =
+        campaigns?.reduce((sum, c) => sum + c.actual_spend, 0) || 0;
+      const totalCustomers =
+        campaigns?.reduce((sum, c) => sum + c.conversions, 0) || 0;
+      const totalLeads =
+        campaigns?.reduce((sum, c) => sum + c.leads_generated, 0) || 0;
 
       const cac = totalCustomers > 0 ? totalSpend / totalCustomers : 0;
       const costPerLead = totalLeads > 0 ? totalSpend / totalLeads : 0;
-      const conversionRate = totalLeads > 0 ? (totalCustomers / totalLeads) * 100 : 0;
+      const conversionRate =
+        totalLeads > 0 ? (totalCustomers / totalLeads) * 100 : 0;
       const leadToCustomerRate = conversionRate;
 
       // Get previous period for comparison
@@ -396,16 +429,29 @@ export class MarketingROIService {
       const previousPeriodEnd = new Date(periodEnd);
       previousPeriodEnd.setMonth(previousPeriodEnd.getMonth() - 1);
 
-      const previousCAC = await this.getPreviousCAC(clinicId, channel, previousPeriodStart, previousPeriodEnd);
-      const cacChangePercentage = previousCAC > 0 ? ((cac - previousCAC) / previousCAC) * 100 : 0;
+      const previousCAC = await this.getPreviousCAC(
+        clinicId,
+        channel,
+        previousPeriodStart,
+        previousPeriodEnd
+      );
+      const cacChangePercentage =
+        previousCAC > 0 ? ((cac - previousCAC) / previousCAC) * 100 : 0;
 
       // Get benchmarks
-      const clinicAverageCAC = await this.getClinicAverageCAC(clinicId, periodStart, periodEnd);
+      const clinicAverageCAC = await this.getClinicAverageCAC(
+        clinicId,
+        periodStart,
+        periodEnd
+      );
       const industryBenchmarkCAC = await this.getIndustryBenchmarkCAC(channel);
 
       // Calculate customer quality metrics
       const customerQualityMetrics = await this.calculateCustomerQualityMetrics(
-        clinicId, channel, periodStart, periodEnd
+        clinicId,
+        channel,
+        periodStart,
+        periodEnd
       );
 
       const cacAnalysis: CustomerAcquisitionCost = {
@@ -426,7 +472,7 @@ export class MarketingROIService {
         industry_benchmark_cac: industryBenchmarkCAC,
         ...customerQualityMetrics,
         created_at: new Date(),
-        updated_at: new Date()
+        updated_at: new Date(),
       };
 
       // Save to database
@@ -461,19 +507,28 @@ export class MarketingROIService {
         ltvData = await this.calculateIndividualLTV(clinicId, patientId);
       } else {
         // Calculate aggregate LTV for channel or clinic
-        ltvData = await this.calculateAggregateLTV(clinicId, acquisitionChannel);
+        ltvData = await this.calculateAggregateLTV(
+          clinicId,
+          acquisitionChannel
+        );
       }
 
       // Get CAC for LTV/CAC ratio calculation
-      const cac = await this.getCAC(clinicId, acquisitionChannel || MarketingChannel.DIRECT);
+      const cac = await this.getCAC(
+        clinicId,
+        acquisitionChannel || MarketingChannel.DIRECT
+      );
       const ltvCacRatio = cac > 0 ? ltvData.lifetime_value / cac : 0;
-      const paybackPeriodMonths = cac > 0 && ltvData.average_order_value > 0 
-        ? cac / ltvData.average_order_value 
-        : 0;
+      const paybackPeriodMonths =
+        cac > 0 && ltvData.average_order_value > 0
+          ? cac / ltvData.average_order_value
+          : 0;
 
       // Calculate predictive metrics
       const predictiveMetrics = await this.calculateLTVPredictiveMetrics(
-        clinicId, patientId, acquisitionChannel
+        clinicId,
+        patientId,
+        acquisitionChannel
       );
 
       const ltvAnalysis: CustomerLifetimeValue = {
@@ -489,7 +544,7 @@ export class MarketingROIService {
         period_start: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000), // 1 year ago
         period_end: new Date(),
         created_at: new Date(),
-        updated_at: new Date()
+        updated_at: new Date(),
       };
 
       // Save to database
@@ -518,19 +573,27 @@ export class MarketingROIService {
   ): Promise<{
     cac_analysis: CustomerAcquisitionCost[];
     ltv_analysis: CustomerLifetimeValue[];
-    ltv_cac_ratios: { channel: MarketingChannel; ratio: number; status: string }[];
-    payback_analysis: { channel: MarketingChannel; average_payback_months: number; median_payback_months: number }[];
+    ltv_cac_ratios: {
+      channel: MarketingChannel;
+      ratio: number;
+      status: string;
+    }[];
+    payback_analysis: {
+      channel: MarketingChannel;
+      average_payback_months: number;
+      median_payback_months: number;
+    }[];
   }> {
     try {
       // Calculate CAC for all channels
       const channels = Object.values(MarketingChannel);
-      const cacPromises = channels.map(channel => 
+      const cacPromises = channels.map((channel) =>
         this.calculateCAC(clinicId, channel, periodStart, periodEnd)
       );
       const cacAnalysis = await Promise.all(cacPromises);
 
       // Calculate LTV for all channels
-      const ltvPromises = channels.map(channel => 
+      const ltvPromises = channels.map((channel) =>
         this.calculateLTV(clinicId, undefined, channel)
       );
       const ltvAnalysis = await Promise.all(ltvPromises);
@@ -547,18 +610,22 @@ export class MarketingROIService {
         return {
           channel: cac.channel,
           ratio,
-          status
+          status,
         };
       });
 
       // Calculate payback analysis
-      const paybackAnalysis = await this.calculatePaybackAnalysis(clinicId, periodStart, periodEnd);
+      const paybackAnalysis = await this.calculatePaybackAnalysis(
+        clinicId,
+        periodStart,
+        periodEnd
+      );
 
       return {
         cac_analysis: cacAnalysis,
         ltv_analysis: ltvAnalysis,
         ltv_cac_ratios: ltvCacRatios,
-        payback_analysis: paybackAnalysis
+        payback_analysis: paybackAnalysis,
       };
     } catch (error) {
       console.error('Error getting CAC/LTV analysis:', error);
@@ -585,7 +652,7 @@ export class MarketingROIService {
       // Check each rule against campaign metrics
       for (const rule of rules || []) {
         const shouldTrigger = await this.evaluateMonitoringRule(rule, campaign);
-        
+
         if (shouldTrigger) {
           await this.createROIAlert(rule, campaign);
         }
@@ -609,7 +676,7 @@ export class MarketingROIService {
         ...alertData,
         status: 'active',
         created_at: new Date(),
-        updated_at: new Date()
+        updated_at: new Date(),
       };
 
       const { data, error } = await this.supabase
@@ -664,19 +731,31 @@ export class MarketingROIService {
       const recommendations: OptimizationRecommendation[] = [];
 
       // Analyze campaign performance for optimization opportunities
-      const campaignRecommendations = await this.analyzeCampaignOptimizations(clinicId, userId);
+      const campaignRecommendations = await this.analyzeCampaignOptimizations(
+        clinicId,
+        userId
+      );
       recommendations.push(...campaignRecommendations);
 
       // Analyze treatment profitability for optimization opportunities
-      const treatmentRecommendations = await this.analyzeTreatmentOptimizations(clinicId, userId);
+      const treatmentRecommendations = await this.analyzeTreatmentOptimizations(
+        clinicId,
+        userId
+      );
       recommendations.push(...treatmentRecommendations);
 
       // Analyze budget allocation for optimization opportunities
-      const budgetRecommendations = await this.analyzeBudgetOptimizations(clinicId, userId);
+      const budgetRecommendations = await this.analyzeBudgetOptimizations(
+        clinicId,
+        userId
+      );
       recommendations.push(...budgetRecommendations);
 
       // Analyze channel mix for optimization opportunities
-      const channelRecommendations = await this.analyzeChannelOptimizations(clinicId, userId);
+      const channelRecommendations = await this.analyzeChannelOptimizations(
+        clinicId,
+        userId
+      );
       recommendations.push(...channelRecommendations);
 
       // Sort by priority score and potential impact
@@ -709,7 +788,7 @@ export class MarketingROIService {
         status: 'pending',
         created_at: new Date(),
         updated_at: new Date(),
-        created_by: userId
+        created_by: userId,
       };
 
       const { data, error } = await this.supabase
@@ -749,35 +828,58 @@ export class MarketingROIService {
       if (campaignError) throw campaignError;
 
       // Calculate overall metrics
-      const totalSpend = campaigns?.reduce((sum, c) => sum + c.actual_spend, 0) || 0;
-      const totalRevenue = campaigns?.reduce((sum, c) => sum + c.revenue_generated, 0) || 0;
-      const totalProfit = campaigns?.reduce((sum, c) => sum + c.profit_generated, 0) || 0;
-      const overallROI = totalSpend > 0 ? ((totalRevenue - totalSpend) / totalSpend) * 100 : 0;
-      const overallProfitROI = totalSpend > 0 ? (totalProfit / totalSpend) * 100 : 0;
+      const totalSpend =
+        campaigns?.reduce((sum, c) => sum + c.actual_spend, 0) || 0;
+      const totalRevenue =
+        campaigns?.reduce((sum, c) => sum + c.revenue_generated, 0) || 0;
+      const totalProfit =
+        campaigns?.reduce((sum, c) => sum + c.profit_generated, 0) || 0;
+      const overallROI =
+        totalSpend > 0 ? ((totalRevenue - totalSpend) / totalSpend) * 100 : 0;
+      const overallProfitROI =
+        totalSpend > 0 ? (totalProfit / totalSpend) * 100 : 0;
 
       // Campaign performance
-      const activeCampaigns = campaigns?.filter(c => c.status === CampaignStatus.ACTIVE) || [];
-      const avgCampaignROI = campaigns?.length > 0 
-        ? campaigns.reduce((sum, c) => sum + c.roi_percentage, 0) / campaigns.length 
-        : 0;
+      const activeCampaigns =
+        campaigns?.filter((c) => c.status === CampaignStatus.ACTIVE) || [];
+      const avgCampaignROI =
+        campaigns?.length > 0
+          ? campaigns.reduce((sum, c) => sum + c.roi_percentage, 0) /
+            campaigns.length
+          : 0;
 
       // Best and worst performing campaigns
-      const sortedCampaigns = campaigns?.sort((a, b) => b.roi_percentage - a.roi_percentage) || [];
+      const sortedCampaigns =
+        campaigns?.sort((a, b) => b.roi_percentage - a.roi_percentage) || [];
       const bestCampaign = sortedCampaigns[0];
       const worstCampaign = sortedCampaigns[sortedCampaigns.length - 1];
 
       // Channel performance
-      const channelPerformance = await this.getChannelPerformance(clinicId, periodStart, periodEnd);
+      const channelPerformance = await this.getChannelPerformance(
+        clinicId,
+        periodStart,
+        periodEnd
+      );
 
       // CAC & LTV metrics
-      const cacLtvMetrics = await this.getCACLTVMetrics(clinicId, periodStart, periodEnd);
+      const cacLtvMetrics = await this.getCACLTVMetrics(
+        clinicId,
+        periodStart,
+        periodEnd
+      );
 
       // Treatment profitability
-      const treatmentProfitability = await this.getTreatmentProfitabilityMetrics(clinicId, periodStart, periodEnd);
+      const treatmentProfitability =
+        await this.getTreatmentProfitabilityMetrics(
+          clinicId,
+          periodStart,
+          periodEnd
+        );
 
       // Alerts and opportunities
       const activeAlerts = await this.getActiveAlerts(clinicId);
-      const optimizationOpportunities = await this.getOptimizationOpportunities(clinicId);
+      const optimizationOpportunities =
+        await this.getOptimizationOpportunities(clinicId);
 
       // Trends
       const trends = await this.getROITrends(clinicId, periodStart, periodEnd);
@@ -794,16 +896,20 @@ export class MarketingROIService {
         active_campaigns_count: activeCampaigns.length,
         total_campaigns_count: campaigns?.length || 0,
         average_campaign_roi: avgCampaignROI,
-        best_performing_campaign: bestCampaign ? {
-          id: bestCampaign.id,
-          name: bestCampaign.name,
-          roi_percentage: bestCampaign.roi_percentage
-        } : { id: '', name: '', roi_percentage: 0 },
-        worst_performing_campaign: worstCampaign ? {
-          id: worstCampaign.id,
-          name: worstCampaign.name,
-          roi_percentage: worstCampaign.roi_percentage
-        } : { id: '', name: '', roi_percentage: 0 },
+        best_performing_campaign: bestCampaign
+          ? {
+              id: bestCampaign.id,
+              name: bestCampaign.name,
+              roi_percentage: bestCampaign.roi_percentage,
+            }
+          : { id: '', name: '', roi_percentage: 0 },
+        worst_performing_campaign: worstCampaign
+          ? {
+              id: worstCampaign.id,
+              name: worstCampaign.name,
+              roi_percentage: worstCampaign.roi_percentage,
+            }
+          : { id: '', name: '', roi_percentage: 0 },
         channel_performance: channelPerformance,
         average_cac: cacLtvMetrics.averageCAC,
         average_ltv: cacLtvMetrics.averageLTV,
@@ -812,11 +918,14 @@ export class MarketingROIService {
         most_profitable_treatments: treatmentProfitability,
         active_alerts_count: activeAlerts.length,
         optimization_opportunities_count: optimizationOpportunities.length,
-        potential_roi_improvement: optimizationOpportunities.reduce((sum, o) => sum + o.roi_improvement_percentage, 0),
+        potential_roi_improvement: optimizationOpportunities.reduce(
+          (sum, o) => sum + o.roi_improvement_percentage,
+          0
+        ),
         roi_trend_percentage: trends.roiTrend,
         cac_trend_percentage: trends.cacTrend,
         ltv_trend_percentage: trends.ltvTrend,
-        generated_at: new Date()
+        generated_at: new Date(),
       };
 
       return dashboardMetrics;
@@ -833,7 +942,7 @@ export class MarketingROIService {
     clinicId: string,
     periodStart: Date,
     periodEnd: Date,
-    granularity: 'daily' | 'weekly' | 'monthly' = 'daily'
+    _granularity: 'daily' | 'weekly' | 'monthly' = 'daily'
   ): Promise<ROITrendData[]> {
     try {
       // Implementation would depend on your specific requirements
@@ -870,10 +979,18 @@ export class MarketingROIService {
   ): Promise<ROIForecast> {
     try {
       // Get historical data for forecasting
-      const historicalData = await this.getHistoricalROIData(clinicId, forecastType, entityId);
-      
+      const historicalData = await this.getHistoricalROIData(
+        clinicId,
+        forecastType,
+        entityId
+      );
+
       // Apply forecasting algorithms (simplified here - in real implementation, use ML models)
-      const forecast = await this.applyForecastingModel(historicalData, forecastPeriodStart, forecastPeriodEnd);
+      const forecast = await this.applyForecastingModel(
+        historicalData,
+        forecastPeriodStart,
+        forecastPeriodEnd
+      );
 
       const roiForecast: ROIForecast = {
         id: crypto.randomUUID(),
@@ -898,7 +1015,7 @@ export class MarketingROIService {
         risk_factors: forecast.riskFactors,
         created_at: new Date(),
         updated_at: new Date(),
-        created_by: userId
+        created_by: userId,
       };
 
       // Save forecast to database
@@ -922,7 +1039,10 @@ export class MarketingROIService {
   /**
    * Estimate customer LTV for a channel (simplified implementation)
    */
-  private async estimateCustomerLTV(clinicId: string, channel: MarketingChannel): Promise<number> {
+  private async estimateCustomerLTV(
+    _clinicId: string,
+    channel: MarketingChannel
+  ): Promise<number> {
     // This would use historical data to estimate LTV
     // For now, return a default value based on channel
     const channelLTVMultipliers = {
@@ -931,12 +1051,12 @@ export class MarketingROIService {
       [MarketingChannel.INSTAGRAM_ADS]: 0.9,
       [MarketingChannel.REFERRAL]: 1.5,
       [MarketingChannel.EMAIL_MARKETING]: 1.1,
-      [MarketingChannel.DIRECT]: 1.3
+      [MarketingChannel.DIRECT]: 1.3,
     };
 
     const baseLTV = 2500; // Base LTV for the clinic
     const multiplier = channelLTVMultipliers[channel] || 1.0;
-    
+
     return baseLTV * multiplier;
   }
 
@@ -944,8 +1064,8 @@ export class MarketingROIService {
    * Create initial monitoring rules for a new campaign
    */
   private async createCampaignMonitoringRules(
-    campaignId: string, 
-    clinicId: string, 
+    campaignId: string,
+    clinicId: string,
     userId: string
   ): Promise<void> {
     const rules = [
@@ -969,8 +1089,8 @@ export class MarketingROIService {
         violations_count: 0,
         created_at: new Date(),
         updated_at: new Date(),
-        created_by: userId
-      }
+        created_by: userId,
+      },
     ];
 
     await this.supabase.from('roi_monitoring_rules').insert(rules);
@@ -981,14 +1101,16 @@ export class MarketingROIService {
    */
   private async sendAlertNotifications(alert: ROIAlert): Promise<void> {
     // Implementation would depend on your notification system
-    console.log(`Sending ROI alert notification: ${alert.title} (${alert.severity})`);
+    console.log(
+      `Sending ROI alert notification: ${alert.title} (${alert.severity})`
+    );
   }
 
   /**
    * Evaluate if a monitoring rule should trigger an alert
    */
   private async evaluateMonitoringRule(
-    rule: ROIMonitoringRule, 
+    rule: ROIMonitoringRule,
     campaign: MarketingCampaign
   ): Promise<boolean> {
     // Simplified evaluation logic

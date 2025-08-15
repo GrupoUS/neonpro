@@ -2,32 +2,33 @@
 // FHIR-compliant healthcare professional data management with modern automation
 
 import { createClient } from '@/app/utils/supabase/client';
+
 const supabase = createClient();
-import type { Database } from '@/types/supabase';
+
 import type {
-  Professional,
-  MedicalSpecialty,
-  ProfessionalSpecialty,
-  ProfessionalCredential,
-  ProfessionalService,
-  PerformanceMetric,
-  ProfessionalDevelopment,
+  CredentialingAlert,
   CredentialingWorkflow,
-  CredentialingAlert
+  MedicalSpecialty,
+  PerformanceMetric,
+  Professional,
+  ProfessionalCredential,
+  ProfessionalDevelopment,
+  ProfessionalService,
+  ProfessionalSpecialty,
 } from '@/lib/types/professional';
 import type {
-  ProfessionalCreateInput,
-  ProfessionalUpdateInput,
-  ProfessionalSearchInput,
+  AlertCreateInput,
   CredentialCreateInput,
-  CredentialUpdateInput,
   CredentialSearchInput,
+  CredentialUpdateInput,
+  DevelopmentCreateInput,
+  MetricCreateInput,
+  ProfessionalCreateInput,
+  ProfessionalSearchInput,
+  ProfessionalUpdateInput,
   ServiceCreateInput,
   ServiceUpdateInput,
-  MetricCreateInput,
-  DevelopmentCreateInput,
   WorkflowCreateInput,
-  AlertCreateInput
 } from '@/lib/validations/professional';
 
 // ============================================
@@ -38,13 +39,15 @@ import type {
  * Create a new healthcare professional
  * Includes automatic FHIR ID generation and compliance checks
  */
-export async function createProfessional(data: ProfessionalCreateInput): Promise<Professional> {
+export async function createProfessional(
+  data: ProfessionalCreateInput
+): Promise<Professional> {
   const { data: professional, error } = await supabase
     .from('professionals')
     .insert({
       ...data,
       fhir_practitioner_id: data.fhir_practitioner_id || crypto.randomUUID(),
-      status: data.status || 'pending_verification'
+      status: data.status || 'pending_verification',
     })
     .select(`
       *,
@@ -64,14 +67,14 @@ export async function createProfessional(data: ProfessionalCreateInput): Promise
  * Includes automated audit trail and compliance tracking
  */
 export async function updateProfessional(
-  id: string, 
+  id: string,
   data: ProfessionalUpdateInput
 ): Promise<Professional> {
   const { data: professional, error } = await supabase
     .from('professionals')
     .update({
       ...data,
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     })
     .eq('id', id)
     .select(`
@@ -90,7 +93,9 @@ export async function updateProfessional(
 /**
  * Get professional by ID with related data
  */
-export async function getProfessional(id: string): Promise<Professional | null> {
+export async function getProfessional(
+  id: string
+): Promise<Professional | null> {
   const { data: professional, error } = await supabase
     .from('professionals')
     .select(`
@@ -123,20 +128,23 @@ export async function getProfessional(id: string): Promise<Professional | null> 
  * Supports full-text search, specialty filtering, and status management
  */
 export async function searchProfessionals(filters: ProfessionalSearchInput) {
-  let query = supabase
-    .from('professionals')
-    .select(`
+  let query = supabase.from('professionals').select(
+    `
       *,
       supervisor:professionals!supervisor_id(id, first_name, last_name),
       specialties:professional_specialties(
         is_primary,
         specialty:medical_specialties(name, code, category)
       )
-    `, { count: 'exact' });
+    `,
+    { count: 'exact' }
+  );
 
   // Text search across name fields
   if (filters.search) {
-    query = query.or(`first_name.ilike.%${filters.search}%,last_name.ilike.%${filters.search}%,email.ilike.%${filters.search}%`);
+    query = query.or(
+      `first_name.ilike.%${filters.search}%,last_name.ilike.%${filters.search}%,email.ilike.%${filters.search}%`
+    );
   }
 
   // Status filters
@@ -174,12 +182,16 @@ export async function searchProfessionals(filters: ProfessionalSearchInput) {
   // License expiration warning
   if (filters.license_expiring_within_days) {
     const futureDate = new Date();
-    futureDate.setDate(futureDate.getDate() + filters.license_expiring_within_days);
+    futureDate.setDate(
+      futureDate.getDate() + filters.license_expiring_within_days
+    );
     query = query.lte('license_expiration', futureDate.toISOString());
   }
 
   // Sorting
-  query = query.order(filters.sort_by || 'last_name', { ascending: filters.sort_order === 'asc' });
+  query = query.order(filters.sort_by || 'last_name', {
+    ascending: filters.sort_order === 'asc',
+  });
 
   // Pagination
   const from = (filters.page - 1) * filters.limit;
@@ -197,7 +209,7 @@ export async function searchProfessionals(filters: ProfessionalSearchInput) {
     count: count || 0,
     page: filters.page,
     limit: filters.limit,
-    totalPages: Math.ceil((count || 0) / filters.limit)
+    totalPages: Math.ceil((count || 0) / filters.limit),
   };
 }
 
@@ -205,7 +217,7 @@ export async function searchProfessionals(filters: ProfessionalSearchInput) {
  * Get professionals with expiring licenses
  * For compliance monitoring and automated alerts
  */
-export async function getProfessionalsWithExpiringLicenses(daysAhead: number = 30) {
+export async function getProfessionalsWithExpiringLicenses(daysAhead = 30) {
   const futureDate = new Date();
   futureDate.setDate(futureDate.getDate() + daysAhead);
 
@@ -226,7 +238,9 @@ export async function getProfessionalsWithExpiringLicenses(daysAhead: number = 3
     .order('license_expiration');
 
   if (error) {
-    throw new Error(`Failed to get professionals with expiring licenses: ${error.message}`);
+    throw new Error(
+      `Failed to get professionals with expiring licenses: ${error.message}`
+    );
   }
 
   return professionals || [];
@@ -256,7 +270,9 @@ export async function getMedicalSpecialties(): Promise<MedicalSpecialty[]> {
 /**
  * Get specialties by category
  */
-export async function getSpecialtiesByCategory(category: string): Promise<MedicalSpecialty[]> {
+export async function getSpecialtiesByCategory(
+  category: string
+): Promise<MedicalSpecialty[]> {
   const { data: specialties, error } = await supabase
     .from('medical_specialties')
     .select('*')
@@ -306,12 +322,14 @@ export async function addProfessionalSpecialty(data: {
  * Create professional credential
  * Includes automatic verification workflow initiation
  */
-export async function createCredential(data: CredentialCreateInput): Promise<ProfessionalCredential> {
+export async function createCredential(
+  data: CredentialCreateInput
+): Promise<ProfessionalCredential> {
   const { data: credential, error } = await supabase
     .from('professional_credentials')
     .insert({
       ...data,
-      verification_status: data.verification_status || 'pending'
+      verification_status: data.verification_status || 'pending',
     })
     .select(`
       *,
@@ -330,14 +348,14 @@ export async function createCredential(data: CredentialCreateInput): Promise<Pro
  * Update credential information
  */
 export async function updateCredential(
-  id: string, 
+  id: string,
   data: CredentialUpdateInput
 ): Promise<ProfessionalCredential> {
   const { data: credential, error } = await supabase
     .from('professional_credentials')
     .update({
       ...data,
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     })
     .eq('id', id)
     .select(`
@@ -357,12 +375,13 @@ export async function updateCredential(
  * Search credentials with filtering
  */
 export async function searchCredentials(filters: CredentialSearchInput) {
-  let query = supabase
-    .from('professional_credentials')
-    .select(`
+  let query = supabase.from('professional_credentials').select(
+    `
       *,
       professional:professionals(id, first_name, last_name, email, npi_number)
-    `, { count: 'exact' });
+    `,
+    { count: 'exact' }
+  );
 
   // Professional filter
   if (filters.professional_id) {
@@ -395,7 +414,9 @@ export async function searchCredentials(filters: CredentialSearchInput) {
   if (filters.expired === true) {
     query = query.lt('expiration_date', new Date().toISOString());
   } else if (filters.expired === false) {
-    query = query.or('expiration_date.is.null,expiration_date.gt.' + new Date().toISOString());
+    query = query.or(
+      `expiration_date.is.null,expiration_date.gt.${new Date().toISOString()}`
+    );
   }
 
   // Date range filters
@@ -407,7 +428,9 @@ export async function searchCredentials(filters: CredentialSearchInput) {
   }
 
   // Sorting
-  query = query.order(filters.sort_by || 'expiration_date', { ascending: filters.sort_order === 'asc' });
+  query = query.order(filters.sort_by || 'expiration_date', {
+    ascending: filters.sort_order === 'asc',
+  });
 
   // Pagination
   const from = (filters.page - 1) * filters.limit;
@@ -425,13 +448,13 @@ export async function searchCredentials(filters: CredentialSearchInput) {
     count: count || 0,
     page: filters.page,
     limit: filters.limit,
-    totalPages: Math.ceil((count || 0) / filters.limit)
+    totalPages: Math.ceil((count || 0) / filters.limit),
   };
-}/**
+} /**
  * Get credentials expiring within specified timeframe
  * Used for automated alert generation and compliance monitoring
  */
-export async function getExpiringCredentials(daysAhead: number = 30) {
+export async function getExpiringCredentials(daysAhead = 30) {
   const futureDate = new Date();
   futureDate.setDate(futureDate.getDate() + daysAhead);
 
@@ -459,7 +482,9 @@ export async function getExpiringCredentials(daysAhead: number = 30) {
 /**
  * Create professional service
  */
-export async function createService(data: ServiceCreateInput): Promise<ProfessionalService> {
+export async function createService(
+  data: ServiceCreateInput
+): Promise<ProfessionalService> {
   const { data: service, error } = await supabase
     .from('professional_services')
     .insert(data)
@@ -481,14 +506,14 @@ export async function createService(data: ServiceCreateInput): Promise<Professio
  * Update professional service
  */
 export async function updateService(
-  id: string, 
+  id: string,
   data: ServiceUpdateInput
 ): Promise<ProfessionalService> {
   const { data: service, error } = await supabase
     .from('professional_services')
     .update({
       ...data,
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     })
     .eq('id', id)
     .select(`
@@ -508,7 +533,9 @@ export async function updateService(
 /**
  * Get services by professional
  */
-export async function getServicesByProfessional(professionalId: string): Promise<ProfessionalService[]> {
+export async function getServicesByProfessional(
+  professionalId: string
+): Promise<ProfessionalService[]> {
   const { data: services, error } = await supabase
     .from('professional_services')
     .select(`
@@ -585,7 +612,9 @@ export async function searchAvailableServices(filters: {
 /**
  * Create performance metric
  */
-export async function createMetric(data: MetricCreateInput): Promise<PerformanceMetric> {
+export async function createMetric(
+  data: MetricCreateInput
+): Promise<PerformanceMetric> {
   const { data: metric, error } = await supabase
     .from('performance_metrics')
     .insert(data)
@@ -644,9 +673,7 @@ export async function getPerformanceDashboardData(filters?: {
   metric_types?: string[];
   timeframe?: { start: string; end: string };
 }) {
-  let query = supabase
-    .from('performance_metrics')
-    .select(`
+  let query = supabase.from('performance_metrics').select(`
       *,
       professional:professionals(id, first_name, last_name, department, primary_specialty)
     `);
@@ -668,7 +695,9 @@ export async function getPerformanceDashboardData(filters?: {
   const { data: metrics, error } = await query;
 
   if (error) {
-    throw new Error(`Failed to get performance dashboard data: ${error.message}`);
+    throw new Error(
+      `Failed to get performance dashboard data: ${error.message}`
+    );
   }
 
   return metrics || [];
@@ -681,7 +710,9 @@ export async function getPerformanceDashboardData(filters?: {
 /**
  * Create professional development activity
  */
-export async function createDevelopmentActivity(data: DevelopmentCreateInput): Promise<ProfessionalDevelopment> {
+export async function createDevelopmentActivity(
+  data: DevelopmentCreateInput
+): Promise<ProfessionalDevelopment> {
   const { data: activity, error } = await supabase
     .from('professional_development')
     .insert(data)
@@ -713,9 +744,7 @@ export async function getDevelopmentByProfessional(
   if (year) {
     const startOfYear = new Date(year, 0, 1).toISOString();
     const endOfYear = new Date(year, 11, 31, 23, 59, 59).toISOString();
-    query = query
-      .gte('start_date', startOfYear)
-      .lte('start_date', endOfYear);
+    query = query.gte('start_date', startOfYear).lte('start_date', endOfYear);
   }
 
   query = query.order('start_date', { ascending: false });
@@ -732,7 +761,10 @@ export async function getDevelopmentByProfessional(
 /**
  * Get CME credits summary for professional
  */
-export async function getCMECreditsSummary(professionalId: string, year: number) {
+export async function getCMECreditsSummary(
+  professionalId: string,
+  year: number
+) {
   const startOfYear = new Date(year, 0, 1).toISOString();
   const endOfYear = new Date(year, 11, 31, 23, 59, 59).toISOString();
 
@@ -756,7 +788,7 @@ export async function getCMECreditsSummary(professionalId: string, year: number)
   return {
     totalCredits,
     activities: activities || [],
-    year
+    year,
   };
 }
 
@@ -767,7 +799,9 @@ export async function getCMECreditsSummary(professionalId: string, year: number)
 /**
  * Create credentialing workflow
  */
-export async function createWorkflow(data: WorkflowCreateInput): Promise<CredentialingWorkflow> {
+export async function createWorkflow(
+  data: WorkflowCreateInput
+): Promise<CredentialingWorkflow> {
   const { data: workflow, error } = await supabase
     .from('credentialing_workflow')
     .insert(data)
@@ -797,7 +831,7 @@ export async function updateWorkflowStatus(
     .update({
       status,
       ...updates,
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     })
     .eq('id', id)
     .select(`
@@ -816,14 +850,21 @@ export async function updateWorkflowStatus(
 /**
  * Get active workflows
  */
-export async function getActiveWorkflows(assignedTo?: string): Promise<CredentialingWorkflow[]> {
+export async function getActiveWorkflows(
+  assignedTo?: string
+): Promise<CredentialingWorkflow[]> {
   let query = supabase
     .from('credentialing_workflow')
     .select(`
       *,
       professional:professionals(id, first_name, last_name, email, npi_number)
     `)
-    .in('status', ['pending', 'in_progress', 'requires_documents', 'under_review']);
+    .in('status', [
+      'pending',
+      'in_progress',
+      'requires_documents',
+      'under_review',
+    ]);
 
   if (assignedTo) {
     query = query.eq('assigned_to', assignedTo);
@@ -847,7 +888,9 @@ export async function getActiveWorkflows(assignedTo?: string): Promise<Credentia
 /**
  * Create alert
  */
-export async function createAlert(data: AlertCreateInput): Promise<CredentialingAlert> {
+export async function createAlert(
+  data: AlertCreateInput
+): Promise<CredentialingAlert> {
   const { data: alert, error } = await supabase
     .from('credentialing_alerts')
     .insert(data)
@@ -892,8 +935,9 @@ export async function getActiveAlerts(
     query = query.in('severity', severity);
   }
 
-  query = query.order('severity', { ascending: false })
-                .order('due_date', { ascending: true });
+  query = query
+    .order('severity', { ascending: false })
+    .order('due_date', { ascending: true });
 
   const { data: alerts, error } = await query;
 
@@ -907,14 +951,17 @@ export async function getActiveAlerts(
 /**
  * Acknowledge alert
  */
-export async function acknowledgeAlert(id: string, acknowledgedBy: string): Promise<CredentialingAlert> {
+export async function acknowledgeAlert(
+  id: string,
+  acknowledgedBy: string
+): Promise<CredentialingAlert> {
   const { data: alert, error } = await supabase
     .from('credentialing_alerts')
     .update({
       acknowledged: true,
       acknowledged_by: acknowledgedBy,
       acknowledged_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     })
     .eq('id', id)
     .select('*')
@@ -931,8 +978,8 @@ export async function acknowledgeAlert(id: string, acknowledgedBy: string): Prom
  * Resolve alert
  */
 export async function resolveAlert(
-  id: string, 
-  resolvedBy: string, 
+  id: string,
+  resolvedBy: string,
   actionTaken?: string
 ): Promise<CredentialingAlert> {
   const { data: alert, error } = await supabase
@@ -942,7 +989,7 @@ export async function resolveAlert(
       resolved_by: resolvedBy,
       resolved_at: new Date().toISOString(),
       action_taken: actionTaken,
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     })
     .eq('id', id)
     .select('*')
@@ -972,13 +1019,15 @@ export async function bulkUpdateProfessionalStatus(
     .update({
       status,
       status_reason: statusReason,
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     })
     .in('id', professionalIds)
     .select('id, first_name, last_name, status');
 
   if (error) {
-    throw new Error(`Failed to bulk update professional status: ${error.message}`);
+    throw new Error(
+      `Failed to bulk update professional status: ${error.message}`
+    );
   }
 
   return professionals || [];
@@ -988,9 +1037,9 @@ export async function bulkUpdateProfessionalStatus(
  * Generate expiration alerts for all credentials
  * Run periodically to maintain compliance
  */
-export async function generateExpirationAlerts(daysAhead: number = 30) {
+export async function generateExpirationAlerts(daysAhead = 30) {
   const expiringCredentials = await getExpiringCredentials(daysAhead);
-  
+
   const alerts = [];
   for (const credential of expiringCredentials) {
     try {
@@ -1003,14 +1052,17 @@ export async function generateExpirationAlerts(daysAhead: number = 30) {
         due_date: credential.expiration_date,
         auto_generated: true,
         related_credential_id: credential.id,
-        action_required: true
+        action_required: true,
       });
       alerts.push(alert);
     } catch (error) {
-      console.error(`Failed to create alert for credential ${credential.id}:`, error);
+      console.error(
+        `Failed to create alert for credential ${credential.id}:`,
+        error
+      );
     }
   }
-  
+
   return alerts;
 }
 
@@ -1028,17 +1080,17 @@ export async function getComprehensiveProfessionalProfile(id: string) {
     currentServices,
     recentDevelopment,
     activeWorkflows,
-    activeAlerts
+    activeAlerts,
   ] = await Promise.all([
     getMetricsByProfessional(id, {
       start: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString(), // Last 90 days
-      end: new Date().toISOString()
+      end: new Date().toISOString(),
     }),
     searchCredentials({ professional_id: id, expired: false, limit: 50 }),
     getServicesByProfessional(id),
     getDevelopmentByProfessional(id, new Date().getFullYear()),
     getActiveWorkflows(),
-    getActiveAlerts(id)
+    getActiveAlerts(id),
   ]);
 
   return {
@@ -1047,7 +1099,7 @@ export async function getComprehensiveProfessionalProfile(id: string) {
     activeCredentials: activeCredentials.data,
     currentServices,
     recentDevelopment,
-    activeWorkflows: activeWorkflows.filter(w => w.professional_id === id),
-    activeAlerts
+    activeWorkflows: activeWorkflows.filter((w) => w.professional_id === id),
+    activeAlerts,
   };
 }

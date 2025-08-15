@@ -1,33 +1,33 @@
-function generateInsightsCSV(data: any): string {
-  if (!data.correlations && !data.anomalies) {
-    throw new Error('Invalid insights data structure')
+function _generateInsightsCSV(data: any): string {
+  if (!(data.correlations || data.anomalies)) {
+    throw new Error('Invalid insights data structure');
   }
 
-  let csv = ''
+  let csv = '';
 
   // Correlations section
   if (data.correlations) {
-    csv += 'CORRELATIONS\n'
-    csv += 'Metric 1,Metric 2,Correlation,Significance,Strength\n'
-    
+    csv += 'CORRELATIONS\n';
+    csv += 'Metric 1,Metric 2,Correlation,Significance,Strength\n';
+
     data.correlations.forEach((corr: any) => {
       const row = [
         corr.metric1,
         corr.metric2,
         corr.correlation,
         corr.significance,
-        corr.strength
-      ]
-      csv += row.join(',') + '\n'
-    })
-    csv += '\n'
+        corr.strength,
+      ];
+      csv += `${row.join(',')}\n`;
+    });
+    csv += '\n';
   }
 
   // Anomalies section
   if (data.anomalies) {
-    csv += 'ANOMALIES\n'
-    csv += 'Metric,Timestamp,Value,Expected Value,Deviation,Severity\n'
-    
+    csv += 'ANOMALIES\n';
+    csv += 'Metric,Timestamp,Value,Expected Value,Deviation,Severity\n';
+
     data.anomalies.forEach((anomaly: any) => {
       const row = [
         anomaly.metric,
@@ -35,67 +35,74 @@ function generateInsightsCSV(data: any): string {
         anomaly.value,
         anomaly.expectedValue,
         anomaly.deviation,
-        anomaly.severity
-      ]
-      csv += row.join(',') + '\n'
-    })
+        anomaly.severity,
+      ];
+      csv += `${row.join(',')}\n`;
+    });
   }
 
-  return csv
+  return csv;
 }
 
-function generateDashboardCSV(data: any): string {
+function _generateDashboardCSV(data: any): string {
   if (!data.kpis) {
-    throw new Error('Invalid dashboard data structure')
+    throw new Error('Invalid dashboard data structure');
   }
 
-  const headers = ['Metric', 'Value', 'Change', 'Trend']
-  let csv = headers.join(',') + '\n'
+  const headers = ['Metric', 'Value', 'Change', 'Trend'];
+  let csv = `${headers.join(',')}\n`;
 
   Object.entries(data.kpis).forEach(([key, value]: [string, any]) => {
     const row = [
-      key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()),
+      key.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase()),
       typeof value === 'number' ? value.toString() : value,
       '', // TODO: Add change calculation
-      '' // TODO: Add trend calculation
-    ]
-    csv += row.join(',') + '\n'
-  })
+      '', // TODO: Add trend calculation
+    ];
+    csv += `${row.join(',')}\n`;
+  });
 
-  return csv
+  return csv;
 }
 
-function generateRealtimeCSV(data: any): string {
+function _generateRealtimeCSV(data: any): string {
   if (!data.metrics) {
-    throw new Error('Invalid realtime data structure')
+    throw new Error('Invalid realtime data structure');
   }
 
-  const headers = ['Timestamp', 'Active Subscriptions', 'MRR', 'Trial Conversions', 'Churn Rate', 'New Signups']
-  let csv = headers.join(',') + '\n'
+  const headers = [
+    'Timestamp',
+    'Active Subscriptions',
+    'MRR',
+    'Trial Conversions',
+    'Churn Rate',
+    'New Signups',
+  ];
+  let csv = `${headers.join(',')}\n`;
 
-  const timestamp = new Date().toISOString()
+  const timestamp = new Date().toISOString();
   const row = [
     timestamp,
     data.metrics.activeSubscriptions,
     data.metrics.monthlyRecurringRevenue,
     data.metrics.trialConversions,
     data.metrics.churnRate,
-    data.metrics.newSignups
-  ]
-  csv += row.join(',') + '\n'
+    data.metrics.newSignups,
+  ];
+  csv += `${row.join(',')}\n`;
 
-  return csv
+  return csv;
 }
 
 // Excel Generation Functions
-function addCohortSheetsToWorkbook(workbook: any, data: any, options: any) {
+function _addCohortSheetsToWorkbook(workbook: any, data: any, _options: any) {
   // Cohort Overview Sheet
   const overviewData = [
     ['Cohort Analysis Report'],
     ['Generated:', new Date().toISOString()],
     [''],
-    ['Cohort', 'Period', 'Users', 'Retention Rate', 'Revenue', 'Churn Rate']
-  ]
+    ['Cohort', 'Period', 'Users', 'Retention Rate', 'Revenue', 'Churn Rate'],
+  ];
 
   if (data.metrics) {
     data.metrics.forEach((metric: any) => {
@@ -105,13 +112,13 @@ function addCohortSheetsToWorkbook(workbook: any, data: any, options: any) {
         metric.totalUsers,
         metric.retentionRate / 100, // Excel percentage format
         metric.revenue,
-        metric.churnRate / 100
-      ])
-    })
+        metric.churnRate / 100,
+      ]);
+    });
   }
 
-  const overviewSheet = XLSX.utils.aoa_to_sheet(overviewData)
-  
+  const overviewSheet = XLSX.utils.aoa_to_sheet(overviewData);
+
   // Format columns
   overviewSheet['!cols'] = [
     { width: 15 }, // Cohort
@@ -119,15 +126,15 @@ function addCohortSheetsToWorkbook(workbook: any, data: any, options: any) {
     { width: 10 }, // Users
     { width: 15 }, // Retention Rate
     { width: 15 }, // Revenue
-    { width: 15 }  // Churn Rate
-  ]
+    { width: 15 }, // Churn Rate
+  ];
 
-  XLSX.utils.book_append_sheet(workbook, overviewSheet, 'Cohort Overview')
+  XLSX.utils.book_append_sheet(workbook, overviewSheet, 'Cohort Overview');
 
   // Retention Heatmap Sheet (if heatmap data available)
   if (data.heatmapData) {
-    const heatmapSheet = XLSX.utils.json_to_sheet(data.heatmapData)
-    XLSX.utils.book_append_sheet(workbook, heatmapSheet, 'Retention Heatmap')
+    const heatmapSheet = XLSX.utils.json_to_sheet(data.heatmapData);
+    XLSX.utils.book_append_sheet(workbook, heatmapSheet, 'Retention Heatmap');
   }
 
   // Statistics Sheet (if statistics available)
@@ -139,23 +146,23 @@ function addCohortSheetsToWorkbook(workbook: any, data: any, options: any) {
       ['Average Retention Rate', data.statistics.averageRetention || 'N/A'],
       ['Best Performing Cohort', data.statistics.bestCohort || 'N/A'],
       ['Worst Performing Cohort', data.statistics.worstCohort || 'N/A'],
-      ['Retention Trend', data.statistics.trend || 'N/A']
-    ]
+      ['Retention Trend', data.statistics.trend || 'N/A'],
+    ];
 
-    const statsSheet = XLSX.utils.aoa_to_sheet(statsData)
-    XLSX.utils.book_append_sheet(workbook, statsSheet, 'Statistics')
+    const statsSheet = XLSX.utils.aoa_to_sheet(statsData);
+    XLSX.utils.book_append_sheet(workbook, statsSheet, 'Statistics');
   }
 }
 
-function addForecastSheetsToWorkbook(workbook: any, data: any, options: any) {
+function _addForecastSheetsToWorkbook(workbook: any, data: any, _options: any) {
   // Forecast Data Sheet
   const forecastData = [
     ['Forecast Report'],
     ['Generated:', new Date().toISOString()],
     ['Model:', data.model || 'Unknown'],
     [''],
-    ['Date', 'Prediction', 'Lower Bound', 'Upper Bound', 'Confidence']
-  ]
+    ['Date', 'Prediction', 'Lower Bound', 'Upper Bound', 'Confidence'],
+  ];
 
   if (data.predictions) {
     data.predictions.forEach((prediction: any) => {
@@ -164,13 +171,13 @@ function addForecastSheetsToWorkbook(workbook: any, data: any, options: any) {
         prediction.value,
         prediction.lowerBound || '',
         prediction.upperBound || '',
-        prediction.confidence || ''
-      ])
-    })
+        prediction.confidence || '',
+      ]);
+    });
   }
 
-  const forecastSheet = XLSX.utils.aoa_to_sheet(forecastData)
-  XLSX.utils.book_append_sheet(workbook, forecastSheet, 'Forecast Data')
+  const forecastSheet = XLSX.utils.aoa_to_sheet(forecastData);
+  XLSX.utils.book_append_sheet(workbook, forecastSheet, 'Forecast Data');
 
   // Model Evaluation Sheet (if evaluation data available)
   if (data.evaluation) {
@@ -181,11 +188,11 @@ function addForecastSheetsToWorkbook(workbook: any, data: any, options: any) {
       ['MAPE', data.evaluation.mape || 'N/A'],
       ['RMSE', data.evaluation.rmse || 'N/A'],
       ['R²', data.evaluation.r2 || 'N/A'],
-      ['Accuracy', data.evaluation.accuracy || 'N/A']
-    ]
+      ['Accuracy', data.evaluation.accuracy || 'N/A'],
+    ];
 
-    const evalSheet = XLSX.utils.aoa_to_sheet(evalData)
-    XLSX.utils.book_append_sheet(workbook, evalSheet, 'Model Evaluation')
+    const evalSheet = XLSX.utils.aoa_to_sheet(evalData);
+    XLSX.utils.book_append_sheet(workbook, evalSheet, 'Model Evaluation');
   }
 
   // Scenarios Sheet (if scenario data available)
@@ -193,32 +200,41 @@ function addForecastSheetsToWorkbook(workbook: any, data: any, options: any) {
     const scenarioData = [
       ['Scenario Analysis'],
       [''],
-      ['Scenario', 'Description', 'Impact', 'Probability']
-    ]
+      ['Scenario', 'Description', 'Impact', 'Probability'],
+    ];
 
-    Object.entries(data.scenarios).forEach(([name, scenario]: [string, any]) => {
-      scenarioData.push([
-        name,
-        scenario.description || '',
-        scenario.impact || '',
-        scenario.probability || ''
-      ])
-    })
+    Object.entries(data.scenarios).forEach(
+      ([name, scenario]: [string, any]) => {
+        scenarioData.push([
+          name,
+          scenario.description || '',
+          scenario.impact || '',
+          scenario.probability || '',
+        ]);
+      }
+    );
 
-    const scenarioSheet = XLSX.utils.aoa_to_sheet(scenarioData)
-    XLSX.utils.book_append_sheet(workbook, scenarioSheet, 'Scenarios')
+    const scenarioSheet = XLSX.utils.aoa_to_sheet(scenarioData);
+    XLSX.utils.book_append_sheet(workbook, scenarioSheet, 'Scenarios');
   }
 }
 
-function addInsightsSheetsToWorkbook(workbook: any, data: any, options: any) {
+function _addInsightsSheetsToWorkbook(workbook: any, data: any, _options: any) {
   // Correlations Sheet
   if (data.correlations) {
     const corrData = [
       ['Correlation Analysis'],
       ['Generated:', new Date().toISOString()],
       [''],
-      ['Metric 1', 'Metric 2', 'Correlation', 'Significance', 'Strength', 'Interpretation']
-    ]
+      [
+        'Metric 1',
+        'Metric 2',
+        'Correlation',
+        'Significance',
+        'Strength',
+        'Interpretation',
+      ],
+    ];
 
     data.correlations.forEach((corr: any) => {
       corrData.push([
@@ -227,12 +243,12 @@ function addInsightsSheetsToWorkbook(workbook: any, data: any, options: any) {
         corr.correlation,
         corr.significance,
         corr.strength,
-        corr.interpretation || ''
-      ])
-    })
+        corr.interpretation || '',
+      ]);
+    });
 
-    const corrSheet = XLSX.utils.aoa_to_sheet(corrData)
-    XLSX.utils.book_append_sheet(workbook, corrSheet, 'Correlations')
+    const corrSheet = XLSX.utils.aoa_to_sheet(corrData);
+    XLSX.utils.book_append_sheet(workbook, corrSheet, 'Correlations');
   }
 
   // Anomalies Sheet
@@ -240,8 +256,16 @@ function addInsightsSheetsToWorkbook(workbook: any, data: any, options: any) {
     const anomalyData = [
       ['Anomaly Detection'],
       [''],
-      ['Metric', 'Timestamp', 'Value', 'Expected Value', 'Deviation', 'Severity', 'Explanation']
-    ]
+      [
+        'Metric',
+        'Timestamp',
+        'Value',
+        'Expected Value',
+        'Deviation',
+        'Severity',
+        'Explanation',
+      ],
+    ];
 
     data.anomalies.forEach((anomaly: any) => {
       anomalyData.push([
@@ -251,12 +275,12 @@ function addInsightsSheetsToWorkbook(workbook: any, data: any, options: any) {
         anomaly.expectedValue,
         anomaly.deviation,
         anomaly.severity,
-        anomaly.explanation || ''
-      ])
-    })
+        anomaly.explanation || '',
+      ]);
+    });
 
-    const anomalySheet = XLSX.utils.aoa_to_sheet(anomalyData)
-    XLSX.utils.book_append_sheet(workbook, anomalySheet, 'Anomalies')
+    const anomalySheet = XLSX.utils.aoa_to_sheet(anomalyData);
+    XLSX.utils.book_append_sheet(workbook, anomalySheet, 'Anomalies');
   }
 
   // Predictions Sheet
@@ -264,8 +288,15 @@ function addInsightsSheetsToWorkbook(workbook: any, data: any, options: any) {
     const predData = [
       ['Predictive Insights'],
       [''],
-      ['Metric', 'Prediction', 'Confidence', 'Timeframe', 'Factors', 'Reasoning']
-    ]
+      [
+        'Metric',
+        'Prediction',
+        'Confidence',
+        'Timeframe',
+        'Factors',
+        'Reasoning',
+      ],
+    ];
 
     data.predictions.forEach((pred: any) => {
       predData.push([
@@ -273,13 +304,15 @@ function addInsightsSheetsToWorkbook(workbook: any, data: any, options: any) {
         pred.prediction,
         pred.confidence,
         pred.timeframe,
-        Array.isArray(pred.factors) ? pred.factors.join(', ') : pred.factors || '',
-        pred.reasoning || ''
-      ])
-    })
+        Array.isArray(pred.factors)
+          ? pred.factors.join(', ')
+          : pred.factors || '',
+        pred.reasoning || '',
+      ]);
+    });
 
-    const predSheet = XLSX.utils.aoa_to_sheet(predData)
-    XLSX.utils.book_append_sheet(workbook, predSheet, 'Predictions')
+    const predSheet = XLSX.utils.aoa_to_sheet(predData);
+    XLSX.utils.book_append_sheet(workbook, predSheet, 'Predictions');
   }
 
   // Recommendations Sheet
@@ -287,69 +320,75 @@ function addInsightsSheetsToWorkbook(workbook: any, data: any, options: any) {
     const recData = [
       ['Recommendations'],
       [''],
-      ['Priority', 'Recommendation', 'Impact', 'Effort']
-    ]
+      ['Priority', 'Recommendation', 'Impact', 'Effort'],
+    ];
 
     data.recommendations.forEach((rec: any, index: number) => {
       recData.push([
         `Priority ${index + 1}`,
         typeof rec === 'string' ? rec : rec.text || rec.recommendation || '',
         rec.impact || 'Medium',
-        rec.effort || 'Medium'
-      ])
-    })
+        rec.effort || 'Medium',
+      ]);
+    });
 
-    const recSheet = XLSX.utils.aoa_to_sheet(recData)
-    XLSX.utils.book_append_sheet(workbook, recSheet, 'Recommendations')
+    const recSheet = XLSX.utils.aoa_to_sheet(recData);
+    XLSX.utils.book_append_sheet(workbook, recSheet, 'Recommendations');
   }
 }
 
-function addDashboardSheetsToWorkbook(workbook: any, data: any, options: any) {
+function _addDashboardSheetsToWorkbook(
+  workbook: any,
+  data: any,
+  _options: any
+) {
   // KPIs Sheet
   const kpiData = [
     ['Analytics Dashboard'],
     ['Generated:', new Date().toISOString()],
     [''],
     ['Key Performance Indicators'],
-    ['Metric', 'Current Value', 'Change', 'Trend']
-  ]
+    ['Metric', 'Current Value', 'Change', 'Trend'],
+  ];
 
   if (data.kpis) {
     Object.entries(data.kpis).forEach(([key, value]: [string, any]) => {
       kpiData.push([
-        key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()),
+        key
+          .replace(/([A-Z])/g, ' $1')
+          .replace(/^./, (str) => str.toUpperCase()),
         typeof value === 'number' ? value : value?.toString() || 'N/A',
         '', // TODO: Add change calculation
-        ''  // TODO: Add trend calculation
-      ])
-    })
+        '', // TODO: Add trend calculation
+      ]);
+    });
   }
 
-  const kpiSheet = XLSX.utils.aoa_to_sheet(kpiData)
-  XLSX.utils.book_append_sheet(workbook, kpiSheet, 'KPIs')
+  const kpiSheet = XLSX.utils.aoa_to_sheet(kpiData);
+  XLSX.utils.book_append_sheet(workbook, kpiSheet, 'KPIs');
 
   // Include other data if available
   if (data.cohorts) {
-    const cohortSheet = XLSX.utils.json_to_sheet(data.cohorts)
-    XLSX.utils.book_append_sheet(workbook, cohortSheet, 'Cohort Data')
+    const cohortSheet = XLSX.utils.json_to_sheet(data.cohorts);
+    XLSX.utils.book_append_sheet(workbook, cohortSheet, 'Cohort Data');
   }
 
   if (data.forecasts) {
-    const forecastSheet = XLSX.utils.json_to_sheet(data.forecasts)
-    XLSX.utils.book_append_sheet(workbook, forecastSheet, 'Forecast Data')
+    const forecastSheet = XLSX.utils.json_to_sheet(data.forecasts);
+    XLSX.utils.book_append_sheet(workbook, forecastSheet, 'Forecast Data');
   }
 
   if (data.insights) {
-    const insightData = [
-      ['Key Insights'],
-      ['']
-    ]
+    const insightData = [['Key Insights'], ['']];
 
     data.insights.forEach((insight: any, index: number) => {
-      insightData.push([`${index + 1}.`, typeof insight === 'string' ? insight : insight.text || ''])
-    })
+      insightData.push([
+        `${index + 1}.`,
+        typeof insight === 'string' ? insight : insight.text || '',
+      ]);
+    });
 
-    const insightSheet = XLSX.utils.aoa_to_sheet(insightData)
-    XLSX.utils.book_append_sheet(workbook, insightSheet, 'Insights')
+    const insightSheet = XLSX.utils.aoa_to_sheet(insightData);
+    XLSX.utils.book_append_sheet(workbook, insightSheet, 'Insights');
   }
 }

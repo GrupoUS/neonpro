@@ -1,7 +1,6 @@
 // Suspicious Activity Detection System
 // Advanced behavioral analysis and anomaly detection for session security
 
-import { UserSession, SecurityEvent, SuspiciousActivity, UserRole } from '@/types/session';
 import { SessionConfig } from '@/lib/auth/config/session-config';
 import { SessionUtils } from '@/lib/auth/utils/session-utils';
 
@@ -16,7 +15,7 @@ export interface BehaviorPattern {
   timestamp: number;
 }
 
-export type BehaviorPatternType = 
+export type BehaviorPatternType =
   | 'typing_speed'
   | 'mouse_movement'
   | 'navigation_pattern'
@@ -64,7 +63,7 @@ export interface AnomalyAlert {
   falsePositive: boolean;
 }
 
-export type AnomalyType = 
+export type AnomalyType =
   | 'unusual_typing_pattern'
   | 'abnormal_mouse_behavior'
   | 'suspicious_navigation'
@@ -99,13 +98,12 @@ export interface DetectionRule {
 }
 
 export class SuspiciousActivityDetector {
-  private config: SessionConfig;
   private utils: SessionUtils;
   private behaviorBaselines: Map<string, BehaviorBaseline> = new Map();
   private activePatterns: Map<string, BehaviorPattern[]> = new Map();
   private anomalyAlerts: Map<string, AnomalyAlert> = new Map();
   private detectionRules: Map<string, DetectionRule> = new Map();
-  private learningMode: boolean = true;
+  private learningMode = true;
   private analysisInterval: NodeJS.Timeout | null = null;
 
   constructor() {
@@ -129,7 +127,7 @@ export class SuspiciousActivityDetector {
         severity: 'medium',
         enabled: true,
         falsePositiveRate: 0.05,
-        lastUpdated: Date.now()
+        lastUpdated: Date.now(),
       },
       {
         id: 'mouse_behavior_anomaly',
@@ -140,7 +138,7 @@ export class SuspiciousActivityDetector {
         severity: 'high',
         enabled: true,
         falsePositiveRate: 0.03,
-        lastUpdated: Date.now()
+        lastUpdated: Date.now(),
       },
       {
         id: 'off_hours_access',
@@ -151,7 +149,7 @@ export class SuspiciousActivityDetector {
         severity: 'medium',
         enabled: true,
         falsePositiveRate: 0.08,
-        lastUpdated: Date.now()
+        lastUpdated: Date.now(),
       },
       {
         id: 'location_anomaly',
@@ -162,7 +160,7 @@ export class SuspiciousActivityDetector {
         severity: 'high',
         enabled: true,
         falsePositiveRate: 0.02,
-        lastUpdated: Date.now()
+        lastUpdated: Date.now(),
       },
       {
         id: 'rapid_actions',
@@ -173,7 +171,7 @@ export class SuspiciousActivityDetector {
         severity: 'high',
         enabled: true,
         falsePositiveRate: 0.04,
-        lastUpdated: Date.now()
+        lastUpdated: Date.now(),
       },
       {
         id: 'privilege_escalation',
@@ -184,11 +182,11 @@ export class SuspiciousActivityDetector {
         severity: 'critical',
         enabled: true,
         falsePositiveRate: 0.01,
-        lastUpdated: Date.now()
-      }
+        lastUpdated: Date.now(),
+      },
     ];
 
-    rules.forEach(rule => {
+    rules.forEach((rule) => {
       this.detectionRules.set(rule.id, rule);
     });
   }
@@ -199,7 +197,7 @@ export class SuspiciousActivityDetector {
   private startContinuousAnalysis(): void {
     this.analysisInterval = setInterval(() => {
       this.performBehaviorAnalysis();
-    }, 30000); // Analyze every 30 seconds
+    }, 30_000); // Analyze every 30 seconds
   }
 
   /**
@@ -220,7 +218,7 @@ export class SuspiciousActivityDetector {
         currentMetrics: this.mergeBehaviorMetrics(userId, metrics),
         anomalyScore: 0,
         confidence: 0,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       };
 
       // Calculate anomaly score
@@ -230,12 +228,12 @@ export class SuspiciousActivityDetector {
       // Store pattern
       const userPatterns = this.activePatterns.get(userId) || [];
       userPatterns.push(pattern);
-      
+
       // Keep only last 100 patterns per user
       if (userPatterns.length > 100) {
         userPatterns.shift();
       }
-      
+
       this.activePatterns.set(userId, userPatterns);
 
       // Check for anomalies
@@ -257,10 +255,10 @@ export class SuspiciousActivityDetector {
     userId: string,
     sessionId: string,
     typingSpeed: number,
-    keyPressIntervals: number[]
+    _keyPressIntervals: number[]
   ): void {
     this.recordBehavior(userId, sessionId, 'typing_speed', {
-      currentTypingSpeed: typingSpeed
+      currentTypingSpeed: typingSpeed,
     });
   }
 
@@ -271,10 +269,10 @@ export class SuspiciousActivityDetector {
     userId: string,
     sessionId: string,
     mouseSpeed: number,
-    clickPatterns: number[]
+    _clickPatterns: number[]
   ): void {
     this.recordBehavior(userId, sessionId, 'mouse_movement', {
-      currentMouseSpeed: mouseSpeed
+      currentMouseSpeed: mouseSpeed,
     });
   }
 
@@ -287,7 +285,7 @@ export class SuspiciousActivityDetector {
     navigationPath: string[]
   ): void {
     this.recordBehavior(userId, sessionId, 'navigation_pattern', {
-      navigationPath
+      navigationPath,
     });
   }
 
@@ -302,15 +300,17 @@ export class SuspiciousActivityDetector {
   ): void {
     const userPatterns = this.activePatterns.get(userId) || [];
     const recentApiPatterns = userPatterns
-      .filter(p => p.patternType === 'api_usage' && Date.now() - p.timestamp < 300000)
-      .map(p => p.currentMetrics.apiEndpoints || [])
-      .flat();
-    
+      .filter(
+        (p) =>
+          p.patternType === 'api_usage' && Date.now() - p.timestamp < 300_000
+      )
+      .flatMap((p) => p.currentMetrics.apiEndpoints || []);
+
     recentApiPatterns.push(endpoint);
 
     this.recordBehavior(userId, sessionId, 'api_usage', {
       apiEndpoints: recentApiPatterns,
-      interactionFrequency: frequency
+      interactionFrequency: frequency,
     });
   }
 
@@ -321,14 +321,14 @@ export class SuspiciousActivityDetector {
     try {
       for (const [userId, patterns] of this.activePatterns.entries()) {
         const recentPatterns = patterns.filter(
-          p => Date.now() - p.timestamp < 300000 // Last 5 minutes
+          (p) => Date.now() - p.timestamp < 300_000 // Last 5 minutes
         );
 
         if (recentPatterns.length === 0) continue;
 
         // Analyze patterns for anomalies
         const anomalies = await this.detectAnomalies(userId, recentPatterns);
-        
+
         // Process detected anomalies
         for (const anomaly of anomalies) {
           await this.processAnomaly(anomaly);
@@ -354,13 +354,17 @@ export class SuspiciousActivityDetector {
     for (const rule of this.detectionRules.values()) {
       if (!rule.enabled) continue;
 
-      const relevantPatterns = patterns.filter(
-        p => rule.patternTypes.includes(p.patternType)
+      const relevantPatterns = patterns.filter((p) =>
+        rule.patternTypes.includes(p.patternType)
       );
 
       if (relevantPatterns.length === 0) continue;
 
-      const anomaly = await this.applyDetectionRule(userId, rule, relevantPatterns);
+      const anomaly = await this.applyDetectionRule(
+        userId,
+        rule,
+        relevantPatterns
+      );
       if (anomaly) {
         anomalies.push(anomaly);
       }
@@ -378,10 +382,15 @@ export class SuspiciousActivityDetector {
     patterns: BehaviorPattern[]
   ): Promise<AnomalyAlert | null> {
     try {
-      const avgAnomalyScore = patterns.reduce((sum, p) => sum + p.anomalyScore, 0) / patterns.length;
-      const avgConfidence = patterns.reduce((sum, p) => sum + p.confidence, 0) / patterns.length;
+      const avgAnomalyScore =
+        patterns.reduce((sum, p) => sum + p.anomalyScore, 0) / patterns.length;
+      const avgConfidence =
+        patterns.reduce((sum, p) => sum + p.confidence, 0) / patterns.length;
 
-      if (avgAnomalyScore >= rule.thresholds.deviation && avgConfidence >= rule.thresholds.confidence) {
+      if (
+        avgAnomalyScore >= rule.thresholds.deviation &&
+        avgConfidence >= rule.thresholds.confidence
+      ) {
         const alertId = this.utils.generateSessionToken();
         const sessionId = patterns[0].sessionId;
 
@@ -397,12 +406,12 @@ export class SuspiciousActivityDetector {
             statisticalSignificance: avgConfidence,
             comparisonData: this.getComparisonData(userId, patterns),
             contextualFactors: this.getContextualFactors(patterns),
-            relatedEvents: []
+            relatedEvents: [],
           },
           riskScore: this.calculateRiskScore(avgAnomalyScore, rule.severity),
           timestamp: Date.now(),
           resolved: false,
-          falsePositive: false
+          falsePositive: false,
         };
 
         return anomaly;
@@ -432,7 +441,9 @@ export class SuspiciousActivityDetector {
       // Send notifications
       await this.sendAnomalyNotification(anomaly);
 
-      console.log(`Anomaly detected: ${anomaly.alertType} for user ${anomaly.userId} (Risk: ${anomaly.riskScore})`);
+      console.log(
+        `Anomaly detected: ${anomaly.alertType} for user ${anomaly.userId} (Risk: ${anomaly.riskScore})`
+      );
     } catch (error) {
       console.error('Error processing anomaly:', error);
     }
@@ -445,7 +456,10 @@ export class SuspiciousActivityDetector {
     switch (anomaly.severity) {
       case 'critical':
         // Immediately suspend session
-        await this.suspendSession(anomaly.sessionId, 'Critical security anomaly detected');
+        await this.suspendSession(
+          anomaly.sessionId,
+          'Critical security anomaly detected'
+        );
         break;
 
       case 'high':
@@ -476,32 +490,45 @@ export class SuspiciousActivityDetector {
     switch (pattern.patternType) {
       case 'typing_speed':
         if (baseline.avgTypingSpeed > 0) {
-          const deviation = Math.abs(current.currentTypingSpeed - baseline.avgTypingSpeed) / baseline.avgTypingSpeed;
+          const deviation =
+            Math.abs(current.currentTypingSpeed - baseline.avgTypingSpeed) /
+            baseline.avgTypingSpeed;
           score = Math.min(100, deviation * 100);
         }
         break;
 
       case 'mouse_movement':
         if (baseline.avgMouseSpeed > 0) {
-          const deviation = Math.abs(current.currentMouseSpeed - baseline.avgMouseSpeed) / baseline.avgMouseSpeed;
+          const deviation =
+            Math.abs(current.currentMouseSpeed - baseline.avgMouseSpeed) /
+            baseline.avgMouseSpeed;
           score = Math.min(100, deviation * 100);
         }
         break;
 
-      case 'time_pattern':
+      case 'time_pattern': {
         const currentHour = new Date().getHours();
-        const isUsualTime = baseline.usualLoginTimes.some(hour => Math.abs(hour - currentHour) <= 2);
+        const isUsualTime = baseline.usualLoginTimes.some(
+          (hour) => Math.abs(hour - currentHour) <= 2
+        );
         score = isUsualTime ? 0 : 80;
         break;
+      }
 
-      case 'location_pattern':
-        const isKnownLocation = baseline.frequentLocations.includes(current.location);
+      case 'location_pattern': {
+        const isKnownLocation = baseline.frequentLocations.includes(
+          current.location
+        );
         score = isKnownLocation ? 0 : 90;
         break;
+      }
 
       case 'interaction_frequency':
         if (baseline.interactionFrequency > 0) {
-          const deviation = Math.abs(current.interactionFrequency - baseline.interactionFrequency) / baseline.interactionFrequency;
+          const deviation =
+            Math.abs(
+              current.interactionFrequency - baseline.interactionFrequency
+            ) / baseline.interactionFrequency;
           score = Math.min(100, deviation * 150); // Higher weight for interaction frequency
         }
         break;
@@ -548,12 +575,12 @@ export class SuspiciousActivityDetector {
           statisticalSignificance: pattern.confidence,
           comparisonData: {},
           contextualFactors: [],
-          relatedEvents: []
+          relatedEvents: [],
         },
         riskScore: pattern.anomalyScore,
         timestamp: Date.now(),
         resolved: false,
-        falsePositive: false
+        falsePositive: false,
       });
     }
   }
@@ -562,20 +589,25 @@ export class SuspiciousActivityDetector {
    * Utility functions
    */
   private getBehaviorBaseline(userId: string): BehaviorBaseline {
-    return this.behaviorBaselines.get(userId) || {
-      avgTypingSpeed: 0,
-      avgMouseSpeed: 0,
-      commonNavigationPaths: [],
-      typicalApiEndpoints: [],
-      usualLoginTimes: [],
-      frequentLocations: [],
-      preferredDevices: [],
-      avgSessionDuration: 0,
-      interactionFrequency: 0
-    };
+    return (
+      this.behaviorBaselines.get(userId) || {
+        avgTypingSpeed: 0,
+        avgMouseSpeed: 0,
+        commonNavigationPaths: [],
+        typicalApiEndpoints: [],
+        usualLoginTimes: [],
+        frequentLocations: [],
+        preferredDevices: [],
+        avgSessionDuration: 0,
+        interactionFrequency: 0,
+      }
+    );
   }
 
-  private mergeBehaviorMetrics(userId: string, metrics: Partial<BehaviorMetrics>): BehaviorMetrics {
+  private mergeBehaviorMetrics(
+    userId: string,
+    metrics: Partial<BehaviorMetrics>
+  ): BehaviorMetrics {
     const baseline = this.getBehaviorBaseline(userId);
     return {
       currentTypingSpeed: metrics.currentTypingSpeed || baseline.avgTypingSpeed,
@@ -586,11 +618,14 @@ export class SuspiciousActivityDetector {
       location: metrics.location || 'unknown',
       deviceType: metrics.deviceType || 'unknown',
       sessionDuration: metrics.sessionDuration || 0,
-      interactionFrequency: metrics.interactionFrequency || 0
+      interactionFrequency: metrics.interactionFrequency || 0,
     };
   }
 
-  private updateBehaviorBaseline(userId: string, pattern: BehaviorPattern): void {
+  private updateBehaviorBaseline(
+    userId: string,
+    pattern: BehaviorPattern
+  ): void {
     const baseline = this.getBehaviorBaseline(userId);
     const current = pattern.currentMetrics;
 
@@ -599,17 +634,22 @@ export class SuspiciousActivityDetector {
 
     switch (pattern.patternType) {
       case 'typing_speed':
-        baseline.avgTypingSpeed = baseline.avgTypingSpeed * (1 - alpha) + current.currentTypingSpeed * alpha;
+        baseline.avgTypingSpeed =
+          baseline.avgTypingSpeed * (1 - alpha) +
+          current.currentTypingSpeed * alpha;
         break;
       case 'mouse_movement':
-        baseline.avgMouseSpeed = baseline.avgMouseSpeed * (1 - alpha) + current.currentMouseSpeed * alpha;
+        baseline.avgMouseSpeed =
+          baseline.avgMouseSpeed * (1 - alpha) +
+          current.currentMouseSpeed * alpha;
         break;
-      case 'time_pattern':
+      case 'time_pattern': {
         const hour = new Date().getHours();
         if (!baseline.usualLoginTimes.includes(hour)) {
           baseline.usualLoginTimes.push(hour);
         }
         break;
+      }
       case 'location_pattern':
         if (!baseline.frequentLocations.includes(current.location)) {
           baseline.frequentLocations.push(current.location);
@@ -622,43 +662,50 @@ export class SuspiciousActivityDetector {
 
   private mapRuleToAnomalyType(ruleId: string): AnomalyType {
     const mapping: Record<string, AnomalyType> = {
-      'typing_speed_anomaly': 'unusual_typing_pattern',
-      'mouse_behavior_anomaly': 'abnormal_mouse_behavior',
-      'off_hours_access': 'off_hours_access',
-      'location_anomaly': 'location_anomaly',
-      'rapid_actions': 'rapid_actions',
-      'privilege_escalation': 'privilege_escalation'
+      typing_speed_anomaly: 'unusual_typing_pattern',
+      mouse_behavior_anomaly: 'abnormal_mouse_behavior',
+      off_hours_access: 'off_hours_access',
+      location_anomaly: 'location_anomaly',
+      rapid_actions: 'rapid_actions',
+      privilege_escalation: 'privilege_escalation',
     };
     return mapping[ruleId] || 'bot_like_behavior';
   }
 
-  private mapPatternToAnomalyType(patternType: BehaviorPatternType): AnomalyType {
+  private mapPatternToAnomalyType(
+    patternType: BehaviorPatternType
+  ): AnomalyType {
     const mapping: Record<BehaviorPatternType, AnomalyType> = {
-      'typing_speed': 'unusual_typing_pattern',
-      'mouse_movement': 'abnormal_mouse_behavior',
-      'navigation_pattern': 'suspicious_navigation',
-      'api_usage': 'unusual_api_usage',
-      'time_pattern': 'off_hours_access',
-      'location_pattern': 'location_anomaly',
-      'device_pattern': 'device_anomaly',
-      'interaction_frequency': 'rapid_actions'
+      typing_speed: 'unusual_typing_pattern',
+      mouse_movement: 'abnormal_mouse_behavior',
+      navigation_pattern: 'suspicious_navigation',
+      api_usage: 'unusual_api_usage',
+      time_pattern: 'off_hours_access',
+      location_pattern: 'location_anomaly',
+      device_pattern: 'device_anomaly',
+      interaction_frequency: 'rapid_actions',
     };
     return mapping[patternType];
   }
 
-  private calculatePatternDeviations(patterns: BehaviorPattern[]): Record<string, number> {
+  private calculatePatternDeviations(
+    patterns: BehaviorPattern[]
+  ): Record<string, number> {
     const deviations: Record<string, number> = {};
-    patterns.forEach(pattern => {
+    patterns.forEach((pattern) => {
       deviations[pattern.patternType] = pattern.anomalyScore;
     });
     return deviations;
   }
 
-  private getComparisonData(userId: string, patterns: BehaviorPattern[]): Record<string, any> {
+  private getComparisonData(
+    userId: string,
+    patterns: BehaviorPattern[]
+  ): Record<string, any> {
     const baseline = this.getBehaviorBaseline(userId);
     return {
       baseline,
-      currentPatterns: patterns.map(p => p.currentMetrics)
+      currentPatterns: patterns.map((p) => p.currentMetrics),
     };
   }
 
@@ -666,22 +713,26 @@ export class SuspiciousActivityDetector {
     const factors: string[] = [];
     const now = new Date();
     const hour = now.getHours();
-    
+
     if (hour < 6 || hour > 22) factors.push('off_hours');
     if (patterns.length > 10) factors.push('high_activity');
-    if (patterns.some(p => p.anomalyScore > 70)) factors.push('multiple_anomalies');
-    
+    if (patterns.some((p) => p.anomalyScore > 70))
+      factors.push('multiple_anomalies');
+
     return factors;
   }
 
-  private calculateRiskScore(anomalyScore: number, severity: AnomalyAlert['severity']): number {
+  private calculateRiskScore(
+    anomalyScore: number,
+    severity: AnomalyAlert['severity']
+  ): number {
     const severityMultiplier = {
-      'low': 0.5,
-      'medium': 0.7,
-      'high': 0.9,
-      'critical': 1.0
+      low: 0.5,
+      medium: 0.7,
+      high: 0.9,
+      critical: 1.0,
     };
-    
+
     return Math.round(anomalyScore * severityMultiplier[severity]);
   }
 
@@ -690,7 +741,7 @@ export class SuspiciousActivityDetector {
       await fetch('/api/security/events', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           type: 'suspicious_activity',
@@ -702,22 +753,25 @@ export class SuspiciousActivityDetector {
             anomalyId: anomaly.id,
             alertType: anomaly.alertType,
             riskScore: anomaly.riskScore,
-            evidence: anomaly.evidence
-          }
-        })
+            evidence: anomaly.evidence,
+          },
+        }),
       });
     } catch (error) {
       console.error('Error creating security event:', error);
     }
   }
 
-  private async suspendSession(sessionId: string, reason: string): Promise<void> {
+  private async suspendSession(
+    sessionId: string,
+    reason: string
+  ): Promise<void> {
     await fetch('/api/session/suspend', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ sessionId, reason })
+      body: JSON.stringify({ sessionId, reason }),
     });
   }
 
@@ -725,9 +779,9 @@ export class SuspiciousActivityDetector {
     await fetch('/api/session/require-auth', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ sessionId })
+      body: JSON.stringify({ sessionId }),
     });
   }
 
@@ -737,7 +791,7 @@ export class SuspiciousActivityDetector {
   }
 
   private async logForReview(anomaly: AnomalyAlert): Promise<void> {
-    console.log(`Anomaly logged for review:`, anomaly);
+    console.log('Anomaly logged for review:', anomaly);
   }
 
   private async sendAnomalyNotification(anomaly: AnomalyAlert): Promise<void> {
@@ -745,18 +799,22 @@ export class SuspiciousActivityDetector {
     console.log(`Security notification sent for anomaly ${anomaly.id}`);
   }
 
-  private async updateUserRiskScore(userId: string, patterns: BehaviorPattern[]): Promise<void> {
-    const avgRiskScore = patterns.reduce((sum, p) => sum + p.anomalyScore, 0) / patterns.length;
-    
+  private async updateUserRiskScore(
+    userId: string,
+    patterns: BehaviorPattern[]
+  ): Promise<void> {
+    const avgRiskScore =
+      patterns.reduce((sum, p) => sum + p.anomalyScore, 0) / patterns.length;
+
     await fetch('/api/users/risk-score', {
       method: 'PUT',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         userId,
-        riskScore: avgRiskScore
-      })
+        riskScore: avgRiskScore,
+      }),
     });
   }
 
@@ -764,11 +822,12 @@ export class SuspiciousActivityDetector {
    * Public methods for external use
    */
   public getAnomalyAlerts(userId: string): AnomalyAlert[] {
-    return Array.from(this.anomalyAlerts.values())
-      .filter(alert => alert.userId === userId && !alert.resolved);
+    return Array.from(this.anomalyAlerts.values()).filter(
+      (alert) => alert.userId === userId && !alert.resolved
+    );
   }
 
-  public resolveAnomaly(anomalyId: string, falsePositive: boolean = false): boolean {
+  public resolveAnomaly(anomalyId: string, falsePositive = false): boolean {
     const anomaly = this.anomalyAlerts.get(anomalyId);
     if (anomaly) {
       anomaly.resolved = true;
@@ -785,19 +844,27 @@ export class SuspiciousActivityDetector {
     lastAnalysis: number;
   } {
     const patterns = this.activePatterns.get(userId) || [];
-    const recentPatterns = patterns.filter(p => Date.now() - p.timestamp < 86400000); // Last 24 hours
-    const avgRiskScore = recentPatterns.length > 0 
-      ? recentPatterns.reduce((sum, p) => sum + p.anomalyScore, 0) / recentPatterns.length 
-      : 0;
-    
-    const recentAnomalies = Array.from(this.anomalyAlerts.values())
-      .filter(a => a.userId === userId && Date.now() - a.timestamp < 86400000).length;
+    const recentPatterns = patterns.filter(
+      (p) => Date.now() - p.timestamp < 86_400_000
+    ); // Last 24 hours
+    const avgRiskScore =
+      recentPatterns.length > 0
+        ? recentPatterns.reduce((sum, p) => sum + p.anomalyScore, 0) /
+          recentPatterns.length
+        : 0;
+
+    const recentAnomalies = Array.from(this.anomalyAlerts.values()).filter(
+      (a) => a.userId === userId && Date.now() - a.timestamp < 86_400_000
+    ).length;
 
     return {
       riskScore: Math.round(avgRiskScore),
       recentAnomalies,
       behaviorBaseline: this.getBehaviorBaseline(userId),
-      lastAnalysis: recentPatterns.length > 0 ? Math.max(...recentPatterns.map(p => p.timestamp)) : 0
+      lastAnalysis:
+        recentPatterns.length > 0
+          ? Math.max(...recentPatterns.map((p) => p.timestamp))
+          : 0,
     };
   }
 
@@ -811,7 +878,7 @@ export class SuspiciousActivityDetector {
 
     // Clean up old patterns
     for (const [userId, patterns] of this.activePatterns.entries()) {
-      const recentPatterns = patterns.filter(p => now - p.timestamp < maxAge);
+      const recentPatterns = patterns.filter((p) => now - p.timestamp < maxAge);
       this.activePatterns.set(userId, recentPatterns);
     }
 

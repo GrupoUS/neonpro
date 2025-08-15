@@ -3,30 +3,31 @@
   "testEnvironment": "node",
   "testMatch": [
     "**/tests/integration/bank-reconciliation-*.test.ts",
-    "**/tests/security/security-audit.test.ts", 
+    "**/tests/security/security-audit.test.ts",
     "**/tests/performance/load-testing.test.ts"
   ],
   "transform": {
-    "^.+\\.(ts|tsx)$": ["ts-jest", {
-      "tsconfig": {
-        "target": "es2020",
-        "module": "commonjs",
-        "moduleResolution": "node",
-        "esModuleInterop": true,
-        "allowSyntheticDefaultImports": true,
-        "skipLibCheck": true,
-        "strict": false,
-        "types": ["jest", "node"]
+    "^.+\\.(ts|tsx)$": [
+      "ts-jest",
+      {
+        "tsconfig": {
+          "target": "es2020",
+          "module": "commonjs",
+          "moduleResolution": "node",
+          "esModuleInterop": true,
+          "allowSyntheticDefaultImports": true,
+          "skipLibCheck": true,
+          "strict": false,
+          "types": ["jest", "node"]
+        }
       }
-    }]
+    ]
   },
   "moduleNameMapper": {
     "^@/(.*)$": "<rootDir>/apps/web/src/$1",
     "^@neonpro/(.*)$": "<rootDir>/packages/$1/src"
   },
-  "setupFilesAfterEnv": [
-    "<rootDir>/jest.reconciliation.setup.js"
-  ],
+  "setupFilesAfterEnv": ["<rootDir>/jest.reconciliation.setup.js"],
   "testTimeout": 30000,
   "verbose": true,
   "detectOpenHandles": true,

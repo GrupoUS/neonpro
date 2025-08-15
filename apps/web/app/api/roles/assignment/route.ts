@@ -1,20 +1,20 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
-import { Database } from '@/database.types';
+import type { Database } from '@/database.types';
 
 type Profile = Database['public']['Tables']['profiles']['Row'];
 
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Verificar autenticação e role de admin
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Não autorizado' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
     // Verificar se o usuário é admin
@@ -26,7 +26,9 @@ export async function POST(request: NextRequest) {
 
     if (profileError || adminProfile?.role !== 'admin') {
       return NextResponse.json(
-        { error: 'Acesso negado. Apenas administradores podem atribuir roles.' },
+        {
+          error: 'Acesso negado. Apenas administradores podem atribuir roles.',
+        },
         { status: 403 }
       );
     }
@@ -35,7 +37,7 @@ export async function POST(request: NextRequest) {
     const { target_user_id, new_role, reason } = body;
 
     // Validar dados obrigatórios
-    if (!target_user_id || !new_role) {
+    if (!(target_user_id && new_role)) {
       return NextResponse.json(
         { error: 'ID do usuário e nova role são obrigatórios' },
         { status: 400 }
@@ -46,7 +48,9 @@ export async function POST(request: NextRequest) {
     const validRoles = ['admin', 'doctor', 'nurse', 'staff', 'professional'];
     if (!validRoles.includes(new_role)) {
       return NextResponse.json(
-        { error: 'Role inválida. Valores permitidos: ' + validRoles.join(', ') },
+        {
+          error: `Role inválida. Valores permitidos: ${validRoles.join(', ')}`,
+        },
         { status: 400 }
       );
     }
@@ -80,7 +84,7 @@ export async function POST(request: NextRequest) {
       .from('profiles')
       .update({
         role: new_role,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', target_user_id)
       .select()
@@ -95,21 +99,19 @@ export async function POST(request: NextRequest) {
     }
 
     // Registrar log de auditoria
-    const { error: logError } = await supabase
-      .from('role_audit_log')
-      .insert({
-        user_id: user.id,
-        action_type: 'manual_role_assignment',
-        target_user_id: target_user_id,
-        old_role: old_role,
-        new_role: new_role,
-        reason: reason || 'Atribuição manual pelo administrador',
-        metadata: {
-          admin_user_id: user.id,
-          target_email: targetProfile.email,
-          assignment_date: new Date().toISOString()
-        }
-      });
+    const { error: logError } = await supabase.from('role_audit_log').insert({
+      user_id: user.id,
+      action_type: 'manual_role_assignment',
+      target_user_id,
+      old_role,
+      new_role,
+      reason: reason || 'Atribuição manual pelo administrador',
+      metadata: {
+        admin_user_id: user.id,
+        target_email: targetProfile.email,
+        assignment_date: new Date().toISOString(),
+      },
+    });
 
     if (logError) {
       console.error('Erro ao registrar log de auditoria:', logError);
@@ -118,16 +120,14 @@ export async function POST(request: NextRequest) {
 
     // Enviar notificação ao usuário (opcional)
     try {
-      await supabase
-        .from('notifications')
-        .insert({
-          user_id: target_user_id,
-          title: 'Role Atualizada',
-          message: `Sua role foi alterada de "${old_role}" para "${new_role}" por um administrador.`,
-          type: 'role_change',
-          is_read: false,
-          created_at: new Date().toISOString()
-        });
+      await supabase.from('notifications').insert({
+        user_id: target_user_id,
+        title: 'Role Atualizada',
+        message: `Sua role foi alterada de "${old_role}" para "${new_role}" por um administrador.`,
+        type: 'role_change',
+        is_read: false,
+        created_at: new Date().toISOString(),
+      });
     } catch (notificationError) {
       console.error('Erro ao enviar notificação:', notificationError);
       // Não falhar a operação por erro de notificação
@@ -141,11 +141,10 @@ export async function POST(request: NextRequest) {
         to: new_role,
         assignedBy: user.id,
         assignedAt: new Date().toISOString(),
-        reason: reason || 'Atribuição manual pelo administrador'
+        reason: reason || 'Atribuição manual pelo administrador',
       },
-      message: `Role alterada de "${old_role}" para "${new_role}" com sucesso`
+      message: `Role alterada de "${old_role}" para "${new_role}" com sucesso`,
     });
-
   } catch (error) {
     console.error('Erro no endpoint de atribuição de role:', error);
     return NextResponse.json(
@@ -158,14 +157,14 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Verificar autenticação e role de admin
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Não autorizado' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
     // Verificar se o usuário é admin
@@ -177,14 +176,17 @@ export async function GET(request: NextRequest) {
 
     if (profileError || profile?.role !== 'admin') {
       return NextResponse.json(
-        { error: 'Acesso negado. Apenas administradores podem visualizar esta informação.' },
+        {
+          error:
+            'Acesso negado. Apenas administradores podem visualizar esta informação.',
+        },
         { status: 403 }
       );
     }
 
     const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '50');
+    const page = Number.parseInt(searchParams.get('page') || '1', 10);
+    const limit = Number.parseInt(searchParams.get('limit') || '50', 10);
     const role_filter = searchParams.get('role');
     const search = searchParams.get('search');
 
@@ -193,7 +195,9 @@ export async function GET(request: NextRequest) {
     // Construir query base
     let query = supabase
       .from('profiles')
-      .select('id, email, full_name, role, created_at, updated_at', { count: 'exact' });
+      .select('id, email, full_name, role, created_at, updated_at', {
+        count: 'exact',
+      });
 
     // Aplicar filtros
     if (role_filter && role_filter !== 'all') {
@@ -205,7 +209,11 @@ export async function GET(request: NextRequest) {
     }
 
     // Aplicar paginação e ordenação
-    const { data: profiles, error: profilesError, count } = await query
+    const {
+      data: profiles,
+      error: profilesError,
+      count,
+    } = await query
       .order('created_at', { ascending: false })
       .range(offset, offset + limit - 1);
 
@@ -223,10 +231,11 @@ export async function GET(request: NextRequest) {
       .select('role')
       .not('role', 'is', null);
 
-    const stats = roleStats?.reduce((acc: Record<string, number>, profile) => {
-      acc[profile.role] = (acc[profile.role] || 0) + 1;
-      return acc;
-    }, {}) || {};
+    const stats =
+      roleStats?.reduce((acc: Record<string, number>, profile) => {
+        acc[profile.role] = (acc[profile.role] || 0) + 1;
+        return acc;
+      }, {}) || {};
 
     return NextResponse.json({
       success: true,
@@ -235,14 +244,13 @@ export async function GET(request: NextRequest) {
         current_page: page,
         total_pages: Math.ceil((count || 0) / limit),
         total_items: count || 0,
-        items_per_page: limit
+        items_per_page: limit,
       },
       statistics: {
         total_users: count || 0,
-        roles_distribution: stats
-      }
+        roles_distribution: stats,
+      },
     });
-
   } catch (error) {
     console.error('Erro no endpoint de listagem de roles:', error);
     return NextResponse.json(

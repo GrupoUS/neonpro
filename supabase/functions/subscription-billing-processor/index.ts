@@ -2,17 +2,18 @@
  * Subscription Billing Processor - Supabase Edge Function
  * Epic: EPIC-001 - Advanced Subscription Management
  * Story: EPIC-001.1 - Subscription Middleware & Management System
- * 
+ *
  * This Edge Function processes subscription billing cycles, handles renewals,
  * and manages subscription status updates.
  */
 
-import { serve } from "https://deno.land/std@0.208.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { serve } from 'https://deno.land/std@0.208.0/http/server.ts';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers':
+    'authorization, x-client-info, apikey, content-type',
 };
 
 interface Database {
@@ -24,7 +25,13 @@ interface Database {
           clinic_id: string;
           user_id: string;
           plan_id: string;
-          status: 'trial' | 'active' | 'past_due' | 'canceled' | 'unpaid' | 'paused';
+          status:
+            | 'trial'
+            | 'active'
+            | 'past_due'
+            | 'canceled'
+            | 'unpaid'
+            | 'paused';
           current_period_start: string;
           current_period_end: string;
           trial_end: string;
@@ -87,27 +94,26 @@ serve(async (req) => {
     await processFailedPaymentRetries(supabase);
 
     return new Response(
-      JSON.stringify({ 
-        success: true, 
+      JSON.stringify({
+        success: true,
         message: 'Subscription billing processing completed',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }),
-      { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       }
     );
-
   } catch (error) {
     console.error('Subscription billing processor error:', error);
-    
+
     return new Response(
-      JSON.stringify({ 
-        error: 'Billing processing failed', 
-        details: error.message 
+      JSON.stringify({
+        error: 'Billing processing failed',
+        details: error.message,
       }),
-      { 
-        status: 500, 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       }
     );
   }
@@ -116,9 +122,9 @@ serve(async (req) => {
 async function processTrialExpirations(supabase: any) {
   try {
     console.log('Processing trial expirations...');
-    
+
     const now = new Date().toISOString();
-    
+
     // Find expired trials
     const { data: expiredTrials, error } = await supabase
       .from('user_subscriptions')
@@ -140,36 +146,35 @@ async function processTrialExpirations(supabase: any) {
           .from('user_subscriptions')
           .update({
             status: 'unpaid',
-            updated_at: now
+            updated_at: now,
           })
           .eq('id', subscription.id);
 
         // Create billing event
-        await supabase
-          .from('billing_events')
-          .insert({
-            subscription_id: subscription.id,
-            event_type: 'trial_expired',
-            amount: 0,
-            currency: 'BRL',
-            status: 'processed',
-            processed_at: now,
-            metadata: {
-              trial_end: subscription.trial_end,
-              processed_by: 'billing-processor'
-            }
-          });
+        await supabase.from('billing_events').insert({
+          subscription_id: subscription.id,
+          event_type: 'trial_expired',
+          amount: 0,
+          currency: 'BRL',
+          status: 'processed',
+          processed_at: now,
+          metadata: {
+            trial_end: subscription.trial_end,
+            processed_by: 'billing-processor',
+          },
+        });
 
         console.log(`Trial expired for subscription ${subscription.id}`);
 
         // TODO: Send trial expiration notification
         // await sendTrialExpirationNotification(subscription);
-
       } catch (error) {
-        console.error(`Error processing trial expiration for ${subscription.id}:`, error);
+        console.error(
+          `Error processing trial expiration for ${subscription.id}:`,
+          error
+        );
       }
     }
-
   } catch (error) {
     console.error('Error in processTrialExpirations:', error);
   }
@@ -178,10 +183,10 @@ async function processTrialExpirations(supabase: any) {
 async function processBillingRenewals(supabase: any) {
   try {
     console.log('Processing billing renewals...');
-    
+
     const now = new Date();
-    const renewalWindow = new Date(now.getTime() + (24 * 60 * 60 * 1000)); // 24 hours ahead
-    
+    const renewalWindow = new Date(now.getTime() + 24 * 60 * 60 * 1000); // 24 hours ahead
+
     // Find subscriptions due for renewal
     const { data: renewalDue, error } = await supabase
       .from('user_subscriptions')
@@ -198,20 +203,25 @@ async function processBillingRenewals(supabase: any) {
       return;
     }
 
-    console.log(`Found ${renewalDue?.length || 0} subscriptions due for renewal`);
+    console.log(
+      `Found ${renewalDue?.length || 0} subscriptions due for renewal`
+    );
 
     for (const subscription of renewalDue || []) {
       try {
         // Calculate next billing period
         const currentPeriodEnd = new Date(subscription.current_period_end);
         const nextPeriodStart = currentPeriodEnd;
-        const nextPeriodEnd = calculateNextPeriodEnd(nextPeriodStart, subscription.billing_cycle);
+        const nextPeriodEnd = calculateNextPeriodEnd(
+          nextPeriodStart,
+          subscription.billing_cycle
+        );
         const nextBillingDate = nextPeriodEnd;
 
         // Get plan price for current billing cycle
         const plan = subscription.plan;
         let amount = 0;
-        
+
         switch (subscription.billing_cycle) {
           case 'monthly':
             amount = plan.price_monthly;
@@ -231,37 +241,36 @@ async function processBillingRenewals(supabase: any) {
             current_period_start: nextPeriodStart.toISOString(),
             current_period_end: nextPeriodEnd.toISOString(),
             next_billing_date: nextBillingDate.toISOString(),
-            updated_at: now.toISOString()
+            updated_at: now.toISOString(),
           })
           .eq('id', subscription.id);
 
         // Create billing event for renewal
-        await supabase
-          .from('billing_events')
-          .insert({
-            subscription_id: subscription.id,
-            event_type: 'subscription_renewed',
-            amount: amount,
-            currency: 'BRL',
-            status: 'pending',
-            metadata: {
-              billing_cycle: subscription.billing_cycle,
-              period_start: nextPeriodStart.toISOString(),
-              period_end: nextPeriodEnd.toISOString(),
-              processed_by: 'billing-processor'
-            }
-          });
+        await supabase.from('billing_events').insert({
+          subscription_id: subscription.id,
+          event_type: 'subscription_renewed',
+          amount,
+          currency: 'BRL',
+          status: 'pending',
+          metadata: {
+            billing_cycle: subscription.billing_cycle,
+            period_start: nextPeriodStart.toISOString(),
+            period_end: nextPeriodEnd.toISOString(),
+            processed_by: 'billing-processor',
+          },
+        });
 
         console.log(`Processed renewal for subscription ${subscription.id}`);
 
         // TODO: Trigger payment processing
         // await triggerPaymentProcessing(subscription, amount);
-
       } catch (error) {
-        console.error(`Error processing renewal for ${subscription.id}:`, error);
+        console.error(
+          `Error processing renewal for ${subscription.id}:`,
+          error
+        );
       }
     }
-
   } catch (error) {
     console.error('Error in processBillingRenewals:', error);
   }
@@ -270,9 +279,9 @@ async function processBillingRenewals(supabase: any) {
 async function processSubscriptionCancellations(supabase: any) {
   try {
     console.log('Processing subscription cancellations...');
-    
+
     const now = new Date().toISOString();
-    
+
     // Find subscriptions to cancel at period end
     const { data: toCancelSubs, error } = await supabase
       .from('user_subscriptions')
@@ -296,37 +305,36 @@ async function processSubscriptionCancellations(supabase: any) {
           .update({
             status: 'canceled',
             canceled_at: now,
-            updated_at: now
+            updated_at: now,
           })
           .eq('id', subscription.id);
 
         // Create billing event
-        await supabase
-          .from('billing_events')
-          .insert({
-            subscription_id: subscription.id,
-            event_type: 'subscription_canceled',
-            amount: 0,
-            currency: 'BRL',
-            status: 'processed',
-            processed_at: now,
-            metadata: {
-              cancellation_reason: subscription.cancellation_reason,
-              period_end: subscription.current_period_end,
-              processed_by: 'billing-processor'
-            }
-          });
+        await supabase.from('billing_events').insert({
+          subscription_id: subscription.id,
+          event_type: 'subscription_canceled',
+          amount: 0,
+          currency: 'BRL',
+          status: 'processed',
+          processed_at: now,
+          metadata: {
+            cancellation_reason: subscription.cancellation_reason,
+            period_end: subscription.current_period_end,
+            processed_by: 'billing-processor',
+          },
+        });
 
         console.log(`Canceled subscription ${subscription.id}`);
 
         // TODO: Send cancellation confirmation
         // await sendCancellationConfirmation(subscription);
-
       } catch (error) {
-        console.error(`Error canceling subscription ${subscription.id}:`, error);
+        console.error(
+          `Error canceling subscription ${subscription.id}:`,
+          error
+        );
       }
     }
-
   } catch (error) {
     console.error('Error in processSubscriptionCancellations:', error);
   }
@@ -335,10 +343,10 @@ async function processSubscriptionCancellations(supabase: any) {
 async function processFailedPaymentRetries(supabase: any) {
   try {
     console.log('Processing failed payment retries...');
-    
+
     const now = new Date();
-    const retryWindow = new Date(now.getTime() - (24 * 60 * 60 * 1000)); // 24 hours ago
-    
+    const retryWindow = new Date(now.getTime() - 24 * 60 * 60 * 1000); // 24 hours ago
+
     // Find failed payments to retry
     const { data: failedPayments, error } = await supabase
       .from('billing_events')
@@ -353,7 +361,9 @@ async function processFailedPaymentRetries(supabase: any) {
       return;
     }
 
-    console.log(`Found ${failedPayments?.length || 0} failed payments to retry`);
+    console.log(
+      `Found ${failedPayments?.length || 0} failed payments to retry`
+    );
 
     for (const payment of failedPayments || []) {
       try {
@@ -363,29 +373,29 @@ async function processFailedPaymentRetries(supabase: any) {
           .update({
             processing_attempts: payment.processing_attempts + 1,
             last_processing_error: null,
-            updated_at: now.toISOString()
+            updated_at: now.toISOString(),
           })
           .eq('id', payment.id);
 
-        console.log(`Retry attempt ${payment.processing_attempts + 1} for payment ${payment.id}`);
+        console.log(
+          `Retry attempt ${payment.processing_attempts + 1} for payment ${payment.id}`
+        );
 
         // TODO: Trigger payment retry
         // await retryPaymentProcessing(payment);
-
       } catch (error) {
         console.error(`Error retrying payment ${payment.id}:`, error);
-        
+
         // Update error information
         await supabase
           .from('billing_events')
           .update({
             last_processing_error: error.message,
-            updated_at: now.toISOString()
+            updated_at: now.toISOString(),
           })
           .eq('id', payment.id);
       }
     }
-
   } catch (error) {
     console.error('Error in processFailedPaymentRetries:', error);
   }
@@ -393,7 +403,7 @@ async function processFailedPaymentRetries(supabase: any) {
 
 function calculateNextPeriodEnd(periodStart: Date, billingCycle: string): Date {
   const nextPeriodEnd = new Date(periodStart);
-  
+
   switch (billingCycle) {
     case 'monthly':
       nextPeriodEnd.setMonth(nextPeriodEnd.getMonth() + 1);
@@ -405,6 +415,6 @@ function calculateNextPeriodEnd(periodStart: Date, billingCycle: string): Date {
       nextPeriodEnd.setFullYear(nextPeriodEnd.getFullYear() + 1);
       break;
   }
-  
+
   return nextPeriodEnd;
 }

@@ -1,8 +1,8 @@
-import { z } from 'zod';
 import { createClient } from '@supabase/supabase-js';
 import { addDays, differenceInDays, format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import nodemailer from 'nodemailer';
+import { z } from 'zod';
 
 // Validation Schemas
 const CustomerRiskProfileSchema = z.object({
@@ -30,12 +30,21 @@ const DelinquencyRuleSchema = z.object({
     riskLevel: z.enum(['low', 'medium', 'high', 'critical']).optional(),
     customerSegment: z.string().optional(),
   }),
-  actions: z.array(z.object({
-    type: z.enum(['email', 'sms', 'call', 'letter', 'collection_agency', 'legal_action']),
-    delay: z.number(), // Days after trigger
-    template: z.string(),
-    escalation: z.boolean().default(false),
-  })),
+  actions: z.array(
+    z.object({
+      type: z.enum([
+        'email',
+        'sms',
+        'call',
+        'letter',
+        'collection_agency',
+        'legal_action',
+      ]),
+      delay: z.number(), // Days after trigger
+      template: z.string(),
+      escalation: z.boolean().default(false),
+    })
+  ),
   isActive: z.boolean().default(true),
 });
 
@@ -50,7 +59,9 @@ const PaymentPlanSchema = z.object({
   interestRate: z.number().min(0).default(0),
   discountAmount: z.number().min(0).default(0),
   terms: z.string(),
-  status: z.enum(['pending', 'active', 'completed', 'defaulted']).default('pending'),
+  status: z
+    .enum(['pending', 'active', 'completed', 'defaulted'])
+    .default('pending'),
 });
 
 const NotificationSchema = z.object({
@@ -129,7 +140,7 @@ export class DelinquencyManager {
     }
   ) {
     this.supabase = createClient(supabaseUrl, supabaseKey);
-    
+
     if (emailConfig) {
       this.emailTransporter = nodemailer.createTransporter(emailConfig.smtp);
     }
@@ -153,13 +164,14 @@ export class DelinquencyManager {
         .eq('type', 'invoice')
         .in('status', ['sent', 'overdue'])
         .lt('data->>dueDate', new Date().toISOString());
-      
+
       if (invoiceError) throw invoiceError;
-      
+
       // Get overdue installments
-      const { data: overdueInstallments, error: installmentError } = await this.supabase
-        .from('payment_installments')
-        .select(`
+      const { data: overdueInstallments, error: installmentError } =
+        await this.supabase
+          .from('payment_installments')
+          .select(`
           id,
           amount,
           due_date,
@@ -169,37 +181,40 @@ export class DelinquencyManager {
             customers!inner(name, email, risk_profile)
           )
         `)
-        .eq('status', 'pending')
-        .lt('due_date', new Date().toISOString());
-      
+          .eq('status', 'pending')
+          .lt('due_date', new Date().toISOString());
+
       if (installmentError) throw installmentError;
-      
+
       const overduePayments: OverduePayment[] = [];
-      
+
       // Process overdue invoices
       overdueInvoices?.forEach((invoice: any) => {
         const dueDate = new Date(invoice.data.dueDate);
         const daysOverdue = differenceInDays(new Date(), dueDate);
-        
+
         overduePayments.push({
           id: invoice.id,
           customerId: invoice.customer_id,
           customerName: invoice.customers.name,
           customerEmail: invoice.customers.email,
-          amount: parseFloat(invoice.data.total),
+          amount: Number.parseFloat(invoice.data.total),
           dueDate,
           daysOverdue,
           type: 'invoice',
           status: 'overdue',
-          riskLevel: this.calculateRiskLevel(invoice.customers.risk_profile, daysOverdue),
+          riskLevel: this.calculateRiskLevel(
+            invoice.customers.risk_profile,
+            daysOverdue
+          ),
         });
       });
-      
+
       // Process overdue installments
       overdueInstallments?.forEach((installment: any) => {
         const dueDate = new Date(installment.due_date);
         const daysOverdue = differenceInDays(new Date(), dueDate);
-        
+
         overduePayments.push({
           id: installment.id,
           customerId: installment.payment_plans.customer_id,
@@ -216,10 +231,10 @@ export class DelinquencyManager {
           ),
         });
       });
-      
+
       // Update overdue status in database
       await this.updateOverdueStatus(overduePayments);
-      
+
       return overduePayments;
     } catch (error) {
       console.error('Error detecting overdue payments:', error);
@@ -234,12 +249,12 @@ export class DelinquencyManager {
     try {
       const overduePayments = await this.detectOverduePayments();
       const rules = await this.getActiveDelinquencyRules();
-      
+
       for (const payment of overduePayments) {
-        const applicableRules = rules.filter(rule => 
+        const applicableRules = rules.filter((rule) =>
           this.isRuleApplicable(rule, payment)
         );
-        
+
         for (const rule of applicableRules) {
           await this.executeRule(rule, payment);
         }
@@ -260,48 +275,50 @@ export class DelinquencyManager {
         'get_customer_payment_history',
         { customer_id: customerId }
       );
-      
+
       if (error) throw error;
-      
+
       const totalPayments = paymentHistory?.total_payments || 0;
       const onTimePayments = paymentHistory?.on_time_payments || 0;
       const latePayments = paymentHistory?.late_payments || 0;
       const averageDelayDays = paymentHistory?.average_delay_days || 0;
-      
+
       // Calculate risk score (0-1000)
       let riskScore = 0;
-      
+
       // Payment punctuality (40% weight)
-      const punctualityScore = totalPayments > 0 ? (onTimePayments / totalPayments) * 400 : 200;
+      const punctualityScore =
+        totalPayments > 0 ? (onTimePayments / totalPayments) * 400 : 200;
       riskScore += 400 - punctualityScore;
-      
+
       // Average delay (30% weight)
       const delayScore = Math.min(averageDelayDays * 10, 300);
       riskScore += delayScore;
-      
+
       // Payment frequency (20% weight)
-      const frequencyScore = totalPayments < 5 ? 200 : Math.max(0, 200 - (totalPayments * 5));
+      const frequencyScore =
+        totalPayments < 5 ? 200 : Math.max(0, 200 - totalPayments * 5);
       riskScore += frequencyScore;
-      
+
       // Recent activity (10% weight)
       const lastPaymentDate = paymentHistory?.last_payment_date
         ? new Date(paymentHistory.last_payment_date)
         : null;
-      
+
       const daysSinceLastPayment = lastPaymentDate
         ? differenceInDays(new Date(), lastPaymentDate)
         : 365;
-      
+
       const activityScore = Math.min(daysSinceLastPayment * 0.3, 100);
       riskScore += activityScore;
-      
+
       // Determine risk level
       let riskLevel: 'low' | 'medium' | 'high' | 'critical';
       if (riskScore <= 250) riskLevel = 'low';
       else if (riskScore <= 500) riskLevel = 'medium';
       else if (riskScore <= 750) riskLevel = 'high';
       else riskLevel = 'critical';
-      
+
       const riskProfile: CustomerRiskProfile = {
         customerId,
         riskScore: Math.round(riskScore),
@@ -315,18 +332,16 @@ export class DelinquencyManager {
         },
         lastUpdated: new Date(),
       };
-      
+
       // Save risk profile
-      await this.supabase
-        .from('customer_risk_profiles')
-        .upsert({
-          customer_id: customerId,
-          risk_score: riskProfile.riskScore,
-          risk_level: riskProfile.riskLevel,
-          payment_history: riskProfile.paymentHistory,
-          last_updated: riskProfile.lastUpdated.toISOString(),
-        });
-      
+      await this.supabase.from('customer_risk_profiles').upsert({
+        customer_id: customerId,
+        risk_score: riskProfile.riskScore,
+        risk_level: riskProfile.riskLevel,
+        payment_history: riskProfile.paymentHistory,
+        last_updated: riskProfile.lastUpdated.toISOString(),
+      });
+
       return riskProfile;
     } catch (error) {
       console.error('Error calculating risk score:', error);
@@ -337,15 +352,19 @@ export class DelinquencyManager {
   /**
    * Create payment plan for delinquent customer
    */
-  async createPaymentPlan(planData: Omit<PaymentPlan, 'status'>): Promise<PaymentPlan> {
+  async createPaymentPlan(
+    planData: Omit<PaymentPlan, 'status'>
+  ): Promise<PaymentPlan> {
     try {
-      const validatedData = PaymentPlanSchema.omit({ status: true }).parse(planData);
-      
+      const validatedData = PaymentPlanSchema.omit({ status: true }).parse(
+        planData
+      );
+
       const paymentPlan: PaymentPlan = {
         ...validatedData,
         status: 'pending',
       };
-      
+
       const { data, error } = await this.supabase
         .from('delinquency_payment_plans')
         .insert({
@@ -363,9 +382,9 @@ export class DelinquencyManager {
         })
         .select()
         .single();
-      
+
       if (error) throw error;
-      
+
       return paymentPlan;
     } catch (error) {
       console.error('Error creating payment plan:', error);
@@ -390,43 +409,45 @@ export class DelinquencyManager {
         .select('*')
         .eq('id', customerId)
         .single();
-      
+
       if (customerError || !customer) {
         throw new Error('Customer not found');
       }
-      
+
       // Get template
       const { data: template, error: templateError } = await this.supabase
         .from('notification_templates')
         .select('*')
         .eq('id', templateId)
         .single();
-      
+
       if (templateError || !template) {
         throw new Error('Template not found');
       }
-      
+
       let success = false;
-      
+
       if (channel === 'email' && this.emailTransporter) {
-        success = await this.sendEmailNotification(customer, template, metadata);
+        success = await this.sendEmailNotification(
+          customer,
+          template,
+          metadata
+        );
       } else if (channel === 'sms') {
         success = await this.sendSMSNotification(customer, template, metadata);
       }
-      
+
       // Log notification
-      await this.supabase
-        .from('delinquency_notifications')
-        .insert({
-          customer_id: customerId,
-          type,
-          channel,
-          template_id: templateId,
-          sent_at: success ? new Date().toISOString() : null,
-          status: success ? 'sent' : 'failed',
-          metadata,
-        });
-      
+      await this.supabase.from('delinquency_notifications').insert({
+        customer_id: customerId,
+        type,
+        channel,
+        template_id: templateId,
+        sent_at: success ? new Date().toISOString() : null,
+        status: success ? 'sent' : 'failed',
+        metadata,
+      });
+
       return success;
     } catch (error) {
       console.error('Error sending notification:', error);
@@ -437,7 +458,10 @@ export class DelinquencyManager {
   /**
    * Get delinquency statistics
    */
-  async getDelinquencyStats(dateRange?: { from: Date; to: Date }): Promise<DelinquencyStats> {
+  async getDelinquencyStats(dateRange?: {
+    from: Date;
+    to: Date;
+  }): Promise<DelinquencyStats> {
     try {
       const { data, error } = await this.supabase.rpc(
         'get_delinquency_statistics',
@@ -446,9 +470,9 @@ export class DelinquencyManager {
           end_date: dateRange?.to?.toISOString(),
         }
       );
-      
+
       if (error) throw error;
-      
+
       return {
         totalOverdue: data?.total_overdue || 0,
         totalAmount: data?.total_amount || 0,
@@ -466,7 +490,9 @@ export class DelinquencyManager {
   /**
    * Get collection workflow for customer
    */
-  async getCollectionWorkflow(customerId: string): Promise<CollectionWorkflow | null> {
+  async getCollectionWorkflow(
+    customerId: string
+  ): Promise<CollectionWorkflow | null> {
     try {
       const { data, error } = await this.supabase
         .from('collection_workflows')
@@ -474,11 +500,11 @@ export class DelinquencyManager {
         .eq('customer_id', customerId)
         .eq('status', 'active')
         .single();
-      
+
       if (error && error.code !== 'PGRST116') throw error;
-      
+
       if (!data) return null;
-      
+
       return {
         customerId: data.customer_id,
         currentStage: data.current_stage,
@@ -506,7 +532,9 @@ export class DelinquencyManager {
     return riskProfile?.risk_level || 'low';
   }
 
-  private async updateOverdueStatus(overduePayments: OverduePayment[]): Promise<void> {
+  private async updateOverdueStatus(
+    overduePayments: OverduePayment[]
+  ): Promise<void> {
     for (const payment of overduePayments) {
       if (payment.type === 'invoice') {
         await this.supabase
@@ -527,41 +555,55 @@ export class DelinquencyManager {
       .from('delinquency_rules')
       .select('*')
       .eq('is_active', true);
-    
+
     if (error) throw error;
-    
-    return data?.map(rule => ({
-      id: rule.id,
-      name: rule.name,
-      description: rule.description,
-      triggerConditions: rule.trigger_conditions,
-      actions: rule.actions,
-      isActive: rule.is_active,
-    })) || [];
+
+    return (
+      data?.map((rule) => ({
+        id: rule.id,
+        name: rule.name,
+        description: rule.description,
+        triggerConditions: rule.trigger_conditions,
+        actions: rule.actions,
+        isActive: rule.is_active,
+      })) || []
+    );
   }
 
-  private isRuleApplicable(rule: DelinquencyRule, payment: OverduePayment): boolean {
+  private isRuleApplicable(
+    rule: DelinquencyRule,
+    payment: OverduePayment
+  ): boolean {
     const conditions = rule.triggerConditions;
-    
-    if (conditions.daysOverdue && payment.daysOverdue < conditions.daysOverdue) {
+
+    if (
+      conditions.daysOverdue &&
+      payment.daysOverdue < conditions.daysOverdue
+    ) {
       return false;
     }
-    
-    if (conditions.amountThreshold && payment.amount < conditions.amountThreshold) {
+
+    if (
+      conditions.amountThreshold &&
+      payment.amount < conditions.amountThreshold
+    ) {
       return false;
     }
-    
+
     if (conditions.riskLevel && payment.riskLevel !== conditions.riskLevel) {
       return false;
     }
-    
+
     return true;
   }
 
-  private async executeRule(rule: DelinquencyRule, payment: OverduePayment): Promise<void> {
+  private async executeRule(
+    rule: DelinquencyRule,
+    payment: OverduePayment
+  ): Promise<void> {
     for (const action of rule.actions) {
       const scheduledFor = addDays(new Date(), action.delay);
-      
+
       // Check if this action was already scheduled
       const { data: existing } = await this.supabase
         .from('delinquency_notifications')
@@ -569,12 +611,15 @@ export class DelinquencyManager {
         .eq('customer_id', payment.customerId)
         .eq('type', action.type)
         .eq('template_id', action.template)
-        .gte('created_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
-      
+        .gte(
+          'created_at',
+          new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+        );
+
       if (existing && existing.length > 0) {
         continue; // Skip if already scheduled
       }
-      
+
       if (action.delay === 0) {
         // Execute immediately
         await this.sendNotification(
@@ -585,17 +630,15 @@ export class DelinquencyManager {
         );
       } else {
         // Schedule for later
-        await this.supabase
-          .from('scheduled_notifications')
-          .insert({
-            customer_id: payment.customerId,
-            type: action.type,
-            channel: 'email',
-            template_id: action.template,
-            scheduled_for: scheduledFor.toISOString(),
-            rule_id: rule.id,
-            payment_id: payment.id,
-          });
+        await this.supabase.from('scheduled_notifications').insert({
+          customer_id: payment.customerId,
+          type: action.type,
+          channel: 'email',
+          template_id: action.template,
+          scheduled_for: scheduledFor.toISOString(),
+          rule_id: rule.id,
+          payment_id: payment.id,
+        });
       }
     }
   }
@@ -606,18 +649,22 @@ export class DelinquencyManager {
     metadata?: Record<string, any>
   ): Promise<boolean> {
     if (!this.emailTransporter) return false;
-    
+
     try {
-      const subject = this.processTemplate(template.subject, customer, metadata);
+      const subject = this.processTemplate(
+        template.subject,
+        customer,
+        metadata
+      );
       const html = this.processTemplate(template.content, customer, metadata);
-      
+
       await this.emailTransporter.sendMail({
         from: process.env.SMTP_FROM || 'noreply@neonpro.com',
         to: customer.email,
         subject,
         html,
       });
-      
+
       return true;
     } catch (error) {
       console.error('Error sending email notification:', error);
@@ -627,8 +674,8 @@ export class DelinquencyManager {
 
   private async sendSMSNotification(
     customer: any,
-    template: any,
-    metadata?: Record<string, any>
+    _template: any,
+    _metadata?: Record<string, any>
   ): Promise<boolean> {
     // Placeholder for SMS integration
     // Would integrate with services like Twilio, AWS SNS, etc.
@@ -644,8 +691,11 @@ export class DelinquencyManager {
     let processed = template
       .replace(/{{customerName}}/g, customer.name)
       .replace(/{{customerEmail}}/g, customer.email)
-      .replace(/{{currentDate}}/g, format(new Date(), 'dd/MM/yyyy', { locale: ptBR }));
-    
+      .replace(
+        /{{currentDate}}/g,
+        format(new Date(), 'dd/MM/yyyy', { locale: ptBR })
+      );
+
     if (metadata) {
       Object.entries(metadata).forEach(([key, value]) => {
         processed = processed.replace(
@@ -654,7 +704,7 @@ export class DelinquencyManager {
         );
       });
     }
-    
+
     return processed;
   }
 }

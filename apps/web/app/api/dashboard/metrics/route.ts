@@ -1,12 +1,14 @@
+import { type NextRequest, NextResponse } from 'next/server';
 import { DashboardService } from '@/app/lib/services/dashboard';
 import { createClient } from '@/app/utils/supabase/server';
-import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -28,15 +30,20 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(metricData);
   } catch (error) {
     console.error('Dashboard metrics GET error:', error);
-    return NextResponse.json({ error: 'Failed to fetch metrics' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to fetch metrics' },
+      { status: 500 }
+    );
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -45,14 +52,25 @@ export async function POST(request: NextRequest) {
     const { metric, value, metadata } = body;
 
     if (!metric || value === undefined) {
-      return NextResponse.json({ error: 'Metric and value are required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Metric and value are required' },
+        { status: 400 }
+      );
     }
 
     const dashboardService = new DashboardService();
-    const result = await dashboardService.recordMetric(user.id, metric, value, metadata);
+    const result = await dashboardService.recordMetric(
+      user.id,
+      metric,
+      value,
+      metadata
+    );
     return NextResponse.json(result, { status: 201 });
   } catch (error) {
     console.error('Dashboard metrics POST error:', error);
-    return NextResponse.json({ error: 'Failed to record metric' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to record metric' },
+      { status: 500 }
+    );
   }
 }

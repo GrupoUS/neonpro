@@ -11,23 +11,23 @@ export interface SMSResult {
 }
 
 export class SMSProvider {
-  constructor() {
-    // Mock implementation
-  }
-
-  async sendSMS(to: string, message: string, options?: {
-    from?: string;
-    priority?: 'low' | 'medium' | 'high' | 'urgent';
-  }): Promise<SMSResult> {
+  async sendSMS(
+    _to: string,
+    _message: string,
+    _options?: {
+      from?: string;
+      priority?: 'low' | 'medium' | 'high' | 'urgent';
+    }
+  ): Promise<SMSResult> {
     // Mock implementation for testing
     return {
       success: true,
-      messageId: 'sms-' + Date.now(),
-      cost: 0.05
-    }
+      messageId: `sms-${Date.now()}`,
+      cost: 0.05,
+    };
   }
 
-  async getDeliveryStatus(messageId: string): Promise<{
+  async getDeliveryStatus(_messageId: string): Promise<{
     status: 'pending' | 'sent' | 'delivered' | 'failed';
     deliveredAt?: Date;
     error?: string;
@@ -35,7 +35,7 @@ export class SMSProvider {
     // Mock implementation
     return {
       status: 'delivered',
-      deliveredAt: new Date()
-    }
+      deliveredAt: new Date(),
+    };
   }
 }

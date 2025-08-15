@@ -2,9 +2,9 @@
 // API route for appointment history and audit trail
 // Story 1.1 Task 5 - Appointment Details Modal/Sidebar
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
+import type { AppointmentHistoryResponse } from '@/app/lib/types/appointments';
 import { createClient } from '@/app/utils/supabase/server';
-import { AppointmentHistoryResponse } from '@/app/lib/types/appointments';
 
 /**
  * GET /api/appointments/[id]/history
@@ -16,9 +16,11 @@ export async function GET(
 ) {
   try {
     const supabase = await createClient();
-    
+
     // Verify authentication
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session) {
       return NextResponse.json(
         { success: false, error_message: 'Authentication required' },
@@ -29,13 +31,18 @@ export async function GET(
     const resolvedParams = await params;
     const appointmentId = resolvedParams.id;
     const { searchParams } = new URL(request.url);
-    const limit = parseInt(searchParams.get('limit') || '50');
-    const offset = parseInt(searchParams.get('offset') || '0');
+    const limit = Number.parseInt(searchParams.get('limit') || '50', 10);
+    const offset = Number.parseInt(searchParams.get('offset') || '0', 10);
 
     // Fetch appointment history with user details
-    const { data: history, error, count } = await supabase
+    const {
+      data: history,
+      error,
+      count,
+    } = await supabase
       .from('appointment_history')
-      .select(`
+      .select(
+        `
         id,
         appointment_id,
         action,
@@ -46,7 +53,9 @@ export async function GET(
         changed_by,
         created_at,
         changed_by_user:profiles!appointment_history_changed_by_fkey(full_name)
-      `, { count: 'exact' })
+      `,
+        { count: 'exact' }
+      )
       .eq('appointment_id', appointmentId)
       .order('created_at', { ascending: false })
       .range(offset, offset + limit - 1);
@@ -56,19 +65,18 @@ export async function GET(
     }
 
     // Transform data to include changed_by_name
-    const transformedHistory = (history || []).map(entry => ({
+    const transformedHistory = (history || []).map((entry) => ({
       ...entry,
-      changed_by_name: entry.changed_by_user?.full_name || 'Unknown User'
+      changed_by_name: entry.changed_by_user?.full_name || 'Unknown User',
     }));
 
     const response: AppointmentHistoryResponse = {
       success: true,
       data: transformedHistory,
-      total_count: count || 0
+      total_count: count || 0,
     };
 
     return NextResponse.json(response);
-
   } catch (error) {
     console.error('Error fetching appointment history:', error);
     return NextResponse.json(

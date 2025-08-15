@@ -6,19 +6,19 @@ import { createClient } from '@/app/utils/supabase/server';
 import { nfeService } from '@/lib/services/tax/nfe-service';
 
 export async function POST(
-  request: Request,
+  _request: Request,
   { params }: { params: { id: string } }
 ) {
   try {
     const supabase = createClient();
-    
+
     // Check authentication
-    const { data: { session }, error: authError } = await supabase.auth.getSession();
+    const {
+      data: { session },
+      error: authError,
+    } = await supabase.auth.getSession();
     if (authError || !session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { id } = params;
@@ -45,10 +45,7 @@ export async function POST(
       .single();
 
     if (clinicError || !clinic) {
-      return NextResponse.json(
-        { error: 'Access denied' },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: 'Access denied' }, { status: 403 });
     }
 
     // Check if NFe can be authorized
@@ -68,10 +65,12 @@ export async function POST(
       .update({
         status: authResult.success ? 'authorized' : 'rejected',
         authorization_code: authResult.authorizationCode,
-        authorization_date: authResult.success ? new Date().toISOString() : null,
+        authorization_date: authResult.success
+          ? new Date().toISOString()
+          : null,
         rejection_reason: authResult.success ? null : authResult.error,
         sefaz_response: authResult.sefazResponse,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', id)
       .select()
@@ -86,25 +85,22 @@ export async function POST(
     }
 
     // Log authorization attempt
-    await supabase
-      .from('nfe_audit_log')
-      .insert({
-        nfe_document_id: id,
-        action: 'authorize',
-        user_id: session.user.id,
-        result: authResult.success ? 'success' : 'failure',
-        details: authResult,
-        created_at: new Date().toISOString()
-      });
+    await supabase.from('nfe_audit_log').insert({
+      nfe_document_id: id,
+      action: 'authorize',
+      user_id: session.user.id,
+      result: authResult.success ? 'success' : 'failure',
+      details: authResult,
+      created_at: new Date().toISOString(),
+    });
 
     return NextResponse.json({
       success: true,
       data: {
         nfe: updatedNfe,
-        authorization: authResult
-      }
+        authorization: authResult,
+      },
     });
-
   } catch (error) {
     console.error('NFe authorization error:', error);
     return NextResponse.json(

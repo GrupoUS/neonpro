@@ -1,12 +1,12 @@
+import { type NextRequest, NextResponse } from 'next/server';
 import { patientSegmentationService } from '@/app/lib/services/patient-segmentation-service';
 import { CreateRuleSchema } from '@/app/lib/validations/segmentation';
 import { createClient } from '@/app/utils/supabase/server';
-import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // For development: Skip auth check
     // const { data: { user } } = await supabase.auth.getUser();
     // if (!user) {
@@ -25,16 +25,15 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({
         success: true,
         data: [],
-        total: 0
+        total: 0,
       });
     }
 
     return NextResponse.json({
       success: true,
       data: rules || [],
-      total: rules?.length || 0
+      total: rules?.length || 0,
     });
-
   } catch (error) {
     console.error('Error fetching segmentation rules:', error);
     return NextResponse.json(
@@ -47,8 +46,10 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -69,17 +70,20 @@ export async function POST(request: NextRequest) {
       description: validationResult.data.rule_description,
       conditions: validationResult.data.rule_logic,
       auto_execute: validationResult.data.requires_ai,
-      execution_schedule: undefined
+      execution_schedule: undefined,
     };
 
-    const rule = await patientSegmentationService.createAutomatedSegment(ruleData);
+    const rule =
+      await patientSegmentationService.createAutomatedSegment(ruleData);
 
-    return NextResponse.json({
-      success: true,
-      data: rule,
-      message: 'Automated segmentation rule created successfully'
-    }, { status: 201 });
-
+    return NextResponse.json(
+      {
+        success: true,
+        data: rule,
+        message: 'Automated segmentation rule created successfully',
+      },
+      { status: 201 }
+    );
   } catch (error) {
     console.error('Error creating segmentation rule:', error);
     return NextResponse.json(

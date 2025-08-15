@@ -1,15 +1,17 @@
+import { type NextRequest, NextResponse } from 'next/server';
 import {
-    createAlertSchema,
-    updateAlertSchema
+  createAlertSchema,
+  updateAlertSchema,
 } from '@/app/lib/validations/dashboard';
 import { createClient } from '@/app/utils/supabase/server';
-import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -37,7 +39,10 @@ export async function GET(request: NextRequest) {
 
     if (error) {
       console.error('Error fetching dashboard alerts:', error);
-      return NextResponse.json({ error: 'Failed to fetch alerts' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Failed to fetch alerts' },
+        { status: 500 }
+      );
     }
 
     if (alertId && data && data.length === 0) {
@@ -47,15 +52,20 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(alertId && data ? data[0] : data);
   } catch (error) {
     console.error('Dashboard alerts GET error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -65,42 +75,55 @@ export async function POST(request: NextRequest) {
 
     const { data, error } = await supabase
       .from('dashboard_alerts')
-      .insert([{
-        ...validatedData,
-        user_id: user.id
-      }])
+      .insert([
+        {
+          ...validatedData,
+          user_id: user.id,
+        },
+      ])
       .select()
       .single();
 
     if (error) {
       console.error('Error creating alert:', error);
-      return NextResponse.json({ error: 'Failed to create alert' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Failed to create alert' },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json(data, { status: 201 });
   } catch (error) {
     console.error('Dashboard alerts POST error:', error);
-    return NextResponse.json({ error: 'Invalid request data' }, { status: 400 });
+    return NextResponse.json(
+      { error: 'Invalid request data' },
+      { status: 400 }
+    );
   }
 }
 
 export async function PUT(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
     const validatedData = updateAlertSchema.parse(body);
-    
+
     const url = new URL(request.url);
     const alertId = url.searchParams.get('alert_id') || body.id;
 
     if (!alertId) {
-      return NextResponse.json({ error: 'Alert ID is required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Alert ID is required' },
+        { status: 400 }
+      );
     }
 
     const { data, error } = await supabase
@@ -113,7 +136,10 @@ export async function PUT(request: NextRequest) {
 
     if (error) {
       console.error('Error updating alert:', error);
-      return NextResponse.json({ error: 'Failed to update alert' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Failed to update alert' },
+        { status: 500 }
+      );
     }
 
     if (!data) {
@@ -123,15 +149,20 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json(data);
   } catch (error) {
     console.error('Dashboard alerts PUT error:', error);
-    return NextResponse.json({ error: 'Invalid request data' }, { status: 400 });
+    return NextResponse.json(
+      { error: 'Invalid request data' },
+      { status: 400 }
+    );
   }
 }
 
 export async function DELETE(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -140,7 +171,10 @@ export async function DELETE(request: NextRequest) {
     const alertId = url.searchParams.get('alert_id');
 
     if (!alertId) {
-      return NextResponse.json({ error: 'Alert ID is required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Alert ID is required' },
+        { status: 400 }
+      );
     }
 
     const { error } = await supabase
@@ -151,12 +185,18 @@ export async function DELETE(request: NextRequest) {
 
     if (error) {
       console.error('Error deleting alert:', error);
-      return NextResponse.json({ error: 'Failed to delete alert' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Failed to delete alert' },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json({ message: 'Alert deleted successfully' });
   } catch (error) {
     console.error('Dashboard alerts DELETE error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }

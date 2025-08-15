@@ -21,9 +21,9 @@ export interface SchedulingConflict {
   updatedAt: Date;
 }
 
-export type ConflictType = 
+export type ConflictType =
   | 'time_overlap'
-  | 'resource_conflict' 
+  | 'resource_conflict'
   | 'capacity_limit'
   | 'staff_unavailable'
   | 'room_conflict'
@@ -66,7 +66,7 @@ export interface ProfessionalAvailabilityPattern {
   professionalId: string;
   dayOfWeek: number; // 0-6 (Sunday-Saturday)
   timeSlotStart: string; // HH:MM format
-  timeSlotEnd: string;   // HH:MM format
+  timeSlotEnd: string; // HH:MM format
   availabilityType: AvailabilityType;
   capacityPercentage: number; // 0-200
   preferences: Record<string, any>;
@@ -76,7 +76,7 @@ export interface ProfessionalAvailabilityPattern {
   updatedAt: Date;
 }
 
-export type AvailabilityType = 
+export type AvailabilityType =
   | 'available'
   | 'preferred'
   | 'limited'
@@ -141,7 +141,11 @@ export interface EnhancedAppointment {
 }
 
 export type ConflictStatus = 'none' | 'detected' | 'resolving' | 'resolved';
-export type AppointmentStatus = 'scheduled' | 'confirmed' | 'completed' | 'cancelled';
+export type AppointmentStatus =
+  | 'scheduled'
+  | 'confirmed'
+  | 'completed'
+  | 'cancelled';
 
 // Conflict detection engine configuration
 export interface ConflictDetectionConfig {
@@ -171,9 +175,15 @@ export interface ResolutionAlgorithm {
   name: string;
   type: StrategyType;
   parameters: Record<string, any>;
-  execute(conflict: SchedulingConflict, context: ResolutionContext): Promise<ResolutionResult>;
+  execute(
+    conflict: SchedulingConflict,
+    context: ResolutionContext
+  ): Promise<ResolutionResult>;
   estimateExecutionTime(conflict: SchedulingConflict): number;
-  calculateSuccessProbability(conflict: SchedulingConflict, context: ResolutionContext): number;
+  calculateSuccessProbability(
+    conflict: SchedulingConflict,
+    context: ResolutionContext
+  ): number;
 }
 
 export interface ResolutionContext {
@@ -211,10 +221,10 @@ export interface ChangeImpact {
 }
 
 export interface StakeholderSatisfaction {
-  patient: number;   // 0-1
+  patient: number; // 0-1
   professional: number; // 0-1
-  clinic: number;    // 0-1
-  overall: number;   // 0-1
+  clinic: number; // 0-1
+  overall: number; // 0-1
 }
 
 export interface SystemConstraints {
@@ -227,7 +237,7 @@ export interface SystemConstraints {
 
 export interface TimeRange {
   start: string; // HH:MM format
-  end: string;   // HH:MM format
+  end: string; // HH:MM format
   dayOfWeek?: number; // 0-6, optional for recurring patterns
 }
 
@@ -383,11 +393,11 @@ export class ResolutionExecutionError extends Error {
 // Validation schemas (for runtime type checking)
 export const ConflictTypeSchema = [
   'time_overlap',
-  'resource_conflict', 
+  'resource_conflict',
   'capacity_limit',
   'staff_unavailable',
   'room_conflict',
-  'equipment_conflict'
+  'equipment_conflict',
 ] as const;
 
 export const StrategyTypeSchema = [
@@ -396,7 +406,7 @@ export const StrategyTypeSchema = [
   'genetic_algorithm',
   'reinforcement_learning',
   'rule_based',
-  'hybrid'
+  'hybrid',
 ] as const;
 
 export const SeverityLevelSchema = [1, 2, 3, 4, 5] as const;

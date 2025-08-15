@@ -1,28 +1,28 @@
 // Treatment Success Prediction Service
 // Comprehensive AI/ML-powered treatment success prediction with ≥85% accuracy
 
-import {
-    AlternativeTreatment,
-    BatchPredictionRequest,
-    BatchPredictionResponse,
-    ConfidenceInterval,
-    ExplainabilityData,
-    ModelFilters,
-    ModelPerformance,
-    PatientFactors,
-    PerformanceFilters,
-    PredictionFeatures,
-    PredictionFeedback,
-    PredictionFilters,
-    PredictionModel,
-    PredictionRequest,
-    PredictionResponse,
-    RiskFactor,
-    TrainingRequest,
-    TrainingResponse,
-    TreatmentCharacteristics,
-    TreatmentPrediction,
-    TreatmentRecommendation
+import type {
+  AlternativeTreatment,
+  BatchPredictionRequest,
+  BatchPredictionResponse,
+  ConfidenceInterval,
+  ExplainabilityData,
+  ModelFilters,
+  ModelPerformance,
+  PatientFactors,
+  PerformanceFilters,
+  PredictionFeatures,
+  PredictionFeedback,
+  PredictionFilters,
+  PredictionModel,
+  PredictionRequest,
+  PredictionResponse,
+  RiskFactor,
+  TrainingRequest,
+  TrainingResponse,
+  TreatmentCharacteristics,
+  TreatmentPrediction,
+  TreatmentRecommendation,
 } from '@/app/types/treatment-prediction';
 import { createServerClient } from '@/app/utils/supabase/server';
 
@@ -77,10 +77,12 @@ export class TreatmentPredictionService {
       .single();
 
     if (error && error.code !== 'PGRST116') throw error;
-    return data as PredictionModel || null;
+    return (data as PredictionModel) || null;
   }
 
-  async createModel(model: Omit<PredictionModel, 'id' | 'created_at' | 'updated_at'>) {
+  async createModel(
+    model: Omit<PredictionModel, 'id' | 'created_at' | 'updated_at'>
+  ) {
     const { data, error } = await this.supabase
       .from('prediction_models')
       .insert(model)
@@ -105,7 +107,12 @@ export class TreatmentPredictionService {
 
   // ==================== TREATMENT PREDICTIONS ====================
 
-  async createPrediction(predictionData: Omit<TreatmentPrediction, 'id' | 'created_at' | 'updated_at'>) {
+  async createPrediction(
+    predictionData: Omit<
+      TreatmentPrediction,
+      'id' | 'created_at' | 'updated_at'
+    >
+  ) {
     const { data, error } = await this.supabase
       .from('treatment_predictions')
       .insert(predictionData)
@@ -164,24 +171,28 @@ export class TreatmentPredictionService {
     return data as TreatmentPrediction[];
   }
 
-  async updatePredictionOutcome(id: string, outcome: string, outcomeDate: string) {
+  async updatePredictionOutcome(
+    id: string,
+    outcome: string,
+    outcomeDate: string
+  ) {
     const { data, error } = await this.supabase
       .from('treatment_predictions')
       .update({
         actual_outcome: outcome,
         outcome_date: outcomeDate,
         accuracy_validated: true,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', id)
       .select()
       .single();
 
     if (error) throw error;
-    
+
     // Update model performance after outcome validation
     await this.updateModelPerformance(data.model_id);
-    
+
     return data as TreatmentPrediction;
   }
 
@@ -195,10 +206,12 @@ export class TreatmentPredictionService {
       .single();
 
     if (error && error.code !== 'PGRST116') throw error;
-    return data as PatientFactors || null;
+    return (data as PatientFactors) || null;
   }
 
-  async upsertPatientFactors(factors: Omit<PatientFactors, 'id' | 'created_at' | 'updated_at'>) {
+  async upsertPatientFactors(
+    factors: Omit<PatientFactors, 'id' | 'created_at' | 'updated_at'>
+  ) {
     const { data, error } = await this.supabase
       .from('patient_factors')
       .upsert(factors, { onConflict: 'patient_id' })
@@ -226,7 +239,12 @@ export class TreatmentPredictionService {
     return data as TreatmentCharacteristics[];
   }
 
-  async createTreatmentCharacteristics(characteristics: Omit<TreatmentCharacteristics, 'id' | 'created_at' | 'updated_at'>) {
+  async createTreatmentCharacteristics(
+    characteristics: Omit<
+      TreatmentCharacteristics,
+      'id' | 'created_at' | 'updated_at'
+    >
+  ) {
     const { data, error } = await this.supabase
       .from('treatment_characteristics')
       .insert(characteristics)
@@ -239,7 +257,9 @@ export class TreatmentPredictionService {
 
   // ==================== PREDICTION ENGINE ====================
 
-  async generatePrediction(request: PredictionRequest): Promise<PredictionResponse> {
+  async generatePrediction(
+    request: PredictionRequest
+  ): Promise<PredictionResponse> {
     // Get active model
     const model = await this.getActiveModel();
     if (!model) {
@@ -249,18 +269,29 @@ export class TreatmentPredictionService {
     // Get patient factors
     const patientFactors = await this.getPatientFactors(request.patient_id);
     if (!patientFactors) {
-      throw new Error('Patient factors not found. Please complete patient assessment first.');
+      throw new Error(
+        'Patient factors not found. Please complete patient assessment first.'
+      );
     }
 
     // Get treatment characteristics
-    const treatmentChars = await this.getTreatmentCharacteristics(request.treatment_type);
-    const treatmentChar = treatmentChars.find(t => t.treatment_type === request.treatment_type);
+    const treatmentChars = await this.getTreatmentCharacteristics(
+      request.treatment_type
+    );
+    const treatmentChar = treatmentChars.find(
+      (t) => t.treatment_type === request.treatment_type
+    );
     if (!treatmentChar) {
-      throw new Error('Treatment characteristics not found for this treatment type');
+      throw new Error(
+        'Treatment characteristics not found for this treatment type'
+      );
     }
 
     // Build feature vector for prediction
-    const features = await this.buildFeatureVector(patientFactors, treatmentChar);
+    const features = await this.buildFeatureVector(
+      patientFactors,
+      treatmentChar
+    );
 
     // Generate prediction using ML model
     const predictionResult = await this.runPredictionModel(model, features);
@@ -276,29 +307,42 @@ export class TreatmentPredictionService {
       model_id: model.id!,
       features_used: features,
       explainability_data: predictionResult.explainability_data,
-      prediction_date: new Date().toISOString()
+      prediction_date: new Date().toISOString(),
     });
 
     // Generate recommendations
-    const recommendations = await this.generateRecommendations(prediction, patientFactors, treatmentChar);
+    const recommendations = await this.generateRecommendations(
+      prediction,
+      patientFactors,
+      treatmentChar
+    );
 
     // Generate alternative treatments if requested
-    const alternatives = request.include_alternatives 
-      ? await this.generateAlternativeTreatments(request.patient_id, request.treatment_type, features)
+    const alternatives = request.include_alternatives
+      ? await this.generateAlternativeTreatments(
+          request.patient_id,
+          request.treatment_type,
+          features
+        )
       : [];
 
     // Generate risk factors
-    const riskFactors = await this.generateRiskFactors(features, predictionResult.explainability_data);
+    const riskFactors = await this.generateRiskFactors(
+      features,
+      predictionResult.explainability_data
+    );
 
     return {
       prediction,
       recommendations,
       alternative_treatments: alternatives,
-      risk_factors: riskFactors
+      risk_factors: riskFactors,
     };
   }
 
-  async generateBatchPredictions(request: BatchPredictionRequest): Promise<BatchPredictionResponse> {
+  async generateBatchPredictions(
+    request: BatchPredictionRequest
+  ): Promise<BatchPredictionResponse> {
     const startTime = Date.now();
     const predictions: PredictionResponse[] = [];
 
@@ -307,7 +351,10 @@ export class TreatmentPredictionService {
         const prediction = await this.generatePrediction(predictionRequest);
         predictions.push(prediction);
       } catch (error) {
-        console.error(`Error generating prediction for patient ${predictionRequest.patient_id}:`, error);
+        console.error(
+          `Error generating prediction for patient ${predictionRequest.patient_id}:`,
+          error
+        );
         // Continue with next prediction
       }
     }
@@ -315,25 +362,30 @@ export class TreatmentPredictionService {
     const processingTime = Date.now() - startTime;
 
     // Generate summary if requested
-    const summary = request.include_summary ? this.generatePredictionSummary(predictions) : {
-      total_predictions: predictions.length,
-      high_success_probability: 0,
-      medium_success_probability: 0,
-      low_success_probability: 0,
-      average_confidence: 0,
-      recommendations_generated: 0
-    };
+    const summary = request.include_summary
+      ? this.generatePredictionSummary(predictions)
+      : {
+          total_predictions: predictions.length,
+          high_success_probability: 0,
+          medium_success_probability: 0,
+          low_success_probability: 0,
+          average_confidence: 0,
+          recommendations_generated: 0,
+        };
 
     return {
       predictions,
       summary,
-      processing_time: processingTime
+      processing_time: processingTime,
     };
   }
 
   // ==================== ML MODEL OPERATIONS ====================
 
-  private async buildFeatureVector(patientFactors: PatientFactors, treatmentChar: TreatmentCharacteristics): Promise<PredictionFeatures> {
+  private async buildFeatureVector(
+    patientFactors: PatientFactors,
+    treatmentChar: TreatmentCharacteristics
+  ): Promise<PredictionFeatures> {
     // Build comprehensive feature vector for ML prediction
     const features: PredictionFeatures = {
       // Patient demographics
@@ -342,8 +394,10 @@ export class TreatmentPredictionService {
       bmi: patientFactors.bmi || 25, // Default BMI if not provided
 
       // Medical history factors
-      previous_treatments: patientFactors.treatment_history?.total_treatments || 0,
-      success_rate_history: patientFactors.treatment_history?.success_rate || 0.5,
+      previous_treatments:
+        patientFactors.treatment_history?.total_treatments || 0,
+      success_rate_history:
+        patientFactors.treatment_history?.success_rate || 0.5,
       medical_conditions: patientFactors.medical_history?.conditions || [],
       medications: patientFactors.medical_history?.medications || [],
       allergies: patientFactors.medical_history?.allergies || [],
@@ -364,27 +418,33 @@ export class TreatmentPredictionService {
       photosensitivity: false, // Default value
 
       // Psychological factors
-      treatment_expectations: patientFactors.psychological_factors?.treatment_expectations || 'realistic',
+      treatment_expectations:
+        patientFactors.psychological_factors?.treatment_expectations ||
+        'realistic',
       anxiety_level: patientFactors.psychological_factors?.anxiety_level || 3,
       compliance_history: patientFactors.compliance_score || 0.8,
 
       // External factors
       seasonal_factors: 'normal',
       geographic_location: patientFactors.geographic_factors?.location,
-      support_system: patientFactors.social_factors?.support_system || 'moderate'
+      support_system:
+        patientFactors.social_factors?.support_system || 'moderate',
     };
 
     return features;
   }
 
-  private async runPredictionModel(model: PredictionModel, features: PredictionFeatures) {
+  private async runPredictionModel(
+    model: PredictionModel,
+    features: PredictionFeatures
+  ) {
     // Simplified ML prediction logic
     // In production, this would call an actual ML model service
-    
+
     let baseScore = model.accuracy; // Start with model's base accuracy
-    
+
     // Adjust score based on features
-    
+
     // Age factor (optimal age range for most aesthetic treatments: 25-45)
     if (features.age >= 25 && features.age <= 45) {
       baseScore += 0.05;
@@ -440,7 +500,7 @@ export class TreatmentPredictionService {
     const confidence_interval: ConfidenceInterval = {
       lower: Math.max(0, baseScore - 0.1),
       upper: Math.min(1, baseScore + 0.1),
-      confidence_level: 0.95
+      confidence_level: 0.95,
     };
 
     // Determine risk assessment
@@ -466,28 +526,34 @@ export class TreatmentPredictionService {
     // Generate explainability data
     const explainability_data: ExplainabilityData = {
       feature_importance: {
-        'age': features.age >= 25 && features.age <= 45 ? 0.1 : -0.05,
-        'bmi': features.bmi && features.bmi >= 18.5 && features.bmi <= 25 ? 0.08 : -0.05,
-        'smoking_status': features.smoking_status === 'never' ? 0.12 : -0.1,
-        'success_rate_history': features.success_rate_history * 0.15,
-        'compliance_history': features.compliance_history * 0.1,
-        'treatment_expectations': features.treatment_expectations === 'realistic' ? 0.08 : -0.05,
-        'support_system': features.support_system === 'strong' ? 0.06 : -0.03
+        age: features.age >= 25 && features.age <= 45 ? 0.1 : -0.05,
+        bmi:
+          features.bmi && features.bmi >= 18.5 && features.bmi <= 25
+            ? 0.08
+            : -0.05,
+        smoking_status: features.smoking_status === 'never' ? 0.12 : -0.1,
+        success_rate_history: features.success_rate_history * 0.15,
+        compliance_history: features.compliance_history * 0.1,
+        treatment_expectations:
+          features.treatment_expectations === 'realistic' ? 0.08 : -0.05,
+        support_system: features.support_system === 'strong' ? 0.06 : -0.03,
       },
       top_positive_factors: [
         'Non-smoker status',
         'Realistic treatment expectations',
         'Good compliance history',
-        'Strong support system'
+        'Strong support system',
       ].filter(Boolean),
       top_negative_factors: [
         features.smoking_status === 'current' ? 'Current smoking' : null,
-        features.treatment_expectations === 'unrealistic' ? 'Unrealistic expectations' : null,
+        features.treatment_expectations === 'unrealistic'
+          ? 'Unrealistic expectations'
+          : null,
         features.anxiety_level > 4 ? 'High anxiety level' : null,
-        features.support_system === 'weak' ? 'Weak support system' : null
+        features.support_system === 'weak' ? 'Weak support system' : null,
       ].filter(Boolean) as string[],
       similar_cases: [], // Would be populated from database of similar cases
-      confidence_reasoning: `Prediction based on ${Object.keys(features).length} patient factors with ${(model.accuracy * 100).toFixed(1)}% model accuracy.`
+      confidence_reasoning: `Prediction based on ${Object.keys(features).length} patient factors with ${(model.accuracy * 100).toFixed(1)}% model accuracy.`,
     };
 
     return {
@@ -495,14 +561,14 @@ export class TreatmentPredictionService {
       confidence_interval,
       risk_assessment,
       predicted_outcome,
-      explainability_data
+      explainability_data,
     };
   }
 
   private async generateRecommendations(
-    prediction: TreatmentPrediction, 
-    patientFactors: PatientFactors, 
-    treatmentChar: TreatmentCharacteristics
+    prediction: TreatmentPrediction,
+    patientFactors: PatientFactors,
+    _treatmentChar: TreatmentCharacteristics
   ): Promise<TreatmentRecommendation[]> {
     const recommendations: TreatmentRecommendation[] = [];
 
@@ -510,9 +576,10 @@ export class TreatmentPredictionService {
     if (prediction.risk_assessment === 'high') {
       recommendations.push({
         type: 'preparation',
-        description: 'Comprehensive pre-treatment consultation and risk assessment recommended',
+        description:
+          'Comprehensive pre-treatment consultation and risk assessment recommended',
         importance: 'critical',
-        evidence_level: 'clinical_trials'
+        evidence_level: 'clinical_trials',
       });
     }
 
@@ -520,9 +587,10 @@ export class TreatmentPredictionService {
     if (patientFactors.lifestyle_factors?.smoking === 'current') {
       recommendations.push({
         type: 'preparation',
-        description: 'Smoking cessation recommended 2-4 weeks before treatment for optimal outcomes',
+        description:
+          'Smoking cessation recommended 2-4 weeks before treatment for optimal outcomes',
         importance: 'high',
-        evidence_level: 'clinical_trials'
+        evidence_level: 'clinical_trials',
       });
     }
 
@@ -530,19 +598,24 @@ export class TreatmentPredictionService {
     if (patientFactors.bmi && patientFactors.bmi > 30) {
       recommendations.push({
         type: 'preparation',
-        description: 'Weight management consultation may improve treatment outcomes',
+        description:
+          'Weight management consultation may improve treatment outcomes',
         importance: 'medium',
-        evidence_level: 'case_studies'
+        evidence_level: 'case_studies',
       });
     }
 
     // Anxiety management
-    if (patientFactors.psychological_factors?.anxiety_level && patientFactors.psychological_factors.anxiety_level > 4) {
+    if (
+      patientFactors.psychological_factors?.anxiety_level &&
+      patientFactors.psychological_factors.anxiety_level > 4
+    ) {
       recommendations.push({
         type: 'preparation',
-        description: 'Anxiety management techniques and relaxation therapy recommended',
+        description:
+          'Anxiety management techniques and relaxation therapy recommended',
         importance: 'medium',
-        evidence_level: 'expert_opinion'
+        evidence_level: 'expert_opinion',
       });
     }
 
@@ -550,19 +623,24 @@ export class TreatmentPredictionService {
     if (prediction.prediction_score < 0.7) {
       recommendations.push({
         type: 'monitoring',
-        description: 'Enhanced follow-up schedule recommended for optimal outcome monitoring',
+        description:
+          'Enhanced follow-up schedule recommended for optimal outcome monitoring',
         importance: 'high',
-        evidence_level: 'clinical_trials'
+        evidence_level: 'clinical_trials',
       });
     }
 
     // Expectation management
-    if (patientFactors.psychological_factors?.treatment_expectations === 'unrealistic') {
+    if (
+      patientFactors.psychological_factors?.treatment_expectations ===
+      'unrealistic'
+    ) {
       recommendations.push({
         type: 'preparation',
-        description: 'Detailed expectation management and realistic outcome discussion',
+        description:
+          'Detailed expectation management and realistic outcome discussion',
         importance: 'high',
-        evidence_level: 'expert_opinion'
+        evidence_level: 'expert_opinion',
       });
     }
 
@@ -570,63 +648,78 @@ export class TreatmentPredictionService {
   }
 
   private async generateAlternativeTreatments(
-    patientId: string, 
-    currentTreatment: string, 
-    features: PredictionFeatures
+    patientId: string,
+    currentTreatment: string,
+    _features: PredictionFeatures
   ): Promise<AlternativeTreatment[]> {
     // Get all treatment characteristics except current
     const allTreatments = await this.getTreatmentCharacteristics();
-    const alternatives = allTreatments.filter(t => t.treatment_type !== currentTreatment);
+    const alternatives = allTreatments.filter(
+      (t) => t.treatment_type !== currentTreatment
+    );
 
     const alternativeTreatments: AlternativeTreatment[] = [];
 
-    for (const treatment of alternatives.slice(0, 3)) { // Limit to top 3 alternatives
+    for (const treatment of alternatives.slice(0, 3)) {
+      // Limit to top 3 alternatives
       // Generate prediction score for alternative treatment
       const altRequest: PredictionRequest = {
         patient_id: patientId,
-        treatment_type: treatment.treatment_type
+        treatment_type: treatment.treatment_type,
       };
 
       try {
         const altPrediction = await this.generatePrediction(altRequest);
-        
+
         alternativeTreatments.push({
           treatment_type: treatment.treatment_type,
           prediction_score: altPrediction.prediction.prediction_score,
           advantages: this.getTreatmentAdvantages(treatment),
           disadvantages: this.getTreatmentDisadvantages(treatment),
-          suitability_score: altPrediction.prediction.prediction_score
+          suitability_score: altPrediction.prediction.prediction_score,
         });
       } catch (error) {
-        console.error(`Error generating alternative prediction for ${treatment.treatment_type}:`, error);
+        console.error(
+          `Error generating alternative prediction for ${treatment.treatment_type}:`,
+          error
+        );
       }
     }
 
-    return alternativeTreatments.sort((a, b) => b.prediction_score - a.prediction_score);
+    return alternativeTreatments.sort(
+      (a, b) => b.prediction_score - a.prediction_score
+    );
   }
 
-  private getTreatmentAdvantages(treatment: TreatmentCharacteristics): string[] {
+  private getTreatmentAdvantages(
+    treatment: TreatmentCharacteristics
+  ): string[] {
     const advantages = [];
-    
+
     if (treatment.invasiveness_level <= 2) {
       advantages.push('Non-invasive procedure');
     }
     if (treatment.recovery_time_days && treatment.recovery_time_days <= 3) {
       advantages.push('Minimal downtime');
     }
-    if (treatment.success_rate_baseline && treatment.success_rate_baseline >= 0.9) {
+    if (
+      treatment.success_rate_baseline &&
+      treatment.success_rate_baseline >= 0.9
+    ) {
       advantages.push('High success rate');
     }
     if (treatment.complexity_level <= 2) {
       advantages.push('Simple procedure');
     }
-    
+
     return advantages;
   }
 
-  private getTreatmentDisadvantages(treatment: TreatmentCharacteristics): string[] {
+  private getTreatmentDisadvantages(
+    treatment: TreatmentCharacteristics
+  ): string[] {
     const disadvantages = [];
-    
+
     if (treatment.invasiveness_level >= 4) {
       disadvantages.push('Invasive procedure');
     }
@@ -639,21 +732,27 @@ export class TreatmentPredictionService {
     if (treatment.complexity_level >= 4) {
       disadvantages.push('Complex procedure');
     }
-    
+
     return disadvantages;
   }
 
-  private async generateRiskFactors(features: PredictionFeatures, explainability: ExplainabilityData): Promise<RiskFactor[]> {
+  private async generateRiskFactors(
+    _features: PredictionFeatures,
+    explainability: ExplainabilityData
+  ): Promise<RiskFactor[]> {
     const riskFactors: RiskFactor[] = [];
 
     // Add risk factors based on feature importance
-    for (const [factor, impact] of Object.entries(explainability.feature_importance)) {
-      if (Math.abs(impact) > 0.05) { // Only significant factors
+    for (const [factor, impact] of Object.entries(
+      explainability.feature_importance
+    )) {
+      if (Math.abs(impact) > 0.05) {
+        // Only significant factors
         riskFactors.push({
           factor: this.humanReadableFactor(factor),
           impact,
           modifiable: this.isModifiableFactor(factor),
-          recommendation: this.getFactorRecommendation(factor, impact)
+          recommendation: this.getFactorRecommendation(factor, impact),
         });
       }
     }
@@ -663,38 +762,47 @@ export class TreatmentPredictionService {
 
   private humanReadableFactor(factor: string): string {
     const factorMap: Record<string, string> = {
-      'age': 'Patient Age',
-      'bmi': 'Body Mass Index',
-      'smoking_status': 'Smoking Status',
-      'success_rate_history': 'Previous Treatment Success Rate',
-      'compliance_history': 'Treatment Compliance History',
-      'treatment_expectations': 'Treatment Expectations',
-      'support_system': 'Social Support System',
-      'anxiety_level': 'Anxiety Level',
-      'exercise_frequency': 'Exercise Frequency'
+      age: 'Patient Age',
+      bmi: 'Body Mass Index',
+      smoking_status: 'Smoking Status',
+      success_rate_history: 'Previous Treatment Success Rate',
+      compliance_history: 'Treatment Compliance History',
+      treatment_expectations: 'Treatment Expectations',
+      support_system: 'Social Support System',
+      anxiety_level: 'Anxiety Level',
+      exercise_frequency: 'Exercise Frequency',
     };
-    
+
     return factorMap[factor] || factor;
   }
 
   private isModifiableFactor(factor: string): boolean {
     const modifiableFactors = [
-      'smoking_status', 'bmi', 'exercise_frequency', 'anxiety_level', 
-      'treatment_expectations', 'compliance_history'
+      'smoking_status',
+      'bmi',
+      'exercise_frequency',
+      'anxiety_level',
+      'treatment_expectations',
+      'compliance_history',
     ];
     return modifiableFactors.includes(factor);
   }
 
-  private getFactorRecommendation(factor: string, impact: number): string | undefined {
-    if (!this.isModifiableFactor(factor)) return undefined;
+  private getFactorRecommendation(
+    factor: string,
+    impact: number
+  ): string | undefined {
+    if (!this.isModifiableFactor(factor)) return;
 
     const recommendations: Record<string, string> = {
-      'smoking_status': 'Consider smoking cessation program before treatment',
-      'bmi': 'Maintain healthy weight through diet and exercise',
-      'exercise_frequency': 'Increase physical activity for better outcomes',
-      'anxiety_level': 'Consider stress management techniques or counseling',
-      'treatment_expectations': 'Discuss realistic treatment outcomes with provider',
-      'compliance_history': 'Follow all pre and post-treatment instructions carefully'
+      smoking_status: 'Consider smoking cessation program before treatment',
+      bmi: 'Maintain healthy weight through diet and exercise',
+      exercise_frequency: 'Increase physical activity for better outcomes',
+      anxiety_level: 'Consider stress management techniques or counseling',
+      treatment_expectations:
+        'Discuss realistic treatment outcomes with provider',
+      compliance_history:
+        'Follow all pre and post-treatment instructions carefully',
     };
 
     return impact < 0 ? recommendations[factor] : undefined;
@@ -702,11 +810,24 @@ export class TreatmentPredictionService {
 
   private generatePredictionSummary(predictions: PredictionResponse[]) {
     const total = predictions.length;
-    const highSuccess = predictions.filter(p => p.prediction.prediction_score >= 0.8).length;
-    const mediumSuccess = predictions.filter(p => p.prediction.prediction_score >= 0.6 && p.prediction.prediction_score < 0.8).length;
-    const lowSuccess = predictions.filter(p => p.prediction.prediction_score < 0.6).length;
-    const avgConfidence = predictions.reduce((sum, p) => sum + p.prediction.prediction_score, 0) / total;
-    const totalRecommendations = predictions.reduce((sum, p) => sum + p.recommendations.length, 0);
+    const highSuccess = predictions.filter(
+      (p) => p.prediction.prediction_score >= 0.8
+    ).length;
+    const mediumSuccess = predictions.filter(
+      (p) =>
+        p.prediction.prediction_score >= 0.6 &&
+        p.prediction.prediction_score < 0.8
+    ).length;
+    const lowSuccess = predictions.filter(
+      (p) => p.prediction.prediction_score < 0.6
+    ).length;
+    const avgConfidence =
+      predictions.reduce((sum, p) => sum + p.prediction.prediction_score, 0) /
+      total;
+    const totalRecommendations = predictions.reduce(
+      (sum, p) => sum + p.recommendations.length,
+      0
+    );
 
     return {
       total_predictions: total,
@@ -714,7 +835,7 @@ export class TreatmentPredictionService {
       medium_success_probability: mediumSuccess,
       low_success_probability: lowSuccess,
       average_confidence: avgConfidence,
-      recommendations_generated: totalRecommendations
+      recommendations_generated: totalRecommendations,
     };
   }
 
@@ -740,7 +861,10 @@ export class TreatmentPredictionService {
         query = query.lte('evaluation_date', filters.evaluation_date_to);
       }
       if (filters.improvement_percentage_min) {
-        query = query.gte('improvement_percentage', filters.improvement_percentage_min);
+        query = query.gte(
+          'improvement_percentage',
+          filters.improvement_percentage_min
+        );
       }
     }
 
@@ -760,7 +884,7 @@ export class TreatmentPredictionService {
     if (error) throw error;
 
     if (predictions && predictions.length > 0) {
-      const correctPredictions = predictions.filter(p => {
+      const correctPredictions = predictions.filter((p) => {
         // Define success threshold for predictions
         const successThreshold = 0.7;
         const predictedSuccess = p.prediction_score >= successThreshold;
@@ -778,7 +902,7 @@ export class TreatmentPredictionService {
           accuracy,
           predictions_count: predictions.length,
           correct_predictions: correctPredictions,
-          evaluation_date: new Date().toISOString()
+          evaluation_date: new Date().toISOString(),
         })
         .select()
         .single();
@@ -792,7 +916,9 @@ export class TreatmentPredictionService {
 
   // ==================== PREDICTION FEEDBACK ====================
 
-  async createFeedback(feedback: Omit<PredictionFeedback, 'id' | 'created_at'>) {
+  async createFeedback(
+    feedback: Omit<PredictionFeedback, 'id' | 'created_at'>
+  ) {
     const { data, error } = await this.supabase
       .from('prediction_feedback')
       .insert(feedback)
@@ -820,7 +946,9 @@ export class TreatmentPredictionService {
 
   // ==================== MODEL TRAINING ====================
 
-  async startModelTraining(request: TrainingRequest): Promise<TrainingResponse> {
+  async startModelTraining(
+    request: TrainingRequest
+  ): Promise<TrainingResponse> {
     // Create new model record
     const newModel = await this.createModel({
       name: request.model_name,
@@ -829,7 +957,7 @@ export class TreatmentPredictionService {
       accuracy: 0, // Will be updated after training
       status: 'training',
       training_data_size: 0,
-      feature_count: request.feature_selection?.length || 0
+      feature_count: request.feature_selection?.length || 0,
     });
 
     // In production, this would trigger actual ML training
@@ -848,28 +976,26 @@ export class TreatmentPredictionService {
             training_accuracy: 0.91,
             validation_accuracy: 0.87,
             cross_validation_mean: 0.86,
-            cross_validation_std: 0.02
-          }
+            cross_validation_std: 0.02,
+          },
         });
       } catch (error) {
         console.error('Error updating model after training:', error);
       }
-    }, 60000); // Simulate 1 minute training time
+    }, 60_000); // Simulate 1 minute training time
 
     return {
       model_id: newModel.id!,
       training_status: 'started',
-      estimated_completion: new Date(Date.now() + 60000).toISOString(),
-      progress_percentage: 0
+      estimated_completion: new Date(Date.now() + 60_000).toISOString(),
+      progress_percentage: 0,
     };
   }
 
   // ==================== ANALYTICS & REPORTING ====================
 
   async getPredictionAnalytics(dateFrom?: string, dateTo?: string) {
-    let query = this.supabase
-      .from('treatment_predictions')
-      .select(`
+    let query = this.supabase.from('treatment_predictions').select(`
         prediction_score,
         risk_assessment,
         predicted_outcome,
@@ -892,23 +1018,31 @@ export class TreatmentPredictionService {
     // Calculate analytics
     const analytics = {
       total_predictions: data.length,
-      validated_predictions: data.filter(p => p.accuracy_validated).length,
-      average_prediction_score: data.reduce((sum, p) => sum + p.prediction_score, 0) / data.length,
+      validated_predictions: data.filter((p) => p.accuracy_validated).length,
+      average_prediction_score:
+        data.reduce((sum, p) => sum + p.prediction_score, 0) / data.length,
       risk_distribution: {
-        low: data.filter(p => p.risk_assessment === 'low').length,
-        medium: data.filter(p => p.risk_assessment === 'medium').length,
-        high: data.filter(p => p.risk_assessment === 'high').length
+        low: data.filter((p) => p.risk_assessment === 'low').length,
+        medium: data.filter((p) => p.risk_assessment === 'medium').length,
+        high: data.filter((p) => p.risk_assessment === 'high').length,
       },
       outcome_distribution: {
-        success: data.filter(p => p.predicted_outcome === 'success').length,
-        partial_success: data.filter(p => p.predicted_outcome === 'partial_success').length,
-        failure: data.filter(p => p.predicted_outcome === 'failure').length
+        success: data.filter((p) => p.predicted_outcome === 'success').length,
+        partial_success: data.filter(
+          (p) => p.predicted_outcome === 'partial_success'
+        ).length,
+        failure: data.filter((p) => p.predicted_outcome === 'failure').length,
       },
-      treatment_type_distribution: data.reduce((acc, p) => {
-        acc[p.treatment_type] = (acc[p.treatment_type] || 0) + 1;
-        return acc;
-      }, {} as Record<string, number>),
-      model_accuracy: this.calculateOverallAccuracy(data.filter(p => p.accuracy_validated))
+      treatment_type_distribution: data.reduce(
+        (acc, p) => {
+          acc[p.treatment_type] = (acc[p.treatment_type] || 0) + 1;
+          return acc;
+        },
+        {} as Record<string, number>
+      ),
+      model_accuracy: this.calculateOverallAccuracy(
+        data.filter((p) => p.accuracy_validated)
+      ),
     };
 
     return analytics;
@@ -917,7 +1051,7 @@ export class TreatmentPredictionService {
   private calculateOverallAccuracy(validatedPredictions: any[]): number {
     if (validatedPredictions.length === 0) return 0;
 
-    const correctPredictions = validatedPredictions.filter(p => {
+    const correctPredictions = validatedPredictions.filter((p) => {
       const successThreshold = 0.7;
       const predictedSuccess = p.prediction_score >= successThreshold;
       const actualSuccess = p.actual_outcome === 'success';

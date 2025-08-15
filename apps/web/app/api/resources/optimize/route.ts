@@ -3,10 +3,9 @@
 // Story 2.4: Smart Resource Management - Optimization
 // =====================================================
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
 import { AllocationEngine } from '@/lib/resources/allocation-engine';
-import { ResourceManager } from '@/lib/resources/resource-manager';
 
 // =====================================================
 // POST /api/resources/optimize - Get allocation suggestions
@@ -14,20 +13,26 @@ import { ResourceManager } from '@/lib/resources/resource-manager';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    
+
     // Validate required fields
     const { clinic_id, resource_type, start_time, end_time } = body;
-    if (!clinic_id || !resource_type || !start_time || !end_time) {
+    if (!(clinic_id && resource_type && start_time && end_time)) {
       return NextResponse.json(
-        { error: 'clinic_id, resource_type, start_time, and end_time are required' },
+        {
+          error:
+            'clinic_id, resource_type, start_time, and end_time are required',
+        },
         { status: 400 }
       );
     }
 
     // Create Supabase client and verify authentication
     const supabase = await createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Authentication required' },
@@ -45,15 +50,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: optimization,
-      message: 'Allocation suggestions generated successfully'
+      message: 'Allocation suggestions generated successfully',
     });
-
   } catch (error) {
     console.error('Error generating allocation suggestions:', error);
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to generate allocation suggestions',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );
@@ -70,7 +74,7 @@ export async function GET(request: NextRequest) {
     const date = searchParams.get('date');
 
     // Validate required parameters
-    if (!clinicId || !date) {
+    if (!(clinicId && date)) {
       return NextResponse.json(
         { error: 'clinic_id and date are required' },
         { status: 400 }
@@ -79,8 +83,11 @@ export async function GET(request: NextRequest) {
 
     // Create Supabase client and verify authentication
     const supabase = await createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Authentication required' },
@@ -90,20 +97,22 @@ export async function GET(request: NextRequest) {
 
     // Initialize allocation engine and optimize workload
     const allocationEngine = new AllocationEngine();
-    const optimization = await allocationEngine.optimizeStaffWorkload(clinicId, date);
+    const optimization = await allocationEngine.optimizeStaffWorkload(
+      clinicId,
+      date
+    );
 
     return NextResponse.json({
       success: true,
       data: optimization,
-      message: 'Staff workload optimization completed'
+      message: 'Staff workload optimization completed',
     });
-
   } catch (error) {
     console.error('Error optimizing staff workload:', error);
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to optimize staff workload',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );

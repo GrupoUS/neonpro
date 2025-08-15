@@ -4,13 +4,13 @@
  */
 
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { Database } from '@/types/database';
-import { 
-  InventoryConfig, 
+import type { Database } from '@/types/database';
+import {
   DEFAULT_INVENTORY_CONFIG,
-  InventoryDashboardSummary,
-  InventoryMetrics,
-  SystemIntegration
+  type InventoryConfig,
+  type InventoryDashboardSummary,
+  type InventoryMetrics,
+  type SystemIntegration,
 } from './types';
 
 /**
@@ -39,7 +39,6 @@ export class InventoryConfigManager {
 
       this.config = { ...DEFAULT_INVENTORY_CONFIG, ...configData.configuracao };
       return this.config;
-
     } catch (error) {
       console.error('Error loading inventory configuration:', error);
       return DEFAULT_INVENTORY_CONFIG;
@@ -49,7 +48,9 @@ export class InventoryConfigManager {
   /**
    * Save configuration to database
    */
-  async saveConfig(config: Partial<InventoryConfig>): Promise<{ success: boolean; error: string | null }> {
+  async saveConfig(
+    config: Partial<InventoryConfig>
+  ): Promise<{ success: boolean; error: string | null }> {
     try {
       const updatedConfig = { ...this.config, ...config };
 
@@ -59,14 +60,13 @@ export class InventoryConfigManager {
           modulo: 'inventory',
           configuracao: updatedConfig,
           ativo: true,
-          atualizado_em: new Date().toISOString()
+          atualizado_em: new Date().toISOString(),
         });
 
       if (error) throw error;
 
       this.config = updatedConfig;
       return { success: true, error: null };
-
     } catch (error) {
       console.error('Error saving inventory configuration:', error);
       return { success: false, error: 'Erro ao salvar configuração' };
@@ -89,7 +89,7 @@ export class InventoryConfigManager {
   ): Promise<{ success: boolean; error: string | null }> {
     const newConfig = {
       ...this.config,
-      [section]: { ...this.config[section], ...updates }
+      [section]: { ...this.config[section], ...updates },
     };
 
     return this.saveConfig(newConfig);
@@ -105,20 +105,20 @@ export class InventoryDashboardProvider {
   /**
    * Get comprehensive dashboard summary
    */
-  async getDashboardSummary(): Promise<{ 
-    data: InventoryDashboardSummary | null; 
-    error: string | null 
+  async getDashboardSummary(): Promise<{
+    data: InventoryDashboardSummary | null;
+    error: string | null;
   }> {
     try {
       // Get stock levels
       const stockLevels = await this.getStockLevels();
-      
+
       // Get recent activity
       const recentActivity = await this.getRecentActivity();
-      
+
       // Get FIFO status
       const fifoStatus = await this.getFIFOStatus();
-      
+
       // Get cost efficiency
       const costEfficiency = await this.getCostEfficiency();
 
@@ -126,11 +126,10 @@ export class InventoryDashboardProvider {
         stock_levels: stockLevels,
         recent_activity: recentActivity,
         fifo_status: fifoStatus,
-        cost_efficiency: costEfficiency
+        cost_efficiency: costEfficiency,
       };
 
       return { data: summary, error: null };
-
     } catch (error) {
       console.error('Error getting dashboard summary:', error);
       return { data: null, error: 'Erro ao carregar resumo do dashboard' };
@@ -157,21 +156,28 @@ export class InventoryDashboardProvider {
         low_stock_products: 0,
         out_of_stock_products: 0,
         expiring_soon_products: 0,
-        total_value: 0
+        total_value: 0,
       };
     }
 
     const totalProducts = stockData.length;
-    const lowStockProducts = stockData.filter(p => p.estoque_atual <= p.estoque_minimo).length;
-    const outOfStockProducts = stockData.filter(p => p.estoque_atual === 0).length;
-    const totalValue = stockData.reduce((sum, p) => sum + (p.estoque_atual * (p.preco_custo || 0)), 0);
+    const lowStockProducts = stockData.filter(
+      (p) => p.estoque_atual <= p.estoque_minimo
+    ).length;
+    const outOfStockProducts = stockData.filter(
+      (p) => p.estoque_atual === 0
+    ).length;
+    const totalValue = stockData.reduce(
+      (sum, p) => sum + p.estoque_atual * (p.preco_custo || 0),
+      0
+    );
 
     // Calculate expiring soon products
     const thirtyDaysFromNow = new Date();
     thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
 
-    const expiringSoonProducts = stockData.filter(product => {
-      return product.lotes_estoque?.some(lote => {
+    const expiringSoonProducts = stockData.filter((product) => {
+      return product.lotes_estoque?.some((lote) => {
         const expiryDate = new Date(lote.data_validade);
         return expiryDate <= thirtyDaysFromNow && lote.status === 'disponivel';
       });
@@ -182,7 +188,7 @@ export class InventoryDashboardProvider {
       low_stock_products: lowStockProducts,
       out_of_stock_products: outOfStockProducts,
       expiring_soon_products: expiringSoonProducts,
-      total_value: totalValue
+      total_value: totalValue,
     };
   }
 
@@ -201,7 +207,8 @@ export class InventoryDashboardProvider {
       .eq('status', 'confirmada');
 
     const outputsCount = outputsToday?.length || 0;
-    const valueConsumedToday = outputsToday?.reduce((sum, output) => sum + output.valor_total, 0) || 0;
+    const valueConsumedToday =
+      outputsToday?.reduce((sum, output) => sum + output.valor_total, 0) || 0;
 
     // Get pending requests
     const { count: pendingRequests } = await this.supabase
@@ -219,7 +226,7 @@ export class InventoryDashboardProvider {
       outputs_today: outputsCount,
       value_consumed_today: valueConsumedToday,
       pending_requests: pendingRequests || 0,
-      alerts_active: activeAlerts || 0
+      alerts_active: activeAlerts || 0,
     };
   }
 
@@ -259,7 +266,7 @@ export class InventoryDashboardProvider {
       batches_expiring_7_days: expiring7Days || 0,
       batches_expiring_30_days: expiring30Days || 0,
       fifo_compliance_score: fifoComplianceScore,
-      waste_prevented_value: wastePreventedValue
+      waste_prevented_value: wastePreventedValue,
     };
   }
 
@@ -277,7 +284,8 @@ export class InventoryDashboardProvider {
       .gte('data_saida', oneMonthAgo.toISOString())
       .eq('status', 'confirmada');
 
-    const monthlyValue = monthlyConsumption?.reduce((sum, c) => sum + c.valor_total, 0) || 0;
+    const monthlyValue =
+      monthlyConsumption?.reduce((sum, c) => sum + c.valor_total, 0) || 0;
 
     // Get procedure count for cost per procedure
     const { count: procedureCount } = await this.supabase
@@ -292,16 +300,16 @@ export class InventoryDashboardProvider {
       monthly_consumption_value: monthlyValue,
       cost_per_procedure: costPerProcedure,
       efficiency_score: 78, // Would implement actual calculation
-      potential_savings: monthlyValue * 0.12 // 12% potential savings
+      potential_savings: monthlyValue * 0.12, // 12% potential savings
     };
   }
 
   /**
    * Get inventory metrics
    */
-  async getInventoryMetrics(): Promise<{ 
-    data: InventoryMetrics | null; 
-    error: string | null 
+  async getInventoryMetrics(): Promise<{
+    data: InventoryMetrics | null;
+    error: string | null;
   }> {
     try {
       // This would implement complex KPI calculations
@@ -314,11 +322,10 @@ export class InventoryDashboardProvider {
         carrying_cost_percentage: 8.5,
         waste_percentage: 3.2,
         fifo_compliance_percentage: 87.3,
-        cost_variance_percentage: -2.8
+        cost_variance_percentage: -2.8,
       };
 
       return { data: metrics, error: null };
-
     } catch (error) {
       console.error('Error getting inventory metrics:', error);
       return { data: null, error: 'Erro ao calcular métricas de estoque' };
@@ -335,9 +342,9 @@ export class InventoryIntegrationManager {
   /**
    * Get system integration status
    */
-  async getIntegrationStatus(): Promise<{ 
-    data: SystemIntegration | null; 
-    error: string | null 
+  async getIntegrationStatus(): Promise<{
+    data: SystemIntegration | null;
+    error: string | null;
   }> {
     try {
       const { data: integrationData, error } = await this.supabase
@@ -349,43 +356,43 @@ export class InventoryIntegrationManager {
       if (error) throw error;
 
       // Convert database results to SystemIntegration format
-      const integrations = integrationData?.reduce((acc, integration) => {
-        acc[integration.sistema_externo] = {
-          enabled: integration.ativo,
-          ...integration.configuracao
-        };
-        return acc;
-      }, {} as any) || {};
+      const integrations =
+        integrationData?.reduce((acc, integration) => {
+          acc[integration.sistema_externo] = {
+            enabled: integration.ativo,
+            ...integration.configuracao,
+          };
+          return acc;
+        }, {} as any) || {};
 
       const systemIntegration: SystemIntegration = {
         erp: integrations.erp || {
           enabled: false,
           sync_interval_minutes: 60,
           last_sync: null,
-          auto_create_purchase_orders: false
+          auto_create_purchase_orders: false,
         },
         financial: integrations.financial || {
           enabled: false,
           cost_center_mapping: {},
           auto_post_transactions: false,
-          chart_of_accounts_mapping: {}
+          chart_of_accounts_mapping: {},
         },
         clinical: integrations.clinical || {
           enabled: false,
           procedure_cost_tracking: false,
           patient_charge_integration: false,
-          insurance_claim_tracking: false
+          insurance_claim_tracking: false,
         },
         quality: integrations.quality || {
           enabled: false,
           batch_testing_integration: false,
           supplier_quality_scores: false,
-          deviation_tracking: false
-        }
+          deviation_tracking: false,
+        },
       };
 
       return { data: systemIntegration, error: null };
-
     } catch (error) {
       console.error('Error getting integration status:', error);
       return { data: null, error: 'Erro ao verificar status das integrações' };
@@ -400,20 +407,17 @@ export class InventoryIntegrationManager {
     config: any
   ): Promise<{ success: boolean; error: string | null }> {
     try {
-      const { error } = await this.supabase
-        .from('integracoes_sistema')
-        .upsert({
-          modulo: 'inventory',
-          sistema_externo: system,
-          configuracao: config,
-          ativo: config.enabled,
-          atualizado_em: new Date().toISOString()
-        });
+      const { error } = await this.supabase.from('integracoes_sistema').upsert({
+        modulo: 'inventory',
+        sistema_externo: system,
+        configuracao: config,
+        ativo: config.enabled,
+        atualizado_em: new Date().toISOString(),
+      });
 
       if (error) throw error;
 
       return { success: true, error: null };
-
     } catch (error) {
       console.error('Error updating integration:', error);
       return { success: false, error: 'Erro ao atualizar integração' };
@@ -423,52 +427,47 @@ export class InventoryIntegrationManager {
   /**
    * Test integration connectivity
    */
-  async testIntegration(system: keyof SystemIntegration): Promise<{ 
-    success: boolean; 
+  async testIntegration(system: keyof SystemIntegration): Promise<{
+    success: boolean;
     error: string | null;
     response_time?: number;
   }> {
     try {
       const startTime = Date.now();
-      
+
       // Simulate integration test
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       const responseTime = Date.now() - startTime;
 
       // Log test result
-      await this.supabase
-        .from('logs_integracao')
-        .insert({
-          sistema: system,
-          operacao: 'connectivity_test',
-          status: 'sucesso',
-          tempo_resposta_ms: responseTime,
-          detalhes: { test_type: 'connectivity' }
-        });
+      await this.supabase.from('logs_integracao').insert({
+        sistema: system,
+        operacao: 'connectivity_test',
+        status: 'sucesso',
+        tempo_resposta_ms: responseTime,
+        detalhes: { test_type: 'connectivity' },
+      });
 
-      return { 
-        success: true, 
+      return {
+        success: true,
         error: null,
-        response_time: responseTime
+        response_time: responseTime,
       };
-
     } catch (error) {
       console.error('Error testing integration:', error);
-      
-      // Log error
-      await this.supabase
-        .from('logs_integracao')
-        .insert({
-          sistema: system,
-          operacao: 'connectivity_test',
-          status: 'erro',
-          detalhes: { error: String(error) }
-        });
 
-      return { 
-        success: false, 
-        error: 'Erro ao testar conectividade'
+      // Log error
+      await this.supabase.from('logs_integracao').insert({
+        sistema: system,
+        operacao: 'connectivity_test',
+        status: 'erro',
+        detalhes: { error: String(error) },
+      });
+
+      return {
+        success: false,
+        error: 'Erro ao testar conectividade',
       };
     }
   }
@@ -484,14 +483,14 @@ export class InventoryUtils {
   static formatCurrency(value: number): string {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
-      currency: 'BRL'
+      currency: 'BRL',
     }).format(value);
   }
 
   /**
    * Format percentage
    */
-  static formatPercentage(value: number, decimals: number = 1): string {
+  static formatPercentage(value: number, decimals = 1): string {
     return `${value.toFixed(decimals)}%`;
   }
 
@@ -508,14 +507,14 @@ export class InventoryUtils {
    */
   static getStatusColor(status: string): string {
     const colorMap: Record<string, string> = {
-      'disponivel': 'green',
-      'baixo': 'yellow',
-      'critico': 'red',
-      'vencido': 'red',
-      'bloqueado': 'orange',
-      'aprovado': 'green',
-      'pendente': 'yellow',
-      'cancelado': 'red'
+      disponivel: 'green',
+      baixo: 'yellow',
+      critico: 'red',
+      vencido: 'red',
+      bloqueado: 'orange',
+      aprovado: 'green',
+      pendente: 'yellow',
+      cancelado: 'red',
     };
 
     return colorMap[status] || 'gray';
@@ -529,14 +528,17 @@ export class InventoryUtils {
     const dateStr = today.toISOString().slice(0, 10).replace(/-/g, '');
     const timeStr = today.toTimeString().slice(0, 8).replace(/:/g, '');
     const randomStr = Math.random().toString(36).substring(2, 8).toUpperCase();
-    
+
     return `LT${dateStr}${timeStr}${randomStr}`;
   }
 
   /**
    * Validate inventory data
    */
-  static validateInventoryData(data: any): { valid: boolean; errors: string[] } {
+  static validateInventoryData(data: any): {
+    valid: boolean;
+    errors: string[];
+  } {
     const errors: string[] = [];
 
     if (!data.produto_id) {
@@ -553,7 +555,7 @@ export class InventoryUtils {
 
     return {
       valid: errors.length === 0,
-      errors
+      errors,
     };
   }
 }

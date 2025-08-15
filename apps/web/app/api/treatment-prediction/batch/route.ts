@@ -1,15 +1,18 @@
 // POST /api/treatment-prediction/batch - Batch prediction generation
+
+import { type NextRequest, NextResponse } from 'next/server';
 import { TreatmentPredictionService } from '@/app/lib/services/treatment-prediction';
-import { BatchPredictionRequest } from '@/app/types/treatment-prediction';
+import type { BatchPredictionRequest } from '@/app/types/treatment-prediction';
 import { createServerClient } from '@/app/utils/supabase/server';
-import { NextRequest, NextResponse } from 'next/server';
 
 // POST /api/treatment-prediction/batch - Generate batch predictions
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createServerClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -21,16 +24,27 @@ export async function POST(request: NextRequest) {
       .eq('id', session.user.id)
       .single();
 
-    if (!profile || !['admin', 'manager', 'practitioner'].includes(profile.role)) {
-      return NextResponse.json({ error: 'Insufficient permissions for batch operations' }, { status: 403 });
+    if (
+      !(profile && ['admin', 'manager', 'practitioner'].includes(profile.role))
+    ) {
+      return NextResponse.json(
+        { error: 'Insufficient permissions for batch operations' },
+        { status: 403 }
+      );
     }
 
     const body: BatchPredictionRequest = await request.json();
 
     // Validate request
-    if (!body.predictions || !Array.isArray(body.predictions) || body.predictions.length === 0) {
+    if (
+      !(body.predictions && Array.isArray(body.predictions)) ||
+      body.predictions.length === 0
+    ) {
       return NextResponse.json(
-        { error: 'Invalid request: predictions array is required and must not be empty' },
+        {
+          error:
+            'Invalid request: predictions array is required and must not be empty',
+        },
         { status: 400 }
       );
     }
@@ -45,16 +59,18 @@ export async function POST(request: NextRequest) {
 
     // Validate each prediction request
     for (const [index, pred] of body.predictions.entries()) {
-      if (!pred.patient_id || !pred.treatment_type) {
+      if (!(pred.patient_id && pred.treatment_type)) {
         return NextResponse.json(
-          { error: `Invalid prediction at index ${index}: patient_id and treatment_type are required` },
+          {
+            error: `Invalid prediction at index ${index}: patient_id and treatment_type are required`,
+          },
           { status: 400 }
         );
       }
     }
 
     // Verify all patients exist
-    const patientIds = body.predictions.map(p => p.patient_id);
+    const patientIds = body.predictions.map((p) => p.patient_id);
     const { data: patients } = await supabase
       .from('patients')
       .select('id')
@@ -68,13 +84,16 @@ export async function POST(request: NextRequest) {
     }
 
     const predictionService = new TreatmentPredictionService();
-    const batchResponse = await predictionService.generateBatchPredictions(body);
+    const batchResponse =
+      await predictionService.generateBatchPredictions(body);
 
-    return NextResponse.json({
-      ...batchResponse,
-      message: `Batch prediction completed: ${batchResponse.predictions.length} predictions generated`
-    }, { status: 201 });
-
+    return NextResponse.json(
+      {
+        ...batchResponse,
+        message: `Batch prediction completed: ${batchResponse.predictions.length} predictions generated`,
+      },
+      { status: 201 }
+    );
   } catch (error) {
     console.error('Error generating batch predictions:', error);
     return NextResponse.json(

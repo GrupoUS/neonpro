@@ -3,8 +3,7 @@
  * Entry point for marketing ROI management
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
+import { NextResponse } from 'next/server';
 
 /**
  * GET /api/marketing-roi
@@ -20,10 +19,11 @@ export async function GET() {
       treatmentProfitability: '/api/marketing-roi/treatment-profitability',
       cacLtvAnalysis: '/api/marketing-roi/cac-ltv-analysis',
       alerts: '/api/marketing-roi/alerts',
-      optimizationRecommendations: '/api/marketing-roi/optimization-recommendations',
+      optimizationRecommendations:
+        '/api/marketing-roi/optimization-recommendations',
       dashboardMetrics: '/api/marketing-roi/dashboard-metrics',
       forecasts: '/api/marketing-roi/forecasts',
-      insights: '/api/marketing-roi/insights'
-    }
+      insights: '/api/marketing-roi/insights',
+    },
   });
 }

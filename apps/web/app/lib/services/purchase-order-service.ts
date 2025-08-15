@@ -29,7 +29,13 @@ interface PurchaseOrder {
   order_number: string;
   supplier_id: string;
   clinic_id: string;
-  status: 'draft' | 'pending_approval' | 'approved' | 'sent' | 'received' | 'cancelled';
+  status:
+    | 'draft'
+    | 'pending_approval'
+    | 'approved'
+    | 'sent'
+    | 'received'
+    | 'cancelled';
   total_amount: number;
   expected_delivery_date: Date;
   items: PurchaseOrderItem[];
@@ -68,7 +74,7 @@ export class PurchaseOrderService {
    */
   async getPreferredSuppliers(itemId: string): Promise<SupplierInfo[]> {
     const supabase = await this.getSupabase();
-    
+
     const { data, error } = await supabase
       .from('supplier_items')
       .select(`
@@ -88,28 +94,30 @@ export class PurchaseOrderService {
       `)
       .eq('item_id', itemId)
       .order('cost_rating', { ascending: false });
-    
+
     if (error) throw error;
-    
-    return data?.map((item: any) => ({
-      id: item.suppliers.id,
-      name: item.suppliers.name,
-      email: item.suppliers.contact_email,
-      phone: item.suppliers.contact_phone,
-      leadTime: item.lead_time_days,
-      minimumOrder: item.minimum_order_quantity,
-      preferredPaymentTerms: item.suppliers.payment_terms,
-      reliability_score: item.suppliers.reliability_score,
-      cost_rating: item.suppliers.cost_rating
-    })) || [];
+
+    return (
+      data?.map((item: any) => ({
+        id: item.suppliers.id,
+        name: item.suppliers.name,
+        email: item.suppliers.contact_email,
+        phone: item.suppliers.contact_phone,
+        leadTime: item.lead_time_days,
+        minimumOrder: item.minimum_order_quantity,
+        preferredPaymentTerms: item.suppliers.payment_terms,
+        reliability_score: item.suppliers.reliability_score,
+        cost_rating: item.suppliers.cost_rating,
+      })) || []
+    );
   }
 
   /**
    * Select best supplier based on criteria
    */
   async selectOptimalSupplier(
-    itemId: string, 
-    quantity: number,
+    itemId: string,
+    _quantity: number,
     priorityFactors: {
       costWeight: number; // 0-1
       reliabilityWeight: number; // 0-1
@@ -117,26 +125,26 @@ export class PurchaseOrderService {
     } = { costWeight: 0.5, reliabilityWeight: 0.3, leadTimeWeight: 0.2 }
   ): Promise<SupplierInfo | null> {
     const suppliers = await this.getPreferredSuppliers(itemId);
-    
+
     if (suppliers.length === 0) return null;
-    
+
     // Calcular score ponderado para cada supplier
-    const scoredSuppliers = suppliers.map(supplier => {
+    const scoredSuppliers = suppliers.map((supplier) => {
       // Normalizar métricas (0-1, onde 1 é melhor)
       const costScore = 1 - (supplier.cost_rating || 0) / 10; // Inverte pois menor custo é melhor
       const reliabilityScore = (supplier.reliability_score || 0) / 10;
       const leadTimeScore = 1 - Math.min(supplier.leadTime / 30, 1); // Normaliza para 30 dias máx
-      
-      const totalScore = 
-        (costScore * priorityFactors.costWeight) +
-        (reliabilityScore * priorityFactors.reliabilityWeight) +
-        (leadTimeScore * priorityFactors.leadTimeWeight);
-      
+
+      const totalScore =
+        costScore * priorityFactors.costWeight +
+        reliabilityScore * priorityFactors.reliabilityWeight +
+        leadTimeScore * priorityFactors.leadTimeWeight;
+
       return { ...supplier, score: totalScore };
     });
-    
+
     // Retornar supplier com maior score
-    return scoredSuppliers.reduce((best, current) => 
+    return scoredSuppliers.reduce((best, current) =>
       current.score > best.score ? current : best
     );
   }
@@ -150,33 +158,33 @@ export class PurchaseOrderService {
    */
   calculateEOQ(input: EOQInput): EOQResult {
     const { annualDemand, orderingCost, holdingCost, unitCost } = input;
-    
+
     // EOQ = √(2 × D × S / H)
     // D = Annual demand, S = Ordering cost, H = Holding cost per unit
     const optimalOrderQuantity = Math.sqrt(
       (2 * annualDemand * orderingCost) / holdingCost
     );
-    
+
     // Total cost = Ordering cost + Holding cost
     const numberOfOrders = annualDemand / optimalOrderQuantity;
     const orderingCostComponent = numberOfOrders * orderingCost;
     const holdingCostComponent = (optimalOrderQuantity / 2) * holdingCost;
     const totalCost = orderingCostComponent + holdingCostComponent;
-    
+
     // Reorder point (assumindo demanda constante)
     const dailyDemand = annualDemand / 365;
     const reorderPoint = dailyDemand * 7; // 7 dias de lead time padrão
-    
+
     // Time between orders
     const timeBetweenOrders = optimalOrderQuantity / dailyDemand;
-    
+
     return {
       optimalOrderQuantity: Math.round(optimalOrderQuantity),
       totalCost,
       orderingCostComponent,
       holdingCostComponent,
       reorderPoint: Math.round(reorderPoint),
-      timeBetweenOrders: Math.round(timeBetweenOrders)
+      timeBetweenOrders: Math.round(timeBetweenOrders),
     };
   }
 
@@ -185,7 +193,7 @@ export class PurchaseOrderService {
    */
   async getEOQParameters(itemId: string, clinicId: string): Promise<EOQInput> {
     const supabase = await this.getSupabase();
-    
+
     // Obter demanda anual (últimos 12 meses)
     const { data: consumptionData } = await supabase
       .from('inventory_transactions')
@@ -193,25 +201,29 @@ export class PurchaseOrderService {
       .eq('item_id', itemId)
       .eq('clinic_id', clinicId)
       .eq('transaction_type', 'consumption')
-      .gte('created_at', new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString());
-    
-    const annualDemand = consumptionData?.reduce((sum, tx) => sum + Math.abs(tx.quantity), 0) || 0;
-    
+      .gte(
+        'created_at',
+        new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString()
+      );
+
+    const annualDemand =
+      consumptionData?.reduce((sum, tx) => sum + Math.abs(tx.quantity), 0) || 0;
+
     // Obter dados do item
     const { data: itemData } = await supabase
       .from('inventory_items')
       .select('unit_cost, storage_cost_percentage')
       .eq('id', itemId)
       .single();
-    
+
     const unitCost = itemData?.unit_cost || 0;
     const storageCostPercentage = itemData?.storage_cost_percentage || 0.25; // 25% padrão
-    
+
     return {
       annualDemand,
       orderingCost: 50, // Custo fixo padrão por pedido
       holdingCost: unitCost * storageCostPercentage,
-      unitCost
+      unitCost,
     };
   }
 
@@ -228,64 +240,78 @@ export class PurchaseOrderService {
     userId: string
   ): Promise<PurchaseOrder> {
     const supabase = await this.getSupabase();
-    
+
     // Agrupar itens por supplier preferido
-    const supplierGroups = new Map<string, Array<{
-      itemId: string;
-      itemName: string;
-      quantity: number;
-      unitPrice: number;
-      supplierSku?: string;
-    }>>();
-    
+    const supplierGroups = new Map<
+      string,
+      Array<{
+        itemId: string;
+        itemName: string;
+        quantity: number;
+        unitPrice: number;
+        supplierSku?: string;
+      }>
+    >();
+
     for (const item of items) {
-      const supplier = await this.selectOptimalSupplier(item.itemId, item.requiredQuantity);
+      const supplier = await this.selectOptimalSupplier(
+        item.itemId,
+        item.requiredQuantity
+      );
       if (!supplier) continue;
-      
+
       // Obter dados do item
       const { data: itemData } = await supabase
         .from('inventory_items')
         .select('name, unit_cost')
         .eq('id', item.itemId)
         .single();
-      
+
       if (!itemData) continue;
-      
+
       // Aplicar EOQ para otimizar quantidade
       const eoqParams = await this.getEOQParameters(item.itemId, clinicId);
       const eoqResult = this.calculateEOQ(eoqParams);
-      
+
       // Usar maior entre quantidade necessária e EOQ (para otimização)
-      const optimizedQuantity = Math.max(item.requiredQuantity, eoqResult.optimalOrderQuantity);
-      
+      const optimizedQuantity = Math.max(
+        item.requiredQuantity,
+        eoqResult.optimalOrderQuantity
+      );
+
       if (!supplierGroups.has(supplier.id)) {
         supplierGroups.set(supplier.id, []);
       }
-      
-      supplierGroups.get(supplier.id)!.push({
+
+      supplierGroups.get(supplier.id)?.push({
         itemId: item.itemId,
         itemName: itemData.name,
         quantity: optimizedQuantity,
         unitPrice: itemData.unit_cost,
-        supplierSku: `SUP-${item.itemId.slice(-6)}`
+        supplierSku: `SUP-${item.itemId.slice(-6)}`,
       });
     }
-    
+
     // Criar purchase orders (um por supplier)
     const purchaseOrders: PurchaseOrder[] = [];
-    
+
     for (const [supplierId, orderItems] of supplierGroups) {
       const orderNumber = await this.generateOrderNumber(clinicId);
-      const totalAmount = orderItems.reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0);
-      
+      const totalAmount = orderItems.reduce(
+        (sum, item) => sum + item.quantity * item.unitPrice,
+        0
+      );
+
       // Obter lead time do supplier
-      const supplierInfo = await this.getPreferredSuppliers(orderItems[0].itemId);
-      const supplier = supplierInfo.find(s => s.id === supplierId);
+      const supplierInfo = await this.getPreferredSuppliers(
+        orderItems[0].itemId
+      );
+      const supplier = supplierInfo.find((s) => s.id === supplierId);
       const leadTime = supplier?.leadTime || 7;
-      
+
       const expectedDeliveryDate = new Date();
       expectedDeliveryDate.setDate(expectedDeliveryDate.getDate() + leadTime);
-      
+
       const purchaseOrder: PurchaseOrder = {
         id: `po_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         order_number: orderNumber,
@@ -294,34 +320,34 @@ export class PurchaseOrderService {
         status: totalAmount > 5000 ? 'pending_approval' : 'approved', // Auto-approve se < R$ 5000
         total_amount: totalAmount,
         expected_delivery_date: expectedDeliveryDate,
-        items: orderItems.map(item => ({
+        items: orderItems.map((item) => ({
           item_id: item.itemId,
           item_name: item.itemName,
           quantity: item.quantity,
           unit_price: item.unitPrice,
           total_price: item.quantity * item.unitPrice,
-          supplier_sku: item.supplierSku
+          supplier_sku: item.supplierSku,
         })),
         created_at: new Date(),
-        created_by: userId
+        created_by: userId,
       };
-      
+
       purchaseOrders.push(purchaseOrder);
     }
-    
+
     return purchaseOrders[0]; // Retornar primeiro PO por simplicidade
   }
 
   /**
    * Generate unique order number
    */
-  private async generateOrderNumber(clinicId: string): Promise<string> {
+  private async generateOrderNumber(_clinicId: string): Promise<string> {
     const date = new Date();
     const year = date.getFullYear().toString().slice(-2);
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const day = date.getDate().toString().padStart(2, '0');
     const random = Math.random().toString(36).substr(2, 4).toUpperCase();
-    
+
     return `PO-${year}${month}${day}-${random}`;
   }
 
@@ -347,31 +373,31 @@ export class PurchaseOrderService {
   }> {
     const recommendations = [];
     let totalSavings = 0;
-    
+
     for (const itemId of itemIds) {
       const eoqParams = await this.getEOQParameters(itemId, clinicId);
       const eoqResult = this.calculateEOQ(eoqParams);
-      
+
       // Simular pedido atual vs otimizado
       const currentQuantity = Math.max(eoqParams.annualDemand / 12, 1); // Mensal
       const currentCost = this.calculateOrderCost(currentQuantity, eoqParams);
       const optimizedCost = eoqResult.totalCost;
-      
+
       const savings = Math.max(0, currentCost - optimizedCost);
-      
+
       if (savings > 0) {
         recommendations.push({
           itemId,
           currentQuantity,
           recommendedQuantity: eoqResult.optimalOrderQuantity,
           costSavings: savings,
-          reasoning: `EOQ optimization reduces total cost from $${currentCost.toFixed(2)} to $${optimizedCost.toFixed(2)}`
+          reasoning: `EOQ optimization reduces total cost from $${currentCost.toFixed(2)} to $${optimizedCost.toFixed(2)}`,
         });
-        
+
         totalSavings += savings;
       }
     }
-    
+
     return { recommendations, totalSavings };
   }
 
@@ -382,7 +408,7 @@ export class PurchaseOrderService {
     const numberOfOrders = eoqParams.annualDemand / quantity;
     const orderingCost = numberOfOrders * eoqParams.orderingCost;
     const holdingCost = (quantity / 2) * eoqParams.holdingCost;
-    
+
     return orderingCost + holdingCost;
   }
 
@@ -402,41 +428,41 @@ export class PurchaseOrderService {
     totalItems: number;
   }> {
     const supabase = await this.getSupabase();
-    
+
     // Obter dados da clínica
     const { data: clinicData } = await supabase
       .from('clinics')
       .select('name, address, phone, email')
       .eq('id', purchaseOrder.clinic_id)
       .single();
-    
+
     // Obter dados do supplier
     const { data: supplierData } = await supabase
       .from('suppliers')
       .select('name, contact_email, contact_phone')
       .eq('id', purchaseOrder.supplier_id)
       .single();
-    
+
     const templateConfig = {
       standard: {
         subject: `Purchase Order ${purchaseOrder.order_number}`,
         priority: 'Normal',
-        urgencyNote: ''
+        urgencyNote: '',
       },
       medical: {
         subject: `MEDICAL SUPPLIES - Purchase Order ${purchaseOrder.order_number}`,
         priority: 'High',
-        urgencyNote: 'Medical supplies required for patient care.'
+        urgencyNote: 'Medical supplies required for patient care.',
       },
       urgent: {
         subject: `URGENT - Purchase Order ${purchaseOrder.order_number}`,
         priority: 'Urgent',
-        urgencyNote: 'Emergency order - expedited delivery required.'
-      }
+        urgencyNote: 'Emergency order - expedited delivery required.',
+      },
     };
-    
+
     const config = templateConfig[templateType];
-    
+
     const html = `
       <div style="font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto;">
         <header style="background: #f8f9fa; padding: 20px; border-bottom: 2px solid #007bff;">
@@ -479,7 +505,9 @@ export class PurchaseOrderService {
               </tr>
             </thead>
             <tbody>
-              ${purchaseOrder.items.map(item => `
+              ${purchaseOrder.items
+                .map(
+                  (item) => `
                 <tr>
                   <td style="border: 1px solid #dee2e6; padding: 12px;">${item.item_name}</td>
                   <td style="border: 1px solid #dee2e6; padding: 12px; text-align: center;">${item.supplier_sku || '-'}</td>
@@ -487,7 +515,9 @@ export class PurchaseOrderService {
                   <td style="border: 1px solid #dee2e6; padding: 12px; text-align: right;">R$ ${item.unit_price.toFixed(2)}</td>
                   <td style="border: 1px solid #dee2e6; padding: 12px; text-align: right;">R$ ${item.total_price.toFixed(2)}</td>
                 </tr>
-              `).join('')}
+              `
+                )
+                .join('')}
             </tbody>
             <tfoot>
               <tr style="background: #f8f9fa; font-weight: bold;">
@@ -515,11 +545,11 @@ export class PurchaseOrderService {
         </footer>
       </div>
     `;
-    
+
     return {
       html,
       subject: config.subject,
-      totalItems: purchaseOrder.items.length
+      totalItems: purchaseOrder.items.length,
     };
   }
 }

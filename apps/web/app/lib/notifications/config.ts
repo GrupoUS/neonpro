@@ -11,14 +11,14 @@ export const NOTIFICATION_CONFIG = {
     provider: 'resend' as const,
     templates: {
       appointmentReminder: 'appointment-reminder',
-      appointmentConfirmation: 'appointment-confirmation', 
+      appointmentConfirmation: 'appointment-confirmation',
       appointmentCancellation: 'appointment-cancellation',
       rescheduleRequest: 'reschedule-request',
       treatmentReminder: 'treatment-reminder',
-      followUpReminder: 'follow-up-reminder'
-    }
+      followUpReminder: 'follow-up-reminder',
+    },
   },
-  
+
   // SMS configuration (Twilio)
   sms: {
     enabled: Boolean(process.env.TWILIO_ACCOUNT_SID),
@@ -28,8 +28,8 @@ export const NOTIFICATION_CONFIG = {
     templates: {
       appointmentReminder: 'appointment_reminder_sms',
       appointmentConfirmation: 'appointment_confirmation_sms',
-      emergencyReminder: 'emergency_reminder_sms'
-    }
+      emergencyReminder: 'emergency_reminder_sms',
+    },
   },
 
   // Scheduling configuration
@@ -39,12 +39,12 @@ export const NOTIFICATION_CONFIG = {
     reminderIntervals: {
       // Appointment reminders
       firstReminder: { days: 7, hours: 0 }, // 1 week before
-      secondReminder: { days: 1, hours: 0 }, // 1 day before  
+      secondReminder: { days: 1, hours: 0 }, // 1 day before
       finalReminder: { days: 0, hours: 2 }, // 2 hours before
       // Treatment follow-ups
       followUp: { days: 1, hours: 0 }, // Next day
-      checkIn: { days: 7, hours: 0 } // 1 week after
-    }
+      checkIn: { days: 7, hours: 0 }, // 1 week after
+    },
   },
 
   // HIPAA compliance settings
@@ -53,7 +53,7 @@ export const NOTIFICATION_CONFIG = {
     auditLogging: true,
     consentRequired: true,
     retentionPeriod: 2555, // 7 years in days
-    allowedChannels: ['email', 'sms', 'in_app'] as const
+    allowedChannels: ['email', 'sms', 'in_app'] as const,
   },
 
   // Message preferences
@@ -64,18 +64,18 @@ export const NOTIFICATION_CONFIG = {
     businessHours: {
       start: '08:00',
       end: '18:00',
-      timezone: 'America/Sao_Paulo'
+      timezone: 'America/Sao_Paulo',
     },
     quietHours: {
       start: '20:00',
       end: '08:00',
-      timezone: 'America/Sao_Paulo'
-    }
-  }
+      timezone: 'America/Sao_Paulo',
+    },
+  },
 } as const;
 
 // Notification types for the system
-export type NotificationType = 
+export type NotificationType =
   | 'appointment_reminder'
   | 'appointment_confirmation'
   | 'appointment_cancellation'
@@ -117,7 +117,7 @@ export function validateNotificationConfig() {
     errors.push('RESEND_API_KEY is required for email notifications');
   }
 
-  // Check SMS configuration  
+  // Check SMS configuration
   if (NOTIFICATION_CONFIG.sms.enabled) {
     if (!process.env.TWILIO_ACCOUNT_SID) {
       errors.push('TWILIO_ACCOUNT_SID is required for SMS notifications');

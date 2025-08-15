@@ -1,10 +1,10 @@
+import { type NextRequest, NextResponse } from 'next/server';
 import { equipmentMaintenanceService } from '@/app/lib/services/equipment-maintenance-service';
-import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    
+
     // Extract clinic_id from query params
     const clinicId = searchParams.get('clinic_id');
     if (!clinicId) {
@@ -14,7 +14,8 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const summary = await equipmentMaintenanceService.getMaintenanceSummary(clinicId);
+    const summary =
+      await equipmentMaintenanceService.getMaintenanceSummary(clinicId);
 
     return NextResponse.json(summary);
   } catch (error) {

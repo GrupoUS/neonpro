@@ -1,33 +1,33 @@
-'use client'
+'use client';
 
-import { createClient } from '@/app/utils/supabase/client'
-import { RealtimeChannel } from '@supabase/supabase-js'
-import { useCallback, useEffect, useState } from 'react'
+import type { RealtimeChannel } from '@supabase/supabase-js';
+import { useCallback, useEffect, useState } from 'react';
+import { createClient } from '@/app/utils/supabase/client';
 
 interface AvailabilitySlot {
-  datetime: string
-  is_available: boolean
-  professional_id?: string
-  professional_name?: string
-  booking_count: number
-  conflict_reason?: string
+  datetime: string;
+  is_available: boolean;
+  professional_id?: string;
+  professional_name?: string;
+  booking_count: number;
+  conflict_reason?: string;
 }
 
 interface UseRealTimeAvailabilityProps {
-  serviceId: string | null
-  professionalId?: string | null
-  startDate: string
-  endDate: string
-  enabled?: boolean
+  serviceId: string | null;
+  professionalId?: string | null;
+  startDate: string;
+  endDate: string;
+  enabled?: boolean;
 }
 
 interface UseRealTimeAvailabilityResult {
-  slots: AvailabilitySlot[]
-  loading: boolean
-  error: string | null
-  refreshAvailability: () => Promise<void>
-  isConnected: boolean
-  lastUpdated: Date | null
+  slots: AvailabilitySlot[];
+  loading: boolean;
+  error: string | null;
+  refreshAvailability: () => Promise<void>;
+  isConnected: boolean;
+  lastUpdated: Date | null;
 }
 
 export function useRealTimeAvailability({
@@ -35,33 +35,35 @@ export function useRealTimeAvailability({
   professionalId,
   startDate,
   endDate,
-  enabled = true
+  enabled = true,
 }: UseRealTimeAvailabilityProps): UseRealTimeAvailabilityResult {
-  const [slots, setSlots] = useState<AvailabilitySlot[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [isConnected, setIsConnected] = useState(false)
-  const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
-  const [channel, setChannel] = useState<RealtimeChannel | null>(null)
+  const [slots, setSlots] = useState<AvailabilitySlot[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [isConnected, setIsConnected] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [_channel, setChannel] = useState<RealtimeChannel | null>(null);
 
-  const supabase = createClient()
+  const supabase = createClient();
 
   const fetchAvailability = useCallback(async () => {
-    if (!serviceId || !enabled) return
+    if (!(serviceId && enabled)) return;
 
     try {
-      setLoading(true)
-      setError(null)
+      setLoading(true);
+      setError(null);
 
-      const { data, error: fetchError } = await supabase
-        .rpc('get_patient_available_slots_realtime', {
+      const { data, error: fetchError } = await supabase.rpc(
+        'get_patient_available_slots_realtime',
+        {
           p_service_id: serviceId,
           p_professional_id: professionalId || null,
           p_start_date: startDate,
-          p_end_date: endDate
-        })
+          p_end_date: endDate,
+        }
+      );
 
-      if (fetchError) throw fetchError
+      if (fetchError) throw fetchError;
 
       const enrichedSlots: AvailabilitySlot[] = data.map((slot: any) => ({
         datetime: slot.datetime,
@@ -69,25 +71,25 @@ export function useRealTimeAvailability({
         professional_id: slot.professional_id,
         professional_name: slot.professional_name,
         booking_count: slot.booking_count || 0,
-        conflict_reason: slot.conflict_reason
-      }))
+        conflict_reason: slot.conflict_reason,
+      }));
 
-      setSlots(enrichedSlots)
-      setLastUpdated(new Date())
+      setSlots(enrichedSlots);
+      setLastUpdated(new Date());
     } catch (err) {
-      console.error('Error fetching availability:', err)
-      setError('Erro ao carregar disponibilidade em tempo real.')
+      console.error('Error fetching availability:', err);
+      setError('Erro ao carregar disponibilidade em tempo real.');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }, [serviceId, professionalId, startDate, endDate, enabled, supabase])
+  }, [serviceId, professionalId, startDate, endDate, enabled, supabase]);
 
   // Set up real-time subscription
   useEffect(() => {
-    if (!serviceId || !enabled) return
+    if (!(serviceId && enabled)) return;
 
-    const channelName = `availability:${serviceId}${professionalId ? `:${professionalId}` : ''}`
-    
+    const channelName = `availability:${serviceId}${professionalId ? `:${professionalId}` : ''}`;
+
     const newChannel = supabase
       .channel(channelName)
       .on(
@@ -96,13 +98,15 @@ export function useRealTimeAvailability({
           event: '*',
           schema: 'public',
           table: 'appointments',
-          filter: professionalId ? `professional_id=eq.${professionalId}` : undefined
+          filter: professionalId
+            ? `professional_id=eq.${professionalId}`
+            : undefined,
         },
         (payload) => {
-          console.log('Real-time appointment change:', payload)
-          
+          console.log('Real-time appointment change:', payload);
+
           // Refresh availability when appointments change
-          fetchAvailability()
+          fetchAvailability();
         }
       )
       .on(
@@ -110,64 +114,64 @@ export function useRealTimeAvailability({
         {
           event: '*',
           schema: 'public',
-          table: 'patient_appointments'
+          table: 'patient_appointments',
         },
         (payload) => {
-          console.log('Real-time patient appointment change:', payload)
-          
+          console.log('Real-time patient appointment change:', payload);
+
           // Refresh availability when patient appointments change
-          fetchAvailability()
+          fetchAvailability();
         }
       )
       .on('presence', { event: 'sync' }, () => {
-        setIsConnected(true)
-        console.log('Real-time availability connected')
+        setIsConnected(true);
+        console.log('Real-time availability connected');
       })
       .on('presence', { event: 'leave' }, () => {
-        setIsConnected(false)
-        console.log('Real-time availability disconnected')
-      })
+        setIsConnected(false);
+        console.log('Real-time availability disconnected');
+      });
 
     newChannel.subscribe((status) => {
       if (status === 'SUBSCRIBED') {
-        setIsConnected(true)
-        console.log('Real-time availability subscribed')
+        setIsConnected(true);
+        console.log('Real-time availability subscribed');
       } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
-        setIsConnected(false)
-        console.error('Real-time availability connection error:', status)
+        setIsConnected(false);
+        console.error('Real-time availability connection error:', status);
       }
-    })
+    });
 
-    setChannel(newChannel)
+    setChannel(newChannel);
 
     // Initial fetch
-    fetchAvailability()
+    fetchAvailability();
 
     // Cleanup on unmount
     return () => {
-      newChannel.unsubscribe()
-      setChannel(null)
-      setIsConnected(false)
-    }
-  }, [serviceId, professionalId, enabled, fetchAvailability, supabase])
+      newChannel.unsubscribe();
+      setChannel(null);
+      setIsConnected(false);
+    };
+  }, [serviceId, professionalId, enabled, fetchAvailability, supabase]);
 
   // Periodic refresh fallback (every 30 seconds)
   useEffect(() => {
-    if (!enabled) return
+    if (!enabled) return;
 
     const interval = setInterval(() => {
       if (!isConnected) {
-        console.log('Real-time disconnected, fallback refresh')
-        fetchAvailability()
+        console.log('Real-time disconnected, fallback refresh');
+        fetchAvailability();
       }
-    }, 30000)
+    }, 30_000);
 
-    return () => clearInterval(interval)
-  }, [enabled, isConnected, fetchAvailability])
+    return () => clearInterval(interval);
+  }, [enabled, isConnected, fetchAvailability]);
 
   const refreshAvailability = useCallback(async () => {
-    await fetchAvailability()
-  }, [fetchAvailability])
+    await fetchAvailability();
+  }, [fetchAvailability]);
 
   return {
     slots,
@@ -175,131 +179,144 @@ export function useRealTimeAvailability({
     error,
     refreshAvailability,
     isConnected,
-    lastUpdated
-  }
+    lastUpdated,
+  };
 }
 
 // Hook for conflict detection during booking
 export function useConflictDetection() {
-  const supabase = createClient()
+  const supabase = createClient();
 
-  const checkForConflicts = useCallback(async (
-    datetime: string,
-    serviceId: string,
-    professionalId?: string,
-    duration?: number
-  ): Promise<{
-    hasConflict: boolean
-    conflictReason?: string
-    suggestedAlternatives?: AvailabilitySlot[]
-  }> => {
-    try {
-      // Use the conflict prevention system from Story 1.2
-      const { data: conflictCheck, error: conflictError } = await supabase
-        .rpc('detect_appointment_conflicts_advanced', {
-          p_datetime: datetime,
-          p_service_id: serviceId,
-          p_professional_id: professionalId || null,
-          p_duration_minutes: duration || 60
-        })
-
-      if (conflictError) throw conflictError
-
-      if (conflictCheck?.has_conflict) {
-        // Get alternative suggestions
-        const { data: alternatives, error: altError } = await supabase
-          .rpc('get_alternative_slots', {
-            p_original_datetime: datetime,
+  const checkForConflicts = useCallback(
+    async (
+      datetime: string,
+      serviceId: string,
+      professionalId?: string,
+      duration?: number
+    ): Promise<{
+      hasConflict: boolean;
+      conflictReason?: string;
+      suggestedAlternatives?: AvailabilitySlot[];
+    }> => {
+      try {
+        // Use the conflict prevention system from Story 1.2
+        const { data: conflictCheck, error: conflictError } =
+          await supabase.rpc('detect_appointment_conflicts_advanced', {
+            p_datetime: datetime,
             p_service_id: serviceId,
             p_professional_id: professionalId || null,
             p_duration_minutes: duration || 60,
-            p_search_range_hours: 48
-          })
+          });
 
-        if (altError) {
-          console.warn('Error fetching alternatives:', altError)
+        if (conflictError) throw conflictError;
+
+        if (conflictCheck?.has_conflict) {
+          // Get alternative suggestions
+          const { data: alternatives, error: altError } = await supabase.rpc(
+            'get_alternative_slots',
+            {
+              p_original_datetime: datetime,
+              p_service_id: serviceId,
+              p_professional_id: professionalId || null,
+              p_duration_minutes: duration || 60,
+              p_search_range_hours: 48,
+            }
+          );
+
+          if (altError) {
+            console.warn('Error fetching alternatives:', altError);
+          }
+
+          return {
+            hasConflict: true,
+            conflictReason: conflictCheck.conflict_reason,
+            suggestedAlternatives: alternatives || [],
+          };
         }
 
+        return { hasConflict: false };
+      } catch (error) {
+        console.error('Error checking conflicts:', error);
         return {
           hasConflict: true,
-          conflictReason: conflictCheck.conflict_reason,
-          suggestedAlternatives: alternatives || []
-        }
+          conflictReason: 'Erro ao verificar conflitos. Tente novamente.',
+        };
       }
+    },
+    [supabase]
+  );
 
-      return { hasConflict: false }
-
-    } catch (error) {
-      console.error('Error checking conflicts:', error)
-      return { 
-        hasConflict: true, 
-        conflictReason: 'Erro ao verificar conflitos. Tente novamente.' 
-      }
-    }
-  }, [supabase])
-
-  return { checkForConflicts }
+  return { checkForConflicts };
 }
 
 // Hook for optimistic booking (temporary reservation)
 export function useOptimisticBooking() {
-  const supabase = createClient()
-  const [reservedSlots, setReservedSlots] = useState<Set<string>>(new Set())
+  const supabase = createClient();
+  const [reservedSlots, setReservedSlots] = useState<Set<string>>(new Set());
 
-  const reserveSlot = useCallback(async (
-    datetime: string,
-    serviceId: string,
-    professionalId?: string
-  ): Promise<{ success: boolean; reservationId?: string }> => {
-    try {
-      // Create temporary reservation (expires in 10 minutes)
-      const { data, error } = await supabase
-        .rpc('create_temporary_reservation', {
-          p_datetime: datetime,
-          p_service_id: serviceId,
-          p_professional_id: professionalId || null,
-          p_expires_in_minutes: 10
-        })
+  const reserveSlot = useCallback(
+    async (
+      datetime: string,
+      serviceId: string,
+      professionalId?: string
+    ): Promise<{ success: boolean; reservationId?: string }> => {
+      try {
+        // Create temporary reservation (expires in 10 minutes)
+        const { data, error } = await supabase.rpc(
+          'create_temporary_reservation',
+          {
+            p_datetime: datetime,
+            p_service_id: serviceId,
+            p_professional_id: professionalId || null,
+            p_expires_in_minutes: 10,
+          }
+        );
 
-      if (error) throw error
+        if (error) throw error;
 
-      if (data?.reservation_id) {
-        setReservedSlots(prev => new Set([...prev, datetime]))
-        
-        // Auto-remove from reserved slots after 10 minutes
-        setTimeout(() => {
-          setReservedSlots(prev => {
-            const newSet = new Set(prev)
-            newSet.delete(datetime)
-            return newSet
-          })
-        }, 10 * 60 * 1000)
+        if (data?.reservation_id) {
+          setReservedSlots((prev) => new Set([...prev, datetime]));
 
-        return { success: true, reservationId: data.reservation_id }
+          // Auto-remove from reserved slots after 10 minutes
+          setTimeout(
+            () => {
+              setReservedSlots((prev) => {
+                const newSet = new Set(prev);
+                newSet.delete(datetime);
+                return newSet;
+              });
+            },
+            10 * 60 * 1000
+          );
+
+          return { success: true, reservationId: data.reservation_id };
+        }
+
+        return { success: false };
+      } catch (error) {
+        console.error('Error reserving slot:', error);
+        return { success: false };
       }
+    },
+    [supabase]
+  );
 
-      return { success: false }
-
-    } catch (error) {
-      console.error('Error reserving slot:', error)
-      return { success: false }
-    }
-  }, [supabase])
-
-  const releaseSlot = useCallback(async (reservationId: string) => {
-    try {
-      await supabase
-        .rpc('release_temporary_reservation', {
-          p_reservation_id: reservationId
-        })
-    } catch (error) {
-      console.error('Error releasing slot:', error)
-    }
-  }, [supabase])
+  const releaseSlot = useCallback(
+    async (reservationId: string) => {
+      try {
+        await supabase.rpc('release_temporary_reservation', {
+          p_reservation_id: reservationId,
+        });
+      } catch (error) {
+        console.error('Error releasing slot:', error);
+      }
+    },
+    [supabase]
+  );
 
   return {
     reserveSlot,
     releaseSlot,
-    reservedSlots: Array.from(reservedSlots)
-  }
+    reservedSlots: Array.from(reservedSlots),
+  };
 }

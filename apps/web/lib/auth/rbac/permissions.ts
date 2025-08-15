@@ -1,14 +1,20 @@
 /**
  * RBAC Permissions System for NeonPro
  * Story 1.2: Role-Based Access Control Implementation
- * 
+ *
  * This module provides comprehensive permission checking and validation
  * for the NeonPro application with multi-tenant support.
  */
 
-import { UserRole, Permission, PermissionCheck, PermissionResult, DEFAULT_ROLES } from '@/types/rbac';
-import { AuthUser } from '@/lib/middleware/auth';
 import { createClient } from '@/app/utils/supabase/client';
+import type { AuthUser } from '@/lib/middleware/auth';
+import {
+  DEFAULT_ROLES,
+  type Permission,
+  type PermissionCheck,
+  type PermissionResult,
+  type UserRole,
+} from '@/types/rbac';
 
 // Export the class-based manager interface
 export { RBACPermissionManager } from './rbac-manager';
@@ -16,7 +22,10 @@ export { RBACPermissionManager } from './rbac-manager';
 /**
  * Permission validation cache for performance optimization
  */
-const permissionCache = new Map<string, { result: PermissionResult; timestamp: number }>();
+const permissionCache = new Map<
+  string,
+  { result: PermissionResult; timestamp: number }
+>();
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
 /**
@@ -52,7 +61,7 @@ export async function hasPermission(
     permission,
     resourceId,
     clinicId: user.clinicId || '',
-    context
+    context,
   };
 
   // Check cache first
@@ -68,11 +77,11 @@ export async function hasPermission(
   }
 
   const result = await validatePermission(check, user);
-  
+
   // Cache the result
   permissionCache.set(cacheKey, {
     result,
-    timestamp: Date.now()
+    timestamp: Date.now(),
   });
 
   return result;
@@ -92,18 +101,20 @@ async function validatePermission(
       return {
         granted: false,
         reason: 'Invalid user role',
-        roleUsed: user.role as UserRole
+        roleUsed: user.role as UserRole,
       };
     }
 
     // Check if role has the permission
-    const hasRolePermission = roleDefinition.permissions.includes(check.permission);
+    const hasRolePermission = roleDefinition.permissions.includes(
+      check.permission
+    );
     if (!hasRolePermission) {
       return {
         granted: false,
         reason: `Role '${user.role}' does not have permission '${check.permission}'`,
         roleUsed: user.role as UserRole,
-        hierarchyLevel: roleDefinition.hierarchy
+        hierarchyLevel: roleDefinition.hierarchy,
       };
     }
 
@@ -115,7 +126,7 @@ async function validatePermission(
           granted: false,
           reason: 'Access denied: Different clinic',
           roleUsed: user.role as UserRole,
-          hierarchyLevel: roleDefinition.hierarchy
+          hierarchyLevel: roleDefinition.hierarchy,
         };
       }
     }
@@ -135,19 +146,18 @@ async function validatePermission(
       granted: true,
       roleUsed: user.role as UserRole,
       hierarchyLevel: roleDefinition.hierarchy,
-      auditId: await generateAuditId()
+      auditId: await generateAuditId(),
     };
-
   } catch (error) {
     console.error('Permission validation error:', error);
-    
+
     // Log failed permission check
     await logPermissionCheck(check, user, false);
-    
+
     return {
       granted: false,
       reason: 'Permission validation failed',
-      roleUsed: user.role as UserRole
+      roleUsed: user.role as UserRole,
     };
   }
 }
@@ -170,7 +180,10 @@ async function checkResourceAccess(
   }
 
   // For financial data, check if user has financial permissions
-  if (check.permission.startsWith('billing.') || check.permission.startsWith('payments.')) {
+  if (
+    check.permission.startsWith('billing.') ||
+    check.permission.startsWith('payments.')
+  ) {
     return await checkFinancialAccess(user);
   }
 
@@ -187,7 +200,7 @@ async function checkPatientAccess(
 ): Promise<PermissionResult> {
   try {
     const supabase = createClient();
-    
+
     // Check if patient belongs to user's clinic
     const { data: patient } = await supabase
       .from('patients')
@@ -199,7 +212,7 @@ async function checkPatientAccess(
       return {
         granted: false,
         reason: 'Patient not found',
-        roleUsed: user.role as UserRole
+        roleUsed: user.role as UserRole,
       };
     }
 
@@ -207,7 +220,7 @@ async function checkPatientAccess(
       return {
         granted: false,
         reason: 'Patient belongs to different clinic',
-        roleUsed: user.role as UserRole
+        roleUsed: user.role as UserRole,
       };
     }
 
@@ -217,7 +230,7 @@ async function checkPatientAccess(
     return {
       granted: false,
       reason: 'Patient access validation failed',
-      roleUsed: user.role as UserRole
+      roleUsed: user.role as UserRole,
     };
   }
 }
@@ -231,7 +244,7 @@ async function checkAppointmentAccess(
 ): Promise<PermissionResult> {
   try {
     const supabase = createClient();
-    
+
     // Check if appointment belongs to user's clinic
     const { data: appointment } = await supabase
       .from('appointments')
@@ -243,7 +256,7 @@ async function checkAppointmentAccess(
       return {
         granted: false,
         reason: 'Appointment not found',
-        roleUsed: user.role as UserRole
+        roleUsed: user.role as UserRole,
       };
     }
 
@@ -251,7 +264,7 @@ async function checkAppointmentAccess(
       return {
         granted: false,
         reason: 'Appointment belongs to different clinic',
-        roleUsed: user.role as UserRole
+        roleUsed: user.role as UserRole,
       };
     }
 
@@ -260,7 +273,7 @@ async function checkAppointmentAccess(
       return {
         granted: false,
         reason: 'Staff can only access own appointments',
-        roleUsed: user.role as UserRole
+        roleUsed: user.role as UserRole,
       };
     }
 
@@ -270,7 +283,7 @@ async function checkAppointmentAccess(
     return {
       granted: false,
       reason: 'Appointment access validation failed',
-      roleUsed: user.role as UserRole
+      roleUsed: user.role as UserRole,
     };
   }
 }
@@ -281,12 +294,12 @@ async function checkAppointmentAccess(
 async function checkFinancialAccess(user: AuthUser): Promise<PermissionResult> {
   // Only owner, manager, and admin roles can access financial data
   const allowedRoles: UserRole[] = ['owner', 'manager', 'admin'];
-  
+
   if (!allowedRoles.includes(user.role as UserRole)) {
     return {
       granted: false,
       reason: 'Insufficient role for financial data access',
-      roleUsed: user.role as UserRole
+      roleUsed: user.role as UserRole,
     };
   }
 
@@ -303,7 +316,7 @@ async function logPermissionCheck(
 ): Promise<void> {
   try {
     const supabase = createClient();
-    
+
     await supabase.from('permission_audit_log').insert({
       user_id: check.userId,
       action: 'permission_check',
@@ -315,7 +328,7 @@ async function logPermissionCheck(
       ip_address: check.context?.ipAddress || 'unknown',
       user_agent: check.context?.userAgent || 'unknown',
       timestamp: new Date().toISOString(),
-      metadata: check.context
+      metadata: check.context,
     });
   } catch (error) {
     console.error('Failed to log permission check:', error);
@@ -348,7 +361,7 @@ export async function hasAnyPermission(
   return {
     granted: false,
     reason: `User does not have any of the required permissions: ${permissions.join(', ')}`,
-    roleUsed: user.role as UserRole
+    roleUsed: user.role as UserRole,
   };
 }
 
@@ -367,14 +380,14 @@ export async function hasAllPermissions(
       return {
         granted: false,
         reason: `Missing required permission: ${permission}`,
-        roleUsed: user.role as UserRole
+        roleUsed: user.role as UserRole,
       };
     }
   }
 
   return {
     granted: true,
-    roleUsed: user.role as UserRole
+    roleUsed: user.role as UserRole,
   };
 }
 
@@ -407,6 +420,6 @@ export function getPermissionCacheStats(): {
   return {
     size: permissionCache.size,
     hitRate: 0, // TODO: Implement hit rate tracking
-    entries: permissionCache.size
+    entries: permissionCache.size,
   };
 }

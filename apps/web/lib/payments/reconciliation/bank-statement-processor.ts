@@ -2,11 +2,9 @@
 // Story 6.1 - Task 4: Bank Reconciliation System
 // Automated bank statement import and processing service
 
+import Papa from 'papaparse';
 import { z } from 'zod';
 import { createClient } from '@/lib/supabase/client';
-import Papa from 'papaparse';
-import * as XLSX from 'xlsx';
-import { BankStatement, BankTransaction } from './enhanced-bank-reconciliation-service';
 
 // Validation schemas
 const BankStatementFileSchema = z.object({
@@ -69,7 +67,10 @@ interface FileParsingResult {
 interface BankParser {
   name: string;
   patterns: string[];
-  parseStatement: (content: string, options: ProcessingOptions) => FileParsingResult;
+  parseStatement: (
+    content: string,
+    options: ProcessingOptions
+  ) => FileParsingResult;
 }
 
 class BankStatementProcessor {
@@ -121,11 +122,11 @@ class BankStatementProcessor {
     try {
       const processingOptions = ProcessingOptionsSchema.parse(options);
       const content = await this.readFileContent(file);
-      
+
       // Detect bank and parse statement
       const parser = this.detectBankParser(fileName, content);
       const parseResult = parser.parseStatement(content, processingOptions);
-      
+
       if (parseResult.errors.length > 0) {
         return {
           success: false,
@@ -193,9 +194,12 @@ class BankStatementProcessor {
   getBatchSummary(results: ProcessingResult[]) {
     return {
       totalFiles: results.length,
-      successfulFiles: results.filter(r => r.success).length,
-      failedFiles: results.filter(r => !r.success).length,
-      totalTransactions: results.reduce((sum, r) => sum + r.processedTransactions, 0),
+      successfulFiles: results.filter((r) => r.success).length,
+      failedFiles: results.filter((r) => !r.success).length,
+      totalTransactions: results.reduce(
+        (sum, r) => sum + r.processedTransactions,
+        0
+      ),
       totalSkipped: results.reduce((sum, r) => sum + r.skippedTransactions, 0),
       totalErrors: results.reduce((sum, r) => sum + r.errors.length, 0),
       totalWarnings: results.reduce((sum, r) => sum + r.warnings.length, 0),
@@ -206,11 +210,11 @@ class BankStatementProcessor {
     if (file instanceof Buffer) {
       return file.toString('utf-8');
     }
-    
+
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = (e) => resolve(e.target?.result as string);
-      reader.onerror = (e) => reject(new Error('Failed to read file'));
+      reader.onerror = (_e) => reject(new Error('Failed to read file'));
       reader.readAsText(file);
     });
   }
@@ -221,11 +225,12 @@ class BankStatementProcessor {
 
     for (const [key, parser] of this.parsers) {
       if (key === 'generic') continue; // Skip generic parser in detection
-      
-      const matches = parser.patterns.some(pattern => 
-        lowerFileName.includes(pattern) || lowerContent.includes(pattern)
+
+      const matches = parser.patterns.some(
+        (pattern) =>
+          lowerFileName.includes(pattern) || lowerContent.includes(pattern)
       );
-      
+
       if (matches) {
         return parser;
       }
@@ -236,16 +241,16 @@ class BankStatementProcessor {
   }
 
   private parseBradescoStatement(
-    content: string, 
+    content: string,
     options: ProcessingOptions
   ): FileParsingResult {
     const errors: string[] = [];
     const warnings: string[] = [];
-    
+
     try {
       // Bradesco-specific parsing logic
       const lines = content.split('\n');
-      
+
       // Extract header information
       const header: BankStatementFile = {
         bankName: 'Bradesco',
@@ -266,27 +271,29 @@ class BankStatementProcessor {
 
       return { header, transactions, errors, warnings };
     } catch (error) {
-      errors.push(`Bradesco parsing error: ${error instanceof Error ? error.message : 'Unknown error'}`);
-      return { 
-        header: {} as BankStatementFile, 
-        transactions: [], 
-        errors, 
-        warnings 
+      errors.push(
+        `Bradesco parsing error: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
+      return {
+        header: {} as BankStatementFile,
+        transactions: [],
+        errors,
+        warnings,
       };
     }
   }
 
   private parseItauStatement(
-    content: string, 
+    content: string,
     options: ProcessingOptions
   ): FileParsingResult {
     const errors: string[] = [];
     const warnings: string[] = [];
-    
+
     try {
       // Itaú-specific parsing logic
       const lines = content.split('\n');
-      
+
       const header: BankStatementFile = {
         bankName: 'Itaú',
         accountNumber: this.extractAccountNumber(lines, 'itau'),
@@ -305,27 +312,29 @@ class BankStatementProcessor {
 
       return { header, transactions, errors, warnings };
     } catch (error) {
-      errors.push(`Itaú parsing error: ${error instanceof Error ? error.message : 'Unknown error'}`);
-      return { 
-        header: {} as BankStatementFile, 
-        transactions: [], 
-        errors, 
-        warnings 
+      errors.push(
+        `Itaú parsing error: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
+      return {
+        header: {} as BankStatementFile,
+        transactions: [],
+        errors,
+        warnings,
       };
     }
   }
 
   private parseSantanderStatement(
-    content: string, 
+    content: string,
     options: ProcessingOptions
   ): FileParsingResult {
     const errors: string[] = [];
     const warnings: string[] = [];
-    
+
     try {
       // Santander-specific parsing logic
       const lines = content.split('\n');
-      
+
       const header: BankStatementFile = {
         bankName: 'Santander',
         accountNumber: this.extractAccountNumber(lines, 'santander'),
@@ -344,23 +353,25 @@ class BankStatementProcessor {
 
       return { header, transactions, errors, warnings };
     } catch (error) {
-      errors.push(`Santander parsing error: ${error instanceof Error ? error.message : 'Unknown error'}`);
-      return { 
-        header: {} as BankStatementFile, 
-        transactions: [], 
-        errors, 
-        warnings 
+      errors.push(
+        `Santander parsing error: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
+      return {
+        header: {} as BankStatementFile,
+        transactions: [],
+        errors,
+        warnings,
       };
     }
   }
 
   private parseGenericCSV(
-    content: string, 
+    content: string,
     options: ProcessingOptions
   ): FileParsingResult {
     const errors: string[] = [];
     const warnings: string[] = [];
-    
+
     try {
       const parseResult = Papa.parse(content, {
         header: options.hasHeader,
@@ -369,14 +380,19 @@ class BankStatementProcessor {
       });
 
       if (parseResult.errors.length > 0) {
-        errors.push(...parseResult.errors.map(e => e.message));
+        errors.push(...parseResult.errors.map((e) => e.message));
       }
 
       const data = parseResult.data as any[];
-      
+
       if (data.length === 0) {
         errors.push('No data found in CSV file');
-        return { header: {} as BankStatementFile, transactions: [], errors, warnings };
+        return {
+          header: {} as BankStatementFile,
+          transactions: [],
+          errors,
+          warnings,
+        };
       }
 
       // Try to detect header information from first few rows or use defaults
@@ -392,7 +408,7 @@ class BankStatementProcessor {
 
       // Parse transactions from CSV data
       const transactions: BankTransactionFile[] = [];
-      
+
       for (let i = 0; i < data.length; i++) {
         try {
           const row = data[i];
@@ -401,23 +417,30 @@ class BankStatementProcessor {
             transactions.push(transaction);
           }
         } catch (error) {
-          warnings.push(`Row ${i + 1}: ${error instanceof Error ? error.message : 'Parse error'}`);
+          warnings.push(
+            `Row ${i + 1}: ${error instanceof Error ? error.message : 'Parse error'}`
+          );
         }
       }
 
       return { header, transactions, errors, warnings };
     } catch (error) {
-      errors.push(`CSV parsing error: ${error instanceof Error ? error.message : 'Unknown error'}`);
-      return { 
-        header: {} as BankStatementFile, 
-        transactions: [], 
-        errors, 
-        warnings 
+      errors.push(
+        `CSV parsing error: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
+      return {
+        header: {} as BankStatementFile,
+        transactions: [],
+        errors,
+        warnings,
       };
     }
   }
 
-  private parseCSVRow(row: any, options: ProcessingOptions): BankTransactionFile | null {
+  private parseCSVRow(
+    row: any,
+    _options: ProcessingOptions
+  ): BankTransactionFile | null {
     // Handle both header and non-header CSV formats
     if (typeof row === 'object' && row !== null) {
       // Header format
@@ -430,7 +453,8 @@ class BankStatementProcessor {
         balance: row.balance || row.Balance || row.SALDO || '',
         category: row.category || row.Category || row.CATEGORIA || '',
       };
-    } else if (Array.isArray(row)) {
+    }
+    if (Array.isArray(row)) {
       // Non-header format - assume standard order
       return {
         date: row[0] || '',
@@ -442,7 +466,7 @@ class BankStatementProcessor {
         category: row[6] || '',
       };
     }
-    
+
     return null;
   }
 
@@ -462,7 +486,7 @@ class BankStatementProcessor {
     try {
       // Validate header
       const validatedHeader = BankStatementFileSchema.parse(header);
-      
+
       // Create bank statement record
       const { data: statement, error: statementError } = await this.supabase
         .from('bank_statements')
@@ -481,31 +505,41 @@ class BankStatementProcessor {
         .single();
 
       if (statementError) {
-        throw new Error(`Failed to create statement: ${statementError.message}`);
+        throw new Error(
+          `Failed to create statement: ${statementError.message}`
+        );
       }
 
       // Process transactions
       const transactionInserts = [];
-      
+
       for (const transaction of transactions) {
         try {
-          const validatedTransaction = BankTransactionFileSchema.parse(transaction);
-          
+          const validatedTransaction =
+            BankTransactionFileSchema.parse(transaction);
+
           // Parse amounts
           const debitAmount = this.parseAmount(validatedTransaction.debit);
           const creditAmount = this.parseAmount(validatedTransaction.credit);
           const balance = this.parseAmount(validatedTransaction.balance);
-          
-          if (!debitAmount && !creditAmount) {
-            warnings.push(`Transaction skipped - no amount: ${validatedTransaction.description}`);
+
+          if (!(debitAmount || creditAmount)) {
+            warnings.push(
+              `Transaction skipped - no amount: ${validatedTransaction.description}`
+            );
             skippedTransactions++;
             continue;
           }
 
           // Parse date
-          const transactionDate = this.parseDate(validatedTransaction.date, options.dateFormat);
+          const transactionDate = this.parseDate(
+            validatedTransaction.date,
+            options.dateFormat
+          );
           if (!transactionDate) {
-            warnings.push(`Transaction skipped - invalid date: ${validatedTransaction.date}`);
+            warnings.push(
+              `Transaction skipped - invalid date: ${validatedTransaction.date}`
+            );
             skippedTransactions++;
             continue;
           }
@@ -518,18 +552,22 @@ class BankStatementProcessor {
             debit_amount: debitAmount,
             credit_amount: creditAmount,
             balance: balance || 0,
-            transaction_type: debitAmount ? 'debit' as const : 'credit' as const,
+            transaction_type: debitAmount
+              ? ('debit' as const)
+              : ('credit' as const),
             category: validatedTransaction.category || null,
           };
 
           transactionInserts.push(transactionData);
-          
+
           if (debitAmount) totalDebits += debitAmount;
           if (creditAmount) totalCredits += creditAmount;
-          
+
           processedTransactions++;
         } catch (error) {
-          warnings.push(`Transaction validation error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+          warnings.push(
+            `Transaction validation error: ${error instanceof Error ? error.message : 'Unknown error'}`
+          );
           skippedTransactions++;
         }
       }
@@ -541,7 +579,9 @@ class BankStatementProcessor {
           .insert(transactionInserts);
 
         if (transactionError) {
-          throw new Error(`Failed to insert transactions: ${transactionError.message}`);
+          throw new Error(
+            `Failed to insert transactions: ${transactionError.message}`
+          );
         }
       }
 
@@ -556,17 +596,21 @@ class BankStatementProcessor {
         .eq('id', statement.id);
 
       if (updateError) {
-        warnings.push(`Failed to update statement totals: ${updateError.message}`);
+        warnings.push(
+          `Failed to update statement totals: ${updateError.message}`
+        );
       }
 
       // Validate balance
-      const expectedBalance = header.openingBalance + totalCredits - totalDebits;
-      const balanceCheck = Math.abs(expectedBalance - header.closingBalance) < 0.01;
-      
+      const expectedBalance =
+        header.openingBalance + totalCredits - totalDebits;
+      const balanceCheck =
+        Math.abs(expectedBalance - header.closingBalance) < 0.01;
+
       if (!balanceCheck) {
         warnings.push(
           `Balance mismatch: Expected ${expectedBalance.toFixed(2)}, ` +
-          `Got ${header.closingBalance.toFixed(2)}`
+            `Got ${header.closingBalance.toFixed(2)}`
         );
       }
 
@@ -601,7 +645,7 @@ class BankStatementProcessor {
   }
 
   // Helper methods for bank-specific parsing
-  private extractAccountNumber(lines: string[], bank: string): string {
+  private extractAccountNumber(lines: string[], _bank: string): string {
     // Bank-specific account number extraction logic
     for (const line of lines) {
       const lowerLine = line.toLowerCase();
@@ -613,12 +657,17 @@ class BankStatementProcessor {
     return 'Unknown';
   }
 
-  private extractBalance(lines: string[], type: 'opening' | 'closing', bank: string): number {
+  private extractBalance(
+    lines: string[],
+    type: 'opening' | 'closing',
+    _bank: string
+  ): number {
     // Bank-specific balance extraction logic
-    const searchTerms = type === 'opening' 
-      ? ['saldo anterior', 'opening balance', 'saldo inicial']
-      : ['saldo final', 'closing balance', 'saldo atual'];
-    
+    const searchTerms =
+      type === 'opening'
+        ? ['saldo anterior', 'opening balance', 'saldo inicial']
+        : ['saldo final', 'closing balance', 'saldo atual'];
+
     for (const line of lines) {
       const lowerLine = line.toLowerCase();
       for (const term of searchTerms) {
@@ -631,17 +680,17 @@ class BankStatementProcessor {
     return 0;
   }
 
-  private extractPeriodStart(lines: string[], bank: string): string {
+  private extractPeriodStart(_lines: string[], _bank: string): string {
     // Extract statement period start date
     return new Date().toISOString(); // Placeholder
   }
 
-  private extractPeriodEnd(lines: string[], bank: string): string {
+  private extractPeriodEnd(_lines: string[], _bank: string): string {
     // Extract statement period end date
     return new Date().toISOString(); // Placeholder
   }
 
-  private findTransactionStartLine(lines: string[], bank: string): number {
+  private findTransactionStartLine(lines: string[], _bank: string): number {
     // Find where transaction data starts
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i].toLowerCase();
@@ -653,35 +702,35 @@ class BankStatementProcessor {
   }
 
   private parseTransactionLines(
-    lines: string[], 
-    bank: string, 
+    lines: string[],
+    bank: string,
     options: ProcessingOptions
   ): BankTransactionFile[] {
     const transactions: BankTransactionFile[] = [];
-    
+
     for (const line of lines) {
       if (line.trim() === '') continue;
-      
+
       // Bank-specific transaction parsing
       const transaction = this.parseTransactionLine(line, bank, options);
       if (transaction) {
         transactions.push(transaction);
       }
     }
-    
+
     return transactions;
   }
 
   private parseTransactionLine(
-    line: string, 
-    bank: string, 
-    options: ProcessingOptions
+    line: string,
+    _bank: string,
+    _options: ProcessingOptions
   ): BankTransactionFile | null {
     // Basic transaction line parsing - would be customized per bank
     const parts = line.split(/\s{2,}|\t/); // Split on multiple spaces or tabs
-    
+
     if (parts.length < 4) return null;
-    
+
     return {
       date: parts[0] || '',
       description: parts[1] || '',
@@ -694,23 +743,23 @@ class BankStatementProcessor {
 
   private parseAmount(value: string | number | undefined): number | null {
     if (value === undefined || value === null || value === '') return null;
-    
+
     if (typeof value === 'number') return value;
-    
+
     // Clean up string value
     const cleaned = value
       .toString()
       .replace(/[^\d.,-]/g, '') // Remove non-numeric characters except . , -
       .replace(/,/g, '.') // Replace comma with dot
       .replace(/\.(?=.*\.)/g, ''); // Remove all but last dot
-    
-    const parsed = parseFloat(cleaned);
-    return isNaN(parsed) ? null : parsed;
+
+    const parsed = Number.parseFloat(cleaned);
+    return Number.isNaN(parsed) ? null : parsed;
   }
 
-  private parseDate(dateStr: string, format: string): Date | null {
+  private parseDate(dateStr: string, _format: string): Date | null {
     if (!dateStr) return null;
-    
+
     // Try different date formats
     const formats = [
       /^(\d{4})-(\d{2})-(\d{2})$/, // YYYY-MM-DD
@@ -718,29 +767,41 @@ class BankStatementProcessor {
       /^(\d{2})-(\d{2})-(\d{4})$/, // DD-MM-YYYY
       /^(\d{2})\.(\d{2})\.(\d{4})$/, // DD.MM.YYYY
     ];
-    
+
     for (const formatRegex of formats) {
       const match = dateStr.match(formatRegex);
       if (match) {
         const [, part1, part2, part3] = match;
-        
+
         // Determine if it's YYYY-MM-DD or DD/MM/YYYY format
         if (part1.length === 4) {
           // YYYY-MM-DD
-          const date = new Date(parseInt(part1), parseInt(part2) - 1, parseInt(part3));
-          if (!isNaN(date.getTime())) return date;
+          const date = new Date(
+            Number.parseInt(part1, 10),
+            Number.parseInt(part2, 10) - 1,
+            Number.parseInt(part3, 10)
+          );
+          if (!Number.isNaN(date.getTime())) return date;
         } else {
           // DD/MM/YYYY
-          const date = new Date(parseInt(part3), parseInt(part2) - 1, parseInt(part1));
-          if (!isNaN(date.getTime())) return date;
+          const date = new Date(
+            Number.parseInt(part3, 10),
+            Number.parseInt(part2, 10) - 1,
+            Number.parseInt(part1, 10)
+          );
+          if (!Number.isNaN(date.getTime())) return date;
         }
       }
     }
-    
+
     // Fallback to Date constructor
     const date = new Date(dateStr);
-    return isNaN(date.getTime()) ? null : date;
+    return Number.isNaN(date.getTime()) ? null : date;
   }
 }
 
-export { BankStatementProcessor, type ProcessingOptions, type ProcessingResult };
+export {
+  BankStatementProcessor,
+  type ProcessingOptions,
+  type ProcessingResult,
+};

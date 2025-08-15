@@ -1,7 +1,7 @@
 import { z } from 'zod';
-import { createClient } from '@/lib/supabase/client';
 import { logger } from '@/lib/logger';
-import { kpiCalculationService, type KPICalculationResult } from './kpi-calculation-service';
+import { createClient } from '@/lib/supabase/client';
+import { kpiCalculationService } from './kpi-calculation-service';
 
 // Widget Types and Schemas
 export const WidgetTypeSchema = z.enum([
@@ -14,7 +14,7 @@ export const WidgetTypeSchema = z.enum([
   'table',
   'metric_comparison',
   'trend_indicator',
-  'alert_list'
+  'alert_list',
 ]);
 
 export const WidgetDataSourceSchema = z.object({
@@ -22,7 +22,7 @@ export const WidgetDataSourceSchema = z.object({
   source: z.string(),
   parameters: z.record(z.any()).optional(),
   refreshInterval: z.number().min(30).default(300), // seconds
-  cacheEnabled: z.boolean().default(true)
+  cacheEnabled: z.boolean().default(true),
 });
 
 export const WidgetConfigurationSchema = z.object({
@@ -36,27 +36,31 @@ export const WidgetConfigurationSchema = z.object({
     x: z.number().min(0),
     y: z.number().min(0),
     width: z.number().min(1).max(12),
-    height: z.number().min(1).max(12)
+    height: z.number().min(1).max(12),
   }),
-  styling: z.object({
-    backgroundColor: z.string().optional(),
-    textColor: z.string().optional(),
-    borderColor: z.string().optional(),
-    borderRadius: z.number().optional(),
-    padding: z.number().optional(),
-    fontSize: z.number().optional()
-  }).optional(),
-  chartOptions: z.object({
-    showLegend: z.boolean().default(true),
-    showGrid: z.boolean().default(true),
-    showTooltip: z.boolean().default(true),
-    colors: z.array(z.string()).optional(),
-    animation: z.boolean().default(true),
-    responsive: z.boolean().default(true)
-  }).optional(),
+  styling: z
+    .object({
+      backgroundColor: z.string().optional(),
+      textColor: z.string().optional(),
+      borderColor: z.string().optional(),
+      borderRadius: z.number().optional(),
+      padding: z.number().optional(),
+      fontSize: z.number().optional(),
+    })
+    .optional(),
+  chartOptions: z
+    .object({
+      showLegend: z.boolean().default(true),
+      showGrid: z.boolean().default(true),
+      showTooltip: z.boolean().default(true),
+      colors: z.array(z.string()).optional(),
+      animation: z.boolean().default(true),
+      responsive: z.boolean().default(true),
+    })
+    .optional(),
   isVisible: z.boolean().default(true),
   createdAt: z.string().datetime(),
-  updatedAt: z.string().datetime()
+  updatedAt: z.string().datetime(),
 });
 
 export const WidgetDataSchema = z.object({
@@ -66,9 +70,9 @@ export const WidgetDataSchema = z.object({
     lastUpdated: z.string().datetime(),
     dataPoints: z.number(),
     status: z.enum(['success', 'error', 'loading']),
-    errorMessage: z.string().optional()
+    errorMessage: z.string().optional(),
   }),
-  cacheExpiry: z.string().datetime().optional()
+  cacheExpiry: z.string().datetime().optional(),
 });
 
 export type WidgetType = z.infer<typeof WidgetTypeSchema>;
@@ -85,7 +89,9 @@ export class WidgetService {
   /**
    * Get all widgets for a dashboard
    */
-  async getDashboardWidgets(dashboardId: string): Promise<WidgetConfiguration[]> {
+  async getDashboardWidgets(
+    dashboardId: string
+  ): Promise<WidgetConfiguration[]> {
     try {
       const { data, error } = await this.supabase
         .from('dashboard_widgets')
@@ -100,7 +106,7 @@ export class WidgetService {
         return [];
       }
 
-      return data.map(widget => ({
+      return data.map((widget) => ({
         id: widget.id,
         dashboardId: widget.dashboard_id,
         clinicId: widget.clinic_id,
@@ -112,7 +118,7 @@ export class WidgetService {
         chartOptions: widget.chart_options,
         isVisible: widget.is_visible,
         createdAt: widget.created_at,
-        updatedAt: widget.updated_at
+        updatedAt: widget.updated_at,
       }));
     } catch (error) {
       logger.error('Error getting dashboard widgets:', error);
@@ -123,7 +129,9 @@ export class WidgetService {
   /**
    * Create a new widget
    */
-  async createWidget(widget: Omit<WidgetConfiguration, 'id' | 'createdAt' | 'updatedAt'>): Promise<WidgetConfiguration | null> {
+  async createWidget(
+    widget: Omit<WidgetConfiguration, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<WidgetConfiguration | null> {
     try {
       const widgetId = crypto.randomUUID();
       const now = new Date().toISOString();
@@ -142,7 +150,7 @@ export class WidgetService {
           chart_options: widget.chartOptions,
           is_visible: widget.isVisible,
           created_at: now,
-          updated_at: now
+          updated_at: now,
         })
         .select()
         .single();
@@ -164,7 +172,7 @@ export class WidgetService {
         chartOptions: data.chart_options,
         isVisible: data.is_visible,
         createdAt: data.created_at,
-        updatedAt: data.updated_at
+        updatedAt: data.updated_at,
       };
 
       // Start data refresh for the new widget
@@ -180,7 +188,10 @@ export class WidgetService {
   /**
    * Update widget configuration
    */
-  async updateWidget(widgetId: string, updates: Partial<WidgetConfiguration>): Promise<WidgetConfiguration | null> {
+  async updateWidget(
+    widgetId: string,
+    updates: Partial<WidgetConfiguration>
+  ): Promise<WidgetConfiguration | null> {
     try {
       const { data, error } = await this.supabase
         .from('dashboard_widgets')
@@ -192,7 +203,7 @@ export class WidgetService {
           styling: updates.styling,
           chart_options: updates.chartOptions,
           is_visible: updates.isVisible,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', widgetId)
         .select()
@@ -215,7 +226,7 @@ export class WidgetService {
         chartOptions: data.chart_options,
         isVisible: data.is_visible,
         createdAt: data.created_at,
-        updatedAt: data.updated_at
+        updatedAt: data.updated_at,
       };
 
       // Restart data refresh with new configuration
@@ -258,12 +269,15 @@ export class WidgetService {
   /**
    * Get widget data
    */
-  async getWidgetData(widgetId: string, forceRefresh = false): Promise<WidgetData | null> {
+  async getWidgetData(
+    widgetId: string,
+    forceRefresh = false
+  ): Promise<WidgetData | null> {
     try {
       // Check cache first
       if (!forceRefresh) {
         const cached = this.dataCache.get(widgetId);
-        if (cached && cached.cacheExpiry && new Date(cached.cacheExpiry) > new Date()) {
+        if (cached?.cacheExpiry && new Date(cached.cacheExpiry) > new Date()) {
           return cached;
         }
       }
@@ -282,18 +296,20 @@ export class WidgetService {
 
       // Fetch data based on data source
       const data = await this.fetchWidgetData(widgetConfig);
-      
+
       const widgetData: WidgetData = {
         widgetId,
         data,
         metadata: {
           lastUpdated: new Date().toISOString(),
           dataPoints: Array.isArray(data) ? data.length : 1,
-          status: 'success'
+          status: 'success',
         },
-        cacheExpiry: widgetConfig.data_source.cacheEnabled 
-          ? new Date(Date.now() + (widgetConfig.data_source.refreshInterval * 1000)).toISOString()
-          : undefined
+        cacheExpiry: widgetConfig.data_source.cacheEnabled
+          ? new Date(
+              Date.now() + widgetConfig.data_source.refreshInterval * 1000
+            ).toISOString()
+          : undefined,
       };
 
       // Cache the data
@@ -311,8 +327,9 @@ export class WidgetService {
           lastUpdated: new Date().toISOString(),
           dataPoints: 0,
           status: 'error',
-          errorMessage: error instanceof Error ? error.message : 'Unknown error'
-        }
+          errorMessage:
+            error instanceof Error ? error.message : 'Unknown error',
+        },
       };
     }
   }
@@ -325,17 +342,27 @@ export class WidgetService {
 
     switch (dataSource.type) {
       case 'kpi':
-        return await this.fetchKPIData(widgetConfig.clinic_id, dataSource.source, dataSource.parameters);
-      
+        return await this.fetchKPIData(
+          widgetConfig.clinic_id,
+          dataSource.source,
+          dataSource.parameters
+        );
+
       case 'query':
-        return await this.fetchQueryData(dataSource.source, dataSource.parameters);
-      
+        return await this.fetchQueryData(
+          dataSource.source,
+          dataSource.parameters
+        );
+
       case 'api':
-        return await this.fetchAPIData(dataSource.source, dataSource.parameters);
-      
+        return await this.fetchAPIData(
+          dataSource.source,
+          dataSource.parameters
+        );
+
       case 'static':
         return this.fetchStaticData(dataSource.source);
-      
+
       default:
         throw new Error(`Unknown data source type: ${dataSource.type}`);
     }
@@ -344,35 +371,53 @@ export class WidgetService {
   /**
    * Fetch KPI data
    */
-  private async fetchKPIData(clinicId: string, kpiSource: string, parameters?: any): Promise<any> {
+  private async fetchKPIData(
+    clinicId: string,
+    kpiSource: string,
+    parameters?: any
+  ): Promise<any> {
     switch (kpiSource) {
       case 'all_kpis':
         return await kpiCalculationService.calculateClinicKPIs(
           clinicId,
-          parameters?.periodStart ? new Date(parameters.periodStart) : undefined,
+          parameters?.periodStart
+            ? new Date(parameters.periodStart)
+            : undefined,
           parameters?.periodEnd ? new Date(parameters.periodEnd) : undefined
         );
-      
-      case 'financial_summary':
-        const allKPIs = await kpiCalculationService.calculateClinicKPIs(clinicId);
-        return allKPIs.filter(kpi => kpi.kpi.category === 'financial');
-      
-      case 'operational_summary':
-        const operationalKPIs = await kpiCalculationService.calculateClinicKPIs(clinicId);
-        return operationalKPIs.filter(kpi => kpi.kpi.category === 'operational');
-      
-      case 'patient_summary':
-        const patientKPIs = await kpiCalculationService.calculateClinicKPIs(clinicId);
-        return patientKPIs.filter(kpi => kpi.kpi.category === 'patient');
-      
-      case 'staff_summary':
-        const staffKPIs = await kpiCalculationService.calculateClinicKPIs(clinicId);
-        return staffKPIs.filter(kpi => kpi.kpi.category === 'staff');
-      
-      default:
+
+      case 'financial_summary': {
+        const allKPIs =
+          await kpiCalculationService.calculateClinicKPIs(clinicId);
+        return allKPIs.filter((kpi) => kpi.kpi.category === 'financial');
+      }
+
+      case 'operational_summary': {
+        const operationalKPIs =
+          await kpiCalculationService.calculateClinicKPIs(clinicId);
+        return operationalKPIs.filter(
+          (kpi) => kpi.kpi.category === 'operational'
+        );
+      }
+
+      case 'patient_summary': {
+        const patientKPIs =
+          await kpiCalculationService.calculateClinicKPIs(clinicId);
+        return patientKPIs.filter((kpi) => kpi.kpi.category === 'patient');
+      }
+
+      case 'staff_summary': {
+        const staffKPIs =
+          await kpiCalculationService.calculateClinicKPIs(clinicId);
+        return staffKPIs.filter((kpi) => kpi.kpi.category === 'staff');
+      }
+
+      default: {
         // Fetch specific KPI
-        const specificKPIs = await kpiCalculationService.calculateClinicKPIs(clinicId);
-        return specificKPIs.find(kpi => kpi.kpi.name === kpiSource) || null;
+        const specificKPIs =
+          await kpiCalculationService.calculateClinicKPIs(clinicId);
+        return specificKPIs.find((kpi) => kpi.kpi.name === kpiSource) || null;
+      }
     }
   }
 
@@ -384,7 +429,7 @@ export class WidgetService {
       // This would execute a predefined query with parameters
       // For security, only allow predefined queries
       const predefinedQueries = {
-        'monthly_revenue_trend': `
+        monthly_revenue_trend: `
           SELECT 
             DATE_TRUNC('month', created_at) as month,
             SUM(amount) as revenue
@@ -394,7 +439,7 @@ export class WidgetService {
           GROUP BY month
           ORDER BY month
         `,
-        'appointment_status_distribution': `
+        appointment_status_distribution: `
           SELECT 
             status,
             COUNT(*) as count
@@ -403,7 +448,7 @@ export class WidgetService {
             AND scheduled_at >= $2 AND scheduled_at <= $3
           GROUP BY status
         `,
-        'top_services': `
+        top_services: `
           SELECT 
             s.name,
             COUNT(a.id) as appointment_count,
@@ -416,18 +461,20 @@ export class WidgetService {
           GROUP BY s.id, s.name
           ORDER BY appointment_count DESC
           LIMIT 10
-        `
+        `,
       };
 
       if (!predefinedQueries[query as keyof typeof predefinedQueries]) {
         throw new Error(`Query '${query}' not found`);
       }
 
-      const { data, error } = await this.supabase
-        .rpc('execute_dashboard_query', {
+      const { data, error } = await this.supabase.rpc(
+        'execute_dashboard_query',
+        {
           query_name: query,
-          query_params: parameters || {}
-        });
+          query_params: parameters || {},
+        }
+      );
 
       if (error) {
         throw error;
@@ -443,7 +490,10 @@ export class WidgetService {
   /**
    * Fetch data from external API
    */
-  private async fetchAPIData(apiEndpoint: string, parameters?: any): Promise<any> {
+  private async fetchAPIData(
+    apiEndpoint: string,
+    parameters?: any
+  ): Promise<any> {
     try {
       // This would call external APIs for additional data
       // Implementation depends on specific API requirements
@@ -452,7 +502,7 @@ export class WidgetService {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(parameters || {})
+        body: JSON.stringify(parameters || {}),
       });
 
       if (!response.ok) {
@@ -471,19 +521,19 @@ export class WidgetService {
    */
   private fetchStaticData(dataSource: string): any {
     const staticData = {
-      'sample_chart_data': [
+      sample_chart_data: [
         { name: 'Jan', value: 400 },
         { name: 'Feb', value: 300 },
         { name: 'Mar', value: 600 },
         { name: 'Apr', value: 800 },
-        { name: 'May', value: 500 }
+        { name: 'May', value: 500 },
       ],
-      'sample_kpi_data': {
-        revenue: 15000,
+      sample_kpi_data: {
+        revenue: 15_000,
         patients: 120,
         appointments: 450,
-        satisfaction: 4.8
-      }
+        satisfaction: 4.8,
+      },
     };
 
     return staticData[dataSource as keyof typeof staticData] || null;
@@ -493,7 +543,10 @@ export class WidgetService {
    * Start automatic data refresh for a widget
    */
   private startWidgetDataRefresh(widget: WidgetConfiguration): void {
-    if (!widget.dataSource.refreshInterval || widget.dataSource.refreshInterval <= 0) {
+    if (
+      !widget.dataSource.refreshInterval ||
+      widget.dataSource.refreshInterval <= 0
+    ) {
       return;
     }
 
@@ -524,7 +577,7 @@ export class WidgetService {
    */
   async initializeDashboardWidgets(dashboardId: string): Promise<void> {
     const widgets = await this.getDashboardWidgets(dashboardId);
-    
+
     for (const widget of widgets) {
       this.startWidgetDataRefresh(widget);
       // Pre-load data
@@ -546,7 +599,12 @@ export class WidgetService {
   /**
    * Get widget templates for quick setup
    */
-  getWidgetTemplates(): Array<Omit<WidgetConfiguration, 'id' | 'dashboardId' | 'clinicId' | 'createdAt' | 'updatedAt'>> {
+  getWidgetTemplates(): Array<
+    Omit<
+      WidgetConfiguration,
+      'id' | 'dashboardId' | 'clinicId' | 'createdAt' | 'updatedAt'
+    >
+  > {
     return [
       {
         title: 'Receita Mensal',
@@ -555,14 +613,14 @@ export class WidgetService {
           type: 'kpi',
           source: 'financial.monthly_revenue',
           refreshInterval: 300,
-          cacheEnabled: true
+          cacheEnabled: true,
         },
         position: { x: 0, y: 0, width: 3, height: 2 },
         styling: {
           backgroundColor: '#10b981',
-          textColor: '#ffffff'
+          textColor: '#ffffff',
         },
-        isVisible: true
+        isVisible: true,
       },
       {
         title: 'Novos Pacientes',
@@ -571,14 +629,14 @@ export class WidgetService {
           type: 'kpi',
           source: 'patients.new_patients',
           refreshInterval: 300,
-          cacheEnabled: true
+          cacheEnabled: true,
         },
         position: { x: 3, y: 0, width: 3, height: 2 },
         styling: {
           backgroundColor: '#3b82f6',
-          textColor: '#ffffff'
+          textColor: '#ffffff',
         },
-        isVisible: true
+        isVisible: true,
       },
       {
         title: 'Taxa de Ocupação',
@@ -587,15 +645,15 @@ export class WidgetService {
           type: 'kpi',
           source: 'operations.occupancy_rate',
           refreshInterval: 300,
-          cacheEnabled: true
+          cacheEnabled: true,
         },
         position: { x: 6, y: 0, width: 3, height: 4 },
         chartOptions: {
           showLegend: false,
           showGrid: false,
-          colors: ['#10b981', '#f59e0b', '#ef4444']
+          colors: ['#10b981', '#f59e0b', '#ef4444'],
         },
-        isVisible: true
+        isVisible: true,
       },
       {
         title: 'Tendência de Receita',
@@ -604,16 +662,16 @@ export class WidgetService {
           type: 'query',
           source: 'monthly_revenue_trend',
           refreshInterval: 600,
-          cacheEnabled: true
+          cacheEnabled: true,
         },
         position: { x: 0, y: 2, width: 6, height: 4 },
         chartOptions: {
           showLegend: true,
           showGrid: true,
           colors: ['#10b981'],
-          animation: true
+          animation: true,
         },
-        isVisible: true
+        isVisible: true,
       },
       {
         title: 'Status dos Agendamentos',
@@ -622,15 +680,15 @@ export class WidgetService {
           type: 'query',
           source: 'appointment_status_distribution',
           refreshInterval: 300,
-          cacheEnabled: true
+          cacheEnabled: true,
         },
         position: { x: 9, y: 0, width: 3, height: 4 },
         chartOptions: {
           showLegend: true,
-          colors: ['#10b981', '#f59e0b', '#ef4444', '#6b7280']
+          colors: ['#10b981', '#f59e0b', '#ef4444', '#6b7280'],
         },
-        isVisible: true
-      }
+        isVisible: true,
+      },
     ];
   }
 }

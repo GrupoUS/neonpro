@@ -4,10 +4,10 @@
  * GET /api/analytics/events - Retrieve analytics events
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { requireAuth } from '@/lib/middleware/auth';
-import { analyticsService } from '@/lib/analytics';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { analyticsService } from '@/lib/analytics';
+import { requireAuth } from '@/lib/middleware/auth';
 
 // Validation schema for event tracking
 const EventSchema = z.object({
@@ -29,14 +29,17 @@ const BatchEventsSchema = z.object({
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    
+
     // Validate request body
     let events;
     if (Array.isArray(body.events)) {
       const validation = BatchEventsSchema.safeParse(body);
       if (!validation.success) {
         return NextResponse.json(
-          { error: 'Invalid batch events format', details: validation.error.issues },
+          {
+            error: 'Invalid batch events format',
+            details: validation.error.issues,
+          },
           { status: 400 }
         );
       }
@@ -51,7 +54,7 @@ export async function POST(request: NextRequest) {
       }
       events = [validation.data];
     }
-    
+
     // Optional authentication for user-specific events
     let user;
     try {
@@ -62,7 +65,7 @@ export async function POST(request: NextRequest) {
     } catch {
       // Continue without authentication for anonymous events
     }
-    
+
     // Process events
     const trackedEvents = await Promise.all(
       events.map(async (event) => {
@@ -73,20 +76,19 @@ export async function POST(request: NextRequest) {
           clinicId: user?.clinicId || event.clinicId,
           timestamp: event.timestamp || new Date().toISOString(),
         };
-        
+
         return await analyticsService.trackEvent(eventData);
       })
     );
-    
+
     return NextResponse.json({
       success: true,
       tracked: trackedEvents.length,
       events: trackedEvents,
     });
-    
   } catch (error) {
     console.error('Event tracking error:', error);
-    
+
     return NextResponse.json(
       {
         error: 'Failed to track events',
@@ -102,28 +104,30 @@ export async function POST(request: NextRequest) {
  */
 export async function GET(request: NextRequest) {
   // Require authentication for event retrieval
-  const authResult = await requireAuth(['admin', 'clinic_owner', 'manager'])(request);
-  
+  const authResult = await requireAuth(['admin', 'clinic_owner', 'manager'])(
+    request
+  );
+
   if (!authResult.authenticated) {
     return NextResponse.json(
       { error: authResult.error },
       { status: authResult.status }
     );
   }
-  
+
   const user = authResult.user!;
-  
+
   try {
     // Get query parameters
     const { searchParams } = new URL(request.url);
-    const limit = parseInt(searchParams.get('limit') || '100');
-    const offset = parseInt(searchParams.get('offset') || '0');
+    const limit = Number.parseInt(searchParams.get('limit') || '100', 10);
+    const offset = Number.parseInt(searchParams.get('offset') || '0', 10);
     const eventName = searchParams.get('event');
     const userId = searchParams.get('userId');
     const clinicId = searchParams.get('clinicId') || user.clinicId;
     const startDate = searchParams.get('startDate');
     const endDate = searchParams.get('endDate');
-    
+
     // Validate clinic access
     if (clinicId && user.role !== 'admin' && user.clinicId !== clinicId) {
       return NextResponse.json(
@@ -131,7 +135,7 @@ export async function GET(request: NextRequest) {
         { status: 403 }
       );
     }
-    
+
     // Get events
     const result = await analyticsService.getEvents({
       limit: Math.min(limit, 1000), // Max 1000 events per request
@@ -142,7 +146,7 @@ export async function GET(request: NextRequest) {
       startDate,
       endDate,
     });
-    
+
     return NextResponse.json({
       success: true,
       data: result.events,
@@ -157,10 +161,9 @@ export async function GET(request: NextRequest) {
         generatedAt: new Date().toISOString(),
       },
     });
-    
   } catch (error) {
     console.error('Event retrieval error:', error);
-    
+
     return NextResponse.json(
       {
         error: 'Failed to retrieve events',

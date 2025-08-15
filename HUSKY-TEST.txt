@@ -1,0 +1,2 @@
+Testando Husky pre-commit hook
+Data: $(Get-Date)

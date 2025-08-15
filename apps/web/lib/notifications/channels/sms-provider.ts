@@ -4,13 +4,13 @@
  * Compliance: LGPD + ANVISA + CFM + telecomunicações Brasil
  */
 
-import { 
-  NotificationChannel, 
-  NotificationProvider, 
-  NotificationResult,
-  NotificationMetadata,
+import type {
   HealthcareNotificationContext,
-  LGPDCompliantData 
+  LGPDCompliantData,
+  NotificationChannel,
+  NotificationMetadata,
+  NotificationProvider,
+  NotificationResult,
 } from '../types/notifications';
 
 // SMS-specific types
@@ -120,7 +120,7 @@ class TwilioSMSProvider implements SMSProvider {
   private brazilConfig: SMSProviderConfig['brazil'];
 
   constructor(
-    config: SMSProviderConfig['primary'], 
+    config: SMSProviderConfig['primary'],
     brazilConfig: SMSProviderConfig['brazil']
   ) {
     this.accountSid = config.accountSid;
@@ -138,11 +138,11 @@ class TwilioSMSProvider implements SMSProvider {
         `https://api.twilio.com/2010-04-01/Accounts/${this.accountSid}.json`,
         {
           headers: {
-            'Authorization': `Basic ${auth}`,
+            Authorization: `Basic ${auth}`,
           },
         }
       );
-      
+
       return response.ok;
     } catch (error) {
       console.error(`[${this.id}] Health check failed:`, error);
@@ -152,21 +152,21 @@ class TwilioSMSProvider implements SMSProvider {
 
   async sendSMS(params: SMSParams): Promise<NotificationResult> {
     const startTime = Date.now();
-    
+
     try {
       // Validate LGPD compliance
       await this.validateLGPDCompliance(params.metadata.lgpdConsent);
-      
+
       // Validate Brazil telecom compliance
       if (this.brazilConfig.enableCompliance) {
         await this.validateBrazilCompliance(params);
       }
 
       const phoneNumbers = Array.isArray(params.to) ? params.to : [params.to];
-      
+
       // Validate phone numbers
       for (const phoneNumber of phoneNumbers) {
-        if (!await this.validatePhoneNumber(phoneNumber)) {
+        if (!(await this.validatePhoneNumber(phoneNumber))) {
           throw new Error(`Invalid phone number: ${phoneNumber}`);
         }
       }
@@ -179,12 +179,11 @@ class TwilioSMSProvider implements SMSProvider {
         const payload = new URLSearchParams({
           To: phoneNumber,
           Body: params.message,
-          ...(this.messagingServiceSid ? 
-            { MessagingServiceSid: this.messagingServiceSid } : 
-            { From: params.from || this.fromNumber }
-          ),
-          ...(params.validityPeriod && { 
-            ValidityPeriod: String(params.validityPeriod * 3600) // Convert hours to seconds
+          ...(this.messagingServiceSid
+            ? { MessagingServiceSid: this.messagingServiceSid }
+            : { From: params.from || this.fromNumber }),
+          ...(params.validityPeriod && {
+            ValidityPeriod: String(params.validityPeriod * 3600), // Convert hours to seconds
           }),
           ...(params.scheduledAt && {
             SendAt: params.scheduledAt.toISOString(),
@@ -196,7 +195,7 @@ class TwilioSMSProvider implements SMSProvider {
           {
             method: 'POST',
             headers: {
-              'Authorization': `Basic ${auth}`,
+              Authorization: `Basic ${auth}`,
               'Content-Type': 'application/x-www-form-urlencoded',
             },
             body: payload,
@@ -204,9 +203,11 @@ class TwilioSMSProvider implements SMSProvider {
         );
 
         const responseData = await response.json();
-        
+
         if (!response.ok) {
-          throw new Error(`Twilio API error: ${responseData.message || response.statusText}`);
+          throw new Error(
+            `Twilio API error: ${responseData.message || response.statusText}`
+          );
         }
 
         results.push({
@@ -227,7 +228,7 @@ class TwilioSMSProvider implements SMSProvider {
 
         // Rate limiting for Brazil compliance
         if (phoneNumbers.length > 1) {
-          await new Promise(resolve => setTimeout(resolve, 1000)); // 1s between messages
+          await new Promise((resolve) => setTimeout(resolve, 1000)); // 1s between messages
         }
       }
 
@@ -237,8 +238,8 @@ class TwilioSMSProvider implements SMSProvider {
       }
 
       return {
-        success: results.every(r => r.success),
-        messageId: results.map(r => r.messageId).join(','),
+        success: results.every((r) => r.success),
+        messageId: results.map((r) => r.messageId).join(','),
         providerId: this.id,
         channel: this.channel,
         timestamp: new Date(),
@@ -246,14 +247,13 @@ class TwilioSMSProvider implements SMSProvider {
           ...params.metadata,
           duration: Date.now() - startTime,
           bulkResults: results,
-          totalSent: results.filter(r => r.success).length,
-          totalFailed: results.filter(r => !r.success).length,
+          totalSent: results.filter((r) => r.success).length,
+          totalFailed: results.filter((r) => !r.success).length,
         },
       };
-
     } catch (error) {
       const duration = Date.now() - startTime;
-      
+
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -263,7 +263,7 @@ class TwilioSMSProvider implements SMSProvider {
         metadata: {
           ...params.metadata,
           duration,
-          error: error,
+          error,
         },
       };
     }
@@ -271,15 +271,16 @@ class TwilioSMSProvider implements SMSProvider {
 
   async sendBulkSMS(params: BulkSMSParams): Promise<NotificationResult[]> {
     const batchSize = params.batchSize || 10; // Conservative for Brazil compliance
-    const rateLimitMs = params.rateLimitPerMinute ? 
-      Math.ceil(60000 / params.rateLimitPerMinute) : 1000;
+    const rateLimitMs = params.rateLimitPerMinute
+      ? Math.ceil(60_000 / params.rateLimitPerMinute)
+      : 1000;
     const results: NotificationResult[] = [];
-    
+
     // Process in batches with rate limiting
     for (let i = 0; i < params.messages.length; i += batchSize) {
       const batch = params.messages.slice(i, i + batchSize);
-      
-      const batchPromises = batch.map(message => 
+
+      const batchPromises = batch.map((message) =>
         this.sendSMS({
           to: message.to,
           message: message.message,
@@ -289,7 +290,7 @@ class TwilioSMSProvider implements SMSProvider {
       );
 
       const batchResults = await Promise.allSettled(batchPromises);
-      
+
       batchResults.forEach((result, index) => {
         if (result.status === 'fulfilled') {
           results.push(result.value);
@@ -307,7 +308,7 @@ class TwilioSMSProvider implements SMSProvider {
 
       // Rate limiting between batches
       if (i + batchSize < params.messages.length) {
-        await new Promise(resolve => setTimeout(resolve, rateLimitMs));
+        await new Promise((resolve) => setTimeout(resolve, rateLimitMs));
       }
     }
 
@@ -343,13 +344,13 @@ class TwilioSMSProvider implements SMSProvider {
         `https://api.twilio.com/2010-04-01/Accounts/${this.accountSid}/Messages/${messageId}.json`,
         {
           headers: {
-            'Authorization': `Basic ${auth}`,
+            Authorization: `Basic ${auth}`,
           },
         }
       );
 
       const data = await response.json();
-      
+
       if (!response.ok) {
         throw new Error(`Twilio API error: ${data.message}`);
       }
@@ -358,7 +359,9 @@ class TwilioSMSProvider implements SMSProvider {
         status: this.mapTwilioStatus(data.status),
         errorCode: data.error_code,
         errorMessage: data.error_message,
-        deliveredAt: data.date_updated ? new Date(data.date_updated) : undefined,
+        deliveredAt: data.date_updated
+          ? new Date(data.date_updated)
+          : undefined,
         price: data.price,
         priceUnit: data.price_unit,
       };
@@ -372,27 +375,34 @@ class TwilioSMSProvider implements SMSProvider {
 
   private mapTwilioStatus(twilioStatus: string): SMSDeliveryStatus['status'] {
     const statusMap: Record<string, SMSDeliveryStatus['status']> = {
-      'queued': 'queued',
-      'sending': 'sent',
-      'sent': 'sent',
-      'delivered': 'delivered',
-      'failed': 'failed',
-      'undelivered': 'undelivered',
+      queued: 'queued',
+      sending: 'sent',
+      sent: 'sent',
+      delivered: 'delivered',
+      failed: 'failed',
+      undelivered: 'undelivered',
     };
-    
+
     return statusMap[twilioStatus] || 'failed';
   }
 
-  private async validateLGPDCompliance(lgpdData: LGPDCompliantData): Promise<void> {
+  private async validateLGPDCompliance(
+    lgpdData: LGPDCompliantData
+  ): Promise<void> {
     if (!lgpdData.consentGiven) {
       throw new Error('LGPD: SMS consent not provided');
     }
-    
+
     if (lgpdData.consentExpiry && new Date() > lgpdData.consentExpiry) {
       throw new Error('LGPD: SMS consent expired');
     }
-    
-    if (!lgpdData.purposes.includes('notifications') && !lgpdData.purposes.includes('marketing')) {
+
+    if (
+      !(
+        lgpdData.purposes.includes('notifications') ||
+        lgpdData.purposes.includes('marketing')
+      )
+    ) {
       throw new Error('LGPD: SMS purpose not authorized');
     }
   }
@@ -400,13 +410,19 @@ class TwilioSMSProvider implements SMSProvider {
   private async validateBrazilCompliance(params: SMSParams): Promise<void> {
     const now = new Date();
     const phoneNumbers = Array.isArray(params.to) ? params.to : [params.to];
-    
+
     // Check operating hours
     if (this.brazilConfig.restrictToOperatingHours) {
       const currentHour = now.getHours();
-      const startHour = parseInt(this.brazilConfig.operatingHours.start.split(':')[0]);
-      const endHour = parseInt(this.brazilConfig.operatingHours.end.split(':')[0]);
-      
+      const startHour = Number.parseInt(
+        this.brazilConfig.operatingHours.start.split(':')[0],
+        10
+      );
+      const endHour = Number.parseInt(
+        this.brazilConfig.operatingHours.end.split(':')[0],
+        10
+      );
+
       if (currentHour < startHour || currentHour >= endHour) {
         throw new Error('Brazil Compliance: SMS outside operating hours');
       }
@@ -414,20 +430,28 @@ class TwilioSMSProvider implements SMSProvider {
 
     // Validate Brazil phone numbers
     for (const phoneNumber of phoneNumbers) {
-      if (phoneNumber.startsWith('+55')) {
-        if (!await this.validatePhoneNumber(phoneNumber)) {
-          throw new Error(`Brazil Compliance: Invalid Brazilian phone number: ${phoneNumber}`);
-        }
+      if (
+        phoneNumber.startsWith('+55') &&
+        !(await this.validatePhoneNumber(phoneNumber))
+      ) {
+        throw new Error(
+          `Brazil Compliance: Invalid Brazilian phone number: ${phoneNumber}`
+        );
       }
     }
 
     // Check opt-out requirements for marketing
-    if (this.brazilConfig.requireOptOut && 
-        params.metadata.lgpdConsent.purposes.includes('marketing')) {
-      if (!params.message.toLowerCase().includes('sair') && 
-          !params.message.toLowerCase().includes('stop')) {
-        throw new Error('Brazil Compliance: Marketing SMS must include opt-out instructions');
-      }
+    if (
+      this.brazilConfig.requireOptOut &&
+      params.metadata.lgpdConsent.purposes.includes('marketing') &&
+      !(
+        params.message.toLowerCase().includes('sair') ||
+        params.message.toLowerCase().includes('stop')
+      )
+    ) {
+      throw new Error(
+        'Brazil Compliance: Marketing SMS must include opt-out instructions'
+      );
     }
   }
 }
@@ -438,7 +462,6 @@ class TwilioSMSProvider implements SMSProvider {
  */
 class SMSProviderFactory {
   private primaryProvider: SMSProvider;
-  private config: SMSProviderConfig;
 
   constructor(config: SMSProviderConfig) {
     this.config = config;
@@ -474,7 +497,7 @@ class SMSProviderFactory {
       const provider = await this.getProvider();
       return await provider.sendBulkSMS(params);
     } catch (error) {
-      return params.messages.map(message => ({
+      return params.messages.map((message) => ({
         success: false,
         error: error instanceof Error ? error.message : 'SMS provider failed',
         providerId: 'sms-factory',
@@ -509,12 +532,12 @@ class SMSProviderFactory {
 }
 
 // Export types and implementations
-export type { 
-  SMSProvider, 
-  SMSParams, 
-  BulkSMSParams, 
-  SMSDeliveryStatus, 
-  BrazilTelecomCompliance, 
-  SMSProviderConfig 
+export type {
+  SMSProvider,
+  SMSParams,
+  BulkSMSParams,
+  SMSDeliveryStatus,
+  BrazilTelecomCompliance,
+  SMSProviderConfig,
 };
 export { TwilioSMSProvider, SMSProviderFactory };

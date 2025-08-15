@@ -5,21 +5,86 @@
 import { z } from 'zod';
 
 // Base validation schemas for enums and common patterns
-const ApprovalStatusSchema = z.enum(['draft', 'pending', 'approved', 'rejected', 'deprecated']);
-const FeedbackTypeSchema = z.enum(['improvement', 'issue', 'suggestion', 'rating', 'complaint']);
+const ApprovalStatusSchema = z.enum([
+  'draft',
+  'pending',
+  'approved',
+  'rejected',
+  'deprecated',
+]);
+const FeedbackTypeSchema = z.enum([
+  'improvement',
+  'issue',
+  'suggestion',
+  'rating',
+  'complaint',
+]);
 const PriorityLevelSchema = z.enum(['low', 'medium', 'high', 'critical']);
-const FeedbackStatusSchema = z.enum(['open', 'reviewed', 'implemented', 'rejected']);
+const FeedbackStatusSchema = z.enum([
+  'open',
+  'reviewed',
+  'implemented',
+  'rejected',
+]);
 const ExperimentTypeSchema = z.enum(['ab_test', 'multivariate', 'sequential']);
-const ExperimentStatusSchema = z.enum(['setup', 'running', 'paused', 'completed', 'cancelled']);
-const EvidenceTypeSchema = z.enum(['literature', 'guideline', 'regulation', 'study', 'best_practice']);
+const ExperimentStatusSchema = z.enum([
+  'setup',
+  'running',
+  'paused',
+  'completed',
+  'cancelled',
+]);
+const EvidenceTypeSchema = z.enum([
+  'literature',
+  'guideline',
+  'regulation',
+  'study',
+  'best_practice',
+]);
 const EvidenceLevelSchema = z.enum(['A', 'B', 'C', 'D', 'expert_opinion']);
-const VerificationStatusSchema = z.enum(['current', 'outdated', 'conflicting', 'superseded']);
-const ComplianceStatusSchema = z.enum(['compliant', 'partial', 'non_compliant', 'unknown']);
-const ImplementationScopeSchema = z.enum(['clinic_wide', 'department', 'provider', 'pilot']);
-const RolloutStrategySchema = z.enum(['immediate', 'gradual', 'pilot', 'scheduled']);
-const ImplementationStatusSchema = z.enum(['planned', 'in_progress', 'completed', 'failed', 'rolled_back']);
-const OptimizationStatusSchema = z.enum(['pending', 'approved', 'implemented', 'rejected']);
-const AnalyticsPeriodSchema = z.enum(['daily', 'weekly', 'monthly', 'quarterly']);
+const VerificationStatusSchema = z.enum([
+  'current',
+  'outdated',
+  'conflicting',
+  'superseded',
+]);
+const ComplianceStatusSchema = z.enum([
+  'compliant',
+  'partial',
+  'non_compliant',
+  'unknown',
+]);
+const ImplementationScopeSchema = z.enum([
+  'clinic_wide',
+  'department',
+  'provider',
+  'pilot',
+]);
+const RolloutStrategySchema = z.enum([
+  'immediate',
+  'gradual',
+  'pilot',
+  'scheduled',
+]);
+const ImplementationStatusSchema = z.enum([
+  'planned',
+  'in_progress',
+  'completed',
+  'failed',
+  'rolled_back',
+]);
+const OptimizationStatusSchema = z.enum([
+  'pending',
+  'approved',
+  'implemented',
+  'rejected',
+]);
+const AnalyticsPeriodSchema = z.enum([
+  'daily',
+  'weekly',
+  'monthly',
+  'quarterly',
+]);
 
 // Core entity schemas
 export const ProtocolVersionSchema = z.object({
@@ -104,7 +169,7 @@ export const ProtocolExperimentSchema = z.object({
   end_date: z.string().datetime().optional(),
   target_sample_size: z.number().int().min(1).default(100),
   current_sample_size: z.number().int().min(0).default(0),
-  statistical_power: z.number().min(0).max(1).default(0.80),
+  statistical_power: z.number().min(0).max(1).default(0.8),
   significance_level: z.number().min(0).max(1).default(0.05),
   primary_metric: z.string().max(100).optional(),
   secondary_metrics: z.array(z.string()).default([]),
@@ -233,7 +298,7 @@ export const CreateProtocolExperimentRequestSchema = z.object({
   test_protocol_id: z.string().uuid().optional(),
   experiment_type: ExperimentTypeSchema.default('ab_test'),
   target_sample_size: z.number().int().min(1).default(100),
-  statistical_power: z.number().min(0).max(1).default(0.80),
+  statistical_power: z.number().min(0).max(1).default(0.8),
   significance_level: z.number().min(0).max(1).default(0.05),
   primary_metric: z.string().max(100).optional(),
   secondary_metrics: z.array(z.string()).default([]),
@@ -295,7 +360,9 @@ export const ProtocolAnalyticsRequestSchema = z.object({
 
 export const GenerateOptimizationAnalysisRequestSchema = z.object({
   protocol_id: z.string().uuid(),
-  analysis_type: z.enum(['performance', 'outcomes', 'cost_effectiveness', 'comprehensive']).default('comprehensive'),
+  analysis_type: z
+    .enum(['performance', 'outcomes', 'cost_effectiveness', 'comprehensive'])
+    .default('comprehensive'),
   include_comparisons: z.boolean().default(true),
   date_range: z.object({
     start: z.string().datetime(),
@@ -304,17 +371,21 @@ export const GenerateOptimizationAnalysisRequestSchema = z.object({
 });
 
 // API response validation schemas
-export const ProtocolApiResponseSchema = <T extends z.ZodTypeAny>(dataSchema: T) =>
+export const ProtocolApiResponseSchema = <T extends z.ZodTypeAny>(
+  dataSchema: T
+) =>
   z.object({
     data: dataSchema,
     success: z.boolean(),
     message: z.string().optional(),
-    pagination: z.object({
-      page: z.number().int().min(1),
-      per_page: z.number().int().min(1),
-      total: z.number().int().min(0),
-      total_pages: z.number().int().min(0),
-    }).optional(),
+    pagination: z
+      .object({
+        page: z.number().int().min(1),
+        per_page: z.number().int().min(1),
+        total: z.number().int().min(0),
+        total_pages: z.number().int().min(0),
+      })
+      .optional(),
   });
 
 export const ProtocolApiErrorSchema = z.object({
@@ -331,7 +402,15 @@ export const ProtocolVersionQuerySchema = z.object({
   created_by: z.string().uuid().optional(),
   page: z.number().int().min(1).default(1),
   per_page: z.number().int().min(1).max(100).default(20),
-  sort_by: z.enum(['protocol_name', 'version_number', 'created_at', 'updated_at', 'success_rate']).default('created_at'),
+  sort_by: z
+    .enum([
+      'protocol_name',
+      'version_number',
+      'created_at',
+      'updated_at',
+      'success_rate',
+    ])
+    .default('created_at'),
   sort_order: z.enum(['asc', 'desc']).default('desc'),
 });
 
@@ -443,6 +522,19 @@ export const validateGenerateOptimizationAnalysisRequest = (data: unknown) => {
 
 // Export all schemas for external use
 export {
-    AnalyticsPeriodSchema, ApprovalStatusSchema, ComplianceStatusSchema, EvidenceLevelSchema, EvidenceTypeSchema, ExperimentStatusSchema, ExperimentTypeSchema, FeedbackStatusSchema, FeedbackTypeSchema, ImplementationScopeSchema, ImplementationStatusSchema,
-    OptimizationStatusSchema, PriorityLevelSchema, RolloutStrategySchema, VerificationStatusSchema
+  AnalyticsPeriodSchema,
+  ApprovalStatusSchema,
+  ComplianceStatusSchema,
+  EvidenceLevelSchema,
+  EvidenceTypeSchema,
+  ExperimentStatusSchema,
+  ExperimentTypeSchema,
+  FeedbackStatusSchema,
+  FeedbackTypeSchema,
+  ImplementationScopeSchema,
+  ImplementationStatusSchema,
+  OptimizationStatusSchema,
+  PriorityLevelSchema,
+  RolloutStrategySchema,
+  VerificationStatusSchema,
 };

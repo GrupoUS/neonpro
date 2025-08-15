@@ -3,24 +3,34 @@
  * /api/marketing-roi/treatment-profitability
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { marketingROIService } from '@/app/lib/services/marketing-roi-service';
 import { TreatmentROIFiltersSchema } from '@/app/types/marketing-roi';
-import { z } from 'zod';
+import { createClient } from '@/app/utils/supabase/server';
 
 // Utility functions
 async function validateUserAndClinic(request: NextRequest) {
   const supabase = await createClient();
-  
-  const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
   if (userError || !user) {
-    return { error: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }) };
+    return {
+      error: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }),
+    };
   }
 
   const clinicId = request.nextUrl.searchParams.get('clinic_id');
   if (!clinicId) {
-    return { error: NextResponse.json({ error: 'clinic_id is required' }, { status: 400 }) };
+    return {
+      error: NextResponse.json(
+        { error: 'clinic_id is required' },
+        { status: 400 }
+      ),
+    };
   }
 
   const { data: userClinic, error: clinicError } = await supabase
@@ -31,7 +41,12 @@ async function validateUserAndClinic(request: NextRequest) {
     .single();
 
   if (clinicError || !userClinic) {
-    return { error: NextResponse.json({ error: 'Access denied to clinic' }, { status: 403 }) };
+    return {
+      error: NextResponse.json(
+        { error: 'Access denied to clinic' },
+        { status: 403 }
+      ),
+    };
   }
 
   return { user, clinicId, userRole: userClinic.role };
@@ -40,10 +55,10 @@ async function validateUserAndClinic(request: NextRequest) {
 function getDateRangeParams(request: NextRequest) {
   const startDate = request.nextUrl.searchParams.get('start_date');
   const endDate = request.nextUrl.searchParams.get('end_date');
-  
+
   return {
     start_date: startDate ? new Date(startDate) : undefined,
-    end_date: endDate ? new Date(endDate) : undefined
+    end_date: endDate ? new Date(endDate) : undefined,
   };
 }
 
@@ -55,47 +70,53 @@ export async function GET(request: NextRequest) {
   try {
     const validation = await validateUserAndClinic(request);
     if (validation.error) return validation.error;
-    
+
     const { clinicId } = validation;
     const { start_date, end_date } = getDateRangeParams(request);
-    
+
     // Parse treatment filters
     const treatmentIds = request.nextUrl.searchParams.getAll('treatment_ids');
-    const minROI = request.nextUrl.searchParams.get('min_roi') ? 
-      parseFloat(request.nextUrl.searchParams.get('min_roi')!) : undefined;
-    const minProcedures = request.nextUrl.searchParams.get('min_procedures') ? 
-      parseInt(request.nextUrl.searchParams.get('min_procedures')!) : undefined;
+    const minROI = request.nextUrl.searchParams.get('min_roi')
+      ? Number.parseFloat(request.nextUrl.searchParams.get('min_roi')!)
+      : undefined;
+    const minProcedures = request.nextUrl.searchParams.get('min_procedures')
+      ? Number.parseInt(request.nextUrl.searchParams.get('min_procedures')!, 10)
+      : undefined;
     const sortBy = request.nextUrl.searchParams.get('sort_by');
     const sortOrder = request.nextUrl.searchParams.get('sort_order');
-    
+
     const filters = {
       treatment_ids: treatmentIds.length > 0 ? treatmentIds : undefined,
       min_roi: minROI,
       min_procedures: minProcedures,
-      date_range: start_date && end_date ? { start: start_date, end: end_date } : undefined,
+      date_range:
+        start_date && end_date
+          ? { start: start_date, end: end_date }
+          : undefined,
       sort_by: sortBy,
-      sort_order: sortOrder
+      sort_order: sortOrder,
     };
-    
+
     // Validate filters
     const validatedFilters = TreatmentROIFiltersSchema.parse(filters);
-    
-    const profitabilityAnalysis = await marketingROIService.getTreatmentProfitabilityAnalysis(
-      clinicId,
-      validatedFilters
-    );
-    
+
+    const profitabilityAnalysis =
+      await marketingROIService.getTreatmentProfitabilityAnalysis(
+        clinicId,
+        validatedFilters
+      );
+
     return NextResponse.json(profitabilityAnalysis);
   } catch (error: any) {
     console.error('[Marketing ROI API] GET treatment profitability:', error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Validation error', details: error.errors },
         { status: 400 }
       );
     }
-    
+
     return NextResponse.json(
       { error: 'Internal server error', message: error.message },
       { status: 500 }
@@ -111,30 +132,30 @@ export async function POST(request: NextRequest) {
   try {
     const validation = await validateUserAndClinic(request);
     if (validation.error) return validation.error;
-    
+
     const { clinicId } = validation;
     const body = await request.json();
-    
+
     const { treatment_id, period_start, period_end } = body;
-    
-    if (!treatment_id || !period_start || !period_end) {
+
+    if (!(treatment_id && period_start && period_end)) {
       return NextResponse.json(
         { error: 'treatment_id, period_start, and period_end are required' },
         { status: 400 }
       );
     }
-    
+
     const treatmentROI = await marketingROIService.calculateTreatmentROI(
       clinicId,
       treatment_id,
       new Date(period_start),
       new Date(period_end)
     );
-    
+
     return NextResponse.json(treatmentROI);
   } catch (error: any) {
     console.error('[Marketing ROI API] POST calculate treatment ROI:', error);
-    
+
     return NextResponse.json(
       { error: 'Internal server error', message: error.message },
       { status: 500 }

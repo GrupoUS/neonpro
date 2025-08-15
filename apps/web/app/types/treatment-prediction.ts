@@ -5,7 +5,12 @@ export interface PredictionModel {
   id: string;
   name: string;
   version: string;
-  algorithm_type: 'ensemble' | 'neural_network' | 'random_forest' | 'gradient_boosting' | 'svm';
+  algorithm_type:
+    | 'ensemble'
+    | 'neural_network'
+    | 'random_forest'
+    | 'gradient_boosting'
+    | 'svm';
   accuracy: number; // 0-1, target ≥0.85
   confidence_threshold: number; // Default 0.85
   status: 'training' | 'active' | 'deprecated';
@@ -48,7 +53,7 @@ export interface TreatmentPrediction {
   created_at: string;
   updated_at: string;
   created_by?: string;
-  
+
   // Relationships
   model?: PredictionModel;
   patient?: any; // Patient interface from main types
@@ -66,34 +71,34 @@ export interface PredictionFeatures {
   age: number;
   gender: string;
   bmi?: number;
-  
+
   // Medical history factors
   previous_treatments: number;
   success_rate_history: number;
   medical_conditions: string[];
   medications: string[];
   allergies: string[];
-  
+
   // Lifestyle factors
   smoking_status: 'never' | 'former' | 'current';
   alcohol_consumption: 'none' | 'light' | 'moderate' | 'heavy';
   exercise_frequency: 'none' | 'light' | 'moderate' | 'regular';
-  
+
   // Treatment-specific factors
   treatment_complexity: number; // 1-5
   provider_experience: number;
   clinic_success_rate: number;
-  
+
   // Skin-specific factors (for aesthetic treatments)
   skin_type?: string;
   skin_condition?: string;
   photosensitivity?: boolean;
-  
+
   // Psychological factors
   treatment_expectations: 'realistic' | 'optimistic' | 'unrealistic';
   anxiety_level: number; // 1-5
   compliance_history: number; // 0-1
-  
+
   // External factors
   seasonal_factors?: string;
   geographic_location?: string;
@@ -232,7 +237,7 @@ export interface ModelPerformance {
   validation_metrics?: ValidationMetrics;
   feature_importance?: Record<string, number>;
   created_at: string;
-  
+
   // Relationships
   model?: PredictionModel;
 }
@@ -263,7 +268,7 @@ export interface PredictionFeedback {
   confidence_level: number; // 1-5
   medical_factors?: Record<string, any>;
   created_at: string;
-  
+
   // Relationships
   prediction?: TreatmentPrediction;
   provider?: any; // User interface from main types
@@ -347,7 +352,12 @@ export interface TrainingResponse {
 }
 
 // Utility Types
-export type PredictionConfidence = 'very_low' | 'low' | 'medium' | 'high' | 'very_high';
+export type PredictionConfidence =
+  | 'very_low'
+  | 'low'
+  | 'medium'
+  | 'high'
+  | 'very_high';
 export type TreatmentOutcome = 'success' | 'partial_success' | 'failure';
 export type RiskLevel = 'low' | 'medium' | 'high';
 export type ModelStatus = 'training' | 'active' | 'deprecated';

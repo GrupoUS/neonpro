@@ -1,7 +1,7 @@
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { AuditLogger } from '../../audit/audit-logger';
-import { LGPDManager } from '../../lgpd/lgpd-manager';
-import { SessionManager } from '../auth/session-manager';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import type { AuditLogger } from '../../audit/audit-logger';
+import type { LGPDManager } from '../../lgpd/lgpd-manager';
+import type { SessionManager } from '../auth/session-manager';
 
 // Configuration interface
 export interface AppointmentConfig {
@@ -43,7 +43,7 @@ export interface BookingRequest {
     sms: boolean;
     push: boolean;
   };
-}// Booking result
+} // Booking result
 export interface BookingResult {
   success: boolean;
   appointmentId?: string;
@@ -71,7 +71,6 @@ export interface CancellationRequest {
 export class AppointmentManager {
   private supabase: SupabaseClient;
   private auditLogger: AuditLogger;
-  private lgpdManager: LGPDManager;
   private sessionManager: SessionManager;
   private config: AppointmentConfig;
 
@@ -86,7 +85,7 @@ export class AppointmentManager {
     this.supabase = createClient(supabaseUrl, supabaseKey);
     this.auditLogger = auditLogger;
     this.lgpdManager = lgpdManager;
-    this.sessionManager = sessionManager;    
+    this.sessionManager = sessionManager;
     this.config = {
       maxAdvanceBookingDays: 90,
       minAdvanceBookingHours: 2,
@@ -95,7 +94,7 @@ export class AppointmentManager {
       enableWaitingList: true,
       autoConfirmationEnabled: false,
       reminderIntervals: [24, 2], // 24 hours and 2 hours before
-      ...config
+      ...config,
     };
   }
 
@@ -112,18 +111,26 @@ export class AppointmentManager {
   ): Promise<TimeSlot[]> {
     try {
       // Validate session
-      const sessionValidation = await this.sessionManager.validateSession(sessionToken);
-      if (!sessionValidation.isValid || sessionValidation.session?.patientId !== patientId) {
+      const sessionValidation =
+        await this.sessionManager.validateSession(sessionToken);
+      if (
+        !sessionValidation.isValid ||
+        sessionValidation.session?.patientId !== patientId
+      ) {
         throw new Error('Invalid session or unauthorized access');
       }
 
       // Validate date range
       const now = new Date();
-      const maxDate = new Date(now.getTime() + this.config.maxAdvanceBookingDays * 24 * 60 * 60 * 1000);
-      
+      const maxDate = new Date(
+        now.getTime() + this.config.maxAdvanceBookingDays * 24 * 60 * 60 * 1000
+      );
+
       if (startDate < now || endDate > maxDate) {
-        throw new Error(`Booking dates must be between now and ${this.config.maxAdvanceBookingDays} days in advance`);
-      }      
+        throw new Error(
+          `Booking dates must be between now and ${this.config.maxAdvanceBookingDays} days in advance`
+        );
+      }
       // Get service details
       const { data: service, error: serviceError } = await this.supabase
         .from('services')
@@ -154,12 +161,15 @@ export class AppointmentManager {
       if (staffError) throw staffError;
 
       // Get existing appointments in the date range
-      const { data: existingAppointments, error: appointmentsError } = await this.supabase
-        .from('appointments')
-        .select('staff_id, appointment_date, appointment_time, estimated_duration')
-        .gte('appointment_date', startDate.toISOString().split('T')[0])
-        .lte('appointment_date', endDate.toISOString().split('T')[0])
-        .in('status', ['scheduled', 'confirmed', 'in_progress']);      
+      const { data: existingAppointments, error: appointmentsError } =
+        await this.supabase
+          .from('appointments')
+          .select(
+            'staff_id, appointment_date, appointment_time, estimated_duration'
+          )
+          .gte('appointment_date', startDate.toISOString().split('T')[0])
+          .lte('appointment_date', endDate.toISOString().split('T')[0])
+          .in('status', ['scheduled', 'confirmed', 'in_progress']);
       if (appointmentsError) throw appointmentsError;
 
       // Generate available time slots
@@ -168,7 +178,7 @@ export class AppointmentManager {
 
       while (currentDate <= endDate) {
         const dayOfWeek = currentDate.getDay();
-        
+
         // Check each staff member's availability for this day
         for (const staff of availableStaff || []) {
           const dayAvailability = staff.staff_availability.find(
@@ -200,8 +210,8 @@ export class AppointmentManager {
         details: {
           serviceId,
           dateRange: { startDate, endDate },
-          slotsFound: availableSlots.length
-        }
+          slotsFound: availableSlots.length,
+        },
       });
 
       return availableSlots.sort((a, b) => a.date.getTime() - b.date.getTime());
@@ -210,11 +220,11 @@ export class AppointmentManager {
         action: 'slots_access_failed',
         userId: patientId,
         userType: 'patient',
-        details: { error: error.message }
+        details: { error: error.message },
       });
       throw error;
     }
-  }  
+  }
   /**
    * Generate time slots for a specific day and staff member
    */
@@ -230,34 +240,45 @@ export class AppointmentManager {
     const slots: TimeSlot[] = [];
     const [startHour, startMinute] = startTime.split(':').map(Number);
     const [endHour, endMinute] = endTime.split(':').map(Number);
-    
+
     const slotStart = new Date(date);
     slotStart.setHours(startHour, startMinute, 0, 0);
-    
+
     const slotEnd = new Date(date);
     slotEnd.setHours(endHour, endMinute, 0, 0);
-    
+
     const now = new Date();
-    const minBookingTime = new Date(now.getTime() + this.config.minAdvanceBookingHours * 60 * 60 * 1000);
-    
-    while (slotStart.getTime() + serviceDuration * 60 * 1000 <= slotEnd.getTime()) {
-      const slotEndTime = new Date(slotStart.getTime() + serviceDuration * 60 * 1000);
-      
+    const minBookingTime = new Date(
+      now.getTime() + this.config.minAdvanceBookingHours * 60 * 60 * 1000
+    );
+
+    while (
+      slotStart.getTime() + serviceDuration * 60 * 1000 <=
+      slotEnd.getTime()
+    ) {
+      const slotEndTime = new Date(
+        slotStart.getTime() + serviceDuration * 60 * 1000
+      );
+
       // Check if slot is in the future with minimum advance booking time
       if (slotStart >= minBookingTime) {
         // Check for conflicts with existing appointments
-        const hasConflict = existingAppointments.some(apt => {
+        const hasConflict = existingAppointments.some((apt) => {
           if (apt.staff_id !== staff.id) return false;
-          
-          const aptDate = new Date(`${apt.appointment_date}T${apt.appointment_time}`);
-          const aptEndTime = new Date(aptDate.getTime() + apt.estimated_duration * 60 * 1000);
-          
+
+          const aptDate = new Date(
+            `${apt.appointment_date}T${apt.appointment_time}`
+          );
+          const aptEndTime = new Date(
+            aptDate.getTime() + apt.estimated_duration * 60 * 1000
+          );
+
           return (
             (slotStart >= aptDate && slotStart < aptEndTime) ||
             (slotEndTime > aptDate && slotEndTime <= aptEndTime) ||
             (slotStart <= aptDate && slotEndTime >= aptEndTime)
           );
-        });        
+        });
         if (!hasConflict) {
           slots.push({
             id: `${staff.id}_${date.toISOString().split('T')[0]}_${slotStart.getHours()}:${slotStart.getMinutes().toString().padStart(2, '0')}`,
@@ -270,15 +291,15 @@ export class AppointmentManager {
             serviceName: service.name,
             duration: serviceDuration,
             isAvailable: true,
-            price: service.price
+            price: service.price,
           });
         }
       }
-      
+
       // Move to next slot (15-minute intervals)
       slotStart.setMinutes(slotStart.getMinutes() + 15);
     }
-    
+
     return slots;
   }
 
@@ -291,10 +312,14 @@ export class AppointmentManager {
   ): Promise<BookingResult> {
     try {
       // Validate session
-      const sessionValidation = await this.sessionManager.validateSession(sessionToken);
-      if (!sessionValidation.isValid || sessionValidation.session?.patientId !== request.patientId) {
+      const sessionValidation =
+        await this.sessionManager.validateSession(sessionToken);
+      if (
+        !sessionValidation.isValid ||
+        sessionValidation.session?.patientId !== request.patientId
+      ) {
         throw new Error('Invalid session or unauthorized access');
-      }      
+      }
       // Validate booking request
       const validationResult = await this.validateBookingRequest(request);
       if (!validationResult.isValid) {
@@ -302,18 +327,22 @@ export class AppointmentManager {
           success: false,
           message: validationResult.message,
           conflictingAppointments: validationResult.conflicts,
-          suggestedAlternatives: validationResult.alternatives
+          suggestedAlternatives: validationResult.alternatives,
         };
       }
 
       // Check for existing appointments at the same time
-      const { data: conflictingAppointments, error: conflictError } = await this.supabase
-        .from('appointments')
-        .select('*')
-        .eq('staff_id', request.staffId)
-        .eq('appointment_date', request.preferredDate.toISOString().split('T')[0])
-        .eq('appointment_time', request.preferredTime)
-        .in('status', ['scheduled', 'confirmed', 'in_progress']);
+      const { data: conflictingAppointments, error: conflictError } =
+        await this.supabase
+          .from('appointments')
+          .select('*')
+          .eq('staff_id', request.staffId)
+          .eq(
+            'appointment_date',
+            request.preferredDate.toISOString().split('T')[0]
+          )
+          .eq('appointment_time', request.preferredTime)
+          .in('status', ['scheduled', 'confirmed', 'in_progress']);
 
       if (conflictError) throw conflictError;
 
@@ -327,11 +356,12 @@ export class AppointmentManager {
 
         return {
           success: false,
-          message: 'Horário não disponível. Verifique as alternativas sugeridas.',
+          message:
+            'Horário não disponível. Verifique as alternativas sugeridas.',
           conflictingAppointments,
-          suggestedAlternatives: alternatives
+          suggestedAlternatives: alternatives,
         };
-      }      
+      }
       // Create the appointment
       const { data: newAppointment, error: insertError } = await this.supabase
         .from('appointments')
@@ -341,11 +371,13 @@ export class AppointmentManager {
           staff_id: request.staffId,
           appointment_date: request.preferredDate.toISOString().split('T')[0],
           appointment_time: request.preferredTime,
-          status: this.config.autoConfirmationEnabled ? 'confirmed' : 'scheduled',
+          status: this.config.autoConfirmationEnabled
+            ? 'confirmed'
+            : 'scheduled',
           notes: request.notes,
-          is_urgent: request.isUrgent || false,
+          is_urgent: request.isUrgent,
           reminder_preferences: request.reminderPreferences,
-          created_at: new Date().toISOString()
+          created_at: new Date().toISOString(),
         })
         .select()
         .single();
@@ -362,25 +394,25 @@ export class AppointmentManager {
           serviceId: request.serviceId,
           staffId: request.staffId,
           appointmentDate: request.preferredDate,
-          appointmentTime: request.preferredTime
-        }
+          appointmentTime: request.preferredTime,
+        },
       });
 
       return {
         success: true,
         appointmentId: newAppointment.id,
-        message: 'Agendamento realizado com sucesso!'
+        message: 'Agendamento realizado com sucesso!',
       };
     } catch (error) {
       await this.auditLogger.log({
         action: 'appointment_booking_failed',
         userId: request.patientId,
         userType: 'patient',
-        details: { error: error.message }
+        details: { error: error.message },
       });
       throw error;
     }
-  }  
+  }
   /**
    * Validate booking request
    */
@@ -391,15 +423,21 @@ export class AppointmentManager {
     alternatives?: TimeSlot[];
   }> {
     const now = new Date();
-    const appointmentDateTime = new Date(`${request.preferredDate.toISOString().split('T')[0]}T${request.preferredTime}`);
-    const minBookingTime = new Date(now.getTime() + this.config.minAdvanceBookingHours * 60 * 60 * 1000);
-    const maxBookingTime = new Date(now.getTime() + this.config.maxAdvanceBookingDays * 24 * 60 * 60 * 1000);
+    const appointmentDateTime = new Date(
+      `${request.preferredDate.toISOString().split('T')[0]}T${request.preferredTime}`
+    );
+    const minBookingTime = new Date(
+      now.getTime() + this.config.minAdvanceBookingHours * 60 * 60 * 1000
+    );
+    const maxBookingTime = new Date(
+      now.getTime() + this.config.maxAdvanceBookingDays * 24 * 60 * 60 * 1000
+    );
 
     // Check minimum advance booking time
     if (appointmentDateTime < minBookingTime) {
       return {
         isValid: false,
-        message: `Agendamentos devem ser feitos com pelo menos ${this.config.minAdvanceBookingHours} horas de antecedência.`
+        message: `Agendamentos devem ser feitos com pelo menos ${this.config.minAdvanceBookingHours} horas de antecedência.`,
       };
     }
 
@@ -407,7 +445,7 @@ export class AppointmentManager {
     if (appointmentDateTime > maxBookingTime) {
       return {
         isValid: false,
-        message: `Agendamentos podem ser feitos com até ${this.config.maxAdvanceBookingDays} dias de antecedência.`
+        message: `Agendamentos podem ser feitos com até ${this.config.maxAdvanceBookingDays} dias de antecedência.`,
       };
     }
 
@@ -421,9 +459,9 @@ export class AppointmentManager {
     if (serviceError || !service || !service.is_active) {
       return {
         isValid: false,
-        message: 'Serviço não encontrado ou não disponível.'
+        message: 'Serviço não encontrado ou não disponível.',
       };
-    }    
+    }
     // Validate staff exists and is available
     const { data: staff, error: staffError } = await this.supabase
       .from('staff')
@@ -434,13 +472,13 @@ export class AppointmentManager {
     if (staffError || !staff || !staff.is_active) {
       return {
         isValid: false,
-        message: 'Profissional não encontrado ou não disponível.'
+        message: 'Profissional não encontrado ou não disponível.',
       };
     }
 
     return {
       isValid: true,
-      message: 'Validação bem-sucedida'
+      message: 'Validação bem-sucedida',
     };
   }
 

@@ -1,53 +1,60 @@
 /**
  * LGPD Automation System - Testes Automatizados
- * 
+ *
  * Suite completa de testes para validar o funcionamento do sistema de automação LGPD
  */
 
-import { describe, test, expect, beforeAll, afterAll, beforeEach, jest } from '@jest/globals'
-import { createClient } from '@supabase/supabase-js'
-import { Database } from '@/types/supabase'
-import { LGPDComplianceManager } from '../LGPDComplianceManager'
-import { 
-  LGPDAutomationOrchestrator,
-  ConsentAutomationManager,
-  DataSubjectRightsAutomation,
-  RealTimeComplianceMonitor,
-  DataRetentionAutomation,
-  BreachDetectionAutomation,
-  DataMinimizationAutomation,
-  ThirdPartyComplianceAutomation,
+import {
+  afterAll,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  jest,
+  test,
+} from '@jest/globals';
+import {
   AuditReportingAutomation,
-  getLGPDAutomationConfig
-} from './index'
+  BreachDetectionAutomation,
+  ConsentAutomationManager,
+  DataMinimizationAutomation,
+  DataRetentionAutomation,
+  DataSubjectRightsAutomation,
+  getLGPDAutomationConfig,
+  LGPDAutomationOrchestrator,
+  RealTimeComplianceMonitor,
+  ThirdPartyComplianceAutomation,
+} from './index';
 
 // Mock do Supabase para testes
 const mockSupabase = {
   from: jest.fn(() => ({
     select: jest.fn(() => ({
       eq: jest.fn(() => ({
-        single: jest.fn(() => Promise.resolve({ data: {}, error: null }))
-      }))
+        single: jest.fn(() => Promise.resolve({ data: {}, error: null })),
+      })),
     })),
     insert: jest.fn(() => ({
       select: jest.fn(() => ({
-        single: jest.fn(() => Promise.resolve({ data: { id: 'test-id' }, error: null }))
-      }))
+        single: jest.fn(() =>
+          Promise.resolve({ data: { id: 'test-id' }, error: null })
+        ),
+      })),
     })),
     update: jest.fn(() => ({
-      eq: jest.fn(() => Promise.resolve({ data: {}, error: null }))
+      eq: jest.fn(() => Promise.resolve({ data: {}, error: null })),
     })),
     delete: jest.fn(() => ({
-      eq: jest.fn(() => Promise.resolve({ data: {}, error: null }))
-    }))
+      eq: jest.fn(() => Promise.resolve({ data: {}, error: null })),
+    })),
   })),
   rpc: jest.fn(() => Promise.resolve({ data: {}, error: null })),
   channel: jest.fn(() => ({
     on: jest.fn(() => ({
-      subscribe: jest.fn()
-    }))
-  }))
-} as any
+      subscribe: jest.fn(),
+    })),
+  })),
+} as any;
 
 // Mock do LGPDComplianceManager
 const mockComplianceManager = {
@@ -55,99 +62,101 @@ const mockComplianceManager = {
   checkUserPermission: jest.fn(() => Promise.resolve(true)),
   getDashboardMetrics: jest.fn(() => Promise.resolve({})),
   getConsents: jest.fn(() => Promise.resolve({ consents: [] })),
-  createOrUpdateConsent: jest.fn(() => Promise.resolve({ consent_id: 'test-consent' }))
-} as any
+  createOrUpdateConsent: jest.fn(() =>
+    Promise.resolve({ consent_id: 'test-consent' })
+  ),
+} as any;
 
 describe('LGPD Automation System', () => {
-  let orchestrator: LGPDAutomationOrchestrator
-  let config: any
+  let orchestrator: LGPDAutomationOrchestrator;
+  let config: any;
 
   beforeAll(() => {
     // Configuração de teste
-    config = getLGPDAutomationConfig('development')
-    
+    config = getLGPDAutomationConfig('development');
+
     // Inicializar orquestrador com mocks
     orchestrator = new LGPDAutomationOrchestrator(
       mockSupabase,
       mockComplianceManager,
       config
-    )
-  })
+    );
+  });
 
   afterAll(async () => {
     // Limpar recursos após os testes
     if (orchestrator) {
-      await orchestrator.stopAllAutomation()
+      await orchestrator.stopAllAutomation();
     }
-  })
+  });
 
   describe('Orchestrator', () => {
     test('should initialize successfully', () => {
-      expect(orchestrator).toBeDefined()
-      expect(typeof orchestrator.startAllAutomation).toBe('function')
-      expect(typeof orchestrator.stopAllAutomation).toBe('function')
-    })
+      expect(orchestrator).toBeDefined();
+      expect(typeof orchestrator.startAllAutomation).toBe('function');
+      expect(typeof orchestrator.stopAllAutomation).toBe('function');
+    });
 
     test('should start all automation modules', async () => {
-      const result = await orchestrator.startAllAutomation()
-      
-      expect(result).toHaveProperty('success')
-      expect(result).toHaveProperty('started_modules')
-      expect(result).toHaveProperty('failed_modules')
-      expect(Array.isArray(result.started_modules)).toBe(true)
-      expect(Array.isArray(result.failed_modules)).toBe(true)
-    })
+      const result = await orchestrator.startAllAutomation();
+
+      expect(result).toHaveProperty('success');
+      expect(result).toHaveProperty('started_modules');
+      expect(result).toHaveProperty('failed_modules');
+      expect(Array.isArray(result.started_modules)).toBe(true);
+      expect(Array.isArray(result.failed_modules)).toBe(true);
+    });
 
     test('should stop all automation modules', async () => {
-      const result = await orchestrator.stopAllAutomation()
-      
-      expect(result).toHaveProperty('success')
-      expect(result).toHaveProperty('stopped_modules')
-      expect(Array.isArray(result.stopped_modules)).toBe(true)
-    })
+      const result = await orchestrator.stopAllAutomation();
+
+      expect(result).toHaveProperty('success');
+      expect(result).toHaveProperty('stopped_modules');
+      expect(Array.isArray(result.stopped_modules)).toBe(true);
+    });
 
     test('should get automation status', async () => {
-      const status = await orchestrator.getAutomationStatus()
-      
-      expect(Array.isArray(status)).toBe(true)
-    })
+      const status = await orchestrator.getAutomationStatus();
+
+      expect(Array.isArray(status)).toBe(true);
+    });
 
     test('should get automation metrics', async () => {
-      const metrics = await orchestrator.getAutomationMetrics()
-      
-      expect(metrics).toBeDefined()
-    })
+      const metrics = await orchestrator.getAutomationMetrics();
+
+      expect(metrics).toBeDefined();
+    });
 
     test('should get unified dashboard', async () => {
-      const dashboard = await orchestrator.getUnifiedDashboard()
-      
-      expect(dashboard).toBeDefined()
-    })
+      const dashboard = await orchestrator.getUnifiedDashboard();
+
+      expect(dashboard).toBeDefined();
+    });
 
     test('should get modules', () => {
-      const modules = orchestrator.getModules()
-      
-      expect(modules).toHaveProperty('consentAutomation')
-      expect(modules).toHaveProperty('dataSubjectRights')
-      expect(modules).toHaveProperty('complianceMonitor')
-      expect(modules).toHaveProperty('dataRetention')
-      expect(modules).toHaveProperty('breachDetection')
-      expect(modules).toHaveProperty('dataMinimization')
-      expect(modules).toHaveProperty('thirdPartyCompliance')
-      expect(modules).toHaveProperty('auditReporting')
-    })
-  })
+      const modules = orchestrator.getModules();
+
+      expect(modules).toHaveProperty('consentAutomation');
+      expect(modules).toHaveProperty('dataSubjectRights');
+      expect(modules).toHaveProperty('complianceMonitor');
+      expect(modules).toHaveProperty('dataRetention');
+      expect(modules).toHaveProperty('breachDetection');
+      expect(modules).toHaveProperty('dataMinimization');
+      expect(modules).toHaveProperty('thirdPartyCompliance');
+      expect(modules).toHaveProperty('auditReporting');
+    });
+  });
 
   describe('Consent Automation Manager', () => {
-    let consentManager: ConsentAutomationManager
+    let consentManager: ConsentAutomationManager;
 
     beforeEach(() => {
       consentManager = new ConsentAutomationManager(
         mockSupabase,
         mockComplianceManager,
         config.consent_automation
-      )
-    })
+      );
+    });
 
     test('should collect consent with tracking', async () => {
       const consentData = {
@@ -161,14 +170,15 @@ describe('LGPD Automation System', () => {
         legal_basis: 'consent' as any,
         data_categories: ['personal'],
         retention_period_months: 24,
-        third_party_sharing: false
-      }
+        third_party_sharing: false,
+      };
 
-      const result = await consentManager.collectConsentWithTracking(consentData)
-      
-      expect(result).toHaveProperty('consent_id')
-      expect(result).toHaveProperty('tracking_id')
-    })
+      const result =
+        await consentManager.collectConsentWithTracking(consentData);
+
+      expect(result).toHaveProperty('consent_id');
+      expect(result).toHaveProperty('tracking_id');
+    });
 
     test('should process consent renewal', async () => {
       const renewalData = {
@@ -176,13 +186,13 @@ describe('LGPD Automation System', () => {
         user_id: 'test-user',
         purpose: 'marketing' as any,
         renewal_method: 'email' as any,
-        notification_sent: true
-      }
+        notification_sent: true,
+      };
 
-      const result = await consentManager.processConsentRenewal(renewalData)
-      
-      expect(result).toHaveProperty('success')
-    })
+      const result = await consentManager.processConsentRenewal(renewalData);
+
+      expect(result).toHaveProperty('success');
+    });
 
     test('should withdraw consent', async () => {
       const withdrawalData = {
@@ -191,39 +201,39 @@ describe('LGPD Automation System', () => {
         withdrawal_reason: 'user_request' as any,
         withdrawal_method: 'web_form' as any,
         ip_address: '192.168.1.1',
-        user_agent: 'Mozilla/5.0 Test'
-      }
+        user_agent: 'Mozilla/5.0 Test',
+      };
 
-      const result = await consentManager.withdrawConsent(withdrawalData)
-      
-      expect(result).toHaveProperty('success')
-    })
+      const result = await consentManager.withdrawConsent(withdrawalData);
+
+      expect(result).toHaveProperty('success');
+    });
 
     test('should get consent analytics', async () => {
       const filters = {
         start_date: '2024-01-01',
         end_date: '2024-12-31',
-        purpose: 'marketing' as any
-      }
+        purpose: 'marketing' as any,
+      };
 
-      const analytics = await consentManager.getConsentAnalytics(filters)
-      
-      expect(analytics).toHaveProperty('total_consents')
-      expect(analytics).toHaveProperty('consent_rate')
-      expect(analytics).toHaveProperty('withdrawal_rate')
-    })
-  })
+      const analytics = await consentManager.getConsentAnalytics(filters);
+
+      expect(analytics).toHaveProperty('total_consents');
+      expect(analytics).toHaveProperty('consent_rate');
+      expect(analytics).toHaveProperty('withdrawal_rate');
+    });
+  });
 
   describe('Data Subject Rights Automation', () => {
-    let rightsManager: DataSubjectRightsAutomation
+    let rightsManager: DataSubjectRightsAutomation;
 
     beforeEach(() => {
       rightsManager = new DataSubjectRightsAutomation(
         mockSupabase,
         mockComplianceManager,
         config.data_subject_rights
-      )
-    })
+      );
+    });
 
     test('should process access request', async () => {
       const requestData = {
@@ -232,14 +242,14 @@ describe('LGPD Automation System', () => {
         contact_email: 'test@example.com',
         identity_verified: true,
         requested_data_categories: ['personal', 'usage'],
-        delivery_method: 'secure_download' as any
-      }
+        delivery_method: 'secure_download' as any,
+      };
 
-      const result = await rightsManager.processAccessRequest(requestData)
-      
-      expect(result).toHaveProperty('request_id')
-      expect(result).toHaveProperty('status')
-    })
+      const result = await rightsManager.processAccessRequest(requestData);
+
+      expect(result).toHaveProperty('request_id');
+      expect(result).toHaveProperty('status');
+    });
 
     test('should process rectification request', async () => {
       const requestData = {
@@ -251,15 +261,16 @@ describe('LGPD Automation System', () => {
           field: 'email',
           current_value: 'old@example.com',
           new_value: 'new@example.com',
-          justification: 'Email address changed'
-        }
-      }
+          justification: 'Email address changed',
+        },
+      };
 
-      const result = await rightsManager.processRectificationRequest(requestData)
-      
-      expect(result).toHaveProperty('request_id')
-      expect(result).toHaveProperty('status')
-    })
+      const result =
+        await rightsManager.processRectificationRequest(requestData);
+
+      expect(result).toHaveProperty('request_id');
+      expect(result).toHaveProperty('status');
+    });
 
     test('should process deletion request', async () => {
       const requestData = {
@@ -268,14 +279,14 @@ describe('LGPD Automation System', () => {
         contact_email: 'test@example.com',
         identity_verified: true,
         deletion_scope: 'all_data' as any,
-        reason: 'user_request' as any
-      }
+        reason: 'user_request' as any,
+      };
 
-      const result = await rightsManager.processDeletionRequest(requestData)
-      
-      expect(result).toHaveProperty('request_id')
-      expect(result).toHaveProperty('status')
-    })
+      const result = await rightsManager.processDeletionRequest(requestData);
+
+      expect(result).toHaveProperty('request_id');
+      expect(result).toHaveProperty('status');
+    });
 
     test('should process portability request', async () => {
       const requestData = {
@@ -284,58 +295,58 @@ describe('LGPD Automation System', () => {
         contact_email: 'test@example.com',
         identity_verified: true,
         export_format: 'json' as any,
-        data_categories: ['personal', 'preferences']
-      }
+        data_categories: ['personal', 'preferences'],
+      };
 
-      const result = await rightsManager.processPortabilityRequest(requestData)
-      
-      expect(result).toHaveProperty('request_id')
-      expect(result).toHaveProperty('status')
-    })
-  })
+      const result = await rightsManager.processPortabilityRequest(requestData);
+
+      expect(result).toHaveProperty('request_id');
+      expect(result).toHaveProperty('status');
+    });
+  });
 
   describe('Real-Time Compliance Monitor', () => {
-    let complianceMonitor: RealTimeComplianceMonitor
+    let complianceMonitor: RealTimeComplianceMonitor;
 
     beforeEach(() => {
       complianceMonitor = new RealTimeComplianceMonitor(
         mockSupabase,
         mockComplianceManager,
         config.compliance_monitoring
-      )
-    })
+      );
+    });
 
     test('should start monitoring', async () => {
-      const result = await complianceMonitor.startMonitoring()
-      
-      expect(result).toHaveProperty('success')
-    })
+      const result = await complianceMonitor.startMonitoring();
+
+      expect(result).toHaveProperty('success');
+    });
 
     test('should get compliance dashboard', async () => {
-      const dashboard = await complianceMonitor.getComplianceDashboard()
-      
-      expect(dashboard).toHaveProperty('overall_compliance_score')
-      expect(dashboard).toHaveProperty('compliance_checks')
-    })
+      const dashboard = await complianceMonitor.getComplianceDashboard();
+
+      expect(dashboard).toHaveProperty('overall_compliance_score');
+      expect(dashboard).toHaveProperty('compliance_checks');
+    });
 
     test('should perform compliance check', async () => {
-      const result = await complianceMonitor.performComplianceCheck()
-      
-      expect(result).toHaveProperty('overall_score')
-      expect(result).toHaveProperty('checks')
-    })
-  })
+      const result = await complianceMonitor.performComplianceCheck();
+
+      expect(result).toHaveProperty('overall_score');
+      expect(result).toHaveProperty('checks');
+    });
+  });
 
   describe('Data Retention Automation', () => {
-    let retentionManager: DataRetentionAutomation
+    let retentionManager: DataRetentionAutomation;
 
     beforeEach(() => {
       retentionManager = new DataRetentionAutomation(
         mockSupabase,
         mockComplianceManager,
         config.data_retention
-      )
-    })
+      );
+    });
 
     test('should create retention policy', async () => {
       const policyData = {
@@ -346,44 +357,45 @@ describe('LGPD Automation System', () => {
         retention_type: 'soft_delete' as any,
         conditions: {
           date_column: 'created_at',
-          additional_conditions: []
+          additional_conditions: [],
         },
         approval_required: true,
         backup_before_deletion: true,
-        notification_before_days: 7
-      }
+        notification_before_days: 7,
+      };
 
-      const result = await retentionManager.createRetentionPolicy(policyData)
-      
-      expect(result).toHaveProperty('policy_id')
-      expect(result).toHaveProperty('status')
-    })
+      const result = await retentionManager.createRetentionPolicy(policyData);
+
+      expect(result).toHaveProperty('policy_id');
+      expect(result).toHaveProperty('status');
+    });
 
     test('should schedule retention execution', async () => {
       const scheduleData = {
         policy_id: 'test-policy',
-        execution_date: new Date(Date.now() + 86400000).toISOString(), // Tomorrow
+        execution_date: new Date(Date.now() + 86_400_000).toISOString(), // Tomorrow
         dry_run: true,
-        notification_recipients: ['admin@example.com']
-      }
+        notification_recipients: ['admin@example.com'],
+      };
 
-      const result = await retentionManager.scheduleRetentionExecution(scheduleData)
-      
-      expect(result).toHaveProperty('schedule_id')
-      expect(result).toHaveProperty('status')
-    })
-  })
+      const result =
+        await retentionManager.scheduleRetentionExecution(scheduleData);
+
+      expect(result).toHaveProperty('schedule_id');
+      expect(result).toHaveProperty('status');
+    });
+  });
 
   describe('Breach Detection Automation', () => {
-    let breachDetection: BreachDetectionAutomation
+    let breachDetection: BreachDetectionAutomation;
 
     beforeEach(() => {
       breachDetection = new BreachDetectionAutomation(
         mockSupabase,
         mockComplianceManager,
         config.breach_detection
-      )
-    })
+      );
+    });
 
     test('should create detection rule', async () => {
       const ruleData = {
@@ -393,18 +405,18 @@ describe('LGPD Automation System', () => {
         conditions: {
           threshold: 5,
           time_window_minutes: 15,
-          user_scope: 'all'
+          user_scope: 'all',
         },
         severity: 'medium' as any,
         auto_response_enabled: true,
-        notification_enabled: true
-      }
+        notification_enabled: true,
+      };
 
-      const result = await breachDetection.createDetectionRule(ruleData)
-      
-      expect(result).toHaveProperty('rule_id')
-      expect(result).toHaveProperty('status')
-    })
+      const result = await breachDetection.createDetectionRule(ruleData);
+
+      expect(result).toHaveProperty('rule_id');
+      expect(result).toHaveProperty('status');
+    });
 
     test('should report incident', async () => {
       const incidentData = {
@@ -415,26 +427,26 @@ describe('LGPD Automation System', () => {
         estimated_affected_users: 100,
         detection_method: 'automated' as any,
         source_ip: '192.168.1.1',
-        user_agent: 'Test Agent'
-      }
+        user_agent: 'Test Agent',
+      };
 
-      const result = await breachDetection.reportIncident(incidentData)
-      
-      expect(result).toHaveProperty('incident_id')
-      expect(result).toHaveProperty('status')
-    })
-  })
+      const result = await breachDetection.reportIncident(incidentData);
+
+      expect(result).toHaveProperty('incident_id');
+      expect(result).toHaveProperty('status');
+    });
+  });
 
   describe('Data Minimization Automation', () => {
-    let dataMinimization: DataMinimizationAutomation
+    let dataMinimization: DataMinimizationAutomation;
 
     beforeEach(() => {
       dataMinimization = new DataMinimizationAutomation(
         mockSupabase,
         mockComplianceManager,
         config.data_minimization
-      )
-    })
+      );
+    });
 
     test('should create minimization rule', async () => {
       const ruleData = {
@@ -445,44 +457,44 @@ describe('LGPD Automation System', () => {
         conditions: {
           age_threshold_days: 365,
           data_categories: ['personal'],
-          exclude_conditions: []
+          exclude_conditions: [],
         },
         approval_required: true,
         backup_enabled: true,
-        business_impact_assessment: true
-      }
+        business_impact_assessment: true,
+      };
 
-      const result = await dataMinimization.createMinimizationRule(ruleData)
-      
-      expect(result).toHaveProperty('rule_id')
-      expect(result).toHaveProperty('status')
-    })
+      const result = await dataMinimization.createMinimizationRule(ruleData);
+
+      expect(result).toHaveProperty('rule_id');
+      expect(result).toHaveProperty('status');
+    });
 
     test('should get data inventory', async () => {
       const filters = {
         table_name: 'test_table',
         data_categories: ['personal'],
-        age_threshold_days: 365
-      }
+        age_threshold_days: 365,
+      };
 
-      const inventory = await dataMinimization.getDataInventory(filters)
-      
-      expect(inventory).toHaveProperty('tables')
-      expect(inventory).toHaveProperty('total_records')
-      expect(inventory).toHaveProperty('data_categories')
-    })
-  })
+      const inventory = await dataMinimization.getDataInventory(filters);
+
+      expect(inventory).toHaveProperty('tables');
+      expect(inventory).toHaveProperty('total_records');
+      expect(inventory).toHaveProperty('data_categories');
+    });
+  });
 
   describe('Third Party Compliance Automation', () => {
-    let thirdPartyCompliance: ThirdPartyComplianceAutomation
+    let thirdPartyCompliance: ThirdPartyComplianceAutomation;
 
     beforeEach(() => {
       thirdPartyCompliance = new ThirdPartyComplianceAutomation(
         mockSupabase,
         mockComplianceManager,
         config.third_party_compliance
-      )
-    })
+      );
+    });
 
     test('should register provider', async () => {
       const providerData = {
@@ -495,14 +507,14 @@ describe('LGPD Automation System', () => {
         international_transfer: false,
         adequacy_decision: null,
         safeguards_implemented: ['encryption', 'access_controls'],
-        compliance_certifications: ['ISO27001']
-      }
+        compliance_certifications: ['ISO27001'],
+      };
 
-      const result = await thirdPartyCompliance.registerProvider(providerData)
-      
-      expect(result).toHaveProperty('provider_id')
-      expect(result).toHaveProperty('status')
-    })
+      const result = await thirdPartyCompliance.registerProvider(providerData);
+
+      expect(result).toHaveProperty('provider_id');
+      expect(result).toHaveProperty('status');
+    });
 
     test('should create data sharing agreement', async () => {
       const agreementData = {
@@ -515,26 +527,29 @@ describe('LGPD Automation System', () => {
         legal_basis: 'legitimate_interest' as any,
         safeguards: ['encryption'],
         start_date: new Date().toISOString(),
-        end_date: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
-      }
+        end_date: new Date(
+          Date.now() + 365 * 24 * 60 * 60 * 1000
+        ).toISOString(),
+      };
 
-      const result = await thirdPartyCompliance.createDataSharingAgreement(agreementData)
-      
-      expect(result).toHaveProperty('agreement_id')
-      expect(result).toHaveProperty('status')
-    })
-  })
+      const result =
+        await thirdPartyCompliance.createDataSharingAgreement(agreementData);
+
+      expect(result).toHaveProperty('agreement_id');
+      expect(result).toHaveProperty('status');
+    });
+  });
 
   describe('Audit Reporting Automation', () => {
-    let auditReporting: AuditReportingAutomation
+    let auditReporting: AuditReportingAutomation;
 
     beforeEach(() => {
       auditReporting = new AuditReportingAutomation(
         mockSupabase,
         mockComplianceManager,
         config.audit_reporting
-      )
-    })
+      );
+    });
 
     test('should generate compliance report', async () => {
       const reportData = {
@@ -544,14 +559,14 @@ describe('LGPD Automation System', () => {
         include_requests: true,
         include_consents: true,
         format: 'pdf' as any,
-        language: 'pt-BR' as any
-      }
+        language: 'pt-BR' as any,
+      };
 
-      const result = await auditReporting.generateComplianceReport(reportData)
-      
-      expect(result).toHaveProperty('report_id')
-      expect(result).toHaveProperty('status')
-    })
+      const result = await auditReporting.generateComplianceReport(reportData);
+
+      expect(result).toHaveProperty('report_id');
+      expect(result).toHaveProperty('status');
+    });
 
     test('should schedule report', async () => {
       const scheduleData = {
@@ -561,61 +576,69 @@ describe('LGPD Automation System', () => {
         format: 'pdf' as any,
         auto_send: true,
         include_metrics: true,
-        include_incidents: true
-      }
+        include_incidents: true,
+      };
 
-      const result = await auditReporting.scheduleReport(scheduleData)
-      
-      expect(result).toHaveProperty('schedule_id')
-      expect(result).toHaveProperty('status')
-    })
+      const result = await auditReporting.scheduleReport(scheduleData);
+
+      expect(result).toHaveProperty('schedule_id');
+      expect(result).toHaveProperty('status');
+    });
 
     test('should get audit trail', async () => {
       const filters = {
         start_date: '2024-01-01',
         end_date: '2024-12-31',
         event_type: 'consent_collected' as any,
-        user_id: 'test-user'
-      }
+        user_id: 'test-user',
+      };
 
-      const trail = await auditReporting.getAuditTrail(filters)
-      
-      expect(trail).toHaveProperty('events')
-      expect(trail).toHaveProperty('total_count')
-    })
-  })
+      const trail = await auditReporting.getAuditTrail(filters);
+
+      expect(trail).toHaveProperty('events');
+      expect(trail).toHaveProperty('total_count');
+    });
+  });
 
   describe('Configuration', () => {
     test('should get default configuration', () => {
-      const defaultConfig = getLGPDAutomationConfig('default')
-      
-      expect(defaultConfig).toHaveProperty('consent_automation')
-      expect(defaultConfig).toHaveProperty('data_subject_rights')
-      expect(defaultConfig).toHaveProperty('compliance_monitoring')
-      expect(defaultConfig).toHaveProperty('data_retention')
-      expect(defaultConfig).toHaveProperty('breach_detection')
-      expect(defaultConfig).toHaveProperty('data_minimization')
-      expect(defaultConfig).toHaveProperty('third_party_compliance')
-      expect(defaultConfig).toHaveProperty('audit_reporting')
-      expect(defaultConfig).toHaveProperty('global_settings')
-    })
+      const defaultConfig = getLGPDAutomationConfig('default');
+
+      expect(defaultConfig).toHaveProperty('consent_automation');
+      expect(defaultConfig).toHaveProperty('data_subject_rights');
+      expect(defaultConfig).toHaveProperty('compliance_monitoring');
+      expect(defaultConfig).toHaveProperty('data_retention');
+      expect(defaultConfig).toHaveProperty('breach_detection');
+      expect(defaultConfig).toHaveProperty('data_minimization');
+      expect(defaultConfig).toHaveProperty('third_party_compliance');
+      expect(defaultConfig).toHaveProperty('audit_reporting');
+      expect(defaultConfig).toHaveProperty('global_settings');
+    });
 
     test('should get development configuration', () => {
-      const devConfig = getLGPDAutomationConfig('development')
-      
-      expect(devConfig.consent_automation.processing_interval_minutes).toBe(5)
-      expect(devConfig.data_subject_rights.processing_interval_minutes).toBe(10)
-      expect(devConfig.compliance_monitoring.monitoring_interval_minutes).toBe(1)
-    })
+      const devConfig = getLGPDAutomationConfig('development');
+
+      expect(devConfig.consent_automation.processing_interval_minutes).toBe(5);
+      expect(devConfig.data_subject_rights.processing_interval_minutes).toBe(
+        10
+      );
+      expect(devConfig.compliance_monitoring.monitoring_interval_minutes).toBe(
+        1
+      );
+    });
 
     test('should get production configuration', () => {
-      const prodConfig = getLGPDAutomationConfig('production')
-      
-      expect(prodConfig.compliance_monitoring.alert_thresholds.consent_compliance).toBe(98)
-      expect(prodConfig.breach_detection.detection_rules.failed_login_threshold).toBe(3)
-      expect(prodConfig.data_retention.approval_required).toBe(true)
-    })
-  })
+      const prodConfig = getLGPDAutomationConfig('production');
+
+      expect(
+        prodConfig.compliance_monitoring.alert_thresholds.consent_compliance
+      ).toBe(98);
+      expect(
+        prodConfig.breach_detection.detection_rules.failed_login_threshold
+      ).toBe(3);
+      expect(prodConfig.data_retention.approval_required).toBe(true);
+    });
+  });
 
   describe('Error Handling', () => {
     test('should handle database errors gracefully', async () => {
@@ -623,42 +646,47 @@ describe('LGPD Automation System', () => {
       const errorSupabase = {
         ...mockSupabase,
         from: jest.fn(() => ({
-          select: jest.fn(() => Promise.resolve({ data: null, error: { message: 'Database error' } }))
-        }))
-      }
+          select: jest.fn(() =>
+            Promise.resolve({
+              data: null,
+              error: { message: 'Database error' },
+            })
+          ),
+        })),
+      };
 
       const errorOrchestrator = new LGPDAutomationOrchestrator(
         errorSupabase as any,
         mockComplianceManager,
         config
-      )
+      );
 
-      await expect(errorOrchestrator.getAutomationStatus()).rejects.toThrow()
-    })
+      await expect(errorOrchestrator.getAutomationStatus()).rejects.toThrow();
+    });
 
     test('should handle invalid configuration', () => {
       const invalidConfig = {
         ...config,
-        consent_automation: null
-      }
+        consent_automation: null,
+      };
 
       expect(() => {
         new LGPDAutomationOrchestrator(
           mockSupabase,
           mockComplianceManager,
           invalidConfig as any
-        )
-      }).toThrow()
-    })
-  })
+        );
+      }).toThrow();
+    });
+  });
 
   describe('Performance', () => {
     test('should handle batch operations efficiently', async () => {
-      const modules = orchestrator.getModules()
-      
+      const modules = orchestrator.getModules();
+
       // Test batch consent collection
-      const batchSize = 100
-      const consentPromises = Array.from({ length: batchSize }, (_, i) => 
+      const batchSize = 100;
+      const consentPromises = Array.from({ length: batchSize }, (_, i) =>
         modules.consentAutomation.collectConsentWithTracking({
           user_id: `test-user-${i}`,
           purpose: 'marketing' as any,
@@ -670,56 +698,56 @@ describe('LGPD Automation System', () => {
           legal_basis: 'consent' as any,
           data_categories: ['personal'],
           retention_period_months: 24,
-          third_party_sharing: false
+          third_party_sharing: false,
         })
-      )
+      );
 
-      const startTime = Date.now()
-      await Promise.all(consentPromises)
-      const endTime = Date.now()
+      const startTime = Date.now();
+      await Promise.all(consentPromises);
+      const endTime = Date.now();
 
-      const executionTime = endTime - startTime
-      expect(executionTime).toBeLessThan(5000) // Should complete within 5 seconds
-    })
+      const executionTime = endTime - startTime;
+      expect(executionTime).toBeLessThan(5000); // Should complete within 5 seconds
+    });
 
     test('should handle concurrent operations', async () => {
-      const modules = orchestrator.getModules()
-      
+      const modules = orchestrator.getModules();
+
       // Test concurrent operations
       const operations = [
         modules.consentAutomation.getConsentAnalytics({}),
         modules.dataSubjectRights.getRequestStatus('test-request'),
         modules.complianceMonitor.getComplianceDashboard(),
         modules.dataRetention.getRetentionStatus(),
-        modules.auditReporting.getAuditTrail({})
-      ]
+        modules.auditReporting.getAuditTrail({}),
+      ];
 
-      const startTime = Date.now()
-      await Promise.allSettled(operations)
-      const endTime = Date.now()
+      const startTime = Date.now();
+      await Promise.allSettled(operations);
+      const endTime = Date.now();
 
-      const executionTime = endTime - startTime
-      expect(executionTime).toBeLessThan(3000) // Should complete within 3 seconds
-    })
-  })
-})
+      const executionTime = endTime - startTime;
+      expect(executionTime).toBeLessThan(3000); // Should complete within 3 seconds
+    });
+  });
+});
 
 // Helper functions for testing
 export const testHelpers = {
   /**
    * Create mock user data for testing
    */
-  createMockUser: (id: string = 'test-user') => ({
+  createMockUser: (id = 'test-user') => ({
     id,
     email: `${id}@example.com`,
     created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString()
+    updated_at: new Date().toISOString(),
   }),
 
   /**
    * Create mock consent data for testing
    */
-  createMockConsent: (userId: string = 'test-user', purpose: string = 'marketing') => ({
+  createMockConsent: (userId = 'test-user', purpose = 'marketing') => ({
     user_id: userId,
     purpose: purpose as any,
     consent_given: true,
@@ -730,29 +758,29 @@ export const testHelpers = {
     legal_basis: 'consent' as any,
     data_categories: ['personal'],
     retention_period_months: 24,
-    third_party_sharing: false
+    third_party_sharing: false,
   }),
 
   /**
    * Create mock data subject request for testing
    */
-  createMockDataSubjectRequest: (userId: string = 'test-user', type: string = 'access') => ({
+  createMockDataSubjectRequest: (userId = 'test-user', type = 'access') => ({
     user_id: userId,
     request_type: type as any,
     contact_email: `${userId}@example.com`,
     identity_verified: true,
     requested_data_categories: ['personal', 'usage'],
-    delivery_method: 'secure_download' as any
+    delivery_method: 'secure_download' as any,
   }),
 
   /**
    * Wait for async operations to complete
    */
-  waitFor: (ms: number) => new Promise(resolve => setTimeout(resolve, ms)),
+  waitFor: (ms: number) => new Promise((resolve) => setTimeout(resolve, ms)),
 
   /**
    * Generate test data in bulk
    */
-  generateTestData: (count: number, generator: (index: number) => any) => 
-    Array.from({ length: count }, (_, i) => generator(i))
-}
+  generateTestData: (count: number, generator: (index: number) => any) =>
+    Array.from({ length: count }, (_, i) => generator(i)),
+};

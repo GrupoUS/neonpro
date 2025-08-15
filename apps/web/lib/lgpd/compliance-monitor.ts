@@ -1,7 +1,7 @@
 /**
  * LGPD Compliance Monitoring System
  * Implements real-time compliance monitoring and violation detection
- * 
+ *
  * Features:
  * - Real-time compliance monitoring across all system operations
  * - Automated violation detection and alerting
@@ -10,12 +10,12 @@
  * - Compliance risk assessment
  * - Continuous improvement recommendations
  * - Compliance dashboard metrics
- * 
+ *
  * @version 1.0.0
  * @author NeonPro Development Team
  */
 
-import { EventEmitter } from 'events';
+import { EventEmitter } from 'node:events';
 
 // ============================================================================
 // COMPLIANCE MONITORING TYPES & INTERFACES
@@ -39,18 +39,18 @@ export enum ComplianceCategory {
   SENSITIVE_DATA = 'sensitive_data',
   INTERNATIONAL_TRANSFERS = 'international_transfers',
   DATA_BREACH = 'data_breach',
-  RECORDS_OF_PROCESSING = 'records_of_processing'
+  RECORDS_OF_PROCESSING = 'records_of_processing',
 }
 
 /**
  * LGPD Article References
  */
 export enum LGPDArticle {
-  ART_5 = 'art_5',   // Definitions
-  ART_6 = 'art_6',   // Processing principles
-  ART_7 = 'art_7',   // Legal bases
-  ART_8 = 'art_8',   // Children's data
-  ART_9 = 'art_9',   // Data subject rights
+  ART_5 = 'art_5', // Definitions
+  ART_6 = 'art_6', // Processing principles
+  ART_7 = 'art_7', // Legal bases
+  ART_8 = 'art_8', // Children's data
+  ART_9 = 'art_9', // Data subject rights
   ART_10 = 'art_10', // Processing principles
   ART_11 = 'art_11', // Sensitive data
   ART_12 = 'art_12', // Anonymization
@@ -61,7 +61,7 @@ export enum LGPDArticle {
   ART_42 = 'art_42', // Liability
   ART_46 = 'art_46', // Security measures
   ART_48 = 'art_48', // Data breach notification
-  ART_50 = 'art_50'  // Good practices
+  ART_50 = 'art_50', // Good practices
 }
 
 /**
@@ -72,7 +72,7 @@ export enum ViolationSeverity {
   LOW = 'low',
   MEDIUM = 'medium',
   HIGH = 'high',
-  CRITICAL = 'critical'
+  CRITICAL = 'critical',
 }
 
 /**
@@ -83,7 +83,7 @@ export enum ComplianceStatus {
   PARTIALLY_COMPLIANT = 'partially_compliant',
   NON_COMPLIANT = 'non_compliant',
   UNDER_REVIEW = 'under_review',
-  EXEMPTED = 'exempted'
+  EXEMPTED = 'exempted',
 }
 
 /**
@@ -199,7 +199,7 @@ export interface ComplianceEvents {
 
 /**
  * LGPD Compliance Monitoring System
- * 
+ *
  * Provides real-time monitoring of LGPD compliance including:
  * - Automated violation detection and alerting
  * - Compliance scoring and reporting
@@ -235,9 +235,9 @@ export class ComplianceMonitor extends EventEmitter {
         ComplianceCategory.DATA_SUBJECT_RIGHTS,
         ComplianceCategory.DATA_SECURITY,
         ComplianceCategory.SENSITIVE_DATA,
-        ComplianceCategory.DATA_BREACH
+        ComplianceCategory.DATA_BREACH,
       ],
-      notificationEnabled: true
+      notificationEnabled: true,
     }
   ) {
     super();
@@ -273,9 +273,8 @@ export class ComplianceMonitor extends EventEmitter {
       this.logActivity('system', 'compliance_monitor_initialized', {
         timestamp: new Date(),
         requirementsLoaded: this.requirements.size,
-        violationsLoaded: this.violations.size
+        violationsLoaded: this.violations.size,
       });
-
     } catch (error) {
       throw new Error(`Failed to initialize compliance monitor: ${error}`);
     }
@@ -305,7 +304,7 @@ export class ComplianceMonitor extends EventEmitter {
     try {
       // Apply compliance rules based on operation and category
       const rules = this.getComplianceRules(context.category);
-      
+
       for (const rule of rules) {
         const result = await this.evaluateRule(rule, operation, context);
         if (!result.compliant) {
@@ -318,8 +317,8 @@ export class ComplianceMonitor extends EventEmitter {
               userId: context.userId,
               operation,
               data: context.data,
-              location: context.location
-            }
+              location: context.location,
+            },
           });
           violations.push(violation);
         }
@@ -327,35 +326,34 @@ export class ComplianceMonitor extends EventEmitter {
 
       // If critical violations are found, emit alert
       const criticalViolations = violations.filter(
-        v => v.severity === ViolationSeverity.CRITICAL
+        (v) => v.severity === ViolationSeverity.CRITICAL
       );
-      
+
       if (criticalViolations.length > 0 && this.config.notificationEnabled) {
         this.emit('compliance:critical_alert', {
           alert: `${criticalViolations.length} critical compliance violations detected`,
           details: {
             operation,
-            violations: criticalViolations.map(v => v.id),
-            timestamp: new Date()
-          }
+            violations: criticalViolations.map((v) => v.id),
+            timestamp: new Date(),
+          },
         });
       }
 
       return {
         compliant: violations.length === 0,
-        violations
+        violations,
       };
-
     } catch (error) {
       this.logActivity('system', 'compliance_check_error', {
         error: String(error),
         operation,
-        category: context.category
+        category: context.category,
       });
 
       return {
         compliant: false,
-        violations: []
+        violations: [],
       };
     }
   }
@@ -380,7 +378,7 @@ export class ComplianceMonitor extends EventEmitter {
       article,
       severity,
       description,
-      context
+      context,
     });
   }
 
@@ -405,9 +403,9 @@ export class ComplianceMonitor extends EventEmitter {
       resolvedAt: new Date(),
       resolvedBy: resolution.resolvedBy,
       resolution: resolution.resolution,
-      preventiveMeasures: resolution.preventiveMeasures
+      preventiveMeasures: resolution.preventiveMeasures,
     };
-    violation.metadata.resolutionTime = 
+    violation.metadata.resolutionTime =
       violation.resolution.resolvedAt.getTime() - violation.timestamp.getTime();
 
     await this.saveViolation(violation);
@@ -416,7 +414,7 @@ export class ComplianceMonitor extends EventEmitter {
     this.logActivity('user', 'violation_resolved', {
       violationId,
       resolvedBy: resolution.resolvedBy,
-      resolutionTime: violation.metadata.resolutionTime
+      resolutionTime: violation.metadata.resolutionTime,
     });
 
     return violation;
@@ -446,7 +444,7 @@ export class ComplianceMonitor extends EventEmitter {
     this.logActivity('user', 'violation_false_positive', {
       violationId,
       reviewer,
-      reason
+      reason,
     });
 
     return violation;
@@ -457,7 +455,7 @@ export class ComplianceMonitor extends EventEmitter {
    */
   getActiveViolations(): ComplianceViolation[] {
     return Array.from(this.violations.values())
-      .filter(v => v.status === 'detected' || v.status === 'investigating')
+      .filter((v) => v.status === 'detected' || v.status === 'investigating')
       .sort((a, b) => {
         // Sort by severity first, then by timestamp
         const severityOrder = {
@@ -465,13 +463,13 @@ export class ComplianceMonitor extends EventEmitter {
           [ViolationSeverity.HIGH]: 1,
           [ViolationSeverity.MEDIUM]: 2,
           [ViolationSeverity.LOW]: 3,
-          [ViolationSeverity.INFO]: 4
+          [ViolationSeverity.INFO]: 4,
         };
-        
+
         if (severityOrder[a.severity] !== severityOrder[b.severity]) {
           return severityOrder[a.severity] - severityOrder[b.severity];
         }
-        
+
         return b.timestamp.getTime() - a.timestamp.getTime();
       });
   }
@@ -481,7 +479,7 @@ export class ComplianceMonitor extends EventEmitter {
    */
   getViolationsByCategory(category: ComplianceCategory): ComplianceViolation[] {
     return Array.from(this.violations.values())
-      .filter(v => v.category === category)
+      .filter((v) => v.category === category)
       .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
   }
 
@@ -547,9 +545,9 @@ export class ComplianceMonitor extends EventEmitter {
       findings: {
         compliant: [],
         nonCompliant: [],
-        recommendations: []
+        recommendations: [],
       },
-      overallScore: 0 // Will be calculated when completed
+      overallScore: 0, // Will be calculated when completed
     };
 
     this.audits.set(audit.id, audit);
@@ -558,7 +556,7 @@ export class ComplianceMonitor extends EventEmitter {
     this.logActivity('user', 'audit_created', {
       auditId: audit.id,
       auditor,
-      scope
+      scope,
     });
 
     return audit;
@@ -604,7 +602,9 @@ export class ComplianceMonitor extends EventEmitter {
 
     // Set next audit date
     const nextAuditDate = new Date();
-    nextAuditDate.setMonth(nextAuditDate.getMonth() + this.config.auditFrequencyMonths);
+    nextAuditDate.setMonth(
+      nextAuditDate.getMonth() + this.config.auditFrequencyMonths
+    );
     audit.nextAuditDate = nextAuditDate;
 
     await this.saveAudit(audit);
@@ -620,9 +620,8 @@ export class ComplianceMonitor extends EventEmitter {
    */
   getLatestAudit(): ComplianceAudit | undefined {
     return Array.from(this.audits.values())
-      .filter(a => a.status === 'completed')
-      .sort((a, b) => b.endDate.getTime() - a.endDate.getTime())
-      [0];
+      .filter((a) => a.status === 'completed')
+      .sort((a, b) => b.endDate.getTime() - a.endDate.getTime())[0];
   }
 
   /**
@@ -655,48 +654,62 @@ export class ComplianceMonitor extends EventEmitter {
     const latestAudit = this.getLatestAudit();
 
     // Count violations by severity and category
-    const bySeverity = activeViolations.reduce((acc, v) => {
-      acc[v.severity] = (acc[v.severity] || 0) + 1;
-      return acc;
-    }, {} as Record<ViolationSeverity, number>);
+    const bySeverity = activeViolations.reduce(
+      (acc, v) => {
+        acc[v.severity] = (acc[v.severity] || 0) + 1;
+        return acc;
+      },
+      {} as Record<ViolationSeverity, number>
+    );
 
-    const byCategory = activeViolations.reduce((acc, v) => {
-      acc[v.category] = (acc[v.category] || 0) + 1;
-      return acc;
-    }, {} as Record<ComplianceCategory, number>);
+    const byCategory = activeViolations.reduce(
+      (acc, v) => {
+        acc[v.category] = (acc[v.category] || 0) + 1;
+        return acc;
+      },
+      {} as Record<ComplianceCategory, number>
+    );
 
     // Count requirements by status and risk
-    const byStatus = requirements.reduce((acc, r) => {
-      acc[r.implementationStatus] = (acc[r.implementationStatus] || 0) + 1;
-      return acc;
-    }, {} as Record<ComplianceStatus, number>);
+    const byStatus = requirements.reduce(
+      (acc, r) => {
+        acc[r.implementationStatus] = (acc[r.implementationStatus] || 0) + 1;
+        return acc;
+      },
+      {} as Record<ComplianceStatus, number>
+    );
 
-    const byRisk = requirements.reduce((acc, r) => {
-      acc[r.riskLevel] = (acc[r.riskLevel] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+    const byRisk = requirements.reduce(
+      (acc, r) => {
+        acc[r.riskLevel] = (acc[r.riskLevel] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>
+    );
 
     return {
       score: this.complianceScore,
       activeViolations: {
         total: activeViolations.length,
         bySeverity,
-        byCategory
+        byCategory,
       },
       requirements: {
         total: requirements.length,
         byStatus,
-        byRisk
+        byRisk,
       },
-      latestAudit: latestAudit ? {
-        date: latestAudit.endDate,
-        score: latestAudit.overallScore,
-        nonCompliantCount: latestAudit.findings.nonCompliant.length
-      } : undefined,
+      latestAudit: latestAudit
+        ? {
+            date: latestAudit.endDate,
+            score: latestAudit.overallScore,
+            nonCompliantCount: latestAudit.findings.nonCompliant.length,
+          }
+        : undefined,
       trends: {
         violationTrend: this.calculateViolationTrend(),
-        scoreTrend: this.complianceScore?.trend.weekly || {}
-      }
+        scoreTrend: this.complianceScore?.trend.weekly || {},
+      },
     };
   }
 
@@ -707,22 +720,23 @@ export class ComplianceMonitor extends EventEmitter {
     const requirements = Array.from(this.requirements.values());
     const violations = Array.from(this.violations.values());
     const activeViolations = violations.filter(
-      v => v.status === 'detected' || v.status === 'investigating'
+      (v) => v.status === 'detected' || v.status === 'investigating'
     );
 
     // Calculate overall compliance score
     const totalRequirements = requirements.length;
     const compliantRequirements = requirements.filter(
-      r => r.implementationStatus === ComplianceStatus.COMPLIANT
+      (r) => r.implementationStatus === ComplianceStatus.COMPLIANT
     ).length;
     const partiallyCompliantRequirements = requirements.filter(
-      r => r.implementationStatus === ComplianceStatus.PARTIALLY_COMPLIANT
+      (r) => r.implementationStatus === ComplianceStatus.PARTIALLY_COMPLIANT
     ).length;
 
     // Weight: Compliant = 1, Partially = 0.5
-    const weightedScore = 
-      (compliantRequirements + (partiallyCompliantRequirements * 0.5)) / totalRequirements;
-    
+    const weightedScore =
+      (compliantRequirements + partiallyCompliantRequirements * 0.5) /
+      totalRequirements;
+
     // Adjust score based on active violations
     let violationPenalty = 0;
     for (const violation of activeViolations) {
@@ -747,31 +761,38 @@ export class ComplianceMonitor extends EventEmitter {
 
     // Cap penalty at 0.5 (50%)
     violationPenalty = Math.min(violationPenalty, 0.5);
-    
+
     // Calculate final score (0-100)
-    const overallScore = Math.max(0, Math.min(100, weightedScore * 100 * (1 - violationPenalty)));
+    const overallScore = Math.max(
+      0,
+      Math.min(100, weightedScore * 100 * (1 - violationPenalty))
+    );
 
     // Calculate score by category
     const byCategory = {} as Record<ComplianceCategory, number>;
     for (const category of Object.values(ComplianceCategory)) {
-      const categoryRequirements = requirements.filter(r => r.category === category);
+      const categoryRequirements = requirements.filter(
+        (r) => r.category === category
+      );
       if (categoryRequirements.length === 0) {
         byCategory[category] = 100; // Default if no requirements
         continue;
       }
 
       const compliant = categoryRequirements.filter(
-        r => r.implementationStatus === ComplianceStatus.COMPLIANT
+        (r) => r.implementationStatus === ComplianceStatus.COMPLIANT
       ).length;
       const partiallyCompliant = categoryRequirements.filter(
-        r => r.implementationStatus === ComplianceStatus.PARTIALLY_COMPLIANT
+        (r) => r.implementationStatus === ComplianceStatus.PARTIALLY_COMPLIANT
       ).length;
 
-      const categoryWeightedScore = 
-        (compliant + (partiallyCompliant * 0.5)) / categoryRequirements.length;
+      const categoryWeightedScore =
+        (compliant + partiallyCompliant * 0.5) / categoryRequirements.length;
 
       // Adjust for violations in this category
-      const categoryViolations = activeViolations.filter(v => v.category === category);
+      const categoryViolations = activeViolations.filter(
+        (v) => v.category === category
+      );
       let categoryPenalty = 0;
       for (const violation of categoryViolations) {
         switch (violation.severity) {
@@ -795,10 +816,11 @@ export class ComplianceMonitor extends EventEmitter {
 
       // Cap category penalty at 0.75 (75%)
       categoryPenalty = Math.min(categoryPenalty, 0.75);
-      
-      byCategory[category] = Math.max(0, Math.min(100, 
-        categoryWeightedScore * 100 * (1 - categoryPenalty)
-      ));
+
+      byCategory[category] = Math.max(
+        0,
+        Math.min(100, categoryWeightedScore * 100 * (1 - categoryPenalty))
+      );
     }
 
     // Calculate risk areas
@@ -808,7 +830,9 @@ export class ComplianceMonitor extends EventEmitter {
         category: category as ComplianceCategory,
         score,
         trend: this.calculateCategoryTrend(category as ComplianceCategory),
-        recommendations: this.generateRecommendations(category as ComplianceCategory)
+        recommendations: this.generateRecommendations(
+          category as ComplianceCategory
+        ),
       }))
       .sort((a, b) => a.score - b.score); // Sort by lowest score first
 
@@ -819,10 +843,10 @@ export class ComplianceMonitor extends EventEmitter {
       trend: {
         daily: this.calculateScoreTrend('daily'),
         weekly: this.calculateScoreTrend('weekly'),
-        monthly: this.calculateScoreTrend('monthly')
+        monthly: this.calculateScoreTrend('monthly'),
       },
       riskAreas,
-      lastUpdated: new Date()
+      lastUpdated: new Date(),
     };
 
     // Save score history
@@ -832,15 +856,18 @@ export class ComplianceMonitor extends EventEmitter {
     this.emit('compliance:score_updated', { score: this.complianceScore });
 
     // Check if score is below alert threshold
-    if (overallScore < this.config.alertThreshold && this.config.notificationEnabled) {
+    if (
+      overallScore < this.config.alertThreshold &&
+      this.config.notificationEnabled
+    ) {
       this.emit('compliance:critical_alert', {
         alert: `Compliance score (${Math.round(overallScore)}) is below threshold (${this.config.alertThreshold})`,
         details: {
           score: Math.round(overallScore),
           threshold: this.config.alertThreshold,
-          riskAreas: riskAreas.map(r => r.category),
-          timestamp: new Date()
-        }
+          riskAreas: riskAreas.map((r) => r.category),
+          timestamp: new Date(),
+        },
       });
     }
   }
@@ -871,9 +898,11 @@ export class ComplianceMonitor extends EventEmitter {
       status: 'detected',
       metadata: {
         detectionSource: 'automated_monitoring',
-        relatedRequirements: this.findRelatedRequirements(data.category, data.article)
-          .map(r => r.id)
-      }
+        relatedRequirements: this.findRelatedRequirements(
+          data.category,
+          data.article
+        ).map((r) => r.id),
+      },
     };
 
     this.violations.set(violation.id, violation);
@@ -888,18 +917,24 @@ export class ComplianceMonitor extends EventEmitter {
    * Start monitoring interval
    */
   private startMonitoringInterval(): void {
-    this.monitoringInterval = setInterval(async () => {
-      await this.performSystemCheck();
-    }, this.config.monitoringIntervalMinutes * 60 * 1000);
+    this.monitoringInterval = setInterval(
+      async () => {
+        await this.performSystemCheck();
+      },
+      this.config.monitoringIntervalMinutes * 60 * 1000
+    );
   }
 
   /**
    * Start score update interval
    */
   private startScoreUpdateInterval(): void {
-    this.scoreUpdateInterval = setInterval(async () => {
-      await this.calculateComplianceScore();
-    }, this.config.scoreUpdateIntervalHours * 60 * 60 * 1000);
+    this.scoreUpdateInterval = setInterval(
+      async () => {
+        await this.calculateComplianceScore();
+      },
+      this.config.scoreUpdateIntervalHours * 60 * 60 * 1000
+    );
   }
 
   /**
@@ -908,54 +943,62 @@ export class ComplianceMonitor extends EventEmitter {
   private async performSystemCheck(): Promise<void> {
     try {
       // Check for outdated requirements
-      const outdatedRequirements = Array.from(this.requirements.values())
-        .filter(r => {
-          if (!r.lastVerified) return true;
-          
-          const lastVerified = new Date(r.lastVerified);
-          const updateThreshold = new Date();
-          updateThreshold.setDate(
-            updateThreshold.getDate() - this.config.requirementUpdateIntervalDays
-          );
-          
-          return lastVerified < updateThreshold;
-        });
+      const outdatedRequirements = Array.from(
+        this.requirements.values()
+      ).filter((r) => {
+        if (!r.lastVerified) return true;
+
+        const lastVerified = new Date(r.lastVerified);
+        const updateThreshold = new Date();
+        updateThreshold.setDate(
+          updateThreshold.getDate() - this.config.requirementUpdateIntervalDays
+        );
+
+        return lastVerified < updateThreshold;
+      });
 
       if (outdatedRequirements.length > 0) {
         this.logActivity('system', 'outdated_requirements_detected', {
           count: outdatedRequirements.length,
-          requirements: outdatedRequirements.map(r => r.id)
+          requirements: outdatedRequirements.map((r) => r.id),
         });
       }
 
       // Check for long-standing violations
-      const longStandingViolations = Array.from(this.violations.values())
-        .filter(v => {
-          if (v.status !== 'detected' && v.status !== 'investigating') return false;
-          
-          const violationAge = Date.now() - v.timestamp.getTime();
-          const ageInDays = violationAge / (1000 * 60 * 60 * 24);
-          
-          return (
-            (v.severity === ViolationSeverity.CRITICAL && ageInDays > 1) ||
-            (v.severity === ViolationSeverity.HIGH && ageInDays > 3) ||
-            (v.severity === ViolationSeverity.MEDIUM && ageInDays > 7) ||
-            (v.severity === ViolationSeverity.LOW && ageInDays > 14)
-          );
-        });
+      const longStandingViolations = Array.from(
+        this.violations.values()
+      ).filter((v) => {
+        if (v.status !== 'detected' && v.status !== 'investigating')
+          return false;
 
-      if (longStandingViolations.length > 0 && this.config.notificationEnabled) {
+        const violationAge = Date.now() - v.timestamp.getTime();
+        const ageInDays = violationAge / (1000 * 60 * 60 * 24);
+
+        return (
+          (v.severity === ViolationSeverity.CRITICAL && ageInDays > 1) ||
+          (v.severity === ViolationSeverity.HIGH && ageInDays > 3) ||
+          (v.severity === ViolationSeverity.MEDIUM && ageInDays > 7) ||
+          (v.severity === ViolationSeverity.LOW && ageInDays > 14)
+        );
+      });
+
+      if (
+        longStandingViolations.length > 0 &&
+        this.config.notificationEnabled
+      ) {
         this.emit('compliance:critical_alert', {
           alert: `${longStandingViolations.length} long-standing compliance violations require attention`,
           details: {
-            violations: longStandingViolations.map(v => ({
+            violations: longStandingViolations.map((v) => ({
               id: v.id,
               category: v.category,
               severity: v.severity,
-              age: Math.floor((Date.now() - v.timestamp.getTime()) / (1000 * 60 * 60 * 24))
+              age: Math.floor(
+                (Date.now() - v.timestamp.getTime()) / (1000 * 60 * 60 * 24)
+              ),
             })),
-            timestamp: new Date()
-          }
+            timestamp: new Date(),
+          },
         });
       }
 
@@ -963,22 +1006,26 @@ export class ComplianceMonitor extends EventEmitter {
       const latestAudit = this.getLatestAudit();
       if (latestAudit?.nextAuditDate) {
         const daysUntilAudit = Math.floor(
-          (latestAudit.nextAuditDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+          (latestAudit.nextAuditDate.getTime() - Date.now()) /
+            (1000 * 60 * 60 * 24)
         );
-        
-        if (daysUntilAudit <= 30 && daysUntilAudit > 0 && this.config.notificationEnabled) {
+
+        if (
+          daysUntilAudit <= 30 &&
+          daysUntilAudit > 0 &&
+          this.config.notificationEnabled
+        ) {
           this.logActivity('system', 'upcoming_audit_reminder', {
             daysUntilAudit,
             scheduledDate: latestAudit.nextAuditDate,
-            previousAuditId: latestAudit.id
+            previousAuditId: latestAudit.id,
           });
         }
       }
-
     } catch (error) {
       this.logActivity('system', 'system_check_error', {
         error: String(error),
-        timestamp: new Date()
+        timestamp: new Date(),
       });
     }
   }
@@ -994,8 +1041,8 @@ export class ComplianceMonitor extends EventEmitter {
         id: 'rule_1',
         category,
         article: this.getCategoryArticle(category),
-        check: async () => ({ compliant: true })
-      }
+        check: async () => ({ compliant: true }),
+      },
     ];
   }
 
@@ -1017,7 +1064,7 @@ export class ComplianceMonitor extends EventEmitter {
     } catch (error) {
       return {
         compliant: false,
-        reason: `Rule evaluation error: ${error}`
+        reason: `Rule evaluation error: ${error}`,
       };
     }
   }
@@ -1027,7 +1074,7 @@ export class ComplianceMonitor extends EventEmitter {
    */
   private determineSeverity(
     category: ComplianceCategory,
-    rule: any
+    _rule: any
   ): ViolationSeverity {
     // Critical categories always get high or critical severity
     if (this.config.criticalCategories.includes(category)) {
@@ -1045,8 +1092,9 @@ export class ComplianceMonitor extends EventEmitter {
     category: ComplianceCategory,
     article: LGPDArticle
   ): ComplianceRequirement[] {
-    return Array.from(this.requirements.values())
-      .filter(r => r.category === category && r.article === article);
+    return Array.from(this.requirements.values()).filter(
+      (r) => r.category === category && r.article === article
+    );
   }
 
   /**
@@ -1068,7 +1116,7 @@ export class ComplianceMonitor extends EventEmitter {
       [ComplianceCategory.SENSITIVE_DATA]: LGPDArticle.ART_11,
       [ComplianceCategory.INTERNATIONAL_TRANSFERS]: LGPDArticle.ART_5,
       [ComplianceCategory.DATA_BREACH]: LGPDArticle.ART_48,
-      [ComplianceCategory.RECORDS_OF_PROCESSING]: LGPDArticle.ART_50
+      [ComplianceCategory.RECORDS_OF_PROCESSING]: LGPDArticle.ART_50,
     };
 
     return articleMap[category] || LGPDArticle.ART_6;
@@ -1077,36 +1125,42 @@ export class ComplianceMonitor extends EventEmitter {
   /**
    * Calculate score trend
    */
-  private calculateScoreTrend(period: 'daily' | 'weekly' | 'monthly'): Record<string, number> {
+  private calculateScoreTrend(
+    period: 'daily' | 'weekly' | 'monthly'
+  ): Record<string, number> {
     // In a real implementation, this would calculate from historical data
     // For now, we'll return placeholder data
     const result: Record<string, number> = {};
     const now = new Date();
-    
+
     let days = 7;
     if (period === 'weekly') days = 8;
     if (period === 'monthly') days = 30;
-    
+
     for (let i = 0; i < days; i++) {
       const date = new Date(now);
       date.setDate(date.getDate() - i);
       const dateStr = date.toISOString().split('T')[0];
-      
+
       // Generate a random score between 70 and 95
       result[dateStr] = Math.floor(Math.random() * 25) + 70;
     }
-    
+
     return result;
   }
 
   /**
    * Calculate category trend
    */
-  private calculateCategoryTrend(category: ComplianceCategory): 'improving' | 'stable' | 'declining' {
+  private calculateCategoryTrend(
+    _category: ComplianceCategory
+  ): 'improving' | 'stable' | 'declining' {
     // In a real implementation, this would calculate from historical data
     // For now, we'll return a random trend
     const trends: Array<'improving' | 'stable' | 'declining'> = [
-      'improving', 'stable', 'declining'
+      'improving',
+      'stable',
+      'declining',
     ];
     return trends[Math.floor(Math.random() * trends.length)];
   }
@@ -1119,16 +1173,16 @@ export class ComplianceMonitor extends EventEmitter {
     // For now, we'll return placeholder data
     const result: Record<string, number> = {};
     const now = new Date();
-    
+
     for (let i = 0; i < 7; i++) {
       const date = new Date(now);
       date.setDate(date.getDate() - i);
       const dateStr = date.toISOString().split('T')[0];
-      
+
       // Generate a random count between 0 and 5
       result[dateStr] = Math.floor(Math.random() * 6);
     }
-    
+
     return result;
   }
 
@@ -1142,35 +1196,37 @@ export class ComplianceMonitor extends EventEmitter {
       [ComplianceCategory.CONSENT]: [
         'Implement granular consent options',
         'Add consent versioning',
-        'Improve consent withdrawal process'
+        'Improve consent withdrawal process',
       ],
       [ComplianceCategory.DATA_SUBJECT_RIGHTS]: [
         'Streamline rights request process',
         'Improve response time for rights requests',
-        'Enhance data portability exports'
+        'Enhance data portability exports',
       ],
       [ComplianceCategory.DATA_SECURITY]: [
         'Implement additional encryption',
         'Enhance access controls',
-        'Conduct security assessment'
+        'Conduct security assessment',
       ],
       [ComplianceCategory.DATA_MINIMIZATION]: [
         'Review data collection practices',
         'Implement data minimization strategy',
-        'Reduce unnecessary data fields'
+        'Reduce unnecessary data fields',
       ],
       [ComplianceCategory.SENSITIVE_DATA]: [
         'Review sensitive data handling',
         'Enhance protection for sensitive data',
-        'Implement additional safeguards'
-      ]
+        'Implement additional safeguards',
+      ],
     };
 
-    return recommendations[category] || [
-      'Review compliance requirements',
-      'Implement additional controls',
-      'Conduct compliance assessment'
-    ];
+    return (
+      recommendations[category] || [
+        'Review compliance requirements',
+        'Implement additional controls',
+        'Conduct compliance assessment',
+      ]
+    );
   }
 
   /**
@@ -1186,7 +1242,7 @@ export class ComplianceMonitor extends EventEmitter {
         article: LGPDArticle.ART_7,
         description: {
           pt: 'Obter consentimento específico, informado e inequívoco',
-          en: 'Obtain specific, informed, and unambiguous consent'
+          en: 'Obtain specific, informed, and unambiguous consent',
         },
         implementationStatus: ComplianceStatus.COMPLIANT,
         verificationMethod: 'Consent records audit',
@@ -1196,7 +1252,7 @@ export class ComplianceMonitor extends EventEmitter {
         evidenceRequired: true,
         evidence: ['Consent management system', 'Consent records'],
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       },
       {
         id: 'req_rights_1',
@@ -1204,7 +1260,7 @@ export class ComplianceMonitor extends EventEmitter {
         article: LGPDArticle.ART_18,
         description: {
           pt: 'Implementar processo para atender solicitações de direitos dos titulares',
-          en: 'Implement process to handle data subject rights requests'
+          en: 'Implement process to handle data subject rights requests',
         },
         implementationStatus: ComplianceStatus.PARTIALLY_COMPLIANT,
         verificationMethod: 'Rights request process audit',
@@ -1213,7 +1269,7 @@ export class ComplianceMonitor extends EventEmitter {
         responsibleParty: 'Data Protection Officer',
         evidenceRequired: true,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       },
       {
         id: 'req_security_1',
@@ -1221,7 +1277,7 @@ export class ComplianceMonitor extends EventEmitter {
         article: LGPDArticle.ART_46,
         description: {
           pt: 'Implementar medidas técnicas e organizacionais de segurança',
-          en: 'Implement technical and organizational security measures'
+          en: 'Implement technical and organizational security measures',
         },
         implementationStatus: ComplianceStatus.COMPLIANT,
         verificationMethod: 'Security assessment',
@@ -1231,8 +1287,8 @@ export class ComplianceMonitor extends EventEmitter {
         evidenceRequired: true,
         evidence: ['Security policy', 'Security assessment report'],
         createdAt: new Date(),
-        updatedAt: new Date()
-      }
+        updatedAt: new Date(),
+      },
     ];
 
     for (const requirement of sampleRequirements) {
@@ -1268,7 +1324,9 @@ export class ComplianceMonitor extends EventEmitter {
   /**
    * Save requirement
    */
-  private async saveRequirement(requirement: ComplianceRequirement): Promise<void> {
+  private async saveRequirement(
+    requirement: ComplianceRequirement
+  ): Promise<void> {
     // In a real implementation, this would save to database
     // For now, we'll just keep in memory
     this.requirements.set(requirement.id, requirement);
@@ -1286,7 +1344,7 @@ export class ComplianceMonitor extends EventEmitter {
   /**
    * Save score history
    */
-  private async saveScoreHistory(score: ComplianceScore): Promise<void> {
+  private async saveScoreHistory(_score: ComplianceScore): Promise<void> {
     // In a real implementation, this would save to database
     // For now, we'll do nothing
   }
@@ -1294,7 +1352,11 @@ export class ComplianceMonitor extends EventEmitter {
   /**
    * Log activity
    */
-  private logActivity(actor: string, action: string, details: Record<string, any>): void {
+  private logActivity(
+    actor: string,
+    action: string,
+    details: Record<string, any>
+  ): void {
     // In a real implementation, this would log to audit trail
     // For now, we'll just log to console
     console.log(`[Compliance] ${actor} - ${action}:`, details);
@@ -1325,7 +1387,7 @@ export class ComplianceMonitor extends EventEmitter {
     this.isInitialized = false;
 
     this.logActivity('system', 'compliance_monitor_shutdown', {
-      timestamp: new Date()
+      timestamp: new Date(),
     });
   }
 
@@ -1337,7 +1399,7 @@ export class ComplianceMonitor extends EventEmitter {
     details: Record<string, any>;
   } {
     const issues: string[] = [];
-    
+
     if (!this.isInitialized) {
       issues.push('Compliance monitor not initialized');
     }
@@ -1354,18 +1416,22 @@ export class ComplianceMonitor extends EventEmitter {
       issues.push('Compliance score not calculated');
     }
 
-    const criticalViolations = Array.from(this.violations.values())
-      .filter(v => 
-        v.severity === ViolationSeverity.CRITICAL && 
+    const criticalViolations = Array.from(this.violations.values()).filter(
+      (v) =>
+        v.severity === ViolationSeverity.CRITICAL &&
         (v.status === 'detected' || v.status === 'investigating')
-      ).length;
+    ).length;
 
     if (criticalViolations > 0) {
       issues.push(`${criticalViolations} critical violations active`);
     }
 
-    const status = issues.length === 0 ? 'healthy' : 
-                  issues.length <= 2 ? 'degraded' : 'unhealthy';
+    const status =
+      issues.length === 0
+        ? 'healthy'
+        : issues.length <= 2
+          ? 'degraded'
+          : 'unhealthy';
 
     return {
       status,
@@ -1376,8 +1442,8 @@ export class ComplianceMonitor extends EventEmitter {
         activeViolations: this.getActiveViolations().length,
         complianceScore: this.complianceScore?.overall,
         lastUpdated: this.complianceScore?.lastUpdated,
-        issues
-      }
+        issues,
+      },
     };
   }
 }
@@ -1395,5 +1461,5 @@ export type {
   ComplianceViolation,
   ComplianceAudit,
   ComplianceScore,
-  ComplianceEvents
+  ComplianceEvents,
 };

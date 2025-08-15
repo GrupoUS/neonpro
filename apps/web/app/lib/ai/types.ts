@@ -1,12 +1,12 @@
 // AI System Types for Epic 4 Implementation
 // Based on technical architecture in docs/ai/neonpro-ai-technical-deep-dive.md
 
-import { Database } from "@/types/supabase";
+import type { Database } from '@/types/supabase';
 
 // Core AI System Types
 export interface AISystemArchitecture {
   chatEngine: {
-    provider: "OpenAI GPT-4" | "Anthropic Claude" | "Custom LLM";
+    provider: 'OpenAI GPT-4' | 'Anthropic Claude' | 'Custom LLM';
     fallbackProviders: string[];
     contextWindow: number;
     maxTokens: number;
@@ -14,21 +14,21 @@ export interface AISystemArchitecture {
   };
 
   visionModels: {
-    medicalImageAnalysis: "GPT-4 Vision" | "Custom Medical Vision Model";
-    progressComparison: "Computer Vision API";
-    skinAnalysis: "Dermatology AI Model";
+    medicalImageAnalysis: 'GPT-4 Vision' | 'Custom Medical Vision Model';
+    progressComparison: 'Computer Vision API';
+    skinAnalysis: 'Dermatology AI Model';
   };
 
   dataProcessing: {
-    embeddingModel: "text-embedding-ada-002" | "sentence-transformers";
-    vectorDatabase: "Pinecone" | "Weaviate" | "Supabase pgvector";
-    cacheLayer: "Redis" | "Supabase Edge Cache";
+    embeddingModel: 'text-embedding-ada-002' | 'sentence-transformers';
+    vectorDatabase: 'Pinecone' | 'Weaviate' | 'Supabase pgvector';
+    cacheLayer: 'Redis' | 'Supabase Edge Cache';
   };
 
   integrationLayer: {
-    dataAccess: "Supabase RLS + Custom Policies";
-    realTimeUpdates: "Supabase Realtime";
-    eventStreaming: "Supabase Edge Functions";
+    dataAccess: 'Supabase RLS + Custom Policies';
+    realTimeUpdates: 'Supabase Realtime';
+    eventStreaming: 'Supabase Edge Functions';
   };
 }
 
@@ -84,7 +84,7 @@ export interface UniversalChatContext {
 
 // Query Classification Types
 export interface QueryClassification {
-  epic: "epic1" | "epic2" | "epic3" | "epic4" | "cross_functional";
+  epic: 'epic1' | 'epic2' | 'epic3' | 'epic4' | 'cross_functional';
   category: string;
   confidence: number;
   requiredPermissions: string[];
@@ -121,9 +121,9 @@ export interface AIResponse {
 export interface CrossFunctionalSuggestion {
   id: string;
   category:
-    | "financial_optimization"
-    | "clinical_excellence"
-    | "operational_efficiency";
+    | 'financial_optimization'
+    | 'clinical_excellence'
+    | 'operational_efficiency';
   title: string;
   description: string;
   affectedEpics: string[];
@@ -135,7 +135,7 @@ export interface CrossFunctionalSuggestion {
     satisfactionImprovement?: number;
   };
   implementationSteps: ImplementationStep[];
-  status: "pending" | "accepted" | "rejected" | "implemented";
+  status: 'pending' | 'accepted' | 'rejected' | 'implemented';
   confidence: number;
   requiredResources: string[];
 }
@@ -151,10 +151,10 @@ export interface ImplementationStep {
 // Predictive Analytics Types (Story 4.3)
 export interface PredictiveInsight {
   type:
-    | "outcome_prediction"
-    | "financial_forecast"
-    | "demand_forecast"
-    | "risk_assessment";
+    | 'outcome_prediction'
+    | 'financial_forecast'
+    | 'demand_forecast'
+    | 'risk_assessment';
   title: string;
   prediction: string;
   confidence: number;
@@ -169,7 +169,7 @@ export interface ForecastingResult {
   currentValue: number;
   predictedValue: number;
   confidence: number;
-  trend: "increasing" | "decreasing" | "stable";
+  trend: 'increasing' | 'decreasing' | 'stable';
   factors: string[];
   accuracy?: number;
 }
@@ -179,16 +179,16 @@ export interface AutomationRecommendation {
   id: string;
   name: string;
   description: string;
-  category: "workflow" | "clinical" | "financial" | "operational";
+  category: 'workflow' | 'clinical' | 'financial' | 'operational';
   estimatedTimesSaved: number;
   estimatedCostSavings: number;
   implementation: {
-    complexity: "low" | "medium" | "high";
+    complexity: 'low' | 'medium' | 'high';
     estimatedDuration: string;
     requiredResources: string[];
     risks: string[];
   };
-  status: "suggested" | "approved" | "in_progress" | "completed";
+  status: 'suggested' | 'approved' | 'in_progress' | 'completed';
 }
 
 // Data Access Types
@@ -215,11 +215,11 @@ export interface OperationalContext {
 }
 
 // Epic Integration Types
-export type Appointment = Database["public"]["Tables"]["appointments"]["Row"];
-export type Patient = Database["public"]["Tables"]["patients"]["Row"];
-export type Professional = Database["public"]["Tables"]["professionals"]["Row"];
+export type Appointment = Database['public']['Tables']['appointments']['Row'];
+export type Patient = Database['public']['Tables']['patients']['Row'];
+export type Professional = Database['public']['Tables']['professionals']['Row'];
 export type TreatmentSession =
-  Database["public"]["Tables"]["treatment_sessions"]["Row"];
+  Database['public']['Tables']['treatment_sessions']['Row'];
 
 // Supporting Types
 export interface ConflictAnalysis {
@@ -368,7 +368,7 @@ export interface SystemAlerts {
 
 export interface AlertItem {
   id: string;
-  type: "critical" | "warning" | "info";
+  type: 'critical' | 'warning' | 'info';
   title: string;
   description: string;
   timestamp: string;
@@ -377,7 +377,7 @@ export interface AlertItem {
 }
 
 export interface ChartData {
-  type: "line" | "bar" | "pie" | "scatter";
+  type: 'line' | 'bar' | 'pie' | 'scatter';
   data: any;
   options: any;
   title: string;
@@ -387,7 +387,7 @@ export interface SuggestedAction {
   id: string;
   title: string;
   description: string;
-  actionType: "navigation" | "function" | "external";
+  actionType: 'navigation' | 'function' | 'external';
   target: string;
   parameters?: Record<string, any>;
 }

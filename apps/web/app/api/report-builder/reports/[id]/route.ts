@@ -1,15 +1,15 @@
 // Individual Report API Route
 // Story 8.2: Custom Report Builder (Drag-Drop Interface)
 
+import { type NextRequest, NextResponse } from 'next/server';
 import { ReportBuilderService } from '@/app/lib/services/report-builder';
 import { UpdateReportRequest } from '@/app/lib/validations/report-builder';
-import { NextRequest, NextResponse } from 'next/server';
 
 const reportService = new ReportBuilderService();
 
 // GET /api/report-builder/reports/[id] - Get specific report
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
@@ -19,7 +19,7 @@ export async function GET(
       return NextResponse.json(
         {
           success: false,
-          error: 'Report ID is required'
+          error: 'Report ID is required',
         },
         { status: 400 }
       );
@@ -31,7 +31,7 @@ export async function GET(
       return NextResponse.json(
         {
           success: false,
-          error: 'Report not found'
+          error: 'Report not found',
         },
         { status: 404 }
       );
@@ -39,14 +39,15 @@ export async function GET(
 
     return NextResponse.json({
       success: true,
-      data: report
+      data: report,
     });
   } catch (error) {
     console.error('Error fetching report:', error);
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to fetch report'
+        error:
+          error instanceof Error ? error.message : 'Failed to fetch report',
       },
       { status: 500 }
     );
@@ -66,7 +67,7 @@ export async function PUT(
       return NextResponse.json(
         {
           success: false,
-          error: 'Report ID is required'
+          error: 'Report ID is required',
         },
         { status: 400 }
       );
@@ -79,19 +80,22 @@ export async function PUT(
         {
           success: false,
           error: 'Invalid request data',
-          details: validationResult.error.errors
+          details: validationResult.error.errors,
         },
         { status: 400 }
       );
     }
 
-    const report = await reportService.updateReport(reportId, validationResult.data);
+    const report = await reportService.updateReport(
+      reportId,
+      validationResult.data
+    );
 
     if (!report) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Report not found'
+          error: 'Report not found',
         },
         { status: 404 }
       );
@@ -99,14 +103,15 @@ export async function PUT(
 
     return NextResponse.json({
       success: true,
-      data: report
+      data: report,
     });
   } catch (error) {
     console.error('Error updating report:', error);
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to update report'
+        error:
+          error instanceof Error ? error.message : 'Failed to update report',
       },
       { status: 500 }
     );
@@ -115,7 +120,7 @@ export async function PUT(
 
 // DELETE /api/report-builder/reports/[id] - Delete specific report
 export async function DELETE(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
@@ -125,7 +130,7 @@ export async function DELETE(
       return NextResponse.json(
         {
           success: false,
-          error: 'Report ID is required'
+          error: 'Report ID is required',
         },
         { status: 400 }
       );
@@ -137,7 +142,7 @@ export async function DELETE(
       return NextResponse.json(
         {
           success: false,
-          error: 'Report not found'
+          error: 'Report not found',
         },
         { status: 404 }
       );
@@ -145,14 +150,15 @@ export async function DELETE(
 
     return NextResponse.json({
       success: true,
-      message: 'Report deleted successfully'
+      message: 'Report deleted successfully',
     });
   } catch (error) {
     console.error('Error deleting report:', error);
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to delete report'
+        error:
+          error instanceof Error ? error.message : 'Failed to delete report',
       },
       { status: 500 }
     );

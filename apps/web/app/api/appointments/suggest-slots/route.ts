@@ -1,6 +1,6 @@
-import { createClient } from "@/app/utils/supabase/server";
-import { addDays, addMinutes, format, parseISO } from "date-fns";
-import { NextRequest, NextResponse } from "next/server";
+import { addDays, addMinutes, format, parseISO } from 'date-fns';
+import { type NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@/app/utils/supabase/server';
 
 // =============================================
 // NeonPro Alternative Slot Suggestion API
@@ -25,7 +25,7 @@ interface AlternativeSlot {
   conflicts?: Array<{
     type: string;
     message: string;
-    severity: "error" | "warning" | "info";
+    severity: 'error' | 'warning' | 'info';
   }>;
   score?: number;
   reason?: string;
@@ -49,32 +49,37 @@ export async function GET(request: NextRequest) {
 
     // Extract and validate parameters
     const params: SlotSuggestionParams = {
-      professional_id: searchParams.get("professional_id") || "",
-      service_type_id: searchParams.get("service_type_id") || "",
-      preferred_start_time: searchParams.get("preferred_start_time") || "",
-      duration_minutes: parseInt(searchParams.get("duration_minutes") || "60"),
+      professional_id: searchParams.get('professional_id') || '',
+      service_type_id: searchParams.get('service_type_id') || '',
+      preferred_start_time: searchParams.get('preferred_start_time') || '',
+      duration_minutes: Number.parseInt(
+        searchParams.get('duration_minutes') || '60',
+        10
+      ),
       exclude_appointment_id:
-        searchParams.get("exclude_appointment_id") || undefined,
+        searchParams.get('exclude_appointment_id') || undefined,
       max_suggestions: Math.min(
-        parseInt(searchParams.get("max_suggestions") || "6"),
+        Number.parseInt(searchParams.get('max_suggestions') || '6', 10),
         20
       ),
       search_window_days: Math.min(
-        parseInt(searchParams.get("search_window_days") || "14"),
+        Number.parseInt(searchParams.get('search_window_days') || '14', 10),
         30
       ),
-      clinic_id: searchParams.get("clinic_id") || "",
+      clinic_id: searchParams.get('clinic_id') || '',
     };
 
     // Validation
     if (
-      !params.professional_id ||
-      !params.service_type_id ||
-      !params.preferred_start_time ||
-      !params.clinic_id
+      !(
+        params.professional_id &&
+        params.service_type_id &&
+        params.preferred_start_time &&
+        params.clinic_id
+      )
     ) {
       return NextResponse.json(
-        { error: "Missing required parameters" },
+        { error: 'Missing required parameters' },
         { status: 400 }
       );
     }
@@ -113,10 +118,10 @@ export async function GET(request: NextRequest) {
       total_slots_checked: params.search_window_days * 48, // Assuming 30-min intervals
       available_slots_found: suggestions.length,
       search_period: {
-        start_date: format(preferredDate, "yyyy-MM-dd"),
+        start_date: format(preferredDate, 'yyyy-MM-dd'),
         end_date: format(
           addDays(preferredDate, params.search_window_days),
-          "yyyy-MM-dd"
+          'yyyy-MM-dd'
         ),
       },
     };
@@ -128,9 +133,9 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(response);
   } catch (error) {
-    console.error("Error in suggest-slots API:", error);
+    console.error('Error in suggest-slots API:', error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }
@@ -142,14 +147,14 @@ async function getProfessionalSchedule(
   clinicId: string
 ) {
   const { data, error } = await supabase
-    .from("professional_schedules")
-    .select("*")
-    .eq("professional_id", professionalId)
-    .eq("clinic_id", clinicId)
-    .eq("is_available", true);
+    .from('professional_schedules')
+    .select('*')
+    .eq('professional_id', professionalId)
+    .eq('clinic_id', clinicId)
+    .eq('is_available', true);
 
   if (error) {
-    console.error("Error fetching professional schedule:", error);
+    console.error('Error fetching professional schedule:', error);
     return [];
   }
 
@@ -162,16 +167,16 @@ async function getServiceRules(
   clinicId: string
 ) {
   const { data, error } = await supabase
-    .from("service_type_rules")
-    .select("*")
-    .eq("service_type_id", serviceTypeId)
-    .eq("clinic_id", clinicId)
-    .eq("is_active", true)
+    .from('service_type_rules')
+    .select('*')
+    .eq('service_type_id', serviceTypeId)
+    .eq('clinic_id', clinicId)
+    .eq('is_active', true)
     .single();
 
-  if (error && error.code !== "PGRST116") {
+  if (error && error.code !== 'PGRST116') {
     // Not found is OK
-    console.error("Error fetching service rules:", error);
+    console.error('Error fetching service rules:', error);
   }
 
   return data || {};
@@ -188,22 +193,22 @@ async function getExistingAppointments(
   const endDate = addDays(startDate, searchWindowDays);
 
   let query = supabase
-    .from("appointments")
-    .select("start_time, end_time")
-    .eq("professional_id", professionalId)
-    .eq("clinic_id", clinicId)
-    .neq("status", "cancelled")
-    .gte("start_time", startDate.toISOString())
-    .lte("start_time", endDate.toISOString());
+    .from('appointments')
+    .select('start_time, end_time')
+    .eq('professional_id', professionalId)
+    .eq('clinic_id', clinicId)
+    .neq('status', 'cancelled')
+    .gte('start_time', startDate.toISOString())
+    .lte('start_time', endDate.toISOString());
 
   if (excludeId) {
-    query = query.neq("id", excludeId);
+    query = query.neq('id', excludeId);
   }
 
   const { data, error } = await query;
 
   if (error) {
-    console.error("Error fetching existing appointments:", error);
+    console.error('Error fetching existing appointments:', error);
     return [];
   }
 
@@ -218,7 +223,7 @@ async function generateSlotSuggestions(
 ): Promise<AlternativeSlot[]> {
   const suggestions: AlternativeSlot[] = [];
   const preferredDate = parseISO(params.preferred_start_time);
-  const preferredTime = format(preferredDate, "HH:mm");
+  const preferredTime = format(preferredDate, 'HH:mm');
 
   // Create schedule map for quick lookup
   const scheduleMap = new Map();
@@ -292,7 +297,7 @@ function generateDaySuggestions(
       bufferBefore,
       bufferAfter
     );
-    const hasErrors = conflicts.some((c) => c.severity === "error");
+    const hasErrors = conflicts.some((c) => c.severity === 'error');
 
     if (!hasErrors) {
       const score = calculateSlotScore(
@@ -319,7 +324,7 @@ function generateDaySuggestions(
 }
 
 function parseTime(timeString: string): number {
-  const [hours, minutes] = timeString.split(":").map(Number);
+  const [hours, minutes] = timeString.split(':').map(Number);
   return hours * 60 + minutes;
 }
 
@@ -333,7 +338,7 @@ function checkSlotConflicts(
 ): Array<{
   type: string;
   message: string;
-  severity: "error" | "warning" | "info";
+  severity: 'error' | 'warning' | 'info';
 }> {
   const conflicts = [];
 
@@ -348,9 +353,9 @@ function checkSlotConflicts(
       (slotStartWithBuffer <= apt.start && slotEndWithBuffer >= apt.end)
     ) {
       conflicts.push({
-        type: "appointment_overlap",
-        message: "Conflito com agendamento existente",
-        severity: "error" as const,
+        type: 'appointment_overlap',
+        message: 'Conflito com agendamento existente',
+        severity: 'error' as const,
       });
     }
   }
@@ -359,8 +364,8 @@ function checkSlotConflicts(
   if (schedule.break_start_time && schedule.break_end_time) {
     const breakStart = parseTime(schedule.break_start_time);
     const breakEnd = parseTime(schedule.break_end_time);
-    const slotTimeStart = parseTime(format(slotStart, "HH:mm"));
-    const slotTimeEnd = parseTime(format(slotEnd, "HH:mm"));
+    const slotTimeStart = parseTime(format(slotStart, 'HH:mm'));
+    const slotTimeEnd = parseTime(format(slotEnd, 'HH:mm'));
 
     if (
       (slotTimeStart >= breakStart && slotTimeStart < breakEnd) ||
@@ -368,9 +373,9 @@ function checkSlotConflicts(
       (slotTimeStart <= breakStart && slotTimeEnd >= breakEnd)
     ) {
       conflicts.push({
-        type: "break_time",
-        message: "Conflito com horário de intervalo",
-        severity: "error" as const,
+        type: 'break_time',
+        message: 'Conflito com horário de intervalo',
+        severity: 'error' as const,
       });
     }
   }
@@ -386,9 +391,9 @@ function checkSlotConflicts(
 
   if (appointmentsInHour >= (schedule.max_appointments_per_hour || 4)) {
     conflicts.push({
-      type: "capacity_exceeded",
+      type: 'capacity_exceeded',
       message: `Capacidade máxima da hora (${schedule.max_appointments_per_hour}) atingida`,
-      severity: "warning" as const,
+      severity: 'warning' as const,
     });
   }
 
@@ -407,7 +412,7 @@ function calculateSlotScore(
   score -= dayOffset * 5;
 
   // Penalty for time difference from preferred
-  const slotTime = format(slotStart, "HH:mm");
+  const slotTime = format(slotStart, 'HH:mm');
   const preferredMinutes = parseTime(preferredTime);
   const slotMinutes = parseTime(slotTime);
   const timeDiff = Math.abs(preferredMinutes - slotMinutes);
@@ -431,20 +436,20 @@ function generateSlotReason(
   dayOffset: number
 ): string {
   if (dayOffset === 0) {
-    const slotTime = format(slotStart, "HH:mm");
+    const slotTime = format(slotStart, 'HH:mm');
     if (slotTime === preferredTime) {
-      return "Horário exato solicitado";
+      return 'Horário exato solicitado';
     }
-    return "Mesmo dia, horário próximo";
+    return 'Mesmo dia, horário próximo';
   }
 
   if (dayOffset === 1) {
-    return "Próximo dia útil disponível";
+    return 'Próximo dia útil disponível';
   }
 
   if (dayOffset <= 3) {
-    return "Horário próximo disponível";
+    return 'Horário próximo disponível';
   }
 
-  return "Próxima disponibilidade";
+  return 'Próxima disponibilidade';
 }

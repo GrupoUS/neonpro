@@ -3,7 +3,7 @@
  * Implements security headers, input validation, and audit logging
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 
 export interface SecurityConfig {
   enableCSP: boolean;
@@ -24,14 +24,11 @@ export class SecurityMiddleware {
   }
 
   // Security Headers Middleware
-  async applySecurityHeaders(request: NextRequest): Promise<NextResponse> {
+  async applySecurityHeaders(_request: NextRequest): Promise<NextResponse> {
     const response = NextResponse.next();
 
     if (this.config.enableCSP) {
-      response.headers.set(
-        'Content-Security-Policy',
-        this.generateCSPHeader()
-      );
+      response.headers.set('Content-Security-Policy', this.generateCSPHeader());
     }
 
     if (this.config.enableHSTS) {
@@ -46,8 +43,11 @@ export class SecurityMiddleware {
     response.headers.set('X-Frame-Options', 'DENY');
     response.headers.set('X-XSS-Protection', '1; mode=block');
     response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-    response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
-    
+    response.headers.set(
+      'Permissions-Policy',
+      'camera=(), microphone=(), geolocation=()'
+    );
+
     // Remove server identification
     response.headers.delete('Server');
     response.headers.delete('X-Powered-By');
@@ -65,32 +65,37 @@ export class SecurityMiddleware {
       "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://vercel.live",
       "frame-ancestors 'none'",
       "base-uri 'self'",
-      "form-action 'self'"
+      "form-action 'self'",
     ].join('; ');
   }
 
   // Input Validation Middleware
   async validateInput(request: NextRequest): Promise<NextResponse | null> {
     const contentType = request.headers.get('content-type');
-    
+
     if (contentType?.includes('application/json')) {
       try {
         const body = await request.clone().json();
         const validationResult = this.validateJSONInput(body);
-        
+
         if (!validationResult.isValid) {
-          await this.logSecurityEvent('input_validation_failed', validationResult.errors.join(', '), request);
+          await this.logSecurityEvent(
+            'input_validation_failed',
+            validationResult.errors.join(', '),
+            request
+          );
           return NextResponse.json(
             { error: 'Invalid input', details: validationResult.errors },
             { status: 400 }
           );
         }
       } catch (error) {
-        await this.logSecurityEvent('json_parse_error', `JSON parse error: ${error}`, request);
-        return NextResponse.json(
-          { error: 'Invalid JSON' },
-          { status: 400 }
+        await this.logSecurityEvent(
+          'json_parse_error',
+          `JSON parse error: ${error}`,
+          request
         );
+        return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
       }
     }
 
@@ -112,17 +117,21 @@ export class SecurityMiddleware {
       /window\.location/gi, // Location manipulation
     ];
 
-    const checkValue = (value: any, path: string = '') => {
+    const checkValue = (value: any, path = '') => {
       if (typeof value === 'string') {
         for (const pattern of suspiciousPatterns) {
           if (pattern.test(value)) {
-            errors.push(`Suspicious pattern detected in ${path || 'input'}: ${pattern.source}`);
+            errors.push(
+              `Suspicious pattern detected in ${path || 'input'}: ${pattern.source}`
+            );
           }
         }
-        
+
         // Check for excessively long strings (potential DoS)
-        if (value.length > 10000) {
-          errors.push(`String too long in ${path || 'input'}: ${value.length} characters`);
+        if (value.length > 10_000) {
+          errors.push(
+            `String too long in ${path || 'input'}: ${value.length} characters`
+          );
         }
       } else if (typeof value === 'object' && value !== null) {
         // Recursively check object properties
@@ -136,12 +145,16 @@ export class SecurityMiddleware {
 
     return {
       isValid: errors.length === 0,
-      errors
+      errors,
     };
   }
 
   // Audit Logging
-  private async logSecurityEvent(eventType: string, description: string, request: NextRequest): Promise<void> {
+  private async logSecurityEvent(
+    eventType: string,
+    description: string,
+    request: NextRequest
+  ): Promise<void> {
     if (!this.config.auditLogging) return;
 
     const logEntry = {
@@ -162,9 +175,11 @@ export class SecurityMiddleware {
   }
 
   private getClientIP(request: NextRequest): string {
-    return request.headers.get('x-forwarded-for')?.split(',')[0].trim() ||
-           request.headers.get('x-real-ip') ||
-           'unknown';
+    return (
+      request.headers.get('x-forwarded-for')?.split(',')[0].trim() ||
+      request.headers.get('x-real-ip') ||
+      'unknown'
+    );
   }
 
   // Main middleware function
@@ -179,8 +194,12 @@ export class SecurityMiddleware {
 
       return response;
     } catch (error) {
-      await this.logSecurityEvent('middleware_error', `Error: ${error}`, request);
-      
+      await this.logSecurityEvent(
+        'middleware_error',
+        `Error: ${error}`,
+        request
+      );
+
       return NextResponse.json(
         { error: 'Internal security error' },
         { status: 500 }
@@ -198,8 +217,10 @@ export const defaultHealthcareSecurityConfig: SecurityConfig = {
   rateLimitMax: 100, // requests per window
   auditLogging: true,
   ipWhitelist: [], // Empty = allow all
-  ipBlacklist: [] // Add known malicious IPs
+  ipBlacklist: [], // Add known malicious IPs
 };
 
 // Create middleware instance
-export const healthcareSecurityMiddleware = new SecurityMiddleware(defaultHealthcareSecurityConfig);
+export const healthcareSecurityMiddleware = new SecurityMiddleware(
+  defaultHealthcareSecurityConfig
+);

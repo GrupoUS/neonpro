@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
 // =============================================
 // NeonPro Conflict Prevention Hook
 // Story 1.2: Real-time slot validation
 // =============================================
 
+import { useCallback, useRef, useState } from 'react';
 import type {
   AlternativeSlot,
   AppointmentConflict,
   SlotValidationRequest,
   SlotValidationResponse,
-} from "@/app/lib/types/conflict-prevention";
-import { useCallback, useRef, useState } from "react";
+} from '@/app/lib/types/conflict-prevention';
 
 interface UseConflictPreventionProps {
   debounceMs?: number; // Debounce validation calls
@@ -57,7 +57,7 @@ export function useConflictPrevention({
 
   // Refs for debouncing and request management
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const currentRequestRef = useRef<string>("");
+  const currentRequestRef = useRef<string>('');
 
   // Generate request key for deduplication
   const generateRequestKey = (request: SlotValidationRequest): string => {
@@ -79,8 +79,8 @@ export function useConflictPrevention({
             warnings: [],
             alternative_slots: [],
             validation_details: {
-              appointment_date: "",
-              appointment_time: "",
+              appointment_date: '',
+              appointment_time: '',
               day_of_week: 0,
               duration_minutes: 0,
             },
@@ -102,10 +102,10 @@ export function useConflictPrevention({
               currentRequestRef.current = requestKey;
 
               // Make API call
-              const response = await fetch("/api/appointments/validate-slot", {
-                method: "POST",
+              const response = await fetch('/api/appointments/validate-slot', {
+                method: 'POST',
                 headers: {
-                  "Content-Type": "application/json",
+                  'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(request),
               });
@@ -123,11 +123,11 @@ export function useConflictPrevention({
               setConflicts(validationResult.conflicts || []);
               setWarnings(validationResult.warnings || []);
               setAlternativeSlots(validationResult.alternative_slots || []);
-              setIsAvailable(validationResult.available || false);
+              setIsAvailable(validationResult.available);
 
               resolve(validationResult);
             } catch (error) {
-              console.error("Slot validation error:", error);
+              console.error('Slot validation error:', error);
 
               // Reset state on error
               const errorResponse: SlotValidationResponse = {
@@ -135,11 +135,11 @@ export function useConflictPrevention({
                 available: false,
                 conflicts: [
                   {
-                    type: "APPOINTMENT_OVERLAP", // Generic type for errors
+                    type: 'APPOINTMENT_OVERLAP', // Generic type for errors
                     message: `Validation failed: ${
-                      error instanceof Error ? error.message : "Unknown error"
+                      error instanceof Error ? error.message : 'Unknown error'
                     }`,
-                    severity: "error",
+                    severity: 'error',
                   },
                 ],
                 warnings: [],
@@ -147,15 +147,15 @@ export function useConflictPrevention({
                 validation_details: {
                   appointment_date: new Date(request.start_time)
                     .toISOString()
-                    .split("T")[0],
+                    .split('T')[0],
                   appointment_time: new Date(request.start_time)
                     .toTimeString()
-                    .split(" ")[0],
+                    .split(' ')[0],
                   day_of_week: new Date(request.start_time).getDay(),
                   duration_minutes: Math.round(
                     (new Date(request.end_time).getTime() -
                       new Date(request.start_time).getTime()) /
-                      60000
+                      60_000
                   ),
                 },
               };
@@ -169,7 +169,7 @@ export function useConflictPrevention({
               reject(error);
             } finally {
               setIsValidating(false);
-              currentRequestRef.current = "";
+              currentRequestRef.current = '';
             }
           },
           enableRealTime ? debounceMs : 0
@@ -191,13 +191,13 @@ export function useConflictPrevention({
     setWarnings([]);
     setAlternativeSlots([]);
     setIsAvailable(false);
-    currentRequestRef.current = "";
+    currentRequestRef.current = '';
   }, []);
 
   // Utility functions
-  const hasErrors = conflicts.some((c) => c.severity === "error");
+  const hasErrors = conflicts.some((c) => c.severity === 'error');
   const hasWarnings =
-    warnings.length > 0 || conflicts.some((c) => c.severity === "warning");
+    warnings.length > 0 || conflicts.some((c) => c.severity === 'warning');
 
   const getConflictsByType = useCallback(
     (type: string): AppointmentConflict[] => {
@@ -207,7 +207,7 @@ export function useConflictPrevention({
   );
 
   const getSuggestedSlots = useCallback(
-    (limit: number = 3): AlternativeSlot[] => {
+    (limit = 3): AlternativeSlot[] => {
       return alternativeSlots
         .filter((slot) => slot.available)
         .sort((a, b) => (b.score || 0) - (a.score || 0))
@@ -217,7 +217,7 @@ export function useConflictPrevention({
   );
 
   // Cleanup on unmount
-  const cleanup = useCallback(() => {
+  const _cleanup = useCallback(() => {
     if (debounceTimeoutRef.current) {
       clearTimeout(debounceTimeoutRef.current);
     }
@@ -280,9 +280,9 @@ export function useQuickAvailabilityCheck() {
         }
 
         const result = await response.json();
-        return result.available || false;
+        return result.available;
       } catch (error) {
-        console.error("Quick availability check error:", error);
+        console.error('Quick availability check error:', error);
         return false;
       } finally {
         setIsChecking(false);

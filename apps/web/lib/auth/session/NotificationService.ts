@@ -1,29 +1,29 @@
 /**
  * Notification Service - Security Alerts and User Notifications
- * 
+ *
  * Comprehensive notification system for security events, session alerts,
  * and user communications in the NeonPro session management system.
- * 
+ *
  * @version 1.0.0
  * @author NeonPro Development Team
  * @created 2024
  */
 
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { validateUUID, removeUndefined } from './utils';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import type {
+  AuthenticationResponse,
+  NotificationChannel,
   NotificationConfig,
   NotificationData,
-  NotificationType,
   NotificationPriority,
-  NotificationChannel,
   NotificationTemplate,
-  AuthenticationResponse
+  NotificationType,
 } from './types';
+import { validateUUID } from './utils';
 
 /**
  * Notification Service Class
- * 
+ *
  * Core notification operations:
  * - Security alert notifications
  * - Session timeout warnings
@@ -41,7 +41,7 @@ export class NotificationService {
 
   constructor(config: NotificationConfig) {
     this.config = config;
-    
+
     this.supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -69,17 +69,17 @@ export class NotificationService {
           success: false,
           error: {
             code: 'INVALID_USER_ID',
-            message: 'Invalid user ID format'
+            message: 'Invalid user ID format',
           },
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       }
 
       // Get user preferences
       const userPreferences = await this.getUserNotificationPreferences(userId);
-      
+
       // Filter channels based on user preferences
-      const allowedChannels = channels.filter(channel => 
+      const allowedChannels = channels.filter((channel) =>
         userPreferences.enabledChannels.includes(channel)
       );
 
@@ -88,9 +88,9 @@ export class NotificationService {
           success: false,
           error: {
             code: 'NO_ENABLED_CHANNELS',
-            message: 'No notification channels enabled for user'
+            message: 'No notification channels enabled for user',
           },
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       }
 
@@ -108,7 +108,7 @@ export class NotificationService {
         attempts: 0,
         maxAttempts: this.config.maxRetryAttempts,
         createdAt: new Date().toISOString(),
-        scheduledAt: new Date().toISOString()
+        scheduledAt: new Date().toISOString(),
       };
 
       // Store notification in database
@@ -126,7 +126,7 @@ export class NotificationService {
           attempts: 0,
           max_attempts: this.config.maxRetryAttempts,
           created_at: notification.createdAt,
-          scheduled_at: notification.scheduledAt
+          scheduled_at: notification.scheduledAt,
         });
 
       if (dbError) {
@@ -135,9 +135,9 @@ export class NotificationService {
           error: {
             code: 'NOTIFICATION_STORE_FAILED',
             message: 'Failed to store notification',
-            details: { error: dbError.message }
+            details: { error: dbError.message },
           },
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       }
 
@@ -152,18 +152,19 @@ export class NotificationService {
       return {
         success: true,
         data: notification,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
-
     } catch (error) {
       return {
         success: false,
         error: {
           code: 'NOTIFICATION_SEND_ERROR',
           message: 'Error sending notification',
-          details: { error: error instanceof Error ? error.message : 'Unknown error' }
+          details: {
+            error: error instanceof Error ? error.message : 'Unknown error',
+          },
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -184,7 +185,7 @@ export class NotificationService {
       {
         sessionId,
         timeoutMinutes,
-        message: `Your session will expire in ${timeoutMinutes} minutes. Click to extend.`
+        message: `Your session will expire in ${timeoutMinutes} minutes. Click to extend.`,
       },
       'session_timeout_warning'
     );
@@ -200,17 +201,17 @@ export class NotificationService {
     details: Record<string, any>
   ): Promise<AuthenticationResponse> {
     const priorityMap = {
-      'low': 'low' as NotificationPriority,
-      'medium': 'medium' as NotificationPriority,
-      'high': 'high' as NotificationPriority,
-      'critical': 'critical' as NotificationPriority
+      low: 'low' as NotificationPriority,
+      medium: 'medium' as NotificationPriority,
+      high: 'high' as NotificationPriority,
+      critical: 'critical' as NotificationPriority,
     };
 
     const channelMap = {
-      'low': ['in_app'] as NotificationChannel[],
-      'medium': ['in_app', 'email'] as NotificationChannel[],
-      'high': ['in_app', 'email', 'push'] as NotificationChannel[],
-      'critical': ['in_app', 'email', 'push', 'sms'] as NotificationChannel[]
+      low: ['in_app'] as NotificationChannel[],
+      medium: ['in_app', 'email'] as NotificationChannel[],
+      high: ['in_app', 'email', 'push'] as NotificationChannel[],
+      critical: ['in_app', 'email', 'push', 'sms'] as NotificationChannel[],
     };
 
     return this.sendNotification(
@@ -221,7 +222,7 @@ export class NotificationService {
       {
         alertType,
         severity,
-        ...details
+        ...details,
       },
       'security_alert'
     );
@@ -244,7 +245,7 @@ export class NotificationService {
       {
         deviceId,
         action,
-        deviceInfo
+        deviceInfo,
       },
       'device_trust'
     );
@@ -266,7 +267,7 @@ export class NotificationService {
       {
         deviceInfo,
         location,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       },
       'login_notification'
     );
@@ -294,21 +295,20 @@ export class NotificationService {
             securityAlerts: true,
             sessionWarnings: true,
             deviceNotifications: true,
-            loginNotifications: false
-          }
+            loginNotifications: false,
+          },
         };
       }
 
       return {
         enabledChannels: JSON.parse(data.enabled_channels || '[]'),
-        preferences: JSON.parse(data.preferences || '{}')
+        preferences: JSON.parse(data.preferences || '{}'),
       };
-
     } catch (error) {
       console.error('Error getting user notification preferences:', error);
       return {
         enabledChannels: ['in_app', 'email'],
-        preferences: {}
+        preferences: {},
       };
     }
   }
@@ -327,9 +327,9 @@ export class NotificationService {
           success: false,
           error: {
             code: 'INVALID_USER_ID',
-            message: 'Invalid user ID format'
+            message: 'Invalid user ID format',
           },
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       }
 
@@ -339,7 +339,7 @@ export class NotificationService {
           user_id: userId,
           enabled_channels: JSON.stringify(enabledChannels),
           preferences: JSON.stringify(preferences),
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         });
 
       if (error) {
@@ -347,9 +347,9 @@ export class NotificationService {
           success: false,
           error: {
             code: 'PREFERENCES_UPDATE_FAILED',
-            message: 'Failed to update notification preferences'
+            message: 'Failed to update notification preferences',
           },
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       }
 
@@ -359,20 +359,21 @@ export class NotificationService {
           userId,
           enabledChannels,
           preferences,
-          updatedAt: new Date().toISOString()
+          updatedAt: new Date().toISOString(),
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
-
     } catch (error) {
       return {
         success: false,
         error: {
           code: 'PREFERENCES_UPDATE_ERROR',
           message: 'Error updating notification preferences',
-          details: { error: error instanceof Error ? error.message : 'Unknown error' }
+          details: {
+            error: error instanceof Error ? error.message : 'Unknown error',
+          },
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -382,8 +383,8 @@ export class NotificationService {
    */
   async getNotificationHistory(
     userId: string,
-    limit: number = 50,
-    offset: number = 0
+    limit = 50,
+    offset = 0
   ): Promise<AuthenticationResponse> {
     try {
       if (!validateUUID(userId)) {
@@ -391,9 +392,9 @@ export class NotificationService {
           success: false,
           error: {
             code: 'INVALID_USER_ID',
-            message: 'Invalid user ID format'
+            message: 'Invalid user ID format',
           },
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       }
 
@@ -409,29 +410,32 @@ export class NotificationService {
           success: false,
           error: {
             code: 'NOTIFICATION_HISTORY_FAILED',
-            message: 'Failed to retrieve notification history'
+            message: 'Failed to retrieve notification history',
           },
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       }
 
-      const notifications = (data || []).map(row => this.convertToNotificationData(row));
+      const notifications = (data || []).map((row) =>
+        this.convertToNotificationData(row)
+      );
 
       return {
         success: true,
         data: notifications,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
-
     } catch (error) {
       return {
         success: false,
         error: {
           code: 'NOTIFICATION_HISTORY_ERROR',
           message: 'Error retrieving notification history',
-          details: { error: error instanceof Error ? error.message : 'Unknown error' }
+          details: {
+            error: error instanceof Error ? error.message : 'Unknown error',
+          },
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -446,9 +450,9 @@ export class NotificationService {
           success: false,
           error: {
             code: 'INVALID_NOTIFICATION_ID',
-            message: 'Invalid notification ID format'
+            message: 'Invalid notification ID format',
           },
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       }
 
@@ -456,7 +460,7 @@ export class NotificationService {
         .from('notifications')
         .update({
           read_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', notificationId)
         .select()
@@ -467,9 +471,9 @@ export class NotificationService {
           success: false,
           error: {
             code: 'MARK_READ_FAILED',
-            message: 'Failed to mark notification as read'
+            message: 'Failed to mark notification as read',
           },
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       }
 
@@ -478,18 +482,19 @@ export class NotificationService {
       return {
         success: true,
         data: notification,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
-
     } catch (error) {
       return {
         success: false,
         error: {
           code: 'MARK_READ_ERROR',
           message: 'Error marking notification as read',
-          details: { error: error instanceof Error ? error.message : 'Unknown error' }
+          details: {
+            error: error instanceof Error ? error.message : 'Unknown error',
+          },
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -497,11 +502,13 @@ export class NotificationService {
   /**
    * Clean up old notifications
    */
-  async cleanupOldNotifications(retentionDays: number = 30): Promise<AuthenticationResponse> {
+  async cleanupOldNotifications(
+    retentionDays = 30
+  ): Promise<AuthenticationResponse> {
     try {
       const cutoffDate = new Date();
       cutoffDate.setDate(cutoffDate.getDate() - retentionDays);
-      
+
       const { data, error } = await this.supabase
         .from('notifications')
         .delete()
@@ -513,9 +520,9 @@ export class NotificationService {
           success: false,
           error: {
             code: 'NOTIFICATION_CLEANUP_FAILED',
-            message: 'Failed to cleanup old notifications'
+            message: 'Failed to cleanup old notifications',
           },
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       }
 
@@ -524,20 +531,21 @@ export class NotificationService {
         data: {
           deletedCount: data?.length || 0,
           cutoffDate: cutoffDate.toISOString(),
-          cleanupDate: new Date().toISOString()
+          cleanupDate: new Date().toISOString(),
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
-
     } catch (error) {
       return {
         success: false,
         error: {
           code: 'NOTIFICATION_CLEANUP_ERROR',
           message: 'Error cleaning up old notifications',
-          details: { error: error instanceof Error ? error.message : 'Unknown error' }
+          details: {
+            error: error instanceof Error ? error.message : 'Unknown error',
+          },
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -553,7 +561,7 @@ export class NotificationService {
       subject: 'Your session will expire soon',
       body: 'Your session will expire in {{timeoutMinutes}} minutes. Click here to extend your session.',
       channels: ['in_app', 'push'],
-      variables: ['timeoutMinutes', 'sessionId']
+      variables: ['timeoutMinutes', 'sessionId'],
     });
 
     // Security alert template
@@ -563,7 +571,7 @@ export class NotificationService {
       subject: 'Security Alert - {{alertType}}',
       body: 'A security event has been detected on your account: {{alertType}}. Severity: {{severity}}. Please review your account activity.',
       channels: ['in_app', 'email', 'push', 'sms'],
-      variables: ['alertType', 'severity', 'details']
+      variables: ['alertType', 'severity', 'details'],
     });
 
     // Device trust template
@@ -573,7 +581,7 @@ export class NotificationService {
       subject: 'Device Trust Update',
       body: 'Device trust status has been updated for {{deviceInfo.name}}. Action: {{action}}.',
       channels: ['in_app', 'email'],
-      variables: ['deviceId', 'action', 'deviceInfo']
+      variables: ['deviceId', 'action', 'deviceInfo'],
     });
 
     // Login notification template
@@ -583,7 +591,7 @@ export class NotificationService {
       subject: 'New login to your account',
       body: 'A new login was detected from {{deviceInfo.name}} at {{timestamp}}.',
       channels: ['in_app', 'email'],
-      variables: ['deviceInfo', 'location', 'timestamp']
+      variables: ['deviceInfo', 'location', 'timestamp'],
     });
   }
 
@@ -593,20 +601,20 @@ export class NotificationService {
       if (!this.isProcessingQueue && this.deliveryQueue.length > 0) {
         await this.processQueue();
       }
-    }, 30000);
+    }, 30_000);
   }
 
   private async processQueue(): Promise<void> {
     if (this.isProcessingQueue) return;
-    
+
     this.isProcessingQueue = true;
-    
+
     try {
       const batchSize = 10;
       const batch = this.deliveryQueue.splice(0, batchSize);
-      
+
       await Promise.all(
-        batch.map(notification => this.processNotification(notification))
+        batch.map((notification) => this.processNotification(notification))
       );
     } catch (error) {
       console.error('Error processing notification queue:', error);
@@ -615,10 +623,12 @@ export class NotificationService {
     }
   }
 
-  private async processNotification(notification: NotificationData): Promise<void> {
+  private async processNotification(
+    notification: NotificationData
+  ): Promise<void> {
     try {
       const template = this.templates.get(notification.templateId || '');
-      
+
       for (const channel of notification.channels) {
         try {
           await this.deliverToChannel(notification, channel, template);
@@ -629,13 +639,12 @@ export class NotificationService {
 
       // Update notification status
       await this.updateNotificationStatus(notification.id, 'delivered');
-      
     } catch (error) {
       console.error('Error processing notification:', error);
-      
+
       // Increment attempts and retry if under limit
       notification.attempts++;
-      
+
       if (notification.attempts < notification.maxAttempts) {
         // Add back to queue for retry
         this.deliveryQueue.push(notification);
@@ -652,7 +661,7 @@ export class NotificationService {
     template?: NotificationTemplate
   ): Promise<void> {
     const content = this.renderTemplate(template, notification.data);
-    
+
     switch (channel) {
       case 'in_app':
         await this.deliverInApp(notification, content);
@@ -671,14 +680,17 @@ export class NotificationService {
     }
   }
 
-  private renderTemplate(template: NotificationTemplate | undefined, data: Record<string, any>): {
+  private renderTemplate(
+    template: NotificationTemplate | undefined,
+    data: Record<string, any>
+  ): {
     subject: string;
     body: string;
   } {
     if (!template) {
       return {
         subject: 'Notification',
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
       };
     }
 
@@ -688,8 +700,9 @@ export class NotificationService {
     // Simple template variable replacement
     Object.entries(data).forEach(([key, value]) => {
       const placeholder = `{{${key}}}`;
-      const stringValue = typeof value === 'object' ? JSON.stringify(value) : String(value);
-      
+      const stringValue =
+        typeof value === 'object' ? JSON.stringify(value) : String(value);
+
       subject = subject.replace(new RegExp(placeholder, 'g'), stringValue);
       body = body.replace(new RegExp(placeholder, 'g'), stringValue);
     });
@@ -697,56 +710,69 @@ export class NotificationService {
     return { subject, body };
   }
 
-  private async deliverInApp(notification: NotificationData, content: { subject: string; body: string }): Promise<void> {
+  private async deliverInApp(
+    notification: NotificationData,
+    content: { subject: string; body: string }
+  ): Promise<void> {
     // Store in-app notification in database
-    await this.supabase
-      .from('in_app_notifications')
-      .insert({
-        id: crypto.randomUUID(),
-        user_id: notification.userId,
-        notification_id: notification.id,
-        title: content.subject,
-        message: content.body,
-        type: notification.type,
-        priority: notification.priority,
-        read: false,
-        created_at: new Date().toISOString()
-      });
+    await this.supabase.from('in_app_notifications').insert({
+      id: crypto.randomUUID(),
+      user_id: notification.userId,
+      notification_id: notification.id,
+      title: content.subject,
+      message: content.body,
+      type: notification.type,
+      priority: notification.priority,
+      read: false,
+      created_at: new Date().toISOString(),
+    });
   }
 
-  private async deliverEmail(notification: NotificationData, content: { subject: string; body: string }): Promise<void> {
+  private async deliverEmail(
+    notification: NotificationData,
+    content: { subject: string; body: string }
+  ): Promise<void> {
     // TODO: Integrate with email service (SendGrid, AWS SES, etc.)
     console.log('Email delivery:', {
       to: notification.userId,
       subject: content.subject,
-      body: content.body
+      body: content.body,
     });
   }
 
-  private async deliverPush(notification: NotificationData, content: { subject: string; body: string }): Promise<void> {
+  private async deliverPush(
+    notification: NotificationData,
+    content: { subject: string; body: string }
+  ): Promise<void> {
     // TODO: Integrate with push notification service (FCM, APNs, etc.)
     console.log('Push notification delivery:', {
       to: notification.userId,
       title: content.subject,
-      body: content.body
+      body: content.body,
     });
   }
 
-  private async deliverSMS(notification: NotificationData, content: { subject: string; body: string }): Promise<void> {
+  private async deliverSMS(
+    notification: NotificationData,
+    content: { subject: string; body: string }
+  ): Promise<void> {
     // TODO: Integrate with SMS service (Twilio, AWS SNS, etc.)
     console.log('SMS delivery:', {
       to: notification.userId,
-      message: content.body
+      message: content.body,
     });
   }
 
-  private async updateNotificationStatus(notificationId: string, status: string): Promise<void> {
+  private async updateNotificationStatus(
+    notificationId: string,
+    status: string
+  ): Promise<void> {
     try {
       await this.supabase
         .from('notifications')
         .update({
           status,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', notificationId);
     } catch (error) {
@@ -769,7 +795,7 @@ export class NotificationService {
       createdAt: row.created_at,
       scheduledAt: row.scheduled_at,
       deliveredAt: row.delivered_at,
-      readAt: row.read_at
+      readAt: row.read_at,
     };
   }
 }

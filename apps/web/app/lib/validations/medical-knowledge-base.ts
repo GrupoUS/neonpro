@@ -7,7 +7,14 @@ import { z } from 'zod';
 export const knowledgeSourceSchema = z.object({
   id: z.string().uuid().optional(),
   source_name: z.string().min(1).max(255),
-  source_type: z.enum(['database', 'journal', 'guideline', 'drug_db', 'classification', 'research']),
+  source_type: z.enum([
+    'database',
+    'journal',
+    'guideline',
+    'drug_db',
+    'classification',
+    'research',
+  ]),
   api_endpoint: z.string().url().optional(),
   access_credentials: z.record(z.any()).optional(),
   last_sync: z.string().datetime().optional(),
@@ -21,13 +28,23 @@ export const knowledgeSourceSchema = z.object({
 
 export const medicalKnowledgeSchema = z.object({
   id: z.string().uuid().optional(),
-  knowledge_type: z.enum(['guideline', 'research', 'drug_info', 'diagnosis', 'treatment', 'protocol', 'reference']),
+  knowledge_type: z.enum([
+    'guideline',
+    'research',
+    'drug_info',
+    'diagnosis',
+    'treatment',
+    'protocol',
+    'reference',
+  ]),
   title: z.string().min(1).max(500),
   content_data: z.record(z.any()),
   source_id: z.string().uuid().optional(),
   external_id: z.string().max(255).optional(),
   validity_date: z.string().date().optional(),
-  evidence_level: z.enum(['A', 'B', 'C', 'D', 'Expert Opinion', 'Not Graded']).optional(),
+  evidence_level: z
+    .enum(['A', 'B', 'C', 'D', 'Expert Opinion', 'Not Graded'])
+    .optional(),
   quality_score: z.number().min(0).max(1).optional(),
   medical_categories: z.array(z.string()).optional(),
   keywords: z.array(z.string()).optional(),
@@ -56,7 +73,13 @@ export const validationResultSchema = z.object({
   knowledge_source_id: z.string().uuid().optional(),
   knowledge_reference_id: z.string().uuid().optional(),
   evidence_level: z.string().max(50).optional(),
-  validation_status: z.enum(['validated', 'conflicted', 'unsupported', 'pending', 'requires_review']),
+  validation_status: z.enum([
+    'validated',
+    'conflicted',
+    'unsupported',
+    'pending',
+    'requires_review',
+  ]),
   confidence_score: z.number().min(0).max(1).optional(),
   validation_notes: z.string().optional(),
   validation_date: z.string().datetime().optional(),
@@ -83,21 +106,23 @@ export const drugInformationSchema = z.object({
   last_updated: z.string().datetime().optional(),
 });
 
-export const drugInteractionSchema = z.object({
-  id: z.string().uuid().optional(),
-  drug_1_id: z.string().uuid(),
-  drug_2_id: z.string().uuid(),
-  interaction_type: z.enum(['major', 'moderate', 'minor', 'contraindicated']),
-  severity_level: z.number().int().min(1).max(10),
-  mechanism: z.string().optional(),
-  clinical_effects: z.string().optional(),
-  management_strategy: z.string().optional(),
-  evidence_level: z.string().max(50).optional(),
-  source_id: z.string().uuid().optional(),
-}).refine((data) => data.drug_1_id !== data.drug_2_id, {
-  message: "Drug IDs must be different",
-  path: ["drug_2_id"],
-});
+export const drugInteractionSchema = z
+  .object({
+    id: z.string().uuid().optional(),
+    drug_1_id: z.string().uuid(),
+    drug_2_id: z.string().uuid(),
+    interaction_type: z.enum(['major', 'moderate', 'minor', 'contraindicated']),
+    severity_level: z.number().int().min(1).max(10),
+    mechanism: z.string().optional(),
+    clinical_effects: z.string().optional(),
+    management_strategy: z.string().optional(),
+    evidence_level: z.string().max(50).optional(),
+    source_id: z.string().uuid().optional(),
+  })
+  .refine((data) => data.drug_1_id !== data.drug_2_id, {
+    message: 'Drug IDs must be different',
+    path: ['drug_2_id'],
+  });
 
 export const medicalGuidelineSchema = z.object({
   id: z.string().uuid().optional(),
@@ -113,30 +138,40 @@ export const medicalGuidelineSchema = z.object({
   evidence_grade: z.string().max(50).optional(),
   implementation_notes: z.string().optional(),
   source_id: z.string().uuid().optional(),
-  status: z.enum(['current', 'superseded', 'withdrawn', 'draft']).default('current'),
+  status: z
+    .enum(['current', 'superseded', 'withdrawn', 'draft'])
+    .default('current'),
 });
 
 // Search and query validation schemas
 export const medicalSearchQuerySchema = z.object({
   query: z.string().min(1).max(1000),
-  filters: z.object({
-    knowledge_type: z.array(z.string()).optional(),
-    evidence_level: z.array(z.string()).optional(),
-    medical_categories: z.array(z.string()).optional(),
-    date_range: z.object({
-      start: z.string().date().optional(),
-      end: z.string().date().optional(),
-    }).optional(),
-    quality_threshold: z.number().min(0).max(1).optional(),
-  }).optional(),
-  pagination: z.object({
-    page: z.number().int().min(1).default(1),
-    limit: z.number().int().min(1).max(100).default(20),
-  }).optional(),
-  sort: z.object({
-    field: z.string(),
-    direction: z.enum(['asc', 'desc']).default('desc'),
-  }).optional(),
+  filters: z
+    .object({
+      knowledge_type: z.array(z.string()).optional(),
+      evidence_level: z.array(z.string()).optional(),
+      medical_categories: z.array(z.string()).optional(),
+      date_range: z
+        .object({
+          start: z.string().date().optional(),
+          end: z.string().date().optional(),
+        })
+        .optional(),
+      quality_threshold: z.number().min(0).max(1).optional(),
+    })
+    .optional(),
+  pagination: z
+    .object({
+      page: z.number().int().min(1).default(1),
+      limit: z.number().int().min(1).max(100).default(20),
+    })
+    .optional(),
+  sort: z
+    .object({
+      field: z.string(),
+      direction: z.enum(['asc', 'desc']).default('desc'),
+    })
+    .optional(),
 });
 
 export const drugSearchQuerySchema = z.object({
@@ -151,12 +186,16 @@ export const evidenceValidationRequestSchema = z.object({
   recommendation_id: z.string().uuid(),
   recommendation_type: z.string().min(1).max(100),
   recommendation_content: z.record(z.any()),
-  validation_criteria: z.object({
-    min_evidence_level: z.enum(['A', 'B', 'C', 'D', 'Expert Opinion']).optional(),
-    require_guidelines: z.boolean().default(false),
-    recent_only: z.boolean().default(false),
-    max_age_months: z.number().int().min(1).max(120).optional(),
-  }).optional(),
+  validation_criteria: z
+    .object({
+      min_evidence_level: z
+        .enum(['A', 'B', 'C', 'D', 'Expert Opinion'])
+        .optional(),
+      require_guidelines: z.boolean().default(false),
+      recent_only: z.boolean().default(false),
+      max_age_months: z.number().int().min(1).max(120).optional(),
+    })
+    .optional(),
 });
 
 // Knowledge base integration schemas
@@ -165,11 +204,13 @@ export const knowledgeIntegrationConfigSchema = z.object({
   api_settings: z.object({
     base_url: z.string().url(),
     api_key: z.string().optional(),
-    rate_limit: z.object({
-      requests_per_minute: z.number().int().min(1).max(1000).default(60),
-      burst_limit: z.number().int().min(1).max(100).default(10),
-    }).optional(),
-    timeout_ms: z.number().int().min(1000).max(300000).default(30000),
+    rate_limit: z
+      .object({
+        requests_per_minute: z.number().int().min(1).max(1000).default(60),
+        burst_limit: z.number().int().min(1).max(100).default(10),
+      })
+      .optional(),
+    timeout_ms: z.number().int().min(1000).max(300_000).default(30_000),
   }),
   sync_settings: z.object({
     auto_sync: z.boolean().default(true),
@@ -197,10 +238,10 @@ export const knowledgeBaseSettingsSchema = z.object({
     auto_validate_low_risk: z.boolean().default(true),
     require_human_review_threshold: z.number().min(0).max(1).default(0.7),
     evidence_level_weights: z.record(z.number().min(0).max(1)).default({
-      'A': 1.0,
-      'B': 0.8,
-      'C': 0.6,
-      'D': 0.4,
+      A: 1.0,
+      B: 0.8,
+      C: 0.6,
+      D: 0.4,
       'Expert Opinion': 0.3,
       'Not Graded': 0.2,
     }),
@@ -210,7 +251,9 @@ export const knowledgeBaseSettingsSchema = z.object({
     default_sync_interval: z.number().int().min(1).max(168).default(24),
     max_concurrent_syncs: z.number().int().min(1).max(10).default(3),
     retry_failed_syncs: z.boolean().default(true),
-    notification_preferences: z.array(z.string()).default(['email', 'dashboard']),
+    notification_preferences: z
+      .array(z.string())
+      .default(['email', 'dashboard']),
   }),
 });
 
@@ -223,13 +266,15 @@ export const createKnowledgeSourceRequestSchema = knowledgeSourceSchema.pick({
   configuration: true,
 });
 
-export const updateKnowledgeSourceRequestSchema = knowledgeSourceSchema.pick({
-  source_name: true,
-  api_endpoint: true,
-  sync_frequency: true,
-  status: true,
-  configuration: true,
-}).partial();
+export const updateKnowledgeSourceRequestSchema = knowledgeSourceSchema
+  .pick({
+    source_name: true,
+    api_endpoint: true,
+    sync_frequency: true,
+    status: true,
+    configuration: true,
+  })
+  .partial();
 
 export const createMedicalKnowledgeRequestSchema = medicalKnowledgeSchema.pick({
   knowledge_type: true,
@@ -251,11 +296,15 @@ export const validateRecommendationRequestSchema = z.object({
     content: z.record(z.any()),
     patient_context: z.record(z.any()).optional(),
   }),
-  validation_options: z.object({
-    min_evidence_level: z.enum(['A', 'B', 'C', 'D', 'Expert Opinion']).optional(),
-    require_guidelines: z.boolean().default(false),
-    max_age_months: z.number().int().min(1).max(120).optional(),
-  }).optional(),
+  validation_options: z
+    .object({
+      min_evidence_level: z
+        .enum(['A', 'B', 'C', 'D', 'Expert Opinion'])
+        .optional(),
+      require_guidelines: z.boolean().default(false),
+      max_age_months: z.number().int().min(1).max(120).optional(),
+    })
+    .optional(),
 });
 
 // Sync and status schemas
@@ -268,11 +317,13 @@ export const syncTriggerRequestSchema = z.object({
 export const bulkKnowledgeImportSchema = z.object({
   source_id: z.string().uuid(),
   knowledge_items: z.array(createMedicalKnowledgeRequestSchema),
-  import_options: z.object({
-    skip_duplicates: z.boolean().default(true),
-    validate_before_import: z.boolean().default(true),
-    update_existing: z.boolean().default(false),
-  }).optional(),
+  import_options: z
+    .object({
+      skip_duplicates: z.boolean().default(true),
+      validate_before_import: z.boolean().default(true),
+      update_existing: z.boolean().default(false),
+    })
+    .optional(),
 });
 
 // Response validation schemas
@@ -297,16 +348,23 @@ export const drugSearchResultSchema = z.object({
 
 export const evidenceValidationResponseSchema = z.object({
   validation_id: z.string().uuid(),
-  overall_status: z.enum(['validated', 'conflicted', 'unsupported', 'requires_review']),
+  overall_status: z.enum([
+    'validated',
+    'conflicted',
+    'unsupported',
+    'requires_review',
+  ]),
   confidence_score: z.number().min(0).max(1),
-  evidence_sources: z.array(z.object({
-    source_id: z.string().uuid(),
-    source_name: z.string(),
-    evidence_level: z.string(),
-    relevance_score: z.number().min(0).max(1),
-    supports_recommendation: z.boolean(),
-    conflicting_evidence: z.boolean().optional(),
-  })),
+  evidence_sources: z.array(
+    z.object({
+      source_id: z.string().uuid(),
+      source_name: z.string(),
+      evidence_level: z.string(),
+      relevance_score: z.number().min(0).max(1),
+      supports_recommendation: z.boolean(),
+      conflicting_evidence: z.boolean().optional(),
+    })
+  ),
   recommendations: z.object({
     action: z.enum(['approve', 'review', 'reject', 'modify']),
     reason: z.string(),
@@ -337,7 +395,18 @@ export const sortingSchema = z.object({
 
 export const filterSchema = z.object({
   field: z.string().min(1),
-  operator: z.enum(['eq', 'ne', 'gt', 'gte', 'lt', 'lte', 'in', 'nin', 'like', 'ilike']),
+  operator: z.enum([
+    'eq',
+    'ne',
+    'gt',
+    'gte',
+    'lt',
+    'lte',
+    'in',
+    'nin',
+    'like',
+    'ilike',
+  ]),
   value: z.union([z.string(), z.number(), z.boolean(), z.array(z.any())]),
 });
 
@@ -345,22 +414,34 @@ export const filterSchema = z.object({
 export const knowledgeQueryBuilderSchema = z.object({
   select: z.array(z.string()).optional(),
   filters: z.array(filterSchema).optional(),
-  search: z.object({
-    query: z.string(),
-    fields: z.array(z.string()).optional(),
-    operator: z.enum(['and', 'or']).default('and'),
-  }).optional(),
+  search: z
+    .object({
+      query: z.string(),
+      fields: z.array(z.string()).optional(),
+      operator: z.enum(['and', 'or']).default('and'),
+    })
+    .optional(),
   sort: z.array(sortingSchema).optional(),
   pagination: paginationSchema.optional(),
   include_related: z.array(z.string()).optional(),
 });
 
 // Type inference from schemas
-export type KnowledgeSourceInput = z.infer<typeof createKnowledgeSourceRequestSchema>;
-export type KnowledgeSourceUpdate = z.infer<typeof updateKnowledgeSourceRequestSchema>;
-export type MedicalKnowledgeInput = z.infer<typeof createMedicalKnowledgeRequestSchema>;
+export type KnowledgeSourceInput = z.infer<
+  typeof createKnowledgeSourceRequestSchema
+>;
+export type KnowledgeSourceUpdate = z.infer<
+  typeof updateKnowledgeSourceRequestSchema
+>;
+export type MedicalKnowledgeInput = z.infer<
+  typeof createMedicalKnowledgeRequestSchema
+>;
 export type MedicalSearchQuery = z.infer<typeof medicalSearchQuerySchema>;
 export type DrugSearchQuery = z.infer<typeof drugSearchQuerySchema>;
-export type EvidenceValidationRequest = z.infer<typeof evidenceValidationRequestSchema>;
+export type EvidenceValidationRequest = z.infer<
+  typeof evidenceValidationRequestSchema
+>;
 export type KnowledgeBaseSettings = z.infer<typeof knowledgeBaseSettingsSchema>;
-export type KnowledgeIntegrationConfig = z.infer<typeof knowledgeIntegrationConfigSchema>;
+export type KnowledgeIntegrationConfig = z.infer<
+  typeof knowledgeIntegrationConfigSchema
+>;

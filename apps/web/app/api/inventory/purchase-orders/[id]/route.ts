@@ -2,31 +2,40 @@
 // GET /api/inventory/purchase-orders/[id] - Get specific purchase order
 // PATCH /api/inventory/purchase-orders/[id] - Update purchase order status
 // DELETE /api/inventory/purchase-orders/[id] - Cancel purchase order
+
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { purchaseOrderService } from '@/app/lib/services/purchase-order-service';
 import { createClient } from '@/app/utils/supabase/server';
-import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
 
 const updatePurchaseOrderSchema = z.object({
-  status: z.enum(['draft', 'pending_approval', 'approved', 'sent', 'received', 'cancelled']).optional(),
+  status: z
+    .enum([
+      'draft',
+      'pending_approval',
+      'approved',
+      'sent',
+      'received',
+      'cancelled',
+    ])
+    .optional(),
   notes: z.string().optional(),
   supplier_id: z.string().optional(),
   expected_delivery_date: z.string().optional(),
-  template_type: z.enum(['standard', 'medical', 'urgent']).optional()
+  template_type: z.enum(['standard', 'medical', 'urgent']).optional(),
 });
 
 interface RouteParams {
   params: { id: string };
 }
 
-export async function GET(
-  request: NextRequest,
-  { params }: RouteParams
-) {
+export async function GET(_request: NextRequest, { params }: RouteParams) {
   try {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -63,10 +72,16 @@ export async function GET(
 
     if (error) {
       if (error.code === 'PGRST116') {
-        return NextResponse.json({ error: 'Purchase order not found' }, { status: 404 });
+        return NextResponse.json(
+          { error: 'Purchase order not found' },
+          { status: 404 }
+        );
       }
       console.error('Error fetching purchase order:', error);
-      return NextResponse.json({ error: 'Failed to fetch purchase order' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Failed to fetch purchase order' },
+        { status: 500 }
+      );
     }
 
     // Transform data
@@ -78,13 +93,13 @@ export async function GET(
         name: purchaseOrder.suppliers?.name,
         email: purchaseOrder.suppliers?.contact_email,
         phone: purchaseOrder.suppliers?.contact_phone,
-        payment_terms: purchaseOrder.suppliers?.payment_terms
+        payment_terms: purchaseOrder.suppliers?.payment_terms,
       },
       clinic: {
         name: purchaseOrder.clinics?.name,
         address: purchaseOrder.clinics?.address,
         phone: purchaseOrder.clinics?.phone,
-        email: purchaseOrder.clinics?.email
+        email: purchaseOrder.clinics?.email,
       },
       clinic_id: purchaseOrder.clinic_id,
       status: purchaseOrder.status,
@@ -93,36 +108,38 @@ export async function GET(
       created_at: purchaseOrder.created_at,
       created_by: purchaseOrder.created_by,
       notes: purchaseOrder.notes,
-      items: purchaseOrder.purchase_order_items?.map((item: any) => ({
-        id: item.id,
-        item_id: item.item_id,
-        item_name: item.inventory_items?.name,
-        sku: item.inventory_items?.sku,
-        unit: item.inventory_items?.unit,
-        category: item.inventory_items?.category,
-        quantity: item.quantity,
-        unit_price: item.unit_price,
-        total_price: item.total_price,
-        supplier_sku: item.supplier_sku
-      })) || []
+      items:
+        purchaseOrder.purchase_order_items?.map((item: any) => ({
+          id: item.id,
+          item_id: item.item_id,
+          item_name: item.inventory_items?.name,
+          sku: item.inventory_items?.sku,
+          unit: item.inventory_items?.unit,
+          category: item.inventory_items?.category,
+          quantity: item.quantity,
+          unit_price: item.unit_price,
+          total_price: item.total_price,
+          supplier_sku: item.supplier_sku,
+        })) || [],
     };
 
     return NextResponse.json({ purchase_order: transformedOrder });
-
   } catch (error) {
     console.error('Error in purchase order GET:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
 
-export async function PATCH(
-  request: NextRequest,
-  { params }: RouteParams
-) {
+export async function PATCH(request: NextRequest, { params }: RouteParams) {
   try {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -139,36 +156,46 @@ export async function PATCH(
 
     if (fetchError) {
       if (fetchError.code === 'PGRST116') {
-        return NextResponse.json({ error: 'Purchase order not found' }, { status: 404 });
+        return NextResponse.json(
+          { error: 'Purchase order not found' },
+          { status: 404 }
+        );
       }
-      return NextResponse.json({ error: 'Failed to fetch purchase order' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Failed to fetch purchase order' },
+        { status: 500 }
+      );
     }
 
     // Validate status transitions
     const validTransitions: Record<string, string[]> = {
-      'draft': ['pending_approval', 'approved', 'cancelled'],
-      'pending_approval': ['approved', 'draft', 'cancelled'],
-      'approved': ['sent', 'cancelled'],
-      'sent': ['received', 'cancelled'],
-      'received': [],
-      'cancelled': []
+      draft: ['pending_approval', 'approved', 'cancelled'],
+      pending_approval: ['approved', 'draft', 'cancelled'],
+      approved: ['sent', 'cancelled'],
+      sent: ['received', 'cancelled'],
+      received: [],
+      cancelled: [],
     };
 
     if (validatedData.status && existingPO.status !== validatedData.status) {
       const allowedStatuses = validTransitions[existingPO.status] || [];
       if (!allowedStatuses.includes(validatedData.status)) {
-        return NextResponse.json({ 
-          error: `Cannot change status from ${existingPO.status} to ${validatedData.status}` 
-        }, { status: 400 });
+        return NextResponse.json(
+          {
+            error: `Cannot change status from ${existingPO.status} to ${validatedData.status}`,
+          },
+          { status: 400 }
+        );
       }
     }
 
     // Prepare update data
     const updateData: any = {};
-    
+
     if (validatedData.status) updateData.status = validatedData.status;
     if (validatedData.notes) updateData.notes = validatedData.notes;
-    if (validatedData.supplier_id) updateData.supplier_id = validatedData.supplier_id;
+    if (validatedData.supplier_id)
+      updateData.supplier_id = validatedData.supplier_id;
     if (validatedData.expected_delivery_date) {
       updateData.expected_delivery_date = validatedData.expected_delivery_date;
     }
@@ -185,12 +212,18 @@ export async function PATCH(
 
     if (updateError) {
       console.error('Error updating purchase order:', updateError);
-      return NextResponse.json({ error: 'Failed to update purchase order' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Failed to update purchase order' },
+        { status: 500 }
+      );
     }
 
     // Generate template if requested and status is approved or sent
     let template = null;
-    if (validatedData.template_type && (updatedPO.status === 'approved' || updatedPO.status === 'sent')) {
+    if (
+      validatedData.template_type &&
+      (updatedPO.status === 'approved' || updatedPO.status === 'sent')
+    ) {
       // Fetch full PO data for template generation
       const { data: fullPO, error: fullPOError } = await supabase
         .from('purchase_orders')
@@ -221,8 +254,8 @@ export async function PATCH(
             quantity: item.quantity,
             unit_price: item.unit_price,
             total_price: item.total_price,
-            supplier_sku: item.supplier_sku
-          }))
+            supplier_sku: item.supplier_sku,
+          })),
         };
 
         template = await purchaseOrderService.generatePOTemplate(
@@ -235,30 +268,34 @@ export async function PATCH(
     return NextResponse.json({
       purchase_order: updatedPO,
       template,
-      message: 'Purchase order updated successfully'
+      message: 'Purchase order updated successfully',
     });
-
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ 
-        error: 'Validation error', 
-        details: error.errors 
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          error: 'Validation error',
+          details: error.errors,
+        },
+        { status: 400 }
+      );
     }
 
     console.error('Error in purchase order PATCH:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
 
-export async function DELETE(
-  request: NextRequest,
-  { params }: RouteParams
-) {
+export async function DELETE(_request: NextRequest, { params }: RouteParams) {
   try {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -272,26 +309,42 @@ export async function DELETE(
 
     if (fetchError) {
       if (fetchError.code === 'PGRST116') {
-        return NextResponse.json({ error: 'Purchase order not found' }, { status: 404 });
+        return NextResponse.json(
+          { error: 'Purchase order not found' },
+          { status: 404 }
+        );
       }
-      return NextResponse.json({ error: 'Failed to fetch purchase order' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Failed to fetch purchase order' },
+        { status: 500 }
+      );
     }
 
     // Check if PO can be cancelled
-    const cancelableStatuses = ['draft', 'pending_approval', 'approved', 'sent'];
+    const cancelableStatuses = [
+      'draft',
+      'pending_approval',
+      'approved',
+      'sent',
+    ];
     if (!cancelableStatuses.includes(existingPO.status)) {
-      return NextResponse.json({ 
-        error: `Cannot cancel purchase order with status: ${existingPO.status}` 
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          error: `Cannot cancel purchase order with status: ${existingPO.status}`,
+        },
+        { status: 400 }
+      );
     }
 
     // Update status to cancelled instead of deleting
     const { data: cancelledPO, error: cancelError } = await supabase
       .from('purchase_orders')
-      .update({ 
+      .update({
         status: 'cancelled',
         updated_at: new Date().toISOString(),
-        notes: (existingPO as any).notes + '\n[CANCELLED] Purchase order cancelled by user.'
+        notes:
+          (existingPO as any).notes +
+          '\n[CANCELLED] Purchase order cancelled by user.',
       })
       .eq('id', params.id)
       .select()
@@ -299,16 +352,21 @@ export async function DELETE(
 
     if (cancelError) {
       console.error('Error cancelling purchase order:', cancelError);
-      return NextResponse.json({ error: 'Failed to cancel purchase order' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Failed to cancel purchase order' },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json({
       purchase_order: cancelledPO,
-      message: 'Purchase order cancelled successfully'
+      message: 'Purchase order cancelled successfully',
     });
-
   } catch (error) {
     console.error('Error in purchase order DELETE:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }

@@ -2,14 +2,14 @@
 
 /**
  * NeonPro Performance Optimization Deployment Script
- * 
+ *
  * Deploys and validates the complete performance monitoring system
  * Includes Web Vitals, bundle analysis, caching, and optimization
  */
 
-const { execSync } = require('child_process')
-const { existsSync, readFileSync } = require('fs')
-const path = require('path')
+const { execSync } = require('node:child_process');
+const { existsSync, readFileSync } = require('node:fs');
+const path = require('node:path');
 
 // Colors for console output
 const colors = {
@@ -20,44 +20,57 @@ const colors = {
   magenta: '\x1b[35m',
   cyan: '\x1b[36m',
   reset: '\x1b[0m',
-  bold: '\x1b[1m'
-}
+  bold: '\x1b[1m',
+};
 
 function log(message, color = colors.reset) {
-  console.log(`${color}${message}${colors.reset}`)
+  console.log(`${color}${message}${colors.reset}`);
 }
 
-function success(message) { log(`✅ ${message}`, colors.green) }
-function error(message) { log(`❌ ${message}`, colors.red) }
-function warning(message) { log(`⚠️  ${message}`, colors.yellow) }
-function info(message) { log(`ℹ️  ${message}`, colors.blue) }
-function highlight(message) { log(`🔥 ${message}`, colors.magenta) }
+function success(message) {
+  log(`✅ ${message}`, colors.green);
+}
+function error(message) {
+  log(`❌ ${message}`, colors.red);
+}
+function warning(message) {
+  log(`⚠️  ${message}`, colors.yellow);
+}
+function info(message) {
+  log(`ℹ️  ${message}`, colors.blue);
+}
+function highlight(message) {
+  log(`🔥 ${message}`, colors.magenta);
+}
 
 async function validateEnvironment() {
-  info('Validating deployment environment...')
-  
+  info('Validating deployment environment...');
+
   const checks = [
     { name: 'Node.js version', cmd: 'node --version' },
     { name: 'pnpm version', cmd: 'pnpm --version' },
     { name: 'Next.js installation', cmd: 'npx next --version' },
-  ]
-  
+  ];
+
   for (const check of checks) {
     try {
-      const result = execSync(check.cmd, { encoding: 'utf8', shell: false }).trim()
-      success(`${check.name}: ${result}`)
+      const result = execSync(check.cmd, {
+        encoding: 'utf8',
+        shell: false,
+      }).trim();
+      success(`${check.name}: ${result}`);
     } catch (err) {
-      error(`${check.name}: Failed - ${err.message}`)
-      return false
+      error(`${check.name}: Failed - ${err.message}`);
+      return false;
     }
   }
-  
-  return true
+
+  return true;
 }
 
 function validatePerformanceFiles() {
-  info('Validating performance monitoring files...')
-  
+  info('Validating performance monitoring files...');
+
   const requiredFiles = [
     'performance/web-vitals.ts',
     'performance/bundle-analyzer.ts',
@@ -68,106 +81,111 @@ function validatePerformanceFiles() {
     'lib/performance/integration.tsx',
     'app/api/analytics/performance/route.ts',
     'app/dashboard/performance/page.tsx',
-    'scripts/performance/integration-test.js'
-  ]
-  
-  const missing = []
-  
+    'scripts/performance/integration-test.js',
+  ];
+
+  const missing = [];
+
   for (const file of requiredFiles) {
-    const fullPath = path.join(process.cwd(), file)
+    const fullPath = path.join(process.cwd(), file);
     if (existsSync(fullPath)) {
-      success(`Found: ${file}`)
+      success(`Found: ${file}`);
     } else {
-      error(`Missing: ${file}`)
-      missing.push(file)
+      error(`Missing: ${file}`);
+      missing.push(file);
     }
   }
-  
+
   if (missing.length > 0) {
-    error(`Missing ${missing.length} required files`)
-    return false
+    error(`Missing ${missing.length} required files`);
+    return false;
   }
-  
-  success('All performance monitoring files validated ✅')
-  return true
+
+  success('All performance monitoring files validated ✅');
+  return true;
 }
 
 function analyzeBundle() {
-  info('Analyzing bundle size and performance...')
-  
+  info('Analyzing bundle size and performance...');
+
   try {
     // Build the project for analysis
-    info('Building project for bundle analysis...')
-    execSync('pnpm build', { stdio: 'inherit', shell: false })
-    
-    success('Build completed successfully')
-    
+    info('Building project for bundle analysis...');
+    execSync('pnpm build', { stdio: 'inherit', shell: false });
+
+    success('Build completed successfully');
+
     // Check if bundle analyzer is available
     if (process.env.ANALYZE === 'true') {
-      info('Running bundle analyzer...')
-      execSync('ANALYZE=true pnpm build', { stdio: 'inherit', shell: false })
+      info('Running bundle analyzer...');
+      execSync('ANALYZE=true pnpm build', { stdio: 'inherit', shell: false });
     }
-    
-    return true
+
+    return true;
   } catch (err) {
-    error(`Bundle analysis failed: ${err.message}`)
-    return false
+    error(`Bundle analysis failed: ${err.message}`);
+    return false;
   }
 }
 
 function testPerformanceIntegration() {
-  info('Running performance integration tests...')
-  
+  info('Running performance integration tests...');
+
   try {
-    execSync('node scripts/performance/integration-test.js', { stdio: 'inherit', shell: false })
-    return true
-  } catch (err) {
-    warning(`Performance tests completed with some warnings`)
-    return true // Non-critical for deployment
+    execSync('node scripts/performance/integration-test.js', {
+      stdio: 'inherit',
+      shell: false,
+    });
+    return true;
+  } catch (_err) {
+    warning('Performance tests completed with some warnings');
+    return true; // Non-critical for deployment
   }
 }
 
 function validateNextConfig() {
-  info('Validating Next.js configuration...')
-  
-  const configPath = path.join(process.cwd(), 'next.config.mjs')
-  
+  info('Validating Next.js configuration...');
+
+  const configPath = path.join(process.cwd(), 'next.config.mjs');
+
   if (!existsSync(configPath)) {
-    error('next.config.mjs not found')
-    return false
+    error('next.config.mjs not found');
+    return false;
   }
-  
+
   try {
-    const config = readFileSync(configPath, 'utf8')
-    
+    const config = readFileSync(configPath, 'utf8');
+
     const optimizations = [
       'optimizePackageImports',
       'cssChunking',
       'serverComponentsHmrCache',
       'bundlePagesRouterDependencies',
       'compress: true',
-      'generateEtags: true'
-    ]
-    
-    let found = 0
+      'generateEtags: true',
+    ];
+
+    let found = 0;
     for (const opt of optimizations) {
       if (config.includes(opt)) {
-        success(`Found optimization: ${opt}`)
-        found++
+        success(`Found optimization: ${opt}`);
+        found++;
       }
     }
-    
-    success(`Next.js configuration validated (${found}/${optimizations.length} optimizations found)`)
-    return true
+
+    success(
+      `Next.js configuration validated (${found}/${optimizations.length} optimizations found)`
+    );
+    return true;
   } catch (err) {
-    error(`Failed to validate Next.js config: ${err.message}`)
-    return false
+    error(`Failed to validate Next.js config: ${err.message}`);
+    return false;
   }
 }
 
 function generateDeploymentReport() {
-  info('Generating deployment report...')
-  
+  info('Generating deployment report...');
+
   const report = {
     timestamp: new Date().toISOString(),
     version: '1.0.0',
@@ -179,106 +197,111 @@ function generateDeploymentReport() {
       reactOptimizations: true,
       performanceDashboard: true,
       apiEndpoints: true,
-      deploymentAutomation: true
+      deploymentAutomation: true,
     },
     metrics: {
       coreWebVitalsTracking: '5 metrics (LCP, FID, CLS, FCP, TTFB)',
       bundleOptimizations: 'Tree shaking, code splitting, compression',
       cachingLayers: 'Multi-level (browser, CDN, application)',
       performanceMonitoring: 'Real-time with alerts',
-      deploymentOptimizations: 'Automated build and health checks'
+      deploymentOptimizations: 'Automated build and health checks',
     },
-    status: 'DEPLOYED'
-  }
-  
-  log('\n' + '='.repeat(80), colors.bold)
-  log('📊 PERFORMANCE OPTIMIZATION DEPLOYMENT REPORT', colors.bold)
-  log('='.repeat(80), colors.bold)
-  
+    status: 'DEPLOYED',
+  };
+
+  log(`\n${'='.repeat(80)}`, colors.bold);
+  log('📊 PERFORMANCE OPTIMIZATION DEPLOYMENT REPORT', colors.bold);
+  log('='.repeat(80), colors.bold);
+
   Object.entries(report).forEach(([key, value]) => {
     if (typeof value === 'object' && value !== null) {
-      highlight(`${key.toUpperCase()}:`)
+      highlight(`${key.toUpperCase()}:`);
       Object.entries(value).forEach(([subKey, subValue]) => {
-        log(`  ${subKey}: ${subValue}`, colors.cyan)
-      })
+        log(`  ${subKey}: ${subValue}`, colors.cyan);
+      });
     } else {
-      highlight(`${key}: ${value}`)
+      highlight(`${key}: ${value}`);
     }
-  })
-  
-  log('='.repeat(80), colors.bold)
-  
-  return report
+  });
+
+  log('='.repeat(80), colors.bold);
+
+  return report;
 }
 
 async function deployPerformanceOptimization() {
-  log('\n' + '='.repeat(80), colors.bold)
-  log('🚀 NEONPRO PERFORMANCE OPTIMIZATION DEPLOYMENT', colors.bold)
-  log('='.repeat(80), colors.bold)
-  
+  log(`\n${'='.repeat(80)}`, colors.bold);
+  log('🚀 NEONPRO PERFORMANCE OPTIMIZATION DEPLOYMENT', colors.bold);
+  log('='.repeat(80), colors.bold);
+
   const deploymentSteps = [
     { name: 'Environment Validation', fn: validateEnvironment },
     { name: 'Performance Files Validation', fn: validatePerformanceFiles },
     { name: 'Next.js Configuration', fn: validateNextConfig },
     { name: 'Bundle Analysis', fn: analyzeBundle },
-    { name: 'Performance Integration Tests', fn: testPerformanceIntegration }
-  ]
-  
-  const results = []
-  
+    { name: 'Performance Integration Tests', fn: testPerformanceIntegration },
+  ];
+
+  const results = [];
+
   for (const step of deploymentSteps) {
-    log(`\n🔧 ${step.name}...`, colors.blue)
+    log(`\n🔧 ${step.name}...`, colors.blue);
     try {
-      const result = await step.fn()
-      results.push({ name: step.name, success: result })
+      const result = await step.fn();
+      results.push({ name: step.name, success: result });
       if (result) {
-        success(`${step.name} completed successfully`)
+        success(`${step.name} completed successfully`);
       } else {
-        error(`${step.name} failed`)
+        error(`${step.name} failed`);
       }
     } catch (err) {
-      error(`${step.name} threw an error: ${err.message}`)
-      results.push({ name: step.name, success: false })
+      error(`${step.name} threw an error: ${err.message}`);
+      results.push({ name: step.name, success: false });
     }
   }
-  
+
   // Generate deployment report
-  const report = generateDeploymentReport()
-  
+  const _report = generateDeploymentReport();
+
   // Summary
-  const successful = results.filter(r => r.success).length
-  const total = results.length
-  
-  log(`\n📈 Deployment Summary: ${successful}/${total} steps completed`, 
-      successful === total ? colors.green : colors.yellow)
-  
+  const successful = results.filter((r) => r.success).length;
+  const total = results.length;
+
+  log(
+    `\n📈 Deployment Summary: ${successful}/${total} steps completed`,
+    successful === total ? colors.green : colors.yellow
+  );
+
   if (successful === total) {
-    success('\n🎉 PERFORMANCE OPTIMIZATION DEPLOYMENT SUCCESSFUL!')
-    success('✨ NeonPro performance monitoring system is production-ready!')
-    
-    log('\n🚀 Next Steps:', colors.bold)
-    log('1. Access performance dashboard at /dashboard/performance', colors.cyan)
-    log('2. Monitor Web Vitals in real-time', colors.cyan)
-    log('3. Use bundle analyzer with ANALYZE=true pnpm build', colors.cyan)
-    log('4. Set up database migration for metric storage', colors.cyan)
-    log('5. Configure production monitoring alerts', colors.cyan)
+    success('\n🎉 PERFORMANCE OPTIMIZATION DEPLOYMENT SUCCESSFUL!');
+    success('✨ NeonPro performance monitoring system is production-ready!');
+
+    log('\n🚀 Next Steps:', colors.bold);
+    log(
+      '1. Access performance dashboard at /dashboard/performance',
+      colors.cyan
+    );
+    log('2. Monitor Web Vitals in real-time', colors.cyan);
+    log('3. Use bundle analyzer with ANALYZE=true pnpm build', colors.cyan);
+    log('4. Set up database migration for metric storage', colors.cyan);
+    log('5. Configure production monitoring alerts', colors.cyan);
   } else {
-    warning('\n⚠️  Deployment completed with some issues')
-    info('Check the logs above for specific failure details')
-    info('Core performance features are still available')
+    warning('\n⚠️  Deployment completed with some issues');
+    info('Check the logs above for specific failure details');
+    info('Core performance features are still available');
   }
-  
-  return successful === total
+
+  return successful === total;
 }
 
 // Run deployment if this file is executed directly
 if (require.main === module) {
   deployPerformanceOptimization()
-    .then(success => process.exit(success ? 0 : 1))
-    .catch(err => {
-      error(`Deployment failed: ${err.message}`)
-      process.exit(1)
-    })
+    .then((success) => process.exit(success ? 0 : 1))
+    .catch((err) => {
+      error(`Deployment failed: ${err.message}`);
+      process.exit(1);
+    });
 }
 
 module.exports = {
@@ -288,5 +311,5 @@ module.exports = {
   analyzeBundle,
   testPerformanceIntegration,
   validateNextConfig,
-  generateDeploymentReport
-}
+  generateDeploymentReport,
+};

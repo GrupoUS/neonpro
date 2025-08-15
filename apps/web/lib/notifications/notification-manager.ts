@@ -1,37 +1,36 @@
 /**
  * NeonPro Notification System - Core Manager
  * Story 1.7: Sistema de Notificações
- * 
+ *
  * Gerenciador central do sistema de notificações
  * Coordena envio, templates, canais e automação
  */
 
 import { createClient } from '@supabase/supabase-js';
-import {
-  BaseNotification,
-  DeliveryNotification,
-  NotificationRecipient,
-  NotificationTemplate,
-  NotificationChannel,
-  NotificationType,
-  NotificationStatus,
-  NotificationPriority,
-  NotificationCategory,
-  DeliveryResult,
-  NotificationContext,
-  NotificationFilters,
-  PaginationOptions,
-  PaginatedResult,
-  NotificationSystemConfig,
-  ChannelConfig,
-  NotificationMetrics,
-  NotificationEvent
-} from './types';
-import { TemplateEngine } from './template-engine';
-import { ChannelOrchestrator } from './channels/channel-orchestrator';
 // import { RuleEngine } from './rule-engine';
 // import { MetricsCollector } from './metrics-collector';
 import { auditLogger } from '../auth/audit/audit-logger';
+import { ChannelOrchestrator } from './channels/channel-orchestrator';
+import { TemplateEngine } from './template-engine';
+import {
+  type BaseNotification,
+  type DeliveryNotification,
+  type DeliveryResult,
+  NotificationCategory,
+  type NotificationChannel,
+  type NotificationContext,
+  type NotificationEvent,
+  type NotificationFilters,
+  type NotificationMetrics,
+  NotificationPriority,
+  type NotificationRecipient,
+  NotificationStatus,
+  type NotificationSystemConfig,
+  type NotificationTemplate,
+  NotificationType,
+  type PaginatedResult,
+  type PaginationOptions,
+} from './types';
 
 // ============================================================================
 // NOTIFICATION MANAGER CLASS
@@ -85,18 +84,17 @@ class NotificationManager {
         category: 'system',
         severity: 'info',
         details: {
-          channelsEnabled: config.channels.filter(c => c.isEnabled).length,
+          channelsEnabled: config.channels.filter((c) => c.isEnabled).length,
           analyticsEnabled: config.analytics.enabled,
-          lgpdCompliance: config.compliance.lgpd.enabled
-        }
+          lgpdCompliance: config.compliance.lgpd.enabled,
+        },
       });
-
     } catch (error) {
       await auditLogger.log({
         action: 'notification_system_init_failed',
         category: 'system',
         severity: 'error',
-        details: { error: error.message }
+        details: { error: error.message },
       });
       throw error;
     }
@@ -107,7 +105,9 @@ class NotificationManager {
    */
   private ensureInitialized(): void {
     if (!this.isInitialized) {
-      throw new Error('NotificationManager não foi inicializado. Chame initialize() primeiro.');
+      throw new Error(
+        'NotificationManager não foi inicializado. Chame initialize() primeiro.'
+      );
     }
   }
 
@@ -133,29 +133,42 @@ class NotificationManager {
 
     try {
       // Criar notificação base
-      const notification = await this.createNotification(type, data, options?.priority);
-      
+      const notification = await this.createNotification(
+        type,
+        data,
+        options?.priority
+      );
+
       // Determinar canais de entrega
-      const channels = this.determineChannels(recipient, type, options?.channels);
-      
+      const channels = this.determineChannels(
+        recipient,
+        type,
+        options?.channels
+      );
+
       // Verificar rate limiting
       await this.checkRateLimit(recipient, channels);
-      
+
       // Criar notificações de entrega para cada canal
       const deliveryNotifications = await Promise.all(
-        channels.map(channel => 
-          this.createDeliveryNotification(notification, recipient, channel, options)
+        channels.map((channel) =>
+          this.createDeliveryNotification(
+            notification,
+            recipient,
+            channel,
+            options
+          )
         )
       );
-      
+
       // Enviar notificações
       const results = await Promise.all(
-        deliveryNotifications.map(dn => this.deliverNotification(dn))
+        deliveryNotifications.map((dn) => this.deliverNotification(dn))
       );
-      
+
       // Registrar métricas
       // await this.metricsCollector.recordDelivery(deliveryNotifications, results);
-      
+
       // Log de auditoria
       await auditLogger.log({
         action: 'notification_sent',
@@ -165,12 +178,11 @@ class NotificationManager {
           type,
           recipientId: recipient.id,
           channels: channels.length,
-          success: results.filter(r => r.success).length
-        }
+          success: results.filter((r) => r.success).length,
+        },
       });
-      
+
       return results;
-      
     } catch (error) {
       await auditLogger.log({
         action: 'notification_send_failed',
@@ -179,8 +191,8 @@ class NotificationManager {
         details: {
           type,
           recipientId: recipient.id,
-          error: error.message
-        }
+          error: error.message,
+        },
       });
       throw error;
     }
@@ -200,28 +212,28 @@ class NotificationManager {
     }
   ): Promise<DeliveryResult[][]> {
     this.ensureInitialized();
-    
+
     const batchSize = options?.batchSize || 100;
     const results: DeliveryResult[][] = [];
-    
+
     // Processar em lotes
     for (let i = 0; i < recipients.length; i += batchSize) {
       const batch = recipients.slice(i, i + batchSize);
-      
+
       const batchResults = await Promise.all(
-        batch.map(recipient => 
+        batch.map((recipient) =>
           this.sendNotification(type, recipient, data, options)
         )
       );
-      
+
       results.push(...batchResults);
-      
+
       // Delay entre lotes para evitar sobrecarga
       if (i + batchSize < recipients.length) {
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
       }
     }
-    
+
     return results;
   }
 
@@ -238,7 +250,7 @@ class NotificationManager {
     priority: NotificationPriority = NotificationPriority.NORMAL
   ): Promise<BaseNotification> {
     const category = this.getNotificationCategory(type);
-    
+
     const notification: BaseNotification = {
       id: crypto.randomUUID(),
       type,
@@ -250,21 +262,21 @@ class NotificationManager {
       metadata: {
         source: 'notification-manager',
         version: '1.0.0',
-        correlationId: data.correlationId || crypto.randomUUID()
+        correlationId: data.correlationId || crypto.randomUUID(),
       },
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
-    
+
     // Salvar no banco
     const { error } = await this.supabase
       .from('notifications')
       .insert(notification);
-    
+
     if (error) {
       throw new Error(`Erro ao salvar notificação: ${error.message}`);
     }
-    
+
     return notification;
   }
 
@@ -281,19 +293,23 @@ class NotificationManager {
     }
   ): Promise<DeliveryNotification> {
     // Buscar template
-    const template = await this.getTemplate(notification.type, channel, options?.template);
-    
+    const template = await this.getTemplate(
+      notification.type,
+      channel,
+      options?.template
+    );
+
     // Renderizar conteúdo
     const context: NotificationContext = {
       recipient,
       clinic: await this.getClinicInfo(recipient.id),
       data: notification.data || {},
       timestamp: new Date(),
-      locale: recipient.language || 'pt-BR'
+      locale: recipient.language || 'pt-BR',
     };
-    
+
     const renderedContent = await this.templateEngine.render(template, context);
-    
+
     const deliveryNotification: DeliveryNotification = {
       ...notification,
       title: renderedContent.title,
@@ -303,9 +319,9 @@ class NotificationManager {
       template,
       scheduledFor: options?.scheduledFor,
       attempts: [],
-      status: NotificationStatus.PENDING
+      status: NotificationStatus.PENDING,
     };
-    
+
     // Salvar no banco
     const { error } = await this.supabase
       .from('notification_deliveries')
@@ -317,13 +333,13 @@ class NotificationManager {
         template_id: template?.id,
         scheduled_for: options?.scheduledFor,
         status: NotificationStatus.PENDING,
-        created_at: new Date()
+        created_at: new Date(),
       });
-    
+
     if (error) {
       throw new Error(`Erro ao salvar delivery: ${error.message}`);
     }
-    
+
     return deliveryNotification;
   }
 
@@ -344,36 +360,35 @@ class NotificationManager {
         return {
           success: true,
           status: NotificationStatus.PENDING,
-          messageId: `scheduled_${notification.id}`
+          messageId: `scheduled_${notification.id}`,
         };
       }
-      
+
       // Entregar através do canal
       const result = await this.channelManager.deliver(notification);
-      
+
       // Atualizar status
       await this.updateDeliveryStatus(notification.id, result);
-      
+
       // Registrar evento
       await this.recordNotificationEvent(notification.id, 'sent', {
         channel: notification.channel,
-        messageId: result.messageId
+        messageId: result.messageId,
       });
-      
+
       return result;
-      
     } catch (error) {
       const result: DeliveryResult = {
         success: false,
         status: NotificationStatus.FAILED,
-        error: error.message
+        error: error.message,
       };
-      
+
       await this.updateDeliveryStatus(notification.id, result);
       await this.recordNotificationEvent(notification.id, 'failed', {
-        error: error.message
+        error: error.message,
       });
-      
+
       return result;
     }
   }
@@ -393,7 +408,7 @@ class NotificationManager {
     if (templateId) {
       return await this.templateEngine.getTemplate(templateId);
     }
-    
+
     return await this.templateEngine.getTemplateByType(type, channel);
   }
 
@@ -405,11 +420,11 @@ class NotificationManager {
       .from('notification_templates')
       .select('*')
       .eq('is_active', true);
-    
+
     if (error) {
       throw new Error(`Erro ao carregar templates: ${error.message}`);
     }
-    
+
     for (const template of templates || []) {
       await this.templateEngine.addTemplate(template);
     }
@@ -429,41 +444,46 @@ class NotificationManager {
   ): NotificationChannel[] {
     const category = this.getNotificationCategory(type);
     const preferences = recipient.preferences;
-    
+
     if (requestedChannels) {
       // Filtrar apenas canais habilitados nas preferências
-      return requestedChannels.filter(channel => 
-        preferences.channels[channel] && 
-        preferences.categories[category]?.channels.includes(channel)
+      return requestedChannels.filter(
+        (channel) =>
+          preferences.channels[channel] &&
+          preferences.categories[category]?.channels.includes(channel)
       );
     }
-    
+
     // Usar preferências do usuário
-    return preferences.categories[category]?.channels || [this.config.defaultChannel];
+    return (
+      preferences.categories[category]?.channels || [this.config.defaultChannel]
+    );
   }
 
   /**
    * Obtém categoria da notificação
    */
-  private getNotificationCategory(type: NotificationType): NotificationCategory {
+  private getNotificationCategory(
+    type: NotificationType
+  ): NotificationCategory {
     const categoryMap: Record<string, NotificationCategory> = {
-      'appointment_': NotificationCategory.APPOINTMENT,
-      'patient_': NotificationCategory.PATIENT,
-      'system_': NotificationCategory.SYSTEM,
-      'security_': NotificationCategory.SECURITY,
-      'payment_': NotificationCategory.PAYMENT,
-      'promotional_': NotificationCategory.MARKETING,
-      'newsletter': NotificationCategory.MARKETING,
-      'campaign_': NotificationCategory.MARKETING,
-      'staff_': NotificationCategory.STAFF
+      appointment_: NotificationCategory.APPOINTMENT,
+      patient_: NotificationCategory.PATIENT,
+      system_: NotificationCategory.SYSTEM,
+      security_: NotificationCategory.SECURITY,
+      payment_: NotificationCategory.PAYMENT,
+      promotional_: NotificationCategory.MARKETING,
+      newsletter: NotificationCategory.MARKETING,
+      campaign_: NotificationCategory.MARKETING,
+      staff_: NotificationCategory.STAFF,
     };
-    
+
     for (const [prefix, category] of Object.entries(categoryMap)) {
       if (type.startsWith(prefix)) {
         return category;
       }
     }
-    
+
     return NotificationCategory.SYSTEM;
   }
 
@@ -494,9 +514,9 @@ class NotificationManager {
       [NotificationType.CAMPAIGN_MESSAGE]: 'Mensagem da Campanha',
       [NotificationType.STAFF_SCHEDULE_CHANGE]: 'Mudança de Horário',
       [NotificationType.STAFF_TASK_ASSIGNED]: 'Nova Tarefa',
-      [NotificationType.STAFF_PERFORMANCE_REPORT]: 'Relatório de Performance'
+      [NotificationType.STAFF_PERFORMANCE_REPORT]: 'Relatório de Performance',
     };
-    
+
     return titles[type] || 'Notificação';
   }
 
@@ -509,16 +529,18 @@ class NotificationManager {
       .select('*')
       .eq('owner_id', userId)
       .single();
-    
-    return data || {
-      id: 'default',
-      name: 'NeonPro Clinic',
-      contact: {
-        phone: '(11) 99999-9999',
-        email: 'contato@neonpro.com',
-        address: 'São Paulo, SP'
+
+    return (
+      data || {
+        id: 'default',
+        name: 'NeonPro Clinic',
+        contact: {
+          phone: '(11) 99999-9999',
+          email: 'contato@neonpro.com',
+          address: 'São Paulo, SP',
+        },
       }
-    };
+    );
   }
 
   /**
@@ -529,7 +551,7 @@ class NotificationManager {
     channels: NotificationChannel[]
   ): Promise<void> {
     if (!this.config.rateLimiting.enabled) return;
-    
+
     // Implementar verificação de rate limiting
     // Por simplicidade, apenas log por enquanto
     await auditLogger.log({
@@ -538,8 +560,8 @@ class NotificationManager {
       severity: 'info',
       details: {
         recipientId: recipient.id,
-        channels: channels.length
-      }
+        channels: channels.length,
+      },
     });
   }
 
@@ -556,8 +578,8 @@ class NotificationManager {
       severity: 'info',
       details: {
         notificationId: notification.id,
-        scheduledFor: notification.scheduledFor
-      }
+        scheduledFor: notification.scheduledFor,
+      },
     });
   }
 
@@ -575,10 +597,10 @@ class NotificationManager {
         message_id: result.messageId,
         error_message: result.error,
         delivered_at: result.success ? new Date() : null,
-        updated_at: new Date()
+        updated_at: new Date(),
       })
       .eq('id', notificationId);
-    
+
     if (error) {
       console.error('Erro ao atualizar status:', error);
     }
@@ -597,13 +619,13 @@ class NotificationManager {
       notificationId,
       event: event as any,
       timestamp: new Date(),
-      data
+      data,
     };
-    
+
     const { error } = await this.supabase
       .from('notification_events')
       .insert(notificationEvent);
-    
+
     if (error) {
       console.error('Erro ao registrar evento:', error);
     }
@@ -617,12 +639,12 @@ class NotificationManager {
       .from('notification_rules')
       .select('*')
       .eq('is_active', true);
-    
+
     if (error) {
       throw new Error(`Erro ao carregar regras: ${error.message}`);
     }
-    
-    for (const rule of rules || []) {
+
+    for (const _rule of rules || []) {
       // await this.ruleEngine.addRule(rule);
     }
   }
@@ -639,48 +661,46 @@ class NotificationManager {
     pagination: PaginationOptions
   ): Promise<PaginatedResult<DeliveryNotification>> {
     this.ensureInitialized();
-    
-    let query = this.supabase
-      .from('notification_deliveries')
-      .select(`
+
+    let query = this.supabase.from('notification_deliveries').select(`
         *,
         notification:notifications(*),
         recipient:recipients(*)
       `);
-    
+
     // Aplicar filtros
     if (filters.types?.length) {
       query = query.in('notification.type', filters.types);
     }
-    
+
     if (filters.statuses?.length) {
       query = query.in('status', filters.statuses);
     }
-    
+
     if (filters.recipientId) {
       query = query.eq('recipient_id', filters.recipientId);
     }
-    
+
     if (filters.dateRange) {
       query = query
         .gte('created_at', filters.dateRange.start.toISOString())
         .lte('created_at', filters.dateRange.end.toISOString());
     }
-    
+
     // Paginação
     const offset = (pagination.page - 1) * pagination.limit;
     query = query
       .range(offset, offset + pagination.limit - 1)
       .order(pagination.sortBy || 'created_at', {
-        ascending: pagination.sortOrder === 'asc'
+        ascending: pagination.sortOrder === 'asc',
       });
-    
+
     const { data, error, count } = await query;
-    
+
     if (error) {
       throw new Error(`Erro ao buscar notificações: ${error.message}`);
     }
-    
+
     return {
       data: data || [],
       pagination: {
@@ -689,8 +709,8 @@ class NotificationManager {
         total: count || 0,
         totalPages: Math.ceil((count || 0) / pagination.limit),
         hasNext: offset + pagination.limit < (count || 0),
-        hasPrev: pagination.page > 1
-      }
+        hasPrev: pagination.page > 1,
+      },
     };
   }
 
@@ -698,9 +718,9 @@ class NotificationManager {
    * Obtém métricas de notificação
    */
   async getMetrics(
-    startDate: Date,
-    endDate: Date,
-    filters?: NotificationFilters
+    _startDate: Date,
+    _endDate: Date,
+    _filters?: NotificationFilters
   ): Promise<NotificationMetrics> {
     this.ensureInitialized();
     // return await this.metricsCollector.getMetrics(startDate, endDate, filters);
@@ -710,7 +730,7 @@ class NotificationManager {
       totalFailed: 0,
       deliveryRate: 0,
       channels: {},
-      trends: []
+      trends: [],
     };
   }
 
@@ -719,21 +739,21 @@ class NotificationManager {
    */
   async markAsRead(notificationId: string, userId: string): Promise<void> {
     this.ensureInitialized();
-    
+
     const { error } = await this.supabase
       .from('notification_deliveries')
       .update({
         status: NotificationStatus.READ,
         read_at: new Date(),
-        updated_at: new Date()
+        updated_at: new Date(),
       })
       .eq('id', notificationId)
       .eq('recipient_id', userId);
-    
+
     if (error) {
       throw new Error(`Erro ao marcar como lida: ${error.message}`);
     }
-    
+
     await this.recordNotificationEvent(notificationId, 'read', { userId });
   }
 }

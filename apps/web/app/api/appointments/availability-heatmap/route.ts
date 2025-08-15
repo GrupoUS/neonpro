@@ -1,6 +1,6 @@
-import { createClient } from "@/app/utils/supabase/server";
-import { addDays, addMinutes, format, parseISO } from "date-fns";
-import { NextRequest, NextResponse } from "next/server";
+import { addDays, addMinutes, format, parseISO } from 'date-fns';
+import { type NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@/app/utils/supabase/server';
 
 // =============================================
 // NeonPro Availability Heat Map API
@@ -23,7 +23,7 @@ interface AvailabilitySlot {
   conflicts: Array<{
     type: string;
     message: string;
-    severity: "error" | "warning" | "info";
+    severity: 'error' | 'warning' | 'info';
   }>;
   capacity: {
     used: number;
@@ -58,15 +58,15 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
 
-    const professionalId = searchParams.get("professional_id");
-    const clinicId = searchParams.get("clinic_id");
-    const startDateStr = searchParams.get("start_date");
-    const endDateStr = searchParams.get("end_date");
-    const serviceTypeId = searchParams.get("service_type_id");
+    const professionalId = searchParams.get('professional_id');
+    const clinicId = searchParams.get('clinic_id');
+    const startDateStr = searchParams.get('start_date');
+    const endDateStr = searchParams.get('end_date');
+    const serviceTypeId = searchParams.get('service_type_id');
 
-    if (!professionalId || !clinicId || !startDateStr || !endDateStr) {
+    if (!(professionalId && clinicId && startDateStr && endDateStr)) {
       return NextResponse.json(
-        { error: "Missing required parameters" },
+        { error: 'Missing required parameters' },
         { status: 400 }
       );
     }
@@ -106,7 +106,7 @@ export async function GET(request: NextRequest) {
         (s) => s.day_of_week === dayOfWeek
       );
 
-      if (daySchedule && daySchedule.is_available) {
+      if (daySchedule?.is_available) {
         const dayAvailability = await generateDayAvailability(
           currentDate,
           daySchedule,
@@ -118,7 +118,7 @@ export async function GET(request: NextRequest) {
       } else {
         // No schedule for this day
         days.push({
-          date: format(currentDate, "yyyy-MM-dd"),
+          date: format(currentDate, 'yyyy-MM-dd'),
           slots: [],
           summary: {
             total_slots: 0,
@@ -133,16 +133,16 @@ export async function GET(request: NextRequest) {
     const response: HeatMapResponse = {
       days,
       period: {
-        start_date: format(startDate, "yyyy-MM-dd"),
-        end_date: format(endDate, "yyyy-MM-dd"),
+        start_date: format(startDate, 'yyyy-MM-dd'),
+        end_date: format(endDate, 'yyyy-MM-dd'),
       },
     };
 
     return NextResponse.json(response);
   } catch (error) {
-    console.error("Error in availability-heatmap API:", error);
+    console.error('Error in availability-heatmap API:', error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }
@@ -154,13 +154,13 @@ async function getProfessionalSchedule(
   clinicId: string
 ): Promise<ProfessionalSchedule[]> {
   const { data, error } = await supabase
-    .from("professional_schedules")
-    .select("*")
-    .eq("professional_id", professionalId)
-    .eq("clinic_id", clinicId);
+    .from('professional_schedules')
+    .select('*')
+    .eq('professional_id', professionalId)
+    .eq('clinic_id', clinicId);
 
   if (error) {
-    console.error("Error fetching professional schedule:", error);
+    console.error('Error fetching professional schedule:', error);
     return [];
   }
 
@@ -175,16 +175,16 @@ async function getExistingAppointments(
   endDate: Date
 ) {
   const { data, error } = await supabase
-    .from("appointments")
-    .select("start_time, end_time, service_type_id, status")
-    .eq("professional_id", professionalId)
-    .eq("clinic_id", clinicId)
-    .neq("status", "cancelled")
-    .gte("start_time", startDate.toISOString())
-    .lte("start_time", endDate.toISOString());
+    .from('appointments')
+    .select('start_time, end_time, service_type_id, status')
+    .eq('professional_id', professionalId)
+    .eq('clinic_id', clinicId)
+    .neq('status', 'cancelled')
+    .gte('start_time', startDate.toISOString())
+    .lte('start_time', endDate.toISOString());
 
   if (error) {
-    console.error("Error fetching existing appointments:", error);
+    console.error('Error fetching existing appointments:', error);
     return [];
   }
 
@@ -197,16 +197,16 @@ async function getServiceRules(
   clinicId: string
 ) {
   const { data, error } = await supabase
-    .from("service_type_rules")
-    .select("*")
-    .eq("service_type_id", serviceTypeId)
-    .eq("clinic_id", clinicId)
-    .eq("is_active", true)
+    .from('service_type_rules')
+    .select('*')
+    .eq('service_type_id', serviceTypeId)
+    .eq('clinic_id', clinicId)
+    .eq('is_active', true)
     .single();
 
-  if (error && error.code !== "PGRST116") {
+  if (error && error.code !== 'PGRST116') {
     // Not found is OK
-    console.error("Error fetching service rules:", error);
+    console.error('Error fetching service rules:', error);
   }
 
   return data;
@@ -219,19 +219,19 @@ async function getClinicHolidays(
   endDate: Date
 ) {
   const { data, error } = await supabase
-    .from("clinic_holidays")
-    .select("*")
-    .eq("clinic_id", clinicId)
-    .eq("is_active", true)
+    .from('clinic_holidays')
+    .select('*')
+    .eq('clinic_id', clinicId)
+    .eq('is_active', true)
     .or(
-      `start_date.lte.${format(endDate, "yyyy-MM-dd")},end_date.gte.${format(
+      `start_date.lte.${format(endDate, 'yyyy-MM-dd')},end_date.gte.${format(
         startDate,
-        "yyyy-MM-dd"
+        'yyyy-MM-dd'
       )}`
     );
 
   if (error) {
-    console.error("Error fetching clinic holidays:", error);
+    console.error('Error fetching clinic holidays:', error);
     return [];
   }
 
@@ -289,12 +289,12 @@ async function generateDayAvailability(
     ).length,
     blocked_slots: slots.filter((s) => !s.available).length,
     warning_slots: slots.filter(
-      (s) => s.available && s.conflicts.some((c) => c.severity === "warning")
+      (s) => s.available && s.conflicts.some((c) => c.severity === 'warning')
     ).length,
   };
 
   return {
-    date: format(date, "yyyy-MM-dd"),
+    date: format(date, 'yyyy-MM-dd'),
     slots,
     summary,
   };
@@ -324,18 +324,18 @@ async function analyzeSlot(
 
       if (slotStartTime >= holidayStartTime && slotEndTime <= holidayEndTime) {
         conflicts.push({
-          type: "holiday",
+          type: 'holiday',
           message: `Fechado: ${holiday.name}`,
-          severity: "error" as const,
+          severity: 'error' as const,
         });
         available = false;
       }
     } else {
       // Full day holiday
       conflicts.push({
-        type: "holiday",
+        type: 'holiday',
         message: `Fechado: ${holiday.name}`,
-        severity: "error" as const,
+        severity: 'error' as const,
       });
       available = false;
     }
@@ -354,9 +354,9 @@ async function analyzeSlot(
       (slotStartTime <= breakStart && slotEndTime >= breakEnd)
     ) {
       conflicts.push({
-        type: "break_time",
-        message: "Horário de intervalo",
-        severity: "error" as const,
+        type: 'break_time',
+        message: 'Horário de intervalo',
+        severity: 'error' as const,
       });
       available = false;
     }
@@ -377,16 +377,16 @@ async function analyzeSlot(
   // Check capacity limits
   if (capacityUsed >= maxCapacity) {
     conflicts.push({
-      type: "capacity_full",
+      type: 'capacity_full',
       message: `Capacidade esgotada (${capacityUsed}/${maxCapacity})`,
-      severity: "error" as const,
+      severity: 'error' as const,
     });
     available = false;
   } else if (capacityUsed / maxCapacity >= 0.8) {
     conflicts.push({
-      type: "capacity_high",
+      type: 'capacity_high',
       message: `Alta ocupação (${capacityUsed}/${maxCapacity})`,
-      severity: "warning" as const,
+      severity: 'warning' as const,
     });
   }
 
@@ -404,9 +404,9 @@ async function analyzeSlot(
 
   if (directOverlaps.length > 0) {
     conflicts.push({
-      type: "appointment_overlap",
-      message: "Conflito direto com agendamento",
-      severity: "error" as const,
+      type: 'appointment_overlap',
+      message: 'Conflito direto com agendamento',
+      severity: 'error' as const,
     });
     available = false;
   }
@@ -432,11 +432,11 @@ async function analyzeSlot(
 
       if (bufferConflicts.length > 0) {
         conflicts.push({
-          type: "buffer_conflict",
+          type: 'buffer_conflict',
           message: `Conflito com tempo de buffer (${
             bufferBefore + bufferAfter
           }min)`,
-          severity: "warning" as const,
+          severity: 'warning' as const,
         });
       }
     }
@@ -454,6 +454,6 @@ async function analyzeSlot(
 }
 
 function parseTime(timeString: string): number {
-  const [hours, minutes] = timeString.split(":").map(Number);
+  const [hours, minutes] = timeString.split(':').map(Number);
   return hours * 60 + minutes;
 }

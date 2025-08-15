@@ -1,17 +1,17 @@
 /**
  * Subscription Context Test Utilities
  * Provides testing utilities for subscription context and state management
- * 
+ *
  * @description Comprehensive test utilities for subscription system testing,
  *              including context providers, mock factories, and test helpers
  * @version 1.0.0
  * @created 2025-07-22
  */
 
-import React from 'react'
-import { render, RenderOptions } from '@testing-library/react'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import type { SubscriptionStatus, SubscriptionTier, UserProfile } from '@/types/subscription'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { type RenderOptions, render } from '@testing-library/react';
+import type React from 'react';
+import type { SubscriptionStatus, UserProfile } from '@/types/subscription';
 
 // ============================================================================
 // Mock Data Factories
@@ -20,7 +20,9 @@ import type { SubscriptionStatus, SubscriptionTier, UserProfile } from '@/types/
 /**
  * Factory for creating mock user profiles
  */
-export const createMockUserProfile = (overrides: Partial<UserProfile> = {}): UserProfile => ({
+export const createMockUserProfile = (
+  overrides: Partial<UserProfile> = {}
+): UserProfile => ({
   id: 'test-user-123',
   email: 'test@example.com',
   name: 'Test User',
@@ -28,7 +30,7 @@ export const createMockUserProfile = (overrides: Partial<UserProfile> = {}): Use
   createdAt: new Date('2025-01-01'),
   updatedAt: new Date('2025-07-22'),
   ...overrides,
-})
+});
 
 /**
  * Factory for creating mock subscription statuses
@@ -47,8 +49,9 @@ export const createMockSubscription = (
   limits: {
     maxUsers: 100,
     maxProjects: 50,
-    maxStorage: 10000,
-  },  usage: {
+    maxStorage: 10_000,
+  },
+  usage: {
     users: 10,
     projects: 5,
     storage: 1000,
@@ -58,7 +61,7 @@ export const createMockSubscription = (
     environment: 'testing',
   },
   ...overrides,
-})
+});
 
 // ============================================================================
 // Mock Providers
@@ -78,27 +81,25 @@ export const createTestQueryClient = (): QueryClient => {
         retry: false,
       },
     },
-  })
-}
+  });
+};
 
 /**
  * Test wrapper component that provides all necessary contexts
  */
 interface AllTheProvidersProps {
-  children: React.ReactNode
-  queryClient?: QueryClient
+  children: React.ReactNode;
+  queryClient?: QueryClient;
 }
 
-export const AllTheProviders: React.FC<AllTheProvidersProps> = ({ 
-  children, 
-  queryClient = createTestQueryClient() 
+export const AllTheProviders: React.FC<AllTheProvidersProps> = ({
+  children,
+  queryClient = createTestQueryClient(),
 }) => {
   return (
-    <QueryClientProvider client={queryClient}>
-      {children}
-    </QueryClientProvider>
-  )
-}// ============================================================================
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
+}; // ============================================================================
 // Custom Render Function
 // ============================================================================
 
@@ -106,23 +107,21 @@ export const AllTheProviders: React.FC<AllTheProvidersProps> = ({
  * Custom render function with providers
  */
 interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
-  queryClient?: QueryClient
+  queryClient?: QueryClient;
 }
 
 export const renderWithProviders = (
   ui: React.ReactElement,
   options: CustomRenderOptions = {}
 ) => {
-  const { queryClient, ...renderOptions } = options
-  
-  const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-    <AllTheProviders queryClient={queryClient}>
-      {children}
-    </AllTheProviders>
-  )
+  const { queryClient, ...renderOptions } = options;
 
-  return render(ui, { wrapper: Wrapper, ...renderOptions })
-}
+  const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+    <AllTheProviders queryClient={queryClient}>{children}</AllTheProviders>
+  );
+
+  return render(ui, { wrapper: Wrapper, ...renderOptions });
+};
 
 // ============================================================================
 // Test Helpers and Utilities
@@ -139,24 +138,24 @@ export const createMockSubscriptionHook = (
   isError: false,
   error: null,
   refetch: jest.fn(),
-})
+});
 
 /**
  * Waits for specified time in milliseconds (for async testing)
  */
-export const waitFor = (ms: number): Promise<void> => 
-  new Promise(resolve => setTimeout(resolve, ms))
+export const waitFor = (ms: number): Promise<void> =>
+  new Promise((resolve) => setTimeout(resolve, ms));
 
 /**
  * Creates mock server responses for fetch requests
  */
-export const createMockResponse = (data: any, status: number = 200) => ({
+export const createMockResponse = (data: any, status = 200) => ({
   ok: status >= 200 && status < 300,
   status,
   json: () => Promise.resolve(data),
   text: () => Promise.resolve(JSON.stringify(data)),
-})
+});
 
 // Re-export testing library utilities
-export * from '@testing-library/react'
-export { default as userEvent } from '@testing-library/user-event'
+export * from '@testing-library/react';
+export { default as userEvent } from '@testing-library/user-event';

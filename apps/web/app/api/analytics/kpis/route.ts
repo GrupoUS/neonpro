@@ -3,11 +3,10 @@
 // Author: Dev Agent
 // Date: 2025-01-26
 
-import { NextRequest, NextResponse } from 'next/server';
-import { KPIEngine } from '@/lib/analytics/kpi-engine';
-import { kpiCalculationSchema } from '@/lib/validations/kpi-validations';
-import { createClient } from '@/app/utils/supabase/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { createClient } from '@/app/utils/supabase/server';
+import { KPIEngine } from '@/lib/analytics/kpi-engine';
 
 interface KPICalculationRequest {
   kpi_ids?: string[];
@@ -34,23 +33,29 @@ const requestSchema = z.object({
   time_period: z.object({
     start_date: z.string(),
     end_date: z.string(),
-    preset: z.enum(['today', 'week', 'month', 'quarter', 'year', 'custom']).optional(),
+    preset: z
+      .enum(['today', 'week', 'month', 'quarter', 'year', 'custom'])
+      .optional(),
   }),
-  filters: z.object({
-    service_types: z.array(z.string()).optional(),
-    doctor_ids: z.array(z.string()).optional(),
-    location_ids: z.array(z.string()).optional(),
-    payment_methods: z.array(z.string()).optional(),
-  }).optional(),
+  filters: z
+    .object({
+      service_types: z.array(z.string()).optional(),
+      doctor_ids: z.array(z.string()).optional(),
+      location_ids: z.array(z.string()).optional(),
+      payment_methods: z.array(z.string()).optional(),
+    })
+    .optional(),
   include_variance: z.boolean().default(true),
   include_targets: z.boolean().default(true),
-  calculation_method: z.enum(['real_time', 'cached', 'force_refresh']).default('cached'),
+  calculation_method: z
+    .enum(['real_time', 'cached', 'force_refresh'])
+    .default('cached'),
 });
 
 export async function POST(request: NextRequest) {
   try {
     const supabase = createClient();
-    
+
     // Get current user
     const {
       data: { user },
@@ -79,17 +84,26 @@ export async function POST(request: NextRequest) {
     });
 
     // Format results for API response
-    const formattedResults = results.map(result => ({
+    const formattedResults = results.map((result) => ({
       id: result.kpi_id,
       kpi_name: result.kpi_name,
       kpi_category: result.kpi_category,
       current_value: result.current_value,
-      previous_value: validatedData.include_variance ? result.previous_value : undefined,
-      target_value: validatedData.include_targets ? result.target_value : undefined,
-      variance_percent: validatedData.include_variance ? result.variance_percent : undefined,
-      trend_direction: validatedData.include_variance ? result.trend_direction : undefined,
+      previous_value: validatedData.include_variance
+        ? result.previous_value
+        : undefined,
+      target_value: validatedData.include_targets
+        ? result.target_value
+        : undefined,
+      variance_percent: validatedData.include_variance
+        ? result.variance_percent
+        : undefined,
+      trend_direction: validatedData.include_variance
+        ? result.trend_direction
+        : undefined,
       calculation_date: result.calculation_date,
-      last_updated: result.metadata?.calculation_timestamp || new Date().toISOString(),
+      last_updated:
+        result.metadata?.calculation_timestamp || new Date().toISOString(),
       metadata: {
         data_points: result.metadata?.data_points,
         calculation_method: result.metadata?.calculation_method,
@@ -104,13 +118,14 @@ export async function POST(request: NextRequest) {
         total_kpis: formattedResults.length,
         calculation_timestamp: new Date().toISOString(),
         time_period: validatedData.time_period,
-        filters_applied: validatedData.filters ? Object.keys(validatedData.filters).length : 0,
+        filters_applied: validatedData.filters
+          ? Object.keys(validatedData.filters).length
+          : 0,
       },
     });
-
   } catch (error) {
     console.error('Error calculating KPIs:', error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -136,7 +151,7 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     const supabase = createClient();
-    
+
     // Get current user
     const {
       data: { user },
@@ -153,7 +168,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const category = searchParams.get('category');
     const includeTargets = searchParams.get('include_targets') === 'true';
-    const limit = parseInt(searchParams.get('limit') || '50');
+    const limit = Number.parseInt(searchParams.get('limit') || '50', 10);
 
     // Get cached KPIs from database
     let query = supabase
@@ -176,21 +191,23 @@ export async function GET(request: NextRequest) {
     }
 
     // Format results
-    const formattedKpis = kpis?.map(kpi => ({
-      id: kpi.id,
-      kpi_name: kpi.kpi_name,
-      kpi_category: kpi.kpi_category,
-      current_value: kpi.current_value,
-      previous_value: kpi.previous_value,
-      target_value: includeTargets && kpi.kpi_targets?.[0]?.target_value 
-        ? kpi.kpi_targets[0].target_value 
-        : undefined,
-      variance_percent: kpi.variance_percent,
-      trend_direction: kpi.trend_direction,
-      calculation_date: kpi.calculation_date,
-      last_updated: kpi.last_updated,
-      metadata: kpi.metadata,
-    })) || [];
+    const formattedKpis =
+      kpis?.map((kpi) => ({
+        id: kpi.id,
+        kpi_name: kpi.kpi_name,
+        kpi_category: kpi.kpi_category,
+        current_value: kpi.current_value,
+        previous_value: kpi.previous_value,
+        target_value:
+          includeTargets && kpi.kpi_targets?.[0]?.target_value
+            ? kpi.kpi_targets[0].target_value
+            : undefined,
+        variance_percent: kpi.variance_percent,
+        trend_direction: kpi.trend_direction,
+        calculation_date: kpi.calculation_date,
+        last_updated: kpi.last_updated,
+        metadata: kpi.metadata,
+      })) || [];
 
     return NextResponse.json({
       success: true,
@@ -202,7 +219,6 @@ export async function GET(request: NextRequest) {
         retrieved_at: new Date().toISOString(),
       },
     });
-
   } catch (error) {
     console.error('Error retrieving KPIs:', error);
     return NextResponse.json(

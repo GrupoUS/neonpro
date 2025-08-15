@@ -1,13 +1,25 @@
-import { describe, expect, test, beforeEach, afterEach, jest } from '@jest/globals';
-import type { jest as JestType } from '@jest/globals';
-import { AnalyticsService } from '@/lib/analytics/service';
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  jest,
+  test,
+} from '@jest/globals';
 import { AnalyticsRepository } from '@/lib/analytics/repository';
-import type { SubscriptionMetrics, TrialMetrics, CohortAnalysis } from '@/lib/analytics/types';
+import { AnalyticsService } from '@/lib/analytics/service';
+import type {
+  CohortAnalysis,
+  SubscriptionMetrics,
+  TrialMetrics,
+} from '@/lib/analytics/types';
 
 // Mock the repository
 jest.mock('@/lib/analytics/repository');
 
-const MockedAnalyticsRepository = AnalyticsRepository as jest.MockedClass<typeof AnalyticsRepository>;
+const MockedAnalyticsRepository = AnalyticsRepository as jest.MockedClass<
+  typeof AnalyticsRepository
+>;
 
 describe('AnalyticsService', () => {
   let analyticsService: AnalyticsService;
@@ -16,9 +28,10 @@ describe('AnalyticsService', () => {
   beforeEach(() => {
     // Clear all mocks before each test
     jest.clearAllMocks();
-    
+
     // Create a new instance of the mocked repository
-    mockRepository = new MockedAnalyticsRepository() as jest.Mocked<AnalyticsRepository>;
+    mockRepository =
+      new MockedAnalyticsRepository() as jest.Mocked<AnalyticsRepository>;
     analyticsService = new AnalyticsService(mockRepository);
   });
 
@@ -32,13 +45,13 @@ describe('AnalyticsService', () => {
       const mockMetrics: SubscriptionMetrics = {
         totalSubscriptions: 150,
         activeSubscriptions: 125,
-        mrr: 15000,
-        arr: 180000,
+        mrr: 15_000,
+        arr: 180_000,
         churnRate: 0.05,
         growthRate: 0.12,
         conversionRate: 0.25,
         period: 'monthly',
-        generatedAt: new Date('2024-01-15T10:00:00Z')
+        generatedAt: new Date('2024-01-15T10:00:00Z'),
       };
 
       mockRepository.getSubscriptionMetrics.mockResolvedValue(mockMetrics);
@@ -48,26 +61,30 @@ describe('AnalyticsService', () => {
 
       // Assert
       expect(result).toEqual(mockMetrics);
-      expect(mockRepository.getSubscriptionMetrics).toHaveBeenCalledWith('monthly');
+      expect(mockRepository.getSubscriptionMetrics).toHaveBeenCalledWith(
+        'monthly'
+      );
       expect(mockRepository.getSubscriptionMetrics).toHaveBeenCalledTimes(1);
     });
 
     test('should handle repository errors gracefully', async () => {
       // Arrange
       const errorMessage = 'Database connection failed';
-      mockRepository.getSubscriptionMetrics.mockRejectedValue(new Error(errorMessage));
+      mockRepository.getSubscriptionMetrics.mockRejectedValue(
+        new Error(errorMessage)
+      );
 
       // Act & Assert
-      await expect(analyticsService.getSubscriptionMetrics('monthly'))
-        .rejects
-        .toThrow(errorMessage);
+      await expect(
+        analyticsService.getSubscriptionMetrics('monthly')
+      ).rejects.toThrow(errorMessage);
     });
 
     test('should validate period parameter', async () => {
       // Act & Assert
-      await expect(analyticsService.getSubscriptionMetrics('invalid' as any))
-        .rejects
-        .toThrow('Invalid period specified');
+      await expect(
+        analyticsService.getSubscriptionMetrics('invalid' as any)
+      ).rejects.toThrow('Invalid period specified');
     });
   });
 
@@ -82,11 +99,15 @@ describe('AnalyticsService', () => {
         conversionRate: 0.25,
         averageTrialDuration: 14,
         conversionPredictions: [
-          { userId: 'user1', probability: 0.85, factors: ['high_engagement', 'email_response'] },
-          { userId: 'user2', probability: 0.60, factors: ['moderate_usage'] }
+          {
+            userId: 'user1',
+            probability: 0.85,
+            factors: ['high_engagement', 'email_response'],
+          },
+          { userId: 'user2', probability: 0.6, factors: ['moderate_usage'] },
         ],
         period: 'monthly',
-        generatedAt: new Date('2024-01-15T10:00:00Z')
+        generatedAt: new Date('2024-01-15T10:00:00Z'),
       };
 
       mockRepository.getTrialMetrics.mockResolvedValue(mockTrialMetrics);
@@ -112,7 +133,7 @@ describe('AnalyticsService', () => {
         averageTrialDuration: 0,
         conversionPredictions: [],
         period: 'monthly',
-        generatedAt: new Date()
+        generatedAt: new Date(),
       };
 
       mockRepository.getTrialMetrics.mockResolvedValue(emptyTrialMetrics);
@@ -131,35 +152,56 @@ describe('AnalyticsService', () => {
       // Arrange
       const startDate = new Date('2024-01-01');
       const endDate = new Date('2024-01-31');
-      
+
       const mockCohortData: CohortAnalysis = {
         cohorts: [
           {
             cohortMonth: '2024-01',
             initialUsers: 100,
             retentionByPeriod: [
-              { period: 0, retainedUsers: 100, retentionRate: 1.0, revenue: 5000 },
-              { period: 1, retainedUsers: 85, retentionRate: 0.85, revenue: 4250 },
-              { period: 2, retainedUsers: 72, retentionRate: 0.72, revenue: 3600 }
-            ]
-          }
+              {
+                period: 0,
+                retainedUsers: 100,
+                retentionRate: 1.0,
+                revenue: 5000,
+              },
+              {
+                period: 1,
+                retainedUsers: 85,
+                retentionRate: 0.85,
+                revenue: 4250,
+              },
+              {
+                period: 2,
+                retainedUsers: 72,
+                retentionRate: 0.72,
+                revenue: 3600,
+              },
+            ],
+          },
         ],
-        totalRevenue: 12850,
+        totalRevenue: 12_850,
         averageRetentionRate: 0.86,
-        generatedAt: new Date('2024-01-15T10:00:00Z')
+        generatedAt: new Date('2024-01-15T10:00:00Z'),
       };
 
       mockRepository.getCohortAnalysis.mockResolvedValue(mockCohortData);
 
       // Act
-      const result = await analyticsService.getCohortAnalysis(startDate, endDate);
+      const result = await analyticsService.getCohortAnalysis(
+        startDate,
+        endDate
+      );
 
       // Assert
       expect(result).toEqual(mockCohortData);
       expect(result.cohorts).toHaveLength(1);
       expect(result.cohorts[0].retentionByPeriod).toHaveLength(3);
       expect(result.averageRetentionRate).toBeCloseTo(0.86);
-      expect(mockRepository.getCohortAnalysis).toHaveBeenCalledWith(startDate, endDate);
+      expect(mockRepository.getCohortAnalysis).toHaveBeenCalledWith(
+        startDate,
+        endDate
+      );
     });
 
     test('should validate date range parameters', async () => {
@@ -168,9 +210,9 @@ describe('AnalyticsService', () => {
       const endDate = new Date('2024-01-01'); // End date before start date
 
       // Act & Assert
-      await expect(analyticsService.getCohortAnalysis(startDate, endDate))
-        .rejects
-        .toThrow('End date must be after start date');
+      await expect(
+        analyticsService.getCohortAnalysis(startDate, endDate)
+      ).rejects.toThrow('End date must be after start date');
     });
   });
 
@@ -180,12 +222,20 @@ describe('AnalyticsService', () => {
       const periods = 6;
       const mockForecast = {
         predictions: [
-          { period: '2024-02', value: 16000, confidence: { lower: 14500, upper: 17500 } },
-          { period: '2024-03', value: 17200, confidence: { lower: 15400, upper: 19000 } }
+          {
+            period: '2024-02',
+            value: 16_000,
+            confidence: { lower: 14_500, upper: 17_500 },
+          },
+          {
+            period: '2024-03',
+            value: 17_200,
+            confidence: { lower: 15_400, upper: 19_000 },
+          },
         ],
         accuracy: 0.92,
         modelVersion: 'v2.1',
-        generatedAt: new Date('2024-01-15T10:00:00Z')
+        generatedAt: new Date('2024-01-15T10:00:00Z'),
       };
 
       mockRepository.getRevenueForecasting.mockResolvedValue(mockForecast);
@@ -197,19 +247,23 @@ describe('AnalyticsService', () => {
       expect(result).toEqual(mockForecast);
       expect(result.predictions).toHaveLength(2);
       expect(result.accuracy).toBeGreaterThan(0.9);
-      expect(result.predictions[0].confidence.lower).toBeLessThan(result.predictions[0].value);
-      expect(result.predictions[0].confidence.upper).toBeGreaterThan(result.predictions[0].value);
+      expect(result.predictions[0].confidence.lower).toBeLessThan(
+        result.predictions[0].value
+      );
+      expect(result.predictions[0].confidence.upper).toBeGreaterThan(
+        result.predictions[0].value
+      );
     });
 
     test('should validate periods parameter', async () => {
       // Act & Assert
-      await expect(analyticsService.getRevenueForecasting(0))
-        .rejects
-        .toThrow('Periods must be greater than 0');
+      await expect(analyticsService.getRevenueForecasting(0)).rejects.toThrow(
+        'Periods must be greater than 0'
+      );
 
-      await expect(analyticsService.getRevenueForecasting(25))
-        .rejects
-        .toThrow('Periods cannot exceed 24');
+      await expect(analyticsService.getRevenueForecasting(25)).rejects.toThrow(
+        'Periods cannot exceed 24'
+      );
     });
   });
 
@@ -219,13 +273,13 @@ describe('AnalyticsService', () => {
       const mockMetrics: SubscriptionMetrics = {
         totalSubscriptions: 150,
         activeSubscriptions: 125,
-        mrr: 15000,
-        arr: 180000,
+        mrr: 15_000,
+        arr: 180_000,
         churnRate: 0.05,
         growthRate: 0.12,
         conversionRate: 0.25,
         period: 'monthly',
-        generatedAt: new Date('2024-01-15T10:00:00Z')
+        generatedAt: new Date('2024-01-15T10:00:00Z'),
       };
 
       mockRepository.getSubscriptionMetrics.mockResolvedValue(mockMetrics);
@@ -249,12 +303,14 @@ describe('AnalyticsService', () => {
   describe('error handling', () => {
     test('should handle network errors gracefully', async () => {
       // Arrange
-      mockRepository.getSubscriptionMetrics.mockRejectedValue(new Error('Network timeout'));
+      mockRepository.getSubscriptionMetrics.mockRejectedValue(
+        new Error('Network timeout')
+      );
 
       // Act & Assert
-      await expect(analyticsService.getSubscriptionMetrics('monthly'))
-        .rejects
-        .toThrow('Network timeout');
+      await expect(
+        analyticsService.getSubscriptionMetrics('monthly')
+      ).rejects.toThrow('Network timeout');
     });
 
     test('should handle malformed data gracefully', async () => {
@@ -262,9 +318,9 @@ describe('AnalyticsService', () => {
       mockRepository.getSubscriptionMetrics.mockResolvedValue(null as any);
 
       // Act & Assert
-      await expect(analyticsService.getSubscriptionMetrics('monthly'))
-        .rejects
-        .toThrow('Invalid analytics data received');
+      await expect(
+        analyticsService.getSubscriptionMetrics('monthly')
+      ).rejects.toThrow('Invalid analytics data received');
     });
   });
 
@@ -274,13 +330,13 @@ describe('AnalyticsService', () => {
       const mockMetrics: SubscriptionMetrics = {
         totalSubscriptions: 150,
         activeSubscriptions: 125,
-        mrr: 15000,
-        arr: 180000,
+        mrr: 15_000,
+        arr: 180_000,
         churnRate: 0.05,
         growthRate: 0.12,
         conversionRate: 0.25,
         period: 'monthly',
-        generatedAt: new Date()
+        generatedAt: new Date(),
       };
 
       mockRepository.getSubscriptionMetrics.mockResolvedValue(mockMetrics);

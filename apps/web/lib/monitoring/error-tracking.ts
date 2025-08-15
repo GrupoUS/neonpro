@@ -1,7 +1,7 @@
 /**
  * TASK-001: Foundation Setup & Baseline
  * Error Tracking and Monitoring System
- * 
+ *
  * Comprehensive error monitoring with categorization, alerting,
  * and baseline error rate establishment for enhancement safety.
  */
@@ -9,7 +9,13 @@
 import { createClient } from '@/app/utils/supabase/client';
 
 export interface ErrorEvent {
-  error_type: 'javascript' | 'api' | 'database' | 'network' | 'validation' | 'authentication';
+  error_type:
+    | 'javascript'
+    | 'api'
+    | 'database'
+    | 'network'
+    | 'validation'
+    | 'authentication';
   error_message: string;
   error_stack?: string;
   error_code?: string;
@@ -42,10 +48,30 @@ class ErrorTracker {
   private errorQueue: ErrorEvent[] = [];
   private flushInterval: NodeJS.Timeout | null = null;
   private thresholds: ErrorThreshold[] = [
-    { error_type: 'javascript', max_count_per_hour: 50, max_rate_percentage: 1, alert_enabled: true },
-    { error_type: 'api', max_count_per_hour: 30, max_rate_percentage: 2, alert_enabled: true },
-    { error_type: 'database', max_count_per_hour: 10, max_rate_percentage: 0.5, alert_enabled: true },
-    { error_type: 'authentication', max_count_per_hour: 20, max_rate_percentage: 1, alert_enabled: true }
+    {
+      error_type: 'javascript',
+      max_count_per_hour: 50,
+      max_rate_percentage: 1,
+      alert_enabled: true,
+    },
+    {
+      error_type: 'api',
+      max_count_per_hour: 30,
+      max_rate_percentage: 2,
+      alert_enabled: true,
+    },
+    {
+      error_type: 'database',
+      max_count_per_hour: 10,
+      max_rate_percentage: 0.5,
+      alert_enabled: true,
+    },
+    {
+      error_type: 'authentication',
+      max_count_per_hour: 20,
+      max_rate_percentage: 1,
+      alert_enabled: true,
+    },
   ];
 
   constructor() {
@@ -78,7 +104,7 @@ class ErrorTracker {
       session_id: context?.session_id || this.getSessionId(),
       severity: context?.severity || this.determineSeverity(errorType, error),
       metadata: context?.metadata,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     this.errorQueue.push(errorEvent);
@@ -148,8 +174,8 @@ class ErrorTracker {
         metadata: {
           filename: event.filename,
           lineno: event.lineno,
-          colno: event.colno
-        }
+          colno: event.colno,
+        },
       });
     });
 
@@ -159,8 +185,8 @@ class ErrorTracker {
         route_path: window.location.pathname,
         severity: 'high',
         metadata: {
-          type: 'unhandled_promise_rejection'
-        }
+          type: 'unhandled_promise_rejection',
+        },
       });
     });
 
@@ -173,41 +199,49 @@ class ErrorTracker {
    */
   private interceptFetchErrors(): void {
     const originalFetch = window.fetch;
-    
+
     window.fetch = async (...args) => {
       try {
         const response = await originalFetch(...args);
-        
+
         // Track API errors based on status codes
         if (!response.ok) {
           const url = args[0] instanceof Request ? args[0].url : args[0];
-          
-          this.trackError('api', `HTTP ${response.status}: ${response.statusText}`, {
-            route_path: window.location.pathname,
-            severity: response.status >= 500 ? 'critical' : 'medium',
-            error_code: response.status.toString(),
-            metadata: {
-              url: url.toString(),
-              status: response.status,
-              statusText: response.statusText
+
+          this.trackError(
+            'api',
+            `HTTP ${response.status}: ${response.statusText}`,
+            {
+              route_path: window.location.pathname,
+              severity: response.status >= 500 ? 'critical' : 'medium',
+              error_code: response.status.toString(),
+              metadata: {
+                url: url.toString(),
+                status: response.status,
+                statusText: response.statusText,
+              },
             }
-          });
+          );
         }
-        
+
         return response;
       } catch (error) {
         // Track network errors
         const url = args[0] instanceof Request ? args[0].url : args[0];
-        
-        this.trackError('network', error instanceof Error ? error : 'Network error', {
-          route_path: window.location.pathname,
-          severity: 'high',
-          metadata: {
-            url: url.toString(),
-            type: 'network_error'
+
+        this.trackError(
+          'network',
+          error instanceof Error ? error : 'Network error',
+          {
+            route_path: window.location.pathname,
+            severity: 'high',
+            metadata: {
+              url: url.toString(),
+              type: 'network_error',
+            },
           }
-        });
-        
+        );
+
         throw error;
       }
     };
@@ -224,8 +258,10 @@ class ErrorTracker {
    * Check error thresholds and trigger alerts
    */
   private async checkErrorThresholds(errorEvent: ErrorEvent): Promise<void> {
-    const threshold = this.thresholds.find(t => t.error_type === errorEvent.error_type);
-    if (!threshold || !threshold.alert_enabled) return;
+    const threshold = this.thresholds.find(
+      (t) => t.error_type === errorEvent.error_type
+    );
+    if (!(threshold && threshold.alert_enabled)) return;
 
     try {
       // Get error count for the last hour
@@ -248,12 +284,15 @@ class ErrorTracker {
 
       // Check if threshold exceeded
       if (hourlyCount >= threshold.max_count_per_hour) {
-        await this.triggerErrorAlert(errorEvent.error_type, hourlyCount, threshold);
+        await this.triggerErrorAlert(
+          errorEvent.error_type,
+          hourlyCount,
+          threshold
+        );
       }
 
       // Log error count metric
       await this.logErrorMetric(errorEvent.error_type, hourlyCount + 1);
-
     } catch (error) {
       console.error('Error in threshold checking:', error);
     }
@@ -267,22 +306,22 @@ class ErrorTracker {
     count: number,
     threshold: ErrorThreshold
   ): Promise<void> {
-    console.error(`🚨 ERROR THRESHOLD EXCEEDED: ${errorType} - ${count} errors in the last hour (threshold: ${threshold.max_count_per_hour})`);
+    console.error(
+      `🚨 ERROR THRESHOLD EXCEEDED: ${errorType} - ${count} errors in the last hour (threshold: ${threshold.max_count_per_hour})`
+    );
 
     // Log alert as system metric
-    await this.supabase
-      .from('system_metrics')
-      .insert({
-        metric_type: 'error_alert',
-        metric_name: `${errorType}_threshold_exceeded`,
-        metric_value: count,
-        metric_unit: 'count',
-        metadata: {
-          threshold: threshold.max_count_per_hour,
-          error_type: errorType,
-          alert_time: new Date().toISOString()
-        }
-      });
+    await this.supabase.from('system_metrics').insert({
+      metric_type: 'error_alert',
+      metric_name: `${errorType}_threshold_exceeded`,
+      metric_value: count,
+      metric_unit: 'count',
+      metadata: {
+        threshold: threshold.max_count_per_hour,
+        error_type: errorType,
+        alert_time: new Date().toISOString(),
+      },
+    });
 
     // Here you would integrate with your alerting system
     // (Slack, email, SMS, etc.)
@@ -291,16 +330,17 @@ class ErrorTracker {
   /**
    * Log error metric
    */
-  private async logErrorMetric(errorType: string, count: number): Promise<void> {
+  private async logErrorMetric(
+    errorType: string,
+    count: number
+  ): Promise<void> {
     try {
-      await this.supabase
-        .from('system_metrics')
-        .insert({
-          metric_type: 'error_count',
-          metric_name: errorType,
-          metric_value: count,
-          metric_unit: 'count'
-        });
+      await this.supabase.from('system_metrics').insert({
+        metric_type: 'error_count',
+        metric_name: errorType,
+        metric_value: count,
+        metric_unit: 'count',
+      });
     } catch (error) {
       console.error('Error logging error metric:', error);
     }
@@ -310,7 +350,7 @@ class ErrorTracker {
    * Get error summary for a time period
    */
   async getErrorSummary(
-    hours: number = 24,
+    hours = 24,
     errorType?: ErrorEvent['error_type']
   ): Promise<ErrorSummary[]> {
     try {
@@ -337,7 +377,7 @@ class ErrorTracker {
       // Group by error type and calculate summary
       const summaryMap: Record<string, ErrorSummary> = {};
 
-      data.forEach(record => {
+      data.forEach((record) => {
         const errorType = record.metric_name;
         if (!summaryMap[errorType]) {
           summaryMap[errorType] = {
@@ -346,16 +386,16 @@ class ErrorTracker {
             first_occurrence: record.timestamp,
             last_occurrence: record.timestamp,
             affected_users: 0,
-            error_rate: 0
+            error_rate: 0,
           };
         }
 
         summaryMap[errorType].count += record.metric_value;
-        
+
         if (record.timestamp < summaryMap[errorType].first_occurrence) {
           summaryMap[errorType].first_occurrence = record.timestamp;
         }
-        
+
         if (record.timestamp > summaryMap[errorType].last_occurrence) {
           summaryMap[errorType].last_occurrence = record.timestamp;
         }
@@ -371,7 +411,7 @@ class ErrorTracker {
   /**
    * Get error baseline data
    */
-  async getErrorBaseline(days: number = 7): Promise<Record<string, any>> {
+  async getErrorBaseline(days = 7): Promise<Record<string, any>> {
     try {
       const startDate = new Date();
       startDate.setDate(startDate.getDate() - days);
@@ -391,14 +431,14 @@ class ErrorTracker {
       // Calculate baseline metrics by error type
       const baseline: Record<string, any> = {};
 
-      data.forEach(record => {
+      data.forEach((record) => {
         const errorType = record.metric_name;
         if (!baseline[errorType]) {
           baseline[errorType] = {
             total_errors: 0,
             daily_averages: [],
             peak_hour: null,
-            trend: 'stable'
+            trend: 'stable',
           };
         }
 
@@ -424,7 +464,7 @@ class ErrorTracker {
 
     try {
       // Store errors as system metrics for analysis
-      const metrics = errorsToFlush.map(error => ({
+      const metrics = errorsToFlush.map((error) => ({
         metric_type: 'error_event',
         metric_name: error.error_type,
         metric_value: 1,
@@ -438,8 +478,8 @@ class ErrorTracker {
           session_id: error.session_id,
           severity: error.severity,
           timestamp: error.timestamp,
-          ...error.metadata
-        }
+          ...error.metadata,
+        },
       }));
 
       const { error } = await this.supabase
@@ -494,6 +534,6 @@ export function useErrorTracking() {
   return {
     trackError: errorTracker.trackError.bind(errorTracker),
     getErrorSummary: errorTracker.getErrorSummary.bind(errorTracker),
-    getErrorBaseline: errorTracker.getErrorBaseline.bind(errorTracker)
+    getErrorBaseline: errorTracker.getErrorBaseline.bind(errorTracker),
   };
 }

@@ -1,11 +1,11 @@
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { Database } from '@/types/supabase';
+import type { Database } from '@/types/supabase';
 
 // Types for patient profile management
 export interface PatientProfile {
   id: string;
   patient_id: string;
-  
+
   // Biometric data
   height_cm?: number;
   weight_kg?: number;
@@ -15,7 +15,7 @@ export interface PatientProfile {
   chronic_conditions: string[];
   medications: string[];
   emergency_contact: EmergencyContact;
-  
+
   // AI insights
   ai_insights: AIInsights;
   risk_score?: number;
@@ -23,14 +23,14 @@ export interface PatientProfile {
   risk_factors: string[];
   treatment_recommendations: TreatmentRecommendation[];
   last_assessment_date?: string;
-  
+
   // Profile metadata
   profile_completeness_score: number;
   data_quality_score: number;
   preferences: PatientPreferences;
   consent_status: ConsentStatus;
   privacy_settings: PrivacySettings;
-  
+
   // Audit
   created_at: string;
   updated_at: string;
@@ -93,7 +93,13 @@ export interface PatientPhoto {
   id: string;
   patient_id: string;
   photo_url: string;
-  photo_type: 'profile' | 'identification' | 'medical' | 'before' | 'after' | 'progress';
+  photo_type:
+    | 'profile'
+    | 'identification'
+    | 'medical'
+    | 'before'
+    | 'after'
+    | 'progress';
   file_size?: number;
   mime_type?: string;
   dimensions?: { width: number; height: number };
@@ -116,7 +122,14 @@ export interface PatientPhoto {
 export interface MedicalTimelineEvent {
   id: string;
   patient_id: string;
-  event_type: 'appointment' | 'treatment' | 'procedure' | 'diagnosis' | 'medication' | 'test_result' | 'follow_up';
+  event_type:
+    | 'appointment'
+    | 'treatment'
+    | 'procedure'
+    | 'diagnosis'
+    | 'medication'
+    | 'test_result'
+    | 'follow_up';
   event_date: string;
   title: string;
   description?: string;
@@ -201,7 +214,10 @@ export class PatientProfileManager {
   /**
    * Create or update patient profile
    */
-  async upsertPatientProfile(patientId: string, profileData: Partial<PatientProfile>): Promise<PatientProfile | null> {
+  async upsertPatientProfile(
+    patientId: string,
+    profileData: Partial<PatientProfile>
+  ): Promise<PatientProfile | null> {
     try {
       const { data, error } = await this.supabase
         .from('patient_profiles_extended')
@@ -217,7 +233,7 @@ export class PatientProfileManager {
 
       // Update search index
       await this.updateSearchIndex(patientId);
-      
+
       return data as PatientProfile;
     } catch (error) {
       console.error('Error upserting patient profile:', error);
@@ -230,8 +246,10 @@ export class PatientProfileManager {
    */
   async updateProfileCompleteness(patientId: string): Promise<number> {
     try {
-      const { data, error } = await this.supabase
-        .rpc('calculate_profile_completeness', { patient_uuid: patientId });
+      const { data, error } = await this.supabase.rpc(
+        'calculate_profile_completeness',
+        { patient_uuid: patientId }
+      );
 
       if (error) throw error;
 
@@ -251,7 +269,10 @@ export class PatientProfileManager {
   /**
    * Get patient photos
    */
-  async getPatientPhotos(patientId: string, photoType?: string): Promise<PatientPhoto[]> {
+  async getPatientPhotos(
+    patientId: string,
+    photoType?: string
+  ): Promise<PatientPhoto[]> {
     try {
       let query = this.supabase
         .from('patient_photos')
@@ -286,9 +307,10 @@ export class PatientProfileManager {
     try {
       // Upload file to Supabase storage
       const fileName = `${patientId}/${photoType}/${Date.now()}-${file.name}`;
-      const { data: uploadData, error: uploadError } = await this.supabase.storage
-        .from('patient-photos')
-        .upload(fileName, file);
+      const { data: uploadData, error: uploadError } =
+        await this.supabase.storage
+          .from('patient-photos')
+          .upload(fileName, file);
 
       if (uploadError) throw uploadError;
 
@@ -326,7 +348,10 @@ export class PatientProfileManager {
   /**
    * Get medical timeline for patient
    */
-  async getMedicalTimeline(patientId: string, limit?: number): Promise<MedicalTimelineEvent[]> {
+  async getMedicalTimeline(
+    patientId: string,
+    limit?: number
+  ): Promise<MedicalTimelineEvent[]> {
     try {
       let query = this.supabase
         .from('medical_timeline')
@@ -353,7 +378,10 @@ export class PatientProfileManager {
    */
   async addTimelineEvent(
     patientId: string,
-    eventData: Omit<MedicalTimelineEvent, 'id' | 'patient_id' | 'created_at' | 'updated_at'>
+    eventData: Omit<
+      MedicalTimelineEvent,
+      'id' | 'patient_id' | 'created_at' | 'updated_at'
+    >
   ): Promise<MedicalTimelineEvent | null> {
     try {
       const { data, error } = await this.supabase
@@ -402,7 +430,7 @@ export class PatientProfileManager {
       if (query.trim()) {
         searchQuery = searchQuery.textSearch('search_vector', query, {
           type: 'websearch',
-          config: 'portuguese'
+          config: 'portuguese',
         });
       }
 
@@ -414,17 +442,21 @@ export class PatientProfileManager {
       }
 
       // Get additional patient data
-      const patientIds = searchData.map(p => p.patient_id);
+      const patientIds = searchData.map((p) => p.patient_id);
       const { data: profilesData, error: profilesError } = await this.supabase
         .from('patient_profiles_extended')
-        .select('patient_id, risk_level, profile_completeness_score, updated_at')
+        .select(
+          'patient_id, risk_level, profile_completeness_score, updated_at'
+        )
         .in('patient_id', patientIds);
 
       if (profilesError) throw profilesError;
 
       // Combine search and profile data
-      const results = searchData.map(search => {
-        const profile = profilesData?.find(p => p.patient_id === search.patient_id);
+      const results = searchData.map((search) => {
+        const profile = profilesData?.find(
+          (p) => p.patient_id === search.patient_id
+        );
         return {
           patient_id: search.patient_id,
           full_name: search.full_name_normalized,
@@ -475,7 +507,7 @@ export class PatientProfileManager {
   private async updateSearchIndex(patientId: string): Promise<void> {
     try {
       await this.supabase.rpc('update_patient_search_index', {
-        patient_uuid: patientId
+        patient_uuid: patientId,
       });
     } catch (error) {
       console.error('Error updating search index:', error);
@@ -485,7 +517,9 @@ export class PatientProfileManager {
   /**
    * Get image dimensions from file
    */
-  private async getImageDimensions(file: File): Promise<{ width: number; height: number } | null> {
+  private async getImageDimensions(
+    file: File
+  ): Promise<{ width: number; height: number } | null> {
     return new Promise((resolve) => {
       if (!file.type.startsWith('image/')) {
         resolve(null);
@@ -516,21 +550,25 @@ export class PatientProfileManager {
   ): PatientSearchResult[] {
     if (!filters) return results;
 
-    return results.filter(result => {
+    return results.filter((result) => {
       // Risk level filter
       if (filters.risk_level && result.risk_level !== filters.risk_level) {
         return false;
       }
 
       // Completion threshold filter
-      if (filters.completion_threshold && result.profile_completeness < filters.completion_threshold) {
+      if (
+        filters.completion_threshold &&
+        result.profile_completeness < filters.completion_threshold
+      ) {
         return false;
       }
 
       // Last visit filter
       if (filters.last_visit_days && result.last_visit) {
         const daysSinceVisit = Math.floor(
-          (Date.now() - new Date(result.last_visit).getTime()) / (1000 * 60 * 60 * 24)
+          (Date.now() - new Date(result.last_visit).getTime()) /
+            (1000 * 60 * 60 * 24)
         );
         if (daysSinceVisit > filters.last_visit_days) {
           return false;

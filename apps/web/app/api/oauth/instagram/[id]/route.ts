@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
 import { InstagramOAuthHandler } from '@/lib/oauth/platforms/instagram-handler';
 import { TokenEncryptionService } from '@/lib/oauth/token-encryption';
@@ -15,9 +15,11 @@ export async function GET(
 ) {
   try {
     const supabase = await createClient();
-    
+
     // Verify user authentication
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session) {
       return NextResponse.json(
         { error: 'Authentication required' },
@@ -49,13 +51,14 @@ export async function GET(
 
     // Decrypt access token
     const encryptedAccessToken = JSON.parse(account.encrypted_access_token);
-    const accessToken = TokenEncryptionService.decryptToken(encryptedAccessToken);
+    const accessToken =
+      TokenEncryptionService.decryptToken(encryptedAccessToken);
 
     const instagramHandler = new InstagramOAuthHandler();
 
     // Handle different actions
     switch (action) {
-      case 'profile':
+      case 'profile': {
         const profile = await instagramHandler.getUserProfile(accessToken);
         return NextResponse.json({
           success: true,
@@ -65,40 +68,50 @@ export async function GET(
             username: account.platform_username,
             isVerified: account.is_verified,
             followerCount: account.follower_count,
-            lastSync: account.last_sync_at
-          }
+            lastSync: account.last_sync_at,
+          },
         });
+      }
 
-      case 'media':
-        const limit = parseInt(searchParams.get('limit') || '25');
+      case 'media': {
+        const limit = Number.parseInt(searchParams.get('limit') || '25', 10);
         const media = await instagramHandler.getUserMedia(accessToken, limit);
         return NextResponse.json({
           success: true,
           media,
-          count: media.length
+          count: media.length,
         });
+      }
 
-      case 'insights':
-        const period = searchParams.get('period') as 'day' | 'week' | 'days_28' || 'day';
-        const insights = await instagramHandler.getAccountInsights(accessToken, period);
+      case 'insights': {
+        const period =
+          (searchParams.get('period') as 'day' | 'week' | 'days_28') || 'day';
+        const insights = await instagramHandler.getAccountInsights(
+          accessToken,
+          period
+        );
         return NextResponse.json({
           success: true,
           insights,
-          period
+          period,
         });
+      }
 
-      case 'validate':
+      case 'validate': {
         const isValid = await instagramHandler.validateTokens({
           accessToken,
           tokenType: 'Bearer',
-          expiresIn: Math.floor((new Date(account.token_expires_at).getTime() - Date.now()) / 1000),
-          expiresAt: new Date(account.token_expires_at)
+          expiresIn: Math.floor(
+            (new Date(account.token_expires_at).getTime() - Date.now()) / 1000
+          ),
+          expiresAt: new Date(account.token_expires_at),
         });
         return NextResponse.json({
           success: true,
           isValid,
-          expiresAt: account.token_expires_at
+          expiresAt: account.token_expires_at,
         });
+      }
 
       default:
         return NextResponse.json(
@@ -106,14 +119,13 @@ export async function GET(
           { status: 400 }
         );
     }
-
   } catch (error) {
     console.error('Instagram account API error:', error);
-    
+
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to process Instagram account request',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );
@@ -129,9 +141,11 @@ export async function PATCH(
 ) {
   try {
     const supabase = await createClient();
-    
+
     // Verify user authentication
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session) {
       return NextResponse.json(
         { error: 'Authentication required' },
@@ -147,7 +161,8 @@ export async function PATCH(
     const updateData: any = {};
     if (typeof isActive === 'boolean') updateData.is_active = isActive;
     if (typeof autoPost === 'boolean') updateData.auto_post = autoPost;
-    if (typeof notificationsEnabled === 'boolean') updateData.notifications_enabled = notificationsEnabled;
+    if (typeof notificationsEnabled === 'boolean')
+      updateData.notifications_enabled = notificationsEnabled;
 
     if (Object.keys(updateData).length === 0) {
       return NextResponse.json(
@@ -170,33 +185,30 @@ export async function PATCH(
     }
 
     // Log account update
-    await supabase
-      .from('activity_logs')
-      .insert({
-        user_id: session.user.id,
-        clinic_id: data.clinic_id,
-        action: 'social_media_account_updated',
-        entity_type: 'social_media_account',
-        entity_id: accountId,
-        details: {
-          platform: 'instagram',
-          changes: updateData
-        }
-      });
+    await supabase.from('activity_logs').insert({
+      user_id: session.user.id,
+      clinic_id: data.clinic_id,
+      action: 'social_media_account_updated',
+      entity_type: 'social_media_account',
+      entity_id: accountId,
+      details: {
+        platform: 'instagram',
+        changes: updateData,
+      },
+    });
 
     return NextResponse.json({
       success: true,
       message: 'Instagram account updated successfully',
-      account: data
+      account: data,
     });
-
   } catch (error) {
     console.error('Instagram account update error:', error);
-    
+
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to update Instagram account',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );
@@ -207,16 +219,18 @@ export async function PATCH(
  * Delete/disconnect Instagram account
  */
 export async function DELETE(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await params;
     const accountId = id;
     const supabase = await createClient();
-    
+
     // Verify user authentication
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session) {
       return NextResponse.json(
         { error: 'Authentication required' },
@@ -236,9 +250,9 @@ export async function DELETE(
     // Soft delete the account
     const { error } = await supabase
       .from('social_media_accounts')
-      .update({ 
+      .update({
         is_active: false,
-        deleted_at: new Date().toISOString()
+        deleted_at: new Date().toISOString(),
       })
       .eq('id', accountId)
       .eq('user_id', session.user.id)
@@ -250,33 +264,30 @@ export async function DELETE(
 
     // Log account deletion
     if (account) {
-      await supabase
-        .from('activity_logs')
-        .insert({
-          user_id: session.user.id,
-          clinic_id: account.clinic_id,
-          action: 'social_media_account_deleted',
-          entity_type: 'social_media_account',
-          entity_id: accountId,
-          details: {
-            platform: 'instagram',
-            username: account.platform_username
-          }
-        });
+      await supabase.from('activity_logs').insert({
+        user_id: session.user.id,
+        clinic_id: account.clinic_id,
+        action: 'social_media_account_deleted',
+        entity_type: 'social_media_account',
+        entity_id: accountId,
+        details: {
+          platform: 'instagram',
+          username: account.platform_username,
+        },
+      });
     }
 
     return NextResponse.json({
       success: true,
-      message: 'Instagram account disconnected successfully'
+      message: 'Instagram account disconnected successfully',
     });
-
   } catch (error) {
     console.error('Instagram account deletion error:', error);
-    
+
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to disconnect Instagram account',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );

@@ -2,16 +2,18 @@
  * Vision Analysis System Types
  * Comprehensive TypeScript type definitions for NeonPro Computer Vision System
  * Epic 10 - Story 10.1: Automated Before/After Analysis
- * 
+ *
  * VOIDBEAST V4.0 APEX ENHANCED - Quality ≥9.5/10
  */
 
-import { TREATMENT_TYPES, ANALYSIS_STATUS, ERROR_CODES } from './config';
+import { ANALYSIS_STATUS, ERROR_CODES, TREATMENT_TYPES } from './config';
 
 // Base Types
-export type TreatmentType = typeof TREATMENT_TYPES[keyof typeof TREATMENT_TYPES];
-export type AnalysisStatus = typeof ANALYSIS_STATUS[keyof typeof ANALYSIS_STATUS];
-export type ErrorCode = typeof ERROR_CODES[keyof typeof ERROR_CODES];
+export type TreatmentType =
+  (typeof TREATMENT_TYPES)[keyof typeof TREATMENT_TYPES];
+export type AnalysisStatus =
+  (typeof ANALYSIS_STATUS)[keyof typeof ANALYSIS_STATUS];
+export type ErrorCode = (typeof ERROR_CODES)[keyof typeof ERROR_CODES];
 
 // Image Processing Types
 export interface ImageData {
@@ -103,7 +105,12 @@ export interface ChangeMetrics {
 export interface OverallAssessment {
   improvementScore: number; // 0-10 scale
   confidenceLevel: number; // 0-1 scale
-  clinicalSignificance: 'none' | 'minimal' | 'moderate' | 'significant' | 'dramatic';
+  clinicalSignificance:
+    | 'none'
+    | 'minimal'
+    | 'moderate'
+    | 'significant'
+    | 'dramatic';
   recommendedFollowUp?: string;
   concerns?: string[];
 }
@@ -143,7 +150,7 @@ export interface ObjectiveMeasurement {
   timestamp: string;
 }
 
-export type MeasurementType = 
+export type MeasurementType =
   | 'area'
   | 'perimeter'
   | 'volume'
@@ -200,7 +207,7 @@ export interface MeasurementQualityAssurance {
   qualityFlags: string[];
 }
 
-export type ClinicalSignificance = 
+export type ClinicalSignificance =
   | 'not_significant'
   | 'minimal'
   | 'moderate'
@@ -223,7 +230,7 @@ export interface AnnotationData {
   metadata?: Record<string, any>;
 }
 
-export type AnnotationType = 
+export type AnnotationType =
   | 'measurement'
   | 'highlight'
   | 'comparison'
@@ -437,7 +444,7 @@ export interface AnalysisProgress {
   processingMetrics: Partial<ProcessingMetrics>;
 }
 
-export type AnalysisStage = 
+export type AnalysisStage =
   | 'initializing'
   | 'loading_images'
   | 'preprocessing'
@@ -558,7 +565,7 @@ export interface AnalysisEvent {
   timestamp: string;
 }
 
-export type AnalysisEventType = 
+export type AnalysisEventType =
   | 'analysis_started'
   | 'analysis_progress'
   | 'analysis_completed'
@@ -664,14 +671,18 @@ export interface MonitoringConfig {
 
 // Type Guards
 export function isAnalysisResult(obj: any): obj is AnalysisResult {
-  return obj && typeof obj.id === 'string' && typeof obj.analysisData === 'object';
+  return (
+    obj && typeof obj.id === 'string' && typeof obj.analysisData === 'object'
+  );
 }
 
 export function isValidTreatmentType(type: string): type is TreatmentType {
   return Object.values(TREATMENT_TYPES).includes(type as TreatmentType);
 }
 
-export function isValidAnalysisStatus(status: string): status is AnalysisStatus {
+export function isValidAnalysisStatus(
+  status: string
+): status is AnalysisStatus {
   return Object.values(ANALYSIS_STATUS).includes(status as AnalysisStatus);
 }
 
@@ -686,7 +697,8 @@ export type DeepPartial<T> = {
 
 export type RequiredFields<T, K extends keyof T> = T & Required<Pick<T, K>>;
 
-export type OptionalFields<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
+export type OptionalFields<T, K extends keyof T> = Omit<T, K> &
+  Partial<Pick<T, K>>;
 
 // Re-export commonly used types
 export type {
@@ -699,5 +711,5 @@ export type {
   MeasurementType,
   ClinicalSignificance,
   AnalysisStage,
-  AnalysisEventType
+  AnalysisEventType,
 };

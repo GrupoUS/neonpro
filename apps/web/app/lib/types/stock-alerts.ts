@@ -10,37 +10,37 @@ import { z } from 'zod';
 
 export const AlertType = {
   LOW_STOCK: 'low_stock',
-  EXPIRING: 'expiring', 
+  EXPIRING: 'expiring',
   EXPIRED: 'expired',
   OVERSTOCK: 'overstock',
-  CRITICAL_SHORTAGE: 'critical_shortage'
+  CRITICAL_SHORTAGE: 'critical_shortage',
 } as const;
 
 export const SeverityLevel = {
   LOW: 'low',
-  MEDIUM: 'medium', 
+  MEDIUM: 'medium',
   HIGH: 'high',
-  CRITICAL: 'critical'
+  CRITICAL: 'critical',
 } as const;
 
 export const AlertStatus = {
   ACTIVE: 'active',
   ACKNOWLEDGED: 'acknowledged',
   RESOLVED: 'resolved',
-  DISMISSED: 'dismissed'
+  DISMISSED: 'dismissed',
 } as const;
 
 export const ThresholdUnit = {
   QUANTITY: 'quantity',
   DAYS: 'days',
-  PERCENTAGE: 'percentage'
+  PERCENTAGE: 'percentage',
 } as const;
 
 export const NotificationChannel = {
   IN_APP: 'in_app',
   EMAIL: 'email',
   WHATSAPP: 'whatsapp',
-  SMS: 'sms'
+  SMS: 'sms',
 } as const;
 
 export const ReportType = {
@@ -49,7 +49,7 @@ export const ReportType = {
   MOVEMENT: 'movement',
   EXPIRATION: 'expiration',
   CUSTOM: 'custom',
-  PERFORMANCE: 'performance'
+  PERFORMANCE: 'performance',
 } as const;
 
 // =====================================================
@@ -60,7 +60,10 @@ export const ReportType = {
 const uuidSchema = z.string().uuid('Invalid UUID format');
 const positiveNumberSchema = z.number().positive('Must be a positive number');
 const nonNegativeNumberSchema = z.number().min(0, 'Must be non-negative');
-const percentageSchema = z.number().min(0).max(100, 'Must be between 0 and 100');
+const percentageSchema = z
+  .number()
+  .min(0)
+  .max(100, 'Must be between 0 and 100');
 const emailSchema = z.string().email('Invalid email format');
 
 // Alert type validation
@@ -69,38 +72,29 @@ const alertTypeSchema = z.enum([
   'expiring',
   'expired',
   'overstock',
-  'critical_shortage'
+  'critical_shortage',
 ]);
 
 // Severity level validation
-const severityLevelSchema = z.enum([
-  'low',
-  'medium',
-  'high',
-  'critical'
-]);
+const severityLevelSchema = z.enum(['low', 'medium', 'high', 'critical']);
 
 // Alert status validation
 const alertStatusSchema = z.enum([
   'active',
   'acknowledged',
   'resolved',
-  'dismissed'
+  'dismissed',
 ]);
 
 // Threshold unit validation
-const thresholdUnitSchema = z.enum([
-  'quantity',
-  'days',
-  'percentage'
-]);
+const thresholdUnitSchema = z.enum(['quantity', 'days', 'percentage']);
 
 // Notification channels validation
 const notificationChannelSchema = z.enum([
   'in_app',
   'email',
   'whatsapp',
-  'sms'
+  'sms',
 ]);
 
 // Report type validation
@@ -110,35 +104,41 @@ const reportTypeSchema = z.enum([
   'movement',
   'expiration',
   'custom',
-  'performance'
+  'performance',
 ]);
 
 // =====================================================
 // STOCK ALERT CONFIG SCHEMAS
 // =====================================================
 
-export const stockAlertConfigSchema = z.object({
-  id: uuidSchema.optional(),
-  clinicId: uuidSchema,
-  productId: uuidSchema.optional(),
-  categoryId: uuidSchema.optional(),
-  alertType: alertTypeSchema,
-  thresholdValue: positiveNumberSchema,
-  thresholdUnit: thresholdUnitSchema.default('quantity'),
-  severityLevel: severityLevelSchema.default('medium'),
-  isActive: z.boolean().default(true),
-  notificationChannels: z.array(notificationChannelSchema).min(1, 'At least one notification channel required'),
-  createdAt: z.date().optional(),
-  updatedAt: z.date().optional(),
-  createdBy: uuidSchema.optional(),
-  updatedBy: uuidSchema.optional()
-}).refine(
-  (data) => data.productId || data.categoryId || (!data.productId && !data.categoryId),
-  {
-    message: "Either productId, categoryId, or neither should be provided (not both)",
-    path: ["productId", "categoryId"]
-  }
-);
+export const stockAlertConfigSchema = z
+  .object({
+    id: uuidSchema.optional(),
+    clinicId: uuidSchema,
+    productId: uuidSchema.optional(),
+    categoryId: uuidSchema.optional(),
+    alertType: alertTypeSchema,
+    thresholdValue: positiveNumberSchema,
+    thresholdUnit: thresholdUnitSchema.default('quantity'),
+    severityLevel: severityLevelSchema.default('medium'),
+    isActive: z.boolean().default(true),
+    notificationChannels: z
+      .array(notificationChannelSchema)
+      .min(1, 'At least one notification channel required'),
+    createdAt: z.date().optional(),
+    updatedAt: z.date().optional(),
+    createdBy: uuidSchema.optional(),
+    updatedBy: uuidSchema.optional(),
+  })
+  .refine(
+    (data) =>
+      data.productId || data.categoryId || !(data.productId || data.categoryId),
+    {
+      message:
+        'Either productId, categoryId, or neither should be provided (not both)',
+      path: ['productId', 'categoryId'],
+    }
+  );
 
 // Create alert config schema (for API requests)
 export const createStockAlertConfigSchema = stockAlertConfigSchema.omit({
@@ -146,66 +146,81 @@ export const createStockAlertConfigSchema = stockAlertConfigSchema.omit({
   createdAt: true,
   updatedAt: true,
   createdBy: true,
-  updatedBy: true
+  updatedBy: true,
 });
 
 // Update alert config schema (for API requests)
-export const updateStockAlertConfigSchema = stockAlertConfigSchema.partial().omit({
-  id: true,
-  clinicId: true,
-  createdAt: true,
-  updatedAt: true,
-  createdBy: true,
-  updatedBy: true
-});
+export const updateStockAlertConfigSchema = stockAlertConfigSchema
+  .partial()
+  .omit({
+    id: true,
+    clinicId: true,
+    createdAt: true,
+    updatedAt: true,
+    createdBy: true,
+    updatedBy: true,
+  });
 
 // =====================================================
 // STOCK ALERT SCHEMAS
 // =====================================================
 
-export const stockAlertSchema = z.object({
-  id: uuidSchema.optional(),
-  clinicId: uuidSchema,
-  alertConfigId: uuidSchema.optional(),
-  productId: uuidSchema,
-  alertType: alertTypeSchema,
-  severityLevel: severityLevelSchema,
-  currentValue: nonNegativeNumberSchema,
-  thresholdValue: positiveNumberSchema,
-  message: z.string().min(1, 'Message is required').max(1000, 'Message too long'),
-  status: alertStatusSchema.default('active'),
-  metadata: z.record(z.any()).default({}),
-  acknowledgedBy: uuidSchema.optional(),
-  acknowledgedAt: z.date().optional(),
-  resolvedAt: z.date().optional(),
-  createdAt: z.date().optional()
-}).refine(
-  (data) => {
-    // If acknowledged, must have both acknowledgedBy and acknowledgedAt
-    if (data.acknowledgedBy || data.acknowledgedAt) {
-      return data.acknowledgedBy && data.acknowledgedAt;
+export const stockAlertSchema = z
+  .object({
+    id: uuidSchema.optional(),
+    clinicId: uuidSchema,
+    alertConfigId: uuidSchema.optional(),
+    productId: uuidSchema,
+    alertType: alertTypeSchema,
+    severityLevel: severityLevelSchema,
+    currentValue: nonNegativeNumberSchema,
+    thresholdValue: positiveNumberSchema,
+    message: z
+      .string()
+      .min(1, 'Message is required')
+      .max(1000, 'Message too long'),
+    status: alertStatusSchema.default('active'),
+    metadata: z.record(z.any()).default({}),
+    acknowledgedBy: uuidSchema.optional(),
+    acknowledgedAt: z.date().optional(),
+    resolvedAt: z.date().optional(),
+    createdAt: z.date().optional(),
+  })
+  .refine(
+    (data) => {
+      // If acknowledged, must have both acknowledgedBy and acknowledgedAt
+      if (data.acknowledgedBy || data.acknowledgedAt) {
+        return data.acknowledgedBy && data.acknowledgedAt;
+      }
+      return true;
+    },
+    {
+      message:
+        'Both acknowledgedBy and acknowledgedAt must be provided when acknowledging an alert',
+      path: ['acknowledgedBy', 'acknowledgedAt'],
     }
-    return true;
-  },
-  {
-    message: "Both acknowledgedBy and acknowledgedAt must be provided when acknowledging an alert",
-    path: ["acknowledgedBy", "acknowledgedAt"]
-  }
-);
+  );
 
 // Acknowledge alert schema
 export const acknowledgeAlertSchema = z.object({
   alertId: uuidSchema,
   acknowledgedBy: uuidSchema,
-  note: z.string().optional().transform(val => val?.trim()).pipe(z.string().max(500, 'Note too long').optional())
+  note: z
+    .string()
+    .optional()
+    .transform((val) => val?.trim())
+    .pipe(z.string().max(500, 'Note too long').optional()),
 });
 
 // Resolve alert schema
 export const resolveAlertSchema = z.object({
   alertId: uuidSchema,
   resolvedBy: uuidSchema,
-  resolution: z.string().min(1, 'Resolution description required').max(1000, 'Resolution too long'),
-  actionsTaken: z.array(z.string()).optional()
+  resolution: z
+    .string()
+    .min(1, 'Resolution description required')
+    .max(1000, 'Resolution too long'),
+  actionsTaken: z.array(z.string()).optional(),
 });
 
 // =====================================================
@@ -213,49 +228,60 @@ export const resolveAlertSchema = z.object({
 // =====================================================
 
 const reportFiltersSchema = z.object({
-  dateRange: z.object({
-    start: z.date(),
-    end: z.date()
-  }).optional().refine(
-    (data) => !data || data.start <= data.end,
-    { message: "Start date must be before or equal to end date" }
-  ),
+  dateRange: z
+    .object({
+      start: z.date(),
+      end: z.date(),
+    })
+    .optional()
+    .refine((data) => !data || data.start <= data.end, {
+      message: 'Start date must be before or equal to end date',
+    }),
   productIds: z.array(uuidSchema).optional(),
   categoryIds: z.array(uuidSchema).optional(),
   supplierId: uuidSchema.optional(),
   costCenterId: uuidSchema.optional(),
   alertTypes: z.array(alertTypeSchema).optional(),
   severityLevels: z.array(severityLevelSchema).optional(),
-  customFilters: z.record(z.any()).optional()
+  customFilters: z.record(z.any()).optional(),
 });
 
-const reportScheduleConfigSchema = z.object({
-  frequency: z.enum(['daily', 'weekly', 'monthly']),
-  dayOfWeek: z.number().min(0).max(6).optional(), // 0 = Sunday
-  dayOfMonth: z.number().min(1).max(31).optional(),
-  time: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/, 'Invalid time format (HH:MM)'),
-  recipients: z.array(emailSchema).min(1, 'At least one recipient required'),
-  enabled: z.boolean().default(true)
-}).refine(
-  (data) => {
-    if (data.frequency === 'weekly' && !data.dayOfWeek) {
-      return false;
+const reportScheduleConfigSchema = z
+  .object({
+    frequency: z.enum(['daily', 'weekly', 'monthly']),
+    dayOfWeek: z.number().min(0).max(6).optional(), // 0 = Sunday
+    dayOfMonth: z.number().min(1).max(31).optional(),
+    time: z
+      .string()
+      .regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/, 'Invalid time format (HH:MM)'),
+    recipients: z.array(emailSchema).min(1, 'At least one recipient required'),
+    enabled: z.boolean().default(true),
+  })
+  .refine(
+    (data) => {
+      if (data.frequency === 'weekly' && !data.dayOfWeek) {
+        return false;
+      }
+      if (data.frequency === 'monthly' && !data.dayOfMonth) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message:
+        'dayOfWeek required for weekly frequency, dayOfMonth required for monthly frequency',
     }
-    if (data.frequency === 'monthly' && !data.dayOfMonth) {
-      return false;
-    }
-    return true;
-  },
-  {
-    message: "dayOfWeek required for weekly frequency, dayOfMonth required for monthly frequency"
-  }
-);
+  );
 
 export const customStockReportSchema = z.object({
   id: uuidSchema.optional(),
   clinicId: uuidSchema,
   userId: uuidSchema,
-  reportName: z.string().min(1, 'Report name required').max(200, 'Report name too long').trim(),
+  reportName: z
+    .string()
+    .min(1, 'Report name required')
+    .max(200, 'Report name too long')
+    .trim(),
   reportType: reportTypeSchema,
   filters: reportFiltersSchema,
   scheduleConfig: reportScheduleConfigSchema.optional(),
@@ -263,7 +289,7 @@ export const customStockReportSchema = z.object({
   lastExecutedAt: z.date().optional(),
   executionCount: nonNegativeNumberSchema.default(0),
   createdAt: z.date().optional(),
-  updatedAt: z.date().optional()
+  updatedAt: z.date().optional(),
 });
 
 // Create custom report schema
@@ -272,7 +298,7 @@ export const createCustomReportSchema = customStockReportSchema.omit({
   lastExecutedAt: true,
   executionCount: true,
   createdAt: true,
-  updatedAt: true
+  updatedAt: true,
 });
 
 // =====================================================
@@ -294,7 +320,7 @@ export const stockPerformanceMetricsSchema = z.object({
   productsCount: nonNegativeNumberSchema,
   outOfStockCount: nonNegativeNumberSchema,
   lowStockCount: nonNegativeNumberSchema,
-  createdAt: z.date().optional()
+  createdAt: z.date().optional(),
 });
 
 // =====================================================
@@ -309,14 +335,14 @@ export const stockKPIsSchema = z.object({
   activeAlerts: nonNegativeNumberSchema,
   criticalAlerts: nonNegativeNumberSchema,
   wasteValue: nonNegativeNumberSchema,
-  wastePercentage: percentageSchema
+  wastePercentage: percentageSchema,
 });
 
 export const consumptionTrendSchema = z.object({
   date: z.string().datetime(),
   value: nonNegativeNumberSchema,
   category: z.string().optional(),
-  trend: z.enum(['up', 'down', 'stable']).optional()
+  trend: z.enum(['up', 'down', 'stable']).optional(),
 });
 
 export const topProductSchema = z.object({
@@ -325,21 +351,21 @@ export const topProductSchema = z.object({
   sku: z.string().optional(),
   consumption: nonNegativeNumberSchema,
   value: nonNegativeNumberSchema,
-  changePercentage: z.number().optional()
+  changePercentage: z.number().optional(),
 });
 
 export const alertsByTypeSchema = z.object({
   type: alertTypeSchema,
   count: nonNegativeNumberSchema,
   severity: severityLevelSchema,
-  percentage: percentageSchema.optional()
+  percentage: percentageSchema.optional(),
 });
 
 export const wasteAnalysisSchema = z.object({
   period: z.string(),
   waste: nonNegativeNumberSchema,
   percentage: percentageSchema,
-  trend: z.enum(['improving', 'worsening', 'stable']).optional()
+  trend: z.enum(['improving', 'worsening', 'stable']).optional(),
 });
 
 export const recommendationSchema = z.object({
@@ -350,13 +376,17 @@ export const recommendationSchema = z.object({
   message: z.string().min(1).max(500),
   actionable: z.boolean(),
   productId: uuidSchema.optional(),
-  actions: z.array(z.object({
-    label: z.string(),
-    action: z.string(),
-    parameters: z.record(z.any()).optional()
-  })).optional(),
+  actions: z
+    .array(
+      z.object({
+        label: z.string(),
+        action: z.string(),
+        parameters: z.record(z.any()).optional(),
+      })
+    )
+    .optional(),
   dismissible: z.boolean().default(true),
-  createdAt: z.date().default(() => new Date())
+  createdAt: z.date().default(() => new Date()),
 });
 
 export const stockDashboardDataSchema = z.object({
@@ -365,11 +395,11 @@ export const stockDashboardDataSchema = z.object({
     consumptionTrend: z.array(consumptionTrendSchema),
     topProducts: z.array(topProductSchema),
     alertsByType: z.array(alertsByTypeSchema),
-    wasteAnalysis: z.array(wasteAnalysisSchema)
+    wasteAnalysis: z.array(wasteAnalysisSchema),
   }),
   alerts: z.array(stockAlertSchema),
   recommendations: z.array(recommendationSchema),
-  lastUpdated: z.date().default(() => new Date())
+  lastUpdated: z.date().default(() => new Date()),
 });
 
 // =====================================================
@@ -384,8 +414,10 @@ export const alertsQuerySchema = z.object({
   productId: uuidSchema.optional(),
   limit: z.number().int().min(1).max(100).default(50),
   offset: z.number().int().min(0).default(0),
-  sortBy: z.enum(['created_at', 'severity_level', 'alert_type']).default('created_at'),
-  sortOrder: z.enum(['asc', 'desc']).default('desc')
+  sortBy: z
+    .enum(['created_at', 'severity_level', 'alert_type'])
+    .default('created_at'),
+  sortOrder: z.enum(['asc', 'desc']).default('desc'),
 });
 
 // Query parameters for reports
@@ -395,7 +427,7 @@ export const reportsQuerySchema = z.object({
   endDate: z.string().datetime().optional(),
   productIds: z.array(uuidSchema).optional(),
   categoryIds: z.array(uuidSchema).optional(),
-  format: z.enum(['json', 'csv', 'pdf']).default('json')
+  format: z.enum(['json', 'csv', 'pdf']).default('json'),
 });
 
 // =====================================================
@@ -410,8 +442,12 @@ export type NotificationChannel = z.infer<typeof notificationChannelSchema>;
 export type ReportType = z.infer<typeof reportTypeSchema>;
 
 export type StockAlertConfig = z.infer<typeof stockAlertConfigSchema>;
-export type CreateStockAlertConfig = z.infer<typeof createStockAlertConfigSchema>;
-export type UpdateStockAlertConfig = z.infer<typeof updateStockAlertConfigSchema>;
+export type CreateStockAlertConfig = z.infer<
+  typeof createStockAlertConfigSchema
+>;
+export type UpdateStockAlertConfig = z.infer<
+  typeof updateStockAlertConfigSchema
+>;
 
 export type StockAlert = z.infer<typeof stockAlertSchema>;
 export type AcknowledgeAlert = z.infer<typeof acknowledgeAlertSchema>;
@@ -422,7 +458,9 @@ export type CreateCustomReport = z.infer<typeof createCustomReportSchema>;
 export type ReportFilters = z.infer<typeof reportFiltersSchema>;
 export type ReportScheduleConfig = z.infer<typeof reportScheduleConfigSchema>;
 
-export type StockPerformanceMetrics = z.infer<typeof stockPerformanceMetricsSchema>;
+export type StockPerformanceMetrics = z.infer<
+  typeof stockPerformanceMetricsSchema
+>;
 export type StockKPIs = z.infer<typeof stockKPIsSchema>;
 export type ConsumptionTrend = z.infer<typeof consumptionTrendSchema>;
 export type TopProduct = z.infer<typeof topProductSchema>;
@@ -493,7 +531,9 @@ export const validateStockAlertConfig = (data: unknown): StockAlertConfig => {
   return stockAlertConfigSchema.parse(data);
 };
 
-export const validateCreateStockAlertConfig = (data: unknown): CreateStockAlertConfig => {
+export const validateCreateStockAlertConfig = (
+  data: unknown
+): CreateStockAlertConfig => {
   return createStockAlertConfigSchema.parse(data);
 };
 
@@ -541,28 +581,28 @@ export const ALERT_TYPE_LABELS = {
   [AlertType.EXPIRING]: 'Próximo ao Vencimento',
   [AlertType.EXPIRED]: 'Vencido',
   [AlertType.OVERSTOCK]: 'Excesso de Estoque',
-  [AlertType.CRITICAL_SHORTAGE]: 'Falta Crítica'
+  [AlertType.CRITICAL_SHORTAGE]: 'Falta Crítica',
 } as const;
 
 export const SEVERITY_LABELS = {
   [SeverityLevel.LOW]: 'Baixa',
   [SeverityLevel.MEDIUM]: 'Média',
   [SeverityLevel.HIGH]: 'Alta',
-  [SeverityLevel.CRITICAL]: 'Crítica'
+  [SeverityLevel.CRITICAL]: 'Crítica',
 } as const;
 
 export const STATUS_LABELS = {
   [AlertStatus.ACTIVE]: 'Ativo',
   [AlertStatus.ACKNOWLEDGED]: 'Reconhecido',
   [AlertStatus.RESOLVED]: 'Resolvido',
-  [AlertStatus.DISMISSED]: 'Descartado'
+  [AlertStatus.DISMISSED]: 'Descartado',
 } as const;
 
 export const NOTIFICATION_CHANNEL_LABELS = {
   [NotificationChannel.IN_APP]: 'Notificação no App',
   [NotificationChannel.EMAIL]: 'Email',
   [NotificationChannel.WHATSAPP]: 'WhatsApp',
-  [NotificationChannel.SMS]: 'SMS'
+  [NotificationChannel.SMS]: 'SMS',
 } as const;
 
 export const REPORT_TYPE_LABELS = {
@@ -571,5 +611,5 @@ export const REPORT_TYPE_LABELS = {
   [ReportType.MOVEMENT]: 'Relatório de Movimentação',
   [ReportType.EXPIRATION]: 'Relatório de Vencimentos',
   [ReportType.CUSTOM]: 'Relatório Personalizado',
-  [ReportType.PERFORMANCE]: 'Métricas de Performance'
+  [ReportType.PERFORMANCE]: 'Métricas de Performance',
 } as const;

@@ -2,17 +2,17 @@
 // Story 11.4: Alertas e Relatórios de Estoque
 // Cron job para avaliar e gerar alertas automaticamente
 
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { StockAlertService } from '@/app/lib/services/stock-alert.service';
 import { StockAlertError } from '@/app/lib/types/stock';
+import { createClient } from '@/app/utils/supabase/server';
 
 // =====================================================
 // CONFIGURATION
 // =====================================================
 
 const BATCH_SIZE = 100; // Process in batches to avoid memory issues
-const MAX_EXECUTION_TIME = 50000; // 50 seconds (Vercel function timeout is 60s)
+const MAX_EXECUTION_TIME = 50_000; // 50 seconds (Vercel function timeout is 60s)
 const RETRY_ATTEMPTS = 3;
 
 // =====================================================
@@ -46,7 +46,7 @@ function validateCronRequest(request: NextRequest): boolean {
   // In production, validate using Vercel's cron secret
   const authHeader = request.headers.get('authorization');
   const expectedAuth = `Bearer ${process.env.CRON_SECRET}`;
-  
+
   if (process.env.NODE_ENV === 'production' && authHeader !== expectedAuth) {
     return false;
   }
@@ -79,7 +79,7 @@ async function getActiveClinics(supabase: any): Promise<string[]> {
  * Processes alerts for a batch of clinics
  */
 async function processBatch(
-  clinicIds: string[], 
+  clinicIds: string[],
   supabase: any,
   startTime: number
 ): Promise<ProcessingResult> {
@@ -88,7 +88,7 @@ async function processBatch(
     alertsGenerated: 0,
     errors: [],
     executionTime: 0,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
 
   for (const clinicId of clinicIds) {
@@ -104,7 +104,7 @@ async function processBatch(
       console.error(`Failed to process clinic ${clinicId}:`, error);
       result.errors.push({
         clinicId,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       });
     }
 
@@ -119,12 +119,12 @@ async function processBatch(
  * Processes alerts for a single clinic
  */
 async function processClinicAlerts(
-  clinicId: string, 
-  supabase: any, 
+  clinicId: string,
+  supabase: any,
   result: ProcessingResult
 ): Promise<void> {
   // Create a service instance for this clinic
-  const alertService = new StockAlertService(supabase);
+  const _alertService = new StockAlertService(supabase);
 
   let attempts = 0;
   while (attempts < RETRY_ATTEMPTS) {
@@ -135,17 +135,18 @@ async function processClinicAlerts(
       result.alertsGenerated += alerts.length;
 
       // Log successful processing
-      console.log(`Processed clinic ${clinicId}: ${alerts.length} alerts generated`);
+      console.log(
+        `Processed clinic ${clinicId}: ${alerts.length} alerts generated`
+      );
       break;
-
     } catch (error) {
       attempts++;
       if (attempts >= RETRY_ATTEMPTS) {
         throw error;
       }
-      
+
       // Exponential backoff
-      await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempts) * 1000));
+      await new Promise((resolve) => setTimeout(resolve, 2 ** attempts * 1000));
     }
   }
 }
@@ -153,7 +154,10 @@ async function processClinicAlerts(
 /**
  * Evaluates alerts for a specific clinic
  */
-async function evaluateClinicAlerts(clinicId: string, supabase: any): Promise<any[]> {
+async function evaluateClinicAlerts(
+  clinicId: string,
+  supabase: any
+): Promise<any[]> {
   // Get active alert configurations for the clinic
   const { data: configs, error: configError } = await supabase
     .from('stock_alert_configs')
@@ -203,14 +207,17 @@ async function evaluateClinicAlerts(clinicId: string, supabase: any): Promise<an
 /**
  * Evaluates a single alert configuration condition
  */
-async function evaluateConfigCondition(config: any, supabase: any): Promise<any | null> {
+async function evaluateConfigCondition(
+  config: any,
+  supabase: any
+): Promise<any | null> {
   const product = config.product;
   if (!product) {
     return null;
   }
 
   let shouldAlert = false;
-  let currentValue: number = 0;
+  let currentValue = 0;
   let message = '';
 
   switch (config.alert_type) {
@@ -223,10 +230,13 @@ async function evaluateConfigCondition(config: any, supabase: any): Promise<any 
     case 'expiring':
       if (product.expiration_date) {
         const daysUntilExpiration = Math.ceil(
-          (new Date(product.expiration_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+          (new Date(product.expiration_date).getTime() - Date.now()) /
+            (1000 * 60 * 60 * 24)
         );
         currentValue = daysUntilExpiration;
-        shouldAlert = daysUntilExpiration <= config.threshold_value && daysUntilExpiration > 0;
+        shouldAlert =
+          daysUntilExpiration <= config.threshold_value &&
+          daysUntilExpiration > 0;
         message = `Produto ${product.name} vence em ${daysUntilExpiration} dias`;
       }
       break;
@@ -234,7 +244,8 @@ async function evaluateConfigCondition(config: any, supabase: any): Promise<any 
     case 'expired':
       if (product.expiration_date) {
         const daysUntilExpiration = Math.ceil(
-          (new Date(product.expiration_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+          (new Date(product.expiration_date).getTime() - Date.now()) /
+            (1000 * 60 * 60 * 24)
         );
         currentValue = Math.abs(daysUntilExpiration);
         shouldAlert = daysUntilExpiration <= 0;
@@ -242,12 +253,13 @@ async function evaluateConfigCondition(config: any, supabase: any): Promise<any 
       }
       break;
 
-    case 'overstock':
+    case 'overstock': {
       currentValue = product.current_stock || 0;
-      const maxStock = product.max_stock || (product.min_stock * 3); // Default max = 3x min
+      const maxStock = product.max_stock || product.min_stock * 3; // Default max = 3x min
       shouldAlert = currentValue >= maxStock;
       message = `Excesso de estoque para ${product.name}: ${currentValue} unidades (máximo: ${maxStock})`;
       break;
+    }
 
     default:
       return null;
@@ -287,9 +299,9 @@ async function evaluateConfigCondition(config: any, supabase: any): Promise<any 
     metadata: {
       productName: product.name,
       generatedBy: 'system',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     },
-    triggered_at: new Date().toISOString()
+    triggered_at: new Date().toISOString(),
   };
 
   const { data: newAlert, error } = await supabase
@@ -299,30 +311,27 @@ async function evaluateConfigCondition(config: any, supabase: any): Promise<any 
     .single();
 
   if (error) {
-    throw new StockAlertError(
-      'Failed to create alert',
-      'CREATE_ALERT_FAILED',
-      { configId: config.id, error: error.message }
-    );
+    throw new StockAlertError('Failed to create alert', 'CREATE_ALERT_FAILED', {
+      configId: config.id,
+      error: error.message,
+    });
   }
 
   // Log event for audit trail
-  await supabase
-    .from('stock_alert_events')
-    .insert({
-      event_type: 'alert_generated',
-      entity_id: newAlert.id,
-      clinic_id: config.clinic_id,
-      event_data: {
-        configId: config.id,
-        productId: product.id,
-        alertType: config.alert_type,
-        severityLevel: config.severity_level,
-        currentValue,
-        thresholdValue: config.threshold_value,
-        generatedBy: 'system'
-      }
-    });
+  await supabase.from('stock_alert_events').insert({
+    event_type: 'alert_generated',
+    entity_id: newAlert.id,
+    clinic_id: config.clinic_id,
+    event_data: {
+      configId: config.id,
+      productId: product.id,
+      alertType: config.alert_type,
+      severityLevel: config.severity_level,
+      currentValue,
+      thresholdValue: config.threshold_value,
+      generatedBy: 'system',
+    },
+  });
 
   return newAlert;
 }
@@ -331,20 +340,18 @@ async function evaluateConfigCondition(config: any, supabase: any): Promise<any 
  * Records processing statistics
  */
 async function recordProcessingStats(
-  supabase: any, 
+  supabase: any,
   result: ProcessingResult
 ): Promise<void> {
   try {
-    await supabase
-      .from('alert_processing_stats')
-      .insert({
-        processed_at: result.timestamp,
-        clinics_processed: result.clinicsProcessed,
-        alerts_generated: result.alertsGenerated,
-        execution_time_ms: result.executionTime,
-        error_count: result.errors.length,
-        errors: result.errors
-      });
+    await supabase.from('alert_processing_stats').insert({
+      processed_at: result.timestamp,
+      clinics_processed: result.clinicsProcessed,
+      alerts_generated: result.alertsGenerated,
+      execution_time_ms: result.executionTime,
+      error_count: result.errors.length,
+      errors: result.errors,
+    });
   } catch (error) {
     console.error('Failed to record processing stats:', error);
     // Don't throw - this is not critical
@@ -378,7 +385,9 @@ export async function POST(request: NextRequest) {
 
     // Get all active clinics
     const clinicIds = await getActiveClinics(supabase);
-    console.log(`Found ${clinicIds.length} clinics with active alert configurations`);
+    console.log(
+      `Found ${clinicIds.length} clinics with active alert configurations`
+    );
 
     if (clinicIds.length === 0) {
       return NextResponse.json({
@@ -388,8 +397,8 @@ export async function POST(request: NextRequest) {
           clinicsProcessed: 0,
           alertsGenerated: 0,
           errors: [],
-          executionTime: Date.now() - startTime
-        }
+          executionTime: Date.now() - startTime,
+        },
       });
     }
 
@@ -404,15 +413,15 @@ export async function POST(request: NextRequest) {
       alertsGenerated: 0,
       errors: [],
       executionTime: 0,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     // Process each batch
     for (let i = 0; i < batches.length; i++) {
       console.log(`Processing batch ${i + 1}/${batches.length}`);
-      
+
       const batchResult = await processBatch(batches[i], supabase, startTime);
-      
+
       // Merge results
       totalResult.clinicsProcessed += batchResult.clinicsProcessed;
       totalResult.alertsGenerated += batchResult.alertsGenerated;
@@ -434,40 +443,39 @@ export async function POST(request: NextRequest) {
       clinicsProcessed: totalResult.clinicsProcessed,
       alertsGenerated: totalResult.alertsGenerated,
       errorCount: totalResult.errors.length,
-      executionTime: `${totalResult.executionTime}ms`
+      executionTime: `${totalResult.executionTime}ms`,
     });
 
     return NextResponse.json({
       success: true,
       message: 'Alert evaluation completed',
-      data: totalResult
+      data: totalResult,
     });
-
   } catch (error) {
     const executionTime = Date.now() - startTime;
-    
+
     console.error('Alert evaluation job failed:', {
       error: error instanceof Error ? error.message : 'Unknown error',
-      executionTime: `${executionTime}ms`
+      executionTime: `${executionTime}ms`,
     });
 
     if (error instanceof StockAlertError) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: error.message, 
+        {
+          success: false,
+          error: error.message,
           code: error.code,
-          context: error.context
+          context: error.context,
         },
         { status: 500 }
       );
     }
 
     return NextResponse.json(
-      { 
-        success: false, 
-        error: 'Internal server error', 
-        code: 'INTERNAL_ERROR' 
+      {
+        success: false,
+        error: 'Internal server error',
+        code: 'INTERNAL_ERROR',
       },
       { status: 500 }
     );
@@ -487,6 +495,6 @@ export async function GET() {
     status: 'healthy',
     service: 'alert-evaluation-cron',
     timestamp: new Date().toISOString(),
-    version: '1.0.0'
+    version: '1.0.0',
   });
 }

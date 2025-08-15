@@ -15,8 +15,8 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     autoRefreshToken: true,
     persistSession: true,
-    detectSessionInUrl: true
-  }
+    detectSessionInUrl: true,
+  },
 });
 
 // =============================================================================================
@@ -24,15 +24,19 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 // =============================================================================================
 
 // Sign up with email and password
-export const signUp = async (email: string, password: string, metadata?: any) => {
+export const signUp = async (
+  email: string,
+  password: string,
+  metadata?: any
+) => {
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
-      data: metadata
-    }
+      data: metadata,
+    },
   });
-  
+
   return { data, error };
 };
 
@@ -40,9 +44,9 @@ export const signUp = async (email: string, password: string, metadata?: any) =>
 export const signIn = async (email: string, password: string) => {
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
-    password
+    password,
   });
-  
+
   return { data, error };
 };
 
@@ -54,13 +58,19 @@ export const signOut = async () => {
 
 // Get current session
 export const getSession = async () => {
-  const { data: { session }, error } = await supabase.auth.getSession();
+  const {
+    data: { session },
+    error,
+  } = await supabase.auth.getSession();
   return { session, error };
 };
 
 // Get current user
 export const getUser = async () => {
-  const { data: { user }, error } = await supabase.auth.getUser();
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
   return { user, error };
 };
 
@@ -69,7 +79,9 @@ export const getUser = async () => {
 // =============================================================================================
 
 // Listen to auth state changes
-export const onAuthStateChange = (callback: (event: string, session: any) => void) => {
+export const onAuthStateChange = (
+  callback: (event: string, session: any) => void
+) => {
   return supabase.auth.onAuthStateChange(callback);
 };
 
@@ -80,12 +92,12 @@ export const onAuthStateChange = (callback: (event: string, session: any) => voi
 /*
  * This file provides Supabase client configuration for authentication purposes.
  * The main database operations are handled by Prisma (see lib/prisma.ts).
- * 
+ *
  * Supabase is used here primarily for:
  * - User authentication
  * - Session management
  * - OAuth providers (Google, GitHub, etc.)
- * 
+ *
  * For database operations, use Prisma client instead.
  */
 

@@ -1,19 +1,19 @@
-import { describe, expect, test, beforeEach, afterEach, jest } from '@jest/globals';
+import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import {
-  formatCurrency,
-  formatPercentage,
-  calculateGrowthRate,
+  aggregateMetricsByPeriod,
+  calculateARR,
   calculateChurnRate,
+  calculateGrowthRate,
   calculateLTV,
   calculateMRR,
-  calculateARR,
-  aggregateMetricsByPeriod,
-  generateDateRange,
-  validateDateRange,
-  parseAnalyticsFilters,
   exportToCSV,
+  exportToExcel,
   exportToPDF,
-  exportToExcel
+  formatCurrency,
+  formatPercentage,
+  generateDateRange,
+  parseAnalyticsFilters,
+  validateDateRange,
 } from '@/lib/analytics/utils';
 
 // Mock date-fns
@@ -24,23 +24,42 @@ jest.mock('date-fns', () => ({
       return d.toISOString().split('T')[0]; // Returns actual yyyy-mm-dd format
     }
     if (formatStr === 'MMM yyyy') {
-      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const monthNames = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec',
+      ];
       return `${monthNames[d.getMonth()]} ${d.getFullYear()}`; // Returns actual month year format
     }
     return d.toISOString().split('T')[0];
   }),
-  subDays: jest.fn((date, days) => new Date(date.getTime() - days * 24 * 60 * 60 * 1000)),
+  subDays: jest.fn(
+    (date, days) => new Date(date.getTime() - days * 24 * 60 * 60 * 1000)
+  ),
   subMonths: jest.fn((date, months) => {
     const newDate = new Date(date);
     newDate.setMonth(newDate.getMonth() - months);
     return newDate;
   }),
-  startOfMonth: jest.fn((date) => new Date(date.getFullYear(), date.getMonth(), 1)),
-  endOfMonth: jest.fn((date) => new Date(date.getFullYear(), date.getMonth() + 1, 0)),
+  startOfMonth: jest.fn(
+    (date) => new Date(date.getFullYear(), date.getMonth(), 1)
+  ),
+  endOfMonth: jest.fn(
+    (date) => new Date(date.getFullYear(), date.getMonth() + 1, 0)
+  ),
   isValid: jest.fn(() => true),
   parseISO: jest.fn((dateStr) => new Date(dateStr)),
   differenceInDays: jest.fn(() => 30),
-  differenceInMonths: jest.fn(() => 12)
+  differenceInMonths: jest.fn(() => 12),
 }));
 
 // Mock lodash groupBy
@@ -55,7 +74,7 @@ jest.mock('lodash', () => ({
       result[key].push(item);
     }
     return result;
-  })
+  }),
 }));
 
 // Mock jsPDF and xlsx
@@ -63,12 +82,12 @@ const mockPDFInstance = {
   text: jest.fn(),
   addPage: jest.fn(),
   save: jest.fn(),
-  output: jest.fn().mockReturnValue('mock-pdf-data')
+  output: jest.fn().mockReturnValue('mock-pdf-data'),
 };
 
 jest.mock('jspdf', () => ({
   __esModule: true,
-  default: jest.fn(() => mockPDFInstance)
+  default: jest.fn(() => mockPDFInstance),
 }));
 
 jest.mock('xlsx', () => ({
@@ -76,9 +95,9 @@ jest.mock('xlsx', () => ({
     json_to_sheet: jest.fn().mockReturnValue({}),
     book_new: jest.fn().mockReturnValue({}),
     book_append_sheet: jest.fn(),
-    sheet_to_csv: jest.fn().mockReturnValue('mock,csv,data')
+    sheet_to_csv: jest.fn().mockReturnValue('mock,csv,data'),
   },
-  write: jest.fn().mockReturnValue('mock-xlsx-data')
+  write: jest.fn().mockReturnValue('mock-xlsx-data'),
 }));
 
 describe('Analytics Utils', () => {
@@ -91,7 +110,7 @@ describe('Analytics Utils', () => {
       // Test various amounts
       expect(formatCurrency(1234.56)).toBe('$1,234.56');
       expect(formatCurrency(0)).toBe('$0.00');
-      expect(formatCurrency(1000000)).toBe('$1,000,000.00');
+      expect(formatCurrency(1_000_000)).toBe('$1,000,000.00');
     });
 
     test('should format negative amounts correctly', () => {
@@ -109,7 +128,7 @@ describe('Analytics Utils', () => {
     });
 
     test('should handle invalid inputs', () => {
-      expect(formatCurrency(NaN)).toBe('$0.00');
+      expect(formatCurrency(Number.NaN)).toBe('$0.00');
       expect(formatCurrency(null as any)).toBe('$0.00');
       expect(formatCurrency(undefined as any)).toBe('$0.00');
     });
@@ -134,8 +153,8 @@ describe('Analytics Utils', () => {
 
     test('should handle edge cases', () => {
       expect(formatPercentage(0)).toBe('0.00%');
-      expect(formatPercentage(NaN)).toBe('0.00%');
-      expect(formatPercentage(Infinity)).toBe('0.00%');
+      expect(formatPercentage(Number.NaN)).toBe('0.00%');
+      expect(formatPercentage(Number.POSITIVE_INFINITY)).toBe('0.00%');
     });
   });
 
@@ -147,7 +166,7 @@ describe('Analytics Utils', () => {
     });
 
     test('should handle zero current value', () => {
-      expect(calculateGrowthRate(0, 100)).toBe(Infinity);
+      expect(calculateGrowthRate(0, 100)).toBe(Number.POSITIVE_INFINITY);
     });
 
     test('should handle zero previous value', () => {
@@ -155,8 +174,8 @@ describe('Analytics Utils', () => {
     });
 
     test('should handle invalid inputs', () => {
-      expect(calculateGrowthRate(NaN, 100)).toBeNaN();
-      expect(calculateGrowthRate(100, NaN)).toBeNaN();
+      expect(calculateGrowthRate(Number.NaN, 100)).toBeNaN();
+      expect(calculateGrowthRate(100, Number.NaN)).toBeNaN();
     });
   });
 
@@ -176,8 +195,8 @@ describe('Analytics Utils', () => {
     });
 
     test('should handle invalid inputs', () => {
-      expect(calculateChurnRate(NaN, 100)).toBeNaN();
-      expect(calculateChurnRate(10, NaN)).toBeNaN();
+      expect(calculateChurnRate(Number.NaN, 100)).toBeNaN();
+      expect(calculateChurnRate(10, Number.NaN)).toBeNaN();
       expect(calculateChurnRate(-10, 100)).toBe(0); // Negative churn should be 0
     });
   });
@@ -189,7 +208,7 @@ describe('Analytics Utils', () => {
     });
 
     test('should handle zero churn rate', () => {
-      expect(calculateLTV(50, 0)).toBe(Infinity);
+      expect(calculateLTV(50, 0)).toBe(Number.POSITIVE_INFINITY);
     });
 
     test('should handle zero ARPU', () => {
@@ -197,8 +216,8 @@ describe('Analytics Utils', () => {
     });
 
     test('should handle invalid inputs', () => {
-      expect(calculateLTV(NaN, 0.05)).toBeNaN();
-      expect(calculateLTV(50, NaN)).toBeNaN();
+      expect(calculateLTV(Number.NaN, 0.05)).toBeNaN();
+      expect(calculateLTV(50, Number.NaN)).toBeNaN();
       expect(calculateLTV(-50, 0.05)).toBe(0); // Negative ARPU should return 0
     });
   });
@@ -209,9 +228,9 @@ describe('Analytics Utils', () => {
         { amount: 2900, status: 'active' }, // $29
         { amount: 4900, status: 'active' }, // $49
         { amount: 9900, status: 'cancelled' }, // Should be excluded
-        { amount: 1900, status: 'active' }  // $19
+        { amount: 1900, status: 'active' }, // $19
       ];
-      
+
       expect(calculateMRR(subscriptions)).toBe(97); // $97 MRR
     });
 
@@ -223,33 +242,33 @@ describe('Analytics Utils', () => {
       const subscriptions = [
         { amount: 2900, status: 'cancelled' },
         { amount: 4900, status: 'past_due' },
-        { amount: 1900, status: 'paused' }
+        { amount: 1900, status: 'paused' },
       ];
-      
+
       expect(calculateMRR(subscriptions)).toBe(0);
     });
 
     test('should handle invalid subscription data', () => {
       const subscriptions = [
-        { amount: NaN, status: 'active' },
+        { amount: Number.NaN, status: 'active' },
         { amount: null, status: 'active' },
         { status: 'active' }, // Missing amount
-        { amount: 2900 } // Missing status
+        { amount: 2900 }, // Missing status
       ];
-      
+
       expect(calculateMRR(subscriptions)).toBe(0);
     });
   });
 
   describe('calculateARR', () => {
     test('should calculate ARR from MRR', () => {
-      expect(calculateARR(1000)).toBe(12000); // $1000 MRR = $12,000 ARR
+      expect(calculateARR(1000)).toBe(12_000); // $1000 MRR = $12,000 ARR
       expect(calculateARR(0)).toBe(0);
     });
 
     test('should handle invalid MRR values', () => {
-      expect(calculateARR(NaN)).toBeNaN();
-      expect(calculateARR(-1000)).toBe(-12000); // Negative ARR
+      expect(calculateARR(Number.NaN)).toBeNaN();
+      expect(calculateARR(-1000)).toBe(-12_000); // Negative ARR
     });
   });
 
@@ -258,22 +277,22 @@ describe('Analytics Utils', () => {
       { date: '2024-01-01', value: 100, category: 'A' },
       { date: '2024-01-15', value: 150, category: 'B' },
       { date: '2024-02-01', value: 200, category: 'A' },
-      { date: '2024-02-15', value: 250, category: 'B' }
+      { date: '2024-02-15', value: 250, category: 'B' },
     ];
 
     test('should aggregate by month', () => {
-      const result = aggregateMetricsByPeriod(sampleData, 'month', (items) => 
+      const result = aggregateMetricsByPeriod(sampleData, 'month', (items) =>
         items.reduce((sum, item) => sum + item.value, 0)
       );
 
       expect(result).toEqual([
         { period: 'Jan 2024', value: 250 },
-        { period: 'Feb 2024', value: 450 }
+        { period: 'Feb 2024', value: 450 },
       ]);
     });
 
     test('should aggregate by day', () => {
-      const result = aggregateMetricsByPeriod(sampleData, 'day', (items) => 
+      const result = aggregateMetricsByPeriod(sampleData, 'day', (items) =>
         items.reduce((sum, item) => sum + item.value, 0)
       );
 
@@ -282,7 +301,7 @@ describe('Analytics Utils', () => {
     });
 
     test('should handle empty data', () => {
-      const result = aggregateMetricsByPeriod([], 'month', (items) => 
+      const result = aggregateMetricsByPeriod([], 'month', (items) =>
         items.reduce((sum, item) => sum + item.value, 0)
       );
 
@@ -290,13 +309,13 @@ describe('Analytics Utils', () => {
     });
 
     test('should handle custom aggregation functions', () => {
-      const result = aggregateMetricsByPeriod(sampleData, 'month', (items) => 
-        Math.max(...items.map(item => item.value))
+      const result = aggregateMetricsByPeriod(sampleData, 'month', (items) =>
+        Math.max(...items.map((item) => item.value))
       );
 
       expect(result).toEqual([
         { period: 'Jan 2024', value: 150 },
-        { period: 'Feb 2024', value: 250 }
+        { period: 'Feb 2024', value: 250 },
       ]);
     });
   });
@@ -305,9 +324,9 @@ describe('Analytics Utils', () => {
     test('should generate date range correctly', () => {
       const start = new Date('2024-01-01');
       const end = new Date('2024-01-03');
-      
+
       const result = generateDateRange(start, end);
-      
+
       expect(result).toHaveLength(3);
       expect(result[0].toISOString().substring(0, 10)).toBe('2024-01-01');
       expect(result[2].toISOString().substring(0, 10)).toBe('2024-01-03');
@@ -316,7 +335,7 @@ describe('Analytics Utils', () => {
     test('should handle single day range', () => {
       const date = new Date('2024-01-01');
       const result = generateDateRange(date, date);
-      
+
       expect(result).toHaveLength(1);
       expect(result[0].toISOString().substring(0, 10)).toBe('2024-01-01');
     });
@@ -324,8 +343,10 @@ describe('Analytics Utils', () => {
     test('should handle reverse date order', () => {
       const start = new Date('2024-01-03');
       const end = new Date('2024-01-01');
-      
-      expect(() => generateDateRange(start, end)).toThrow('Start date must be before or equal to end date');
+
+      expect(() => generateDateRange(start, end)).toThrow(
+        'Start date must be before or equal to end date'
+      );
     });
   });
 
@@ -333,27 +354,27 @@ describe('Analytics Utils', () => {
     test('should validate correct date ranges', () => {
       const start = new Date('2024-01-01');
       const end = new Date('2024-01-31');
-      
+
       expect(validateDateRange(start, end)).toBe(true);
     });
 
     test('should reject invalid date ranges', () => {
       const start = new Date('2024-01-31');
       const end = new Date('2024-01-01');
-      
+
       expect(validateDateRange(start, end)).toBe(false);
     });
 
     test('should handle equal dates', () => {
       const date = new Date('2024-01-01');
-      
+
       expect(validateDateRange(date, date)).toBe(true);
     });
 
     test('should handle invalid dates', () => {
       const invalidDate = new Date('invalid');
       const validDate = new Date('2024-01-01');
-      
+
       // Should return false for invalid dates (Date('invalid') creates Invalid Date)
       expect(validateDateRange(invalidDate, validDate)).toBe(false);
     });
@@ -366,26 +387,26 @@ describe('Analytics Utils', () => {
         metric: 'subscriptions',
         start_date: '2024-01-01',
         end_date: '2024-01-31',
-        group_by: 'plan'
+        group_by: 'plan',
       });
-      
+
       const result = parseAnalyticsFilters(params);
-      
+
       expect(result).toEqual({
         period: 'last_month',
         metric: 'subscriptions',
         startDate: new Date('2024-01-01'),
         endDate: new Date('2024-01-31'),
         groupBy: 'plan',
-        filters: {}
+        filters: {},
       });
     });
 
     test('should provide default values for missing parameters', () => {
       const params = new URLSearchParams({});
-      
+
       const result = parseAnalyticsFilters(params);
-      
+
       expect(result.period).toBe('last_30_days');
       expect(result.metric).toBe('all');
       expect(result.startDate).toBeInstanceOf(Date);
@@ -396,10 +417,12 @@ describe('Analytics Utils', () => {
       const params = new URLSearchParams({
         period: 'invalid_period',
         metric: 'invalid_metric',
-        start_date: 'invalid_date'
+        start_date: 'invalid_date',
       });
-      
-      expect(() => parseAnalyticsFilters(params)).toThrow('Invalid filter parameters');
+
+      expect(() => parseAnalyticsFilters(params)).toThrow(
+        'Invalid filter parameters'
+      );
     });
 
     test('should handle complex filters', () => {
@@ -408,14 +431,14 @@ describe('Analytics Utils', () => {
         start_date: '2024-01-01',
         end_date: '2024-01-31',
         'filter[status]': 'active',
-        'filter[plan]': 'premium'
+        'filter[plan]': 'premium',
       });
-      
+
       const result = parseAnalyticsFilters(params);
-      
+
       expect(result.filters).toEqual({
         status: 'active',
-        plan: 'premium'
+        plan: 'premium',
       });
     });
   });
@@ -423,15 +446,15 @@ describe('Analytics Utils', () => {
   describe('export functions', () => {
     const sampleData = [
       { id: 1, name: 'John Doe', email: 'john@example.com', amount: 29.99 },
-      { id: 2, name: 'Jane Smith', email: 'jane@example.com', amount: 49.99 }
+      { id: 2, name: 'Jane Smith', email: 'jane@example.com', amount: 49.99 },
     ];
 
     describe('exportToCSV', () => {
       test('should export data to CSV format', () => {
         const result = exportToCSV(sampleData, 'subscriptions');
-        
+
         expect(result).toBe('mock,csv,data');
-        
+
         const XLSX = require('xlsx');
         expect(XLSX.utils.json_to_sheet).toHaveBeenCalledWith(sampleData);
         expect(XLSX.utils.sheet_to_csv).toHaveBeenCalled();
@@ -439,16 +462,16 @@ describe('Analytics Utils', () => {
 
       test('should handle empty data', () => {
         const result = exportToCSV([], 'subscriptions');
-        
+
         expect(result).toBe('mock,csv,data');
       });
 
       test('should include metadata in filename', () => {
         const result = exportToCSV(sampleData, 'subscriptions', {
           filename: 'custom_export',
-          includeTimestamp: true
+          includeTimestamp: true,
         });
-        
+
         expect(result).toBe('mock,csv,data');
       });
     });
@@ -456,9 +479,9 @@ describe('Analytics Utils', () => {
     describe('exportToPDF', () => {
       test('should export data to PDF format', () => {
         const result = exportToPDF(sampleData, 'Subscription Report');
-        
+
         expect(result).toBe('mock-pdf-data');
-        
+
         const jsPDF = require('jspdf').default;
         expect(jsPDF).toHaveBeenCalled();
       });
@@ -467,25 +490,27 @@ describe('Analytics Utils', () => {
         const options = {
           title: 'Custom Report',
           fontSize: 12,
-          margins: { top: 20, left: 20 }
+          margins: { top: 20, left: 20 },
         };
-        
+
         const result = exportToPDF(sampleData, 'Custom Report', options);
-        
+
         expect(result).toBe('mock-pdf-data');
       });
 
       test('should handle large datasets with pagination', () => {
-        const largeData = Array(1000).fill(null).map((_, i) => ({
-          id: i,
-          name: `User ${i}`,
-          amount: Math.random() * 100
-        }));
-        
+        const largeData = Array(1000)
+          .fill(null)
+          .map((_, i) => ({
+            id: i,
+            name: `User ${i}`,
+            amount: Math.random() * 100,
+          }));
+
         const result = exportToPDF(largeData, 'Large Report');
-        
+
         expect(result).toBe('mock-pdf-data');
-        
+
         expect(mockPDFInstance.addPage).toHaveBeenCalled();
       });
     });
@@ -493,9 +518,9 @@ describe('Analytics Utils', () => {
     describe('exportToExcel', () => {
       test('should export data to Excel format', () => {
         const result = exportToExcel(sampleData, 'subscriptions');
-        
+
         expect(result).toBe('mock-xlsx-data');
-        
+
         const XLSX = require('xlsx');
         expect(XLSX.utils.json_to_sheet).toHaveBeenCalledWith(sampleData);
         expect(XLSX.utils.book_new).toHaveBeenCalled();
@@ -505,13 +530,13 @@ describe('Analytics Utils', () => {
       test('should handle multiple sheets', () => {
         const multiSheetData = {
           subscriptions: sampleData,
-          analytics: [{ metric: 'MRR', value: 15000 }]
+          analytics: [{ metric: 'MRR', value: 15_000 }],
         };
-        
+
         const result = exportToExcel(multiSheetData, 'multi_sheet_report');
-        
+
         expect(result).toBe('mock-xlsx-data');
-        
+
         const XLSX = require('xlsx');
         expect(XLSX.utils.book_append_sheet).toHaveBeenCalledTimes(2);
       });
@@ -521,12 +546,12 @@ describe('Analytics Utils', () => {
           formatting: {
             currency: ['amount'],
             percentage: ['growth_rate'],
-            date: ['created_at']
-          }
+            date: ['created_at'],
+          },
         };
-        
+
         const result = exportToExcel(sampleData, 'formatted_export', options);
-        
+
         expect(result).toBe('mock-xlsx-data');
       });
     });
@@ -555,9 +580,9 @@ describe('Analytics Utils', () => {
       const invalidData = [
         { amount: 'not a number', status: 'active' },
         { amount: 100, status: 123 },
-        'not an object'
+        'not an object',
       ];
-      
+
       expect(calculateMRR(invalidData as any)).toBe(0);
     });
   });

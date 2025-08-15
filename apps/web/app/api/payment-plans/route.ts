@@ -2,9 +2,9 @@
 // Story 6.1 - Task 3: Installment Management System
 // API endpoints for payment plan management
 
-import { NextRequest, NextResponse } from 'next/server';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { getInstallmentManager } from '@/lib/payments/installments/installment-manager';
 
@@ -15,32 +15,48 @@ const createPaymentPlanSchema = z.object({
   currency: z.string().length(3).default('BRL'),
   installmentCount: z.number().int().min(1).max(60),
   frequency: z.enum(['weekly', 'biweekly', 'monthly', 'quarterly']),
-  startDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
-    message: 'Invalid date format'
+  startDate: z.string().refine((date) => !Number.isNaN(Date.parse(date)), {
+    message: 'Invalid date format',
   }),
   description: z.string().optional(),
-  metadata: z.record(z.any()).optional().default({})
+  metadata: z.record(z.any()).optional().default({}),
 });
 
 const updatePaymentPlanSchema = z.object({
   totalAmount: z.number().positive().optional(),
   installmentCount: z.number().int().min(1).max(60).optional(),
   frequency: z.enum(['weekly', 'biweekly', 'monthly', 'quarterly']).optional(),
-  startDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
-    message: 'Invalid date format'
-  }).optional(),
+  startDate: z
+    .string()
+    .refine((date) => !Number.isNaN(Date.parse(date)), {
+      message: 'Invalid date format',
+    })
+    .optional(),
   description: z.string().optional(),
-  metadata: z.record(z.any()).optional()
+  metadata: z.record(z.any()).optional(),
 });
 
 const querySchema = z.object({
-  page: z.string().transform(Number).pipe(z.number().int().min(1)).optional().default('1'),
-  limit: z.string().transform(Number).pipe(z.number().int().min(1).max(100)).optional().default('20'),
+  page: z
+    .string()
+    .transform(Number)
+    .pipe(z.number().int().min(1))
+    .optional()
+    .default('1'),
+  limit: z
+    .string()
+    .transform(Number)
+    .pipe(z.number().int().min(1).max(100))
+    .optional()
+    .default('20'),
   status: z.enum(['active', 'completed', 'cancelled', 'defaulted']).optional(),
   customerId: z.string().uuid().optional(),
   frequency: z.enum(['weekly', 'biweekly', 'monthly', 'quarterly']).optional(),
-  sortBy: z.enum(['created_at', 'start_date', 'total_amount', 'status']).optional().default('created_at'),
-  sortOrder: z.enum(['asc', 'desc']).optional().default('desc')
+  sortBy: z
+    .enum(['created_at', 'start_date', 'total_amount', 'status'])
+    .optional()
+    .default('created_at'),
+  sortOrder: z.enum(['asc', 'desc']).optional().default('desc'),
 });
 
 /**
@@ -50,22 +66,23 @@ const querySchema = z.object({
 export async function GET(request: NextRequest) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    
+
     // Check authentication
-    const { data: { session }, error: authError } = await supabase.auth.getSession();
+    const {
+      data: { session },
+      error: authError,
+    } = await supabase.auth.getSession();
     if (authError || !session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Parse and validate query parameters
     const url = new URL(request.url);
     const queryParams = Object.fromEntries(url.searchParams.entries());
-    
+
     const validatedQuery = querySchema.parse(queryParams);
-    const { page, limit, status, customerId, frequency, sortBy, sortOrder } = validatedQuery;
+    const { page, limit, status, customerId, frequency, sortBy, sortOrder } =
+      validatedQuery;
 
     // Get installment manager
     const installmentManager = getInstallmentManager();
@@ -82,7 +99,7 @@ export async function GET(request: NextRequest) {
       limit,
       filters,
       sortBy,
-      sortOrder
+      sortOrder,
     });
 
     return NextResponse.json({
@@ -92,18 +109,17 @@ export async function GET(request: NextRequest) {
       filters: {
         status,
         customerId,
-        frequency
-      }
+        frequency,
+      },
     });
-
   } catch (error) {
     console.error('Error fetching payment plans:', error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { 
+        {
           error: 'Invalid query parameters',
-          details: error.errors
+          details: error.errors,
         },
         { status: 400 }
       );
@@ -123,14 +139,14 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    
+
     // Check authentication
-    const { data: { session }, error: authError } = await supabase.auth.getSession();
+    const {
+      data: { session },
+      error: authError,
+    } = await supabase.auth.getSession();
     if (authError || !session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Parse and validate request body
@@ -149,23 +165,25 @@ export async function POST(request: NextRequest) {
       frequency: validatedData.frequency,
       startDate: new Date(validatedData.startDate),
       description: validatedData.description,
-      metadata: validatedData.metadata
+      metadata: validatedData.metadata,
     });
 
-    return NextResponse.json({
-      success: true,
-      data: paymentPlan,
-      message: 'Payment plan created successfully'
-    }, { status: 201 });
-
+    return NextResponse.json(
+      {
+        success: true,
+        data: paymentPlan,
+        message: 'Payment plan created successfully',
+      },
+      { status: 201 }
+    );
   } catch (error) {
     console.error('Error creating payment plan:', error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { 
+        {
           error: 'Invalid request data',
-          details: error.errors
+          details: error.errors,
         },
         { status: 400 }
       );
@@ -179,12 +197,9 @@ export async function POST(request: NextRequest) {
           { status: 404 }
         );
       }
-      
+
       if (error.message.includes('Invalid installment configuration')) {
-        return NextResponse.json(
-          { error: error.message },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: error.message }, { status: 400 });
       }
     }
 
@@ -202,21 +217,21 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    
+
     // Check authentication
-    const { data: { session }, error: authError } = await supabase.auth.getSession();
+    const {
+      data: { session },
+      error: authError,
+    } = await supabase.auth.getSession();
     if (authError || !session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Parse request body
     const body = await request.json();
     const { action, paymentPlanIds, data: updateData } = body;
 
-    if (!action || !paymentPlanIds || !Array.isArray(paymentPlanIds)) {
+    if (!(action && paymentPlanIds && Array.isArray(paymentPlanIds))) {
       return NextResponse.json(
         { error: 'Invalid request: action and paymentPlanIds are required' },
         { status: 400 }
@@ -229,27 +244,28 @@ export async function PUT(request: NextRequest) {
     switch (action) {
       case 'cancel':
         results = await Promise.all(
-          paymentPlanIds.map(id => 
+          paymentPlanIds.map((id) =>
             installmentManager.cancelPaymentPlan(id, updateData?.reason)
           )
         );
         break;
 
-      case 'update':
+      case 'update': {
         if (!updateData) {
           return NextResponse.json(
             { error: 'Update data is required for update action' },
             { status: 400 }
           );
         }
-        
+
         const validatedUpdateData = updatePaymentPlanSchema.parse(updateData);
         results = await Promise.all(
-          paymentPlanIds.map(id => 
+          paymentPlanIds.map((id) =>
             installmentManager.modifyPaymentPlan(id, validatedUpdateData)
           )
         );
         break;
+      }
 
       default:
         return NextResponse.json(
@@ -261,17 +277,16 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: results,
-      message: `Bulk ${action} completed successfully`
+      message: `Bulk ${action} completed successfully`,
     });
-
   } catch (error) {
     console.error('Error in bulk payment plan operation:', error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { 
+        {
           error: 'Invalid request data',
-          details: error.errors
+          details: error.errors,
         },
         { status: 400 }
       );
@@ -291,21 +306,21 @@ export async function PUT(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    
+
     // Check authentication
-    const { data: { session }, error: authError } = await supabase.auth.getSession();
+    const {
+      data: { session },
+      error: authError,
+    } = await supabase.auth.getSession();
     if (authError || !session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Parse request body
     const body = await request.json();
     const { paymentPlanIds, reason } = body;
 
-    if (!paymentPlanIds || !Array.isArray(paymentPlanIds)) {
+    if (!(paymentPlanIds && Array.isArray(paymentPlanIds))) {
       return NextResponse.json(
         { error: 'paymentPlanIds array is required' },
         { status: 400 }
@@ -318,20 +333,23 @@ export async function DELETE(request: NextRequest) {
     const results = await Promise.all(
       paymentPlanIds.map(async (id) => {
         try {
-          await installmentManager.cancelPaymentPlan(id, reason || 'Bulk deletion');
+          await installmentManager.cancelPaymentPlan(
+            id,
+            reason || 'Bulk deletion'
+          );
           return { id, success: true };
         } catch (error) {
-          return { 
-            id, 
-            success: false, 
-            error: error instanceof Error ? error.message : 'Unknown error'
+          return {
+            id,
+            success: false,
+            error: error instanceof Error ? error.message : 'Unknown error',
           };
         }
       })
     );
 
-    const successful = results.filter(r => r.success).length;
-    const failed = results.filter(r => !r.success).length;
+    const successful = results.filter((r) => r.success).length;
+    const failed = results.filter((r) => !r.success).length;
 
     return NextResponse.json({
       success: true,
@@ -339,14 +357,13 @@ export async function DELETE(request: NextRequest) {
         total: paymentPlanIds.length,
         successful,
         failed,
-        results
+        results,
       },
-      message: `Bulk deletion completed: ${successful} successful, ${failed} failed`
+      message: `Bulk deletion completed: ${successful} successful, ${failed} failed`,
     });
-
   } catch (error) {
     console.error('Error in bulk payment plan deletion:', error);
-    
+
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

@@ -3,39 +3,36 @@
  * Handles intelligent session timeout, concurrent sessions, device tracking, and security monitoring
  */
 
+import { randomBytes } from 'node:crypto';
+import { EventEmitter } from 'node:events';
 import { createClient } from '@supabase/supabase-js';
 import Redis from 'ioredis';
-import { EventEmitter } from 'events';
+import { UAParser } from 'ua-parser-js';
 import {
-  UserSession,
-  SessionSecurityEvent,
-  DeviceRegistration,
-  SessionAuditLog,
-  SessionPolicy,
-  SessionConfiguration,
-  SuspiciousActivity,
-  CrossDeviceSync,
+  type CrossDeviceSync,
+  type DeviceRegistration,
+  DeviceType,
+  type EmergencySessionControls,
   SecurityEventType,
+  SecurityLevel,
   SecuritySeverity,
   SessionAction,
-  SecurityLevel,
+  type SessionAuditLog,
+  type SessionManagerConfig,
+  type SessionPolicy,
+  type SessionSecurityEvent,
+  type SessionValidationResult,
+  type SuspiciousActivity,
   SuspiciousActivityType,
-  SessionValidationResult,
-  SessionManagerConfig,
-  EmergencySessionControls,
-  SessionEventHandlers,
-  DeviceType
+  type UserSession,
 } from '@/types/session';
-import { Database } from '@/types/supabase';
-import { createHash, randomBytes, createHmac } from 'crypto';
-import { UAParser } from 'ua-parser-js';
+import type { Database } from '@/types/supabase';
 
 export class SessionManager extends EventEmitter {
   private supabase: ReturnType<typeof createClient<Database>>;
   private redis: Redis;
   private config: SessionManagerConfig;
   private cleanupInterval: NodeJS.Timeout | null = null;
-  private securityMonitor: SecurityMonitor;
   private deviceTracker: DeviceTracker;
   private suspiciousActivityDetector: SuspiciousActivityDetector;
   private emergencyControls: EmergencySessionControls | null = null;
@@ -43,12 +40,18 @@ export class SessionManager extends EventEmitter {
   constructor(config: SessionManagerConfig) {
     super();
     this.config = config;
-    this.supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+    this.supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
     this.redis = new Redis(config.redis.url);
     this.securityMonitor = new SecurityMonitor(this.supabase, this.redis);
     this.deviceTracker = new DeviceTracker(this.supabase, this.redis);
-    this.suspiciousActivityDetector = new SuspiciousActivityDetector(this.supabase, this.redis);
-    
+    this.suspiciousActivityDetector = new SuspiciousActivityDetector(
+      this.supabase,
+      this.redis
+    );
+
     this.initializeCleanupInterval();
     this.setupEventHandlers();
   }
@@ -72,16 +75,24 @@ export class SessionManager extends EventEmitter {
       // Get user role and session policy
       const userRole = await this.getUserRole(userId);
       const policy = await this.getSessionPolicy(userRole.id);
-      
+
       // Check concurrent session limits
       await this.enforceConcurrentSessionLimits(userId, policy);
-      
+
       // Validate device and detect suspicious activity
-      const deviceInfo = await this.deviceTracker.validateDevice(userId, deviceFingerprint, userAgent);
-      const suspiciousActivity = await this.suspiciousActivityDetector.analyzeLoginAttempt(
-        userId, ipAddress, deviceFingerprint, userAgent
+      const deviceInfo = await this.deviceTracker.validateDevice(
+        userId,
+        deviceFingerprint,
+        userAgent
       );
-      
+      const suspiciousActivity =
+        await this.suspiciousActivityDetector.analyzeLoginAttempt(
+          userId,
+          ipAddress,
+          deviceFingerprint,
+          userAgent
+        );
+
       if (suspiciousActivity.risk_score > 80) {
         await this.logSecurityEvent({
           session_id: '',
@@ -90,16 +101,18 @@ export class SessionManager extends EventEmitter {
           severity: SecuritySeverity.HIGH,
           details: suspiciousActivity,
           ip_address: ipAddress,
-          user_agent: userAgent
+          user_agent: userAgent,
         });
         throw new Error('Login blocked due to suspicious activity');
       }
-      
+
       // Create session
       const sessionId = this.generateSessionId();
       const now = new Date();
-      const expiresAt = new Date(now.getTime() + (policy.session_timeout_minutes * 60 * 1000));
-      
+      const expiresAt = new Date(
+        now.getTime() + policy.session_timeout_minutes * 60 * 1000
+      );
+
       const session: UserSession = {
         id: sessionId,
         user_id: userId,
@@ -113,27 +126,30 @@ export class SessionManager extends EventEmitter {
         expires_at: expiresAt,
         is_active: true,
         security_score: Math.max(0, 100 - suspiciousActivity.risk_score),
-        session_data: additionalData || {}
+        session_data: additionalData || {},
       };
-      
+
       // Store in database and Redis
       await this.storeSession(session);
       await this.cacheSession(session);
-      
+
       // Log session creation
       await this.logAuditEvent({
         session_id: sessionId,
         user_id: userId,
         action: SessionAction.CREATE,
-        details: { device_fingerprint: deviceFingerprint, security_score: session.security_score },
+        details: {
+          device_fingerprint: deviceFingerprint,
+          security_score: session.security_score,
+        },
         ip_address: ipAddress,
         user_agent: userAgent,
-        success: true
+        success: true,
       });
-      
+
       // Emit session created event
       this.emit('sessionCreated', session);
-      
+
       return session;
     } catch (error) {
       await this.logAuditEvent({
@@ -144,7 +160,7 @@ export class SessionManager extends EventEmitter {
         ip_address: ipAddress,
         user_agent: userAgent,
         success: false,
-        error_message: error.message
+        error_message: error.message,
       });
       throw error;
     }
@@ -153,14 +169,18 @@ export class SessionManager extends EventEmitter {
   /**
    * Validate session with security checks
    */
-  async validateSession(sessionId: string, ipAddress?: string, userAgent?: string): Promise<SessionValidationResult> {
+  async validateSession(
+    sessionId: string,
+    ipAddress?: string,
+    userAgent?: string
+  ): Promise<SessionValidationResult> {
     try {
       // Check emergency controls
       if (this.emergencyControls?.global_kill_switch) {
         return {
           valid: false,
           errors: ['System is in emergency lockdown mode'],
-          security_score: 0
+          security_score: 0,
         };
       }
 
@@ -172,28 +192,32 @@ export class SessionManager extends EventEmitter {
           await this.cacheSession(session);
         }
       }
-      
-      if (!session || !session.is_active) {
+
+      if (!(session && session.is_active)) {
         return {
           valid: false,
           errors: ['Session not found or inactive'],
-          security_score: 0
+          security_score: 0,
         };
       }
-      
+
       // Check expiration
       if (new Date() > session.expires_at) {
         await this.expireSession(sessionId);
         return {
           valid: false,
           errors: ['Session expired'],
-          security_score: 0
+          security_score: 0,
         };
       }
-      
+
       // Security validation
-      const securityChecks = await this.performSecurityChecks(session, ipAddress, userAgent);
-      
+      const securityChecks = await this.performSecurityChecks(
+        session,
+        ipAddress,
+        userAgent
+      );
+
       if (!securityChecks.passed) {
         await this.logSecurityEvent({
           session_id: sessionId,
@@ -202,30 +226,30 @@ export class SessionManager extends EventEmitter {
           severity: SecuritySeverity.HIGH,
           details: securityChecks.violations,
           ip_address: ipAddress || '',
-          user_agent: userAgent || ''
+          user_agent: userAgent || '',
         });
-        
+
         return {
           valid: false,
           errors: securityChecks.violations,
           security_score: securityChecks.security_score,
-          warnings: ['Security violations detected']
+          warnings: ['Security violations detected'],
         };
       }
-      
+
       // Update last activity
       await this.updateSessionActivity(sessionId);
-      
+
       return {
         valid: true,
         session,
-        security_score: securityChecks.security_score
+        security_score: securityChecks.security_score,
       };
     } catch (error) {
       return {
         valid: false,
         errors: [error.message],
-        security_score: 0
+        security_score: 0,
       };
     }
   }
@@ -233,27 +257,31 @@ export class SessionManager extends EventEmitter {
   /**
    * Extend session with activity-based logic
    */
-  async extendSession(sessionId: string, additionalMinutes?: number): Promise<UserSession> {
+  async extendSession(
+    sessionId: string,
+    additionalMinutes?: number
+  ): Promise<UserSession> {
     const session = await this.getSession(sessionId);
     if (!session) {
       throw new Error('Session not found');
     }
-    
+
     const userRole = await this.getUserRole(session.user_id);
     const policy = await this.getSessionPolicy(userRole.id);
-    
-    const extensionMinutes = additionalMinutes || policy.session_timeout_minutes;
-    const newExpiresAt = new Date(Date.now() + (extensionMinutes * 60 * 1000));
-    
+
+    const extensionMinutes =
+      additionalMinutes || policy.session_timeout_minutes;
+    const newExpiresAt = new Date(Date.now() + extensionMinutes * 60 * 1000);
+
     const updatedSession = {
       ...session,
       expires_at: newExpiresAt,
-      last_activity: new Date()
+      last_activity: new Date(),
     };
-    
+
     await this.updateSession(updatedSession);
     await this.cacheSession(updatedSession);
-    
+
     await this.logAuditEvent({
       session_id: sessionId,
       user_id: session.user_id,
@@ -261,9 +289,9 @@ export class SessionManager extends EventEmitter {
       details: { extension_minutes: extensionMinutes },
       ip_address: session.ip_address,
       user_agent: session.user_agent,
-      success: true
+      success: true,
     });
-    
+
     return updatedSession;
   }
 
@@ -275,11 +303,11 @@ export class SessionManager extends EventEmitter {
     if (!session) {
       return;
     }
-    
+
     // Mark as inactive
     await this.updateSession({ ...session, is_active: false });
     await this.removeCachedSession(sessionId);
-    
+
     await this.logAuditEvent({
       session_id: sessionId,
       user_id: session.user_id,
@@ -287,9 +315,9 @@ export class SessionManager extends EventEmitter {
       details: { reason: reason || 'Manual termination' },
       ip_address: session.ip_address,
       user_agent: session.user_agent,
-      success: true
+      success: true,
     });
-    
+
     await this.logSecurityEvent({
       session_id: sessionId,
       user_id: session.user_id,
@@ -297,9 +325,9 @@ export class SessionManager extends EventEmitter {
       severity: SecuritySeverity.LOW,
       details: { reason },
       ip_address: session.ip_address,
-      user_agent: session.user_agent
+      user_agent: session.user_agent,
     });
-    
+
     this.emit('sessionTerminated', session);
   }
 
@@ -313,16 +341,19 @@ export class SessionManager extends EventEmitter {
       .eq('user_id', userId)
       .eq('is_active', true)
       .order('last_activity', { ascending: false });
-    
+
     if (error) throw error;
-    
+
     return data.map(this.mapDatabaseRowToSession);
   }
 
   /**
    * Emergency session controls
    */
-  async activateEmergencyControls(controls: Partial<EmergencySessionControls>, initiatedBy: string): Promise<void> {
+  async activateEmergencyControls(
+    controls: Partial<EmergencySessionControls>,
+    initiatedBy: string
+  ): Promise<void> {
     this.emergencyControls = {
       global_kill_switch: false,
       lockdown_mode: false,
@@ -330,13 +361,13 @@ export class SessionManager extends EventEmitter {
       incident_response_active: false,
       ...controls,
       initiated_by: initiatedBy,
-      initiated_at: new Date()
+      initiated_at: new Date(),
     };
-    
+
     if (controls.global_kill_switch) {
       await this.terminateAllSessions('Emergency kill switch activated');
     }
-    
+
     // Store emergency controls in Redis
     await this.redis.set(
       `${this.config.redis.prefix}emergency_controls`,
@@ -344,7 +375,7 @@ export class SessionManager extends EventEmitter {
       'EX',
       3600 // 1 hour expiry
     );
-    
+
     this.emit('emergencyControlsActivated', this.emergencyControls);
   }
 
@@ -352,31 +383,31 @@ export class SessionManager extends EventEmitter {
    * Cross-device session synchronization
    */
   async syncCrossDeviceSessions(userId: string): Promise<CrossDeviceSync> {
-    const activeSessions = await this.getUserActiveSessions(userId);
+    const _activeSessions = await this.getUserActiveSessions(userId);
     const devices = await this.deviceTracker.getUserDevices(userId);
-    
+
     // Get user preferences and UI state
     const { data: userPrefs } = await this.supabase
       .from('user_preferences')
       .select('*')
       .eq('user_id', userId)
       .single();
-    
+
     const syncData: CrossDeviceSync = {
       user_id: userId,
       sync_data: {
         preferences: userPrefs?.preferences || {},
         ui_state: userPrefs?.ui_state || {},
         notifications: [], // TODO: Implement notifications
-        last_sync: new Date()
+        last_sync: new Date(),
       },
-      devices: devices.map(device => ({
+      devices: devices.map((device) => ({
         device_fingerprint: device.device_fingerprint,
         last_sync: device.last_used,
-        sync_status: 'synced'
-      }))
+        sync_status: 'synced',
+      })),
     };
-    
+
     // Cache sync data
     await this.redis.set(
       `${this.config.redis.prefix}sync:${userId}`,
@@ -384,7 +415,7 @@ export class SessionManager extends EventEmitter {
       'EX',
       300 // 5 minutes
     );
-    
+
     return syncData;
   }
 
@@ -399,7 +430,7 @@ export class SessionManager extends EventEmitter {
       .select('role_id, roles(id, name)')
       .eq('user_id', userId)
       .single();
-    
+
     if (error) throw error;
     return data.roles;
   }
@@ -410,7 +441,7 @@ export class SessionManager extends EventEmitter {
       .select('*')
       .eq('role_id', roleId)
       .single();
-    
+
     if (error) {
       // Return default policy
       return {
@@ -426,34 +457,43 @@ export class SessionManager extends EventEmitter {
         ip_restriction_enabled: false,
         geo_restriction_enabled: false,
         created_at: new Date(),
-        updated_at: new Date()
+        updated_at: new Date(),
       };
     }
-    
+
     return this.mapDatabaseRowToSessionPolicy(data);
   }
 
-  private async enforceConcurrentSessionLimits(userId: string, policy: SessionPolicy): Promise<void> {
+  private async enforceConcurrentSessionLimits(
+    userId: string,
+    policy: SessionPolicy
+  ): Promise<void> {
     const activeSessions = await this.getUserActiveSessions(userId);
-    
+
     if (activeSessions.length >= policy.max_concurrent_sessions) {
       // Terminate oldest session
       const oldestSession = activeSessions[activeSessions.length - 1];
-      await this.terminateSession(oldestSession.id, 'Concurrent session limit exceeded');
-      
+      await this.terminateSession(
+        oldestSession.id,
+        'Concurrent session limit exceeded'
+      );
+
       await this.logSecurityEvent({
         session_id: oldestSession.id,
         user_id: userId,
         event_type: SecurityEventType.CONCURRENT_LIMIT_EXCEEDED,
         severity: SecuritySeverity.MEDIUM,
-        details: { limit: policy.max_concurrent_sessions, terminated_session: oldestSession.id },
+        details: {
+          limit: policy.max_concurrent_sessions,
+          terminated_session: oldestSession.id,
+        },
         ip_address: oldestSession.ip_address,
-        user_agent: oldestSession.user_agent
+        user_agent: oldestSession.user_agent,
       });
     }
   }
 
-  private async getLocationFromIP(ipAddress: string): Promise<any> {
+  private async getLocationFromIP(_ipAddress: string): Promise<any> {
     // TODO: Implement IP geolocation
     return null;
   }
@@ -462,7 +502,7 @@ export class SessionManager extends EventEmitter {
     const { error } = await this.supabase
       .from('user_sessions')
       .insert(this.mapSessionToDatabaseRow(session));
-    
+
     if (error) throw error;
   }
 
@@ -475,19 +515,25 @@ export class SessionManager extends EventEmitter {
     );
   }
 
-  private async getCachedSession(sessionId: string): Promise<UserSession | null> {
-    const cached = await this.redis.get(`${this.config.redis.prefix}session:${sessionId}`);
+  private async getCachedSession(
+    sessionId: string
+  ): Promise<UserSession | null> {
+    const cached = await this.redis.get(
+      `${this.config.redis.prefix}session:${sessionId}`
+    );
     return cached ? JSON.parse(cached) : null;
   }
 
-  private async getSessionFromDatabase(sessionId: string): Promise<UserSession | null> {
+  private async getSessionFromDatabase(
+    sessionId: string
+  ): Promise<UserSession | null> {
     const { data, error } = await this.supabase
       .from('user_sessions')
       .select('*')
       .eq('id', sessionId)
       .eq('is_active', true)
       .single();
-    
+
     if (error) return null;
     return this.mapDatabaseRowToSession(data);
   }
@@ -508,19 +554,19 @@ export class SessionManager extends EventEmitter {
       .from('user_sessions')
       .update(this.mapSessionToDatabaseRow(session))
       .eq('id', session.id);
-    
+
     if (error) throw error;
   }
 
   private async updateSessionActivity(sessionId: string): Promise<void> {
     const now = new Date();
-    
+
     // Update in database
     await this.supabase
       .from('user_sessions')
       .update({ last_activity: now.toISOString() })
       .eq('id', sessionId);
-    
+
     // Update in cache
     const cached = await this.getCachedSession(sessionId);
     if (cached) {
@@ -538,7 +584,7 @@ export class SessionManager extends EventEmitter {
     if (session) {
       await this.updateSession({ ...session, is_active: false });
       await this.removeCachedSession(sessionId);
-      
+
       await this.logAuditEvent({
         session_id: sessionId,
         user_id: session.user_id,
@@ -546,70 +592,82 @@ export class SessionManager extends EventEmitter {
         details: { expired_at: new Date() },
         ip_address: session.ip_address,
         user_agent: session.user_agent,
-        success: true
+        success: true,
       });
-      
+
       this.emit('sessionExpired', session);
     }
   }
 
-  private async performSecurityChecks(session: UserSession, ipAddress?: string, userAgent?: string) {
+  private async performSecurityChecks(
+    session: UserSession,
+    ipAddress?: string,
+    userAgent?: string
+  ) {
     const violations: string[] = [];
     let securityScore = session.security_score;
-    
+
     // IP address validation
     if (ipAddress && ipAddress !== session.ip_address) {
       violations.push('IP address mismatch');
       securityScore -= 20;
     }
-    
+
     // User agent validation
     if (userAgent && userAgent !== session.user_agent) {
       violations.push('User agent mismatch');
       securityScore -= 15;
     }
-    
+
     // Check for suspicious activity
     if (ipAddress) {
-      const suspiciousActivity = await this.suspiciousActivityDetector.analyzeSessionActivity(
-        session.user_id, session.id, ipAddress, userAgent || ''
-      );
-      
+      const suspiciousActivity =
+        await this.suspiciousActivityDetector.analyzeSessionActivity(
+          session.user_id,
+          session.id,
+          ipAddress,
+          userAgent || ''
+        );
+
       if (suspiciousActivity.risk_score > 50) {
         violations.push('Suspicious activity detected');
         securityScore -= suspiciousActivity.risk_score;
       }
     }
-    
+
     return {
       passed: violations.length === 0 && securityScore > 30,
       violations,
-      security_score: Math.max(0, securityScore)
+      security_score: Math.max(0, securityScore),
     };
   }
 
-  private async logSecurityEvent(event: Omit<SessionSecurityEvent, 'id' | 'timestamp' | 'resolved'>): Promise<void> {
+  private async logSecurityEvent(
+    event: Omit<SessionSecurityEvent, 'id' | 'timestamp' | 'resolved'>
+  ): Promise<void> {
     const securityEvent: SessionSecurityEvent = {
       id: randomBytes(16).toString('hex'),
       timestamp: new Date(),
       resolved: false,
-      ...event
+      ...event,
     };
-    
+
     await this.supabase
       .from('session_security_events')
       .insert(this.mapSecurityEventToDatabaseRow(securityEvent));
-    
+
     this.emit('securityEvent', securityEvent);
   }
 
-  private async logAuditEvent(event: Omit<SessionAuditLog, 'id' | 'timestamp'>): Promise<void> {
+  private async logAuditEvent(
+    event: Omit<SessionAuditLog, 'id' | 'timestamp'>
+  ): Promise<void> {
     const auditEvent: SessionAuditLog = {
       id: randomBytes(16).toString('hex'),
       timestamp: new Date(),
-      ...event
+      ...event,
     };
-    
+
     await this.supabase
       .from('session_audit_logs')
       .insert(this.mapAuditEventToDatabaseRow(auditEvent));
@@ -620,7 +678,7 @@ export class SessionManager extends EventEmitter {
       .from('user_sessions')
       .select('*')
       .eq('is_active', true);
-    
+
     if (sessions) {
       for (const session of sessions) {
         await this.terminateSession(session.id, reason);
@@ -629,9 +687,12 @@ export class SessionManager extends EventEmitter {
   }
 
   private initializeCleanupInterval(): void {
-    this.cleanupInterval = setInterval(async () => {
-      await this.cleanupExpiredSessions();
-    }, this.config.policies.cleanup_interval_minutes * 60 * 1000);
+    this.cleanupInterval = setInterval(
+      async () => {
+        await this.cleanupExpiredSessions();
+      },
+      this.config.policies.cleanup_interval_minutes * 60 * 1000
+    );
   }
 
   private async cleanupExpiredSessions(): Promise<void> {
@@ -640,13 +701,16 @@ export class SessionManager extends EventEmitter {
       .select('*')
       .eq('is_active', true)
       .lt('expires_at', new Date().toISOString());
-    
+
     if (expiredSessions) {
       for (const session of expiredSessions) {
         await this.expireSession(session.id);
       }
-      
-      this.emit('sessionCleanup', expiredSessions.map(this.mapDatabaseRowToSession));
+
+      this.emit(
+        'sessionCleanup',
+        expiredSessions.map(this.mapDatabaseRowToSession)
+      );
     }
   }
 
@@ -654,11 +718,11 @@ export class SessionManager extends EventEmitter {
     this.on('sessionCreated', (session: UserSession) => {
       console.log(`Session created for user ${session.user_id}: ${session.id}`);
     });
-    
+
     this.on('sessionExpired', (session: UserSession) => {
       console.log(`Session expired for user ${session.user_id}: ${session.id}`);
     });
-    
+
     this.on('securityEvent', (event: SessionSecurityEvent) => {
       console.log(`Security event: ${event.event_type} - ${event.severity}`);
     });
@@ -679,7 +743,7 @@ export class SessionManager extends EventEmitter {
       expires_at: session.expires_at.toISOString(),
       is_active: session.is_active,
       security_score: session.security_score,
-      session_data: session.session_data
+      session_data: session.session_data,
     };
   }
 
@@ -697,7 +761,7 @@ export class SessionManager extends EventEmitter {
       expires_at: new Date(row.expires_at),
       is_active: row.is_active,
       security_score: row.security_score,
-      session_data: row.session_data
+      session_data: row.session_data,
     };
   }
 
@@ -717,7 +781,7 @@ export class SessionManager extends EventEmitter {
       geo_restriction_enabled: row.geo_restriction_enabled,
       allowed_countries: row.allowed_countries,
       created_at: new Date(row.created_at),
-      updated_at: new Date(row.updated_at)
+      updated_at: new Date(row.updated_at),
     };
   }
 
@@ -733,7 +797,7 @@ export class SessionManager extends EventEmitter {
       user_agent: event.user_agent,
       timestamp: event.timestamp.toISOString(),
       resolved: event.resolved,
-      resolution_notes: event.resolution_notes
+      resolution_notes: event.resolution_notes,
     };
   }
 
@@ -748,7 +812,7 @@ export class SessionManager extends EventEmitter {
       user_agent: event.user_agent,
       timestamp: event.timestamp.toISOString(),
       success: event.success,
-      error_message: event.error_message
+      error_message: event.error_message,
     };
   }
 
@@ -764,37 +828,44 @@ export class SessionManager extends EventEmitter {
 
 // Helper classes (to be implemented in separate files)
 class SecurityMonitor {
-  constructor(private supabase: any, private redis: Redis) {}
-  
-  async monitorSession(sessionId: string): Promise<void> {
+  constructor(_supabase: any, _redis: Redis) {}
+
+  async monitorSession(_sessionId: string): Promise<void> {
     // TODO: Implement real-time security monitoring
   }
 }
 
 class DeviceTracker {
-  constructor(private supabase: any, private redis: Redis) {}
-  
-  async validateDevice(userId: string, deviceFingerprint: string, userAgent: string): Promise<any> {
+  constructor(
+    private supabase: any,
+    _redis: Redis
+  ) {}
+
+  async validateDevice(
+    _userId: string,
+    _deviceFingerprint: string,
+    userAgent: string
+  ): Promise<any> {
     const parser = new UAParser(userAgent);
     const result = parser.getResult();
-    
+
     return {
       device_name: `${result.browser.name} on ${result.os.name}`,
       device_type: this.getDeviceType(result),
-      trusted: false // TODO: Implement device trust logic
+      trusted: false, // TODO: Implement device trust logic
     };
   }
-  
+
   async getUserDevices(userId: string): Promise<DeviceRegistration[]> {
     const { data } = await this.supabase
       .from('device_registrations')
       .select('*')
       .eq('user_id', userId)
       .eq('is_active', true);
-    
+
     return data || [];
   }
-  
+
   private getDeviceType(result: any): DeviceType {
     if (result.device.type === 'mobile') return DeviceType.MOBILE;
     if (result.device.type === 'tablet') return DeviceType.TABLET;
@@ -803,9 +874,14 @@ class DeviceTracker {
 }
 
 class SuspiciousActivityDetector {
-  constructor(private supabase: any, private redis: Redis) {}
-  
-  async analyzeLoginAttempt(userId: string, ipAddress: string, deviceFingerprint: string, userAgent: string): Promise<SuspiciousActivity> {
+  constructor(_supabase: any, _redis: Redis) {}
+
+  async analyzeLoginAttempt(
+    userId: string,
+    ipAddress: string,
+    deviceFingerprint: string,
+    userAgent: string
+  ): Promise<SuspiciousActivity> {
     // TODO: Implement sophisticated suspicious activity detection
     return {
       id: randomBytes(16).toString('hex'),
@@ -815,16 +891,21 @@ class SuspiciousActivityDetector {
       details: {
         ip_address: ipAddress,
         device_fingerprint: deviceFingerprint,
-        user_agent: userAgent
+        user_agent: userAgent,
       },
       detected_at: new Date(),
       auto_resolved: false,
       manual_review_required: false,
-      status: 'pending'
+      status: 'pending',
     };
   }
-  
-  async analyzeSessionActivity(userId: string, sessionId: string, ipAddress: string, userAgent: string): Promise<SuspiciousActivity> {
+
+  async analyzeSessionActivity(
+    userId: string,
+    sessionId: string,
+    ipAddress: string,
+    userAgent: string
+  ): Promise<SuspiciousActivity> {
     // TODO: Implement session activity analysis
     return {
       id: randomBytes(16).toString('hex'),
@@ -834,12 +915,12 @@ class SuspiciousActivityDetector {
       risk_score: 10, // Very low risk by default
       details: {
         ip_address: ipAddress,
-        user_agent: userAgent
+        user_agent: userAgent,
       },
       detected_at: new Date(),
       auto_resolved: true,
       manual_review_required: false,
-      status: 'resolved'
+      status: 'resolved',
     };
   }
 }

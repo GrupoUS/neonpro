@@ -2,12 +2,12 @@
 // Story 6.1 - Task 2: Recurring Payment System
 // Individual plan management endpoints
 
-import { NextRequest, NextResponse } from 'next/server';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { subscriptionManager } from '@/lib/payments/recurring/subscription-manager';
 import { logger } from '@/lib/utils/logger';
-import { z } from 'zod';
 
 // Validation Schemas
 const updatePlanSchema = z.object({
@@ -15,23 +15,23 @@ const updatePlanSchema = z.object({
   description: z.string().optional(),
   trial_period_days: z.number().min(0).max(365).optional(),
   metadata: z.record(z.any()).optional(),
-  active: z.boolean().optional()
+  active: z.boolean().optional(),
 });
 
 // GET /api/subscription-plans/[id] - Get plan details
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const planId = params.id;
@@ -55,10 +55,7 @@ export async function GET(
 
     if (error || !plan) {
       logger.error(`Error fetching plan ${planId}:`, error);
-      return NextResponse.json(
-        { error: 'Plan not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Plan not found' }, { status: 404 });
     }
 
     // Get subscription statistics
@@ -69,16 +66,19 @@ export async function GET(
 
     const stats = {
       total_subscriptions: subscriptionStats?.length || 0,
-      active_subscriptions: subscriptionStats?.filter(s => s.status === 'active').length || 0,
-      trialing_subscriptions: subscriptionStats?.filter(s => s.status === 'trialing').length || 0,
-      canceled_subscriptions: subscriptionStats?.filter(s => s.status === 'canceled').length || 0
+      active_subscriptions:
+        subscriptionStats?.filter((s) => s.status === 'active').length || 0,
+      trialing_subscriptions:
+        subscriptionStats?.filter((s) => s.status === 'trialing').length || 0,
+      canceled_subscriptions:
+        subscriptionStats?.filter((s) => s.status === 'canceled').length || 0,
     };
 
     return NextResponse.json({
       data: {
         ...plan,
-        statistics: stats
-      }
+        statistics: stats,
+      },
     });
   } catch (error) {
     logger.error(`Error in GET /api/subscription-plans/${params.id}:`, error);
@@ -96,13 +96,13 @@ export async function PUT(
 ) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Check if user is admin
@@ -112,7 +112,7 @@ export async function PUT(
       .eq('user_id', user.id)
       .single();
 
-    if (!userProfile || !['admin', 'owner'].includes(userProfile.role)) {
+    if (!(userProfile && ['admin', 'owner'].includes(userProfile.role))) {
       return NextResponse.json(
         { error: 'Insufficient permissions' },
         { status: 403 }
@@ -126,9 +126,9 @@ export async function PUT(
     const validationResult = updatePlanSchema.safeParse(body);
     if (!validationResult.success) {
       return NextResponse.json(
-        { 
+        {
           error: 'Invalid request data',
-          details: validationResult.error.errors
+          details: validationResult.error.errors,
         },
         { status: 400 }
       );
@@ -142,14 +142,14 @@ export async function PUT(
       .single();
 
     if (fetchError || !existingPlan) {
-      return NextResponse.json(
-        { error: 'Plan not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Plan not found' }, { status: 404 });
     }
 
     // Check if name is being changed and if it conflicts
-    if (validationResult.data.name && validationResult.data.name !== existingPlan.name) {
+    if (
+      validationResult.data.name &&
+      validationResult.data.name !== existingPlan.name
+    ) {
       const { data: conflictingPlan } = await supabase
         .from('subscription_plans')
         .select('id')
@@ -175,16 +175,13 @@ export async function PUT(
 
     return NextResponse.json({
       data: updatedPlan,
-      message: 'Plan updated successfully'
+      message: 'Plan updated successfully',
     });
   } catch (error) {
     logger.error(`Error in PUT /api/subscription-plans/${params.id}:`, error);
-    
+
     if (error instanceof Error) {
-      return NextResponse.json(
-        { error: error.message },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: error.message }, { status: 400 });
     }
 
     return NextResponse.json(
@@ -196,18 +193,18 @@ export async function PUT(
 
 // DELETE /api/subscription-plans/[id] - Deactivate plan
 export async function DELETE(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Check if user is admin
@@ -217,7 +214,7 @@ export async function DELETE(
       .eq('user_id', user.id)
       .single();
 
-    if (!userProfile || !['admin', 'owner'].includes(userProfile.role)) {
+    if (!(userProfile && ['admin', 'owner'].includes(userProfile.role))) {
       return NextResponse.json(
         { error: 'Insufficient permissions' },
         { status: 403 }
@@ -234,10 +231,7 @@ export async function DELETE(
       .single();
 
     if (fetchError || !existingPlan) {
-      return NextResponse.json(
-        { error: 'Plan not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Plan not found' }, { status: 404 });
     }
 
     // Check if plan has active subscriptions
@@ -249,37 +243,37 @@ export async function DELETE(
 
     if (activeSubscriptions && activeSubscriptions.length > 0) {
       return NextResponse.json(
-        { 
+        {
           error: 'Cannot deactivate plan with active subscriptions',
           details: {
             active_subscriptions: activeSubscriptions.length,
-            message: 'Cancel or migrate all active subscriptions before deactivating the plan'
-          }
+            message:
+              'Cancel or migrate all active subscriptions before deactivating the plan',
+          },
         },
         { status: 409 }
       );
     }
 
     // Deactivate plan
-    const deactivatedPlan = await subscriptionManager.updatePlan(
-      planId,
-      { active: false }
-    );
+    const deactivatedPlan = await subscriptionManager.updatePlan(planId, {
+      active: false,
+    });
 
     logger.info(`Plan deactivated: ${planId} by user: ${user.id}`);
 
     return NextResponse.json({
       data: deactivatedPlan,
-      message: 'Plan deactivated successfully'
+      message: 'Plan deactivated successfully',
     });
   } catch (error) {
-    logger.error(`Error in DELETE /api/subscription-plans/${params.id}:`, error);
-    
+    logger.error(
+      `Error in DELETE /api/subscription-plans/${params.id}:`,
+      error
+    );
+
     if (error instanceof Error) {
-      return NextResponse.json(
-        { error: error.message },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: error.message }, { status: 400 });
     }
 
     return NextResponse.json(

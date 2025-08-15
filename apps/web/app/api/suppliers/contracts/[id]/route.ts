@@ -3,9 +3,9 @@
 // Epic 6 - Story 6.3: Comprehensive supplier management with performance tracking
 // =====================================================================================
 
-import { SupplierManagementService } from '@/app/lib/services/supplier-management-service';
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { SupplierManagementService } from '@/app/lib/services/supplier-management-service';
 
 const supplierService = new SupplierManagementService();
 
@@ -18,13 +18,10 @@ interface RouteParams {
 // =====================================================================================
 // GET /api/suppliers/contracts/[id] - Get contract by ID
 // =====================================================================================
-export async function GET(
-  request: NextRequest,
-  { params }: RouteParams
-) {
+export async function GET(_request: NextRequest, { params }: RouteParams) {
   try {
     const contract = await supplierService.getContract(params.id);
-    
+
     if (!contract) {
       return NextResponse.json(
         { error: 'Contrato não encontrado' },
@@ -45,10 +42,7 @@ export async function GET(
 // =====================================================================================
 // PUT /api/suppliers/contracts/[id] - Update contract
 // =====================================================================================
-export async function PUT(
-  request: NextRequest,
-  { params }: RouteParams
-) {
+export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
     const body = await request.json();
 

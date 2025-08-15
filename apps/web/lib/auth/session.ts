@@ -1,32 +1,29 @@
 /**
  * Session Management Service
  * Story 1.4: Session Management & Security
- * 
+ *
  * Comprehensive session management with security monitoring,
  * device tracking, and LGPD compliance.
  */
 
 import { createClient } from '@/app/utils/supabase/client';
-import { 
-  UserSession, 
-  SessionSecurityEvent, 
-  DeviceRegistration,
-  SessionAuditLog,
-  SessionPolicy,
-  SecurityEventType,
-  SecuritySeverity,
-  SessionAction,
-  DeviceType,
-  SecurityLevel,
-  CreateSessionRequest,
-  UpdateSessionRequest,
-  SessionFilter,
-  SessionSort,
-  SessionAnalytics,
-  SessionConfig,
-  SecurityThresholds
-} from '@/types/session';
 import { logger } from '@/lib/logger';
+import {
+  type CreateSessionRequest,
+  type DeviceRegistration,
+  DeviceType,
+  SecurityEventType,
+  SecurityLevel,
+  SecuritySeverity,
+  type SecurityThresholds,
+  SessionAction,
+  type SessionAuditLog,
+  type SessionConfig,
+  type SessionPolicy,
+  type SessionSecurityEvent,
+  type UpdateSessionRequest,
+  type UserSession,
+} from '@/types/session';
 
 // ============================================================================
 // SESSION MANAGEMENT CLASS
@@ -46,7 +43,7 @@ export class SessionManager {
       geo_location_tracking: true,
       audit_logging_enabled: true,
       cleanup_interval_hours: 24,
-      threat_intelligence_enabled: true
+      threat_intelligence_enabled: true,
     };
 
     this.securityThresholds = {
@@ -55,7 +52,7 @@ export class SessionManager {
       unusual_location_score: 70,
       device_change_score: 60,
       concurrent_session_penalty: 20,
-      ip_change_score: 50
+      ip_change_score: 50,
     };
   }
 
@@ -69,12 +66,15 @@ export class SessionManager {
   async createSession(request: CreateSessionRequest): Promise<UserSession> {
     try {
       // Validate device and security
-      const deviceInfo = await this.validateDevice(request.user_id, request.device_fingerprint);
+      const _deviceInfo = await this.validateDevice(
+        request.user_id,
+        request.device_fingerprint
+      );
       const securityScore = await this.calculateSecurityScore(request);
-      
+
       // Check concurrent session limits
       await this.enforceConcurrentSessionLimits(request.user_id);
-      
+
       // Create session record
       const sessionData: Partial<UserSession> = {
         user_id: request.user_id,
@@ -87,7 +87,7 @@ export class SessionManager {
         last_activity: new Date().toISOString(),
         expires_at: this.calculateExpiryTime(request.user_id),
         is_active: true,
-        security_score: securityScore
+        security_score: securityScore,
       };
 
       const { data: session, error } = await this.supabase
@@ -99,21 +99,26 @@ export class SessionManager {
       if (error) throw error;
 
       // Log session creation
-      await this.logSessionAction(session.id, request.user_id, SessionAction.LOGIN, {
-        device_fingerprint: request.device_fingerprint,
-        ip_address: request.ip_address,
-        security_score: securityScore
-      });
+      await this.logSessionAction(
+        session.id,
+        request.user_id,
+        SessionAction.LOGIN,
+        {
+          device_fingerprint: request.device_fingerprint,
+          ip_address: request.ip_address,
+          security_score: securityScore,
+        }
+      );
 
       // Monitor for suspicious activity
       if (this.config.security_monitoring_enabled) {
         await this.monitorSessionSecurity(session);
       }
 
-      logger.info('Session created successfully', { 
-        session_id: session.id, 
+      logger.info('Session created successfully', {
+        session_id: session.id,
         user_id: request.user_id,
-        security_score: securityScore
+        security_score: securityScore,
       });
 
       return session;
@@ -126,11 +131,14 @@ export class SessionManager {
   /**
    * Update session activity and security score
    */
-  async updateSession(sessionId: string, updates: UpdateSessionRequest): Promise<UserSession> {
+  async updateSession(
+    sessionId: string,
+    updates: UpdateSessionRequest
+  ): Promise<UserSession> {
     try {
       const updateData = {
         ...updates,
-        last_activity: new Date().toISOString()
+        last_activity: new Date().toISOString(),
       };
 
       const { data: session, error } = await this.supabase
@@ -158,7 +166,10 @@ export class SessionManager {
   /**
    * Terminate a session
    */
-  async terminateSession(sessionId: string, reason: string = 'user_logout'): Promise<void> {
+  async terminateSession(
+    sessionId: string,
+    reason = 'user_logout'
+  ): Promise<void> {
     try {
       const { data: session } = await this.supabase
         .from('user_sessions')
@@ -171,19 +182,24 @@ export class SessionManager {
       // Mark session as inactive
       const { error } = await this.supabase
         .from('user_sessions')
-        .update({ 
+        .update({
           is_active: false,
-          expires_at: new Date().toISOString()
+          expires_at: new Date().toISOString(),
         })
         .eq('id', sessionId);
 
       if (error) throw error;
 
       // Log session termination
-      await this.logSessionAction(sessionId, session.user_id, SessionAction.LOGOUT, {
-        reason,
-        terminated_at: new Date().toISOString()
-      });
+      await this.logSessionAction(
+        sessionId,
+        session.user_id,
+        SessionAction.LOGOUT,
+        {
+          reason,
+          terminated_at: new Date().toISOString(),
+        }
+      );
 
       logger.info('Session terminated', { session_id: sessionId, reason });
     } catch (error) {
@@ -202,59 +218,72 @@ export class SessionManager {
   private async monitorSessionSecurity(session: UserSession): Promise<void> {
     try {
       const suspiciousEvents: SecurityEventType[] = [];
-      
+
       // Check for unusual location
       if (await this.isUnusualLocation(session.user_id, session.ip_address)) {
         suspiciousEvents.push(SecurityEventType.UNUSUAL_LOCATION);
       }
-      
+
       // Check for device changes
       if (await this.isNewDevice(session.user_id, session.device_fingerprint)) {
         suspiciousEvents.push(SecurityEventType.DEVICE_CHANGE);
       }
-      
+
       // Check for rapid login attempts
       if (await this.hasRapidLoginAttempts(session.user_id)) {
         suspiciousEvents.push(SecurityEventType.RAPID_REQUESTS);
       }
-      
+
       // Create security events for suspicious activity
       for (const eventType of suspiciousEvents) {
         await this.createSecurityEvent(session, eventType);
       }
-      
+
       // Auto-terminate if critical security score
       if (session.security_score < 30) {
         await this.terminateSession(session.id, 'security_risk');
-        await this.createSecurityEvent(session, SecurityEventType.SESSION_HIJACK_ATTEMPT, SecuritySeverity.CRITICAL);
+        await this.createSecurityEvent(
+          session,
+          SecurityEventType.SESSION_HIJACK_ATTEMPT,
+          SecuritySeverity.CRITICAL
+        );
       }
     } catch (error) {
-      logger.error('Security monitoring failed', { error, session_id: session.id });
+      logger.error('Security monitoring failed', {
+        error,
+        session_id: session.id,
+      });
     }
   }
 
   /**
    * Calculate security score for session
    */
-  private async calculateSecurityScore(request: CreateSessionRequest): Promise<number> {
+  private async calculateSecurityScore(
+    request: CreateSessionRequest
+  ): Promise<number> {
     let score = 100; // Start with perfect score
-    
+
     try {
       // Check device trust level
-      const device = await this.getDeviceRegistration(request.user_id, request.device_fingerprint);
+      const device = await this.getDeviceRegistration(
+        request.user_id,
+        request.device_fingerprint
+      );
       if (!device?.trusted) score -= 20;
-      
+
       // Check location consistency
       if (await this.isUnusualLocation(request.user_id, request.ip_address)) {
         score -= this.securityThresholds.unusual_location_score;
       }
-      
+
       // Check for concurrent sessions
       const activeSessions = await this.getActiveSessionCount(request.user_id);
       if (activeSessions > 2) {
-        score -= (activeSessions * this.securityThresholds.concurrent_session_penalty);
+        score -=
+          activeSessions * this.securityThresholds.concurrent_session_penalty;
       }
-      
+
       // Ensure score is within bounds
       return Math.max(0, Math.min(100, score));
     } catch (error) {
@@ -267,8 +296,8 @@ export class SessionManager {
    * Create security event record
    */
   private async createSecurityEvent(
-    session: UserSession, 
-    eventType: SecurityEventType, 
+    session: UserSession,
+    eventType: SecurityEventType,
     severity: SecuritySeverity = SecuritySeverity.MEDIUM
   ): Promise<void> {
     try {
@@ -281,12 +310,12 @@ export class SessionManager {
           ip_address: session.ip_address,
           device_fingerprint: session.device_fingerprint,
           security_score: session.security_score,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         },
         ip_address: session.ip_address,
         user_agent: session.user_agent,
         timestamp: new Date().toISOString(),
-        resolved: false
+        resolved: false,
       };
 
       const { error } = await this.supabase
@@ -295,13 +324,17 @@ export class SessionManager {
 
       if (error) throw error;
 
-      logger.warn('Security event created', { 
-        event_type: eventType, 
-        severity, 
-        session_id: session.id 
+      logger.warn('Security event created', {
+        event_type: eventType,
+        severity,
+        session_id: session.id,
       });
     } catch (error) {
-      logger.error('Failed to create security event', { error, eventType, session });
+      logger.error('Failed to create security event', {
+        error,
+        eventType,
+        session,
+      });
     }
   }
 
@@ -312,21 +345,28 @@ export class SessionManager {
   /**
    * Validate and register device
    */
-  private async validateDevice(userId: string, deviceFingerprint: string): Promise<DeviceRegistration | null> {
+  private async validateDevice(
+    userId: string,
+    deviceFingerprint: string
+  ): Promise<DeviceRegistration | null> {
     try {
       let device = await this.getDeviceRegistration(userId, deviceFingerprint);
-      
-      if (!device) {
-        // Register new device
-        device = await this.registerDevice(userId, deviceFingerprint);
-      } else {
+
+      if (device) {
         // Update last seen
         await this.updateDeviceLastSeen(device.id);
+      } else {
+        // Register new device
+        device = await this.registerDevice(userId, deviceFingerprint);
       }
-      
+
       return device;
     } catch (error) {
-      logger.error('Device validation failed', { error, userId, deviceFingerprint });
+      logger.error('Device validation failed', {
+        error,
+        userId,
+        deviceFingerprint,
+      });
       return null;
     }
   }
@@ -334,7 +374,10 @@ export class SessionManager {
   /**
    * Register a new device
    */
-  private async registerDevice(userId: string, deviceFingerprint: string): Promise<DeviceRegistration> {
+  private async registerDevice(
+    userId: string,
+    deviceFingerprint: string
+  ): Promise<DeviceRegistration> {
     try {
       const deviceData: Partial<DeviceRegistration> = {
         user_id: userId,
@@ -344,12 +387,12 @@ export class SessionManager {
         browser_info: {
           name: 'Unknown',
           version: 'Unknown',
-          platform: 'Unknown'
+          platform: 'Unknown',
         },
         trusted: false,
         registered_at: new Date().toISOString(),
         last_seen: new Date().toISOString(),
-        blocked: false
+        blocked: false,
       };
 
       const { data: device, error } = await this.supabase
@@ -360,10 +403,17 @@ export class SessionManager {
 
       if (error) throw error;
 
-      logger.info('New device registered', { device_id: device.id, user_id: userId });
+      logger.info('New device registered', {
+        device_id: device.id,
+        user_id: userId,
+      });
       return device;
     } catch (error) {
-      logger.error('Device registration failed', { error, userId, deviceFingerprint });
+      logger.error('Device registration failed', {
+        error,
+        userId,
+        deviceFingerprint,
+      });
       throw error;
     }
   }
@@ -371,7 +421,10 @@ export class SessionManager {
   /**
    * Get device registration
    */
-  private async getDeviceRegistration(userId: string, deviceFingerprint: string): Promise<DeviceRegistration | null> {
+  private async getDeviceRegistration(
+    userId: string,
+    deviceFingerprint: string
+  ): Promise<DeviceRegistration | null> {
     try {
       const { data: device } = await this.supabase
         .from('device_registrations')
@@ -382,7 +435,7 @@ export class SessionManager {
         .single();
 
       return device;
-    } catch (error) {
+    } catch (_error) {
       return null;
     }
   }
@@ -412,23 +465,30 @@ export class SessionManager {
     try {
       const policy = await this.getSessionPolicy(userId);
       const activeSessions = await this.getActiveSessions(userId);
-      
+
       if (activeSessions.length >= policy.max_concurrent_sessions) {
         // Terminate oldest session
-        const oldestSession = activeSessions.sort((a, b) => 
-          new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+        const oldestSession = activeSessions.sort(
+          (a, b) =>
+            new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
         )[0];
-        
-        await this.terminateSession(oldestSession.id, 'concurrent_limit_exceeded');
-        
+
+        await this.terminateSession(
+          oldestSession.id,
+          'concurrent_limit_exceeded'
+        );
+
         logger.info('Terminated oldest session due to concurrent limit', {
           user_id: userId,
           terminated_session: oldestSession.id,
-          limit: policy.max_concurrent_sessions
+          limit: policy.max_concurrent_sessions,
         });
       }
     } catch (error) {
-      logger.error('Failed to enforce concurrent session limits', { error, userId });
+      logger.error('Failed to enforce concurrent session limits', {
+        error,
+        userId,
+      });
     }
   }
 
@@ -468,7 +528,7 @@ export class SessionManager {
           allow_concurrent_devices: true,
           suspicious_activity_threshold: 50,
           created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         };
       }
 
@@ -532,14 +592,20 @@ export class SessionManager {
   /**
    * Check if location is unusual for user
    */
-  private async isUnusualLocation(userId: string, ipAddress: string): Promise<boolean> {
+  private async isUnusualLocation(
+    userId: string,
+    ipAddress: string
+  ): Promise<boolean> {
     try {
       // Get user's recent locations
       const { data: recentSessions } = await this.supabase
         .from('user_sessions')
         .select('ip_address, location')
         .eq('user_id', userId)
-        .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
+        .gte(
+          'created_at',
+          new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+        )
         .limit(10);
 
       if (!recentSessions || recentSessions.length === 0) {
@@ -547,10 +613,14 @@ export class SessionManager {
       }
 
       // Simple check: if IP is completely different from recent ones
-      const recentIPs = recentSessions.map(s => s.ip_address);
+      const recentIPs = recentSessions.map((s) => s.ip_address);
       return !recentIPs.includes(ipAddress);
     } catch (error) {
-      logger.error('Failed to check unusual location', { error, userId, ipAddress });
+      logger.error('Failed to check unusual location', {
+        error,
+        userId,
+        ipAddress,
+      });
       return false;
     }
   }
@@ -558,12 +628,22 @@ export class SessionManager {
   /**
    * Check if device is new for user
    */
-  private async isNewDevice(userId: string, deviceFingerprint: string): Promise<boolean> {
+  private async isNewDevice(
+    userId: string,
+    deviceFingerprint: string
+  ): Promise<boolean> {
     try {
-      const device = await this.getDeviceRegistration(userId, deviceFingerprint);
+      const device = await this.getDeviceRegistration(
+        userId,
+        deviceFingerprint
+      );
       return !device;
     } catch (error) {
-      logger.error('Failed to check new device', { error, userId, deviceFingerprint });
+      logger.error('Failed to check new device', {
+        error,
+        userId,
+        deviceFingerprint,
+      });
       return false;
     }
   }
@@ -574,7 +654,7 @@ export class SessionManager {
   private async hasRapidLoginAttempts(userId: string): Promise<boolean> {
     try {
       const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
-      
+
       const { data: recentLogins, error } = await this.supabase
         .from('session_audit_logs')
         .select('id')
@@ -583,8 +663,11 @@ export class SessionManager {
         .gte('timestamp', fiveMinutesAgo);
 
       if (error) throw error;
-      
-      return (recentLogins?.length || 0) > this.securityThresholds.suspicious_login_attempts;
+
+      return (
+        (recentLogins?.length || 0) >
+        this.securityThresholds.suspicious_login_attempts
+      );
     } catch (error) {
       logger.error('Failed to check rapid login attempts', { error, userId });
       return false;
@@ -612,13 +695,16 @@ export class SessionManager {
       // Extend if less than 5 minutes remaining
       if (timeUntilExpiry < fiveMinutes) {
         const newExpiryTime = await this.calculateExpiryTime(session.user_id);
-        
+
         await this.supabase
           .from('user_sessions')
           .update({ expires_at: newExpiryTime })
           .eq('id', sessionId);
 
-        logger.info('Session extended', { session_id: sessionId, new_expiry: newExpiryTime });
+        logger.info('Session extended', {
+          session_id: sessionId,
+          new_expiry: newExpiryTime,
+        });
       }
     } catch (error) {
       logger.error('Failed to extend session', { error, sessionId });
@@ -629,9 +715,9 @@ export class SessionManager {
    * Log session action for audit trail
    */
   private async logSessionAction(
-    sessionId: string, 
-    userId: string, 
-    action: SessionAction, 
+    sessionId: string,
+    userId: string,
+    action: SessionAction,
     details: Record<string, any>
   ): Promise<void> {
     try {
@@ -643,14 +729,16 @@ export class SessionManager {
         ip_address: details.ip_address || 'unknown',
         user_agent: details.user_agent || 'unknown',
         timestamp: new Date().toISOString(),
-        success: true
+        success: true,
       };
 
-      await this.supabase
-        .from('session_audit_logs')
-        .insert(auditData);
+      await this.supabase.from('session_audit_logs').insert(auditData);
     } catch (error) {
-      logger.error('Failed to log session action', { error, sessionId, action });
+      logger.error('Failed to log session action', {
+        error,
+        sessionId,
+        action,
+      });
     }
   }
 }

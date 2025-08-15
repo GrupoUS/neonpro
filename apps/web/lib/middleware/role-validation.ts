@@ -3,9 +3,13 @@
 // Story 1.4 - OAuth Google Integration Enhancement
 // Created: 2025-07-22
 
+import { type NextRequest, NextResponse } from 'next/server';
+import {
+  canManageTargetRole,
+  checkPermission,
+  type ROLE_HIERARCHY,
+} from '@/app/api/roles/permissions/route';
 import { createClient } from '@/app/utils/supabase/server';
-import { NextRequest, NextResponse } from 'next/server';
-import { ROLE_HIERARCHY, checkPermission, canManageTargetRole } from '@/app/api/roles/permissions/route';
 
 export interface RoleValidationOptions {
   requiredRole?: string[];
@@ -31,16 +35,19 @@ export async function validateRole(
 ): Promise<RoleValidationResult> {
   try {
     const supabase = await createClient();
-    
+
     // Verificar autenticação
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
       return {
         success: false,
         user: null,
         profile: null,
         error: 'Não autorizado - usuário não autenticado',
-        statusCode: 401
+        statusCode: 401,
       };
     }
 
@@ -57,26 +64,28 @@ export async function validateRole(
         user,
         profile: null,
         error: 'Perfil do usuário não encontrado',
-        statusCode: 404
+        statusCode: 404,
       };
     }
 
     // Verificar role específica se fornecida
-    if (options.requiredRole && options.requiredRole.length > 0) {
-      if (!options.requiredRole.includes(profile.role)) {
-        return {
-          success: false,
-          user,
-          profile,
-          error: `Acesso negado. Roles permitidas: ${options.requiredRole.join(', ')}`,
-          statusCode: 403
-        };
-      }
+    if (
+      options.requiredRole &&
+      options.requiredRole.length > 0 &&
+      !options.requiredRole.includes(profile.role)
+    ) {
+      return {
+        success: false,
+        user,
+        profile,
+        error: `Acesso negado. Roles permitidas: ${options.requiredRole.join(', ')}`,
+        statusCode: 403,
+      };
     }
 
     // Verificar permissões específicas se fornecidas
     if (options.requiredPermission && options.requiredPermission.length > 0) {
-      const hasAllPermissions = options.requiredPermission.every(permission =>
+      const hasAllPermissions = options.requiredPermission.every((permission) =>
         checkPermission(profile.role as keyof typeof ROLE_HIERARCHY, permission)
       );
 
@@ -86,7 +95,7 @@ export async function validateRole(
           user,
           profile,
           error: `Permissões insuficientes. Requeridas: ${options.requiredPermission.join(', ')}`,
-          statusCode: 403
+          statusCode: 403,
         };
       }
     }
@@ -95,14 +104,16 @@ export async function validateRole(
     if (options.allowSelfAccess && options.resourceOwnerField) {
       const body = await request.json().catch(() => ({}));
       const url = new URL(request.url);
-      const resourceOwnerId = body[options.resourceOwnerField] || url.searchParams.get(options.resourceOwnerField);
+      const resourceOwnerId =
+        body[options.resourceOwnerField] ||
+        url.searchParams.get(options.resourceOwnerField);
 
       if (resourceOwnerId && resourceOwnerId === user.id) {
         // Usuário está acessando seus próprios dados
         return {
           success: true,
           user,
-          profile
+          profile,
         };
       }
     }
@@ -110,9 +121,8 @@ export async function validateRole(
     return {
       success: true,
       user,
-      profile
+      profile,
     };
-
   } catch (error) {
     console.error('Erro na validação de role:', error);
     return {
@@ -120,7 +130,7 @@ export async function validateRole(
       user: null,
       profile: null,
       error: 'Erro interno na validação de permissões',
-      statusCode: 500
+      statusCode: 500,
     };
   }
 }
@@ -129,7 +139,10 @@ export async function validateRole(
  * Wrapper para middleware de validação de role
  */
 export function withRoleValidation(
-  handler: (req: NextRequest, validation: RoleValidationResult) => Promise<NextResponse>,
+  handler: (
+    req: NextRequest,
+    validation: RoleValidationResult
+  ) => Promise<NextResponse>,
   options: RoleValidationOptions = {}
 ) {
   return async (request: NextRequest): Promise<NextResponse> => {
@@ -163,13 +176,16 @@ export async function canManageUser(
       .in('id', [managerUserId, targetUserId]);
 
     if (error || !profiles || profiles.length !== 2) {
-      return { canManage: false, reason: 'Erro ao buscar informações dos usuários' };
+      return {
+        canManage: false,
+        reason: 'Erro ao buscar informações dos usuários',
+      };
     }
 
-    const managerProfile = profiles.find(p => p.id === managerUserId);
-    const targetProfile = profiles.find(p => p.id === targetUserId);
+    const managerProfile = profiles.find((p) => p.id === managerUserId);
+    const targetProfile = profiles.find((p) => p.id === targetUserId);
 
-    if (!managerProfile || !targetProfile) {
+    if (!(managerProfile && targetProfile)) {
       return { canManage: false, reason: 'Perfil de usuário não encontrado' };
     }
 
@@ -181,9 +197,10 @@ export async function canManageUser(
 
     return {
       canManage,
-      reason: canManage ? undefined : `Role ${managerProfile.role} não pode gerenciar role ${targetProfile.role}`
+      reason: canManage
+        ? undefined
+        : `Role ${managerProfile.role} não pode gerenciar role ${targetProfile.role}`,
     };
-
   } catch (error) {
     console.error('Erro na verificação de gerenciamento de usuário:', error);
     return { canManage: false, reason: 'Erro interno na verificação' };
@@ -201,18 +218,15 @@ export async function logRoleAction(
   try {
     const supabase = await createClient();
 
-    await supabase
-      .from('role_audit_log')
-      .insert({
-        user_id: userId,
-        action_type: actionType,
-        metadata: {
-          ...metadata,
-          timestamp: new Date().toISOString(),
-          user_agent: metadata.user_agent || 'unknown'
-        }
-      });
-
+    await supabase.from('role_audit_log').insert({
+      user_id: userId,
+      action_type: actionType,
+      metadata: {
+        ...metadata,
+        timestamp: new Date().toISOString(),
+        user_agent: metadata.user_agent || 'unknown',
+      },
+    });
   } catch (error) {
     console.error('Erro ao registrar log de auditoria de role:', error);
     // Não propagar o erro para não afetar a operação principal

@@ -3,7 +3,11 @@
 
 export interface ForecastingModel {
   id: string;
-  model_type: 'appointment_demand' | 'treatment_demand' | 'seasonal' | 'resource_utilization';
+  model_type:
+    | 'appointment_demand'
+    | 'treatment_demand'
+    | 'seasonal'
+    | 'resource_utilization';
   model_name: string;
   model_config: Record<string, any>;
   accuracy_score?: number; // 0.0000 to 1.0000 (≥0.8500 required)
@@ -24,7 +28,11 @@ export interface DemandPrediction {
   model_id: string;
   prediction_date: string; // Date being predicted for
   forecast_period: 'daily' | 'weekly' | 'monthly' | 'quarterly';
-  category: 'appointments' | 'specific_treatment' | 'staff_hours' | 'equipment_usage';
+  category:
+    | 'appointments'
+    | 'specific_treatment'
+    | 'staff_hours'
+    | 'equipment_usage';
   subcategory?: string; // Treatment type, equipment type, etc.
   forecast_value: number;
   confidence_interval_lower?: number;
@@ -58,7 +66,11 @@ export interface ForecastAccuracy {
 
 export interface DemandAlert {
   id: string;
-  alert_type: 'demand_spike' | 'capacity_constraint' | 'anomaly_detected' | 'low_accuracy';
+  alert_type:
+    | 'demand_spike'
+    | 'capacity_constraint'
+    | 'anomaly_detected'
+    | 'low_accuracy';
   severity: 'low' | 'medium' | 'high' | 'critical';
   title: string;
   description: string;
@@ -116,7 +128,10 @@ export interface ModelTrainingHistory {
 
 export interface ResourceOptimizationRecommendation {
   id: string;
-  recommendation_type: 'staff_scheduling' | 'equipment_allocation' | 'capacity_planning';
+  recommendation_type:
+    | 'staff_scheduling'
+    | 'equipment_allocation'
+    | 'capacity_planning';
   priority: 'low' | 'medium' | 'high' | 'urgent';
   title: string;
   description: string;
@@ -379,14 +394,26 @@ export interface ForecastingApiResponse<T = any> {
   };
 }
 
-export type ForecastingModelsResponse = ForecastingApiResponse<ForecastingModel[]>;
+export type ForecastingModelsResponse = ForecastingApiResponse<
+  ForecastingModel[]
+>;
 export type ForecastingModelResponse = ForecastingApiResponse<ForecastingModel>;
-export type DemandPredictionsResponse = ForecastingApiResponse<DemandPrediction[]>;
+export type DemandPredictionsResponse = ForecastingApiResponse<
+  DemandPrediction[]
+>;
 export type DemandPredictionResponse = ForecastingApiResponse<DemandPrediction>;
-export type ForecastAccuracyResponse = ForecastingApiResponse<ForecastAccuracy[]>;
+export type ForecastAccuracyResponse = ForecastingApiResponse<
+  ForecastAccuracy[]
+>;
 export type DemandAlertsResponse = ForecastingApiResponse<DemandAlert[]>;
 export type DemandAlertResponse = ForecastingApiResponse<DemandAlert>;
-export type ForecastingSettingsResponse = ForecastingApiResponse<ForecastingSettings>;
-export type ModelTrainingHistoryResponse = ForecastingApiResponse<ModelTrainingHistory[]>;
-export type ResourceOptimizationResponse = ForecastingApiResponse<ResourceOptimizationRecommendation[]>;
-export type ForecastingDashboardResponse = ForecastingApiResponse<ForecastingDashboardData>;
+export type ForecastingSettingsResponse =
+  ForecastingApiResponse<ForecastingSettings>;
+export type ModelTrainingHistoryResponse = ForecastingApiResponse<
+  ModelTrainingHistory[]
+>;
+export type ResourceOptimizationResponse = ForecastingApiResponse<
+  ResourceOptimizationRecommendation[]
+>;
+export type ForecastingDashboardResponse =
+  ForecastingApiResponse<ForecastingDashboardData>;

@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 // Schema para criação de alertas
@@ -8,39 +8,46 @@ const CreateAlertSchema = z.object({
   title: z.string().min(1).max(200),
   description: z.string().min(1).max(1000),
   severity: z.enum(['low', 'medium', 'high', 'critical']),
-  category: z.enum(['consent', 'data_subject_rights', 'audit', 'security', 'retention', 'anonymization']),
+  category: z.enum([
+    'consent',
+    'data_subject_rights',
+    'audit',
+    'security',
+    'retention',
+    'anonymization',
+  ]),
   metadata: z.record(z.any()).optional(),
   auto_resolve: z.boolean().default(false),
-  resolve_after_hours: z.number().min(1).max(8760).optional() // máximo 1 ano
+  resolve_after_hours: z.number().min(1).max(8760).optional(), // máximo 1 ano
 });
 
 // Schema para atualização de alertas
 const UpdateAlertSchema = z.object({
   status: z.enum(['active', 'resolved', 'dismissed']).optional(),
   resolution_notes: z.string().max(1000).optional(),
-  resolved_by: z.string().optional()
+  resolved_by: z.string().optional(),
 });
 
 // GET - Listar alertas
 export async function GET(request: NextRequest) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    
+
     // Verificar autenticação
-    const { data: { session }, error: authError } = await supabase.auth.getSession();
+    const {
+      data: { session },
+      error: authError,
+    } = await supabase.auth.getSession();
     if (authError || !session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status');
     const severity = searchParams.get('severity');
     const category = searchParams.get('category');
-    const limit = parseInt(searchParams.get('limit') || '50');
-    const offset = parseInt(searchParams.get('offset') || '0');
+    const limit = Number.parseInt(searchParams.get('limit') || '50', 10);
+    const offset = Number.parseInt(searchParams.get('offset') || '0', 10);
 
     const clinicId = session.user.user_metadata.clinic_id;
 
@@ -87,17 +94,16 @@ export async function GET(request: NextRequest) {
           total: count || 0,
           limit,
           offset,
-          hasMore: (count || 0) > offset + limit
-        }
-      }
+          hasMore: (count || 0) > offset + limit,
+        },
+      },
     });
-    
   } catch (error) {
     console.error('Erro ao listar alertas:', error);
     return NextResponse.json(
-      { 
+      {
         error: 'Erro interno do servidor',
-        details: error instanceof Error ? error.message : 'Erro desconhecido'
+        details: error instanceof Error ? error.message : 'Erro desconhecido',
       },
       { status: 500 }
     );
@@ -107,25 +113,25 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    
+
     // Verificar autenticação
-    const { data: { session }, error: authError } = await supabase.auth.getSession();
+    const {
+      data: { session },
+      error: authError,
+    } = await supabase.auth.getSession();
     if (authError || !session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
-    
+
     // Validar dados
     const validationResult = CreateAlertSchema.safeParse(body);
     if (!validationResult.success) {
       return NextResponse.json(
-        { 
+        {
           error: 'Dados inválidos',
-          details: validationResult.error.errors
+          details: validationResult.error.errors,
         },
         { status: 400 }
       );
@@ -155,7 +161,7 @@ export async function POST(request: NextRequest) {
         metadata: alertData.metadata || {},
         auto_resolve: alertData.auto_resolve,
         auto_resolve_at: autoResolveAt,
-        created_by: session.user.id
+        created_by: session.user.id,
       })
       .select()
       .single();
@@ -165,33 +171,30 @@ export async function POST(request: NextRequest) {
     }
 
     // Registrar evento de auditoria
-    await supabase
-      .from('lgpd_audit_trail')
-      .insert({
-        clinic_id: clinicId,
-        event_type: 'system',
-        action: 'compliance_alert_created',
-        user_id: session.user.id,
-        details: {
-          alertId: alert.id,
-          severity: alertData.severity,
-          category: alertData.category
-        },
-        severity: 'info'
-      });
+    await supabase.from('lgpd_audit_trail').insert({
+      clinic_id: clinicId,
+      event_type: 'system',
+      action: 'compliance_alert_created',
+      user_id: session.user.id,
+      details: {
+        alertId: alert.id,
+        severity: alertData.severity,
+        category: alertData.category,
+      },
+      severity: 'info',
+    });
 
     return NextResponse.json({
       success: true,
       data: alert,
-      message: 'Alerta criado com sucesso'
+      message: 'Alerta criado com sucesso',
     });
-    
   } catch (error) {
     console.error('Erro ao criar alerta:', error);
     return NextResponse.json(
-      { 
+      {
         error: 'Erro interno do servidor',
-        details: error instanceof Error ? error.message : 'Erro desconhecido'
+        details: error instanceof Error ? error.message : 'Erro desconhecido',
       },
       { status: 500 }
     );
@@ -201,19 +204,19 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    
+
     // Verificar autenticação
-    const { data: { session }, error: authError } = await supabase.auth.getSession();
+    const {
+      data: { session },
+      error: authError,
+    } = await supabase.auth.getSession();
     if (authError || !session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
     const alertId = searchParams.get('id');
-    
+
     if (!alertId) {
       return NextResponse.json(
         { error: 'ID do alerta é obrigatório' },
@@ -222,14 +225,14 @@ export async function PUT(request: NextRequest) {
     }
 
     const body = await request.json();
-    
+
     // Validar dados
     const validationResult = UpdateAlertSchema.safeParse(body);
     if (!validationResult.success) {
       return NextResponse.json(
-        { 
+        {
           error: 'Dados inválidos',
-          details: validationResult.error.errors
+          details: validationResult.error.errors,
         },
         { status: 400 }
       );
@@ -256,7 +259,7 @@ export async function PUT(request: NextRequest) {
     // Preparar dados de atualização
     const updatePayload: any = {
       updated_at: new Date().toISOString(),
-      updated_by: session.user.id
+      updated_by: session.user.id,
     };
 
     if (updateData.status) {
@@ -285,34 +288,31 @@ export async function PUT(request: NextRequest) {
     }
 
     // Registrar evento de auditoria
-    await supabase
-      .from('lgpd_audit_trail')
-      .insert({
-        clinic_id: clinicId,
-        event_type: 'system',
-        action: 'compliance_alert_updated',
-        user_id: session.user.id,
-        details: {
-          alertId: alertId,
-          previousStatus: existingAlert.status,
-          newStatus: updateData.status,
-          changes: updateData
-        },
-        severity: 'info'
-      });
+    await supabase.from('lgpd_audit_trail').insert({
+      clinic_id: clinicId,
+      event_type: 'system',
+      action: 'compliance_alert_updated',
+      user_id: session.user.id,
+      details: {
+        alertId,
+        previousStatus: existingAlert.status,
+        newStatus: updateData.status,
+        changes: updateData,
+      },
+      severity: 'info',
+    });
 
     return NextResponse.json({
       success: true,
       data: updatedAlert,
-      message: 'Alerta atualizado com sucesso'
+      message: 'Alerta atualizado com sucesso',
     });
-    
   } catch (error) {
     console.error('Erro ao atualizar alerta:', error);
     return NextResponse.json(
-      { 
+      {
         error: 'Erro interno do servidor',
-        details: error instanceof Error ? error.message : 'Erro desconhecido'
+        details: error instanceof Error ? error.message : 'Erro desconhecido',
       },
       { status: 500 }
     );

@@ -1,22 +1,25 @@
 // Story 3.2: API Endpoint - Treatment Recommendations
-import { NextRequest, NextResponse } from 'next/server'
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
-import { PatientInsightsIntegration } from '@/lib/ai/patient-insights'
 
-const patientInsights = new PatientInsightsIntegration()
+import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
+import { type NextRequest, NextResponse } from 'next/server';
+import { PatientInsightsIntegration } from '@/lib/ai/patient-insights';
+
+const patientInsights = new PatientInsightsIntegration();
 
 export async function GET(
   request: NextRequest,
   { params }: { params: { patientId: string } }
 ) {
   try {
-    const supabase = createRouteHandlerClient({ cookies })
-    
+    const supabase = createRouteHandlerClient({ cookies });
+
     // Verify authentication
-    const { data: { session } } = await supabase.auth.getSession()
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Validate patient access
@@ -24,33 +27,33 @@ export async function GET(
       .from('patients')
       .select('id')
       .eq('id', params.patientId)
-      .single()
+      .single();
 
     if (!patient) {
-      return NextResponse.json({ error: 'Patient not found' }, { status: 404 })
+      return NextResponse.json({ error: 'Patient not found' }, { status: 404 });
     }
 
     // Get treatment context from query parameters
-    const { searchParams } = new URL(request.url)
-    const treatmentContext = searchParams.get('context') || undefined
+    const { searchParams } = new URL(request.url);
+    const treatmentContext = searchParams.get('context') || undefined;
 
     // Generate treatment guidance
-    const treatmentRecommendations = await patientInsights.generateTreatmentGuidance(
-      params.patientId,
-      treatmentContext
-    )
+    const treatmentRecommendations =
+      await patientInsights.generateTreatmentGuidance(
+        params.patientId,
+        treatmentContext
+      );
 
     return NextResponse.json({
       success: true,
-      data: treatmentRecommendations
-    })
-
+      data: treatmentRecommendations,
+    });
   } catch (error) {
-    console.error('Treatment recommendations API error:', error)
+    console.error('Treatment recommendations API error:', error);
     return NextResponse.json(
       { error: 'Failed to generate treatment recommendations' },
       { status: 500 }
-    )
+    );
   }
 }
 
@@ -59,55 +62,59 @@ export async function POST(
   { params }: { params: { patientId: string } }
 ) {
   try {
-    const supabase = createRouteHandlerClient({ cookies })
-    
+    const supabase = createRouteHandlerClient({ cookies });
+
     // Verify authentication
-    const { data: { session } } = await supabase.auth.getSession()
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const body = await request.json()
-    const { 
+    const body = await request.json();
+    const {
       treatmentContext,
       includeAlternatives = true,
       includeRiskAssessment = true,
-      outcomeData = null
-    } = body
+      outcomeData = null,
+    } = body;
 
     // Generate comprehensive treatment recommendations
-    const treatmentRecommendations = await patientInsights.generateTreatmentGuidance(
-      params.patientId,
-      treatmentContext
-    )
+    const treatmentRecommendations =
+      await patientInsights.generateTreatmentGuidance(
+        params.patientId,
+        treatmentContext
+      );
 
-    let response: any = { treatmentRecommendations }
+    const response: any = { treatmentRecommendations };
 
     if (includeRiskAssessment) {
-      const riskAssessment = await patientInsights.generateQuickRiskAssessment(params.patientId)
-      response.riskAssessment = riskAssessment
+      const riskAssessment = await patientInsights.generateQuickRiskAssessment(
+        params.patientId
+      );
+      response.riskAssessment = riskAssessment;
     }
 
     // Process outcome data for learning if provided
-    if (outcomeData && outcomeData.treatmentId) {
+    if (outcomeData?.treatmentId) {
       const learningInsights = await patientInsights.updatePatientOutcome(
         params.patientId,
         outcomeData.treatmentId,
         outcomeData
-      )
-      response.learningInsights = learningInsights
+      );
+      response.learningInsights = learningInsights;
     }
 
     return NextResponse.json({
       success: true,
-      data: response
-    })
-
+      data: response,
+    });
   } catch (error) {
-    console.error('Treatment recommendations POST API error:', error)
+    console.error('Treatment recommendations POST API error:', error);
     return NextResponse.json(
       { error: 'Failed to generate comprehensive treatment recommendations' },
       { status: 500 }
-    )
+    );
   }
 }

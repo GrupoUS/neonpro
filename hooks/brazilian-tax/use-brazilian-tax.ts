@@ -6,15 +6,15 @@
 import { useCallback, useEffect, useState } from 'react';
 import CNPJConsultationService from '../../lib/services/brazilian-tax/cnpj-consultation';
 import {
-    CNPJCompanyData,
-    CNPJConsultationResult,
-    formatCNPJ,
-    validateCNPJFormat
+  type CNPJCompanyData,
+  type CNPJConsultationResult,
+  formatCNPJ,
+  validateCNPJFormat,
 } from '../../lib/services/brazilian-tax/cnpj-validator';
 import BrazilianTaxCalculatorService from '../../lib/services/brazilian-tax/tax-calculator-v2';
-import {
-    TaxCalculationRequest,
-    TaxCalculationResponse
+import type {
+  TaxCalculationRequest,
+  TaxCalculationResponse,
 } from '../../lib/types/brazilian-tax';
 
 /**
@@ -34,17 +34,17 @@ export function useCNPJValidation() {
     isLoading: false,
     companyData: null,
     errors: [],
-    consultationResult: null
+    consultationResult: null,
   });
 
   const validateCNPJ = useCallback((cnpj: string) => {
     const validation = validateCNPJFormat(cnpj);
-    
-    setValidationState(prev => ({
+
+    setValidationState((prev) => ({
       ...prev,
-      cnpj: cnpj,
+      cnpj,
       isValid: validation.valid,
-      errors: validation.errors || []
+      errors: validation.errors || [],
     }));
 
     return validation;
@@ -53,46 +53,50 @@ export function useCNPJValidation() {
   const consultCNPJ = useCallback(async (cnpj: string) => {
     if (!cnpj) return;
 
-    setValidationState(prev => ({
+    setValidationState((prev) => ({
       ...prev,
       isLoading: true,
-      errors: []
+      errors: [],
     }));
 
     try {
       const result = await CNPJConsultationService.consultCNPJ(cnpj);
-      
-      setValidationState(prev => ({
+
+      setValidationState((prev) => ({
         ...prev,
         isLoading: false,
         consultationResult: result,
         companyData: result.success ? result.data || null : null,
-        errors: result.errors || []
+        errors: result.errors || [],
       }));
 
       return result;
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro na consulta';
-      
-      setValidationState(prev => ({
+      const errorMessage =
+        error instanceof Error ? error.message : 'Erro na consulta';
+
+      setValidationState((prev) => ({
         ...prev,
         isLoading: false,
-        errors: [errorMessage]
+        errors: [errorMessage],
       }));
 
       return null;
     }
   }, []);
 
-  const formatAndValidate = useCallback((cnpj: string) => {
-    const formatted = formatCNPJ(cnpj);
-    const validation = validateCNPJ(formatted);
-    
-    return {
-      formatted,
-      validation
-    };
-  }, [validateCNPJ]);
+  const formatAndValidate = useCallback(
+    (cnpj: string) => {
+      const formatted = formatCNPJ(cnpj);
+      const validation = validateCNPJ(formatted);
+
+      return {
+        formatted,
+        validation,
+      };
+    },
+    [validateCNPJ]
+  );
 
   const clearValidation = useCallback(() => {
     setValidationState({
@@ -101,7 +105,7 @@ export function useCNPJValidation() {
       isLoading: false,
       companyData: null,
       errors: [],
-      consultationResult: null
+      consultationResult: null,
     });
   }, []);
 
@@ -110,7 +114,7 @@ export function useCNPJValidation() {
     validateCNPJ,
     consultCNPJ,
     formatAndValidate,
-    clearValidation
+    clearValidation,
   };
 }
 
@@ -127,98 +131,108 @@ export function useTaxCalculation() {
     isLoading: false,
     result: null,
     errors: [],
-    history: []
+    history: [],
   });
 
   const calculateTaxes = useCallback(async (request: TaxCalculationRequest) => {
-    setCalculationState(prev => ({
+    setCalculationState((prev) => ({
       ...prev,
       isLoading: true,
-      errors: []
+      errors: [],
     }));
 
     try {
       const result = BrazilianTaxCalculatorService.calculateTaxes(request);
-      
-      setCalculationState(prev => ({
+
+      setCalculationState((prev) => ({
         ...prev,
         isLoading: false,
         result,
-        history: [result, ...prev.history.slice(0, 9)] // Keep last 10 calculations
+        history: [result, ...prev.history.slice(0, 9)], // Keep last 10 calculations
       }));
 
       return result;
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro no cálculo';
-      
-      setCalculationState(prev => ({
+      const errorMessage =
+        error instanceof Error ? error.message : 'Erro no cálculo';
+
+      setCalculationState((prev) => ({
         ...prev,
         isLoading: false,
-        errors: [errorMessage]
+        errors: [errorMessage],
       }));
 
       return null;
     }
   }, []);
 
-  const batchCalculate = useCallback(async (requests: TaxCalculationRequest[]) => {
-    setCalculationState(prev => ({
-      ...prev,
-      isLoading: true,
-      errors: []
-    }));
-
-    try {
-      const results = BrazilianTaxCalculatorService.batchCalculateTaxes(requests);
-      
-      setCalculationState(prev => ({
+  const batchCalculate = useCallback(
+    async (requests: TaxCalculationRequest[]) => {
+      setCalculationState((prev) => ({
         ...prev,
-        isLoading: false
+        isLoading: true,
+        errors: [],
       }));
 
-      return results;
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro no cálculo em lote';
-      
-      setCalculationState(prev => ({
-        ...prev,
-        isLoading: false,
-        errors: [errorMessage]
-      }));
+      try {
+        const results =
+          BrazilianTaxCalculatorService.batchCalculateTaxes(requests);
 
-      return null;
-    }
-  }, []);
+        setCalculationState((prev) => ({
+          ...prev,
+          isLoading: false,
+        }));
 
-  const estimateAnnualTax = useCallback((
-    monthlyRevenue: number,
-    regime: 'simples_nacional' | 'lucro_presumido' | 'lucro_real',
-    serviceType: string
-  ) => {
-    try {
-      return BrazilianTaxCalculatorService.estimateAnnualTax(
-        monthlyRevenue,
-        regime,
-        serviceType
-      );
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro na estimativa';
-      
-      setCalculationState(prev => ({
-        ...prev,
-        errors: [errorMessage]
-      }));
+        return results;
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : 'Erro no cálculo em lote';
 
-      return null;
-    }
-  }, []);
+        setCalculationState((prev) => ({
+          ...prev,
+          isLoading: false,
+          errors: [errorMessage],
+        }));
+
+        return null;
+      }
+    },
+    []
+  );
+
+  const estimateAnnualTax = useCallback(
+    (
+      monthlyRevenue: number,
+      regime: 'simples_nacional' | 'lucro_presumido' | 'lucro_real',
+      serviceType: string
+    ) => {
+      try {
+        return BrazilianTaxCalculatorService.estimateAnnualTax(
+          monthlyRevenue,
+          regime,
+          serviceType
+        );
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : 'Erro na estimativa';
+
+        setCalculationState((prev) => ({
+          ...prev,
+          errors: [errorMessage],
+        }));
+
+        return null;
+      }
+    },
+    []
+  );
 
   const clearCalculations = useCallback(() => {
     setCalculationState({
       isLoading: false,
       result: null,
       errors: [],
-      history: []
+      history: [],
     });
   }, []);
 
@@ -227,7 +241,7 @@ export function useTaxCalculation() {
     calculateTaxes,
     batchCalculate,
     estimateAnnualTax,
-    clearCalculations
+    clearCalculations,
   };
 }
 
@@ -238,7 +252,11 @@ export function useBrazilianTaxCompliance() {
   const [complianceState, setComplianceState] = useState<{
     isLoading: boolean;
     healthcareCNAEValid: boolean;
-    regimeTributario: 'simples_nacional' | 'lucro_presumido' | 'lucro_real' | null;
+    regimeTributario:
+      | 'simples_nacional'
+      | 'lucro_presumido'
+      | 'lucro_real'
+      | null;
     complianceChecks: {
       cnpj_valid: boolean;
       inscricao_estadual_valid: boolean;
@@ -254,9 +272,9 @@ export function useBrazilianTaxCompliance() {
       cnpj_valid: false,
       inscricao_estadual_valid: false,
       inscricao_municipal_valid: false,
-      simples_nacional_active: false
+      simples_nacional_active: false,
     },
-    errors: []
+    errors: [],
   });
 
   const checkHealthcareCNAE = useCallback((cnae: string) => {
@@ -271,70 +289,81 @@ export function useBrazilianTaxCompliance() {
       '4771-7', // Comércio varejista de produtos farmacêuticos
       '4772-5', // Comércio varejista de cosméticos
     ];
-    
-    const isValid = healthcareCNAEs.some(code => cnae.startsWith(code.replace('-', '')));
-    
-    setComplianceState(prev => ({
+
+    const isValid = healthcareCNAEs.some((code) =>
+      cnae.startsWith(code.replace('-', ''))
+    );
+
+    setComplianceState((prev) => ({
       ...prev,
-      healthcareCNAEValid: isValid
+      healthcareCNAEValid: isValid,
     }));
 
     return isValid;
   }, []);
 
-  const validateCompliance = useCallback(async (companyData: CNPJCompanyData) => {
-    setComplianceState(prev => ({
-      ...prev,
-      isLoading: true,
-      errors: []
-    }));
-
-    try {
-      // Validate CNPJ format
-      const cnpjValid = validateCNPJFormat(companyData.cnpj).valid;
-      
-      // Check if it's healthcare/aesthetic related
-      const healthcareValid = checkHealthcareCNAE(companyData.atividade_principal.code);
-      
-      // Determine likely tax regime based on company size and activity
-      let regimeTributario: 'simples_nacional' | 'lucro_presumido' | 'lucro_real' = 'simples_nacional';
-      
-      if (companyData.capital_social > 5000000) {
-        regimeTributario = 'lucro_real';
-      } else if (companyData.capital_social > 1000000) {
-        regimeTributario = 'lucro_presumido';
-      }
-
-      setComplianceState(prev => ({
+  const validateCompliance = useCallback(
+    async (companyData: CNPJCompanyData) => {
+      setComplianceState((prev) => ({
         ...prev,
-        isLoading: false,
-        healthcareCNAEValid: healthcareValid,
-        regimeTributario,
-        complianceChecks: {
-          cnpj_valid: cnpjValid,
-          inscricao_estadual_valid: true, // Would need additional validation
-          inscricao_municipal_valid: true, // Would need additional validation
-          simples_nacional_active: regimeTributario === 'simples_nacional'
+        isLoading: true,
+        errors: [],
+      }));
+
+      try {
+        // Validate CNPJ format
+        const cnpjValid = validateCNPJFormat(companyData.cnpj).valid;
+
+        // Check if it's healthcare/aesthetic related
+        const healthcareValid = checkHealthcareCNAE(
+          companyData.atividade_principal.code
+        );
+
+        // Determine likely tax regime based on company size and activity
+        let regimeTributario:
+          | 'simples_nacional'
+          | 'lucro_presumido'
+          | 'lucro_real' = 'simples_nacional';
+
+        if (companyData.capital_social > 5_000_000) {
+          regimeTributario = 'lucro_real';
+        } else if (companyData.capital_social > 1_000_000) {
+          regimeTributario = 'lucro_presumido';
         }
-      }));
 
-      return {
-        cnpjValid,
-        healthcareValid,
-        regimeTributario
-      };
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro na validação';
-      
-      setComplianceState(prev => ({
-        ...prev,
-        isLoading: false,
-        errors: [errorMessage]
-      }));
+        setComplianceState((prev) => ({
+          ...prev,
+          isLoading: false,
+          healthcareCNAEValid: healthcareValid,
+          regimeTributario,
+          complianceChecks: {
+            cnpj_valid: cnpjValid,
+            inscricao_estadual_valid: true, // Would need additional validation
+            inscricao_municipal_valid: true, // Would need additional validation
+            simples_nacional_active: regimeTributario === 'simples_nacional',
+          },
+        }));
 
-      return null;
-    }
-  }, [checkHealthcareCNAE]);
+        return {
+          cnpjValid,
+          healthcareValid,
+          regimeTributario,
+        };
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : 'Erro na validação';
+
+        setComplianceState((prev) => ({
+          ...prev,
+          isLoading: false,
+          errors: [errorMessage],
+        }));
+
+        return null;
+      }
+    },
+    [checkHealthcareCNAE]
+  );
 
   const clearCompliance = useCallback(() => {
     setComplianceState({
@@ -345,9 +374,9 @@ export function useBrazilianTaxCompliance() {
         cnpj_valid: false,
         inscricao_estadual_valid: false,
         inscricao_municipal_valid: false,
-        simples_nacional_active: false
+        simples_nacional_active: false,
       },
-      errors: []
+      errors: [],
     });
   }, []);
 
@@ -355,7 +384,7 @@ export function useBrazilianTaxCompliance() {
     ...complianceState,
     checkHealthcareCNAE,
     validateCompliance,
-    clearCompliance
+    clearCompliance,
   };
 }
 
@@ -374,42 +403,43 @@ export function useBrazilianTax() {
     setIsInitialized(true);
   }, []);
 
-  const validateAndCalculate = useCallback(async (
-    cnpj: string,
-    serviceType: string,
-    serviceValue: number
-  ) => {
-    // Step 1: Validate CNPJ
-    const cnpjResult = await cnpjValidation.consultCNPJ(cnpj);
-    if (!cnpjResult?.success) {
-      throw new Error('CNPJ inválido ou não encontrado');
-    }
+  const validateAndCalculate = useCallback(
+    async (cnpj: string, serviceType: string, serviceValue: number) => {
+      // Step 1: Validate CNPJ
+      const cnpjResult = await cnpjValidation.consultCNPJ(cnpj);
+      if (!cnpjResult?.success) {
+        throw new Error('CNPJ inválido ou não encontrado');
+      }
 
-    // Step 2: Validate compliance
-    const complianceResult = await compliance.validateCompliance(cnpjResult.data!);
-    if (!complianceResult) {
-      throw new Error('Erro na validação de compliance');
-    }
+      // Step 2: Validate compliance
+      const complianceResult = await compliance.validateCompliance(
+        cnpjResult.data!
+      );
+      if (!complianceResult) {
+        throw new Error('Erro na validação de compliance');
+      }
 
-    // Step 3: Calculate taxes
-    const taxRequest: TaxCalculationRequest = {
-      clinic_id: 'temp', // Would come from context
-      valor_base: serviceValue,
-      tipo_servico: serviceType,
-      regime_tributario: complianceResult.regimeTributario
-    };
+      // Step 3: Calculate taxes
+      const taxRequest: TaxCalculationRequest = {
+        clinic_id: 'temp', // Would come from context
+        valor_base: serviceValue,
+        tipo_servico: serviceType,
+        regime_tributario: complianceResult.regimeTributario,
+      };
 
-    const taxResult = await taxCalculation.calculateTaxes(taxRequest);
-    if (!taxResult) {
-      throw new Error('Erro no cálculo de impostos');
-    }
+      const taxResult = await taxCalculation.calculateTaxes(taxRequest);
+      if (!taxResult) {
+        throw new Error('Erro no cálculo de impostos');
+      }
 
-    return {
-      cnpj: cnpjResult,
-      compliance: complianceResult,
-      tax: taxResult
-    };
-  }, [cnpjValidation, taxCalculation, compliance]);
+      return {
+        cnpj: cnpjResult,
+        compliance: complianceResult,
+        tax: taxResult,
+      };
+    },
+    [cnpjValidation, taxCalculation, compliance]
+  );
 
   const resetAll = useCallback(() => {
     cnpjValidation.clearValidation();
@@ -423,6 +453,6 @@ export function useBrazilianTax() {
     compliance,
     isInitialized,
     validateAndCalculate,
-    resetAll
+    resetAll,
   };
 }

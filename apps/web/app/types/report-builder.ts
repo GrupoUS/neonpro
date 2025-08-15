@@ -183,108 +183,86 @@ export interface ComponentLibrary {
 }
 
 // Enum Types
-export type VisualizationType = 
-  | 'table' 
-  | 'chart' 
-  | 'graph' 
-  | 'metric' 
-  | 'pivot' 
+export type VisualizationType =
+  | 'table'
+  | 'chart'
+  | 'graph'
+  | 'metric'
+  | 'pivot'
   | 'dashboard';
 
-export type TemplateCategory = 
-  | 'financial' 
-  | 'patient' 
-  | 'operational' 
-  | 'clinical' 
-  | 'inventory' 
+export type TemplateCategory =
+  | 'financial'
+  | 'patient'
+  | 'operational'
+  | 'clinical'
+  | 'inventory'
   | 'custom';
 
-export type UsageActionType = 
-  | 'view' 
-  | 'generate' 
-  | 'export' 
-  | 'share' 
-  | 'edit' 
+export type UsageActionType =
+  | 'view'
+  | 'generate'
+  | 'export'
+  | 'share'
+  | 'edit'
   | 'clone';
 
-export type DeliveryMethod = 
-  | 'email' 
-  | 'dashboard' 
-  | 'webhook' 
-  | 'file_system';
+export type DeliveryMethod = 'email' | 'dashboard' | 'webhook' | 'file_system';
 
-export type ReportFormat = 
-  | 'pdf' 
-  | 'excel' 
-  | 'csv' 
-  | 'powerpoint' 
-  | 'json';
+export type ReportFormat = 'pdf' | 'excel' | 'csv' | 'powerpoint' | 'json';
 
-export type PermissionLevel = 
-  | 'view' 
-  | 'edit' 
-  | 'admin' 
-  | 'owner';
+export type PermissionLevel = 'view' | 'edit' | 'admin' | 'owner';
 
-export type ConnectorType = 
-  | 'internal' 
-  | 'database' 
-  | 'api' 
-  | 'file' 
+export type ConnectorType =
+  | 'internal'
+  | 'database'
+  | 'api'
+  | 'file'
   | 'webhook';
 
-export type TestStatus = 
-  | 'success' 
-  | 'failed' 
-  | 'unknown' 
-  | 'testing';
+export type TestStatus = 'success' | 'failed' | 'unknown' | 'testing';
 
-export type ChartType = 
-  | 'line' 
-  | 'bar' 
-  | 'pie' 
-  | 'donut' 
-  | 'area' 
-  | 'scatter' 
-  | 'gauge' 
-  | 'funnel' 
-  | 'heatmap' 
-  | 'treemap' 
-  | 'waterfall' 
+export type ChartType =
+  | 'line'
+  | 'bar'
+  | 'pie'
+  | 'donut'
+  | 'area'
+  | 'scatter'
+  | 'gauge'
+  | 'funnel'
+  | 'heatmap'
+  | 'treemap'
+  | 'waterfall'
   | 'combo';
 
-export type DataSourceType = 
-  | 'sql' 
-  | 'api' 
-  | 'file' 
-  | 'real_time' 
-  | 'cached';
+export type DataSourceType = 'sql' | 'api' | 'file' | 'real_time' | 'cached';
 
-export type AggregationType = 
-  | 'sum' 
-  | 'avg' 
-  | 'count' 
-  | 'min' 
-  | 'max' 
-  | 'distinct' 
+export type AggregationType =
+  | 'sum'
+  | 'avg'
+  | 'count'
+  | 'min'
+  | 'max'
+  | 'distinct'
   | 'percentile';
 
-export type ComponentType = 
-  | 'chart' 
-  | 'table' 
-  | 'metric' 
-  | 'filter' 
-  | 'text' 
-  | 'image' 
+export type ComponentType =
+  | 'chart'
+  | 'table'
+  | 'metric'
+  | 'filter'
+  | 'text'
+  | 'image'
   | 'container';
 
-export type RefreshRate = 
-  | 'real_time' 
-  | 'every_minute' 
-  | 'every_5_minutes' 
-  | 'every_15_minutes' 
-  | 'every_hour' 
-  | 'daily' 
+export type RefreshRate =
+  | 'real_time'
+  | 'every_minute'
+  | 'every_5_minutes'
+  | 'every_15_minutes'
+  | 'every_hour'
+  | 'daily'
   | 'manual';
 
 // Supporting Interface Types
@@ -549,14 +527,40 @@ export interface ValidationRule {
 }
 
 // Enum String Literals
-export type FilterOperator = '=' | '!=' | '>' | '<' | '>=' | '<=' | 'in' | 'not_in' | 'like' | 'not_like';
-export type FilterType = 'date' | 'number' | 'text' | 'select' | 'multi_select' | 'boolean';
+export type FilterOperator =
+  | '='
+  | '!='
+  | '>'
+  | '<'
+  | '>='
+  | '<='
+  | 'in'
+  | 'not_in'
+  | 'like'
+  | 'not_like';
+export type FilterType =
+  | 'date'
+  | 'number'
+  | 'text'
+  | 'select'
+  | 'multi_select'
+  | 'boolean';
 export type FilterLogic = 'AND' | 'OR';
 export type UpdateTrigger = 'change' | 'click' | 'hover' | 'time';
 export type CacheStrategy = 'lru' | 'fifo' | 'ttl' | 'manual';
-export type ScheduleFrequency = 'daily' | 'weekly' | 'monthly' | 'yearly' | 'custom';
+export type ScheduleFrequency =
+  | 'daily'
+  | 'weekly'
+  | 'monthly'
+  | 'yearly'
+  | 'custom';
 export type RecipientType = 'to' | 'cc' | 'bcc';
-export type ValidationType = 'required' | 'min_size' | 'max_size' | 'data_type' | 'custom';
+export type ValidationType =
+  | 'required'
+  | 'min_size'
+  | 'max_size'
+  | 'data_type'
+  | 'custom';
 
 // Additional Interface Types (continued)
 export interface FilterOption {
@@ -668,13 +672,34 @@ export interface Index {
 }
 
 // Final Enum Types
-export type TransformationType = 'map' | 'filter' | 'aggregate' | 'join' | 'pivot';
+export type TransformationType =
+  | 'map'
+  | 'filter'
+  | 'aggregate'
+  | 'join'
+  | 'pivot';
 export type RelationshipType = 'one_to_one' | 'one_to_many' | 'many_to_many';
-export type InvalidationTrigger = 'time' | 'data_change' | 'manual' | 'api_call';
+export type InvalidationTrigger =
+  | 'time'
+  | 'data_change'
+  | 'manual'
+  | 'api_call';
 export type InvalidationAction = 'refresh' | 'clear' | 'partial_refresh';
 export type ActionType = 'export' | 'share' | 'edit' | 'clone' | 'custom';
-export type ClickActionType = 'drill_down' | 'filter' | 'navigate' | 'modal' | 'custom';
-export type FieldType = 'string' | 'number' | 'boolean' | 'date' | 'datetime' | 'json' | 'array';
+export type ClickActionType =
+  | 'drill_down'
+  | 'filter'
+  | 'navigate'
+  | 'modal'
+  | 'custom';
+export type FieldType =
+  | 'string'
+  | 'number'
+  | 'boolean'
+  | 'date'
+  | 'datetime'
+  | 'json'
+  | 'array';
 
 // API Request/Response Types
 export interface CreateReportRequest {

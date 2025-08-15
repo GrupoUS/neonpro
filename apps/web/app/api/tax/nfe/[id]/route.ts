@@ -3,22 +3,21 @@
 
 import { NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
-import { nfeService } from '@/lib/services/tax/nfe-service';
 
 export async function GET(
-  request: Request,
+  _request: Request,
   { params }: { params: { id: string } }
 ) {
   try {
     const supabase = createClient();
-    
+
     // Check authentication
-    const { data: { session }, error: authError } = await supabase.auth.getSession();
+    const {
+      data: { session },
+      error: authError,
+    } = await supabase.auth.getSession();
     if (authError || !session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { id } = params;
@@ -45,17 +44,13 @@ export async function GET(
       .single();
 
     if (clinicError || !clinic) {
-      return NextResponse.json(
-        { error: 'Access denied' },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: 'Access denied' }, { status: 403 });
     }
 
     return NextResponse.json({
       success: true,
-      data: nfeDocument
+      data: nfeDocument,
     });
-
   } catch (error) {
     console.error('NFe fetch error:', error);
     return NextResponse.json(
@@ -71,14 +66,14 @@ export async function PATCH(
 ) {
   try {
     const supabase = createClient();
-    
+
     // Check authentication
-    const { data: { session }, error: authError } = await supabase.auth.getSession();
+    const {
+      data: { session },
+      error: authError,
+    } = await supabase.auth.getSession();
     if (authError || !session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { id } = params;
@@ -106,10 +101,7 @@ export async function PATCH(
       .single();
 
     if (clinicError || !clinic) {
-      return NextResponse.json(
-        { error: 'Access denied' },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: 'Access denied' }, { status: 403 });
     }
 
     // Update NFe document
@@ -117,7 +109,7 @@ export async function PATCH(
       .from('nfe_documents')
       .update({
         ...body,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', id)
       .select()
@@ -133,9 +125,8 @@ export async function PATCH(
 
     return NextResponse.json({
       success: true,
-      data: updatedNfe
+      data: updatedNfe,
     });
-
   } catch (error) {
     console.error('NFe update error:', error);
     return NextResponse.json(
@@ -146,19 +137,19 @@ export async function PATCH(
 }
 
 export async function DELETE(
-  request: Request,
+  _request: Request,
   { params }: { params: { id: string } }
 ) {
   try {
     const supabase = createClient();
-    
+
     // Check authentication
-    const { data: { session }, error: authError } = await supabase.auth.getSession();
+    const {
+      data: { session },
+      error: authError,
+    } = await supabase.auth.getSession();
     if (authError || !session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { id } = params;
@@ -185,10 +176,7 @@ export async function DELETE(
       .single();
 
     if (clinicError || !clinic) {
-      return NextResponse.json(
-        { error: 'Access denied' },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: 'Access denied' }, { status: 403 });
     }
 
     // Check if NFe can be deleted (only draft status can be deleted)
@@ -215,9 +203,8 @@ export async function DELETE(
 
     return NextResponse.json({
       success: true,
-      message: 'NFe document deleted successfully'
+      message: 'NFe document deleted successfully',
     });
-
   } catch (error) {
     console.error('NFe delete error:', error);
     return NextResponse.json(

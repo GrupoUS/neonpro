@@ -1,4 +1,4 @@
-import { BaseEntity } from './common';
+import type { BaseEntity } from './common';
 
 export interface User extends BaseEntity {
   email: string;
@@ -10,5 +10,5 @@ export interface User extends BaseEntity {
 export enum UserRole {
   ADMIN = 'admin',
   PROFESSIONAL = 'professional',
-  PATIENT = 'patient'
+  PATIENT = 'patient',
 }

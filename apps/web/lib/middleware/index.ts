@@ -3,21 +3,19 @@
  * Centralized exports for middleware functionality
  */
 
+export type {
+  AuthResult,
+  AuthUser,
+} from './auth';
 export * from './auth';
-
 // Re-export commonly used items
 export {
   authenticateRequest,
-  verifyAuthToken,
+  canAccessClinic,
   getSupabaseUser,
-  requireAuth,
-  hasRole,
   hasPermission,
+  hasRole,
   hasRoleLevel,
-  canAccessClinic
-} from './auth';
-
-export type {
-  AuthUser,
-  AuthResult
+  requireAuth,
+  verifyAuthToken,
 } from './auth';

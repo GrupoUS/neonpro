@@ -1,13 +1,13 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { renderToBuffer } from '@react-pdf/renderer';
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { createClient } from '@/app/utils/supabase/server';
 import { sendInvoiceEmail } from '@/lib/payments/email';
 import { generateInvoicePDF } from '@/lib/payments/pdf';
-import { renderToBuffer } from '@react-pdf/renderer';
-import { z } from 'zod';
 
 const sendInvoiceSchema = z.object({
   invoiceId: z.string().uuid('ID da fatura inválido'),
-  includeAttachment: z.boolean().optional().default(true)
+  includeAttachment: z.boolean().optional().default(true),
 });
 
 /**
@@ -17,13 +17,13 @@ export async function POST(request: NextRequest) {
   try {
     // Validar autenticação
     const supabase = createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Não autorizado' }, 
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
     // Validar corpo da requisição
@@ -32,10 +32,10 @@ export async function POST(request: NextRequest) {
 
     if (!validation.success) {
       return NextResponse.json(
-        { 
+        {
           error: 'Dados inválidos',
-          details: validation.error.issues 
-        }, 
+          details: validation.error.issues,
+        },
         { status: 400 }
       );
     }
@@ -59,14 +59,14 @@ export async function POST(request: NextRequest) {
 
     if (invoiceError || !invoice) {
       return NextResponse.json(
-        { error: 'Fatura não encontrada' }, 
+        { error: 'Fatura não encontrada' },
         { status: 404 }
       );
     }
 
     if (!invoice.profiles) {
       return NextResponse.json(
-        { error: 'Dados do cliente não encontrados' }, 
+        { error: 'Dados do cliente não encontrados' },
         { status: 404 }
       );
     }
@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
           status: invoice.status,
           clientName: invoice.profiles.full_name || invoice.profiles.email,
           clientEmail: invoice.profiles.email,
-          issuedAt: invoice.created_at
+          issuedAt: invoice.created_at,
         });
 
         pdfBuffer = await renderToBuffer(pdfDocument);
@@ -103,12 +103,12 @@ export async function POST(request: NextRequest) {
       amount: invoice.total,
       status: invoice.status,
       dueDate: invoice.due_date,
-      pdfBuffer
+      pdfBuffer,
     });
 
     if (!emailResult.success) {
       return NextResponse.json(
-        { error: emailResult.error || 'Falha ao enviar email' }, 
+        { error: emailResult.error || 'Falha ao enviar email' },
         { status: 500 }
       );
     }
@@ -118,7 +118,7 @@ export async function POST(request: NextRequest) {
       .from('invoices')
       .update({
         email_sent_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', invoiceId);
 
@@ -130,13 +130,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       message: 'Email enviado com sucesso',
-      emailId: emailResult.id
+      emailId: emailResult.id,
     });
-
   } catch (error) {
     console.error('Erro ao enviar email de fatura:', error);
     return NextResponse.json(
-      { error: 'Erro interno do servidor' }, 
+      { error: 'Erro interno do servidor' },
       { status: 500 }
     );
   }
@@ -148,13 +147,13 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     const supabase = createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Não autorizado' }, 
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
@@ -162,7 +161,7 @@ export async function GET(request: NextRequest) {
 
     if (!invoiceId) {
       return NextResponse.json(
-        { error: 'ID da fatura obrigatório' }, 
+        { error: 'ID da fatura obrigatório' },
         { status: 400 }
       );
     }
@@ -177,7 +176,7 @@ export async function GET(request: NextRequest) {
 
     if (invoiceError || !invoice) {
       return NextResponse.json(
-        { error: 'Fatura não encontrada' }, 
+        { error: 'Fatura não encontrada' },
         { status: 404 }
       );
     }
@@ -185,13 +184,12 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       invoiceId: invoice.id,
       emailSentAt: invoice.email_sent_at,
-      hasBeenSent: !!invoice.email_sent_at
+      hasBeenSent: !!invoice.email_sent_at,
     });
-
   } catch (error) {
     console.error('Erro ao buscar histórico de email:', error);
     return NextResponse.json(
-      { error: 'Erro interno do servidor' }, 
+      { error: 'Erro interno do servidor' },
       { status: 500 }
     );
   }

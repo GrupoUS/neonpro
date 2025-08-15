@@ -89,4 +89,6 @@ Se não há logs de callback:
 `);
 
 console.log('\n✅ INSTRUÇÕES COMPLETAS');
-console.log('Execute o teste acima e reporte os resultados para diagnóstico preciso.');
+console.log(
+  'Execute o teste acima e reporte os resultados para diagnóstico preciso.'
+);

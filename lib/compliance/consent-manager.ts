@@ -22,7 +22,7 @@ export interface ConsentPurpose {
 
 export class LGPDConsentManager {
   private static instance: LGPDConsentManager;
-  
+
   static getInstance(): LGPDConsentManager {
     if (!LGPDConsentManager.instance) {
       LGPDConsentManager.instance = new LGPDConsentManager();
@@ -35,47 +35,49 @@ export class LGPDConsentManager {
     {
       id: 'essential',
       name: 'Funcionamento Essencial',
-      description: 'Dados necessários para operação básica da plataforma médica',
+      description:
+        'Dados necessários para operação básica da plataforma médica',
       required: true,
-      category: 'essential'
+      category: 'essential',
     },
     {
       id: 'medical_treatment',
       name: 'Atendimento Médico',
-      description: 'Processamento de dados médicos para consultas e tratamentos',
+      description:
+        'Processamento de dados médicos para consultas e tratamentos',
       required: true,
-      category: 'essential'
+      category: 'essential',
     },
     {
       id: 'appointment_management',
       name: 'Gestão de Consultas',
       description: 'Agendamento e gerenciamento de consultas médicas',
       required: false,
-      category: 'functional'
+      category: 'functional',
     },
     {
       id: 'analytics',
       name: 'Análises e Melhorias',
       description: 'Análise de uso para melhorar a experiência e qualidade',
       required: false,
-      category: 'analytics'
+      category: 'analytics',
     },
     {
       id: 'marketing',
       name: 'Comunicação e Marketing',
       description: 'Envio de informativos sobre tratamentos e promoções',
       required: false,
-      category: 'marketing'
-    }
+      category: 'marketing',
+    },
   ];
 
   async grantConsent(
     userId: string,
     purposeId: string,
     ipAddress: string,
-    version: string = '1.0'
+    version = '1.0'
   ): Promise<ConsentRecord> {
-    const purpose = this.consentPurposes.find(p => p.id === purposeId);
+    const purpose = this.consentPurposes.find((p) => p.id === purposeId);
     if (!purpose) {
       throw new Error(`Consent purpose not found: ${purposeId}`);
     }
@@ -86,15 +88,15 @@ export class LGPDConsentManager {
       granted: true,
       timestamp: new Date(),
       ipAddress,
-      version
+      version,
     };
 
     // Store in database
     await this.storeConsentRecord(consent);
-    
+
     // Log for audit
     console.log(`LGPD Consent granted: ${purposeId} for user ${userId}`);
-    
+
     return consent;
   }
 
@@ -109,17 +111,17 @@ export class LGPDConsentManager {
       granted: false,
       timestamp: new Date(),
       ipAddress,
-      version: '1.0'
+      version: '1.0',
     };
 
     await this.storeConsentRecord(consent);
-    
+
     console.log(`LGPD Consent revoked: ${purposeId} for user ${userId}`);
-    
+
     return consent;
   }
 
-  async getUserConsents(userId: string): Promise<ConsentRecord[]> {
+  async getUserConsents(_userId: string): Promise<ConsentRecord[]> {
     // This would query the database
     // For now, return mock data
     return [];
@@ -128,10 +130,10 @@ export class LGPDConsentManager {
   async isConsentGranted(userId: string, purposeId: string): Promise<boolean> {
     const consents = await this.getUserConsents(userId);
     const latestConsent = consents
-      .filter(c => c.purpose === purposeId)
+      .filter((c) => c.purpose === purposeId)
       .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())[0];
-    
-    return latestConsent?.granted || false;
+
+    return latestConsent?.granted;
   }
 
   getConsentPurposes(): ConsentPurpose[] {
@@ -139,7 +141,7 @@ export class LGPDConsentManager {
   }
 
   getRequiredPurposes(): ConsentPurpose[] {
-    return this.consentPurposes.filter(p => p.required);
+    return this.consentPurposes.filter((p) => p.required);
   }
 
   async validateConsentsForProcessing(
@@ -159,6 +161,9 @@ export class LGPDConsentManager {
   private async storeConsentRecord(consent: ConsentRecord): Promise<void> {
     // Implementation would store in Supabase
     // Using audit logging for LGPD compliance
-    console.log('Storing LGPD consent record:', JSON.stringify(consent, null, 2));
+    console.log(
+      'Storing LGPD consent record:',
+      JSON.stringify(consent, null, 2)
+    );
   }
 }

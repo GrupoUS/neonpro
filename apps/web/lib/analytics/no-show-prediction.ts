@@ -9,10 +9,10 @@ import type { Database } from '@/types/database';
 // Risk factor categories for comprehensive analysis
 export enum RiskFactorCategory {
   PATIENT_HISTORY = 'patient_history',
-  APPOINTMENT_CHARACTERISTICS = 'appointment_characteristics', 
+  APPOINTMENT_CHARACTERISTICS = 'appointment_characteristics',
   DEMOGRAPHICS = 'demographics',
   EXTERNAL_FACTORS = 'external_factors',
-  COMMUNICATION_PATTERNS = 'communication_patterns'
+  COMMUNICATION_PATTERNS = 'communication_patterns',
 }
 
 // No-show prediction result interface
@@ -94,12 +94,12 @@ export class NoShowPredictionEngine {
         patientHistory,
         appointmentFeatures,
         externalFactors,
-        communicationPatterns
+        communicationPatterns,
       ] = await Promise.all([
         this.getPatientHistory(appointmentData.patient_id),
         this.extractAppointmentFeatures(appointmentData),
         this.getExternalFactors(appointmentData.scheduled_date),
-        this.getCommunicationPatterns(appointmentData.patient_id)
+        this.getCommunicationPatterns(appointmentData.patient_id),
       ]);
 
       // Calculate risk factors
@@ -107,7 +107,7 @@ export class NoShowPredictionEngine {
         patientHistory,
         appointmentFeatures,
         externalFactors,
-        communicationPatterns
+        communicationPatterns,
       });
 
       // Generate final prediction using ensemble model
@@ -129,9 +129,8 @@ export class NoShowPredictionEngine {
         factors: riskFactors,
         interventionRecommendations: interventions,
         predictedAt: new Date(),
-        modelVersion: this.modelVersion
+        modelVersion: this.modelVersion,
       };
-
     } catch (error) {
       console.error('Error in no-show prediction:', error);
       throw new Error('Failed to generate no-show prediction');
@@ -141,22 +140,23 @@ export class NoShowPredictionEngine {
   /**
    * Predict no-shows for multiple appointments (batch processing)
    */
-  async predictBatchNoShows(
-    appointments: any[]
-  ): Promise<NoShowPrediction[]> {
+  async predictBatchNoShows(appointments: any[]): Promise<NoShowPrediction[]> {
     const batchSize = 50; // Process in batches to avoid memory issues
     const results: NoShowPrediction[] = [];
 
     for (let i = 0; i < appointments.length; i += batchSize) {
       const batch = appointments.slice(i, i + batchSize);
-      const batchPromises = batch.map(apt => this.predictNoShow(apt.id, apt));
+      const batchPromises = batch.map((apt) => this.predictNoShow(apt.id, apt));
       const batchResults = await Promise.allSettled(batchPromises);
-      
+
       batchResults.forEach((result, index) => {
         if (result.status === 'fulfilled') {
           results.push(result.value);
         } else {
-          console.error(`Failed to predict for appointment ${batch[index].id}:`, result.reason);
+          console.error(
+            `Failed to predict for appointment ${batch[index].id}:`,
+            result.reason
+          );
         }
       });
     }
@@ -178,36 +178,44 @@ export class NoShowPredictionEngine {
       return this.getDefaultPattern(patientId);
     }
 
-    const noShows = appointments.filter(apt => apt.status === 'NO_SHOW');
+    const noShows = appointments.filter((apt) => apt.status === 'NO_SHOW');
     const totalAppointments = appointments.length;
     const noShowCount = noShows.length;
 
     // Calculate booking patterns
     const bookingDelays = appointments
-      .filter(apt => apt.created_at && apt.scheduled_date)
-      .map(apt => {
+      .filter((apt) => apt.created_at && apt.scheduled_date)
+      .map((apt) => {
         const booking = new Date(apt.created_at);
         const appointment = new Date(apt.scheduled_date);
-        return Math.abs(appointment.getTime() - booking.getTime()) / (1000 * 60 * 60 * 24);
+        return (
+          Math.abs(appointment.getTime() - booking.getTime()) /
+          (1000 * 60 * 60 * 24)
+        );
       });
 
-    const avgDaysBetweenBookingAndAppointment = 
-      bookingDelays.length > 0 ? 
-      bookingDelays.reduce((sum, days) => sum + days, 0) / bookingDelays.length : 0;
+    const avgDaysBetweenBookingAndAppointment =
+      bookingDelays.length > 0
+        ? bookingDelays.reduce((sum, days) => sum + days, 0) /
+          bookingDelays.length
+        : 0;
 
     // Analyze time preferences
-    const timeSlots = appointments.map(apt => {
+    const timeSlots = appointments.map((apt) => {
       const date = new Date(apt.scheduled_date);
       return `${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}`;
     });
 
-    const timeSlotCounts = timeSlots.reduce((acc, slot) => {
-      acc[slot] = (acc[slot] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+    const timeSlotCounts = timeSlots.reduce(
+      (acc, slot) => {
+        acc[slot] = (acc[slot] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>
+    );
 
     const preferredTimeSlots = Object.entries(timeSlotCounts)
-      .sort(([,a], [,b]) => b - a)
+      .sort(([, a], [, b]) => b - a)
       .slice(0, 3)
       .map(([slot]) => slot);
 
@@ -225,18 +233,21 @@ export class NoShowPredictionEngine {
       avgDaysBetweenBookingAndAppointment,
       preferredTimeSlots,
       seasonalPatterns,
-      lastNoShowDate: noShows.length > 0 ? new Date(noShows[0].scheduled_date) : undefined,
-      improvementTrend
+      lastNoShowDate:
+        noShows.length > 0 ? new Date(noShows[0].scheduled_date) : undefined,
+      improvementTrend,
     };
   }
 
   /**
    * Extract appointment-specific features for prediction
    */
-  private async extractAppointmentFeatures(appointmentData: any): Promise<Record<string, any>> {
+  private async extractAppointmentFeatures(
+    appointmentData: any
+  ): Promise<Record<string, any>> {
     const scheduledDate = new Date(appointmentData.scheduled_date);
     const createdDate = new Date(appointmentData.created_at);
-    
+
     return {
       dayOfWeek: scheduledDate.getDay(),
       hourOfDay: scheduledDate.getHours(),
@@ -246,19 +257,24 @@ export class NoShowPredictionEngine {
       appointmentType: appointmentData.type || 'GENERAL',
       duration: appointmentData.duration_minutes || 30,
       priority: appointmentData.priority || 'NORMAL',
-      bookingAdvanceDays: Math.ceil((scheduledDate.getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24)),
-      isRecurring: appointmentData.is_recurring || false,
+      bookingAdvanceDays: Math.ceil(
+        (scheduledDate.getTime() - createdDate.getTime()) /
+          (1000 * 60 * 60 * 24)
+      ),
+      isRecurring: appointmentData.is_recurring,
       providerExperience: appointmentData.provider_years_experience || 5,
-      specialtyType: appointmentData.specialty || 'GENERAL'
+      specialtyType: appointmentData.specialty || 'GENERAL',
     };
   }
 
   /**
    * Get external factors that might affect no-show probability
    */
-  private async getExternalFactors(appointmentDate: string): Promise<Record<string, any>> {
+  private async getExternalFactors(
+    appointmentDate: string
+  ): Promise<Record<string, any>> {
     const date = new Date(appointmentDate);
-    
+
     // Basic external factors (can be enhanced with weather API, traffic data, etc.)
     return {
       isHoliday: await this.isHoliday(date),
@@ -270,14 +286,16 @@ export class NoShowPredictionEngine {
       isFirstDayOfMonth: date.getDate() === 1,
       isLastDayOfMonth: this.isLastDayOfMonth(date),
       weatherForecast: 'unknown', // Placeholder for weather API integration
-      trafficPattern: 'normal' // Placeholder for traffic API integration
+      trafficPattern: 'normal', // Placeholder for traffic API integration
     };
   }
 
   /**
    * Analyze patient communication patterns
    */
-  private async getCommunicationPatterns(patientId: string): Promise<Record<string, any>> {
+  private async getCommunicationPatterns(
+    _patientId: string
+  ): Promise<Record<string, any>> {
     // This would integrate with communication logs
     // For now, returning default patterns
     return {
@@ -289,7 +307,7 @@ export class NoShowPredictionEngine {
       hasPhoneNumber: true,
       hasEmail: true,
       hasMobileApp: false,
-      optedInForReminders: true
+      optedInForReminders: true,
     };
   }
 
@@ -311,7 +329,7 @@ export class NoShowPredictionEngine {
       value: data.patientHistory.noShowRate,
       weight: 0.25,
       contribution: data.patientHistory.noShowRate * 25,
-      description: `Patient has ${(data.patientHistory.noShowRate * 100).toFixed(1)}% no-show rate`
+      description: `Patient has ${(data.patientHistory.noShowRate * 100).toFixed(1)}% no-show rate`,
     });
 
     factors.push({
@@ -319,8 +337,12 @@ export class NoShowPredictionEngine {
       factorName: 'Booking Advance Time',
       value: data.patientHistory.avgDaysBetweenBookingAndAppointment,
       weight: 0.15,
-      contribution: Math.min(data.patientHistory.avgDaysBetweenBookingAndAppointment / 30, 1) * 15,
-      description: `Average booking ${data.patientHistory.avgDaysBetweenBookingAndAppointment.toFixed(1)} days in advance`
+      contribution:
+        Math.min(
+          data.patientHistory.avgDaysBetweenBookingAndAppointment / 30,
+          1
+        ) * 15,
+      description: `Average booking ${data.patientHistory.avgDaysBetweenBookingAndAppointment.toFixed(1)} days in advance`,
     });
 
     // Appointment characteristics
@@ -329,9 +351,11 @@ export class NoShowPredictionEngine {
       category: RiskFactorCategory.APPOINTMENT_CHARACTERISTICS,
       factorName: 'Weekend Appointment',
       value: data.appointmentFeatures.isWeekend,
-      weight: 0.10,
+      weight: 0.1,
       contribution: isWeekendRisk,
-      description: data.appointmentFeatures.isWeekend ? 'Weekend appointments have higher no-show rates' : 'Weekday appointment'
+      description: data.appointmentFeatures.isWeekend
+        ? 'Weekend appointments have higher no-show rates'
+        : 'Weekday appointment',
     });
 
     const earlyMorningRisk = data.appointmentFeatures.isEarlyMorning ? 8 : 0;
@@ -341,7 +365,9 @@ export class NoShowPredictionEngine {
       value: data.appointmentFeatures.isEarlyMorning,
       weight: 0.08,
       contribution: earlyMorningRisk,
-      description: data.appointmentFeatures.isEarlyMorning ? 'Early morning appointments have higher no-show rates' : 'Regular time slot'
+      description: data.appointmentFeatures.isEarlyMorning
+        ? 'Early morning appointments have higher no-show rates'
+        : 'Regular time slot',
     });
 
     // External factors
@@ -352,18 +378,21 @@ export class NoShowPredictionEngine {
       value: data.externalFactors.isHoliday,
       weight: 0.12,
       contribution: holidayRisk,
-      description: data.externalFactors.isHoliday ? 'Holiday periods increase no-show probability' : 'Regular date'
+      description: data.externalFactors.isHoliday
+        ? 'Holiday periods increase no-show probability'
+        : 'Regular date',
     });
 
     // Communication patterns
-    const lowResponseRisk = data.communicationPatterns.responseRate < 0.7 ? 15 : 0;
+    const lowResponseRisk =
+      data.communicationPatterns.responseRate < 0.7 ? 15 : 0;
     factors.push({
       category: RiskFactorCategory.COMMUNICATION_PATTERNS,
       factorName: 'Communication Response Rate',
       value: data.communicationPatterns.responseRate,
       weight: 0.15,
       contribution: lowResponseRisk,
-      description: `Patient response rate: ${(data.communicationPatterns.responseRate * 100).toFixed(1)}%`
+      description: `Patient response rate: ${(data.communicationPatterns.responseRate * 100).toFixed(1)}%`,
     });
 
     return factors;
@@ -377,7 +406,10 @@ export class NoShowPredictionEngine {
     confidence: number;
   }> {
     // Simple weighted sum model (can be enhanced with ML models)
-    const totalContribution = riskFactors.reduce((sum, factor) => sum + factor.contribution, 0);
+    const totalContribution = riskFactors.reduce(
+      (sum, factor) => sum + factor.contribution,
+      0
+    );
     const baseRiskScore = Math.min(Math.max(totalContribution, 0), 100);
 
     // Apply ensemble weighting (multiple model average)
@@ -386,22 +418,24 @@ export class NoShowPredictionEngine {
     const neuralScore = this.neuralNetworkScore(riskFactors);
 
     // Ensemble weights
-    const ensembleScore = (
+    const ensembleScore =
       baseRiskScore * 0.4 +
       logisticScore * 0.3 +
       treeScore * 0.2 +
-      neuralScore * 0.1
-    );
+      neuralScore * 0.1;
 
     // Calculate confidence based on model agreement
     const scores = [baseRiskScore, logisticScore, treeScore, neuralScore];
-    const meanScore = scores.reduce((sum, score) => sum + score, 0) / scores.length;
-    const variance = scores.reduce((sum, score) => sum + Math.pow(score - meanScore, 2), 0) / scores.length;
-    const confidence = Math.max(0.5, 1 - (variance / 1000)); // Higher variance = lower confidence
+    const meanScore =
+      scores.reduce((sum, score) => sum + score, 0) / scores.length;
+    const variance =
+      scores.reduce((sum, score) => sum + (score - meanScore) ** 2, 0) /
+      scores.length;
+    const confidence = Math.max(0.5, 1 - variance / 1000); // Higher variance = lower confidence
 
     return {
       riskScore: Math.round(ensembleScore),
-      confidence: Math.round(confidence * 100) / 100
+      confidence: Math.round(confidence * 100) / 100,
     };
   }
 
@@ -410,8 +444,8 @@ export class NoShowPredictionEngine {
    */
   private async generateInterventionRecommendations(
     riskScore: number,
-    riskFactors: RiskFactor[],
-    appointmentData: any
+    _riskFactors: RiskFactor[],
+    _appointmentData: any
   ): Promise<InterventionRecommendation[]> {
     const recommendations: InterventionRecommendation[] = [];
 
@@ -424,7 +458,7 @@ export class NoShowPredictionEngine {
         channel: 'PHONE',
         message: 'Personal call to confirm attendance and address concerns',
         effectiveness: 0.75,
-        estimatedImpact: 25
+        estimatedImpact: 25,
       });
 
       recommendations.push({
@@ -433,8 +467,8 @@ export class NoShowPredictionEngine {
         timing: '24h before',
         channel: 'MULTIPLE',
         message: 'Offer flexible rescheduling or loyalty points for attendance',
-        effectiveness: 0.60,
-        estimatedImpact: 20
+        effectiveness: 0.6,
+        estimatedImpact: 20,
       });
     } else if (riskScore >= 50) {
       // High risk - targeted interventions
@@ -445,7 +479,7 @@ export class NoShowPredictionEngine {
         channel: 'SMS',
         message: 'Confirmation request with easy reschedule option',
         effectiveness: 0.65,
-        estimatedImpact: 15
+        estimatedImpact: 15,
       });
 
       recommendations.push({
@@ -455,7 +489,7 @@ export class NoShowPredictionEngine {
         channel: 'SMS',
         message: 'Final reminder with clinic contact information',
         effectiveness: 0.45,
-        estimatedImpact: 10
+        estimatedImpact: 10,
       });
     } else if (riskScore >= 25) {
       // Medium risk - standard interventions
@@ -465,8 +499,8 @@ export class NoShowPredictionEngine {
         timing: '24h before',
         channel: 'SMS',
         message: 'Standard appointment reminder',
-        effectiveness: 0.40,
-        estimatedImpact: 8
+        effectiveness: 0.4,
+        estimatedImpact: 8,
       });
     }
 
@@ -476,7 +510,9 @@ export class NoShowPredictionEngine {
   /**
    * Determine risk level based on score
    */
-  private getRiskLevel(riskScore: number): 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' {
+  private getRiskLevel(
+    riskScore: number
+  ): 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' {
     if (riskScore >= 80) return 'CRITICAL';
     if (riskScore >= 50) return 'HIGH';
     if (riskScore >= 25) return 'MEDIUM';
@@ -506,27 +542,31 @@ export class NoShowPredictionEngine {
       avgDaysBetweenBookingAndAppointment: 7,
       preferredTimeSlots: [],
       seasonalPatterns: {},
-      improvementTrend: 'STABLE'
+      improvementTrend: 'STABLE',
     };
   }
 
-  private calculateSeasonalPatterns(appointments: any[]): Record<string, number> {
+  private calculateSeasonalPatterns(
+    _appointments: any[]
+  ): Record<string, number> {
     const patterns: Record<string, number> = {};
     // Implementation for seasonal analysis
     return patterns;
   }
 
-  private calculateImprovementTrend(appointments: any[]): 'IMPROVING' | 'STABLE' | 'DECLINING' {
+  private calculateImprovementTrend(
+    _appointments: any[]
+  ): 'IMPROVING' | 'STABLE' | 'DECLINING' {
     // Implementation for trend analysis
     return 'STABLE';
   }
 
-  private async isHoliday(date: Date): Promise<boolean> {
+  private async isHoliday(_date: Date): Promise<boolean> {
     // Implementation for holiday checking
     return false;
   }
 
-  private async isSchoolHoliday(date: Date): Promise<boolean> {
+  private async isSchoolHoliday(_date: Date): Promise<boolean> {
     // Implementation for school holiday checking
     return false;
   }
@@ -551,7 +591,7 @@ export class NoShowPredictionEngine {
   async updateModel(trainingData: any[]): Promise<ModelPerformance> {
     // Implementation for model retraining
     // This would integrate with ML pipeline
-    
+
     return {
       modelVersion: this.modelVersion,
       accuracy: 0.85,
@@ -563,14 +603,14 @@ export class NoShowPredictionEngine {
       lastTrainingDate: new Date(),
       trainingDataSize: trainingData.length,
       featureImportance: {
-        'historical_no_show_rate': 0.25,
-        'booking_advance_time': 0.15,
-        'communication_response_rate': 0.15,
-        'appointment_time': 0.12,
-        'external_factors': 0.10,
-        'appointment_type': 0.08,
-        'patient_demographics': 0.15
-      }
+        historical_no_show_rate: 0.25,
+        booking_advance_time: 0.15,
+        communication_response_rate: 0.15,
+        appointment_time: 0.12,
+        external_factors: 0.1,
+        appointment_type: 0.08,
+        patient_demographics: 0.15,
+      },
     };
   }
 
@@ -588,16 +628,16 @@ export class NoShowPredictionEngine {
       auc: 0.86,
       calibrationScore: 0.82,
       lastTrainingDate: new Date('2025-01-26'),
-      trainingDataSize: 50000,
+      trainingDataSize: 50_000,
       featureImportance: {
-        'historical_no_show_rate': 0.25,
-        'booking_advance_time': 0.15,
-        'communication_response_rate': 0.15,
-        'appointment_time': 0.12,
-        'external_factors': 0.10,
-        'appointment_type': 0.08,
-        'patient_demographics': 0.15
-      }
+        historical_no_show_rate: 0.25,
+        booking_advance_time: 0.15,
+        communication_response_rate: 0.15,
+        appointment_time: 0.12,
+        external_factors: 0.1,
+        appointment_type: 0.08,
+        patient_demographics: 0.15,
+      },
     };
   }
 }
@@ -615,7 +655,7 @@ export function getRiskColor(level: string): string {
     LOW: 'text-green-600',
     MEDIUM: 'text-yellow-600',
     HIGH: 'text-orange-600',
-    CRITICAL: 'text-red-600'
+    CRITICAL: 'text-red-600',
   };
   return colors[level as keyof typeof colors] || 'text-gray-600';
 }
@@ -625,7 +665,7 @@ export function getRiskBadgeColor(level: string): string {
     LOW: 'bg-green-100 text-green-800',
     MEDIUM: 'bg-yellow-100 text-yellow-800',
     HIGH: 'bg-orange-100 text-orange-800',
-    CRITICAL: 'bg-red-100 text-red-800'
+    CRITICAL: 'bg-red-100 text-red-800',
   };
   return colors[level as keyof typeof colors] || 'bg-gray-100 text-gray-800';
 }

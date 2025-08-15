@@ -4,17 +4,16 @@
  * Part of Story 3.1 - Task 6: System Integration & Search
  */
 
-import { Patient } from '@/types/patient';
+import { logger } from '@/lib/logger';
+import { supabase } from '@/lib/supabase/client';
+import type { Patient } from '@/types/patient';
 import { PatientAppointmentIntegration } from './appointment-integration';
 import { PatientTreatmentIntegration } from './treatment-integration';
-import { AdvancedPatientSearch } from '../search/advanced-patient-search';
-import { supabase } from '@/lib/supabase/client';
-import { logger } from '@/lib/logger';
 
 export interface UnifiedPatientProfile {
   // Core patient data
   patient: Patient;
-  
+
   // Extended profile information
   profile_extended: {
     risk_score: number;
@@ -30,7 +29,7 @@ export interface UnifiedPatientProfile {
     allergies: string[];
     medications: string[];
   };
-  
+
   // Appointment insights
   appointment_insights: {
     total_appointments: number;
@@ -42,7 +41,7 @@ export interface UnifiedPatientProfile {
     recent_appointments: any[];
     appointment_patterns: any;
   };
-  
+
   // Treatment insights
   treatment_insights: {
     total_treatments: number;
@@ -55,7 +54,7 @@ export interface UnifiedPatientProfile {
     risk_factors: string[];
     recommendations: string[];
   };
-  
+
   // Financial summary
   financial_summary: {
     total_billed: number;
@@ -65,7 +64,7 @@ export interface UnifiedPatientProfile {
     payment_history: any[];
     payment_patterns: any;
   };
-  
+
   // Communication history
   communication_history: {
     total_interactions: number;
@@ -74,7 +73,7 @@ export interface UnifiedPatientProfile {
     response_rate: number;
     recent_communications: any[];
   };
-  
+
   // AI insights and predictions
   ai_insights: {
     churn_risk_score: number;
@@ -84,7 +83,7 @@ export interface UnifiedPatientProfile {
     personality_profile: string;
     engagement_score: number;
   };
-  
+
   // Photo and visual data
   visual_data: {
     profile_photos: any[];
@@ -111,10 +110,12 @@ export class UnifiedPatientDashboard {
   /**
    * Get complete 360° patient profile
    */
-  static async getUnifiedPatientProfile(patientId: string): Promise<UnifiedPatientProfile> {
+  static async getUnifiedPatientProfile(
+    patientId: string
+  ): Promise<UnifiedPatientProfile> {
     try {
       logger.info(`Generating unified profile for patient ${patientId}`);
-      
+
       // Get core patient data
       const { data: patient, error: patientError } = await supabase
         .from('patients')
@@ -126,47 +127,60 @@ export class UnifiedPatientDashboard {
         `)
         .eq('id', patientId)
         .single();
-      
+
       if (patientError) throw patientError;
       if (!patient) throw new Error('Patient not found');
-      
+
       // Get appointment insights
-      const appointmentInsights = await PatientAppointmentIntegration.generateAppointmentInsights(patientId);
-      
+      const appointmentInsights =
+        await PatientAppointmentIntegration.generateAppointmentInsights(
+          patientId
+        );
+
       // Get treatment insights
-      const treatmentInsights = await PatientTreatmentIntegration.generateTreatmentInsights(patientId);
-      
+      const treatmentInsights =
+        await PatientTreatmentIntegration.generateTreatmentInsights(patientId);
+
       // Get financial summary
-      const financialSummary = await this.getFinancialSummary(patientId);
-      
+      const financialSummary =
+        await UnifiedPatientDashboard.getFinancialSummary(patientId);
+
       // Get communication history
-      const communicationHistory = await this.getCommunicationHistory(patientId);
-      
+      const communicationHistory =
+        await UnifiedPatientDashboard.getCommunicationHistory(patientId);
+
       // Generate AI insights
-      const aiInsights = await this.generateAIInsights(patientId, {
-        appointmentInsights,
-        treatmentInsights,
-        financialSummary
-      });
-      
+      const aiInsights = await UnifiedPatientDashboard.generateAIInsights(
+        patientId,
+        {
+          appointmentInsights,
+          treatmentInsights,
+          financialSummary,
+        }
+      );
+
       // Get visual data
-      const visualData = await this.getVisualData(patientId);
-      
+      const visualData = await UnifiedPatientDashboard.getVisualData(patientId);
+
       const unifiedProfile: UnifiedPatientProfile = {
         patient,
         profile_extended: {
           risk_score: patient.patient_profiles_extended?.risk_score || 0,
-          satisfaction_score: patient.patient_profiles_extended?.satisfaction_score || 0,
+          satisfaction_score:
+            patient.patient_profiles_extended?.satisfaction_score || 0,
           loyalty_score: patient.patient_profiles_extended?.loyalty_score || 0,
           total_visits: appointmentInsights.total_appointments,
           total_spent: treatmentInsights.total_investment,
           preferred_staff: appointmentInsights.preferred_staff,
           preferred_services: treatmentInsights.preferred_services,
-          communication_preferences: patient.patient_profiles_extended?.communication_preferences || [],
+          communication_preferences:
+            patient.patient_profiles_extended?.communication_preferences || [],
           emergency_contacts: patient.emergency_contacts || [],
-          medical_conditions: patient.patient_profiles_extended?.medical_conditions || [],
+          medical_conditions:
+            patient.patient_profiles_extended?.medical_conditions || [],
           allergies: patient.patient_profiles_extended?.allergies || [],
-          medications: patient.patient_profiles_extended?.current_medications || []
+          medications:
+            patient.patient_profiles_extended?.current_medications || [],
         },
         appointment_insights: {
           total_appointments: appointmentInsights.total_appointments,
@@ -176,7 +190,7 @@ export class UnifiedPatientDashboard {
           punctuality_score: appointmentInsights.punctuality_score,
           next_appointment: appointmentInsights.next_appointment,
           recent_appointments: appointmentInsights.recent_appointments,
-          appointment_patterns: appointmentInsights.appointment_patterns
+          appointment_patterns: appointmentInsights.appointment_patterns,
         },
         treatment_insights: {
           total_treatments: treatmentInsights.total_treatments,
@@ -187,15 +201,17 @@ export class UnifiedPatientDashboard {
           total_investment: treatmentInsights.total_investment,
           adherence_score: treatmentInsights.adherence_score,
           risk_factors: treatmentInsights.risk_factors,
-          recommendations: treatmentInsights.recommendations
+          recommendations: treatmentInsights.recommendations,
         },
         financial_summary: financialSummary,
         communication_history: communicationHistory,
         ai_insights: aiInsights,
-        visual_data: visualData
+        visual_data: visualData,
       };
-      
-      logger.info(`Successfully generated unified profile for patient ${patientId}`);
+
+      logger.info(
+        `Successfully generated unified profile for patient ${patientId}`
+      );
       return unifiedProfile;
     } catch (error) {
       logger.error('Error generating unified patient profile:', error);
@@ -212,106 +228,126 @@ export class UnifiedPatientDashboard {
       const { count: totalPatients } = await supabase
         .from('patients')
         .select('*', { count: 'exact', head: true });
-      
+
       // Get active patients (had appointment in last 6 months)
       const sixMonthsAgo = new Date();
       sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
-      
+
       const { count: activePatients } = await supabase
         .from('patients')
-        .select(`
+        .select(
+          `
           id,
           appointments!inner(id)
-        `, { count: 'exact', head: true })
+        `,
+          { count: 'exact', head: true }
+        )
         .gte('appointments.appointment_date', sixMonthsAgo.toISOString());
-      
+
       // Get new patients this month
       const startOfMonth = new Date();
       startOfMonth.setDate(1);
       startOfMonth.setHours(0, 0, 0, 0);
-      
+
       const { count: newPatients } = await supabase
         .from('patients')
         .select('*', { count: 'exact', head: true })
         .gte('created_at', startOfMonth.toISOString());
-      
+
       // Get high risk patients
       const { count: highRiskPatients } = await supabase
         .from('patient_profiles_extended')
         .select('*', { count: 'exact', head: true })
         .gte('risk_score', 7);
-      
+
       // Get average satisfaction
       const { data: satisfactionData } = await supabase
         .from('patient_profiles_extended')
         .select('satisfaction_score')
         .not('satisfaction_score', 'is', null);
-      
-      const avgSatisfaction = satisfactionData && satisfactionData.length > 0
-        ? satisfactionData.reduce((sum, p) => sum + (p.satisfaction_score || 0), 0) / satisfactionData.length
-        : 0;
-      
+
+      const avgSatisfaction =
+        satisfactionData && satisfactionData.length > 0
+          ? satisfactionData.reduce(
+              (sum, p) => sum + (p.satisfaction_score || 0),
+              0
+            ) / satisfactionData.length
+          : 0;
+
       // Get financial metrics
       const { data: financialData } = await supabase
         .from('patient_treatments')
         .select('cost_total, cost_paid');
-      
-      const totalRevenue = financialData?.reduce((sum, t) => sum + (t.cost_paid || 0), 0) || 0;
-      const outstandingPayments = financialData?.reduce((sum, t) => sum + ((t.cost_total || 0) - (t.cost_paid || 0)), 0) || 0;
-      
+
+      const totalRevenue =
+        financialData?.reduce((sum, t) => sum + (t.cost_paid || 0), 0) || 0;
+      const outstandingPayments =
+        financialData?.reduce(
+          (sum, t) => sum + ((t.cost_total || 0) - (t.cost_paid || 0)),
+          0
+        ) || 0;
+
       // Get appointment utilization (last 30 days)
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-      
+
       const { count: totalSlots } = await supabase
         .from('appointment_slots')
         .select('*', { count: 'exact', head: true })
         .gte('slot_date', thirtyDaysAgo.toISOString());
-      
+
       const { count: bookedSlots } = await supabase
         .from('appointments')
         .select('*', { count: 'exact', head: true })
         .gte('appointment_date', thirtyDaysAgo.toISOString())
         .neq('status', 'cancelled');
-      
-      const appointmentUtilization = totalSlots && totalSlots > 0 ? (bookedSlots || 0) / totalSlots * 100 : 0;
-      
+
+      const appointmentUtilization =
+        totalSlots && totalSlots > 0
+          ? ((bookedSlots || 0) / totalSlots) * 100
+          : 0;
+
       // Get treatment completion rate
       const { count: totalTreatments } = await supabase
         .from('patient_treatments')
         .select('*', { count: 'exact', head: true });
-      
+
       const { count: completedTreatments } = await supabase
         .from('patient_treatments')
         .select('*', { count: 'exact', head: true })
         .eq('status', 'completed');
-      
-      const treatmentCompletionRate = totalTreatments && totalTreatments > 0 
-        ? (completedTreatments || 0) / totalTreatments * 100 
-        : 0;
-      
+
+      const treatmentCompletionRate =
+        totalTreatments && totalTreatments > 0
+          ? ((completedTreatments || 0) / totalTreatments) * 100
+          : 0;
+
       // Calculate patient retention rate (patients who returned in last 12 months)
       const oneYearAgo = new Date();
       oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-      
+
       const { count: returningPatients } = await supabase
         .from('patients')
-        .select(`
+        .select(
+          `
           id,
           appointments!inner(id)
-        `, { count: 'exact', head: true })
+        `,
+          { count: 'exact', head: true }
+        )
         .lt('created_at', oneYearAgo.toISOString())
         .gte('appointments.appointment_date', oneYearAgo.toISOString());
-      
+
       const { count: oldPatients } = await supabase
         .from('patients')
         .select('*', { count: 'exact', head: true })
         .lt('created_at', oneYearAgo.toISOString());
-      
-      const patientRetentionRate = oldPatients && oldPatients > 0 
-        ? (returningPatients || 0) / oldPatients * 100 
-        : 0;
-      
+
+      const patientRetentionRate =
+        oldPatients && oldPatients > 0
+          ? ((returningPatients || 0) / oldPatients) * 100
+          : 0;
+
       return {
         patient_count: totalPatients || 0,
         active_patients: activePatients || 0,
@@ -322,7 +358,7 @@ export class UnifiedPatientDashboard {
         outstanding_payments: outstandingPayments,
         appointment_utilization: appointmentUtilization,
         treatment_completion_rate: treatmentCompletionRate,
-        patient_retention_rate: patientRetentionRate
+        patient_retention_rate: patientRetentionRate,
       };
     } catch (error) {
       logger.error('Error getting dashboard metrics:', error);
@@ -339,24 +375,30 @@ export class UnifiedPatientDashboard {
         .from('patient_treatments')
         .select('cost_total, cost_paid, insurance_covered, start_date')
         .eq('patient_id', patientId);
-      
+
       const { data: payments } = await supabase
         .from('patient_payments')
         .select('*')
         .eq('patient_id', patientId)
         .order('payment_date', { ascending: false });
-      
-      const totalBilled = treatments?.reduce((sum, t) => sum + (t.cost_total || 0), 0) || 0;
-      const totalPaid = treatments?.reduce((sum, t) => sum + (t.cost_paid || 0), 0) || 0;
-      const insuranceCoverage = treatments?.reduce((sum, t) => sum + (t.insurance_covered || 0), 0) || 0;
-      
+
+      const totalBilled =
+        treatments?.reduce((sum, t) => sum + (t.cost_total || 0), 0) || 0;
+      const totalPaid =
+        treatments?.reduce((sum, t) => sum + (t.cost_paid || 0), 0) || 0;
+      const insuranceCoverage =
+        treatments?.reduce((sum, t) => sum + (t.insurance_covered || 0), 0) ||
+        0;
+
       return {
         total_billed: totalBilled,
         total_paid: totalPaid,
         outstanding_balance: totalBilled - totalPaid,
         insurance_coverage: insuranceCoverage,
         payment_history: payments || [],
-        payment_patterns: this.analyzePaymentPatterns(payments || [])
+        payment_patterns: UnifiedPatientDashboard.analyzePaymentPatterns(
+          payments || []
+        ),
       };
     } catch (error) {
       logger.error('Error getting financial summary:', error);
@@ -366,7 +408,7 @@ export class UnifiedPatientDashboard {
         outstanding_balance: 0,
         insurance_coverage: 0,
         payment_history: [],
-        payment_patterns: {}
+        payment_patterns: {},
       };
     }
   }
@@ -381,32 +423,37 @@ export class UnifiedPatientDashboard {
         .select('*')
         .eq('patient_id', patientId)
         .order('created_at', { ascending: false });
-      
+
       const totalInteractions = communications?.length || 0;
       const lastContactDate = communications?.[0]?.created_at || '';
-      
+
       // Calculate preferred channel
       const channelCounts: Record<string, number> = {};
-      communications?.forEach(comm => {
+      communications?.forEach((comm) => {
         channelCounts[comm.channel] = (channelCounts[comm.channel] || 0) + 1;
       });
-      
-      const preferredChannel = Object.keys(channelCounts).reduce((a, b) => 
-        channelCounts[a] > channelCounts[b] ? a : b, 'email'
+
+      const preferredChannel = Object.keys(channelCounts).reduce(
+        (a, b) => (channelCounts[a] > channelCounts[b] ? a : b),
+        'email'
       );
-      
+
       // Calculate response rate
-      const outboundComms = communications?.filter(c => c.direction === 'outbound') || [];
-      const respondedComms = communications?.filter(c => c.direction === 'inbound') || [];
-      const responseRate = outboundComms.length > 0 ? 
-        (respondedComms.length / outboundComms.length) * 100 : 0;
-      
+      const outboundComms =
+        communications?.filter((c) => c.direction === 'outbound') || [];
+      const respondedComms =
+        communications?.filter((c) => c.direction === 'inbound') || [];
+      const responseRate =
+        outboundComms.length > 0
+          ? (respondedComms.length / outboundComms.length) * 100
+          : 0;
+
       return {
         total_interactions: totalInteractions,
         last_contact_date: lastContactDate,
         preferred_channel: preferredChannel,
         response_rate: responseRate,
-        recent_communications: communications?.slice(0, 10) || []
+        recent_communications: communications?.slice(0, 10) || [],
       };
     } catch (error) {
       logger.error('Error getting communication history:', error);
@@ -415,7 +462,7 @@ export class UnifiedPatientDashboard {
         last_contact_date: '',
         preferred_channel: 'email',
         response_rate: 0,
-        recent_communications: []
+        recent_communications: [],
       };
     }
   }
@@ -426,30 +473,40 @@ export class UnifiedPatientDashboard {
   private static async generateAIInsights(patientId: string, data: any) {
     try {
       // Calculate churn risk score
-      const churnRiskScore = this.calculateChurnRisk(data);
-      
+      const churnRiskScore = UnifiedPatientDashboard.calculateChurnRisk(data);
+
       // Predict lifetime value
-      const lifetimeValuePrediction = this.predictLifetimeValue(data);
-      
+      const lifetimeValuePrediction =
+        UnifiedPatientDashboard.predictLifetimeValue(data);
+
       // Generate service recommendations
-      const nextServiceRecommendations = await this.generateServiceRecommendations(patientId, data);
-      
+      const nextServiceRecommendations =
+        await UnifiedPatientDashboard.generateServiceRecommendations(
+          patientId,
+          data
+        );
+
       // Determine optimal contact time
-      const optimalContactTime = this.determineOptimalContactTime(data.communicationHistory);
-      
+      const optimalContactTime =
+        UnifiedPatientDashboard.determineOptimalContactTime(
+          data.communicationHistory
+        );
+
       // Generate personality profile
-      const personalityProfile = this.generatePersonalityProfile(data);
-      
+      const personalityProfile =
+        UnifiedPatientDashboard.generatePersonalityProfile(data);
+
       // Calculate engagement score
-      const engagementScore = this.calculateEngagementScore(data);
-      
+      const engagementScore =
+        UnifiedPatientDashboard.calculateEngagementScore(data);
+
       return {
         churn_risk_score: churnRiskScore,
         lifetime_value_prediction: lifetimeValuePrediction,
         next_service_recommendations: nextServiceRecommendations,
         optimal_contact_time: optimalContactTime,
         personality_profile: personalityProfile,
-        engagement_score: engagementScore
+        engagement_score: engagementScore,
       };
     } catch (error) {
       logger.error('Error generating AI insights:', error);
@@ -459,7 +516,7 @@ export class UnifiedPatientDashboard {
         next_service_recommendations: [],
         optimal_contact_time: '10:00',
         personality_profile: 'Balanced',
-        engagement_score: 0
+        engagement_score: 0,
       };
     }
   }
@@ -474,23 +531,26 @@ export class UnifiedPatientDashboard {
         .select('*')
         .eq('patient_id', patientId)
         .order('created_at', { ascending: false });
-      
-      const profilePhotos = photos?.filter(p => p.photo_type === 'profile') || [];
-      const treatmentPhotos = photos?.filter(p => p.photo_type === 'treatment') || [];
-      const progressPhotos = photos?.filter(p => p.photo_type === 'progress') || [];
-      
+
+      const profilePhotos =
+        photos?.filter((p) => p.photo_type === 'profile') || [];
+      const treatmentPhotos =
+        photos?.filter((p) => p.photo_type === 'treatment') || [];
+      const progressPhotos =
+        photos?.filter((p) => p.photo_type === 'progress') || [];
+
       // Get facial recognition data if available
       const { data: faceData } = await supabase
         .from('patient_face_recognition')
         .select('*')
         .eq('patient_id', patientId)
         .single();
-      
+
       return {
         profile_photos: profilePhotos,
         treatment_photos: treatmentPhotos,
         progress_photos: progressPhotos,
-        facial_recognition_data: faceData
+        facial_recognition_data: faceData,
       };
     } catch (error) {
       logger.error('Error getting visual data:', error);
@@ -498,7 +558,7 @@ export class UnifiedPatientDashboard {
         profile_photos: [],
         treatment_photos: [],
         progress_photos: [],
-        facial_recognition_data: null
+        facial_recognition_data: null,
       };
     }
   }
@@ -508,22 +568,29 @@ export class UnifiedPatientDashboard {
    */
   private static analyzePaymentPatterns(payments: any[]) {
     if (payments.length === 0) return {};
-    
-    const avgPaymentAmount = payments.reduce((sum, p) => sum + (p.amount || 0), 0) / payments.length;
-    const paymentMethods = payments.reduce((methods, p) => {
-      methods[p.payment_method] = (methods[p.payment_method] || 0) + 1;
-      return methods;
-    }, {} as Record<string, number>);
-    
-    const preferredMethod = Object.keys(paymentMethods).reduce((a, b) => 
-      paymentMethods[a] > paymentMethods[b] ? a : b, 'cash'
+
+    const avgPaymentAmount =
+      payments.reduce((sum, p) => sum + (p.amount || 0), 0) / payments.length;
+    const paymentMethods = payments.reduce(
+      (methods, p) => {
+        methods[p.payment_method] = (methods[p.payment_method] || 0) + 1;
+        return methods;
+      },
+      {} as Record<string, number>
     );
-    
+
+    const preferredMethod = Object.keys(paymentMethods).reduce(
+      (a, b) => (paymentMethods[a] > paymentMethods[b] ? a : b),
+      'cash'
+    );
+
     return {
       avg_payment_amount: avgPaymentAmount,
       preferred_payment_method: preferredMethod,
-      payment_frequency: this.calculatePaymentFrequency(payments),
-      on_time_payment_rate: this.calculateOnTimePaymentRate(payments)
+      payment_frequency:
+        UnifiedPatientDashboard.calculatePaymentFrequency(payments),
+      on_time_payment_rate:
+        UnifiedPatientDashboard.calculateOnTimePaymentRate(payments),
     };
   }
 
@@ -532,28 +599,40 @@ export class UnifiedPatientDashboard {
    */
   private static calculateChurnRisk(data: any): number {
     let riskScore = 0;
-    
+
     // No recent appointments
-    const daysSinceLastAppointment = data.appointmentInsights.recent_appointments.length > 0 ?
-      Math.floor((Date.now() - new Date(data.appointmentInsights.recent_appointments[0].appointment_date).getTime()) / (1000 * 60 * 60 * 24)) : 365;
-    
+    const daysSinceLastAppointment =
+      data.appointmentInsights.recent_appointments.length > 0
+        ? Math.floor(
+            (Date.now() -
+              new Date(
+                data.appointmentInsights.recent_appointments[0].appointment_date
+              ).getTime()) /
+              (1000 * 60 * 60 * 24)
+          )
+        : 365;
+
     if (daysSinceLastAppointment > 180) riskScore += 30;
     else if (daysSinceLastAppointment > 90) riskScore += 15;
-    
+
     // High cancellation rate
-    const cancellationRate = data.appointmentInsights.total_appointments > 0 ?
-      (data.appointmentInsights.cancelled_appointments / data.appointmentInsights.total_appointments) * 100 : 0;
-    
+    const cancellationRate =
+      data.appointmentInsights.total_appointments > 0
+        ? (data.appointmentInsights.cancelled_appointments /
+            data.appointmentInsights.total_appointments) *
+          100
+        : 0;
+
     if (cancellationRate > 30) riskScore += 25;
     else if (cancellationRate > 15) riskScore += 10;
-    
+
     // Low satisfaction
     if (data.treatmentInsights.avg_satisfaction < 3) riskScore += 20;
     else if (data.treatmentInsights.avg_satisfaction < 4) riskScore += 10;
-    
+
     // Outstanding balance
     if (data.financialSummary.outstanding_balance > 1000) riskScore += 15;
-    
+
     return Math.min(riskScore, 100);
   }
 
@@ -562,40 +641,50 @@ export class UnifiedPatientDashboard {
    */
   private static predictLifetimeValue(data: any): number {
     const avgMonthlySpend = data.treatmentInsights.total_investment / 12; // Assuming 1 year average
-    const retentionMultiplier = Math.max(1, 5 - (data.churnRiskScore / 20));
-    const satisfactionMultiplier = 1 + (data.treatmentInsights.avg_satisfaction - 3) * 0.2;
-    
+    const retentionMultiplier = Math.max(1, 5 - data.churnRiskScore / 20);
+    const satisfactionMultiplier =
+      1 + (data.treatmentInsights.avg_satisfaction - 3) * 0.2;
+
     return avgMonthlySpend * 24 * retentionMultiplier * satisfactionMultiplier; // 2-year prediction
   }
 
   /**
    * Generate service recommendations
    */
-  private static async generateServiceRecommendations(patientId: string, data: any): Promise<string[]> {
+  private static async generateServiceRecommendations(
+    _patientId: string,
+    data: any
+  ): Promise<string[]> {
     const recommendations: string[] = [];
-    
+
     // Based on successful past treatments
     if (data.treatmentInsights.preferred_services.length > 0) {
-      recommendations.push(`Follow-up ${data.treatmentInsights.preferred_services[0]}`);
+      recommendations.push(
+        `Follow-up ${data.treatmentInsights.preferred_services[0]}`
+      );
     }
-    
+
     // Based on risk factors
-    if (data.treatmentInsights.risk_factors.includes('Low treatment adherence')) {
+    if (
+      data.treatmentInsights.risk_factors.includes('Low treatment adherence')
+    ) {
       recommendations.push('Adherence support program');
     }
-    
+
     // Based on satisfaction
     if (data.treatmentInsights.avg_satisfaction >= 4) {
       recommendations.push('Premium service upgrade');
     }
-    
+
     return recommendations.slice(0, 3);
   }
 
   /**
    * Determine optimal contact time
    */
-  private static determineOptimalContactTime(communicationHistory: any): string {
+  private static determineOptimalContactTime(
+    _communicationHistory: any
+  ): string {
     // Analyze response times to determine best contact hours
     // Default to 10:00 AM for now
     return '10:00';
@@ -605,9 +694,11 @@ export class UnifiedPatientDashboard {
    * Generate personality profile
    */
   private static generatePersonalityProfile(data: any): string {
-    if (data.appointmentInsights.punctuality_score > 80) return 'Punctual & Organized';
+    if (data.appointmentInsights.punctuality_score > 80)
+      return 'Punctual & Organized';
     if (data.treatmentInsights.adherence_score > 90) return 'Highly Compliant';
-    if (data.communicationHistory.response_rate > 80) return 'Highly Responsive';
+    if (data.communicationHistory.response_rate > 80)
+      return 'Highly Responsive';
     if (data.treatmentInsights.avg_satisfaction > 4) return 'Satisfied & Loyal';
     return 'Balanced';
   }
@@ -617,19 +708,19 @@ export class UnifiedPatientDashboard {
    */
   private static calculateEngagementScore(data: any): number {
     let score = 0;
-    
+
     // Appointment engagement
     score += Math.min(data.appointmentInsights.punctuality_score, 25);
-    
+
     // Treatment engagement
     score += Math.min(data.treatmentInsights.adherence_score * 0.25, 25);
-    
+
     // Communication engagement
     score += Math.min(data.communicationHistory.response_rate * 0.25, 25);
-    
+
     // Satisfaction engagement
     score += Math.min(data.treatmentInsights.avg_satisfaction * 5, 25);
-    
+
     return Math.round(score);
   }
 
@@ -638,22 +729,25 @@ export class UnifiedPatientDashboard {
    */
   private static calculatePaymentFrequency(payments: any[]) {
     if (payments.length < 2) return 'Insufficient data';
-    
-    const sortedPayments = payments.sort((a, b) => 
-      new Date(a.payment_date).getTime() - new Date(b.payment_date).getTime()
+
+    const sortedPayments = payments.sort(
+      (a, b) =>
+        new Date(a.payment_date).getTime() - new Date(b.payment_date).getTime()
     );
-    
+
     const intervals = [];
     for (let i = 1; i < sortedPayments.length; i++) {
       const days = Math.floor(
-        (new Date(sortedPayments[i].payment_date).getTime() - 
-         new Date(sortedPayments[i-1].payment_date).getTime()) / (1000 * 60 * 60 * 24)
+        (new Date(sortedPayments[i].payment_date).getTime() -
+          new Date(sortedPayments[i - 1].payment_date).getTime()) /
+          (1000 * 60 * 60 * 24)
       );
       intervals.push(days);
     }
-    
-    const avgInterval = intervals.reduce((sum, interval) => sum + interval, 0) / intervals.length;
-    
+
+    const avgInterval =
+      intervals.reduce((sum, interval) => sum + interval, 0) / intervals.length;
+
     if (avgInterval <= 7) return 'Weekly';
     if (avgInterval <= 30) return 'Monthly';
     if (avgInterval <= 90) return 'Quarterly';
@@ -664,24 +758,28 @@ export class UnifiedPatientDashboard {
    * Calculate on-time payment rate
    */
   private static calculateOnTimePaymentRate(payments: any[]): number {
-    const onTimePayments = payments.filter(p => 
-      new Date(p.payment_date) <= new Date(p.due_date)
+    const onTimePayments = payments.filter(
+      (p) => new Date(p.payment_date) <= new Date(p.due_date)
     ).length;
-    
+
     return payments.length > 0 ? (onTimePayments / payments.length) * 100 : 0;
   }
 
   /**
    * Export patient data for external systems
    */
-  static async exportPatientData(patientId: string, format: 'json' | 'csv' = 'json') {
+  static async exportPatientData(
+    patientId: string,
+    format: 'json' | 'csv' = 'json'
+  ) {
     try {
-      const profile = await this.getUnifiedPatientProfile(patientId);
-      
+      const profile =
+        await UnifiedPatientDashboard.getUnifiedPatientProfile(patientId);
+
       if (format === 'csv') {
-        return this.convertToCSV(profile);
+        return UnifiedPatientDashboard.convertToCSV(profile);
       }
-      
+
       return JSON.stringify(profile, null, 2);
     } catch (error) {
       logger.error('Error exporting patient data:', error);
@@ -694,10 +792,18 @@ export class UnifiedPatientDashboard {
    */
   private static convertToCSV(profile: UnifiedPatientProfile): string {
     const headers = [
-      'Patient ID', 'Name', 'Email', 'Phone', 'Risk Score', 'Satisfaction Score',
-      'Total Appointments', 'Total Treatments', 'Total Investment', 'Outstanding Balance'
+      'Patient ID',
+      'Name',
+      'Email',
+      'Phone',
+      'Risk Score',
+      'Satisfaction Score',
+      'Total Appointments',
+      'Total Treatments',
+      'Total Investment',
+      'Outstanding Balance',
     ];
-    
+
     const row = [
       profile.patient.id,
       profile.patient.name,
@@ -708,9 +814,9 @@ export class UnifiedPatientDashboard {
       profile.appointment_insights.total_appointments,
       profile.treatment_insights.total_treatments,
       profile.treatment_insights.total_investment,
-      profile.financial_summary.outstanding_balance
+      profile.financial_summary.outstanding_balance,
     ];
-    
+
     return [headers.join(','), row.join(',')].join('\n');
   }
 }

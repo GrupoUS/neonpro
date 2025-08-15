@@ -1,7 +1,6 @@
 // Emergency Shutdown System
 // Immediate termination of all sessions in critical situations
 
-import { UserSession, SecurityEvent } from '@/types/session';
 import { SessionConfig } from '@/lib/auth/config/session-config';
 import { SessionUtils } from '@/lib/auth/utils/session-utils';
 
@@ -22,7 +21,7 @@ export interface EmergencyEvent {
   metadata: EmergencyMetadata;
 }
 
-export type EmergencyType = 
+export type EmergencyType =
   | 'security_breach'
   | 'data_leak'
   | 'system_compromise'
@@ -36,13 +35,13 @@ export type EmergencyType =
   | 'scheduled_maintenance'
   | 'legal_requirement';
 
-export type EmergencySeverity = 
-  | 'critical'    // Immediate shutdown required
-  | 'high'        // Shutdown within minutes
-  | 'medium'      // Controlled shutdown
-  | 'low';        // Graceful shutdown
+export type EmergencySeverity =
+  | 'critical' // Immediate shutdown required
+  | 'high' // Shutdown within minutes
+  | 'medium' // Controlled shutdown
+  | 'low'; // Graceful shutdown
 
-export type EmergencyStatus = 
+export type EmergencyStatus =
   | 'triggered'
   | 'in_progress'
   | 'completed'
@@ -62,7 +61,7 @@ export interface EmergencyAction {
   error?: string;
 }
 
-export type ActionType = 
+export type ActionType =
   | 'terminate_session'
   | 'terminate_all_sessions'
   | 'block_user'
@@ -78,7 +77,7 @@ export type ActionType =
   | 'enable_maintenance'
   | 'contact_authorities';
 
-export type ActionTarget = 
+export type ActionTarget =
   | 'session'
   | 'user'
   | 'device'
@@ -90,7 +89,7 @@ export type ActionTarget =
   | 'administrators'
   | 'all_users';
 
-export type ActionStatus = 
+export type ActionStatus =
   | 'pending'
   | 'executing'
   | 'completed'
@@ -123,7 +122,7 @@ export interface Evidence {
   reliability: number;
 }
 
-export type EvidenceType = 
+export type EvidenceType =
   | 'log_entry'
   | 'security_alert'
   | 'anomaly_detection'
@@ -166,7 +165,7 @@ export interface NotificationRecord {
   content: string;
 }
 
-export type NotificationType = 
+export type NotificationType =
   | 'emergency_alert'
   | 'session_terminated'
   | 'system_shutdown'
@@ -174,7 +173,7 @@ export type NotificationType =
   | 'maintenance_notice'
   | 'recovery_update';
 
-export type NotificationChannel = 
+export type NotificationChannel =
   | 'email'
   | 'sms'
   | 'push'
@@ -183,7 +182,7 @@ export type NotificationChannel =
   | 'slack'
   | 'teams';
 
-export type NotificationStatus = 
+export type NotificationStatus =
   | 'pending'
   | 'sent'
   | 'delivered'
@@ -211,13 +210,11 @@ export interface EscalationRule {
 }
 
 export class EmergencyShutdownManager {
-  private config: SessionConfig;
   private utils: SessionUtils;
   private emergencyConfig: EmergencyConfig;
   private activeEmergencies: Map<string, EmergencyEvent> = new Map();
-  private actionQueue: EmergencyAction[] = [];
-  private isShuttingDown: boolean = false;
-  private shutdownStartTime: number = 0;
+  private isShuttingDown = false;
+  private shutdownStartTime = 0;
   private eventListeners: Map<string, Function[]> = new Map();
   private executionLocks: Set<string> = new Set();
   private notificationService: NotificationService;
@@ -228,38 +225,38 @@ export class EmergencyShutdownManager {
     this.utils = new SessionUtils();
     this.notificationService = new NotificationService();
     this.auditLogger = new AuditLogger();
-    
+
     this.emergencyConfig = {
       autoShutdownEnabled: true,
       severityThresholds: {
-        critical: 0,     // Immediate
-        high: 300,       // 5 minutes
-        medium: 1800,    // 30 minutes
-        low: 3600        // 1 hour
+        critical: 0, // Immediate
+        high: 300, // 5 minutes
+        medium: 1800, // 30 minutes
+        low: 3600, // 1 hour
       },
       actionTimeouts: {
-        terminate_session: 30000,
-        terminate_all_sessions: 60000,
-        block_user: 10000,
+        terminate_session: 30_000,
+        terminate_all_sessions: 60_000,
+        block_user: 10_000,
         block_ip: 5000,
-        disable_account: 15000,
-        revoke_tokens: 20000,
-        clear_cache: 30000,
-        backup_data: 300000,
+        disable_account: 15_000,
+        revoke_tokens: 20_000,
+        clear_cache: 30_000,
+        backup_data: 300_000,
         notify_admin: 5000,
-        notify_user: 10000,
+        notify_user: 10_000,
         log_event: 5000,
-        isolate_system: 60000,
-        enable_maintenance: 30000,
-        contact_authorities: 10000
+        isolate_system: 60_000,
+        enable_maintenance: 30_000,
+        contact_authorities: 10_000,
       },
       notificationChannels: ['email', 'sms', 'push', 'in_app'],
       backupBeforeShutdown: true,
-      gracePeriod: 300000, // 5 minutes
+      gracePeriod: 300_000, // 5 minutes
       maxConcurrentActions: 10,
       retryAttempts: 3,
       escalationRules: [],
-      ...config
+      ...config,
     };
   }
 
@@ -287,19 +284,19 @@ export class EmergencyShutdownManager {
         triggeredBy,
         options
       );
-      
+
       // Store emergency event
       this.activeEmergencies.set(emergency.id, emergency);
-      
+
       // Log emergency
       await this.auditLogger.logEmergency(emergency);
-      
+
       // Emit emergency triggered event
       this.emit('emergency_triggered', emergency);
-      
+
       // Execute emergency response
       await this.executeEmergencyResponse(emergency);
-      
+
       return emergency;
     } catch (error) {
       console.error('Error triggering emergency:', error);
@@ -325,64 +322,73 @@ export class EmergencyShutdownManager {
       triggeredAt: Date.now(),
       reason,
       description: this.generateEmergencyDescription(type, reason),
-      affectedSessions: options?.affectedSessions || await this.getAllActiveSessions(),
-      affectedUsers: options?.affectedUsers || await this.getAllActiveUsers(),
-      actions: options?.customActions || this.generateDefaultActions(type, severity),
+      affectedSessions:
+        options?.affectedSessions || (await this.getAllActiveSessions()),
+      affectedUsers: options?.affectedUsers || (await this.getAllActiveUsers()),
+      actions:
+        options?.customActions || this.generateDefaultActions(type, severity),
       status: 'triggered',
       metadata: {
         source: 'emergency_system',
         detector: triggeredBy,
         confidence: 1.0,
         evidence: [],
-        impact: await this.assessImpact(options?.affectedSessions, options?.affectedUsers),
-        timeline: [{
-          timestamp: Date.now(),
-          event: 'emergency_triggered',
-          actor: triggeredBy,
-          details: reason
-        }],
-        notifications: []
-      }
+        impact: await this.assessImpact(
+          options?.affectedSessions,
+          options?.affectedUsers
+        ),
+        timeline: [
+          {
+            timestamp: Date.now(),
+            event: 'emergency_triggered',
+            actor: triggeredBy,
+            details: reason,
+          },
+        ],
+        notifications: [],
+      },
     };
-    
+
     return emergency;
   }
 
   /**
    * Execute emergency response
    */
-  private async executeEmergencyResponse(emergency: EmergencyEvent): Promise<void> {
+  private async executeEmergencyResponse(
+    emergency: EmergencyEvent
+  ): Promise<void> {
     try {
       // Update status
       emergency.status = 'in_progress';
-      
+
       // Add timeline event
       emergency.metadata.timeline.push({
         timestamp: Date.now(),
         event: 'response_started',
         actor: 'emergency_system',
-        details: 'Emergency response execution started'
+        details: 'Emergency response execution started',
       });
-      
+
       // Check if immediate shutdown is required
       if (emergency.severity === 'critical' || this.isShuttingDown) {
         await this.executeImmediateShutdown(emergency);
       } else {
         await this.executeControlledShutdown(emergency);
       }
-      
+
       // Update status
       emergency.status = 'completed';
       emergency.resolvedAt = Date.now();
-      
+
       // Add timeline event
       emergency.metadata.timeline.push({
         timestamp: Date.now(),
         event: 'response_completed',
         actor: 'emergency_system',
-        details: 'Emergency response execution completed'
+        details: 'Emergency response execution completed',
       });
-      
+
       this.emit('emergency_completed', emergency);
     } catch (error) {
       emergency.status = 'failed';
@@ -390,9 +396,9 @@ export class EmergencyShutdownManager {
         timestamp: Date.now(),
         event: 'response_failed',
         actor: 'emergency_system',
-        details: `Emergency response failed: ${error.message}`
+        details: `Emergency response failed: ${error.message}`,
       });
-      
+
       console.error('Error executing emergency response:', error);
       this.emit('emergency_failed', { emergency, error });
       throw error;
@@ -402,105 +408,119 @@ export class EmergencyShutdownManager {
   /**
    * Execute immediate shutdown
    */
-  private async executeImmediateShutdown(emergency: EmergencyEvent): Promise<void> {
+  private async executeImmediateShutdown(
+    emergency: EmergencyEvent
+  ): Promise<void> {
     this.isShuttingDown = true;
     this.shutdownStartTime = Date.now();
-    
-    console.log(`EMERGENCY SHUTDOWN INITIATED: ${emergency.type} - ${emergency.reason}`);
-    
+
+    console.log(
+      `EMERGENCY SHUTDOWN INITIATED: ${emergency.type} - ${emergency.reason}`
+    );
+
     // Send immediate notifications
     await this.sendEmergencyNotifications(emergency, 'immediate');
-    
+
     // Execute actions in parallel for speed
-    const actionPromises = emergency.actions.map(action => 
+    const actionPromises = emergency.actions.map((action) =>
       this.executeAction(action, emergency.id)
     );
-    
+
     // Wait for all actions with timeout
     await Promise.allSettled(actionPromises);
-    
+
     // Force terminate all remaining sessions
     await this.forceTerminateAllSessions(emergency);
-    
+
     console.log('EMERGENCY SHUTDOWN COMPLETED');
   }
 
   /**
    * Execute controlled shutdown
    */
-  private async executeControlledShutdown(emergency: EmergencyEvent): Promise<void> {
+  private async executeControlledShutdown(
+    emergency: EmergencyEvent
+  ): Promise<void> {
     this.isShuttingDown = true;
     this.shutdownStartTime = Date.now();
-    
-    console.log(`CONTROLLED SHUTDOWN INITIATED: ${emergency.type} - ${emergency.reason}`);
-    
+
+    console.log(
+      `CONTROLLED SHUTDOWN INITIATED: ${emergency.type} - ${emergency.reason}`
+    );
+
     // Send warning notifications
     await this.sendEmergencyNotifications(emergency, 'warning');
-    
+
     // Wait for grace period if configured
     if (this.emergencyConfig.gracePeriod > 0) {
-      console.log(`Grace period: ${this.emergencyConfig.gracePeriod / 1000} seconds`);
+      console.log(
+        `Grace period: ${this.emergencyConfig.gracePeriod / 1000} seconds`
+      );
       await this.waitWithProgress(this.emergencyConfig.gracePeriod);
     }
-    
+
     // Execute backup if enabled
     if (this.emergencyConfig.backupBeforeShutdown) {
       await this.executeDataBackup(emergency);
     }
-    
+
     // Execute actions sequentially for control
     for (const action of emergency.actions) {
       await this.executeAction(action, emergency.id);
-      
+
       // Small delay between actions
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
     }
-    
+
     console.log('CONTROLLED SHUTDOWN COMPLETED');
   }
 
   /**
    * Execute individual action
    */
-  private async executeAction(action: EmergencyAction, emergencyId: string): Promise<void> {
+  private async executeAction(
+    action: EmergencyAction,
+    emergencyId: string
+  ): Promise<void> {
     const lockKey = `${action.type}_${action.target}`;
-    
+
     // Prevent concurrent execution of same action type
     if (this.executionLocks.has(lockKey)) {
       console.warn(`Action ${action.type} already executing, skipping`);
       action.status = 'skipped';
       return;
     }
-    
+
     this.executionLocks.add(lockKey);
-    
+
     try {
       action.status = 'executing';
       action.executedAt = Date.now();
       action.executedBy = 'emergency_system';
-      
-      const timeout = this.emergencyConfig.actionTimeouts[action.type] || 30000;
-      
+
+      const timeout =
+        this.emergencyConfig.actionTimeouts[action.type] || 30_000;
+
       // Execute action with timeout
       const result = await Promise.race([
         this.performAction(action),
-        new Promise<ActionResult>((_, reject) => 
+        new Promise<ActionResult>((_, reject) =>
           setTimeout(() => reject(new Error('Action timeout')), timeout)
-        )
+        ),
       ]);
-      
+
       action.result = result;
       action.status = result.success ? 'completed' : 'failed';
-      
+
       if (!result.success) {
         action.error = result.message;
       }
-      
+
       this.emit('action_completed', { action, emergencyId });
     } catch (error) {
       action.status = 'failed';
       action.error = error.message;
-      
+
       console.error(`Action ${action.type} failed:`, error);
       this.emit('action_failed', { action, emergencyId, error });
     } finally {
@@ -515,46 +535,49 @@ export class EmergencyShutdownManager {
     switch (action.type) {
       case 'terminate_session':
         return await this.terminateSession(action.parameters.sessionId);
-        
+
       case 'terminate_all_sessions':
         return await this.terminateAllSessions(action.parameters.excludeAdmin);
-        
+
       case 'block_user':
         return await this.blockUser(action.parameters.userId);
-        
+
       case 'block_ip':
         return await this.blockIP(action.parameters.ipAddress);
-        
+
       case 'disable_account':
         return await this.disableAccount(action.parameters.userId);
-        
+
       case 'revoke_tokens':
         return await this.revokeTokens(action.parameters.userId);
-        
+
       case 'clear_cache':
         return await this.clearCache(action.parameters.cacheType);
-        
+
       case 'backup_data':
         return await this.backupData(action.parameters.dataTypes);
-        
+
       case 'notify_admin':
         return await this.notifyAdministrators(action.parameters.message);
-        
+
       case 'notify_user':
-        return await this.notifyUser(action.parameters.userId, action.parameters.message);
-        
+        return await this.notifyUser(
+          action.parameters.userId,
+          action.parameters.message
+        );
+
       case 'log_event':
         return await this.logSecurityEvent(action.parameters.event);
-        
+
       case 'isolate_system':
         return await this.isolateSystem(action.parameters.systemId);
-        
+
       case 'enable_maintenance':
         return await this.enableMaintenanceMode();
-        
+
       case 'contact_authorities':
         return await this.contactAuthorities(action.parameters.incident);
-        
+
       default:
         throw new Error(`Unknown action type: ${action.type}`);
     }
@@ -568,52 +591,52 @@ export class EmergencyShutdownManager {
       const response = await fetch(`/api/session/${sessionId}/terminate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ reason: 'emergency_shutdown', force: true })
+        body: JSON.stringify({ reason: 'emergency_shutdown', force: true }),
       });
-      
+
       if (response.ok) {
         return {
           success: true,
           message: `Session ${sessionId} terminated successfully`,
-          affectedCount: 1
+          affectedCount: 1,
         };
-      } else {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     } catch (error) {
       return {
         success: false,
-        message: `Failed to terminate session: ${error.message}`
+        message: `Failed to terminate session: ${error.message}`,
       };
     }
   }
 
-  private async terminateAllSessions(excludeAdmin: boolean = false): Promise<ActionResult> {
+  private async terminateAllSessions(
+    excludeAdmin = false
+  ): Promise<ActionResult> {
     try {
       const response = await fetch('/api/session/terminate-all', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          reason: 'emergency_shutdown', 
+        body: JSON.stringify({
+          reason: 'emergency_shutdown',
           force: true,
-          excludeAdmin 
-        })
+          excludeAdmin,
+        }),
       });
-      
+
       if (response.ok) {
         const result = await response.json();
         return {
           success: true,
           message: `${result.terminatedCount} sessions terminated successfully`,
-          affectedCount: result.terminatedCount
+          affectedCount: result.terminatedCount,
         };
-      } else {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     } catch (error) {
       return {
         success: false,
-        message: `Failed to terminate all sessions: ${error.message}`
+        message: `Failed to terminate all sessions: ${error.message}`,
       };
     }
   }
@@ -623,22 +646,21 @@ export class EmergencyShutdownManager {
       const response = await fetch(`/api/users/${userId}/block`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ reason: 'emergency_security_measure' })
+        body: JSON.stringify({ reason: 'emergency_security_measure' }),
       });
-      
+
       if (response.ok) {
         return {
           success: true,
           message: `User ${userId} blocked successfully`,
-          affectedCount: 1
+          affectedCount: 1,
         };
-      } else {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     } catch (error) {
       return {
         success: false,
-        message: `Failed to block user: ${error.message}`
+        message: `Failed to block user: ${error.message}`,
       };
     }
   }
@@ -648,26 +670,25 @@ export class EmergencyShutdownManager {
       const response = await fetch('/api/security/block-ip', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          ipAddress, 
+        body: JSON.stringify({
+          ipAddress,
           reason: 'emergency_security_measure',
-          duration: 24 * 60 * 60 * 1000 // 24 hours
-        })
+          duration: 24 * 60 * 60 * 1000, // 24 hours
+        }),
       });
-      
+
       if (response.ok) {
         return {
           success: true,
           message: `IP address ${ipAddress} blocked successfully`,
-          affectedCount: 1
+          affectedCount: 1,
         };
-      } else {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     } catch (error) {
       return {
         success: false,
-        message: `Failed to block IP: ${error.message}`
+        message: `Failed to block IP: ${error.message}`,
       };
     }
   }
@@ -677,48 +698,46 @@ export class EmergencyShutdownManager {
       const response = await fetch(`/api/users/${userId}/disable`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ reason: 'emergency_security_measure' })
+        body: JSON.stringify({ reason: 'emergency_security_measure' }),
       });
-      
+
       if (response.ok) {
         return {
           success: true,
           message: `Account ${userId} disabled successfully`,
-          affectedCount: 1
+          affectedCount: 1,
         };
-      } else {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     } catch (error) {
       return {
         success: false,
-        message: `Failed to disable account: ${error.message}`
+        message: `Failed to disable account: ${error.message}`,
       };
     }
   }
 
   private async revokeTokens(userId: string): Promise<ActionResult> {
     try {
-      const response = await fetch(`/api/auth/revoke-tokens`, {
+      const response = await fetch('/api/auth/revoke-tokens', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId, reason: 'emergency_security_measure' })
+        body: JSON.stringify({ userId, reason: 'emergency_security_measure' }),
       });
-      
+
       if (response.ok) {
         const result = await response.json();
         return {
           success: true,
           message: `${result.revokedCount} tokens revoked successfully`,
-          affectedCount: result.revokedCount
+          affectedCount: result.revokedCount,
         };
-      } else {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     } catch (error) {
       return {
         success: false,
-        message: `Failed to revoke tokens: ${error.message}`
+        message: `Failed to revoke tokens: ${error.message}`,
       };
     }
   }
@@ -728,21 +747,20 @@ export class EmergencyShutdownManager {
       const response = await fetch('/api/cache/clear', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: cacheType, reason: 'emergency_cleanup' })
+        body: JSON.stringify({ type: cacheType, reason: 'emergency_cleanup' }),
       });
-      
+
       if (response.ok) {
         return {
           success: true,
-          message: `Cache ${cacheType} cleared successfully`
+          message: `Cache ${cacheType} cleared successfully`,
         };
-      } else {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     } catch (error) {
       return {
         success: false,
-        message: `Failed to clear cache: ${error.message}`
+        message: `Failed to clear cache: ${error.message}`,
       };
     }
   }
@@ -752,27 +770,26 @@ export class EmergencyShutdownManager {
       const response = await fetch('/api/backup/emergency', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          dataTypes, 
+        body: JSON.stringify({
+          dataTypes,
           reason: 'emergency_backup',
-          priority: 'high'
-        })
+          priority: 'high',
+        }),
       });
-      
+
       if (response.ok) {
         const result = await response.json();
         return {
           success: true,
           message: `Emergency backup completed: ${result.backupId}`,
-          data: { backupId: result.backupId }
+          data: { backupId: result.backupId },
         };
-      } else {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     } catch (error) {
       return {
         success: false,
-        message: `Failed to backup data: ${error.message}`
+        message: `Failed to backup data: ${error.message}`,
       };
     }
   }
@@ -782,57 +799,58 @@ export class EmergencyShutdownManager {
       const response = await fetch('/api/notifications/admin-alert', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          message, 
+        body: JSON.stringify({
+          message,
           priority: 'critical',
-          channels: this.emergencyConfig.notificationChannels
-        })
+          channels: this.emergencyConfig.notificationChannels,
+        }),
       });
-      
+
       if (response.ok) {
         const result = await response.json();
         return {
           success: true,
           message: `Administrators notified via ${result.sentChannels.length} channels`,
-          affectedCount: result.recipientCount
+          affectedCount: result.recipientCount,
         };
-      } else {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     } catch (error) {
       return {
         success: false,
-        message: `Failed to notify administrators: ${error.message}`
+        message: `Failed to notify administrators: ${error.message}`,
       };
     }
   }
 
-  private async notifyUser(userId: string, message: string): Promise<ActionResult> {
+  private async notifyUser(
+    userId: string,
+    message: string
+  ): Promise<ActionResult> {
     try {
       const response = await fetch('/api/notifications/user-alert', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           userId,
-          message, 
+          message,
           priority: 'high',
-          channels: ['email', 'push', 'in_app']
-        })
+          channels: ['email', 'push', 'in_app'],
+        }),
       });
-      
+
       if (response.ok) {
         return {
           success: true,
           message: `User ${userId} notified successfully`,
-          affectedCount: 1
+          affectedCount: 1,
         };
-      } else {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     } catch (error) {
       return {
         success: false,
-        message: `Failed to notify user: ${error.message}`
+        message: `Failed to notify user: ${error.message}`,
       };
     }
   }
@@ -842,12 +860,12 @@ export class EmergencyShutdownManager {
       await this.auditLogger.logSecurityEvent(event);
       return {
         success: true,
-        message: 'Security event logged successfully'
+        message: 'Security event logged successfully',
       };
     } catch (error) {
       return {
         success: false,
-        message: `Failed to log security event: ${error.message}`
+        message: `Failed to log security event: ${error.message}`,
       };
     }
   }
@@ -857,21 +875,20 @@ export class EmergencyShutdownManager {
       const response = await fetch(`/api/systems/${systemId}/isolate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ reason: 'emergency_isolation' })
+        body: JSON.stringify({ reason: 'emergency_isolation' }),
       });
-      
+
       if (response.ok) {
         return {
           success: true,
-          message: `System ${systemId} isolated successfully`
+          message: `System ${systemId} isolated successfully`,
         };
-      } else {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     } catch (error) {
       return {
         success: false,
-        message: `Failed to isolate system: ${error.message}`
+        message: `Failed to isolate system: ${error.message}`,
       };
     }
   }
@@ -881,25 +898,25 @@ export class EmergencyShutdownManager {
       const response = await fetch('/api/system/maintenance', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          enabled: true, 
+        body: JSON.stringify({
+          enabled: true,
           reason: 'emergency_maintenance',
-          message: 'System is temporarily unavailable due to emergency maintenance'
-        })
+          message:
+            'System is temporarily unavailable due to emergency maintenance',
+        }),
       });
-      
+
       if (response.ok) {
         return {
           success: true,
-          message: 'Maintenance mode enabled successfully'
+          message: 'Maintenance mode enabled successfully',
         };
-      } else {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     } catch (error) {
       return {
         success: false,
-        message: `Failed to enable maintenance mode: ${error.message}`
+        message: `Failed to enable maintenance mode: ${error.message}`,
       };
     }
   }
@@ -911,17 +928,17 @@ export class EmergencyShutdownManager {
       await this.auditLogger.logIncident({
         ...incident,
         reportedToAuthorities: true,
-        reportedAt: Date.now()
+        reportedAt: Date.now(),
       });
-      
+
       return {
         success: true,
-        message: 'Authorities contacted and incident reported'
+        message: 'Authorities contacted and incident reported',
       };
     } catch (error) {
       return {
         success: false,
-        message: `Failed to contact authorities: ${error.message}`
+        message: `Failed to contact authorities: ${error.message}`,
       };
     }
   }
@@ -929,18 +946,20 @@ export class EmergencyShutdownManager {
   /**
    * Force terminate all sessions
    */
-  private async forceTerminateAllSessions(emergency: EmergencyEvent): Promise<void> {
+  private async forceTerminateAllSessions(
+    _emergency: EmergencyEvent
+  ): Promise<void> {
     try {
       // Get all active sessions
       const sessions = await this.getAllActiveSessions();
-      
+
       // Terminate each session forcefully
-      const terminationPromises = sessions.map(sessionId => 
+      const terminationPromises = sessions.map((sessionId) =>
         this.terminateSession(sessionId)
       );
-      
+
       await Promise.allSettled(terminationPromises);
-      
+
       console.log(`Force terminated ${sessions.length} sessions`);
     } catch (error) {
       console.error('Error force terminating sessions:', error);
@@ -951,30 +970,30 @@ export class EmergencyShutdownManager {
    * Send emergency notifications
    */
   private async sendEmergencyNotifications(
-    emergency: EmergencyEvent, 
+    emergency: EmergencyEvent,
     urgency: 'immediate' | 'warning'
   ): Promise<void> {
     try {
       const message = this.generateNotificationMessage(emergency, urgency);
-      
+
       // Notify administrators
       await this.notificationService.sendEmergencyAlert({
         recipients: 'administrators',
         message,
         priority: emergency.severity,
-        channels: this.emergencyConfig.notificationChannels
+        channels: this.emergencyConfig.notificationChannels,
       });
-      
+
       // Notify affected users if not immediate shutdown
       if (urgency !== 'immediate' && emergency.affectedUsers.length > 0) {
         await this.notificationService.sendUserAlert({
           userIds: emergency.affectedUsers,
           message: this.generateUserNotificationMessage(emergency),
           priority: 'high',
-          channels: ['email', 'push', 'in_app']
+          channels: ['email', 'push', 'in_app'],
         });
       }
-      
+
       // Record notifications
       emergency.metadata.notifications.push({
         id: this.utils.generateSessionToken(),
@@ -983,7 +1002,7 @@ export class EmergencyShutdownManager {
         channel: 'multiple',
         sentAt: Date.now(),
         status: 'sent',
-        content: message
+        content: message,
       });
     } catch (error) {
       console.error('Error sending emergency notifications:', error);
@@ -993,45 +1012,58 @@ export class EmergencyShutdownManager {
   /**
    * Utility methods
    */
-  private generateEmergencyDescription(type: EmergencyType, reason: string): string {
+  private generateEmergencyDescription(
+    type: EmergencyType,
+    reason: string
+  ): string {
     const descriptions = {
       security_breach: 'Security breach detected requiring immediate response',
       data_leak: 'Potential data leak identified requiring system isolation',
-      system_compromise: 'System compromise detected requiring emergency shutdown',
+      system_compromise:
+        'System compromise detected requiring emergency shutdown',
       malware_detected: 'Malware detected requiring immediate containment',
-      unauthorized_access: 'Unauthorized access detected requiring session termination',
+      unauthorized_access:
+        'Unauthorized access detected requiring session termination',
       ddos_attack: 'DDoS attack in progress requiring traffic filtering',
       insider_threat: 'Insider threat detected requiring account restrictions',
-      compliance_violation: 'Compliance violation requiring immediate remediation',
+      compliance_violation:
+        'Compliance violation requiring immediate remediation',
       system_failure: 'Critical system failure requiring emergency procedures',
       manual_shutdown: 'Manual emergency shutdown initiated by administrator',
-      scheduled_maintenance: 'Scheduled emergency maintenance requiring system shutdown',
-      legal_requirement: 'Legal requirement mandating immediate system shutdown'
+      scheduled_maintenance:
+        'Scheduled emergency maintenance requiring system shutdown',
+      legal_requirement:
+        'Legal requirement mandating immediate system shutdown',
     };
-    
+
     return `${descriptions[type] || 'Emergency situation detected'}: ${reason}`;
   }
 
-  private generateDefaultActions(type: EmergencyType, severity: EmergencySeverity): EmergencyAction[] {
+  private generateDefaultActions(
+    type: EmergencyType,
+    severity: EmergencySeverity
+  ): EmergencyAction[] {
     const actions: EmergencyAction[] = [];
-    
+
     // Common actions for all emergencies
     actions.push({
       id: this.utils.generateSessionToken(),
       type: 'log_event',
       target: 'logs',
       parameters: { event: { type, severity, timestamp: Date.now() } },
-      status: 'pending'
+      status: 'pending',
     });
-    
+
     actions.push({
       id: this.utils.generateSessionToken(),
       type: 'notify_admin',
       target: 'administrators',
-      parameters: { message: `Emergency ${type} triggered with ${severity} severity` },
-      status: 'pending'
+      parameters: {
+        message: `Emergency ${type} triggered with ${severity} severity`,
+      },
+      status: 'pending',
     });
-    
+
     // Severity-based actions
     if (severity === 'critical' || severity === 'high') {
       actions.push({
@@ -1039,10 +1071,10 @@ export class EmergencyShutdownManager {
         type: 'terminate_all_sessions',
         target: 'system',
         parameters: { excludeAdmin: severity === 'high' },
-        status: 'pending'
+        status: 'pending',
       });
     }
-    
+
     // Type-specific actions
     switch (type) {
       case 'security_breach':
@@ -1052,41 +1084,44 @@ export class EmergencyShutdownManager {
           type: 'backup_data',
           target: 'database',
           parameters: { dataTypes: ['critical', 'user_data'] },
-          status: 'pending'
+          status: 'pending',
         });
         break;
-        
+
       case 'malware_detected':
         actions.push({
           id: this.utils.generateSessionToken(),
           type: 'isolate_system',
           target: 'system',
           parameters: { systemId: 'main' },
-          status: 'pending'
+          status: 'pending',
         });
         break;
-        
+
       case 'ddos_attack':
         actions.push({
           id: this.utils.generateSessionToken(),
           type: 'enable_maintenance',
           target: 'system',
           parameters: {},
-          status: 'pending'
+          status: 'pending',
         });
         break;
     }
-    
+
     return actions;
   }
 
-  private generateNotificationMessage(emergency: EmergencyEvent, urgency: string): string {
+  private generateNotificationMessage(
+    emergency: EmergencyEvent,
+    urgency: string
+  ): string {
     const urgencyText = urgency === 'immediate' ? 'IMMEDIATE' : 'WARNING';
     return `${urgencyText}: ${emergency.description}. Triggered by: ${emergency.triggeredBy}. Severity: ${emergency.severity.toUpperCase()}.`;
   }
 
-  private generateUserNotificationMessage(emergency: EmergencyEvent): string {
-    return `Your session will be terminated due to a security incident. Please save your work and log in again later. We apologize for the inconvenience.`;
+  private generateUserNotificationMessage(_emergency: EmergencyEvent): string {
+    return 'Your session will be terminated due to a security incident. Please save your work and log in again later. We apologize for the inconvenience.';
   }
 
   private async getAllActiveSessions(): Promise<string[]> {
@@ -1115,7 +1150,10 @@ export class EmergencyShutdownManager {
     return [];
   }
 
-  private async assessImpact(affectedSessions?: string[], affectedUsers?: string[]): Promise<ImpactAssessment> {
+  private async assessImpact(
+    affectedSessions?: string[],
+    affectedUsers?: string[]
+  ): Promise<ImpactAssessment> {
     return {
       usersAffected: affectedUsers?.length || 0,
       sessionsAffected: affectedSessions?.length || 0,
@@ -1126,26 +1164,26 @@ export class EmergencyShutdownManager {
         revenue: 0,
         reputation: 0.8,
         compliance: 0.9,
-        operations: 0.7
+        operations: 0.7,
       },
-      estimatedDowntime: 30 * 60 * 1000 // 30 minutes
+      estimatedDowntime: 30 * 60 * 1000, // 30 minutes
     };
   }
 
   private async executeDataBackup(emergency: EmergencyEvent): Promise<void> {
     try {
       console.log('Executing emergency data backup...');
-      
+
       const backupAction: EmergencyAction = {
         id: this.utils.generateSessionToken(),
         type: 'backup_data',
         target: 'database',
         parameters: { dataTypes: ['critical', 'user_data', 'session_data'] },
-        status: 'pending'
+        status: 'pending',
       };
-      
+
       await this.executeAction(backupAction, emergency.id);
-      
+
       if (backupAction.status === 'completed') {
         console.log('Emergency data backup completed successfully');
       } else {
@@ -1159,12 +1197,14 @@ export class EmergencyShutdownManager {
   private async waitWithProgress(duration: number): Promise<void> {
     const interval = 5000; // 5 seconds
     const steps = Math.ceil(duration / interval);
-    
+
     for (let i = 0; i < steps; i++) {
-      const remaining = duration - (i * interval);
+      const remaining = duration - i * interval;
       console.log(`Shutdown in ${Math.ceil(remaining / 1000)} seconds...`);
-      
-      await new Promise(resolve => setTimeout(resolve, Math.min(interval, remaining)));
+
+      await new Promise((resolve) =>
+        setTimeout(resolve, Math.min(interval, remaining))
+      );
     }
   }
 
@@ -1175,7 +1215,7 @@ export class EmergencyShutdownManager {
     if (!this.eventListeners.has(event)) {
       this.eventListeners.set(event, []);
     }
-    this.eventListeners.get(event)!.push(callback);
+    this.eventListeners.get(event)?.push(callback);
   }
 
   public off(event: string, callback: Function): void {
@@ -1191,7 +1231,7 @@ export class EmergencyShutdownManager {
   private emit(event: string, data: any): void {
     const listeners = this.eventListeners.get(event);
     if (listeners) {
-      listeners.forEach(callback => {
+      listeners.forEach((callback) => {
         try {
           callback(data);
         } catch (error) {
@@ -1204,34 +1244,38 @@ export class EmergencyShutdownManager {
   /**
    * Public API methods
    */
-  public async cancelEmergency(emergencyId: string, reason: string): Promise<boolean> {
+  public async cancelEmergency(
+    emergencyId: string,
+    reason: string
+  ): Promise<boolean> {
     const emergency = this.activeEmergencies.get(emergencyId);
     if (!emergency) {
       return false;
     }
-    
+
     if (emergency.status === 'completed') {
       return false; // Cannot cancel completed emergency
     }
-    
+
     emergency.status = 'cancelled';
     emergency.resolvedAt = Date.now();
     emergency.metadata.timeline.push({
       timestamp: Date.now(),
       event: 'emergency_cancelled',
       actor: 'administrator',
-      details: reason
+      details: reason,
     });
-    
+
     this.isShuttingDown = false;
-    
+
     this.emit('emergency_cancelled', { emergency, reason });
     return true;
   }
 
   public getActiveEmergencies(): EmergencyEvent[] {
-    return Array.from(this.activeEmergencies.values())
-      .filter(e => e.status === 'triggered' || e.status === 'in_progress');
+    return Array.from(this.activeEmergencies.values()).filter(
+      (e) => e.status === 'triggered' || e.status === 'in_progress'
+    );
   }
 
   public getEmergencyHistory(): EmergencyEvent[] {
@@ -1242,11 +1286,15 @@ export class EmergencyShutdownManager {
     return this.isShuttingDown;
   }
 
-  public getShutdownStatus(): { isShuttingDown: boolean; startTime: number; duration: number } {
+  public getShutdownStatus(): {
+    isShuttingDown: boolean;
+    startTime: number;
+    duration: number;
+  } {
     return {
       isShuttingDown: this.isShuttingDown,
       startTime: this.shutdownStartTime,
-      duration: this.isShuttingDown ? Date.now() - this.shutdownStartTime : 0
+      duration: this.isShuttingDown ? Date.now() - this.shutdownStartTime : 0,
     };
   }
 
@@ -1258,13 +1306,13 @@ export class EmergencyShutdownManager {
     try {
       // Test notification system
       await this.notificationService.testConnection();
-      
+
       // Test audit logger
       await this.auditLogger.testConnection();
-      
+
       // Test API endpoints
       const testResponse = await fetch('/api/emergency/test');
-      
+
       return testResponse.ok;
     } catch (error) {
       console.error('Emergency system test failed:', error);
@@ -1290,12 +1338,12 @@ class NotificationService {
     // Implementation for sending emergency alerts
     console.log('Sending emergency alert:', params);
   }
-  
+
   async sendUserAlert(params: any): Promise<void> {
     // Implementation for sending user alerts
     console.log('Sending user alert:', params);
   }
-  
+
   async testConnection(): Promise<boolean> {
     // Test notification service connection
     return true;
@@ -1307,17 +1355,17 @@ class AuditLogger {
     // Implementation for logging emergency events
     console.log('Logging emergency:', emergency.id);
   }
-  
+
   async logSecurityEvent(event: any): Promise<void> {
     // Implementation for logging security events
     console.log('Logging security event:', event);
   }
-  
+
   async logIncident(incident: any): Promise<void> {
     // Implementation for logging incidents
     console.log('Logging incident:', incident);
   }
-  
+
   async testConnection(): Promise<boolean> {
     // Test audit logger connection
     return true;

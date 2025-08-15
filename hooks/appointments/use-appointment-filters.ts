@@ -4,12 +4,11 @@
 
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { 
-  AppointmentFilters, 
-  AppointmentFilterParams,
-  AppointmentStatus 
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import type {
+  AppointmentFilters,
+  AppointmentStatus,
 } from '@/app/lib/types/appointments';
 
 // Default filter values
@@ -32,8 +31,12 @@ export function useAppointmentFilters() {
     const professional_id = searchParams.get('professional') || undefined;
     const service_type_id = searchParams.get('service') || undefined;
     const statusParam = searchParams.get('status');
-    const date_from = searchParams.get('date_from') ? new Date(searchParams.get('date_from')!) : undefined;
-    const date_to = searchParams.get('date_to') ? new Date(searchParams.get('date_to')!) : undefined;
+    const date_from = searchParams.get('date_from')
+      ? new Date(searchParams.get('date_from')!)
+      : undefined;
+    const date_to = searchParams.get('date_to')
+      ? new Date(searchParams.get('date_to')!)
+      : undefined;
     const search_query = searchParams.get('search') || undefined;
 
     // Parse multiple status values
@@ -67,69 +70,85 @@ export function useAppointmentFilters() {
     } else {
       setIsInitialized(true);
     }
-  }, [searchParams, parseFiltersFromURL, isInitialized]);  // Update URL with new filter parameters
-  const updateURL = useCallback((newFilters: AppointmentFilters) => {
-    const params = new URLSearchParams(searchParams);
+  }, [searchParams, parseFiltersFromURL, isInitialized]); // Update URL with new filter parameters
+  const updateURL = useCallback(
+    (newFilters: AppointmentFilters) => {
+      const params = new URLSearchParams(searchParams);
 
-    // Update or remove professional filter
-    if (newFilters.professional_id) {
-      params.set('professional', newFilters.professional_id);
-    } else {
-      params.delete('professional');
-    }
+      // Update or remove professional filter
+      if (newFilters.professional_id) {
+        params.set('professional', newFilters.professional_id);
+      } else {
+        params.delete('professional');
+      }
 
-    // Update or remove service filter
-    if (newFilters.service_type_id) {
-      params.set('service', newFilters.service_type_id);
-    } else {
-      params.delete('service');
-    }
+      // Update or remove service filter
+      if (newFilters.service_type_id) {
+        params.set('service', newFilters.service_type_id);
+      } else {
+        params.delete('service');
+      }
 
-    // Update or remove status filter
-    if (newFilters.status && Array.isArray(newFilters.status) && newFilters.status.length > 0) {
-      params.set('status', newFilters.status.join(','));
-    } else if (typeof newFilters.status === 'string') {
-      params.set('status', newFilters.status);
-    } else {
-      params.delete('status');
-    }
+      // Update or remove status filter
+      if (
+        newFilters.status &&
+        Array.isArray(newFilters.status) &&
+        newFilters.status.length > 0
+      ) {
+        params.set('status', newFilters.status.join(','));
+      } else if (typeof newFilters.status === 'string') {
+        params.set('status', newFilters.status);
+      } else {
+        params.delete('status');
+      }
 
-    // Update or remove date filters
-    if (newFilters.date_from) {
-      params.set('date_from', newFilters.date_from.toISOString().split('T')[0]);
-    } else {
-      params.delete('date_from');
-    }
+      // Update or remove date filters
+      if (newFilters.date_from) {
+        params.set(
+          'date_from',
+          newFilters.date_from.toISOString().split('T')[0]
+        );
+      } else {
+        params.delete('date_from');
+      }
 
-    if (newFilters.date_to) {
-      params.set('date_to', newFilters.date_to.toISOString().split('T')[0]);
-    } else {
-      params.delete('date_to');
-    }
+      if (newFilters.date_to) {
+        params.set('date_to', newFilters.date_to.toISOString().split('T')[0]);
+      } else {
+        params.delete('date_to');
+      }
 
-    // Update or remove search query
-    if (newFilters.search_query?.trim()) {
-      params.set('search', newFilters.search_query.trim());
-    } else {
-      params.delete('search');
-    }
+      // Update or remove search query
+      if (newFilters.search_query?.trim()) {
+        params.set('search', newFilters.search_query.trim());
+      } else {
+        params.delete('search');
+      }
 
-    // Update URL without causing navigation
-    const newURL = `${window.location.pathname}${params.toString() ? `?${params.toString()}` : ''}`;
-    router.replace(newURL, { scroll: false });
-  }, [searchParams, router]);  // Update individual filter
-  const updateFilter = useCallback((key: keyof AppointmentFilters, value: any) => {
-    const newFilters = { ...filters, [key]: value };
-    setFilters(newFilters);
-    updateURL(newFilters);
-  }, [filters, updateURL]);
+      // Update URL without causing navigation
+      const newURL = `${window.location.pathname}${params.toString() ? `?${params.toString()}` : ''}`;
+      router.replace(newURL, { scroll: false });
+    },
+    [searchParams, router]
+  ); // Update individual filter
+  const updateFilter = useCallback(
+    (key: keyof AppointmentFilters, value: any) => {
+      const newFilters = { ...filters, [key]: value };
+      setFilters(newFilters);
+      updateURL(newFilters);
+    },
+    [filters, updateURL]
+  );
 
   // Update multiple filters at once
-  const updateFilters = useCallback((newFilters: Partial<AppointmentFilters>) => {
-    const updatedFilters = { ...filters, ...newFilters };
-    setFilters(updatedFilters);
-    updateURL(updatedFilters);
-  }, [filters, updateURL]);
+  const updateFilters = useCallback(
+    (newFilters: Partial<AppointmentFilters>) => {
+      const updatedFilters = { ...filters, ...newFilters };
+      setFilters(updatedFilters);
+      updateURL(updatedFilters);
+    },
+    [filters, updateURL]
+  );
 
   // Clear all filters
   const clearFilters = useCallback(() => {
@@ -139,7 +158,7 @@ export function useAppointmentFilters() {
 
   // Check if any filters are active
   const hasActiveFilters = useMemo(() => {
-    return Object.values(filters).some(value => {
+    return Object.values(filters).some((value) => {
       if (Array.isArray(value)) {
         return value.length > 0;
       }
@@ -152,7 +171,11 @@ export function useAppointmentFilters() {
     let count = 0;
     if (filters.professional_id) count++;
     if (filters.service_type_id) count++;
-    if (filters.status && (Array.isArray(filters.status) ? filters.status.length > 0 : true)) count++;
+    if (
+      filters.status &&
+      (Array.isArray(filters.status) ? filters.status.length > 0 : true)
+    )
+      count++;
     if (filters.date_from) count++;
     if (filters.date_to) count++;
     if (filters.search_query?.trim()) count++;
@@ -163,17 +186,25 @@ export function useAppointmentFilters() {
   const getAPIQueryParams = useMemo(() => {
     const params: Record<string, string> = {};
 
-    if (filters.professional_id) params.professional_id = filters.professional_id;
-    if (filters.service_type_id) params.service_type_id = filters.service_type_id;
+    if (filters.professional_id)
+      params.professional_id = filters.professional_id;
+    if (filters.service_type_id)
+      params.service_type_id = filters.service_type_id;
     if (filters.status) {
-      params.status = Array.isArray(filters.status) ? filters.status.join(',') : filters.status;
+      params.status = Array.isArray(filters.status)
+        ? filters.status.join(',')
+        : filters.status;
     }
-    if (filters.date_from) params.date_from = filters.date_from.toISOString().split('T')[0];
-    if (filters.date_to) params.date_to = filters.date_to.toISOString().split('T')[0];
-    if (filters.search_query?.trim()) params.search = filters.search_query.trim();
+    if (filters.date_from)
+      params.date_from = filters.date_from.toISOString().split('T')[0];
+    if (filters.date_to)
+      params.date_to = filters.date_to.toISOString().split('T')[0];
+    if (filters.search_query?.trim())
+      params.search = filters.search_query.trim();
 
     return params;
-  }, [filters]);  return {
+  }, [filters]);
+  return {
     // State
     filters,
     hasActiveFilters,

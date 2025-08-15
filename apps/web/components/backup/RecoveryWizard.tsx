@@ -1,21 +1,26 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Checkbox } from '@/components/ui/checkbox';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+  AlertTriangle,
+  ArrowLeft,
+  ArrowRight,
+  CheckCircle,
+  Clock,
+  Database,
+  Download,
+  FileText,
+  HardDrive,
+  RefreshCw,
+  Shield,
+} from 'lucide-react';
+import type React from 'react';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Dialog,
   DialogContent,
@@ -24,7 +29,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Progress } from '@/components/ui/progress';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import {
   Stepper,
   StepperContent,
@@ -32,23 +46,7 @@ import {
   StepperSeparator,
   StepperTrigger,
 } from '@/components/ui/stepper';
-import {
-  Database,
-  HardDrive,
-  Calendar,
-  FileText,
-  AlertTriangle,
-  CheckCircle,
-  RefreshCw,
-  Download,
-  Search,
-  Clock,
-  Shield,
-  ArrowRight,
-  ArrowLeft,
-} from 'lucide-react';
 import { formatBytes, formatDate } from '@/lib/utils';
-import { toast } from 'sonner';
 
 // Types
 interface BackupRecord {
@@ -80,10 +78,16 @@ interface RecoveryWizardProps {
   onSuccess?: () => void;
 }
 
-const RecoveryWizard: React.FC<RecoveryWizardProps> = ({ isOpen, onClose, onSuccess }) => {
+const RecoveryWizard: React.FC<RecoveryWizardProps> = ({
+  isOpen,
+  onClose,
+  onSuccess,
+}) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [backups, setBackups] = useState<BackupRecord[]>([]);
-  const [selectedBackup, setSelectedBackup] = useState<BackupRecord | null>(null);
+  const [selectedBackup, setSelectedBackup] = useState<BackupRecord | null>(
+    null
+  );
   const [recoveryOptions, setRecoveryOptions] = useState<RecoveryOptions>({
     backup_id: '',
     type: 'FULL_RESTORE',
@@ -118,13 +122,13 @@ const RecoveryWizard: React.FC<RecoveryWizardProps> = ({ isOpen, onClose, onSucc
     if (isOpen) {
       loadAvailableBackups();
     }
-  }, [isOpen]);
+  }, [isOpen, loadAvailableBackups]);
 
   useEffect(() => {
     if (selectedBackup && recoveryOptions.type === 'PARTIAL_RESTORE') {
       loadBackupFiles(selectedBackup.id);
     }
-  }, [selectedBackup, recoveryOptions.type]);
+  }, [selectedBackup, recoveryOptions.type, loadBackupFiles]);
 
   const loadAvailableBackups = async () => {
     try {
@@ -169,7 +173,8 @@ const RecoveryWizard: React.FC<RecoveryWizardProps> = ({ isOpen, onClose, onSucc
       ...recoveryOptions,
       type,
       files_to_restore: type === 'PARTIAL_RESTORE' ? [] : undefined,
-      point_in_time: type === 'POINT_IN_TIME' ? new Date().toISOString() : undefined,
+      point_in_time:
+        type === 'POINT_IN_TIME' ? new Date().toISOString() : undefined,
     });
   };
 
@@ -183,7 +188,7 @@ const RecoveryWizard: React.FC<RecoveryWizardProps> = ({ isOpen, onClose, onSucc
     } else {
       setRecoveryOptions({
         ...recoveryOptions,
-        files_to_restore: currentFiles.filter(f => f !== file),
+        files_to_restore: currentFiles.filter((f) => f !== file),
       });
     }
   };
@@ -202,7 +207,7 @@ const RecoveryWizard: React.FC<RecoveryWizardProps> = ({ isOpen, onClose, onSucc
       if (response.ok) {
         setCurrentStep(3);
         toast.success('Operação de recuperação iniciada com sucesso');
-        
+
         // Simular progresso (em produção, seria uma chamada real à API)
         setTimeout(() => {
           setRecoveryInProgress(false);
@@ -272,12 +277,12 @@ const RecoveryWizard: React.FC<RecoveryWizardProps> = ({ isOpen, onClose, onSucc
       case 0:
         return (
           <div className="space-y-4">
-            <div className="text-sm text-muted-foreground">
+            <div className="text-muted-foreground text-sm">
               Selecione um backup válido para restaurar:
             </div>
             {loading ? (
-              <div className="text-center py-8">
-                <RefreshCw className="h-8 w-8 animate-spin mx-auto mb-2" />
+              <div className="py-8 text-center">
+                <RefreshCw className="mx-auto mb-2 h-8 w-8 animate-spin" />
                 <p>Carregando backups disponíveis...</p>
               </div>
             ) : backups.length === 0 ? (
@@ -288,15 +293,15 @@ const RecoveryWizard: React.FC<RecoveryWizardProps> = ({ isOpen, onClose, onSucc
                 </AlertDescription>
               </Alert>
             ) : (
-              <div className="space-y-2 max-h-64 overflow-y-auto">
+              <div className="max-h-64 space-y-2 overflow-y-auto">
                 {backups.map((backup) => (
                   <Card
-                    key={backup.id}
                     className={`cursor-pointer transition-colors ${
                       selectedBackup?.id === backup.id
-                        ? 'ring-2 ring-primary bg-accent'
+                        ? 'bg-accent ring-2 ring-primary'
                         : 'hover:bg-accent'
                     }`}
+                    key={backup.id}
                     onClick={() => handleBackupSelect(backup)}
                   >
                     <CardContent className="p-4">
@@ -304,8 +309,10 @@ const RecoveryWizard: React.FC<RecoveryWizardProps> = ({ isOpen, onClose, onSucc
                         <div className="flex items-center space-x-3">
                           {getRecoveryTypeIcon(backup.type)}
                           <div>
-                            <div className="font-medium">{backup.config_name}</div>
-                            <div className="text-sm text-muted-foreground">
+                            <div className="font-medium">
+                              {backup.config_name}
+                            </div>
+                            <div className="text-muted-foreground text-sm">
                               {formatDate(new Date(backup.start_time))}
                             </div>
                           </div>
@@ -313,7 +320,7 @@ const RecoveryWizard: React.FC<RecoveryWizardProps> = ({ isOpen, onClose, onSucc
                         <div className="text-right">
                           <Badge variant="outline">{backup.type}</Badge>
                           {backup.size && (
-                            <div className="text-sm text-muted-foreground mt-1">
+                            <div className="mt-1 text-muted-foreground text-sm">
                               {formatBytes(backup.size)}
                             </div>
                           )}
@@ -333,8 +340,8 @@ const RecoveryWizard: React.FC<RecoveryWizardProps> = ({ isOpen, onClose, onSucc
             <div>
               <Label>Tipo de Restauração</Label>
               <Select
-                value={recoveryOptions.type}
                 onValueChange={handleRecoveryTypeChange}
+                value={recoveryOptions.type}
               >
                 <SelectTrigger className="mt-2">
                   <SelectValue />
@@ -371,21 +378,25 @@ const RecoveryWizard: React.FC<RecoveryWizardProps> = ({ isOpen, onClose, onSucc
             {recoveryOptions.type === 'PARTIAL_RESTORE' && (
               <div>
                 <Label>Arquivos para Restaurar</Label>
-                <div className="mt-2 max-h-48 overflow-y-auto border rounded-md p-3">
+                <div className="mt-2 max-h-48 overflow-y-auto rounded-md border p-3">
                   {availableFiles.length === 0 ? (
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-muted-foreground text-sm">
                       Carregando lista de arquivos...
                     </p>
                   ) : (
                     <div className="space-y-2">
                       {availableFiles.map((file) => (
-                        <div key={file} className="flex items-center space-x-2">
+                        <div className="flex items-center space-x-2" key={file}>
                           <Checkbox
+                            checked={(
+                              recoveryOptions.files_to_restore || []
+                            ).includes(file)}
                             id={file}
-                            checked={(recoveryOptions.files_to_restore || []).includes(file)}
-                            onCheckedChange={(checked) => handleFileToggle(file, checked as boolean)}
+                            onCheckedChange={(checked) =>
+                              handleFileToggle(file, checked as boolean)
+                            }
                           />
-                          <Label htmlFor={file} className="text-sm">
+                          <Label className="text-sm" htmlFor={file}>
                             {file}
                           </Label>
                         </div>
@@ -400,14 +411,16 @@ const RecoveryWizard: React.FC<RecoveryWizardProps> = ({ isOpen, onClose, onSucc
               <div>
                 <Label htmlFor="point-in-time">Data e Hora</Label>
                 <Input
+                  className="mt-2"
                   id="point-in-time"
+                  onChange={(e) =>
+                    setRecoveryOptions({
+                      ...recoveryOptions,
+                      point_in_time: `${e.target.value}.000Z`,
+                    })
+                  }
                   type="datetime-local"
                   value={recoveryOptions.point_in_time?.split('.')[0]}
-                  onChange={(e) => setRecoveryOptions({
-                    ...recoveryOptions,
-                    point_in_time: e.target.value + '.000Z',
-                  })}
-                  className="mt-2"
                 />
               </div>
             )}
@@ -415,12 +428,14 @@ const RecoveryWizard: React.FC<RecoveryWizardProps> = ({ isOpen, onClose, onSucc
             <div className="space-y-4">
               <div className="flex items-center space-x-2">
                 <Checkbox
-                  id="overwrite"
                   checked={recoveryOptions.overwrite_existing}
-                  onCheckedChange={(checked) => setRecoveryOptions({
-                    ...recoveryOptions,
-                    overwrite_existing: checked as boolean,
-                  })}
+                  id="overwrite"
+                  onCheckedChange={(checked) =>
+                    setRecoveryOptions({
+                      ...recoveryOptions,
+                      overwrite_existing: checked as boolean,
+                    })
+                  }
                 />
                 <Label htmlFor="overwrite">
                   Sobrescrever arquivos existentes
@@ -429,31 +444,33 @@ const RecoveryWizard: React.FC<RecoveryWizardProps> = ({ isOpen, onClose, onSucc
 
               <div className="flex items-center space-x-2">
                 <Checkbox
-                  id="verify"
                   checked={recoveryOptions.verify_integrity}
-                  onCheckedChange={(checked) => setRecoveryOptions({
-                    ...recoveryOptions,
-                    verify_integrity: checked as boolean,
-                  })}
+                  id="verify"
+                  onCheckedChange={(checked) =>
+                    setRecoveryOptions({
+                      ...recoveryOptions,
+                      verify_integrity: checked as boolean,
+                    })
+                  }
                 />
-                <Label htmlFor="verify">
-                  Verificar integridade dos dados
-                </Label>
+                <Label htmlFor="verify">Verificar integridade dos dados</Label>
               </div>
             </div>
 
             <div>
               <Label htmlFor="email">Email para Notificação (Opcional)</Label>
               <Input
+                className="mt-2"
                 id="email"
+                onChange={(e) =>
+                  setRecoveryOptions({
+                    ...recoveryOptions,
+                    notification_email: e.target.value,
+                  })
+                }
+                placeholder="seu@email.com"
                 type="email"
                 value={recoveryOptions.notification_email || ''}
-                onChange={(e) => setRecoveryOptions({
-                  ...recoveryOptions,
-                  notification_email: e.target.value,
-                })}
-                placeholder="seu@email.com"
-                className="mt-2"
               />
             </div>
           </div>
@@ -465,37 +482,48 @@ const RecoveryWizard: React.FC<RecoveryWizardProps> = ({ isOpen, onClose, onSucc
             <Alert>
               <AlertTriangle className="h-4 w-4" />
               <AlertDescription>
-                <strong>Atenção:</strong> Esta operação irá restaurar dados do backup selecionado.
-                Certifique-se de que as configurações estão corretas antes de prosseguir.
+                <strong>Atenção:</strong> Esta operação irá restaurar dados do
+                backup selecionado. Certifique-se de que as configurações estão
+                corretas antes de prosseguir.
               </AlertDescription>
             </Alert>
 
             <div className="space-y-4">
               <div>
-                <Label className="text-sm font-medium">Backup Selecionado</Label>
-                <div className="mt-1 text-sm text-muted-foreground">
-                  {selectedBackup?.config_name} - {formatDate(new Date(selectedBackup?.start_time || ''))}
+                <Label className="font-medium text-sm">
+                  Backup Selecionado
+                </Label>
+                <div className="mt-1 text-muted-foreground text-sm">
+                  {selectedBackup?.config_name} -{' '}
+                  {formatDate(new Date(selectedBackup?.start_time || ''))}
                 </div>
               </div>
 
               <div>
-                <Label className="text-sm font-medium">Tipo de Restauração</Label>
-                <div className="mt-1 text-sm text-muted-foreground">
-                  {recoveryOptions.type === 'FULL_RESTORE' && 'Restauração Completa'}
-                  {recoveryOptions.type === 'PARTIAL_RESTORE' && 'Restauração Parcial'}
-                  {recoveryOptions.type === 'POINT_IN_TIME' && 'Point-in-Time Recovery'}
-                  {recoveryOptions.type === 'VERIFICATION' && 'Verificação de Integridade'}
+                <Label className="font-medium text-sm">
+                  Tipo de Restauração
+                </Label>
+                <div className="mt-1 text-muted-foreground text-sm">
+                  {recoveryOptions.type === 'FULL_RESTORE' &&
+                    'Restauração Completa'}
+                  {recoveryOptions.type === 'PARTIAL_RESTORE' &&
+                    'Restauração Parcial'}
+                  {recoveryOptions.type === 'POINT_IN_TIME' &&
+                    'Point-in-Time Recovery'}
+                  {recoveryOptions.type === 'VERIFICATION' &&
+                    'Verificação de Integridade'}
                 </div>
               </div>
 
               {recoveryOptions.type === 'PARTIAL_RESTORE' && (
                 <div>
-                  <Label className="text-sm font-medium">
-                    Arquivos Selecionados ({recoveryOptions.files_to_restore?.length || 0})
+                  <Label className="font-medium text-sm">
+                    Arquivos Selecionados (
+                    {recoveryOptions.files_to_restore?.length || 0})
                   </Label>
                   <div className="mt-1 max-h-32 overflow-y-auto">
                     {recoveryOptions.files_to_restore?.map((file) => (
-                      <div key={file} className="text-sm text-muted-foreground">
+                      <div className="text-muted-foreground text-sm" key={file}>
                         {file}
                       </div>
                     ))}
@@ -505,14 +533,18 @@ const RecoveryWizard: React.FC<RecoveryWizardProps> = ({ isOpen, onClose, onSucc
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-sm font-medium">Sobrescrever Existentes</Label>
-                  <div className="mt-1 text-sm text-muted-foreground">
+                  <Label className="font-medium text-sm">
+                    Sobrescrever Existentes
+                  </Label>
+                  <div className="mt-1 text-muted-foreground text-sm">
                     {recoveryOptions.overwrite_existing ? 'Sim' : 'Não'}
                   </div>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium">Verificar Integridade</Label>
-                  <div className="mt-1 text-sm text-muted-foreground">
+                  <Label className="font-medium text-sm">
+                    Verificar Integridade
+                  </Label>
+                  <div className="mt-1 text-muted-foreground text-sm">
                     {recoveryOptions.verify_integrity ? 'Sim' : 'Não'}
                   </div>
                 </div>
@@ -524,9 +556,9 @@ const RecoveryWizard: React.FC<RecoveryWizardProps> = ({ isOpen, onClose, onSucc
       case 3:
         return (
           <div className="space-y-6 text-center">
-            <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
               {recoveryInProgress ? (
-                <RefreshCw className="h-8 w-8 text-primary animate-spin" />
+                <RefreshCw className="h-8 w-8 animate-spin text-primary" />
               ) : (
                 <CheckCircle className="h-8 w-8 text-green-500" />
               )}
@@ -535,25 +567,25 @@ const RecoveryWizard: React.FC<RecoveryWizardProps> = ({ isOpen, onClose, onSucc
             {recoveryInProgress ? (
               <>
                 <div>
-                  <h3 className="text-lg font-medium">Restauração em Progresso</h3>
+                  <h3 className="font-medium text-lg">
+                    Restauração em Progresso
+                  </h3>
                   <p className="text-muted-foreground">
                     Por favor, aguarde enquanto os dados são restaurados...
                   </p>
                 </div>
-                <Progress value={75} className="w-full" />
-                <p className="text-sm text-muted-foreground">
+                <Progress className="w-full" value={75} />
+                <p className="text-muted-foreground text-sm">
                   Estimativa: 2 minutos restantes
                 </p>
               </>
             ) : (
-              <>
-                <div>
-                  <h3 className="text-lg font-medium">Restauração Concluída</h3>
-                  <p className="text-muted-foreground">
-                    Os dados foram restaurados com sucesso!
-                  </p>
-                </div>
-              </>
+              <div>
+                <h3 className="font-medium text-lg">Restauração Concluída</h3>
+                <p className="text-muted-foreground">
+                  Os dados foram restaurados com sucesso!
+                </p>
+              </div>
             )}
           </div>
         );
@@ -564,8 +596,11 @@ const RecoveryWizard: React.FC<RecoveryWizardProps> = ({ isOpen, onClose, onSucc
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={!recoveryInProgress ? handleClose : undefined}>
-      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+    <Dialog
+      onOpenChange={recoveryInProgress ? undefined : handleClose}
+      open={isOpen}
+    >
+      <DialogContent className="max-h-[80vh] max-w-4xl overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Assistente de Recuperação</DialogTitle>
           <DialogDescription>
@@ -574,7 +609,7 @@ const RecoveryWizard: React.FC<RecoveryWizardProps> = ({ isOpen, onClose, onSucc
         </DialogHeader>
 
         <div className="space-y-6">
-          <Stepper value={currentStep} className="w-full">
+          <Stepper className="w-full" value={currentStep}>
             {steps.map((step, index) => (
               <StepperItem key={index} value={index}>
                 <StepperTrigger>{step.title}</StepperTrigger>
@@ -582,7 +617,7 @@ const RecoveryWizard: React.FC<RecoveryWizardProps> = ({ isOpen, onClose, onSucc
                   <div className="space-y-4">
                     <div>
                       <h3 className="font-medium">{step.title}</h3>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-muted-foreground text-sm">
                         {step.description}
                       </p>
                     </div>
@@ -597,33 +632,34 @@ const RecoveryWizard: React.FC<RecoveryWizardProps> = ({ isOpen, onClose, onSucc
 
         <DialogFooter>
           {currentStep > 0 && currentStep < 3 && (
-            <Button variant="outline" onClick={() => setCurrentStep(currentStep - 1)}>
-              <ArrowLeft className="h-4 w-4 mr-2" />
+            <Button
+              onClick={() => setCurrentStep(currentStep - 1)}
+              variant="outline"
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
               Anterior
             </Button>
           )}
-          
+
           {currentStep < 2 && (
             <Button
-              onClick={() => setCurrentStep(currentStep + 1)}
               disabled={!canProceedToNext()}
+              onClick={() => setCurrentStep(currentStep + 1)}
             >
               Próximo
-              <ArrowRight className="h-4 w-4 ml-2" />
+              <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           )}
-          
+
           {currentStep === 2 && (
-            <Button onClick={startRecovery} disabled={recoveryInProgress}>
-              <Download className="h-4 w-4 mr-2" />
+            <Button disabled={recoveryInProgress} onClick={startRecovery}>
+              <Download className="mr-2 h-4 w-4" />
               Iniciar Recuperação
             </Button>
           )}
-          
+
           {currentStep === 3 && !recoveryInProgress && (
-            <Button onClick={handleClose}>
-              Fechar
-            </Button>
+            <Button onClick={handleClose}>Fechar</Button>
           )}
         </DialogFooter>
       </DialogContent>

@@ -1,7 +1,7 @@
 /**
  * Compliance and Rules Engine for AI Scheduling
  * Story 2.3: AI-Powered Automatic Scheduling Implementation
- * 
+ *
  * This module implements comprehensive compliance and business rules:
  * - Healthcare regulations compliance
  * - Business policy enforcement
@@ -11,11 +11,14 @@
  * - Brazilian healthcare regulations (CFM, ANVISA)
  */
 
-import { createClient } from '@/lib/supabase/client'
-import { SchedulingCriteria, SchedulingRecommendation } from './ai-scheduling-core'
+import { createClient } from '@/lib/supabase/client';
+import type {
+  SchedulingCriteria,
+  SchedulingRecommendation,
+} from './ai-scheduling-core';
 
 // Rule Types
-type RuleType = 
+type RuleType =
   | 'healthcare_regulation'
   | 'business_policy'
   | 'treatment_protocol'
@@ -23,127 +26,134 @@ type RuleType =
   | 'patient_safety'
   | 'equipment_requirement'
   | 'time_constraint'
-  | 'financial_policy'
+  | 'financial_policy';
 
 // Rule Severity
-type RuleSeverity = 'info' | 'warning' | 'error' | 'critical'
+type RuleSeverity = 'info' | 'warning' | 'error' | 'critical';
 
 // Rule Status
-type RuleStatus = 'active' | 'inactive' | 'pending' | 'deprecated'
+type RuleStatus = 'active' | 'inactive' | 'pending' | 'deprecated';
 
 // Compliance Rule Definition
 interface ComplianceRule {
-  id: string
-  name: string
-  type: RuleType
-  severity: RuleSeverity
-  status: RuleStatus
-  description: string
-  regulation: string // CFM, ANVISA, internal policy, etc.
-  conditions: RuleCondition[]
-  actions: RuleAction[]
-  exceptions: RuleException[]
-  priority: number
-  createdAt: Date
-  updatedAt: Date
-  createdBy: string
+  id: string;
+  name: string;
+  type: RuleType;
+  severity: RuleSeverity;
+  status: RuleStatus;
+  description: string;
+  regulation: string; // CFM, ANVISA, internal policy, etc.
+  conditions: RuleCondition[];
+  actions: RuleAction[];
+  exceptions: RuleException[];
+  priority: number;
+  createdAt: Date;
+  updatedAt: Date;
+  createdBy: string;
 }
 
 // Rule Condition
 interface RuleCondition {
-  id: string
-  field: string
-  operator: 'equals' | 'not_equals' | 'greater_than' | 'less_than' | 'contains' | 'in' | 'not_in'
-  value: any
-  logicalOperator?: 'AND' | 'OR'
+  id: string;
+  field: string;
+  operator:
+    | 'equals'
+    | 'not_equals'
+    | 'greater_than'
+    | 'less_than'
+    | 'contains'
+    | 'in'
+    | 'not_in';
+  value: any;
+  logicalOperator?: 'AND' | 'OR';
 }
 
 // Rule Action
 interface RuleAction {
-  id: string
-  type: 'block' | 'warn' | 'modify' | 'require_approval' | 'log' | 'notify'
-  description: string
-  parameters: Record<string, any>
+  id: string;
+  type: 'block' | 'warn' | 'modify' | 'require_approval' | 'log' | 'notify';
+  description: string;
+  parameters: Record<string, any>;
 }
 
 // Rule Exception
 interface RuleException {
-  id: string
-  condition: string
-  description: string
-  approvalRequired: boolean
-  approverRoles: string[]
+  id: string;
+  condition: string;
+  description: string;
+  approvalRequired: boolean;
+  approverRoles: string[];
 }
 
 // Compliance Validation Result
 interface ComplianceValidationResult {
-  isCompliant: boolean
-  violations: RuleViolation[]
-  warnings: RuleWarning[]
-  requiredApprovals: RequiredApproval[]
-  suggestedModifications: SuggestedModification[]
-  complianceScore: number
+  isCompliant: boolean;
+  violations: RuleViolation[];
+  warnings: RuleWarning[];
+  requiredApprovals: RequiredApproval[];
+  suggestedModifications: SuggestedModification[];
+  complianceScore: number;
 }
 
 // Rule Violation
 interface RuleViolation {
-  ruleId: string
-  ruleName: string
-  severity: RuleSeverity
-  description: string
-  field: string
-  currentValue: any
-  expectedValue: any
-  regulation: string
-  canBeOverridden: boolean
-  overrideRequirements: string[]
+  ruleId: string;
+  ruleName: string;
+  severity: RuleSeverity;
+  description: string;
+  field: string;
+  currentValue: any;
+  expectedValue: any;
+  regulation: string;
+  canBeOverridden: boolean;
+  overrideRequirements: string[];
 }
 
 // Rule Warning
 interface RuleWarning {
-  ruleId: string
-  ruleName: string
-  description: string
-  recommendation: string
-  impact: 'low' | 'medium' | 'high'
+  ruleId: string;
+  ruleName: string;
+  description: string;
+  recommendation: string;
+  impact: 'low' | 'medium' | 'high';
 }
 
 // Required Approval
 interface RequiredApproval {
-  ruleId: string
-  approvalType: string
-  requiredRoles: string[]
-  reason: string
-  urgency: 'low' | 'medium' | 'high' | 'urgent'
+  ruleId: string;
+  approvalType: string;
+  requiredRoles: string[];
+  reason: string;
+  urgency: 'low' | 'medium' | 'high' | 'urgent';
 }
 
 // Suggested Modification
 interface SuggestedModification {
-  field: string
-  currentValue: any
-  suggestedValue: any
-  reason: string
-  impact: string
+  field: string;
+  currentValue: any;
+  suggestedValue: any;
+  reason: string;
+  impact: string;
 }
 
 // Brazilian Healthcare Regulations
 interface BrazilianHealthcareRegulation {
-  cfmResolution: string
-  anvisaRegulation: string
-  description: string
-  applicableScenarios: string[]
-  complianceRequirements: string[]
+  cfmResolution: string;
+  anvisaRegulation: string;
+  description: string;
+  applicableScenarios: string[];
+  complianceRequirements: string[];
 }
 
 class ComplianceRulesEngine {
-  private supabase = createClient()
-  private rules: Map<string, ComplianceRule> = new Map()
-  private brazilianRegulations: BrazilianHealthcareRegulation[] = []
-  private ruleCache: Map<string, ComplianceValidationResult> = new Map()
+  private supabase = createClient();
+  private rules: Map<string, ComplianceRule> = new Map();
+  private brazilianRegulations: BrazilianHealthcareRegulation[] = [];
+  private ruleCache: Map<string, ComplianceValidationResult> = new Map();
 
   constructor() {
-    this.initializeBrazilianRegulations()
-    this.loadComplianceRules()
+    this.initializeBrazilianRegulations();
+    this.loadComplianceRules();
   }
 
   /**
@@ -155,38 +165,38 @@ class ComplianceRulesEngine {
     context: any = {}
   ): Promise<ComplianceValidationResult> {
     try {
-      const violations: RuleViolation[] = []
-      const warnings: RuleWarning[] = []
-      const requiredApprovals: RequiredApproval[] = []
-      const suggestedModifications: SuggestedModification[] = []
+      const violations: RuleViolation[] = [];
+      const warnings: RuleWarning[] = [];
+      const requiredApprovals: RequiredApproval[] = [];
+      const suggestedModifications: SuggestedModification[] = [];
 
       // Load patient and treatment data for validation
       const validationContext = await this.buildValidationContext(
         recommendation,
         criteria,
         context
-      )
+      );
 
       // Validate against each active rule
       for (const rule of this.rules.values()) {
-        if (rule.status !== 'active') continue
+        if (rule.status !== 'active') continue;
 
-        const ruleResult = await this.validateRule(rule, validationContext)
-        
+        const ruleResult = await this.validateRule(rule, validationContext);
+
         if (ruleResult.violations.length > 0) {
-          violations.push(...ruleResult.violations)
+          violations.push(...ruleResult.violations);
         }
-        
+
         if (ruleResult.warnings.length > 0) {
-          warnings.push(...ruleResult.warnings)
+          warnings.push(...ruleResult.warnings);
         }
-        
+
         if (ruleResult.requiredApprovals.length > 0) {
-          requiredApprovals.push(...ruleResult.requiredApprovals)
+          requiredApprovals.push(...ruleResult.requiredApprovals);
         }
-        
+
         if (ruleResult.suggestedModifications.length > 0) {
-          suggestedModifications.push(...ruleResult.suggestedModifications)
+          suggestedModifications.push(...ruleResult.suggestedModifications);
         }
       }
 
@@ -195,28 +205,31 @@ class ComplianceRulesEngine {
         violations,
         warnings,
         requiredApprovals
-      )
+      );
 
       const result: ComplianceValidationResult = {
-        isCompliant: violations.filter(v => v.severity === 'critical' || v.severity === 'error').length === 0,
+        isCompliant:
+          violations.filter(
+            (v) => v.severity === 'critical' || v.severity === 'error'
+          ).length === 0,
         violations,
         warnings,
         requiredApprovals,
         suggestedModifications,
-        complianceScore
-      }
+        complianceScore,
+      };
 
       // Cache result for performance
-      const cacheKey = this.generateCacheKey(recommendation, criteria)
-      this.ruleCache.set(cacheKey, result)
+      const cacheKey = this.generateCacheKey(recommendation, criteria);
+      this.ruleCache.set(cacheKey, result);
 
       // Log compliance validation
-      await this.logComplianceValidation(recommendation, criteria, result)
+      await this.logComplianceValidation(recommendation, criteria, result);
 
-      return result
+      return result;
     } catch (error) {
-      console.error('Error validating compliance:', error)
-      throw new Error('Failed to validate compliance')
+      console.error('Error validating compliance:', error);
+      throw new Error('Failed to validate compliance');
     }
   }
 
@@ -227,19 +240,22 @@ class ComplianceRulesEngine {
     rule: ComplianceRule,
     context: any
   ): Promise<{
-    violations: RuleViolation[]
-    warnings: RuleWarning[]
-    requiredApprovals: RequiredApproval[]
-    suggestedModifications: SuggestedModification[]
+    violations: RuleViolation[];
+    warnings: RuleWarning[];
+    requiredApprovals: RequiredApproval[];
+    suggestedModifications: SuggestedModification[];
   }> {
-    const violations: RuleViolation[] = []
-    const warnings: RuleWarning[] = []
-    const requiredApprovals: RequiredApproval[] = []
-    const suggestedModifications: SuggestedModification[] = []
+    const violations: RuleViolation[] = [];
+    const warnings: RuleWarning[] = [];
+    const requiredApprovals: RequiredApproval[] = [];
+    const suggestedModifications: SuggestedModification[] = [];
 
     // Check if rule conditions are met
-    const conditionsMet = await this.evaluateRuleConditions(rule.conditions, context)
-    
+    const conditionsMet = await this.evaluateRuleConditions(
+      rule.conditions,
+      context
+    );
+
     if (conditionsMet) {
       // Rule applies, execute actions
       for (const action of rule.actions) {
@@ -255,44 +271,44 @@ class ComplianceRulesEngine {
               expectedValue: action.parameters.expectedValue,
               regulation: rule.regulation,
               canBeOverridden: rule.exceptions.length > 0,
-              overrideRequirements: rule.exceptions.map(e => e.description)
-            })
-            break
-            
+              overrideRequirements: rule.exceptions.map((e) => e.description),
+            });
+            break;
+
           case 'warn':
             warnings.push({
               ruleId: rule.id,
               ruleName: rule.name,
               description: action.description,
               recommendation: action.parameters.recommendation || '',
-              impact: action.parameters.impact || 'medium'
-            })
-            break
-            
+              impact: action.parameters.impact || 'medium',
+            });
+            break;
+
           case 'require_approval':
             requiredApprovals.push({
               ruleId: rule.id,
               approvalType: action.parameters.approvalType,
               requiredRoles: action.parameters.requiredRoles || [],
               reason: action.description,
-              urgency: action.parameters.urgency || 'medium'
-            })
-            break
-            
+              urgency: action.parameters.urgency || 'medium',
+            });
+            break;
+
           case 'modify':
             suggestedModifications.push({
               field: action.parameters.field,
               currentValue: context[action.parameters.field],
               suggestedValue: action.parameters.suggestedValue,
               reason: action.description,
-              impact: action.parameters.impact || 'Improves compliance'
-            })
-            break
+              impact: action.parameters.impact || 'Improves compliance',
+            });
+            break;
         }
       }
     }
 
-    return { violations, warnings, requiredApprovals, suggestedModifications }
+    return { violations, warnings, requiredApprovals, suggestedModifications };
   }
 
   /**
@@ -302,58 +318,60 @@ class ComplianceRulesEngine {
     conditions: RuleCondition[],
     context: any
   ): Promise<boolean> {
-    if (conditions.length === 0) return true
+    if (conditions.length === 0) return true;
 
-    let result = true
-    let currentLogicalOperator: 'AND' | 'OR' = 'AND'
+    let result = true;
+    let currentLogicalOperator: 'AND' | 'OR' = 'AND';
 
     for (let i = 0; i < conditions.length; i++) {
-      const condition = conditions[i]
-      const conditionResult = this.evaluateCondition(condition, context)
+      const condition = conditions[i];
+      const conditionResult = this.evaluateCondition(condition, context);
 
       if (i === 0) {
-        result = conditionResult
+        result = conditionResult;
+      } else if (currentLogicalOperator === 'AND') {
+        result = result && conditionResult;
       } else {
-        if (currentLogicalOperator === 'AND') {
-          result = result && conditionResult
-        } else {
-          result = result || conditionResult
-        }
+        result = result || conditionResult;
       }
 
       // Set logical operator for next iteration
       if (condition.logicalOperator) {
-        currentLogicalOperator = condition.logicalOperator
+        currentLogicalOperator = condition.logicalOperator;
       }
     }
 
-    return result
+    return result;
   }
 
   /**
    * Evaluate a single condition
    */
   private evaluateCondition(condition: RuleCondition, context: any): boolean {
-    const fieldValue = this.getNestedValue(context, condition.field)
-    const conditionValue = condition.value
+    const fieldValue = this.getNestedValue(context, condition.field);
+    const conditionValue = condition.value;
 
     switch (condition.operator) {
       case 'equals':
-        return fieldValue === conditionValue
+        return fieldValue === conditionValue;
       case 'not_equals':
-        return fieldValue !== conditionValue
+        return fieldValue !== conditionValue;
       case 'greater_than':
-        return Number(fieldValue) > Number(conditionValue)
+        return Number(fieldValue) > Number(conditionValue);
       case 'less_than':
-        return Number(fieldValue) < Number(conditionValue)
+        return Number(fieldValue) < Number(conditionValue);
       case 'contains':
-        return String(fieldValue).includes(String(conditionValue))
+        return String(fieldValue).includes(String(conditionValue));
       case 'in':
-        return Array.isArray(conditionValue) && conditionValue.includes(fieldValue)
+        return (
+          Array.isArray(conditionValue) && conditionValue.includes(fieldValue)
+        );
       case 'not_in':
-        return Array.isArray(conditionValue) && !conditionValue.includes(fieldValue)
+        return (
+          Array.isArray(conditionValue) && !conditionValue.includes(fieldValue)
+        );
       default:
-        return false
+        return false;
     }
   }
 
@@ -361,7 +379,7 @@ class ComplianceRulesEngine {
    * Get nested value from object using dot notation
    */
   private getNestedValue(obj: any, path: string): any {
-    return path.split('.').reduce((current, key) => current?.[key], obj)
+    return path.split('.').reduce((current, key) => current?.[key], obj);
   }
 
   /**
@@ -378,14 +396,14 @@ class ComplianceRulesEngine {
         .from('patients')
         .select('*')
         .eq('id', criteria.patientId)
-        .single()
+        .single();
 
       // Load treatment data
       const { data: treatment } = await this.supabase
         .from('treatments')
         .select('*')
         .eq('id', criteria.treatmentId)
-        .single()
+        .single();
 
       // Load staff data
       const { data: staff } = await this.supabase
@@ -396,7 +414,7 @@ class ComplianceRulesEngine {
           staff_specializations(*)
         `)
         .eq('id', recommendation.staffId)
-        .single()
+        .single();
 
       // Load equipment requirements
       const { data: equipmentRequirements } = await this.supabase
@@ -405,7 +423,7 @@ class ComplianceRulesEngine {
           *,
           equipment(*)
         `)
-        .eq('treatment_id', criteria.treatmentId)
+        .eq('treatment_id', criteria.treatmentId);
 
       return {
         recommendation,
@@ -422,15 +440,15 @@ class ComplianceRulesEngine {
         isMinor: patient ? this.calculateAge(patient.birth_date) < 18 : false,
         isEmergency: criteria.urgencyLevel === 'urgent',
         isFollowUp: criteria.isFollowUp,
-        ...additionalContext
-      }
+        ...additionalContext,
+      };
     } catch (error) {
-      console.error('Error building validation context:', error)
+      console.error('Error building validation context:', error);
       return {
         recommendation,
         criteria,
-        ...additionalContext
-      }
+        ...additionalContext,
+      };
     }
   }
 
@@ -438,16 +456,19 @@ class ComplianceRulesEngine {
    * Calculate age from birth date
    */
   private calculateAge(birthDate: string): number {
-    const today = new Date()
-    const birth = new Date(birthDate)
-    let age = today.getFullYear() - birth.getFullYear()
-    const monthDiff = today.getMonth() - birth.getMonth()
-    
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
-      age--
+    const today = new Date();
+    const birth = new Date(birthDate);
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDiff = today.getMonth() - birth.getMonth();
+
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birth.getDate())
+    ) {
+      age--;
     }
-    
-    return age
+
+    return age;
   }
 
   /**
@@ -458,60 +479,60 @@ class ComplianceRulesEngine {
     warnings: RuleWarning[],
     requiredApprovals: RequiredApproval[]
   ): number {
-    let score = 100
+    let score = 100;
 
     // Deduct points for violations
-    violations.forEach(violation => {
+    violations.forEach((violation) => {
       switch (violation.severity) {
         case 'critical':
-          score -= 25
-          break
+          score -= 25;
+          break;
         case 'error':
-          score -= 15
-          break
+          score -= 15;
+          break;
         case 'warning':
-          score -= 5
-          break
+          score -= 5;
+          break;
         case 'info':
-          score -= 1
-          break
+          score -= 1;
+          break;
       }
-    })
+    });
 
     // Deduct points for warnings
-    warnings.forEach(warning => {
+    warnings.forEach((warning) => {
       switch (warning.impact) {
         case 'high':
-          score -= 10
-          break
+          score -= 10;
+          break;
         case 'medium':
-          score -= 5
-          break
+          score -= 5;
+          break;
         case 'low':
-          score -= 2
-          break
+          score -= 2;
+          break;
       }
-    })
+    });
 
     // Deduct points for required approvals
-    requiredApprovals.forEach(approval => {
+    requiredApprovals.forEach((approval) => {
       switch (approval.urgency) {
         case 'urgent':
-          score -= 15
-          break
+          score -= 15;
+          break;
         case 'high':
-          score -= 10
-          break
+          score -= 10;
+          break;
         case 'medium':
-          score -= 5
-          break
+          score -= 5;
+          break;
         case 'low':
-          score -= 2
-          break
+          score -= 2;
+          break;
       }
-    })
+    });
 
-    return Math.max(0, score)
+    return Math.max(0, score);
   }
 
   /**
@@ -527,8 +548,8 @@ class ComplianceRulesEngine {
         complianceRequirements: [
           'Patient consent for digital consultation',
           'Secure communication platform',
-          'Digital signature validation'
-        ]
+          'Digital signature validation',
+        ],
       },
       {
         cfmResolution: 'CFM 1.821/2007',
@@ -538,8 +559,8 @@ class ComplianceRulesEngine {
         complianceRequirements: [
           'Patient data encryption',
           'Access control and audit logs',
-          'Data retention policies'
-        ]
+          'Data retention policies',
+        ],
       },
       {
         cfmResolution: 'CFM 2.217/2018',
@@ -549,10 +570,10 @@ class ComplianceRulesEngine {
         complianceRequirements: [
           'Professional licensing validation',
           'Continuing education requirements',
-          'Ethical conduct monitoring'
-        ]
-      }
-    ]
+          'Ethical conduct monitoring',
+        ],
+      },
+    ];
   }
 
   /**
@@ -568,10 +589,10 @@ class ComplianceRulesEngine {
           rule_actions(*),
           rule_exceptions(*)
         `)
-        .eq('status', 'active')
+        .eq('status', 'active');
 
       if (rules) {
-        rules.forEach(rule => {
+        rules.forEach((rule) => {
           this.rules.set(rule.id, {
             id: rule.id,
             name: rule.name,
@@ -586,18 +607,18 @@ class ComplianceRulesEngine {
             priority: rule.priority,
             createdAt: new Date(rule.created_at),
             updatedAt: new Date(rule.updated_at),
-            createdBy: rule.created_by
-          })
-        })
+            createdBy: rule.created_by,
+          });
+        });
       }
 
       // Load default rules if none exist
       if (this.rules.size === 0) {
-        await this.createDefaultRules()
+        await this.createDefaultRules();
       }
     } catch (error) {
-      console.error('Error loading compliance rules:', error)
-      await this.createDefaultRules()
+      console.error('Error loading compliance rules:', error);
+      await this.createDefaultRules();
     }
   }
 
@@ -619,8 +640,8 @@ class ComplianceRulesEngine {
             id: 'age-check',
             field: 'patientAge',
             operator: 'less_than',
-            value: 18
-          }
+            value: 18,
+          },
         ],
         actions: [
           {
@@ -630,12 +651,12 @@ class ComplianceRulesEngine {
             parameters: {
               approvalType: 'guardian_consent',
               requiredRoles: ['guardian', 'legal_representative'],
-              urgency: 'high'
-            }
-          }
+              urgency: 'high',
+            },
+          },
         ],
         exceptions: [],
-        priority: 1
+        priority: 1,
       },
       {
         id: 'staff-certification-validation',
@@ -650,8 +671,8 @@ class ComplianceRulesEngine {
             id: 'certification-check',
             field: 'staff.certifications',
             operator: 'contains',
-            value: 'treatment.required_certification'
-          }
+            value: 'treatment.required_certification',
+          },
         ],
         actions: [
           {
@@ -660,9 +681,9 @@ class ComplianceRulesEngine {
             description: 'Staff member lacks required certification',
             parameters: {
               field: 'staffId',
-              expectedValue: 'certified_staff_member'
-            }
-          }
+              expectedValue: 'certified_staff_member',
+            },
+          },
         ],
         exceptions: [
           {
@@ -670,10 +691,10 @@ class ComplianceRulesEngine {
             condition: 'isEmergency === true',
             description: 'Emergency situations allow temporary assignment',
             approvalRequired: true,
-            approverRoles: ['medical_director', 'chief_of_staff']
-          }
+            approverRoles: ['medical_director', 'chief_of_staff'],
+          },
         ],
-        priority: 2
+        priority: 2,
       },
       {
         id: 'equipment-availability-check',
@@ -688,8 +709,8 @@ class ComplianceRulesEngine {
             id: 'equipment-required',
             field: 'equipmentRequirements.length',
             operator: 'greater_than',
-            value: 0
-          }
+            value: 0,
+          },
         ],
         actions: [
           {
@@ -698,12 +719,12 @@ class ComplianceRulesEngine {
             description: 'Required equipment not available or not functional',
             parameters: {
               field: 'equipment',
-              expectedValue: 'available_and_functional'
-            }
-          }
+              expectedValue: 'available_and_functional',
+            },
+          },
         ],
         exceptions: [],
-        priority: 3
+        priority: 3,
       },
       {
         id: 'working-hours-compliance',
@@ -711,7 +732,8 @@ class ComplianceRulesEngine {
         type: 'time_constraint',
         severity: 'warning',
         status: 'active',
-        description: 'Appointments should be scheduled during regular working hours',
+        description:
+          'Appointments should be scheduled during regular working hours',
         regulation: 'Internal Policy - Working Hours',
         conditions: [
           {
@@ -719,14 +741,14 @@ class ComplianceRulesEngine {
             field: 'hourOfDay',
             operator: 'less_than',
             value: 8,
-            logicalOperator: 'OR'
+            logicalOperator: 'OR',
           },
           {
             id: 'hour-check-2',
             field: 'hourOfDay',
             operator: 'greater_than',
-            value: 18
-          }
+            value: 18,
+          },
         ],
         actions: [
           {
@@ -734,10 +756,11 @@ class ComplianceRulesEngine {
             type: 'warn',
             description: 'Appointment scheduled outside regular working hours',
             parameters: {
-              recommendation: 'Consider scheduling during regular hours (8 AM - 6 PM)',
-              impact: 'medium'
-            }
-          }
+              recommendation:
+                'Consider scheduling during regular hours (8 AM - 6 PM)',
+              impact: 'medium',
+            },
+          },
         ],
         exceptions: [
           {
@@ -745,24 +768,24 @@ class ComplianceRulesEngine {
             condition: 'isEmergency === true',
             description: 'Emergency appointments can be scheduled anytime',
             approvalRequired: false,
-            approverRoles: []
-          }
+            approverRoles: [],
+          },
         ],
-        priority: 4
-      }
-    ]
+        priority: 4,
+      },
+    ];
 
     // Add default rules to the rules map
-    defaultRules.forEach(rule => {
+    defaultRules.forEach((rule) => {
       if (rule.id) {
         this.rules.set(rule.id, {
           ...rule,
           createdAt: new Date(),
           updatedAt: new Date(),
-          createdBy: 'system'
-        } as ComplianceRule)
+          createdBy: 'system',
+        } as ComplianceRule);
       }
-    })
+    });
   }
 
   /**
@@ -772,7 +795,7 @@ class ComplianceRulesEngine {
     recommendation: SchedulingRecommendation,
     criteria: SchedulingCriteria
   ): string {
-    return `${criteria.patientId}-${criteria.treatmentId}-${recommendation.staffId}-${recommendation.timeSlot.startTime.getTime()}`
+    return `${criteria.patientId}-${criteria.treatmentId}-${recommendation.staffId}-${recommendation.timeSlot.startTime.getTime()}`;
   }
 
   /**
@@ -784,63 +807,61 @@ class ComplianceRulesEngine {
     result: ComplianceValidationResult
   ): Promise<void> {
     try {
-      await this.supabase
-        .from('compliance_validations')
-        .insert({
-          patient_id: criteria.patientId,
-          treatment_id: criteria.treatmentId,
-          staff_id: recommendation.staffId,
-          time_slot: recommendation.timeSlot.startTime.toISOString(),
-          is_compliant: result.isCompliant,
-          compliance_score: result.complianceScore,
-          violations_count: result.violations.length,
-          warnings_count: result.warnings.length,
-          approvals_required: result.requiredApprovals.length,
-          validation_result: JSON.stringify(result),
-          created_at: new Date().toISOString()
-        })
+      await this.supabase.from('compliance_validations').insert({
+        patient_id: criteria.patientId,
+        treatment_id: criteria.treatmentId,
+        staff_id: recommendation.staffId,
+        time_slot: recommendation.timeSlot.startTime.toISOString(),
+        is_compliant: result.isCompliant,
+        compliance_score: result.complianceScore,
+        violations_count: result.violations.length,
+        warnings_count: result.warnings.length,
+        approvals_required: result.requiredApprovals.length,
+        validation_result: JSON.stringify(result),
+        created_at: new Date().toISOString(),
+      });
     } catch (error) {
-      console.error('Error logging compliance validation:', error)
+      console.error('Error logging compliance validation:', error);
     }
   }
 
   /**
    * Add new compliance rule
    */
-  async addComplianceRule(rule: Omit<ComplianceRule, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
+  async addComplianceRule(
+    rule: Omit<ComplianceRule, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<string> {
     try {
-      const ruleId = `rule-${Date.now()}`
+      const ruleId = `rule-${Date.now()}`;
       const newRule: ComplianceRule = {
         ...rule,
         id: ruleId,
         createdAt: new Date(),
-        updatedAt: new Date()
-      }
+        updatedAt: new Date(),
+      };
 
       // Save to database
-      await this.supabase
-        .from('compliance_rules')
-        .insert({
-          id: newRule.id,
-          name: newRule.name,
-          type: newRule.type,
-          severity: newRule.severity,
-          status: newRule.status,
-          description: newRule.description,
-          regulation: newRule.regulation,
-          priority: newRule.priority,
-          created_by: newRule.createdBy,
-          created_at: newRule.createdAt.toISOString(),
-          updated_at: newRule.updatedAt.toISOString()
-        })
+      await this.supabase.from('compliance_rules').insert({
+        id: newRule.id,
+        name: newRule.name,
+        type: newRule.type,
+        severity: newRule.severity,
+        status: newRule.status,
+        description: newRule.description,
+        regulation: newRule.regulation,
+        priority: newRule.priority,
+        created_by: newRule.createdBy,
+        created_at: newRule.createdAt.toISOString(),
+        updated_at: newRule.updatedAt.toISOString(),
+      });
 
       // Add to memory
-      this.rules.set(ruleId, newRule)
+      this.rules.set(ruleId, newRule);
 
-      return ruleId
+      return ruleId;
     } catch (error) {
-      console.error('Error adding compliance rule:', error)
-      throw new Error('Failed to add compliance rule')
+      console.error('Error adding compliance rule:', error);
+      throw new Error('Failed to add compliance rule');
     }
   }
 
@@ -852,16 +873,16 @@ class ComplianceRulesEngine {
     updates: Partial<ComplianceRule>
   ): Promise<void> {
     try {
-      const existingRule = this.rules.get(ruleId)
+      const existingRule = this.rules.get(ruleId);
       if (!existingRule) {
-        throw new Error('Rule not found')
+        throw new Error('Rule not found');
       }
 
       const updatedRule: ComplianceRule = {
         ...existingRule,
         ...updates,
-        updatedAt: new Date()
-      }
+        updatedAt: new Date(),
+      };
 
       // Update in database
       await this.supabase
@@ -874,15 +895,15 @@ class ComplianceRulesEngine {
           description: updatedRule.description,
           regulation: updatedRule.regulation,
           priority: updatedRule.priority,
-          updated_at: updatedRule.updatedAt.toISOString()
+          updated_at: updatedRule.updatedAt.toISOString(),
         })
-        .eq('id', ruleId)
+        .eq('id', ruleId);
 
       // Update in memory
-      this.rules.set(ruleId, updatedRule)
+      this.rules.set(ruleId, updatedRule);
     } catch (error) {
-      console.error('Error updating compliance rule:', error)
-      throw new Error('Failed to update compliance rule')
+      console.error('Error updating compliance rule:', error);
+      throw new Error('Failed to update compliance rule');
     }
   }
 
@@ -890,14 +911,14 @@ class ComplianceRulesEngine {
    * Get all compliance rules
    */
   getComplianceRules(): ComplianceRule[] {
-    return Array.from(this.rules.values())
+    return Array.from(this.rules.values());
   }
 
   /**
    * Get Brazilian healthcare regulations
    */
   getBrazilianRegulations(): BrazilianHealthcareRegulation[] {
-    return this.brazilianRegulations
+    return this.brazilianRegulations;
   }
 }
 
@@ -909,5 +930,5 @@ export {
   type RuleWarning,
   type RequiredApproval,
   type SuggestedModification,
-  type BrazilianHealthcareRegulation
-}
+  type BrazilianHealthcareRegulation,
+};

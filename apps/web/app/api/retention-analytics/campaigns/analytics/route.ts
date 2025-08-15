@@ -3,9 +3,9 @@
 // API endpoint for analyzing retention campaign effectiveness and A/B testing
 // =====================================================================================
 
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { createClient } from '@/app/utils/supabase/server';
 
 // =====================================================================================
 // VALIDATION SCHEMAS
@@ -14,15 +14,29 @@ import { z } from 'zod';
 const AnalyticsQuerySchema = z.object({
   clinicId: z.string().uuid('Invalid clinic ID format'),
   campaignIds: z.array(z.string().uuid()).optional(),
-  dateRange: z.object({
-    startDate: z.string().datetime(),
-    endDate: z.string().datetime(),
-  }).optional(),
-  metrics: z.array(z.enum([
-    'delivery_rate', 'open_rate', 'click_rate', 'conversion_rate', 
-    'roi', 'retention_improvement', 'patient_engagement', 'revenue_impact'
-  ])).optional(),
-  groupBy: z.enum(['campaign', 'segment', 'intervention_type', 'date']).optional(),
+  dateRange: z
+    .object({
+      startDate: z.string().datetime(),
+      endDate: z.string().datetime(),
+    })
+    .optional(),
+  metrics: z
+    .array(
+      z.enum([
+        'delivery_rate',
+        'open_rate',
+        'click_rate',
+        'conversion_rate',
+        'roi',
+        'retention_improvement',
+        'patient_engagement',
+        'revenue_impact',
+      ])
+    )
+    .optional(),
+  groupBy: z
+    .enum(['campaign', 'segment', 'intervention_type', 'date'])
+    .optional(),
   includeComparison: z.boolean().default(false),
 });
 
@@ -39,14 +53,17 @@ const ABTestResultsSchema = z.object({
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    
+
     const queryData = {
       clinicId: searchParams.get('clinic_id'),
       campaignIds: searchParams.get('campaign_ids')?.split(','),
-      dateRange: searchParams.get('start_date') && searchParams.get('end_date') ? {
-        startDate: searchParams.get('start_date'),
-        endDate: searchParams.get('end_date'),
-      } : undefined,
+      dateRange:
+        searchParams.get('start_date') && searchParams.get('end_date')
+          ? {
+              startDate: searchParams.get('start_date'),
+              endDate: searchParams.get('end_date'),
+            }
+          : undefined,
       metrics: searchParams.get('metrics')?.split(','),
       groupBy: searchParams.get('group_by'),
       includeComparison: searchParams.get('include_comparison') === 'true',
@@ -56,15 +73,22 @@ export async function GET(request: NextRequest) {
 
     if (!validation.success) {
       return NextResponse.json(
-        { 
-          error: 'Invalid analytics query', 
-          details: validation.error.issues 
+        {
+          error: 'Invalid analytics query',
+          details: validation.error.issues,
         },
         { status: 400 }
       );
     }
 
-    const { clinicId, campaignIds, dateRange, metrics, groupBy, includeComparison } = validation.data;
+    const {
+      clinicId,
+      campaignIds,
+      dateRange,
+      metrics,
+      groupBy,
+      includeComparison,
+    } = validation.data;
     const supabase = await createClient();
 
     // Build base query for campaigns
@@ -98,21 +122,38 @@ export async function GET(request: NextRequest) {
     }
 
     // Calculate analytics for each campaign
-    const campaignAnalytics = campaigns.map(campaign => {
+    const campaignAnalytics = campaigns.map((campaign) => {
       const metrics = campaign.campaign_metrics[0] || {};
       const executions = campaign.executions || [];
-      
+
       const totalExecutions = executions.length;
-      const successfulExecutions = executions.filter(e => e.status === 'executed').length;
-      const totalPatientsTargeted = executions.reduce((sum, e) => sum + (e.patients_targeted || 0), 0);
-      
+      const successfulExecutions = executions.filter(
+        (e) => e.status === 'executed'
+      ).length;
+      const totalPatientsTargeted = executions.reduce(
+        (sum, e) => sum + (e.patients_targeted || 0),
+        0
+      );
+
       const performance = {
-        deliveryRate: metrics.sent > 0 ? (metrics.delivered / metrics.sent) * 100 : 0,
-        openRate: metrics.delivered > 0 ? (metrics.opened / metrics.delivered) * 100 : 0,
-        clickRate: metrics.opened > 0 ? (metrics.clicked / metrics.opened) * 100 : 0,
-        conversionRate: metrics.sent > 0 ? (metrics.conversions / metrics.sent) * 100 : 0,
-        roi: metrics.costs > 0 ? ((metrics.revenue - metrics.costs) / metrics.costs) * 100 : 0,
-        engagementScore: (metrics.opened + metrics.clicked * 2 + metrics.conversions * 3) / (metrics.sent || 1) * 100,
+        deliveryRate:
+          metrics.sent > 0 ? (metrics.delivered / metrics.sent) * 100 : 0,
+        openRate:
+          metrics.delivered > 0
+            ? (metrics.opened / metrics.delivered) * 100
+            : 0,
+        clickRate:
+          metrics.opened > 0 ? (metrics.clicked / metrics.opened) * 100 : 0,
+        conversionRate:
+          metrics.sent > 0 ? (metrics.conversions / metrics.sent) * 100 : 0,
+        roi:
+          metrics.costs > 0
+            ? ((metrics.revenue - metrics.costs) / metrics.costs) * 100
+            : 0,
+        engagementScore:
+          ((metrics.opened + metrics.clicked * 2 + metrics.conversions * 3) /
+            (metrics.sent || 1)) *
+          100,
       };
 
       return {
@@ -133,8 +174,12 @@ export async function GET(request: NextRequest) {
           revenue: metrics.revenue || 0,
           costs: metrics.costs || 0,
         },
-        lastExecuted: executions.length > 0 ? 
-          Math.max(...executions.map(e => new Date(e.executed_at).getTime())) : null,
+        lastExecuted:
+          executions.length > 0
+            ? Math.max(
+                ...executions.map((e) => new Date(e.executed_at).getTime())
+              )
+            : null,
       };
     });
 
@@ -142,7 +187,7 @@ export async function GET(request: NextRequest) {
     let groupedAnalytics = campaignAnalytics;
     if (groupBy) {
       const grouped = {};
-      campaignAnalytics.forEach(analytics => {
+      campaignAnalytics.forEach((analytics) => {
         let key;
         switch (groupBy) {
           case 'intervention_type':
@@ -167,37 +212,51 @@ export async function GET(request: NextRequest) {
               totalExecutions: 0,
               totalPatientsTargeted: 0,
               aggregatedMetrics: {
-                sent: 0, delivered: 0, opened: 0, clicked: 0, 
-                conversions: 0, revenue: 0, costs: 0
+                sent: 0,
+                delivered: 0,
+                opened: 0,
+                clicked: 0,
+                conversions: 0,
+                revenue: 0,
+                costs: 0,
               },
               averagePerformance: {
-                deliveryRate: 0, openRate: 0, clickRate: 0, 
-                conversionRate: 0, roi: 0, engagementScore: 0
-              }
-            }
+                deliveryRate: 0,
+                openRate: 0,
+                clickRate: 0,
+                conversionRate: 0,
+                roi: 0,
+                engagementScore: 0,
+              },
+            },
           };
         }
 
         grouped[key].campaigns.push(analytics);
         grouped[key].aggregated.totalCampaigns++;
         grouped[key].aggregated.totalExecutions += analytics.totalExecutions;
-        grouped[key].aggregated.totalPatientsTargeted += analytics.totalPatientsTargeted;
-        
+        grouped[key].aggregated.totalPatientsTargeted +=
+          analytics.totalPatientsTargeted;
+
         // Aggregate metrics
-        Object.keys(analytics.metrics).forEach(metric => {
-          grouped[key].aggregated.aggregatedMetrics[metric] += analytics.metrics[metric];
+        Object.keys(analytics.metrics).forEach((metric) => {
+          grouped[key].aggregated.aggregatedMetrics[metric] +=
+            analytics.metrics[metric];
         });
       });
 
       // Calculate average performance for each group
-      Object.keys(grouped).forEach(key => {
+      Object.keys(grouped).forEach((key) => {
         const group = grouped[key];
         const campaignCount = group.campaigns.length;
-        
+
         if (campaignCount > 0) {
-          Object.keys(group.aggregated.averagePerformance).forEach(metric => {
-            group.aggregated.averagePerformance[metric] = 
-              group.campaigns.reduce((sum, c) => sum + c.performance[metric], 0) / campaignCount;
+          Object.keys(group.aggregated.averagePerformance).forEach((metric) => {
+            group.aggregated.averagePerformance[metric] =
+              group.campaigns.reduce(
+                (sum, c) => sum + c.performance[metric],
+                0
+              ) / campaignCount;
           });
         }
       });
@@ -220,28 +279,58 @@ export async function GET(request: NextRequest) {
           engagementRate: 15.3,
           returnRate: 12.8,
           roi: 320,
-        }
+        },
       };
 
       // Calculate clinic averages
       const clinicAverages = {
-        deliveryRate: campaignAnalytics.reduce((sum, c) => sum + c.performance.deliveryRate, 0) / campaignAnalytics.length,
-        openRate: campaignAnalytics.reduce((sum, c) => sum + c.performance.openRate, 0) / campaignAnalytics.length,
-        clickRate: campaignAnalytics.reduce((sum, c) => sum + c.performance.clickRate, 0) / campaignAnalytics.length,
-        conversionRate: campaignAnalytics.reduce((sum, c) => sum + c.performance.conversionRate, 0) / campaignAnalytics.length,
-        roi: campaignAnalytics.reduce((sum, c) => sum + c.performance.roi, 0) / campaignAnalytics.length,
-        engagementScore: campaignAnalytics.reduce((sum, c) => sum + c.performance.engagementScore, 0) / campaignAnalytics.length,
+        deliveryRate:
+          campaignAnalytics.reduce(
+            (sum, c) => sum + c.performance.deliveryRate,
+            0
+          ) / campaignAnalytics.length,
+        openRate:
+          campaignAnalytics.reduce(
+            (sum, c) => sum + c.performance.openRate,
+            0
+          ) / campaignAnalytics.length,
+        clickRate:
+          campaignAnalytics.reduce(
+            (sum, c) => sum + c.performance.clickRate,
+            0
+          ) / campaignAnalytics.length,
+        conversionRate:
+          campaignAnalytics.reduce(
+            (sum, c) => sum + c.performance.conversionRate,
+            0
+          ) / campaignAnalytics.length,
+        roi:
+          campaignAnalytics.reduce((sum, c) => sum + c.performance.roi, 0) /
+          campaignAnalytics.length,
+        engagementScore:
+          campaignAnalytics.reduce(
+            (sum, c) => sum + c.performance.engagementScore,
+            0
+          ) / campaignAnalytics.length,
       };
 
       comparisonData = {
         industryBenchmarks,
         clinicAverages,
         performanceVsBenchmark: {
-          deliveryRate: clinicAverages.deliveryRate - industryBenchmarks.healthcareEmailMarketing.deliveryRate,
-          openRate: clinicAverages.openRate - industryBenchmarks.healthcareEmailMarketing.openRate,
-          clickRate: clinicAverages.clickRate - industryBenchmarks.healthcareEmailMarketing.clickRate,
-          conversionRate: clinicAverages.conversionRate - industryBenchmarks.healthcareEmailMarketing.conversionRate,
-        }
+          deliveryRate:
+            clinicAverages.deliveryRate -
+            industryBenchmarks.healthcareEmailMarketing.deliveryRate,
+          openRate:
+            clinicAverages.openRate -
+            industryBenchmarks.healthcareEmailMarketing.openRate,
+          clickRate:
+            clinicAverages.clickRate -
+            industryBenchmarks.healthcareEmailMarketing.clickRate,
+          conversionRate:
+            clinicAverages.conversionRate -
+            industryBenchmarks.healthcareEmailMarketing.conversionRate,
+        },
       };
     }
 
@@ -251,15 +340,39 @@ export async function GET(request: NextRequest) {
         analytics: groupedAnalytics,
         summary: {
           totalCampaigns: campaigns.length,
-          totalExecutions: campaignAnalytics.reduce((sum, c) => sum + c.totalExecutions, 0),
-          totalPatientsTargeted: campaignAnalytics.reduce((sum, c) => sum + c.totalPatientsTargeted, 0),
+          totalExecutions: campaignAnalytics.reduce(
+            (sum, c) => sum + c.totalExecutions,
+            0
+          ),
+          totalPatientsTargeted: campaignAnalytics.reduce(
+            (sum, c) => sum + c.totalPatientsTargeted,
+            0
+          ),
           averagePerformance: {
-            deliveryRate: campaignAnalytics.reduce((sum, c) => sum + c.performance.deliveryRate, 0) / campaignAnalytics.length,
-            openRate: campaignAnalytics.reduce((sum, c) => sum + c.performance.openRate, 0) / campaignAnalytics.length,
-            clickRate: campaignAnalytics.reduce((sum, c) => sum + c.performance.clickRate, 0) / campaignAnalytics.length,
-            conversionRate: campaignAnalytics.reduce((sum, c) => sum + c.performance.conversionRate, 0) / campaignAnalytics.length,
-            roi: campaignAnalytics.reduce((sum, c) => sum + c.performance.roi, 0) / campaignAnalytics.length,
-          }
+            deliveryRate:
+              campaignAnalytics.reduce(
+                (sum, c) => sum + c.performance.deliveryRate,
+                0
+              ) / campaignAnalytics.length,
+            openRate:
+              campaignAnalytics.reduce(
+                (sum, c) => sum + c.performance.openRate,
+                0
+              ) / campaignAnalytics.length,
+            clickRate:
+              campaignAnalytics.reduce(
+                (sum, c) => sum + c.performance.clickRate,
+                0
+              ) / campaignAnalytics.length,
+            conversionRate:
+              campaignAnalytics.reduce(
+                (sum, c) => sum + c.performance.conversionRate,
+                0
+              ) / campaignAnalytics.length,
+            roi:
+              campaignAnalytics.reduce((sum, c) => sum + c.performance.roi, 0) /
+              campaignAnalytics.length,
+          },
         },
         comparison: comparisonData,
         groupBy,
@@ -267,15 +380,17 @@ export async function GET(request: NextRequest) {
         generatedAt: new Date().toISOString(),
       },
     });
-
   } catch (error) {
-    console.error('GET /api/retention-analytics/campaigns/analytics error:', error);
+    console.error(
+      'GET /api/retention-analytics/campaigns/analytics error:',
+      error
+    );
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: 'Failed to fetch campaign analytics',
-        message: error instanceof Error ? error.message : 'Unknown error'
-      }, 
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
       { status: 500 }
     );
   }
@@ -292,9 +407,9 @@ export async function POST(request: NextRequest) {
 
     if (!validation.success) {
       return NextResponse.json(
-        { 
-          error: 'Invalid A/B test query', 
-          details: validation.error.issues 
+        {
+          error: 'Invalid A/B test query',
+          details: validation.error.issues,
         },
         { status: 400 }
       );
@@ -329,28 +444,31 @@ export async function POST(request: NextRequest) {
     }
 
     // Calculate A/B test results
-    const splitPercentage = campaign.measurement_criteria.abtest_split_percentage || 50;
+    const splitPercentage =
+      campaign.measurement_criteria.abtest_split_percentage || 50;
     const metrics = campaign.campaign_metrics[0] || {};
-    
+
     // Simulate A/B test groups (in real implementation, this would be based on actual execution data)
     const groupASize = Math.floor(metrics.sent * (splitPercentage / 100));
     const groupBSize = metrics.sent - groupASize;
-    
+
     const groupAConversions = Math.floor(metrics.conversions * 0.6); // Group A gets 60% of conversions
     const groupBConversions = metrics.conversions - groupAConversions;
-    
+
     const groupAPerformance = {
       size: groupASize,
       conversions: groupAConversions,
-      conversionRate: groupASize > 0 ? (groupAConversions / groupASize) * 100 : 0,
+      conversionRate:
+        groupASize > 0 ? (groupAConversions / groupASize) * 100 : 0,
       revenue: metrics.revenue * 0.55,
       costs: metrics.costs * 0.5,
     };
-    
+
     const groupBPerformance = {
       size: groupBSize,
       conversions: groupBConversions,
-      conversionRate: groupBSize > 0 ? (groupBConversions / groupBSize) * 100 : 0,
+      conversionRate:
+        groupBSize > 0 ? (groupBConversions / groupBSize) * 100 : 0,
       revenue: metrics.revenue * 0.45,
       costs: metrics.costs * 0.5,
     };
@@ -358,18 +476,27 @@ export async function POST(request: NextRequest) {
     // Calculate statistical significance (simplified)
     const pooledConversionRate = metrics.conversions / metrics.sent;
     const standardError = Math.sqrt(
-      pooledConversionRate * (1 - pooledConversionRate) * (1/groupASize + 1/groupBSize)
+      pooledConversionRate *
+        (1 - pooledConversionRate) *
+        (1 / groupASize + 1 / groupBSize)
     );
-    
+
     const zScore = Math.abs(
-      (groupAPerformance.conversionRate/100 - groupBPerformance.conversionRate/100) / standardError
+      (groupAPerformance.conversionRate / 100 -
+        groupBPerformance.conversionRate / 100) /
+        standardError
     );
-    
+
     const criticalValue = confidenceLevel === 0.95 ? 1.96 : 2.58; // 95% or 99%
     const isStatisticallySignificant = zScore > criticalValue;
-    
-    const winner = groupAPerformance.conversionRate > groupBPerformance.conversionRate ? 'A' : 'B';
-    const improvement = Math.abs(groupAPerformance.conversionRate - groupBPerformance.conversionRate);
+
+    const winner =
+      groupAPerformance.conversionRate > groupBPerformance.conversionRate
+        ? 'A'
+        : 'B';
+    const improvement = Math.abs(
+      groupAPerformance.conversionRate - groupBPerformance.conversionRate
+    );
 
     return NextResponse.json({
       success: true,
@@ -383,13 +510,21 @@ export async function POST(request: NextRequest) {
         results: {
           groupA: {
             ...groupAPerformance,
-            roi: groupAPerformance.costs > 0 ? 
-              ((groupAPerformance.revenue - groupAPerformance.costs) / groupAPerformance.costs) * 100 : 0,
+            roi:
+              groupAPerformance.costs > 0
+                ? ((groupAPerformance.revenue - groupAPerformance.costs) /
+                    groupAPerformance.costs) *
+                  100
+                : 0,
           },
           groupB: {
             ...groupBPerformance,
-            roi: groupBPerformance.costs > 0 ? 
-              ((groupBPerformance.revenue - groupBPerformance.costs) / groupBPerformance.costs) * 100 : 0,
+            roi:
+              groupBPerformance.costs > 0
+                ? ((groupBPerformance.revenue - groupBPerformance.costs) /
+                    groupBPerformance.costs) *
+                  100
+                : 0,
           },
           statisticalAnalysis: {
             zScore,
@@ -401,23 +536,25 @@ export async function POST(request: NextRequest) {
           conclusion: {
             winner,
             improvement: improvement.toFixed(2),
-            recommendation: isStatisticallySignificant ?
-              `Group ${winner} is statistically significantly better with ${improvement.toFixed(1)}% improvement` :
-              'No statistically significant difference detected. Continue testing or increase sample size.',
-          }
+            recommendation: isStatisticallySignificant
+              ? `Group ${winner} is statistically significantly better with ${improvement.toFixed(1)}% improvement`
+              : 'No statistically significant difference detected. Continue testing or increase sample size.',
+          },
         },
         generatedAt: new Date().toISOString(),
       },
     });
-
   } catch (error) {
-    console.error('POST /api/retention-analytics/campaigns/analytics error:', error);
+    console.error(
+      'POST /api/retention-analytics/campaigns/analytics error:',
+      error
+    );
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: 'Failed to generate A/B test results',
-        message: error instanceof Error ? error.message : 'Unknown error'
-      }, 
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
       { status: 500 }
     );
   }

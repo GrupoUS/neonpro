@@ -4,7 +4,9 @@
   "description": "NeonPro shared configurations (ESLint, Tailwind, TypeScript)",
   "private": true,
   "main": "index.js",
-  "files": ["**"],
+  "files": [
+    "**"
+  ],
   "dependencies": {
     "eslint": "^8.57.1",
     "eslint-config-next": "^15.1.0",

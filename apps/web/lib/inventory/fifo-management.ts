@@ -4,8 +4,8 @@
  */
 
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { Database } from '@/types/database';
-import { StockOutputManager, BatchStock, FIFOResult } from './stock-output-management';
+import type { Database } from '@/types/database';
+import type { BatchStock, FIFOResult } from './stock-output-management';
 
 export interface FIFOAnalysis {
   produto_id: string;
@@ -19,7 +19,11 @@ export interface FIFOAnalysis {
 }
 
 export interface FIFORecommendation {
-  tipo: 'usar_prioritario' | 'transferir_lote' | 'promocao_uso' | 'descarte_iminente';
+  tipo:
+    | 'usar_prioritario'
+    | 'transferir_lote'
+    | 'promocao_uso'
+    | 'descarte_iminente';
   lote_id: string;
   numero_lote: string;
   dias_para_vencer: number;
@@ -45,7 +49,12 @@ export interface ExpiryAlert {
 }
 
 export interface ExpiryAction {
-  tipo: 'uso_prioritario' | 'transferencia' | 'promocao' | 'descarte' | 'devolucao';
+  tipo:
+    | 'uso_prioritario'
+    | 'transferencia'
+    | 'promocao'
+    | 'descarte'
+    | 'devolucao';
   descricao: string;
   impacto_financeiro: number;
   prazo_execucao: number; // dias
@@ -81,14 +90,13 @@ export interface FIFOOptimizationConfig {
  */
 export class FIFOManager {
   private supabase = createClientComponentClient<Database>();
-  private stockOutputManager = new StockOutputManager();
 
   /**
    * Get comprehensive FIFO analysis for all products or specific product
    */
-  async getFIFOAnalysis(productId?: string): Promise<{ 
-    data: FIFOAnalysis[] | null; 
-    error: string | null 
+  async getFIFOAnalysis(productId?: string): Promise<{
+    data: FIFOAnalysis[] | null;
+    error: string | null;
   }> {
     try {
       let query = this.supabase
@@ -104,38 +112,44 @@ export class FIFOManager {
         query = query.eq('produto_id', productId);
       }
 
-      const { data: batches, error } = await query
-        .order('data_validade', { ascending: true });
+      const { data: batches, error } = await query.order('data_validade', {
+        ascending: true,
+      });
 
       if (error) throw error;
 
       // Group batches by product
-      const batchesByProduct = batches?.reduce((acc, batch) => {
-        const productId = batch.produto_id;
-        if (!acc[productId]) {
-          acc[productId] = [];
-        }
-        acc[productId].push(batch);
-        return acc;
-      }, {} as Record<string, any[]>) || {};
+      const batchesByProduct =
+        batches?.reduce(
+          (acc, batch) => {
+            const productId = batch.produto_id;
+            if (!acc[productId]) {
+              acc[productId] = [];
+            }
+            acc[productId].push(batch);
+            return acc;
+          },
+          {} as Record<string, any[]>
+        ) || {};
 
       // Generate analysis for each product
-      const analyses = Object.entries(batchesByProduct).map(([productId, productBatches]) => {
-        return this.analyzeProductFIFO(productId, productBatches);
-      });
+      const analyses = Object.entries(batchesByProduct).map(
+        ([productId, productBatches]) => {
+          return this.analyzeProductFIFO(productId, productBatches);
+        }
+      );
 
       const resolvedAnalyses = await Promise.all(analyses);
 
       return {
         data: resolvedAnalyses,
-        error: null
+        error: null,
       };
-
     } catch (error) {
       console.error('Error getting FIFO analysis:', error);
       return {
         data: null,
-        error: 'Erro ao analisar FIFO'
+        error: 'Erro ao analisar FIFO',
       };
     }
   }
@@ -143,9 +157,9 @@ export class FIFOManager {
   /**
    * Get expiry alerts for products nearing expiration
    */
-  async getExpiryAlerts(daysAhead: number = 30): Promise<{ 
-    data: ExpiryAlert[] | null; 
-    error: string | null 
+  async getExpiryAlerts(daysAhead = 30): Promise<{
+    data: ExpiryAlert[] | null;
+    error: string | null;
   }> {
     try {
       const { data: expiringBatches, error } = await this.supabase
@@ -161,36 +175,43 @@ export class FIFOManager {
 
       if (error) throw error;
 
-      const alerts = expiringBatches?.map(batch => {
-        const daysToExpiry = batch.dias_para_vencer;
-        const estimatedValue = batch.quantidade_disponivel * (batch.produto?.preco_custo || 0);
+      const alerts =
+        expiringBatches?.map((batch) => {
+          const daysToExpiry = batch.dias_para_vencer;
+          const estimatedValue =
+            batch.quantidade_disponivel * (batch.produto?.preco_custo || 0);
 
-        return {
-          id: `alert-${batch.id}`,
-          produto_id: batch.produto_id,
-          nome_produto: batch.produto?.nome || 'Produto não identificado',
-          lote_id: batch.id,
-          numero_lote: batch.numero_lote,
-          data_validade: new Date(batch.data_validade),
-          dias_para_vencer: daysToExpiry,
-          quantidade_disponivel: batch.quantidade_disponivel,
-          valor_estimado: estimatedValue,
-          centro_custo_principal: batch.localizacao_principal,
-          acoes_disponiveis: this.generateExpiryActions(batch, estimatedValue),
-          prioridade: this.calculateExpiryPriority(daysToExpiry, estimatedValue)
-        } as ExpiryAlert;
-      }) || [];
+          return {
+            id: `alert-${batch.id}`,
+            produto_id: batch.produto_id,
+            nome_produto: batch.produto?.nome || 'Produto não identificado',
+            lote_id: batch.id,
+            numero_lote: batch.numero_lote,
+            data_validade: new Date(batch.data_validade),
+            dias_para_vencer: daysToExpiry,
+            quantidade_disponivel: batch.quantidade_disponivel,
+            valor_estimado: estimatedValue,
+            centro_custo_principal: batch.localizacao_principal,
+            acoes_disponiveis: this.generateExpiryActions(
+              batch,
+              estimatedValue
+            ),
+            prioridade: this.calculateExpiryPriority(
+              daysToExpiry,
+              estimatedValue
+            ),
+          } as ExpiryAlert;
+        }) || [];
 
       return {
         data: alerts,
-        error: null
+        error: null,
       };
-
     } catch (error) {
       console.error('Error getting expiry alerts:', error);
       return {
         data: null,
-        error: 'Erro ao buscar alertas de vencimento'
+        error: 'Erro ao buscar alertas de vencimento',
       };
     }
   }
@@ -198,14 +219,16 @@ export class FIFOManager {
   /**
    * Optimize FIFO selection for specific consumption
    */
-  async optimizeFIFOSelection(requests: Array<{
-    produto_id: string;
-    quantidade_necessaria: number;
-    centro_custo_id: string;
-    urgente?: boolean;
-  }>): Promise<{ 
-    data: FIFOResult[] | null; 
-    error: string | null 
+  async optimizeFIFOSelection(
+    requests: Array<{
+      produto_id: string;
+      quantidade_necessaria: number;
+      centro_custo_id: string;
+      urgente?: boolean;
+    }>
+  ): Promise<{
+    data: FIFOResult[] | null;
+    error: string | null;
   }> {
     try {
       const optimizedSelections: FIFOResult[] = [];
@@ -217,14 +240,13 @@ export class FIFOManager {
 
       return {
         data: optimizedSelections,
-        error: null
+        error: null,
       };
-
     } catch (error) {
       console.error('Error optimizing FIFO selection:', error);
       return {
         data: null,
-        error: 'Erro ao otimizar seleção FIFO'
+        error: 'Erro ao otimizar seleção FIFO',
       };
     }
   }
@@ -268,12 +290,12 @@ export class FIFOManager {
           localizacao_origem: batch.localizacao_principal,
           localizacao_destino: data.centro_custo_destino,
           motivo_transferencia: data.motivo,
-          urgente: data.urgente || false,
+          urgente: data.urgente,
           quantidade_total: data.quantidade,
           valor_total: data.quantidade * (batch.custo_unitario || 0),
           status: 'aprovada', // Auto-approve for FIFO optimization
           aprovado: true,
-          aprovado_em: new Date().toISOString()
+          aprovado_em: new Date().toISOString(),
         })
         .select()
         .single();
@@ -281,16 +303,14 @@ export class FIFOManager {
       if (transferError) throw transferError;
 
       // 3. Create transfer item
-      await this.supabase
-        .from('itens_transferencia_interna')
-        .insert({
-          transferencia_id: transfer.id,
-          produto_id: batch.produto_id,
-          lote_id: batch.id,
-          quantidade_solicitada: data.quantidade,
-          quantidade_transferida: data.quantidade,
-          status: 'transferido'
-        });
+      await this.supabase.from('itens_transferencia_interna').insert({
+        transferencia_id: transfer.id,
+        produto_id: batch.produto_id,
+        lote_id: batch.id,
+        quantidade_solicitada: data.quantidade,
+        quantidade_transferida: data.quantidade,
+        status: 'transferido',
+      });
 
       // 4. Update batch location and quantities
       await this.supabase
@@ -298,7 +318,7 @@ export class FIFOManager {
         .update({
           localizacao_principal: data.centro_custo_destino,
           quantidade_atual: batch.quantidade_atual - data.quantidade,
-          ultima_movimentacao: new Date().toISOString()
+          ultima_movimentacao: new Date().toISOString(),
         })
         .eq('id', data.lote_id);
 
@@ -310,11 +330,10 @@ export class FIFOManager {
         quantidade_anterior: batch.quantidade_atual,
         quantidade_posterior: batch.quantidade_atual - data.quantidade,
         motivo: `Transferência FIFO: ${data.motivo}`,
-        documento_origem: transfer.numero_transferencia
+        documento_origem: transfer.numero_transferencia,
       });
 
       return { success: true, error: null };
-
     } catch (error) {
       console.error('Error executing batch transfer:', error);
       return { success: false, error: 'Erro ao executar transferência' };
@@ -324,9 +343,9 @@ export class FIFOManager {
   /**
    * Block expired or near-expiry batches
    */
-  async blockExpiringBatches(daysThreshold: number = 0): Promise<{ 
-    blocked: number; 
-    error: string | null 
+  async blockExpiringBatches(daysThreshold = 0): Promise<{
+    blocked: number;
+    error: string | null;
   }> {
     try {
       const { data: expiringBatches } = await this.supabase
@@ -346,11 +365,15 @@ export class FIFOManager {
         .update({
           bloqueado: true,
           status: daysThreshold <= 0 ? 'vencido' : 'bloqueado',
-          motivo_bloqueio: daysThreshold <= 0 
-            ? 'Produto vencido - bloqueio automático'
-            : `Próximo ao vencimento - ${daysThreshold} dias`
+          motivo_bloqueio:
+            daysThreshold <= 0
+              ? 'Produto vencido - bloqueio automático'
+              : `Próximo ao vencimento - ${daysThreshold} dias`,
         })
-        .in('id', expiringBatches.map(b => b.id));
+        .in(
+          'id',
+          expiringBatches.map((b) => b.id)
+        );
 
       if (blockError) throw blockError;
 
@@ -362,12 +385,14 @@ export class FIFOManager {
           quantidade: 0,
           quantidade_anterior: 0,
           quantidade_posterior: 0,
-          motivo: daysThreshold <= 0 ? 'Bloqueio por vencimento' : 'Bloqueio preventivo'
+          motivo:
+            daysThreshold <= 0
+              ? 'Bloqueio por vencimento'
+              : 'Bloqueio preventivo',
         });
       }
 
       return { blocked: expiringBatches.length, error: null };
-
     } catch (error) {
       console.error('Error blocking expiring batches:', error);
       return { blocked: 0, error: 'Erro ao bloquear lotes vencidos' };
@@ -377,9 +402,9 @@ export class FIFOManager {
   /**
    * Get batch movement history
    */
-  async getBatchMovementHistory(loteId: string): Promise<{ 
-    data: BatchMovement[] | null; 
-    error: string | null 
+  async getBatchMovementHistory(loteId: string): Promise<{
+    data: BatchMovement[] | null;
+    error: string | null;
   }> {
     try {
       const { data: movements, error } = await this.supabase
@@ -395,14 +420,13 @@ export class FIFOManager {
 
       return {
         data: movements as BatchMovement[],
-        error: null
+        error: null,
       };
-
     } catch (error) {
       console.error('Error getting batch movement history:', error);
       return {
         data: null,
-        error: 'Erro ao buscar histórico de movimentações'
+        error: 'Erro ao buscar histórico de movimentações',
       };
     }
   }
@@ -410,18 +434,24 @@ export class FIFOManager {
   /**
    * Analyze FIFO for specific product
    */
-  private async analyzeProductFIFO(productId: string, batches: any[]): Promise<FIFOAnalysis> {
+  private async analyzeProductFIFO(
+    productId: string,
+    batches: any[]
+  ): Promise<FIFOAnalysis> {
     // Sort batches by FIFO priority
     const sortedBatches = batches.sort((a, b) => {
       if (a.data_validade && b.data_validade) {
-        return new Date(a.data_validade).getTime() - new Date(b.data_validade).getTime();
+        return (
+          new Date(a.data_validade).getTime() -
+          new Date(b.data_validade).getTime()
+        );
       }
       return a.prioridade_uso - b.prioridade_uso;
     });
 
     // Categorize batches
-    const lotesPriorizados = sortedBatches.filter(b => b.prioridade_uso <= 3);
-    const lotesVencendo = sortedBatches.filter(b => b.dias_para_vencer <= 30);
+    const lotesPriorizados = sortedBatches.filter((b) => b.prioridade_uso <= 3);
+    const lotesVencendo = sortedBatches.filter((b) => b.dias_para_vencer <= 30);
 
     // Calculate FIFO economy (simplified calculation)
     const economiaFifo = this.calculateFIFOEconomy(sortedBatches);
@@ -437,8 +467,8 @@ export class FIFOManager {
       lotes_priorizados: lotesPriorizados,
       lotes_vencendo: lotesVencendo,
       economia_fifo: economiaFifo,
-      desperdicioEvitado: desperdicioEvitado,
-      recomendacoes: recomendacoes
+      desperdicioEvitado,
+      recomendacoes,
     };
   }
 
@@ -471,7 +501,10 @@ export class FIFOManager {
     for (const batch of availableBatches) {
       if (remainingQuantity <= 0) break;
 
-      const quantityToTake = Math.min(remainingQuantity, batch.quantidade_disponivel);
+      const quantityToTake = Math.min(
+        remainingQuantity,
+        batch.quantidade_disponivel
+      );
 
       selectedBatches.push({
         lote_id: batch.id,
@@ -482,7 +515,7 @@ export class FIFOManager {
         dias_para_vencer: batch.dias_para_vencer,
         prioridade_uso: batch.prioridade_uso,
         recomendado: batch.dias_para_vencer <= 30 || batch.prioridade_uso <= 3,
-        motivo_recomendacao: this.getRecommendationReason(batch)
+        motivo_recomendacao: this.getRecommendationReason(batch),
       });
 
       remainingQuantity -= quantityToTake;
@@ -494,7 +527,10 @@ export class FIFOManager {
   /**
    * Generate expiry actions for a batch
    */
-  private generateExpiryActions(batch: any, estimatedValue: number): ExpiryAction[] {
+  private generateExpiryActions(
+    batch: any,
+    estimatedValue: number
+  ): ExpiryAction[] {
     const actions: ExpiryAction[] = [];
     const daysToExpiry = batch.dias_para_vencer;
 
@@ -504,15 +540,15 @@ export class FIFOManager {
         descricao: 'Priorizar uso em procedimentos',
         impacto_financeiro: estimatedValue * 0.95,
         prazo_execucao: daysToExpiry - 2,
-        probabilidade_sucesso: 85
+        probabilidade_sucesso: 85,
       });
 
       actions.push({
         tipo: 'transferencia',
         descricao: 'Transferir para setor de maior consumo',
-        impacto_financeiro: estimatedValue * 0.90,
+        impacto_financeiro: estimatedValue * 0.9,
         prazo_execucao: 3,
-        probabilidade_sucesso: 70
+        probabilidade_sucesso: 70,
       });
     }
 
@@ -520,9 +556,9 @@ export class FIFOManager {
       actions.push({
         tipo: 'promocao',
         descricao: 'Promoção interna ou desconto',
-        impacto_financeiro: estimatedValue * 0.70,
+        impacto_financeiro: estimatedValue * 0.7,
         prazo_execucao: daysToExpiry,
-        probabilidade_sucesso: 60
+        probabilidade_sucesso: 60,
       });
     }
 
@@ -530,9 +566,9 @@ export class FIFOManager {
       actions.push({
         tipo: 'devolucao',
         descricao: 'Devolução ao fornecedor (se possível)',
-        impacto_financeiro: estimatedValue * 0.80,
+        impacto_financeiro: estimatedValue * 0.8,
         prazo_execucao: 2,
-        probabilidade_sucesso: 30
+        probabilidade_sucesso: 30,
       });
     }
 
@@ -541,7 +577,7 @@ export class FIFOManager {
       descricao: 'Descarte controlado',
       impacto_financeiro: 0,
       prazo_execucao: 1,
-      probabilidade_sucesso: 100
+      probabilidade_sucesso: 100,
     });
 
     return actions;
@@ -550,7 +586,10 @@ export class FIFOManager {
   /**
    * Calculate expiry priority based on days and value
    */
-  private calculateExpiryPriority(daysToExpiry: number, estimatedValue: number): 'baixa' | 'media' | 'alta' | 'critica' {
+  private calculateExpiryPriority(
+    daysToExpiry: number,
+    estimatedValue: number
+  ): 'baixa' | 'media' | 'alta' | 'critica' {
     if (daysToExpiry <= 0) return 'critica';
     if (daysToExpiry <= 3) return 'alta';
     if (daysToExpiry <= 7 || estimatedValue > 1000) return 'media';
@@ -581,7 +620,7 @@ export class FIFOManager {
    */
   private calculateWastePrevention(expiringBatches: any[]): number {
     return expiringBatches.reduce((total, batch) => {
-      return total + (batch.quantidade_disponivel * (batch.custo_unitario || 0));
+      return total + batch.quantidade_disponivel * (batch.custo_unitario || 0);
     }, 0);
   }
 
@@ -591,7 +630,7 @@ export class FIFOManager {
   private generateFIFORecommendations(batches: any[]): FIFORecommendation[] {
     const recommendations: FIFORecommendation[] = [];
 
-    batches.forEach(batch => {
+    batches.forEach((batch) => {
       if (batch.dias_para_vencer <= 7) {
         recommendations.push({
           tipo: 'usar_prioritario',
@@ -601,7 +640,8 @@ export class FIFOManager {
           quantidade_disponivel: batch.quantidade_disponivel,
           acao_recomendada: 'Usar prioritariamente em até 3 dias',
           urgencia: 'critica',
-          impacto_financeiro: batch.quantidade_disponivel * (batch.custo_unitario || 0)
+          impacto_financeiro:
+            batch.quantidade_disponivel * (batch.custo_unitario || 0),
         });
       } else if (batch.dias_para_vencer <= 30) {
         recommendations.push({
@@ -612,7 +652,8 @@ export class FIFOManager {
           quantidade_disponivel: batch.quantidade_disponivel,
           acao_recomendada: 'Promover uso em procedimentos adequados',
           urgencia: 'media',
-          impacto_financeiro: batch.quantidade_disponivel * (batch.custo_unitario || 0) * 0.8
+          impacto_financeiro:
+            batch.quantidade_disponivel * (batch.custo_unitario || 0) * 0.8,
         });
       }
     });
@@ -623,15 +664,18 @@ export class FIFOManager {
   /**
    * Log batch movement
    */
-  private async logBatchMovement(movement: Omit<BatchMovement, 'id' | 'data_movimento' | 'responsavel' | 'auditoria_completa'>): Promise<void> {
+  private async logBatchMovement(
+    movement: Omit<
+      BatchMovement,
+      'id' | 'data_movimento' | 'responsavel' | 'auditoria_completa'
+    >
+  ): Promise<void> {
     try {
-      await this.supabase
-        .from('movimentacoes_lote')
-        .insert({
-          ...movement,
-          data_movimento: new Date().toISOString(),
-          auditoria_completa: true
-        });
+      await this.supabase.from('movimentacoes_lote').insert({
+        ...movement,
+        data_movimento: new Date().toISOString(),
+        auditoria_completa: true,
+      });
     } catch (error) {
       console.error('Error logging batch movement:', error);
     }
@@ -643,7 +687,7 @@ export class FIFOManager {
   private async generateTransferNumber(): Promise<string> {
     const today = new Date();
     const datePrefix = today.toISOString().slice(0, 10).replace(/-/g, '');
-    
+
     const { count } = await this.supabase
       .from('transferencias_internas')
       .select('*', { count: 'exact', head: true })

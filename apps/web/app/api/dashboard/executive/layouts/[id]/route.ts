@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { DashboardLayoutEngine } from '@/lib/dashboard/executive/dashboard-layout-engine';
 
@@ -9,18 +9,22 @@ const UpdateLayoutSchema = z.object({
   name: z.string().min(1, 'Nome é obrigatório').optional(),
   description: z.string().optional(),
   isDefault: z.boolean().optional(),
-  layoutConfig: z.object({
-    widgets: z.array(z.object({
-      id: z.string(),
-      position: z.object({
-        x: z.number(),
-        y: z.number(),
-        w: z.number(),
-        h: z.number()
-      }),
-      config: z.record(z.any())
-    }))
-  }).optional()
+  layoutConfig: z
+    .object({
+      widgets: z.array(
+        z.object({
+          id: z.string(),
+          position: z.object({
+            x: z.number(),
+            y: z.number(),
+            w: z.number(),
+            h: z.number(),
+          }),
+          config: z.record(z.any()),
+        })
+      ),
+    })
+    .optional(),
 });
 
 interface RouteParams {
@@ -30,20 +34,17 @@ interface RouteParams {
 }
 
 // GET /api/dashboard/executive/layouts/[id]
-export async function GET(
-  request: NextRequest,
-  { params }: RouteParams
-) {
+export async function GET(_request: NextRequest, { params }: RouteParams) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    
+
     // Verify authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Não autorizado' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
     // Get user's clinic
@@ -60,7 +61,10 @@ export async function GET(
       );
     }
 
-    const layoutEngine = new DashboardLayoutEngine(supabase, clinicUser.clinic_id);
+    const layoutEngine = new DashboardLayoutEngine(
+      supabase,
+      clinicUser.clinic_id
+    );
     const layout = await layoutEngine.getLayout(params.id);
 
     if (!layout) {
@@ -81,20 +85,17 @@ export async function GET(
 }
 
 // PUT /api/dashboard/executive/layouts/[id]
-export async function PUT(
-  request: NextRequest,
-  { params }: RouteParams
-) {
+export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    
+
     // Verify authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Não autorizado' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
     // Get user's clinic
@@ -115,8 +116,11 @@ export async function PUT(
     const body = await request.json();
     const validatedData = UpdateLayoutSchema.parse(body);
 
-    const layoutEngine = new DashboardLayoutEngine(supabase, clinicUser.clinic_id);
-    
+    const layoutEngine = new DashboardLayoutEngine(
+      supabase,
+      clinicUser.clinic_id
+    );
+
     // Check if layout exists
     const existingLayout = await layoutEngine.getLayout(params.id);
     if (!existingLayout) {
@@ -146,20 +150,17 @@ export async function PUT(
 }
 
 // DELETE /api/dashboard/executive/layouts/[id]
-export async function DELETE(
-  request: NextRequest,
-  { params }: RouteParams
-) {
+export async function DELETE(_request: NextRequest, { params }: RouteParams) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    
+
     // Verify authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Não autorizado' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
     // Get user's clinic
@@ -176,8 +177,11 @@ export async function DELETE(
       );
     }
 
-    const layoutEngine = new DashboardLayoutEngine(supabase, clinicUser.clinic_id);
-    
+    const layoutEngine = new DashboardLayoutEngine(
+      supabase,
+      clinicUser.clinic_id
+    );
+
     // Check if layout exists
     const existingLayout = await layoutEngine.getLayout(params.id);
     if (!existingLayout) {

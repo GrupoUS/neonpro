@@ -3,23 +3,20 @@
 // Epic 7.3: Comprehensive service layer for follow-up automation
 // =====================================================================================
 
-import { createClient } from '@/app/utils/supabase/client';
 import type {
-  TreatmentFollowup,
-  FollowupTemplate,
-  TreatmentProtocol,
   CreateFollowupData,
   CreateFollowupTemplateData,
   CreateTreatmentProtocolData,
-  FollowupFilters,
-  TemplateFilters,
-  ProtocolFilters,
-  FollowupResponse,
   FollowupAnalytics,
   FollowupDashboardSummary,
-  BulkFollowupOperation,
-  TreatmentOutcome
+  FollowupFilters,
+  FollowupTemplate,
+  ProtocolFilters,
+  TemplateFilters,
+  TreatmentFollowup,
+  TreatmentProtocol,
 } from '@/app/types/treatment-followups';
+import { createClient } from '@/app/utils/supabase/client';
 
 class TreatmentFollowupService {
   private supabase = createClient();
@@ -31,11 +28,11 @@ class TreatmentFollowupService {
   /**
    * Get follow-ups with filtering and pagination
    */
-  async getFollowups(filters: FollowupFilters = {}): Promise<TreatmentFollowup[]> {
+  async getFollowups(
+    filters: FollowupFilters = {}
+  ): Promise<TreatmentFollowup[]> {
     try {
-      let query = this.supabase
-        .from('treatment_followups')
-        .select(`
+      let query = this.supabase.from('treatment_followups').select(`
           *,
           template:followup_templates(*),
           patient:patients(id, name, phone, email, whatsapp),
@@ -80,7 +77,10 @@ class TreatmentFollowupService {
         query = query.limit(filters.limit);
       }
       if (filters.offset) {
-        query = query.range(filters.offset, (filters.offset + (filters.limit || 10)) - 1);
+        query = query.range(
+          filters.offset,
+          filters.offset + (filters.limit || 10) - 1
+        );
       }
 
       // Order by scheduled date
@@ -139,7 +139,7 @@ class TreatmentFollowupService {
         scheduled_date: data.scheduled_date.toISOString(),
         status: 'pending' as const,
         automated: data.automated ?? true,
-        priority: data.priority ?? 'normal' as const
+        priority: data.priority ?? ('normal' as const),
       };
 
       const { data: newFollowup, error } = await this.supabase
@@ -167,7 +167,10 @@ class TreatmentFollowupService {
   /**
    * Update follow-up
    */
-  async updateFollowup(id: string, updates: Partial<TreatmentFollowup>): Promise<TreatmentFollowup> {
+  async updateFollowup(
+    id: string,
+    updates: Partial<TreatmentFollowup>
+  ): Promise<TreatmentFollowup> {
     try {
       const { data, error } = await this.supabase
         .from('treatment_followups')
@@ -215,12 +218,15 @@ class TreatmentFollowupService {
   /**
    * Mark follow-up as completed
    */
-  async completeFollowup(id: string, notes?: string): Promise<TreatmentFollowup> {
+  async completeFollowup(
+    id: string,
+    notes?: string
+  ): Promise<TreatmentFollowup> {
     try {
       const updates = {
         status: 'completed' as const,
         completed_date: new Date().toISOString(),
-        ...(notes && { notes })
+        ...(notes && { notes }),
       };
 
       return await this.updateFollowup(id, updates);
@@ -237,11 +243,11 @@ class TreatmentFollowupService {
   /**
    * Get follow-up templates
    */
-  async getTemplates(filters: TemplateFilters = {}): Promise<FollowupTemplate[]> {
+  async getTemplates(
+    filters: TemplateFilters = {}
+  ): Promise<FollowupTemplate[]> {
     try {
-      let query = this.supabase
-        .from('followup_templates')
-        .select('*');
+      let query = this.supabase.from('followup_templates').select('*');
 
       // Apply filters
       if (filters.treatment_type) {
@@ -268,7 +274,10 @@ class TreatmentFollowupService {
         query = query.limit(filters.limit);
       }
       if (filters.offset) {
-        query = query.range(filters.offset, (filters.offset + (filters.limit || 10)) - 1);
+        query = query.range(
+          filters.offset,
+          filters.offset + (filters.limit || 10) - 1
+        );
       }
 
       query = query.order('created_at', { ascending: false });
@@ -290,13 +299,15 @@ class TreatmentFollowupService {
   /**
    * Create follow-up template
    */
-  async createTemplate(data: CreateFollowupTemplateData): Promise<FollowupTemplate> {
+  async createTemplate(
+    data: CreateFollowupTemplateData
+  ): Promise<FollowupTemplate> {
     try {
       const templateData = {
         ...data,
         timing_hours: data.timing_hours ?? 0,
         requires_response: data.requires_response ?? false,
-        active: data.active ?? true
+        active: data.active ?? true,
       };
 
       const { data: newTemplate, error } = await this.supabase
@@ -320,7 +331,10 @@ class TreatmentFollowupService {
   /**
    * Update template
    */
-  async updateTemplate(id: string, updates: Partial<FollowupTemplate>): Promise<FollowupTemplate> {
+  async updateTemplate(
+    id: string,
+    updates: Partial<FollowupTemplate>
+  ): Promise<FollowupTemplate> {
     try {
       const { data, error } = await this.supabase
         .from('followup_templates')
@@ -348,11 +362,11 @@ class TreatmentFollowupService {
   /**
    * Get treatment protocols
    */
-  async getProtocols(filters: ProtocolFilters = {}): Promise<TreatmentProtocol[]> {
+  async getProtocols(
+    filters: ProtocolFilters = {}
+  ): Promise<TreatmentProtocol[]> {
     try {
-      let query = this.supabase
-        .from('treatment_protocols')
-        .select('*');
+      let query = this.supabase.from('treatment_protocols').select('*');
 
       // Apply filters
       if (filters.treatment_type) {
@@ -373,7 +387,10 @@ class TreatmentFollowupService {
         query = query.limit(filters.limit);
       }
       if (filters.offset) {
-        query = query.range(filters.offset, (filters.offset + (filters.limit || 10)) - 1);
+        query = query.range(
+          filters.offset,
+          filters.offset + (filters.limit || 10) - 1
+        );
       }
 
       query = query.order('created_at', { ascending: false });
@@ -395,12 +412,14 @@ class TreatmentFollowupService {
   /**
    * Create treatment protocol
    */
-  async createProtocol(data: CreateTreatmentProtocolData): Promise<TreatmentProtocol> {
+  async createProtocol(
+    data: CreateTreatmentProtocolData
+  ): Promise<TreatmentProtocol> {
     try {
       const protocolData = {
         ...data,
         next_appointment_suggestion: data.next_appointment_suggestion ?? 30,
-        active: data.active ?? true
+        active: data.active ?? true,
       };
 
       const { data: newProtocol, error } = await this.supabase
@@ -428,7 +447,11 @@ class TreatmentFollowupService {
   /**
    * Get follow-up analytics
    */
-  async getAnalytics(clinicId: string, dateFrom?: string, dateTo?: string): Promise<FollowupAnalytics> {
+  async getAnalytics(
+    clinicId: string,
+    dateFrom?: string,
+    dateTo?: string
+  ): Promise<FollowupAnalytics> {
     try {
       // Get basic counts
       const { data: followups, error } = await this.supabase
@@ -443,33 +466,56 @@ class TreatmentFollowupService {
       }
 
       const total_followups = followups.length;
-      const completed_followups = followups.filter(f => f.status === 'completed').length;
-      const pending_followups = followups.filter(f => f.status === 'pending').length;
+      const completed_followups = followups.filter(
+        (f) => f.status === 'completed'
+      ).length;
+      const pending_followups = followups.filter(
+        (f) => f.status === 'pending'
+      ).length;
 
       // Calculate response rate
-      const followupsWithResponses = followups.filter(f => f.responses && f.responses.length > 0).length;
-      const response_rate = total_followups > 0 ? (followupsWithResponses / total_followups) * 100 : 0;
+      const followupsWithResponses = followups.filter(
+        (f) => f.responses && f.responses.length > 0
+      ).length;
+      const response_rate =
+        total_followups > 0
+          ? (followupsWithResponses / total_followups) * 100
+          : 0;
 
       // Calculate satisfaction average
       const satisfactionResponses = followups
-        .flatMap(f => f.responses || [])
-        .filter(r => r.satisfaction_score !== null && r.satisfaction_score !== undefined);
-      
-      const satisfaction_average = satisfactionResponses.length > 0
-        ? satisfactionResponses.reduce((sum, r) => sum + (r.satisfaction_score || 0), 0) / satisfactionResponses.length
-        : 0;
+        .flatMap((f) => f.responses || [])
+        .filter(
+          (r) =>
+            r.satisfaction_score !== null && r.satisfaction_score !== undefined
+        );
+
+      const satisfaction_average =
+        satisfactionResponses.length > 0
+          ? satisfactionResponses.reduce(
+              (sum, r) => sum + (r.satisfaction_score || 0),
+              0
+            ) / satisfactionResponses.length
+          : 0;
 
       // Communication method stats
-      const communication_method_stats = followups.reduce((stats, f) => {
-        stats[f.communication_method] = (stats[f.communication_method] || 0) + 1;
-        return stats;
-      }, {} as Record<string, number>);
+      const communication_method_stats = followups.reduce(
+        (stats, f) => {
+          stats[f.communication_method] =
+            (stats[f.communication_method] || 0) + 1;
+          return stats;
+        },
+        {} as Record<string, number>
+      );
 
       // Follow-up type stats
-      const followup_type_stats = followups.reduce((stats, f) => {
-        stats[f.followup_type] = (stats[f.followup_type] || 0) + 1;
-        return stats;
-      }, {} as Record<string, number>);
+      const followup_type_stats = followups.reduce(
+        (stats, f) => {
+          stats[f.followup_type] = (stats[f.followup_type] || 0) + 1;
+          return stats;
+        },
+        {} as Record<string, number>
+      );
 
       return {
         total_followups,
@@ -479,7 +525,7 @@ class TreatmentFollowupService {
         satisfaction_average,
         communication_method_stats,
         followup_type_stats,
-        monthly_trends: [] // TODO: Implement monthly trends calculation
+        monthly_trends: [], // TODO: Implement monthly trends calculation
       };
     } catch (error) {
       console.error('Service error in getAnalytics:', error);
@@ -490,12 +536,24 @@ class TreatmentFollowupService {
   /**
    * Get dashboard summary
    */
-  async getDashboardSummary(clinicId: string): Promise<FollowupDashboardSummary> {
+  async getDashboardSummary(
+    clinicId: string
+  ): Promise<FollowupDashboardSummary> {
     try {
       const today = new Date();
-      const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate()).toISOString();
-      const todayEnd = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1).toISOString();
-      const weekEnd = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString();
+      const todayStart = new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate()
+      ).toISOString();
+      const todayEnd = new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate() + 1
+      ).toISOString();
+      const weekEnd = new Date(
+        today.getTime() + 7 * 24 * 60 * 60 * 1000
+      ).toISOString();
 
       // Get today's follow-ups
       const { data: todayFollowups } = await this.supabase
@@ -536,7 +594,7 @@ class TreatmentFollowupService {
         satisfaction_average: 0, // TODO: Calculate from recent responses
         upcoming_this_week: upcomingWeek?.length || 0,
         automation_success_rate: 0, // TODO: Calculate automation success rate
-        recent_activities: [] // TODO: Implement recent activities
+        recent_activities: [], // TODO: Implement recent activities
       };
     } catch (error) {
       console.error('Service error in getDashboardSummary:', error);

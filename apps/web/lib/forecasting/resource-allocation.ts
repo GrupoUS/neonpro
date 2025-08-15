@@ -1,7 +1,7 @@
 /**
  * Resource Allocation Optimization System
  * Epic 11 - Story 11.1: Advanced resource optimization based on demand forecasts
- * 
+ *
  * Comprehensive resource allocation engine providing:
  * - Staff scheduling optimization based on predicted demand
  * - Equipment utilization planning and maintenance scheduling
@@ -9,12 +9,12 @@
  * - Inventory management and supply chain optimization
  * - Cost optimization and budget planning
  * - Real-time allocation adjustments and alerts
- * 
+ *
  * BMAD METHOD + VOIDBEAST V6.0 ENHANCED - Quality ≥9.8/10
  */
 
 import { supabase } from '@/lib/supabase';
-import { DemandForecast, ResourceAllocation } from './demand-forecasting';
+import type { DemandForecast } from './demand-forecasting';
 
 export interface StaffAllocation {
   staff_id: string;
@@ -101,7 +101,12 @@ export interface AllocationConstraint {
 }
 
 export interface OptimizationObjective {
-  type: 'minimize_cost' | 'maximize_revenue' | 'maximize_utilization' | 'minimize_wait_time' | 'balance_workload';
+  type:
+    | 'minimize_cost'
+    | 'maximize_revenue'
+    | 'maximize_utilization'
+    | 'minimize_wait_time'
+    | 'balance_workload';
   weight: number;
   target_value?: number;
   tolerance?: number;
@@ -128,7 +133,12 @@ export interface AllocationPlan {
 
 export interface AllocationAlert {
   id: string;
-  alert_type: 'overallocation' | 'underutilization' | 'constraint_violation' | 'cost_overrun' | 'resource_shortage';
+  alert_type:
+    | 'overallocation'
+    | 'underutilization'
+    | 'constraint_violation'
+    | 'cost_overrun'
+    | 'resource_shortage';
   severity: 'low' | 'medium' | 'high' | 'critical';
   resource_type: 'staff' | 'equipment' | 'room' | 'inventory';
   resource_id: string;
@@ -157,8 +167,6 @@ export interface AllocationMetrics {
  */
 export class ResourceAllocationOptimizer {
   private readonly UTILIZATION_TARGET = 0.85; // 85% target utilization
-  private readonly COST_VARIANCE_THRESHOLD = 0.10; // 10% cost variance threshold
-  private readonly EFFICIENCY_THRESHOLD = 0.80; // 80% minimum efficiency
 
   /**
    * Initialize the allocation optimizer
@@ -167,15 +175,17 @@ export class ResourceAllocationOptimizer {
     try {
       // Load resource data
       await this.loadResourceInventory(clinicId);
-      
+
       // Load constraints and objectives
       await this.loadOptimizationParameters(clinicId);
-      
+
       // Validate data integrity
       await this.validateResourceData(clinicId);
-      
     } catch (error) {
-      console.error('Failed to initialize resource allocation optimizer:', error);
+      console.error(
+        'Failed to initialize resource allocation optimizer:',
+        error
+      );
       throw new Error('Resource allocation optimizer initialization failed');
     }
   }
@@ -194,19 +204,24 @@ export class ResourceAllocationOptimizer {
       const defaultObjectives: OptimizationObjective[] = [
         { type: 'maximize_utilization', weight: 0.4 },
         { type: 'minimize_cost', weight: 0.3 },
-        { type: 'maximize_revenue', weight: 0.3 }
+        { type: 'maximize_revenue', weight: 0.3 },
       ];
 
-      const activeObjectives = objectives.length > 0 ? objectives : defaultObjectives;
+      const activeObjectives =
+        objectives.length > 0 ? objectives : defaultObjectives;
 
       // Generate individual resource allocations
-      const [staffAllocations, equipmentAllocations, roomAllocations, inventoryAllocations] = 
-        await Promise.all([
-          this.optimizeStaffAllocation(clinicId, forecasts, planningPeriod),
-          this.optimizeEquipmentAllocation(clinicId, forecasts, planningPeriod),
-          this.optimizeRoomAllocation(clinicId, forecasts, planningPeriod),
-          this.optimizeInventoryAllocation(clinicId, forecasts, planningPeriod)
-        ]);
+      const [
+        staffAllocations,
+        equipmentAllocations,
+        roomAllocations,
+        inventoryAllocations,
+      ] = await Promise.all([
+        this.optimizeStaffAllocation(clinicId, forecasts, planningPeriod),
+        this.optimizeEquipmentAllocation(clinicId, forecasts, planningPeriod),
+        this.optimizeRoomAllocation(clinicId, forecasts, planningPeriod),
+        this.optimizeInventoryAllocation(clinicId, forecasts, planningPeriod),
+      ]);
 
       // Calculate total costs and revenue
       const totalCost = this.calculateTotalCost(
@@ -239,7 +254,7 @@ export class ResourceAllocationOptimizer {
         plan_name: `Allocation Plan ${new Date().toISOString().split('T')[0]}`,
         planning_period: {
           start: planningPeriod.start.toISOString(),
-          end: planningPeriod.end.toISOString()
+          end: planningPeriod.end.toISOString(),
         },
         staff_allocations: staffAllocations,
         equipment_allocations: equipmentAllocations,
@@ -252,7 +267,7 @@ export class ResourceAllocationOptimizer {
         constraints,
         objectives: activeObjectives,
         created_at: new Date().toISOString(),
-        status: 'draft'
+        status: 'draft',
       };
 
       // Validate plan against constraints
@@ -265,7 +280,6 @@ export class ResourceAllocationOptimizer {
       await this.checkAllocationAlerts(plan);
 
       return plan;
-
     } catch (error) {
       console.error('Failed to generate allocation plan:', error);
       throw error;
@@ -316,9 +330,13 @@ export class ResourceAllocationOptimizer {
           );
 
           // Calculate workload and utilization
-          const scheduledHours = Math.min(requiredHours, member.max_hours_per_week || 40);
+          const scheduledHours = Math.min(
+            requiredHours,
+            member.max_hours_per_week || 40
+          );
           const overtimeHours = Math.max(0, requiredHours - scheduledHours);
-          const utilizationRate = scheduledHours / (member.max_hours_per_week || 40);
+          const utilizationRate =
+            scheduledHours / (member.max_hours_per_week || 40);
 
           // Calculate costs
           const regularCost = scheduledHours * member.hourly_rate;
@@ -351,11 +369,10 @@ export class ResourceAllocationOptimizer {
             efficiency_score: efficiencyScore,
             availability_windows: availabilityWindows,
             skills: member.skills || [],
-            certifications: member.certifications || []
+            certifications: member.certifications || [],
           };
 
           allocations.push(allocation);
-
         } catch (error) {
           console.error(`Failed to allocate staff member ${member.id}:`, error);
         }
@@ -363,7 +380,6 @@ export class ResourceAllocationOptimizer {
 
       // Optimize allocations based on constraints and objectives
       return this.optimizeStaffAssignments(allocations, forecasts);
-
     } catch (error) {
       console.error('Failed to optimize staff allocation:', error);
       throw error;
@@ -415,11 +431,15 @@ export class ResourceAllocationOptimizer {
 
           // Calculate utilization
           const maxUsageHours = (item.max_usage_hours_per_day || 8) * 7; // Weekly
-          const scheduledUsageHours = Math.min(predictedDemandHours, maxUsageHours);
+          const scheduledUsageHours = Math.min(
+            predictedDemandHours,
+            maxUsageHours
+          );
           const utilizationRate = scheduledUsageHours / maxUsageHours;
 
           // Calculate operational costs
-          const totalOperationalCost = scheduledUsageHours * item.operational_cost_per_hour;
+          const totalOperationalCost =
+            scheduledUsageHours * item.operational_cost_per_hour;
 
           // Parse maintenance windows
           const maintenanceWindows = this.parseMaintenanceSchedule(
@@ -445,18 +465,16 @@ export class ResourceAllocationOptimizer {
             efficiency_rating: efficiencyRating,
             condition_score: item.condition_score || 0.8,
             replacement_cost: item.replacement_cost || 0,
-            location: item.location
+            location: item.location,
           };
 
           allocations.push(allocation);
-
         } catch (error) {
           console.error(`Failed to allocate equipment ${item.id}:`, error);
         }
       }
 
       return allocations;
-
     } catch (error) {
       console.error('Failed to optimize equipment allocation:', error);
       throw error;
@@ -513,7 +531,7 @@ export class ResourceAllocationOptimizer {
           );
 
           const scheduledBookings = existingBookings + predictedDemand;
-          
+
           // Calculate utilization (assuming 8 hours per day, 5 days per week)
           const maxBookingsPerWeek = 40; // 8 hours * 5 days
           const utilizationRate = scheduledBookings / maxBookingsPerWeek;
@@ -539,18 +557,16 @@ export class ResourceAllocationOptimizer {
             setup_time_minutes: room.setup_time_minutes || 15,
             cleanup_time_minutes: room.cleanup_time_minutes || 15,
             hourly_rate: room.hourly_rate,
-            total_revenue_potential: totalRevenuePotential
+            total_revenue_potential: totalRevenuePotential,
           };
 
           allocations.push(allocation);
-
         } catch (error) {
           console.error(`Failed to allocate room ${room.id}:`, error);
         }
       }
 
       return allocations;
-
     } catch (error) {
       console.error('Failed to optimize room allocation:', error);
       throw error;
@@ -589,7 +605,8 @@ export class ResourceAllocationOptimizer {
       const allocations: InventoryAllocation[] = [];
 
       // Calculate consumption based on forecasts
-      const consumptionByCategory = this.calculateInventoryConsumption(forecasts);
+      const consumptionByCategory =
+        this.calculateInventoryConsumption(forecasts);
 
       for (const item of inventory || []) {
         try {
@@ -633,18 +650,16 @@ export class ResourceAllocationOptimizer {
             holding_cost_per_unit: item.holding_cost_per_unit,
             stockout_risk: stockoutRisk,
             supplier_lead_time_days: item.supplier_lead_time_days || 7,
-            expiration_risk: expirationRisk
+            expiration_risk: expirationRisk,
           };
 
           allocations.push(allocation);
-
         } catch (error) {
           console.error(`Failed to allocate inventory item ${item.id}:`, error);
         }
       }
 
       return allocations;
-
     } catch (error) {
       console.error('Failed to optimize inventory allocation:', error);
       throw error;
@@ -657,13 +672,22 @@ export class ResourceAllocationOptimizer {
   private calculateTotalCost(
     staffAllocations: StaffAllocation[],
     equipmentAllocations: EquipmentAllocation[],
-    roomAllocations: RoomAllocation[],
+    _roomAllocations: RoomAllocation[],
     inventoryAllocations: InventoryAllocation[]
   ): number {
-    const staffCost = staffAllocations.reduce((sum, allocation) => sum + allocation.total_cost, 0);
-    const equipmentCost = equipmentAllocations.reduce((sum, allocation) => sum + allocation.total_operational_cost, 0);
-    const inventoryCost = inventoryAllocations.reduce((sum, allocation) => 
-      sum + (allocation.predicted_consumption * allocation.cost_per_unit), 0);
+    const staffCost = staffAllocations.reduce(
+      (sum, allocation) => sum + allocation.total_cost,
+      0
+    );
+    const equipmentCost = equipmentAllocations.reduce(
+      (sum, allocation) => sum + allocation.total_operational_cost,
+      0
+    );
+    const inventoryCost = inventoryAllocations.reduce(
+      (sum, allocation) =>
+        sum + allocation.predicted_consumption * allocation.cost_per_unit,
+      0
+    );
 
     return staffCost + equipmentCost + inventoryCost;
   }
@@ -674,14 +698,18 @@ export class ResourceAllocationOptimizer {
   private calculateExpectedRevenue(
     forecasts: DemandForecast[],
     roomAllocations: RoomAllocation[],
-    staffAllocations: StaffAllocation[]
+    _staffAllocations: StaffAllocation[]
   ): number {
-    const roomRevenue = roomAllocations.reduce((sum, allocation) => 
-      sum + allocation.total_revenue_potential, 0);
+    const roomRevenue = roomAllocations.reduce(
+      (sum, allocation) => sum + allocation.total_revenue_potential,
+      0
+    );
 
     // Simplified calculation - in production would be more sophisticated
-    const serviceRevenue = forecasts.reduce((sum, forecast) => 
-      sum + (forecast.predicted_demand * 150), 0); // $150 average per service
+    const serviceRevenue = forecasts.reduce(
+      (sum, forecast) => sum + forecast.predicted_demand * 150,
+      0
+    ); // $150 average per service
 
     return roomRevenue + serviceRevenue;
   }
@@ -694,37 +722,53 @@ export class ResourceAllocationOptimizer {
     equipmentAllocations: EquipmentAllocation[],
     roomAllocations: RoomAllocation[]
   ): number {
-    const avgStaffEfficiency = staffAllocations.reduce((sum, allocation) => 
-      sum + allocation.efficiency_score, 0) / staffAllocations.length;
+    const avgStaffEfficiency =
+      staffAllocations.reduce(
+        (sum, allocation) => sum + allocation.efficiency_score,
+        0
+      ) / staffAllocations.length;
 
-    const avgEquipmentEfficiency = equipmentAllocations.reduce((sum, allocation) => 
-      sum + allocation.efficiency_rating, 0) / equipmentAllocations.length;
+    const avgEquipmentEfficiency =
+      equipmentAllocations.reduce(
+        (sum, allocation) => sum + allocation.efficiency_rating,
+        0
+      ) / equipmentAllocations.length;
 
-    const avgRoomUtilization = roomAllocations.reduce((sum, allocation) => 
-      sum + allocation.utilization_rate, 0) / roomAllocations.length;
+    const avgRoomUtilization =
+      roomAllocations.reduce(
+        (sum, allocation) => sum + allocation.utilization_rate,
+        0
+      ) / roomAllocations.length;
 
-    return (avgStaffEfficiency + avgEquipmentEfficiency + avgRoomUtilization) / 3;
+    return (
+      (avgStaffEfficiency + avgEquipmentEfficiency + avgRoomUtilization) / 3
+    );
   }
 
   /**
    * Helper methods for calculations (simplified implementations)
    */
-  private calculateDemandByRole(forecasts: DemandForecast[]): Record<string, number> {
+  private calculateDemandByRole(
+    forecasts: DemandForecast[]
+  ): Record<string, number> {
     // Simplified implementation
-    const totalDemand = forecasts.reduce((sum, forecast) => sum + forecast.predicted_demand, 0);
-    
+    const totalDemand = forecasts.reduce(
+      (sum, forecast) => sum + forecast.predicted_demand,
+      0
+    );
+
     return {
-      'doctor': totalDemand * 0.3,
-      'nurse': totalDemand * 0.4,
-      'technician': totalDemand * 0.2,
-      'admin': totalDemand * 0.1
+      doctor: totalDemand * 0.3,
+      nurse: totalDemand * 0.4,
+      technician: totalDemand * 0.2,
+      admin: totalDemand * 0.1,
     };
   }
 
   private calculateRequiredStaffHours(
     staff: any,
     demand: number,
-    period: { start: Date; end: Date }
+    _period: { start: Date; end: Date }
   ): number {
     // Simplified calculation
     const hoursPerService = staff.role === 'doctor' ? 1 : 0.5;
@@ -732,21 +776,21 @@ export class ResourceAllocationOptimizer {
   }
 
   private calculateStaffEfficiency(
-    staff: any,
+    _staff: any,
     utilizationRate: number,
     overtimeHours: number
   ): number {
     // Efficiency decreases with overutilization and overtime
     let efficiency = Math.min(utilizationRate / this.UTILIZATION_TARGET, 1.0);
-    
+
     if (overtimeHours > 0) {
       efficiency *= Math.max(0.7, 1 - (overtimeHours / 40) * 0.3);
     }
-    
+
     return efficiency;
   }
 
-  private parseAvailabilitySchedule(schedule: any): TimeWindow[] {
+  private parseAvailabilitySchedule(_schedule: any): TimeWindow[] {
     // Simplified implementation - would parse actual schedule format
     return [
       {
@@ -754,93 +798,111 @@ export class ResourceAllocationOptimizer {
         end_time: '17:00',
         day_of_week: 1,
         availability_type: 'available',
-        priority: 'medium'
-      }
+        priority: 'medium',
+      },
     ];
   }
 
   private optimizeStaffAssignments(
     allocations: StaffAllocation[],
-    forecasts: DemandForecast[]
+    _forecasts: DemandForecast[]
   ): StaffAllocation[] {
     // Simplified optimization - in production would use advanced algorithms
     return allocations;
   }
 
-  private calculateEquipmentDemand(forecasts: DemandForecast[]): Record<string, number> {
+  private calculateEquipmentDemand(
+    forecasts: DemandForecast[]
+  ): Record<string, number> {
     // Simplified implementation
-    const totalDemand = forecasts.reduce((sum, forecast) => sum + forecast.predicted_demand, 0);
-    
+    const totalDemand = forecasts.reduce(
+      (sum, forecast) => sum + forecast.predicted_demand,
+      0
+    );
+
     return {
-      'diagnostic': totalDemand * 0.6,
-      'treatment': totalDemand * 0.8,
-      'monitoring': totalDemand * 0.4
+      diagnostic: totalDemand * 0.6,
+      treatment: totalDemand * 0.8,
+      monitoring: totalDemand * 0.4,
     };
   }
 
   private calculateEquipmentHours(
     equipment: any,
     demand: number,
-    period: { start: Date; end: Date }
+    _period: { start: Date; end: Date }
   ): number {
     // Simplified calculation
     const hoursPerUse = equipment.type === 'diagnostic' ? 0.5 : 1.0;
     return demand * hoursPerUse;
   }
 
-  private calculateEquipmentEfficiency(equipment: any, utilizationRate: number): number {
+  private calculateEquipmentEfficiency(
+    _equipment: any,
+    utilizationRate: number
+  ): number {
     // Equipment efficiency is optimal around 80% utilization
     const optimalUtilization = 0.8;
     const deviation = Math.abs(utilizationRate - optimalUtilization);
     return Math.max(0.5, 1 - deviation);
   }
 
-  private parseMaintenanceSchedule(schedule: any): TimeWindow[] {
+  private parseMaintenanceSchedule(_schedule: any): TimeWindow[] {
     // Simplified implementation
     return [];
   }
 
-  private calculateRoomDemand(forecasts: DemandForecast[]): Record<string, number> {
-    const totalDemand = forecasts.reduce((sum, forecast) => sum + forecast.predicted_demand, 0);
-    
+  private calculateRoomDemand(
+    forecasts: DemandForecast[]
+  ): Record<string, number> {
+    const totalDemand = forecasts.reduce(
+      (sum, forecast) => sum + forecast.predicted_demand,
+      0
+    );
+
     return {
-      'consultation': totalDemand * 0.8,
-      'procedure': totalDemand * 0.3,
-      'diagnostic': totalDemand * 0.5
+      consultation: totalDemand * 0.8,
+      procedure: totalDemand * 0.3,
+      diagnostic: totalDemand * 0.5,
     };
   }
 
   private calculateRoomBookings(
-    room: any,
+    _room: any,
     demand: number,
-    period: { start: Date; end: Date }
+    _period: { start: Date; end: Date }
   ): number {
     // Simplified calculation
     return Math.ceil(demand * 0.8);
   }
 
   private async getExistingRoomBookings(
-    roomId: string,
-    period: { start: Date; end: Date }
+    _roomId: string,
+    _period: { start: Date; end: Date }
   ): Promise<number> {
     // Simplified implementation
     return 10;
   }
 
-  private calculateInventoryConsumption(forecasts: DemandForecast[]): Record<string, number> {
-    const totalDemand = forecasts.reduce((sum, forecast) => sum + forecast.predicted_demand, 0);
-    
+  private calculateInventoryConsumption(
+    forecasts: DemandForecast[]
+  ): Record<string, number> {
+    const totalDemand = forecasts.reduce(
+      (sum, forecast) => sum + forecast.predicted_demand,
+      0
+    );
+
     return {
-      'medical_supplies': totalDemand * 2,
-      'medications': totalDemand * 1.5,
-      'consumables': totalDemand * 3
+      medical_supplies: totalDemand * 2,
+      medications: totalDemand * 1.5,
+      consumables: totalDemand * 3,
     };
   }
 
   private calculateItemConsumption(
-    item: any,
+    _item: any,
     categoryConsumption: number,
-    period: { start: Date; end: Date }
+    _period: { start: Date; end: Date }
   ): number {
     // Simplified calculation
     return Math.ceil(categoryConsumption * 0.1);
@@ -856,11 +918,11 @@ export class ResourceAllocationOptimizer {
   private calculateStockoutRisk(
     item: any,
     consumption: number,
-    safetyStock: number
+    _safetyStock: number
   ): number {
     const daysOfStock = item.current_stock / (consumption / 30);
     const leadTime = item.supplier_lead_time_days;
-    
+
     if (daysOfStock < leadTime) return 0.8;
     if (daysOfStock < leadTime + 7) return 0.4;
     return 0.1;
@@ -868,41 +930,41 @@ export class ResourceAllocationOptimizer {
 
   private calculateExpirationRisk(item: any, consumption: number): number {
     if (!item.expiration_days) return 0;
-    
+
     const daysToConsume = item.current_stock / (consumption / 30);
     const daysToExpiry = item.expiration_days;
-    
+
     return Math.max(0, (daysToConsume - daysToExpiry) / daysToExpiry);
   }
 
   /**
    * Additional methods for plan management
    */
-  private async loadResourceInventory(clinicId: string): Promise<void> {
+  private async loadResourceInventory(_clinicId: string): Promise<void> {
     // Implementation would load all resource data
   }
 
-  private async loadOptimizationParameters(clinicId: string): Promise<void> {
+  private async loadOptimizationParameters(_clinicId: string): Promise<void> {
     // Implementation would load constraints and objectives
   }
 
-  private async validateResourceData(clinicId: string): Promise<void> {
+  private async validateResourceData(_clinicId: string): Promise<void> {
     // Implementation would validate data integrity
   }
 
-  private async loadConstraints(clinicId: string): Promise<AllocationConstraint[]> {
+  private async loadConstraints(
+    _clinicId: string
+  ): Promise<AllocationConstraint[]> {
     // Implementation would load constraints from database
     return [];
   }
 
-  private async validateAllocationPlan(plan: AllocationPlan): Promise<void> {
+  private async validateAllocationPlan(_plan: AllocationPlan): Promise<void> {
     // Implementation would validate plan against constraints
   }
 
   private async storeAllocationPlan(plan: AllocationPlan): Promise<void> {
-    const { error } = await supabase
-      .from('allocation_plans')
-      .insert(plan);
+    const { error } = await supabase.from('allocation_plans').insert(plan);
 
     if (error) {
       console.error('Failed to store allocation plan:', error);
@@ -910,7 +972,7 @@ export class ResourceAllocationOptimizer {
     }
   }
 
-  private async checkAllocationAlerts(plan: AllocationPlan): Promise<void> {
+  private async checkAllocationAlerts(_plan: AllocationPlan): Promise<void> {
     // Implementation would check for alerts and store them
   }
 }

@@ -1,9 +1,9 @@
 /**
  * HL7 FHIR R4 Patient Resource Types
- * 
+ *
  * Based on HL7 FHIR Patient Resource:
  * https://www.hl7.org/fhir/patient.html
- * 
+ *
  * Implements FHIR-compliant patient data structures for NeonPro
  * with LGPD compliance for Brazilian healthcare data protection.
  */
@@ -39,7 +39,14 @@ export interface FHIRIdentifier {
 
 // FHIR HumanName for patient names
 export interface FHIRHumanName {
-  use?: 'usual' | 'official' | 'temp' | 'nickname' | 'anonymous' | 'old' | 'maiden';
+  use?:
+    | 'usual'
+    | 'official'
+    | 'temp'
+    | 'nickname'
+    | 'anonymous'
+    | 'old'
+    | 'maiden';
   text?: string;
   family?: string;
   given?: string[];
@@ -115,7 +122,7 @@ export interface FHIRPatient {
   };
   implicitRules?: FHIRURI;
   language?: FHIRCode;
-  
+
   // Patient Demographics
   identifier?: FHIRIdentifier[];
   active?: boolean;
@@ -182,7 +189,7 @@ export interface FHIRCondition {
     lastUpdated?: FHIRDateTime;
     profile?: FHIRURI[];
   };
-  
+
   identifier?: FHIRIdentifier[];
   clinicalStatus?: {
     coding?: {
@@ -240,14 +247,23 @@ export interface FHIRCondition {
     reference?: string;
     display?: string;
   };
-  onset?: FHIRDateTime | FHIRDate | {
-    start?: FHIRDateTime;
-    end?: FHIRDateTime;
-  } | string;
-  abatement?: FHIRDateTime | FHIRDate | {
-    start?: FHIRDateTime;
-    end?: FHIRDateTime;
-  } | string | boolean;
+  onset?:
+    | FHIRDateTime
+    | FHIRDate
+    | {
+        start?: FHIRDateTime;
+        end?: FHIRDateTime;
+      }
+    | string;
+  abatement?:
+    | FHIRDateTime
+    | FHIRDate
+    | {
+        start?: FHIRDateTime;
+        end?: FHIRDateTime;
+      }
+    | string
+    | boolean;
   recordedDate?: FHIRDateTime;
   recorder?: {
     reference?: string;
@@ -294,10 +310,12 @@ export interface FHIRCondition {
     }[];
   }[];
   note?: {
-    author?: string | {
-      reference?: string;
-      display?: string;
-    };
+    author?:
+      | string
+      | {
+          reference?: string;
+          display?: string;
+        };
     time?: FHIRDateTime;
     text: string;
   }[];
@@ -312,7 +330,7 @@ export interface FHIRAllergyIntolerance {
     lastUpdated?: FHIRDateTime;
     profile?: FHIRURI[];
   };
-  
+
   identifier?: FHIRIdentifier[];
   clinicalStatus?: {
     coding?: {
@@ -349,10 +367,14 @@ export interface FHIRAllergyIntolerance {
     reference?: string;
     display?: string;
   };
-  onset?: FHIRDateTime | FHIRDate | {
-    start?: FHIRDateTime;
-    end?: FHIRDateTime;
-  } | string;
+  onset?:
+    | FHIRDateTime
+    | FHIRDate
+    | {
+        start?: FHIRDateTime;
+        end?: FHIRDateTime;
+      }
+    | string;
   recordedDate?: FHIRDateTime;
   recorder?: {
     reference?: string;
@@ -364,10 +386,12 @@ export interface FHIRAllergyIntolerance {
   };
   lastOccurrence?: FHIRDateTime;
   note?: {
-    author?: string | {
-      reference?: string;
-      display?: string;
-    };
+    author?:
+      | string
+      | {
+          reference?: string;
+          display?: string;
+        };
     time?: FHIRDateTime;
     text: string;
   }[];
@@ -400,10 +424,12 @@ export interface FHIRAllergyIntolerance {
       text?: string;
     };
     note?: {
-      author?: string | {
-        reference?: string;
-        display?: string;
-      };
+      author?:
+        | string
+        | {
+            reference?: string;
+            display?: string;
+          };
       time?: FHIRDateTime;
       text: string;
     }[];
@@ -414,7 +440,13 @@ export interface FHIRAllergyIntolerance {
 export interface LGPDConsent {
   id?: string;
   patient_id: string;
-  consent_type: 'explicit' | 'legitimate_interest' | 'vital_interest' | 'public_task' | 'legal_obligation' | 'contract';
+  consent_type:
+    | 'explicit'
+    | 'legitimate_interest'
+    | 'vital_interest'
+    | 'public_task'
+    | 'legal_obligation'
+    | 'contract';
   purpose: string;
   data_categories: string[];
   retention_period_years: number;

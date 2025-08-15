@@ -13,14 +13,14 @@ export class AuditLogger {
     const auditEvent = {
       id: Math.random().toString(36),
       timestamp: new Date(),
-      ...event
+      ...event,
     };
-    
+
     console.log('Audit Event:', auditEvent);
     return auditEvent;
   }
 
-  static async getLogs(filters?: any): Promise<AuditEvent[]> {
+  static async getLogs(_filters?: any): Promise<AuditEvent[]> {
     return [];
   }
 }

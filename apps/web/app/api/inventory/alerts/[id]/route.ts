@@ -4,21 +4,23 @@
 // Created: 2025-01-26
 // =====================================================================================
 
+import { type NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
-import { NextRequest, NextResponse } from 'next/server';
 
 // =====================================================================================
 // MARK ALERT AS READ
 // =====================================================================================
 
 export async function PATCH(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -28,10 +30,10 @@ export async function PATCH(
     // Verify alert exists and update
     const { data: alert, error } = await supabase
       .from('inventory_alerts')
-      .update({ 
+      .update({
         is_read: true,
         read_at: new Date().toISOString(),
-        read_by: user.id
+        read_by: user.id,
       })
       .eq('id', alertId)
       .select()
@@ -39,25 +41,30 @@ export async function PATCH(
 
     if (error) {
       console.error('Error marking alert as read:', error);
-      return NextResponse.json({ error: 'Failed to mark alert as read' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Failed to mark alert as read' },
+        { status: 500 }
+      );
     }
 
     if (!alert) {
       return NextResponse.json({ error: 'Alert not found' }, { status: 404 });
     }
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       message: 'Alert marked as read',
       alert: {
         id: alert.id,
         is_read: alert.is_read,
-        read_at: alert.read_at
-      }
+        read_at: alert.read_at,
+      },
     });
-
   } catch (error) {
     console.error('Error in alert PATCH API:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
 
@@ -66,13 +73,15 @@ export async function PATCH(
 // =====================================================================================
 
 export async function DELETE(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -87,15 +96,20 @@ export async function DELETE(
 
     if (error) {
       console.error('Error deleting alert:', error);
-      return NextResponse.json({ error: 'Failed to delete alert' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Failed to delete alert' },
+        { status: 500 }
+      );
     }
 
-    return NextResponse.json({ 
-      message: 'Alert deleted successfully'
+    return NextResponse.json({
+      message: 'Alert deleted successfully',
     });
-
   } catch (error) {
     console.error('Error in alert DELETE API:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }

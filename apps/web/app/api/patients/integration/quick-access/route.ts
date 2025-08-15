@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
+import { AuditLogger } from '@/lib/audit/audit-logger';
 import { systemIntegrationManager } from '@/lib/patients/integration/system-integration-manager';
 import { createClient } from '@/lib/supabase/server';
-import { AuditLogger } from '@/lib/audit/audit-logger';
 
 const auditLogger = new AuditLogger();
 
@@ -12,13 +12,13 @@ const auditLogger = new AuditLogger();
 export async function GET(request: NextRequest) {
   try {
     const supabase = createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Não autorizado' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
     // Check user permissions
@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
       .eq('id', user.id)
       .single();
 
-    if (!profile || !['admin', 'manager', 'staff'].includes(profile.role)) {
+    if (!(profile && ['admin', 'manager', 'staff'].includes(profile.role))) {
       return NextResponse.json(
         { error: 'Acesso negado: permissões insuficientes' },
         { status: 403 }
@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
 
     const searchParams = request.nextUrl.searchParams;
     const listType = searchParams.get('type') || 'recent';
-    const limit = parseInt(searchParams.get('limit') || '20');
+    const limit = Number.parseInt(searchParams.get('limit') || '20', 10);
 
     let quickAccessData;
 
@@ -104,9 +104,9 @@ export async function GET(request: NextRequest) {
       details: {
         listType,
         patientCount: quickAccessData.patients.length,
-        limit
+        limit,
       },
-      timestamp: new Date()
+      timestamp: new Date(),
     });
 
     return NextResponse.json({
@@ -115,23 +115,25 @@ export async function GET(request: NextRequest) {
         patients: quickAccessData.patients,
         listType,
         totalCount: quickAccessData.totalCount,
-        lastUpdated: quickAccessData.lastUpdated
-      }
+        lastUpdated: quickAccessData.lastUpdated,
+      },
     });
   } catch (error) {
     console.error('Error in quick access patients:', error);
-    
+
     await auditLogger.log({
       action: 'quick_access_patients_error',
       userId: 'system',
-      details: { error: error instanceof Error ? error.message : 'Unknown error' },
-      timestamp: new Date()
+      details: {
+        error: error instanceof Error ? error.message : 'Unknown error',
+      },
+      timestamp: new Date(),
     });
 
     return NextResponse.json(
-      { 
+      {
         error: 'Erro interno do servidor',
-        details: error instanceof Error ? error.message : 'Erro desconhecido'
+        details: error instanceof Error ? error.message : 'Erro desconhecido',
       },
       { status: 500 }
     );
@@ -145,13 +147,13 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const supabase = createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Não autorizado' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
     // Check user permissions
@@ -161,7 +163,7 @@ export async function POST(request: NextRequest) {
       .eq('id', user.id)
       .single();
 
-    if (!profile || !['admin', 'manager', 'staff'].includes(profile.role)) {
+    if (!(profile && ['admin', 'manager', 'staff'].includes(profile.role))) {
       return NextResponse.json(
         { error: 'Acesso negado: permissões insuficientes' },
         { status: 403 }
@@ -172,7 +174,7 @@ export async function POST(request: NextRequest) {
     const { patientId, action } = body;
 
     // Validate required fields
-    if (!patientId || !action) {
+    if (!(patientId && action)) {
       return NextResponse.json(
         { error: 'Campos obrigatórios: patientId, action' },
         { status: 400 }
@@ -208,7 +210,7 @@ export async function POST(request: NextRequest) {
         .insert({
           user_id: user.id,
           patient_id: patientId,
-          created_at: new Date().toISOString()
+          created_at: new Date().toISOString(),
         });
 
       if (insertError && !insertError.message.includes('duplicate')) {
@@ -237,29 +239,31 @@ export async function POST(request: NextRequest) {
       userId: user.id,
       details: {
         patientId,
-        patientName: patient.name
+        patientName: patient.name,
       },
-      timestamp: new Date()
+      timestamp: new Date(),
     });
 
     return NextResponse.json({
       success: true,
-      data: result
+      data: result,
     });
   } catch (error) {
     console.error('Error managing patient favorites:', error);
-    
+
     await auditLogger.log({
       action: 'patient_favorite_error',
       userId: 'system',
-      details: { error: error instanceof Error ? error.message : 'Unknown error' },
-      timestamp: new Date()
+      details: {
+        error: error instanceof Error ? error.message : 'Unknown error',
+      },
+      timestamp: new Date(),
     });
 
     return NextResponse.json(
-      { 
+      {
         error: 'Erro interno do servidor',
-        details: error instanceof Error ? error.message : 'Erro desconhecido'
+        details: error instanceof Error ? error.message : 'Erro desconhecido',
       },
       { status: 500 }
     );

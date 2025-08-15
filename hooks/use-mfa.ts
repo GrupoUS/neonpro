@@ -1,9 +1,9 @@
 /**
  * Custom React Hook for Multi-Factor Authentication
- * 
+ *
  * Provides comprehensive MFA functionality with healthcare compliance,
  * real-time updates, and error handling for the NeonPro platform.
- * 
+ *
  * Features:
  * - MFA setup and verification
  * - Real-time MFA settings updates
@@ -12,32 +12,31 @@
  * - Emergency bypass handling
  * - Comprehensive error handling
  * - Healthcare compliance logging
- * 
+ *
  * @version 1.0.0
  * @author NeonPro Development Team
  */
 
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { createClient } from '@supabase/supabase-js';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { getMFAService } from '@/lib/auth/mfa';
 import {
-  MFAUserSettings,
-  MFASetupRequest,
-  MFASetupResult,
-  MFAVerificationRequest,
-  MFAVerificationResult,
-  UseMFAOptions,
-  UseMFAReturn,
   MFAError,
-  MFAEvent,
-  MFAEventType,
+  type MFAEvent,
+  type MFAEventType,
+  type MFASetupRequest,
+  type MFASetupResult,
+  type MFAUserSettings,
+  type MFAVerificationRequest,
+  type MFAVerificationResult,
+  type UseMFAOptions,
+  type UseMFAReturn,
 } from '@/types/auth';
 
 // Hook options with defaults
 const DEFAULT_OPTIONS: Required<UseMFAOptions> = {
   userId: '',
   autoRefresh: true,
-  refreshInterval: 30000, // 30 seconds
+  refreshInterval: 30_000, // 30 seconds
 };
 
 /**
@@ -45,12 +44,12 @@ const DEFAULT_OPTIONS: Required<UseMFAOptions> = {
  */
 export function useMFA(options: UseMFAOptions): UseMFAReturn {
   const opts = { ...DEFAULT_OPTIONS, ...options };
-  
+
   // State management
   const [mfaSettings, setMfaSettings] = useState<MFAUserSettings | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  
+
   // Refs for cleanup and optimization
   const refreshIntervalRef = useRef<NodeJS.Timeout>();
   const abortControllerRef = useRef<AbortController>();
@@ -59,219 +58,236 @@ export function useMFA(options: UseMFAOptions): UseMFAReturn {
   /**
    * Fetch MFA settings from the server
    */
-  const fetchMFASettings = useCallback(async (showLoading = true) => {
-    if (!opts.userId) return;
+  const fetchMFASettings = useCallback(
+    async (showLoading = true) => {
+      if (!opts.userId) return;
 
-    try {
-      if (showLoading) setIsLoading(true);
-      setError(null);
+      try {
+        if (showLoading) setIsLoading(true);
+        setError(null);
 
-      // Cancel any ongoing requests
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
+        // Cancel any ongoing requests
+        if (abortControllerRef.current) {
+          abortControllerRef.current.abort();
+        }
+        abortControllerRef.current = new AbortController();
+
+        const settings = await mfaServiceRef.current.getUserMFASettings(
+          opts.userId
+        );
+        setMfaSettings(settings);
+
+        // Emit event for analytics/monitoring
+        emitMFAEvent('mfa:settings:loaded', {
+          userId: opts.userId,
+          isEnabled: settings?.isEnabled,
+          methodCount: settings?.methods.length || 0,
+        });
+      } catch (err) {
+        const error =
+          err instanceof Error
+            ? err
+            : new Error('Failed to fetch MFA settings');
+        setError(error);
+
+        // Emit error event
+        emitMFAEvent('mfa:settings:error', {
+          userId: opts.userId,
+          error: error.message,
+        });
+
+        console.error('Failed to fetch MFA settings:', error);
+      } finally {
+        if (showLoading) setIsLoading(false);
       }
-      abortControllerRef.current = new AbortController();
-
-      const settings = await mfaServiceRef.current.getUserMFASettings(opts.userId);
-      setMfaSettings(settings);
-
-      // Emit event for analytics/monitoring
-      emitMFAEvent('mfa:settings:loaded', {
-        userId: opts.userId,
-        isEnabled: settings?.isEnabled || false,
-        methodCount: settings?.methods.length || 0,
-      });
-
-    } catch (err) {
-      const error = err instanceof Error ? err : new Error('Failed to fetch MFA settings');
-      setError(error);
-      
-      // Emit error event
-      emitMFAEvent('mfa:settings:error', {
-        userId: opts.userId,
-        error: error.message,
-      });
-      
-      console.error('Failed to fetch MFA settings:', error);
-    } finally {
-      if (showLoading) setIsLoading(false);
-    }
-  }, [opts.userId]);
+    },
+    [opts.userId]
+  );
 
   /**
    * Setup MFA for the user
    */
-  const setupMFA = useCallback(async (request: MFASetupRequest): Promise<MFASetupResult> => {
-    if (!opts.userId) {
-      throw new MFAError('User ID is required', 'INVALID_USER_ID');
-    }
+  const setupMFA = useCallback(
+    async (request: MFASetupRequest): Promise<MFASetupResult> => {
+      if (!opts.userId) {
+        throw new MFAError('User ID is required', 'INVALID_USER_ID');
+      }
 
-    try {
-      setIsLoading(true);
-      setError(null);
+      try {
+        setIsLoading(true);
+        setError(null);
 
-      // Emit setup started event
-      emitMFAEvent('mfa:setup:started', {
-        userId: opts.userId,
-        method: request.method,
-      });
+        // Emit setup started event
+        emitMFAEvent('mfa:setup:started', {
+          userId: opts.userId,
+          method: request.method,
+        });
 
-      // Get device fingerprint if not provided
-      const deviceFingerprint = await getDeviceFingerprint();
-      
-      // Setup MFA
-      const result = await mfaServiceRef.current.setupMFA(
-        opts.userId,
-        request.method,
-        {
-          phoneNumber: request.phoneNumber,
-          deviceName: request.deviceName,
-          lgpdConsent: request.lgpdConsent,
-          userAgent: request.userAgent,
-          ipAddress: request.ipAddress,
-        }
-      );
+        // Get device fingerprint if not provided
+        const _deviceFingerprint = await getDeviceFingerprint();
 
-      // Refresh settings after successful setup
-      await fetchMFASettings(false);
+        // Setup MFA
+        const result = await mfaServiceRef.current.setupMFA(
+          opts.userId,
+          request.method,
+          {
+            phoneNumber: request.phoneNumber,
+            deviceName: request.deviceName,
+            lgpdConsent: request.lgpdConsent,
+            userAgent: request.userAgent,
+            ipAddress: request.ipAddress,
+          }
+        );
 
-      // Emit success event
-      emitMFAEvent('mfa:setup:completed', {
-        userId: opts.userId,
-        method: request.method,
-        backupCodesCount: result.backupCodes.length,
-      });
+        // Refresh settings after successful setup
+        await fetchMFASettings(false);
 
-      return result;
+        // Emit success event
+        emitMFAEvent('mfa:setup:completed', {
+          userId: opts.userId,
+          method: request.method,
+          backupCodesCount: result.backupCodes.length,
+        });
 
-    } catch (err) {
-      const error = err instanceof Error ? err : new Error('MFA setup failed');
-      setError(error);
-      
-      // Emit error event
-      emitMFAEvent('mfa:setup:failed', {
-        userId: opts.userId,
-        error: error.message,
-      });
-      
-      throw error;
-    } finally {
-      setIsLoading(false);
-    }
-  }, [opts.userId, fetchMFASettings]);
+        return result;
+      } catch (err) {
+        const error =
+          err instanceof Error ? err : new Error('MFA setup failed');
+        setError(error);
+
+        // Emit error event
+        emitMFAEvent('mfa:setup:failed', {
+          userId: opts.userId,
+          error: error.message,
+        });
+
+        throw error;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [opts.userId, fetchMFASettings]
+  );
 
   /**
    * Verify MFA token
    */
-  const verifyMFA = useCallback(async (request: MFAVerificationRequest): Promise<MFAVerificationResult> => {
-    if (!opts.userId) {
-      throw new MFAError('User ID is required', 'INVALID_USER_ID');
-    }
-
-    try {
-      setIsLoading(true);
-      setError(null);
-
-      // Emit verification started event
-      emitMFAEvent('mfa:verify:started', {
-        userId: opts.userId,
-        method: request.method,
-      });
-
-      // Get device fingerprint if not provided
-      const deviceFingerprint = request.deviceFingerprint || await getDeviceFingerprint();
-      
-      // Verify MFA
-      const result = await mfaServiceRef.current.verifyMFA(
-        opts.userId,
-        request.token,
-        request.method,
-        {
-          deviceFingerprint,
-          userAgent: request.userAgent,
-          ipAddress: request.ipAddress,
-          emergencyBypass: request.emergencyBypass,
-          emergencyReason: request.emergencyReason,
-        }
-      );
-
-      // Refresh settings after verification
-      await fetchMFASettings(false);
-
-      // Emit appropriate event based on result
-      if (result.isValid) {
-        emitMFAEvent('mfa:verify:success', {
-          userId: opts.userId,
-          method: request.method,
-          isEmergencyBypass: result.isEmergencyBypass,
-        });
-      } else if (result.lockedUntil) {
-        emitMFAEvent('mfa:verify:locked', {
-          userId: opts.userId,
-          lockedUntil: result.lockedUntil,
-          remainingAttempts: result.remainingAttempts,
-        });
-      } else {
-        emitMFAEvent('mfa:verify:failed', {
-          userId: opts.userId,
-          method: request.method,
-          remainingAttempts: result.remainingAttempts,
-        });
+  const verifyMFA = useCallback(
+    async (request: MFAVerificationRequest): Promise<MFAVerificationResult> => {
+      if (!opts.userId) {
+        throw new MFAError('User ID is required', 'INVALID_USER_ID');
       }
 
-      return result;
+      try {
+        setIsLoading(true);
+        setError(null);
 
-    } catch (err) {
-      const error = err instanceof Error ? err : new Error('MFA verification failed');
-      setError(error);
-      
-      // Emit error event
-      emitMFAEvent('mfa:verify:failed', {
-        userId: opts.userId,
-        error: error.message,
-      });
-      
-      throw error;
-    } finally {
-      setIsLoading(false);
-    }
-  }, [opts.userId, fetchMFASettings]);
+        // Emit verification started event
+        emitMFAEvent('mfa:verify:started', {
+          userId: opts.userId,
+          method: request.method,
+        });
+
+        // Get device fingerprint if not provided
+        const deviceFingerprint =
+          request.deviceFingerprint || (await getDeviceFingerprint());
+
+        // Verify MFA
+        const result = await mfaServiceRef.current.verifyMFA(
+          opts.userId,
+          request.token,
+          request.method,
+          {
+            deviceFingerprint,
+            userAgent: request.userAgent,
+            ipAddress: request.ipAddress,
+            emergencyBypass: request.emergencyBypass,
+            emergencyReason: request.emergencyReason,
+          }
+        );
+
+        // Refresh settings after verification
+        await fetchMFASettings(false);
+
+        // Emit appropriate event based on result
+        if (result.isValid) {
+          emitMFAEvent('mfa:verify:success', {
+            userId: opts.userId,
+            method: request.method,
+            isEmergencyBypass: result.isEmergencyBypass,
+          });
+        } else if (result.lockedUntil) {
+          emitMFAEvent('mfa:verify:locked', {
+            userId: opts.userId,
+            lockedUntil: result.lockedUntil,
+            remainingAttempts: result.remainingAttempts,
+          });
+        } else {
+          emitMFAEvent('mfa:verify:failed', {
+            userId: opts.userId,
+            method: request.method,
+            remainingAttempts: result.remainingAttempts,
+          });
+        }
+
+        return result;
+      } catch (err) {
+        const error =
+          err instanceof Error ? err : new Error('MFA verification failed');
+        setError(error);
+
+        // Emit error event
+        emitMFAEvent('mfa:verify:failed', {
+          userId: opts.userId,
+          error: error.message,
+        });
+
+        throw error;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [opts.userId, fetchMFASettings]
+  );
 
   /**
    * Disable MFA for the user
    */
-  const disableMFA = useCallback(async (reason: string): Promise<void> => {
-    if (!opts.userId) {
-      throw new MFAError('User ID is required', 'INVALID_USER_ID');
-    }
+  const disableMFA = useCallback(
+    async (reason: string): Promise<void> => {
+      if (!opts.userId) {
+        throw new MFAError('User ID is required', 'INVALID_USER_ID');
+      }
 
-    try {
-      setIsLoading(true);
-      setError(null);
+      try {
+        setIsLoading(true);
+        setError(null);
 
-      await mfaServiceRef.current.disableMFA(opts.userId, {
-        reason,
-        userAgent: navigator.userAgent,
-        ipAddress: await getUserIpAddress(),
-      });
+        await mfaServiceRef.current.disableMFA(opts.userId, {
+          reason,
+          userAgent: navigator.userAgent,
+          ipAddress: await getUserIpAddress(),
+        });
 
-      // Refresh settings after disabling
-      await fetchMFASettings(false);
+        // Refresh settings after disabling
+        await fetchMFASettings(false);
 
-      // Emit disabled event
-      emitMFAEvent('mfa:disabled', {
-        userId: opts.userId,
-        reason,
-      });
-
-    } catch (err) {
-      const error = err instanceof Error ? err : new Error('Failed to disable MFA');
-      setError(error);
-      throw error;
-    } finally {
-      setIsLoading(false);
-    }
-  }, [opts.userId, fetchMFASettings]);
+        // Emit disabled event
+        emitMFAEvent('mfa:disabled', {
+          userId: opts.userId,
+          reason,
+        });
+      } catch (err) {
+        const error =
+          err instanceof Error ? err : new Error('Failed to disable MFA');
+        setError(error);
+        throw error;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [opts.userId, fetchMFASettings]
+  );
 
   /**
    * Generate new backup codes
@@ -285,10 +301,13 @@ export function useMFA(options: UseMFAOptions): UseMFAReturn {
       setIsLoading(true);
       setError(null);
 
-      const backupCodes = await mfaServiceRef.current.generateNewBackupCodes(opts.userId, {
-        userAgent: navigator.userAgent,
-        ipAddress: await getUserIpAddress(),
-      });
+      const backupCodes = await mfaServiceRef.current.generateNewBackupCodes(
+        opts.userId,
+        {
+          userAgent: navigator.userAgent,
+          ipAddress: await getUserIpAddress(),
+        }
+      );
 
       // Refresh settings after generating codes
       await fetchMFASettings(false);
@@ -300,9 +319,11 @@ export function useMFA(options: UseMFAOptions): UseMFAReturn {
       });
 
       return backupCodes;
-
     } catch (err) {
-      const error = err instanceof Error ? err : new Error('Failed to generate backup codes');
+      const error =
+        err instanceof Error
+          ? err
+          : new Error('Failed to generate backup codes');
       setError(error);
       throw error;
     } finally {
@@ -313,7 +334,10 @@ export function useMFA(options: UseMFAOptions): UseMFAReturn {
   /**
    * Send SMS OTP
    */
-  const sendSMSOTP = useCallback(async (): Promise<{ success: boolean; expiresIn: number }> => {
+  const sendSMSOTP = useCallback(async (): Promise<{
+    success: boolean;
+    expiresIn: number;
+  }> => {
     if (!opts.userId) {
       throw new MFAError('User ID is required', 'INVALID_USER_ID');
     }
@@ -334,9 +358,9 @@ export function useMFA(options: UseMFAOptions): UseMFAReturn {
       });
 
       return result;
-
     } catch (err) {
-      const error = err instanceof Error ? err : new Error('Failed to send SMS OTP');
+      const error =
+        err instanceof Error ? err : new Error('Failed to send SMS OTP');
       setError(error);
       throw error;
     } finally {
@@ -416,8 +440,10 @@ async function getDeviceFingerprint(): Promise<string> {
   const data = encoder.encode(JSON.stringify(fingerprint));
   const hashBuffer = await crypto.subtle.digest('SHA-256', data);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
-  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-  
+  const hashHex = hashArray
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
+
   return hashHex;
 }
 
@@ -478,9 +504,11 @@ export function useMFAStatistics() {
 
       const stats = await getMFAService().getMFAStatistics();
       setStatistics(stats);
-
     } catch (err) {
-      const error = err instanceof Error ? err : new Error('Failed to fetch MFA statistics');
+      const error =
+        err instanceof Error
+          ? err
+          : new Error('Failed to fetch MFA statistics');
       setError(error);
       console.error('Failed to fetch MFA statistics:', error);
     } finally {

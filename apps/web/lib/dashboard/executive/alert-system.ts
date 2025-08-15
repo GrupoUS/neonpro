@@ -1,12 +1,30 @@
 import { z } from 'zod';
-import { createClient } from '@/lib/supabase/client';
 import { logger } from '@/lib/logger';
-import { kpiCalculationService, type KPICalculationResult } from './kpi-calculation-service';
+import { createClient } from '@/lib/supabase/client';
+import {
+  type KPICalculationResult,
+  kpiCalculationService,
+} from './kpi-calculation-service';
 
 // Alert Types and Schemas
-export const AlertSeveritySchema = z.enum(['low', 'medium', 'high', 'critical']);
-export const AlertStatusSchema = z.enum(['active', 'acknowledged', 'resolved', 'dismissed']);
-export const AlertTypeSchema = z.enum(['kpi_threshold', 'trend_anomaly', 'system_health', 'business_rule']);
+export const AlertSeveritySchema = z.enum([
+  'low',
+  'medium',
+  'high',
+  'critical',
+]);
+export const AlertStatusSchema = z.enum([
+  'active',
+  'acknowledged',
+  'resolved',
+  'dismissed',
+]);
+export const AlertTypeSchema = z.enum([
+  'kpi_threshold',
+  'trend_anomaly',
+  'system_health',
+  'business_rule',
+]);
 
 export const AlertRuleSchema = z.object({
   id: z.string().uuid(),
@@ -22,7 +40,7 @@ export const AlertRuleSchema = z.object({
     threshold: z.number(),
     secondaryThreshold: z.number().optional(), // for 'between' operator
     timeWindow: z.number().min(1).default(60), // minutes
-    consecutiveViolations: z.number().min(1).default(1)
+    consecutiveViolations: z.number().min(1).default(1),
   }),
   actions: z.object({
     sendEmail: z.boolean().default(false),
@@ -30,20 +48,24 @@ export const AlertRuleSchema = z.object({
     sendPushNotification: z.boolean().default(true),
     createTicket: z.boolean().default(false),
     emailRecipients: z.array(z.string().email()).optional(),
-    smsRecipients: z.array(z.string()).optional()
+    smsRecipients: z.array(z.string()).optional(),
   }),
-  schedule: z.object({
-    enabled: z.boolean().default(true),
-    timezone: z.string().default('America/Sao_Paulo'),
-    workingHours: z.object({
-      start: z.string().regex(/^\d{2}:\d{2}$/),
-      end: z.string().regex(/^\d{2}:\d{2}$/)
-    }).optional(),
-    workingDays: z.array(z.number().min(0).max(6)).optional(), // 0 = Sunday
-    excludeHolidays: z.boolean().default(false)
-  }).optional(),
+  schedule: z
+    .object({
+      enabled: z.boolean().default(true),
+      timezone: z.string().default('America/Sao_Paulo'),
+      workingHours: z
+        .object({
+          start: z.string().regex(/^\d{2}:\d{2}$/),
+          end: z.string().regex(/^\d{2}:\d{2}$/),
+        })
+        .optional(),
+      workingDays: z.array(z.number().min(0).max(6)).optional(), // 0 = Sunday
+      excludeHolidays: z.boolean().default(false),
+    })
+    .optional(),
   createdAt: z.string().datetime(),
-  updatedAt: z.string().datetime()
+  updatedAt: z.string().datetime(),
 });
 
 export const AlertInstanceSchema = z.object({
@@ -62,13 +84,15 @@ export const AlertInstanceSchema = z.object({
   resolvedBy: z.string().uuid().optional(),
   dismissedAt: z.string().datetime().optional(),
   dismissedBy: z.string().uuid().optional(),
-  metadata: z.object({
-    kpiValue: z.number().optional(),
-    threshold: z.number().optional(),
-    previousValue: z.number().optional(),
-    violationCount: z.number().default(1),
-    autoResolved: z.boolean().default(false)
-  }).optional()
+  metadata: z
+    .object({
+      kpiValue: z.number().optional(),
+      threshold: z.number().optional(),
+      previousValue: z.number().optional(),
+      violationCount: z.number().default(1),
+      autoResolved: z.boolean().default(false),
+    })
+    .optional(),
 });
 
 export const AlertNotificationSchema = z.object({
@@ -82,7 +106,7 @@ export const AlertNotificationSchema = z.object({
   deliveredAt: z.string().datetime().optional(),
   errorMessage: z.string().optional(),
   retryCount: z.number().default(0),
-  maxRetries: z.number().default(3)
+  maxRetries: z.number().default(3),
 });
 
 export type AlertSeverity = z.infer<typeof AlertSeveritySchema>;
@@ -96,7 +120,7 @@ export type AlertNotification = z.infer<typeof AlertNotificationSchema>;
 export class AlertSystem {
   private supabase = createClient();
   private evaluationTimers = new Map<string, NodeJS.Timeout>();
-  private readonly EVALUATION_INTERVAL = 60000; // 1 minute
+  private readonly EVALUATION_INTERVAL = 60_000; // 1 minute
   private isRunning = false;
 
   /**
@@ -142,7 +166,9 @@ export class AlertSystem {
   /**
    * Create a new alert rule
    */
-  async createAlertRule(rule: Omit<AlertRule, 'id' | 'createdAt' | 'updatedAt'>): Promise<AlertRule | null> {
+  async createAlertRule(
+    rule: Omit<AlertRule, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<AlertRule | null> {
     try {
       const ruleId = crypto.randomUUID();
       const now = new Date().toISOString();
@@ -161,7 +187,7 @@ export class AlertSystem {
           actions: rule.actions,
           schedule: rule.schedule,
           created_at: now,
-          updated_at: now
+          updated_at: now,
         })
         .select()
         .single();
@@ -183,7 +209,7 @@ export class AlertSystem {
         actions: data.actions,
         schedule: data.schedule,
         createdAt: data.created_at,
-        updatedAt: data.updated_at
+        updatedAt: data.updated_at,
       };
 
       // Start monitoring the new rule
@@ -201,7 +227,10 @@ export class AlertSystem {
   /**
    * Update an alert rule
    */
-  async updateAlertRule(ruleId: string, updates: Partial<AlertRule>): Promise<AlertRule | null> {
+  async updateAlertRule(
+    ruleId: string,
+    updates: Partial<AlertRule>
+  ): Promise<AlertRule | null> {
     try {
       const { data, error } = await this.supabase
         .from('alert_rules')
@@ -214,7 +243,7 @@ export class AlertSystem {
           conditions: updates.conditions,
           actions: updates.actions,
           schedule: updates.schedule,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', ruleId)
         .select()
@@ -237,7 +266,7 @@ export class AlertSystem {
         actions: data.actions,
         schedule: data.schedule,
         createdAt: data.created_at,
-        updatedAt: data.updated_at
+        updatedAt: data.updated_at,
       };
 
       // Restart rule evaluation
@@ -282,7 +311,10 @@ export class AlertSystem {
   /**
    * Get active alerts for a clinic
    */
-  async getActiveAlerts(clinicId: string, limit = 50): Promise<AlertInstance[]> {
+  async getActiveAlerts(
+    clinicId: string,
+    limit = 50
+  ): Promise<AlertInstance[]> {
     try {
       const { data, error } = await this.supabase
         .from('alert_instances')
@@ -297,7 +329,7 @@ export class AlertSystem {
         return [];
       }
 
-      return data.map(alert => ({
+      return data.map((alert) => ({
         id: alert.id,
         ruleId: alert.rule_id,
         clinicId: alert.clinic_id,
@@ -313,7 +345,7 @@ export class AlertSystem {
         resolvedBy: alert.resolved_by,
         dismissedAt: alert.dismissed_at,
         dismissedBy: alert.dismissed_by,
-        metadata: alert.metadata
+        metadata: alert.metadata,
       }));
     } catch (error) {
       logger.error('Error getting active alerts:', error);
@@ -331,7 +363,7 @@ export class AlertSystem {
         .update({
           status: 'acknowledged',
           acknowledged_at: new Date().toISOString(),
-          acknowledged_by: userId
+          acknowledged_by: userId,
         })
         .eq('id', alertId);
 
@@ -357,7 +389,7 @@ export class AlertSystem {
         .update({
           status: 'resolved',
           resolved_at: new Date().toISOString(),
-          resolved_by: userId
+          resolved_by: userId,
         })
         .eq('id', alertId);
 
@@ -383,7 +415,7 @@ export class AlertSystem {
         .update({
           status: 'dismissed',
           dismissed_at: new Date().toISOString(),
-          dismissed_by: userId
+          dismissed_by: userId,
         })
         .eq('id', alertId);
 
@@ -427,7 +459,7 @@ export class AlertSystem {
           actions: ruleData.actions,
           schedule: ruleData.schedule,
           createdAt: ruleData.created_at,
-          updatedAt: ruleData.updated_at
+          updatedAt: ruleData.updated_at,
         };
 
         this.startRuleEvaluation(rule);
@@ -480,20 +512,27 @@ export class AlertSystem {
       }
 
       // Get current KPI value
-      const kpiResults = await kpiCalculationService.calculateClinicKPIs(rule.clinicId);
-      const targetKPI = kpiResults.find(kpi => kpi.kpi.id === rule.conditions.kpiId);
+      const kpiResults = await kpiCalculationService.calculateClinicKPIs(
+        rule.clinicId
+      );
+      const targetKPI = kpiResults.find(
+        (kpi) => kpi.kpi.id === rule.conditions.kpiId
+      );
 
       if (!targetKPI) {
         return; // KPI not found
       }
 
       // Check if condition is violated
-      const isViolated = this.evaluateCondition(targetKPI.currentValue, rule.conditions);
+      const isViolated = this.evaluateCondition(
+        targetKPI.currentValue,
+        rule.conditions
+      );
 
       if (isViolated) {
         // Check for existing active alert
         const existingAlert = await this.getExistingActiveAlert(rule.id);
-        
+
         if (existingAlert) {
           // Update violation count
           await this.updateViolationCount(existingAlert.id);
@@ -524,7 +563,10 @@ export class AlertSystem {
     // Check working hours
     if (schedule.workingHours) {
       const currentTime = now.toTimeString().slice(0, 5);
-      if (currentTime < schedule.workingHours.start || currentTime > schedule.workingHours.end) {
+      if (
+        currentTime < schedule.workingHours.start ||
+        currentTime > schedule.workingHours.end
+      ) {
         return false;
       }
     }
@@ -543,7 +585,10 @@ export class AlertSystem {
   /**
    * Evaluate if a condition is violated
    */
-  private evaluateCondition(value: number, conditions: AlertRule['conditions']): boolean {
+  private evaluateCondition(
+    value: number,
+    conditions: AlertRule['conditions']
+  ): boolean {
     const { operator, threshold, secondaryThreshold } = conditions;
 
     switch (operator) {
@@ -560,8 +605,11 @@ export class AlertSystem {
       case '!=':
         return value !== threshold;
       case 'between':
-        return secondaryThreshold !== undefined && 
-               value >= threshold && value <= secondaryThreshold;
+        return (
+          secondaryThreshold !== undefined &&
+          value >= threshold &&
+          value <= secondaryThreshold
+        );
       default:
         return false;
     }
@@ -570,7 +618,9 @@ export class AlertSystem {
   /**
    * Get existing active alert for a rule
    */
-  private async getExistingActiveAlert(ruleId: string): Promise<AlertInstance | null> {
+  private async getExistingActiveAlert(
+    ruleId: string
+  ): Promise<AlertInstance | null> {
     try {
       const { data, error } = await this.supabase
         .from('alert_instances')
@@ -599,9 +649,9 @@ export class AlertSystem {
         resolvedBy: data.resolved_by,
         dismissedAt: data.dismissed_at,
         dismissedBy: data.dismissed_by,
-        metadata: data.metadata
+        metadata: data.metadata,
       };
-    } catch (error) {
+    } catch (_error) {
       return null;
     }
   }
@@ -609,12 +659,23 @@ export class AlertSystem {
   /**
    * Create a new alert instance
    */
-  private async createAlert(rule: AlertRule, kpiResult: KPICalculationResult): Promise<void> {
+  private async createAlert(
+    rule: AlertRule,
+    kpiResult: KPICalculationResult
+  ): Promise<void> {
     try {
       const alertId = crypto.randomUUID();
       const now = new Date().toISOString();
 
-      const alert: Omit<AlertInstance, 'acknowledgedAt' | 'acknowledgedBy' | 'resolvedAt' | 'resolvedBy' | 'dismissedAt' | 'dismissedBy'> = {
+      const alert: Omit<
+        AlertInstance,
+        | 'acknowledgedAt'
+        | 'acknowledgedBy'
+        | 'resolvedAt'
+        | 'resolvedBy'
+        | 'dismissedAt'
+        | 'dismissedBy'
+      > = {
         id: alertId,
         ruleId: rule.id,
         clinicId: rule.clinicId,
@@ -627,7 +688,7 @@ export class AlertSystem {
           kpiName: kpiResult.kpi.name,
           currentValue: kpiResult.currentValue,
           threshold: rule.conditions.threshold,
-          operator: rule.conditions.operator
+          operator: rule.conditions.operator,
         },
         triggeredAt: now,
         metadata: {
@@ -635,24 +696,22 @@ export class AlertSystem {
           threshold: rule.conditions.threshold,
           previousValue: kpiResult.previousValue,
           violationCount: 1,
-          autoResolved: false
-        }
+          autoResolved: false,
+        },
       };
 
-      const { error } = await this.supabase
-        .from('alert_instances')
-        .insert({
-          id: alert.id,
-          rule_id: alert.ruleId,
-          clinic_id: alert.clinicId,
-          title: alert.title,
-          message: alert.message,
-          severity: alert.severity,
-          status: alert.status,
-          data: alert.data,
-          triggered_at: alert.triggeredAt,
-          metadata: alert.metadata
-        });
+      const { error } = await this.supabase.from('alert_instances').insert({
+        id: alert.id,
+        rule_id: alert.ruleId,
+        clinic_id: alert.clinicId,
+        title: alert.title,
+        message: alert.message,
+        severity: alert.severity,
+        status: alert.status,
+        data: alert.data,
+        triggered_at: alert.triggeredAt,
+        metadata: alert.metadata,
+      });
 
       if (error) {
         logger.error('Error creating alert:', error);
@@ -671,14 +730,19 @@ export class AlertSystem {
   /**
    * Generate alert message
    */
-  private generateAlertMessage(rule: AlertRule, kpiResult: KPICalculationResult): string {
+  private generateAlertMessage(
+    rule: AlertRule,
+    kpiResult: KPICalculationResult
+  ): string {
     const kpiName = kpiResult.kpi.name;
     const currentValue = kpiResult.formattedValue;
     const threshold = rule.conditions.threshold;
     const operator = rule.conditions.operator;
 
-    return `O KPI "${kpiName}" está com valor ${currentValue}, que ${operator} ${threshold}. ` +
-           `Verifique os dados e tome as ações necessárias.`;
+    return (
+      `O KPI "${kpiName}" está com valor ${currentValue}, que ${operator} ${threshold}. ` +
+      'Verifique os dados e tome as ações necessárias.'
+    );
   }
 
   /**
@@ -704,8 +768,8 @@ export class AlertSystem {
         .update({
           metadata: {
             ...metadata,
-            violationCount: newViolationCount
-          }
+            violationCount: newViolationCount,
+          },
         })
         .eq('id', alertId);
     } catch (error) {
@@ -724,8 +788,8 @@ export class AlertSystem {
           status: 'resolved',
           resolved_at: new Date().toISOString(),
           metadata: {
-            autoResolved: true
-          }
+            autoResolved: true,
+          },
         })
         .eq('rule_id', ruleId)
         .eq('status', 'active');
@@ -737,7 +801,10 @@ export class AlertSystem {
   /**
    * Send alert notifications
    */
-  private async sendAlertNotifications(alert: AlertInstance, rule: AlertRule): Promise<void> {
+  private async sendAlertNotifications(
+    alert: AlertInstance,
+    rule: AlertRule
+  ): Promise<void> {
     try {
       const actions = rule.actions;
 
@@ -767,7 +834,10 @@ export class AlertSystem {
   /**
    * Send email notification
    */
-  private async sendEmailNotification(alert: AlertInstance, email: string): Promise<void> {
+  private async sendEmailNotification(
+    alert: AlertInstance,
+    email: string
+  ): Promise<void> {
     // Implementation would depend on email service (SendGrid, AWS SES, etc.)
     logger.info(`Sending email notification to ${email} for alert ${alert.id}`);
   }
@@ -775,7 +845,10 @@ export class AlertSystem {
   /**
    * Send SMS notification
    */
-  private async sendSMSNotification(alert: AlertInstance, phone: string): Promise<void> {
+  private async sendSMSNotification(
+    alert: AlertInstance,
+    phone: string
+  ): Promise<void> {
     // Implementation would depend on SMS service (Twilio, AWS SNS, etc.)
     logger.info(`Sending SMS notification to ${phone} for alert ${alert.id}`);
   }
@@ -792,13 +865,16 @@ export class AlertSystem {
    * Start periodic cleanup of old alerts
    */
   private startPeriodicCleanup(): void {
-    setInterval(async () => {
-      try {
-        await this.cleanupOldAlerts();
-      } catch (error) {
-        logger.error('Error during periodic cleanup:', error);
-      }
-    }, 24 * 60 * 60 * 1000); // Daily cleanup
+    setInterval(
+      async () => {
+        try {
+          await this.cleanupOldAlerts();
+        } catch (error) {
+          logger.error('Error during periodic cleanup:', error);
+        }
+      },
+      24 * 60 * 60 * 1000
+    ); // Daily cleanup
   }
 
   /**
@@ -837,7 +913,10 @@ export class AlertSystem {
         .from('alert_instances')
         .select('severity, status')
         .eq('clinic_id', clinicId)
-        .gte('triggered_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()); // Last 7 days
+        .gte(
+          'triggered_at',
+          new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+        ); // Last 7 days
 
       if (error) {
         logger.error('Error fetching alert statistics:', error);
@@ -846,11 +925,11 @@ export class AlertSystem {
 
       const stats = {
         total: data.length,
-        active: data.filter(a => a.status === 'active').length,
-        critical: data.filter(a => a.severity === 'critical').length,
-        high: data.filter(a => a.severity === 'high').length,
-        medium: data.filter(a => a.severity === 'medium').length,
-        low: data.filter(a => a.severity === 'low').length
+        active: data.filter((a) => a.status === 'active').length,
+        critical: data.filter((a) => a.severity === 'critical').length,
+        high: data.filter((a) => a.severity === 'high').length,
+        medium: data.filter((a) => a.severity === 'medium').length,
+        low: data.filter((a) => a.severity === 'low').length,
       };
 
       return stats;

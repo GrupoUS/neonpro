@@ -1,85 +1,83 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { MedicalRecordsManager } from '../medical-records';
-import type { 
-  MedicalRecord, 
-  MedicalHistory, 
-  MedicalAttachment,
-  CreateMedicalRecordData,
-  UpdateMedicalRecordData,
+import type {
   CreateMedicalHistoryData,
-  UpdateMedicalHistoryData
+  CreateMedicalRecordData,
+  MedicalAttachment,
+  MedicalHistory,
+  MedicalRecord,
+  UpdateMedicalRecordData,
 } from '../medical-records';
+import { MedicalRecordsManager } from '../medical-records';
 
 // Mock Supabase
 const mockSupabase = {
-  from: vi.fn(() => ({
-    select: vi.fn(() => ({
-      eq: vi.fn(() => ({
-        order: vi.fn(() => ({
+  from: jest.fn(() => ({
+    select: jest.fn(() => ({
+      eq: jest.fn(() => ({
+        order: jest.fn(() => ({
           data: [],
-          error: null
-        }))
-      }))
+          error: null,
+        })),
+      })),
     })),
-    insert: vi.fn(() => ({
-      select: vi.fn(() => ({
-        single: vi.fn(() => ({
+    insert: jest.fn(() => ({
+      select: jest.fn(() => ({
+        single: jest.fn(() => ({
           data: null,
-          error: null
-        }))
-      }))
+          error: null,
+        })),
+      })),
     })),
-    update: vi.fn(() => ({
-      eq: vi.fn(() => ({
-        select: vi.fn(() => ({
-          single: vi.fn(() => ({
+    update: jest.fn(() => ({
+      eq: jest.fn(() => ({
+        select: jest.fn(() => ({
+          single: jest.fn(() => ({
             data: null,
-            error: null
-          }))
-        }))
-      }))
+            error: null,
+          })),
+        })),
+      })),
     })),
-    delete: vi.fn(() => ({
-      eq: vi.fn(() => ({
+    delete: jest.fn(() => ({
+      eq: jest.fn(() => ({
         data: null,
-        error: null
-      }))
-    }))
+        error: null,
+      })),
+    })),
   })),
   storage: {
-    from: vi.fn(() => ({
-      upload: vi.fn(() => ({
+    from: jest.fn(() => ({
+      upload: jest.fn(() => ({
         data: { path: 'test-path' },
-        error: null
+        error: null,
       })),
-      download: vi.fn(() => ({
+      download: jest.fn(() => ({
         data: new Blob(['test']),
-        error: null
+        error: null,
       })),
-      remove: vi.fn(() => ({
+      remove: jest.fn(() => ({
         data: null,
-        error: null
-      }))
-    }))
-  }
+        error: null,
+      })),
+    })),
+  },
 };
 
 // Mock dependencies
-vi.mock('@/lib/supabase', () => ({
-  supabase: mockSupabase
+jest.mock('@/lib/supabase', () => ({
+  supabase: mockSupabase,
 }));
 
-vi.mock('@/lib/audit/audit-logger', () => ({
+jest.mock('@/lib/audit/audit-logger', () => ({
   AuditLogger: {
-    log: vi.fn()
-  }
+    log: jest.fn(),
+  },
 }));
 
-vi.mock('@/lib/lgpd/lgpd-manager', () => ({
+jest.mock('@/lib/lgpd/lgpd-manager', () => ({
   LGPDManager: {
-    logDataProcessing: vi.fn(),
-    checkDataRetention: vi.fn()
-  }
+    logDataProcessing: jest.fn(),
+    checkDataRetention: jest.fn(),
+  },
 }));
 
 describe('MedicalRecordsManager', () => {
@@ -90,11 +88,11 @@ describe('MedicalRecordsManager', () => {
 
   beforeEach(() => {
     manager = new MedicalRecordsManager();
-    vi.clearAllMocks();
+    jest.clearAllMocks();
   });
 
   afterEach(() => {
-    vi.resetAllMocks();
+    jest.resetAllMocks();
   });
 
   describe('Medical Records', () => {
@@ -114,7 +112,7 @@ describe('MedicalRecordsManager', () => {
       updatedAt: new Date(),
       createdBy: mockUserId,
       version: 1,
-      isDeleted: false
+      isDeleted: false,
     };
 
     describe('createMedicalRecord', () => {
@@ -127,15 +125,18 @@ describe('MedicalRecordsManager', () => {
           content: 'Conteúdo da consulta',
           priority: 'normal',
           tags: ['consulta'],
-          metadata: {}
+          metadata: {},
         };
 
         mockSupabase.from().insert().select().single.mockResolvedValueOnce({
           data: mockMedicalRecord,
-          error: null
+          error: null,
         });
 
-        const result = await manager.createMedicalRecord(createData, mockUserId);
+        const result = await manager.createMedicalRecord(
+          createData,
+          mockUserId
+        );
 
         expect(result.success).toBe(true);
         expect(result.data).toEqual(mockMedicalRecord);
@@ -151,15 +152,22 @@ describe('MedicalRecordsManager', () => {
           content: 'Conteúdo da consulta',
           priority: 'normal',
           tags: [],
-          metadata: {}
+          metadata: {},
         };
 
-        mockSupabase.from().insert().select().single.mockResolvedValueOnce({
-          data: null,
-          error: { message: 'Database error' }
-        });
+        mockSupabase
+          .from()
+          .insert()
+          .select()
+          .single.mockResolvedValueOnce({
+            data: null,
+            error: { message: 'Database error' },
+          });
 
-        const result = await manager.createMedicalRecord(createData, mockUserId);
+        const result = await manager.createMedicalRecord(
+          createData,
+          mockUserId
+        );
 
         expect(result.success).toBe(false);
         expect(result.error).toBe('Database error');
@@ -174,10 +182,13 @@ describe('MedicalRecordsManager', () => {
           content: 'Conteúdo',
           priority: 'normal',
           tags: [],
-          metadata: {}
+          metadata: {},
         } as CreateMedicalRecordData;
 
-        const result = await manager.createMedicalRecord(invalidData, mockUserId);
+        const result = await manager.createMedicalRecord(
+          invalidData,
+          mockUserId
+        );
 
         expect(result.success).toBe(false);
         expect(result.error).toContain('obrigatório');
@@ -186,10 +197,14 @@ describe('MedicalRecordsManager', () => {
 
     describe('getMedicalRecord', () => {
       it('should retrieve a medical record by id', async () => {
-        mockSupabase.from().select().eq().order.mockResolvedValueOnce({
-          data: [mockMedicalRecord],
-          error: null
-        });
+        mockSupabase
+          .from()
+          .select()
+          .eq()
+          .order.mockResolvedValueOnce({
+            data: [mockMedicalRecord],
+            error: null,
+          });
 
         const result = await manager.getMedicalRecord('record-1');
 
@@ -200,7 +215,7 @@ describe('MedicalRecordsManager', () => {
       it('should handle record not found', async () => {
         mockSupabase.from().select().eq().order.mockResolvedValueOnce({
           data: [],
-          error: null
+          error: null,
         });
 
         const result = await manager.getMedicalRecord('nonexistent');
@@ -215,17 +230,30 @@ describe('MedicalRecordsManager', () => {
         const updateData: UpdateMedicalRecordData = {
           title: 'Título Atualizado',
           content: 'Conteúdo atualizado',
-          tags: ['atualizado']
+          tags: ['atualizado'],
         };
 
-        const updatedRecord = { ...mockMedicalRecord, ...updateData, version: 2 };
+        const updatedRecord = {
+          ...mockMedicalRecord,
+          ...updateData,
+          version: 2,
+        };
 
-        mockSupabase.from().update().eq().select().single.mockResolvedValueOnce({
-          data: updatedRecord,
-          error: null
-        });
+        mockSupabase
+          .from()
+          .update()
+          .eq()
+          .select()
+          .single.mockResolvedValueOnce({
+            data: updatedRecord,
+            error: null,
+          });
 
-        const result = await manager.updateMedicalRecord('record-1', updateData, mockUserId);
+        const result = await manager.updateMedicalRecord(
+          'record-1',
+          updateData,
+          mockUserId
+        );
 
         expect(result.success).toBe(true);
         expect(result.data?.title).toBe('Título Atualizado');
@@ -234,15 +262,24 @@ describe('MedicalRecordsManager', () => {
 
       it('should handle update errors', async () => {
         const updateData: UpdateMedicalRecordData = {
-          title: 'Título Atualizado'
+          title: 'Título Atualizado',
         };
 
-        mockSupabase.from().update().eq().select().single.mockResolvedValueOnce({
-          data: null,
-          error: { message: 'Update failed' }
-        });
+        mockSupabase
+          .from()
+          .update()
+          .eq()
+          .select()
+          .single.mockResolvedValueOnce({
+            data: null,
+            error: { message: 'Update failed' },
+          });
 
-        const result = await manager.updateMedicalRecord('record-1', updateData, mockUserId);
+        const result = await manager.updateMedicalRecord(
+          'record-1',
+          updateData,
+          mockUserId
+        );
 
         expect(result.success).toBe(false);
         expect(result.error).toBe('Update failed');
@@ -251,12 +288,20 @@ describe('MedicalRecordsManager', () => {
 
     describe('deleteMedicalRecord', () => {
       it('should soft delete a medical record', async () => {
-        mockSupabase.from().update().eq().select().single.mockResolvedValueOnce({
-          data: { ...mockMedicalRecord, isDeleted: true },
-          error: null
-        });
+        mockSupabase
+          .from()
+          .update()
+          .eq()
+          .select()
+          .single.mockResolvedValueOnce({
+            data: { ...mockMedicalRecord, isDeleted: true },
+            error: null,
+          });
 
-        const result = await manager.deleteMedicalRecord('record-1', mockUserId);
+        const result = await manager.deleteMedicalRecord(
+          'record-1',
+          mockUserId
+        );
 
         expect(result.success).toBe(true);
         expect(mockSupabase.from().update).toHaveBeenCalledWith(
@@ -271,14 +316,17 @@ describe('MedicalRecordsManager', () => {
 
         mockSupabase.from().select().eq().order.mockResolvedValueOnce({
           data: mockRecords,
-          error: null
+          error: null,
         });
 
         const result = await manager.getPatientMedicalRecords(mockPatientId);
 
         expect(result.success).toBe(true);
         expect(result.data).toEqual(mockRecords);
-        expect(mockSupabase.from().select().eq).toHaveBeenCalledWith('patient_id', mockPatientId);
+        expect(mockSupabase.from().select().eq).toHaveBeenCalledWith(
+          'patient_id',
+          mockPatientId
+        );
       });
 
       it('should filter by type when specified', async () => {
@@ -286,11 +334,11 @@ describe('MedicalRecordsManager', () => {
 
         mockSupabase.from().select().eq().order.mockResolvedValueOnce({
           data: mockRecords,
-          error: null
+          error: null,
         });
 
         const result = await manager.getPatientMedicalRecords(mockPatientId, {
-          type: 'consultation'
+          type: 'consultation',
         });
 
         expect(result.success).toBe(true);
@@ -317,7 +365,7 @@ describe('MedicalRecordsManager', () => {
       createdAt: new Date(),
       updatedAt: new Date(),
       createdBy: mockUserId,
-      isDeleted: false
+      isDeleted: false,
     };
 
     describe('createMedicalHistory', () => {
@@ -333,15 +381,18 @@ describe('MedicalRecordsManager', () => {
           status: 'active',
           startDate: new Date(),
           tags: ['alergia'],
-          metadata: {}
+          metadata: {},
         };
 
         mockSupabase.from().insert().select().single.mockResolvedValueOnce({
           data: mockMedicalHistory,
-          error: null
+          error: null,
         });
 
-        const result = await manager.createMedicalHistory(createData, mockUserId);
+        const result = await manager.createMedicalHistory(
+          createData,
+          mockUserId
+        );
 
         expect(result.success).toBe(true);
         expect(result.data).toEqual(mockMedicalHistory);
@@ -359,10 +410,13 @@ describe('MedicalRecordsManager', () => {
           status: 'active',
           startDate: new Date(),
           tags: [],
-          metadata: {}
+          metadata: {},
         } as CreateMedicalHistoryData;
 
-        const result = await manager.createMedicalHistory(invalidData, mockUserId);
+        const result = await manager.createMedicalHistory(
+          invalidData,
+          mockUserId
+        );
 
         expect(result.success).toBe(false);
         expect(result.error).toContain('obrigatório');
@@ -371,10 +425,14 @@ describe('MedicalRecordsManager', () => {
 
     describe('getMedicalHistory', () => {
       it('should retrieve medical history by id', async () => {
-        mockSupabase.from().select().eq().order.mockResolvedValueOnce({
-          data: [mockMedicalHistory],
-          error: null
-        });
+        mockSupabase
+          .from()
+          .select()
+          .eq()
+          .order.mockResolvedValueOnce({
+            data: [mockMedicalHistory],
+            error: null,
+          });
 
         const result = await manager.getMedicalHistory('history-1');
 
@@ -389,7 +447,7 @@ describe('MedicalRecordsManager', () => {
 
         mockSupabase.from().select().eq().order.mockResolvedValueOnce({
           data: mockHistories,
-          error: null
+          error: null,
         });
 
         const result = await manager.getPatientMedicalHistory(mockPatientId);
@@ -403,11 +461,11 @@ describe('MedicalRecordsManager', () => {
 
         mockSupabase.from().select().eq().order.mockResolvedValueOnce({
           data: mockHistories,
-          error: null
+          error: null,
         });
 
         const result = await manager.getPatientMedicalHistory(mockPatientId, {
-          category: 'allergy'
+          category: 'allergy',
         });
 
         expect(result.success).toBe(true);
@@ -432,21 +490,23 @@ describe('MedicalRecordsManager', () => {
       metadata: {},
       uploadedAt: new Date(),
       uploadedBy: mockUserId,
-      isDeleted: false
+      isDeleted: false,
     };
 
     describe('uploadAttachment', () => {
       it('should upload attachment successfully', async () => {
-        const mockFile = new File(['test content'], 'test.pdf', { type: 'application/pdf' });
-        
+        const mockFile = new File(['test content'], 'test.pdf', {
+          type: 'application/pdf',
+        });
+
         mockSupabase.storage.from().upload.mockResolvedValueOnce({
           data: { path: 'medical/attachments/test.pdf' },
-          error: null
+          error: null,
         });
 
         mockSupabase.from().insert().select().single.mockResolvedValueOnce({
           data: mockAttachment,
-          error: null
+          error: null,
         });
 
         const result = await manager.uploadAttachment(
@@ -456,22 +516,26 @@ describe('MedicalRecordsManager', () => {
             category: 'document',
             subcategory: 'report',
             description: 'Test document',
-            tags: ['test']
+            tags: ['test'],
           },
           mockUserId
         );
 
         expect(result.success).toBe(true);
         expect(result.data).toEqual(mockAttachment);
-        expect(mockSupabase.storage.from).toHaveBeenCalledWith('medical-attachments');
+        expect(mockSupabase.storage.from).toHaveBeenCalledWith(
+          'medical-attachments'
+        );
       });
 
       it('should handle upload errors', async () => {
-        const mockFile = new File(['test content'], 'test.pdf', { type: 'application/pdf' });
-        
+        const mockFile = new File(['test content'], 'test.pdf', {
+          type: 'application/pdf',
+        });
+
         mockSupabase.storage.from().upload.mockResolvedValueOnce({
           data: null,
-          error: { message: 'Upload failed' }
+          error: { message: 'Upload failed' },
         });
 
         const result = await manager.uploadAttachment(
@@ -479,7 +543,7 @@ describe('MedicalRecordsManager', () => {
           mockFile,
           {
             category: 'document',
-            description: 'Test document'
+            description: 'Test document',
           },
           mockUserId
         );
@@ -489,14 +553,18 @@ describe('MedicalRecordsManager', () => {
       });
 
       it('should validate file size', async () => {
-        const largeFile = new File(['x'.repeat(11 * 1024 * 1024)], 'large.pdf', { type: 'application/pdf' });
-        
+        const largeFile = new File(
+          ['x'.repeat(11 * 1024 * 1024)],
+          'large.pdf',
+          { type: 'application/pdf' }
+        );
+
         const result = await manager.uploadAttachment(
           'record-1',
           largeFile,
           {
             category: 'document',
-            description: 'Large document'
+            description: 'Large document',
           },
           mockUserId
         );
@@ -506,14 +574,16 @@ describe('MedicalRecordsManager', () => {
       });
 
       it('should validate file type', async () => {
-        const invalidFile = new File(['test'], 'test.exe', { type: 'application/x-executable' });
-        
+        const invalidFile = new File(['test'], 'test.exe', {
+          type: 'application/x-executable',
+        });
+
         const result = await manager.uploadAttachment(
           'record-1',
           invalidFile,
           {
             category: 'document',
-            description: 'Invalid file'
+            description: 'Invalid file',
           },
           mockUserId
         );
@@ -525,10 +595,14 @@ describe('MedicalRecordsManager', () => {
 
     describe('getAttachment', () => {
       it('should retrieve attachment by id', async () => {
-        mockSupabase.from().select().eq().order.mockResolvedValueOnce({
-          data: [mockAttachment],
-          error: null
-        });
+        mockSupabase
+          .from()
+          .select()
+          .eq()
+          .order.mockResolvedValueOnce({
+            data: [mockAttachment],
+            error: null,
+          });
 
         const result = await manager.getAttachment('attachment-1');
 
@@ -539,16 +613,22 @@ describe('MedicalRecordsManager', () => {
 
     describe('downloadAttachment', () => {
       it('should download attachment successfully', async () => {
-        const mockBlob = new Blob(['test content'], { type: 'application/pdf' });
-        
-        mockSupabase.from().select().eq().order.mockResolvedValueOnce({
-          data: [mockAttachment],
-          error: null
+        const mockBlob = new Blob(['test content'], {
+          type: 'application/pdf',
         });
+
+        mockSupabase
+          .from()
+          .select()
+          .eq()
+          .order.mockResolvedValueOnce({
+            data: [mockAttachment],
+            error: null,
+          });
 
         mockSupabase.storage.from().download.mockResolvedValueOnce({
           data: mockBlob,
-          error: null
+          error: null,
         });
 
         const result = await manager.downloadAttachment('attachment-1');
@@ -558,14 +638,18 @@ describe('MedicalRecordsManager', () => {
       });
 
       it('should handle download errors', async () => {
-        mockSupabase.from().select().eq().order.mockResolvedValueOnce({
-          data: [mockAttachment],
-          error: null
-        });
+        mockSupabase
+          .from()
+          .select()
+          .eq()
+          .order.mockResolvedValueOnce({
+            data: [mockAttachment],
+            error: null,
+          });
 
         mockSupabase.storage.from().download.mockResolvedValueOnce({
           data: null,
-          error: { message: 'Download failed' }
+          error: { message: 'Download failed' },
         });
 
         const result = await manager.downloadAttachment('attachment-1');
@@ -577,22 +661,34 @@ describe('MedicalRecordsManager', () => {
 
     describe('deleteAttachment', () => {
       it('should delete attachment successfully', async () => {
-        mockSupabase.from().select().eq().order.mockResolvedValueOnce({
-          data: [mockAttachment],
-          error: null
-        });
+        mockSupabase
+          .from()
+          .select()
+          .eq()
+          .order.mockResolvedValueOnce({
+            data: [mockAttachment],
+            error: null,
+          });
 
         mockSupabase.storage.from().remove.mockResolvedValueOnce({
           data: null,
-          error: null
+          error: null,
         });
 
-        mockSupabase.from().update().eq().select().single.mockResolvedValueOnce({
-          data: { ...mockAttachment, isDeleted: true },
-          error: null
-        });
+        mockSupabase
+          .from()
+          .update()
+          .eq()
+          .select()
+          .single.mockResolvedValueOnce({
+            data: { ...mockAttachment, isDeleted: true },
+            error: null,
+          });
 
-        const result = await manager.deleteAttachment('attachment-1', mockUserId);
+        const result = await manager.deleteAttachment(
+          'attachment-1',
+          mockUserId
+        );
 
         expect(result.success).toBe(true);
         expect(mockSupabase.storage.from().remove).toHaveBeenCalled();
@@ -603,25 +699,27 @@ describe('MedicalRecordsManager', () => {
   describe('Search and Analytics', () => {
     describe('searchMedicalRecords', () => {
       it('should search medical records by query', async () => {
-        const mockRecords = [{
-          id: 'record-1',
-          patientId: mockPatientId,
-          title: 'Consulta de Rotina',
-          content: 'Paciente apresenta bom estado geral',
-          type: 'consultation',
-          status: 'active',
-          createdAt: new Date(),
-          rank: 0.5
-        }];
+        const mockRecords = [
+          {
+            id: 'record-1',
+            patientId: mockPatientId,
+            title: 'Consulta de Rotina',
+            content: 'Paciente apresenta bom estado geral',
+            type: 'consultation',
+            status: 'active',
+            createdAt: new Date(),
+            rank: 0.5,
+          },
+        ];
 
         mockSupabase.from().select().eq().order.mockResolvedValueOnce({
           data: mockRecords,
-          error: null
+          error: null,
         });
 
         const result = await manager.searchMedicalRecords({
           query: 'consulta',
-          patientId: mockPatientId
+          patientId: mockPatientId,
         });
 
         expect(result.success).toBe(true);
@@ -633,7 +731,7 @@ describe('MedicalRecordsManager', () => {
 
         mockSupabase.from().select().eq().order.mockResolvedValueOnce({
           data: mockRecords,
-          error: null
+          error: null,
         });
 
         const result = await manager.searchMedicalRecords({
@@ -643,7 +741,7 @@ describe('MedicalRecordsManager', () => {
           status: 'active',
           dateFrom: new Date('2024-01-01'),
           dateTo: new Date('2024-12-31'),
-          limit: 10
+          limit: 10,
         });
 
         expect(result.success).toBe(true);
@@ -653,7 +751,7 @@ describe('MedicalRecordsManager', () => {
 
     describe('getPatientSummary', () => {
       it('should generate patient summary', async () => {
-        const mockSummary = {
+        const _mockSummary = {
           totalRecords: 5,
           totalHistory: 3,
           totalAttachments: 2,
@@ -661,12 +759,15 @@ describe('MedicalRecordsManager', () => {
           activeConditions: [],
           allergies: [],
           medications: [],
-          lastUpdated: new Date()
+          lastUpdated: new Date(),
         };
 
         // Mock multiple database calls
-        mockSupabase.from().select().eq().order
-          .mockResolvedValueOnce({ data: [], error: null }) // records
+        mockSupabase
+          .from()
+          .select()
+          .eq()
+          .order.mockResolvedValueOnce({ data: [], error: null }) // records
           .mockResolvedValueOnce({ data: [], error: null }) // history
           .mockResolvedValueOnce({ data: [], error: null }) // attachments
           .mockResolvedValueOnce({ data: [], error: null }) // recent records
@@ -687,25 +788,29 @@ describe('MedicalRecordsManager', () => {
   describe('Utility Methods', () => {
     describe('generateThumbnail', () => {
       it('should generate thumbnail for image files', async () => {
-        const mockImageFile = new File(['fake image data'], 'test.jpg', { type: 'image/jpeg' });
-        
+        const mockImageFile = new File(['fake image data'], 'test.jpg', {
+          type: 'image/jpeg',
+        });
+
         // Mock canvas and context
         const mockCanvas = {
-          getContext: vi.fn(() => ({
-            drawImage: vi.fn(),
+          getContext: jest.fn(() => ({
+            drawImage: jest.fn(),
             canvas: {
-              toBlob: vi.fn((callback) => callback(new Blob(['thumbnail'], { type: 'image/jpeg' })))
-            }
+              toBlob: jest.fn((callback) =>
+                callback(new Blob(['thumbnail'], { type: 'image/jpeg' }))
+              ),
+            },
           })),
           width: 0,
-          height: 0
+          height: 0,
         };
-        
-        global.HTMLCanvasElement = vi.fn(() => mockCanvas) as any;
-        global.Image = vi.fn(() => ({
+
+        global.HTMLCanvasElement = jest.fn(() => mockCanvas) as any;
+        global.Image = jest.fn(() => ({
           onload: null,
           onerror: null,
-          src: ''
+          src: '',
         })) as any;
 
         const result = await manager.generateThumbnail(mockImageFile);
@@ -714,8 +819,10 @@ describe('MedicalRecordsManager', () => {
       });
 
       it('should return null for non-image files', async () => {
-        const mockPdfFile = new File(['pdf content'], 'test.pdf', { type: 'application/pdf' });
-        
+        const mockPdfFile = new File(['pdf content'], 'test.pdf', {
+          type: 'application/pdf',
+        });
+
         const result = await manager.generateThumbnail(mockPdfFile);
 
         expect(result).toBeNull();
@@ -727,7 +834,9 @@ describe('MedicalRecordsManager', () => {
         expect(manager.validateFileType('image/jpeg')).toBe(true);
         expect(manager.validateFileType('application/pdf')).toBe(true);
         expect(manager.validateFileType('text/plain')).toBe(true);
-        expect(manager.validateFileType('application/x-executable')).toBe(false);
+        expect(manager.validateFileType('application/x-executable')).toBe(
+          false
+        );
         expect(manager.validateFileType('application/javascript')).toBe(false);
       });
     });
@@ -735,8 +844,8 @@ describe('MedicalRecordsManager', () => {
     describe('formatFileSize', () => {
       it('should format file sizes correctly', () => {
         expect(manager.formatFileSize(1024)).toBe('1.0 KB');
-        expect(manager.formatFileSize(1048576)).toBe('1.0 MB');
-        expect(manager.formatFileSize(1073741824)).toBe('1.0 GB');
+        expect(manager.formatFileSize(1_048_576)).toBe('1.0 MB');
+        expect(manager.formatFileSize(1_073_741_824)).toBe('1.0 GB');
         expect(manager.formatFileSize(500)).toBe('500 B');
       });
     });
@@ -744,7 +853,11 @@ describe('MedicalRecordsManager', () => {
 
   describe('Error Handling', () => {
     it('should handle database connection errors', async () => {
-      mockSupabase.from().select().eq().order.mockRejectedValueOnce(new Error('Connection failed'));
+      mockSupabase
+        .from()
+        .select()
+        .eq()
+        .order.mockRejectedValueOnce(new Error('Connection failed'));
 
       const result = await manager.getMedicalRecord('record-1');
 
@@ -770,7 +883,7 @@ describe('MedicalRecordsManager', () => {
         content: 'Content',
         priority: 'normal',
         tags: [],
-        metadata: {}
+        metadata: {},
       };
 
       const result = await manager.createMedicalRecord(createData, '');
@@ -791,7 +904,7 @@ describe('MedicalRecordsManager', () => {
         content: 'Consulta que terá anexo',
         priority: 'normal',
         tags: [],
-        metadata: {}
+        metadata: {},
       };
 
       const mockRecord = {
@@ -803,23 +916,28 @@ describe('MedicalRecordsManager', () => {
         updatedAt: new Date(),
         createdBy: mockUserId,
         version: 1,
-        isDeleted: false
+        isDeleted: false,
       };
 
       mockSupabase.from().insert().select().single.mockResolvedValueOnce({
         data: mockRecord,
-        error: null
+        error: null,
       });
 
-      const recordResult = await manager.createMedicalRecord(createData, mockUserId);
+      const recordResult = await manager.createMedicalRecord(
+        createData,
+        mockUserId
+      );
       expect(recordResult.success).toBe(true);
 
       // Upload attachment
-      const mockFile = new File(['test'], 'test.pdf', { type: 'application/pdf' });
-      
+      const mockFile = new File(['test'], 'test.pdf', {
+        type: 'application/pdf',
+      });
+
       mockSupabase.storage.from().upload.mockResolvedValueOnce({
         data: { path: 'medical/attachments/test.pdf' },
-        error: null
+        error: null,
       });
 
       const mockAttachment = {
@@ -833,12 +951,12 @@ describe('MedicalRecordsManager', () => {
         category: 'document',
         uploadedAt: new Date(),
         uploadedBy: mockUserId,
-        isDeleted: false
+        isDeleted: false,
       };
 
       mockSupabase.from().insert().select().single.mockResolvedValueOnce({
         data: mockAttachment,
-        error: null
+        error: null,
       });
 
       const attachmentResult = await manager.uploadAttachment(
@@ -854,12 +972,17 @@ describe('MedicalRecordsManager', () => {
 
     it('should handle complete patient data retrieval', async () => {
       // Mock all patient data
-      mockSupabase.from().select().eq().order
-        .mockResolvedValueOnce({ data: [mockMedicalRecord], error: null }) // records
+      mockSupabase
+        .from()
+        .select()
+        .eq()
+        .order.mockResolvedValueOnce({ data: [mockMedicalRecord], error: null }) // records
         .mockResolvedValueOnce({ data: [], error: null }); // history
 
-      const recordsResult = await manager.getPatientMedicalRecords(mockPatientId);
-      const historyResult = await manager.getPatientMedicalHistory(mockPatientId);
+      const recordsResult =
+        await manager.getPatientMedicalRecords(mockPatientId);
+      const historyResult =
+        await manager.getPatientMedicalHistory(mockPatientId);
 
       expect(recordsResult.success).toBe(true);
       expect(historyResult.success).toBe(true);

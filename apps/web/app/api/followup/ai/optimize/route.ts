@@ -2,32 +2,34 @@
 // Epic 7.3: Treatment Follow-up Automation
 // Author: VoidBeast Agent
 
+import { type NextRequest, NextResponse } from 'next/server';
 import { treatmentFollowupService } from '@/app/lib/services/treatment-followup-service';
-import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
   try {
     const { patientId, protocolId, channel } = await request.json();
-    
-    if (!patientId || !protocolId || !channel) {
+
+    if (!(patientId && protocolId && channel)) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Missing required parameters: patientId, protocolId, channel' 
+        {
+          success: false,
+          error: 'Missing required parameters: patientId, protocolId, channel',
         },
         { status: 400 }
       );
     }
 
     // Calculate optimal timing
-    const optimalTiming = await treatmentFollowupService.calculateOptimalTiming(patientId);
-    
+    const optimalTiming =
+      await treatmentFollowupService.calculateOptimalTiming(patientId);
+
     // Generate personalized message
-    const personalizedMessage = await treatmentFollowupService.generatePersonalizedMessage(
-      patientId, 
-      protocolId, 
-      channel
-    );
+    const personalizedMessage =
+      await treatmentFollowupService.generatePersonalizedMessage(
+        patientId,
+        protocolId,
+        channel
+      );
 
     return NextResponse.json({
       success: true,
@@ -38,18 +40,18 @@ export async function POST(request: NextRequest) {
           bestTimeToSend: `${optimalTiming.optimal_hour.toString().padStart(2, '0')}:00`,
           bestDayOfWeek: optimalTiming.optimal_day_of_week,
           confidenceScore: optimalTiming.confidence_score,
-          channel: channel,
-          messageLength: personalizedMessage.length
-        }
-      }
+          channel,
+          messageLength: personalizedMessage.length,
+        },
+      },
     });
   } catch (error) {
     console.error('Error optimizing follow-up:', error);
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: 'Failed to optimize follow-up',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );

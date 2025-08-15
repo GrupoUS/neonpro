@@ -1,26 +1,25 @@
 'use client';
 
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Users, 
-  Search, 
+import { AnimatePresence, motion } from 'framer-motion';
+import {
+  Activity,
+  Calendar,
+  Edit,
+  Eye,
+  FileText,
   Filter,
-  Plus,
-  User,
-  Phone,
   Mail,
   MapPin,
-  Calendar,
-  FileText,
-  Edit,
-  Trash2,
-  Eye,
+  Phone,
+  Plus,
+  Search,
+  User,
   UserPlus,
-  Activity
+  Users,
 } from 'lucide-react';
-import { NeonGradientCard } from '@/components/ui/NeonGradientCard';
+import { useState } from 'react';
 import { CosmicGlowButton } from '@/components/ui/CosmicGlowButton';
+import { NeonGradientCard } from '@/components/ui/NeonGradientCard';
 import { formatDate } from '@/lib/utils';
 
 // Dados mock para pacientes
@@ -38,7 +37,7 @@ const pacientesData = {
       status: 'ativo',
       plan: 'Premium',
       consultations: 15,
-      gender: 'Feminino'
+      gender: 'Feminino',
     },
     {
       id: 2,
@@ -52,7 +51,7 @@ const pacientesData = {
       status: 'ativo',
       plan: 'Básico',
       consultations: 8,
-      gender: 'Masculino'
+      gender: 'Masculino',
     },
     {
       id: 3,
@@ -66,7 +65,7 @@ const pacientesData = {
       status: 'inativo',
       plan: 'Standard',
       consultations: 3,
-      gender: 'Feminino'
+      gender: 'Feminino',
     },
     {
       id: 4,
@@ -80,15 +79,15 @@ const pacientesData = {
       status: 'ativo',
       plan: 'Premium',
       consultations: 22,
-      gender: 'Masculino'
-    }
+      gender: 'Masculino',
+    },
   ],
   stats: {
     total: 1247,
     active: 1156,
     inactive: 91,
-    newThisMonth: 23
-  }
+    newThisMonth: 23,
+  },
 };
 
 const statusConfig = {
@@ -97,21 +96,21 @@ const statusConfig = {
     label: 'Ativo',
     bgColor: 'bg-success/10',
     borderColor: 'border-success/30',
-    textColor: 'text-success'
+    textColor: 'text-success',
   },
   inativo: {
     color: 'danger',
     label: 'Inativo',
     bgColor: 'bg-danger/10',
     borderColor: 'border-danger/30',
-    textColor: 'text-danger'
-  }
+    textColor: 'text-danger',
+  },
 };
 
 const planConfig = {
-  'Básico': { color: 'secondary', gradient: 'secondary' },
-  'Standard': { color: 'accent', gradient: 'accent' },
-  'Premium': { color: 'warning', gradient: 'warning' }
+  Básico: { color: 'secondary', gradient: 'secondary' },
+  Standard: { color: 'accent', gradient: 'accent' },
+  Premium: { color: 'warning', gradient: 'warning' },
 };
 
 const PatientCard = ({ patient, index }) => {
@@ -121,42 +120,50 @@ const PatientCard = ({ patient, index }) => {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, y: 20 }}
       transition={{ delay: index * 0.1 }}
-      whileHover={{ 
-        scale: 1.02, 
+      whileHover={{
+        scale: 1.02,
         y: -5,
-        transition: { 
-          duration: 0.2, 
-          type: 'spring', 
-          stiffness: 400, 
-          damping: 17 
-        }
+        transition: {
+          duration: 0.2,
+          type: 'spring',
+          stiffness: 400,
+          damping: 17,
+        },
       }}
     >
-      <NeonGradientCard gradient={planInfo.gradient} className="group">
-        <div className="flex items-start justify-between mb-4">
+      <NeonGradientCard className="group" gradient={planInfo.gradient}>
+        <div className="mb-4 flex items-start justify-between">
           <div className="flex items-center space-x-4">
-            <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/20">
               <User className="h-8 w-8 text-primary" />
             </div>
             <div>
-              <h3 className="text-xl font-semibold text-white">{patient.name}</h3>
-              <p className="text-gray-400 text-sm">{patient.gender} • {age} anos</p>
-              <div className={`inline-flex px-2 py-1 rounded-full text-xs font-medium mt-1 ${statusInfo.bgColor} ${statusInfo.borderColor} border`}>
+              <h3 className="font-semibold text-white text-xl">
+                {patient.name}
+              </h3>
+              <p className="text-gray-400 text-sm">
+                {patient.gender} • {age} anos
+              </p>
+              <div
+                className={`mt-1 inline-flex rounded-full px-2 py-1 font-medium text-xs ${statusInfo.bgColor} ${statusInfo.borderColor} border`}
+              >
                 <span className={statusInfo.textColor}>{statusInfo.label}</span>
               </div>
             </div>
           </div>
-          <div className={`px-3 py-1 rounded-full bg-${planInfo.color}/20 border border-${planInfo.color}/30`}>
-            <span className={`text-sm font-medium text-${planInfo.color}`}>
+          <div
+            className={`rounded-full px-3 py-1 bg-${planInfo.color}/20 border border-${planInfo.color}/30`}
+          >
+            <span className={`font-medium text-sm text-${planInfo.color}`}>
               {patient.plan}
             </span>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
           <div className="space-y-2">
             <div className="flex items-center space-x-2 text-gray-300">
               <Mail className="h-4 w-4 text-accent" />
@@ -170,7 +177,9 @@ const PatientCard = ({ patient, index }) => {
           <div className="space-y-2">
             <div className="flex items-center space-x-2 text-gray-300">
               <Calendar className="h-4 w-4 text-accent" />
-              <span className="text-sm">Última visita: {formatDate(patient.lastVisit)}</span>
+              <span className="text-sm">
+                Última visita: {formatDate(patient.lastVisit)}
+              </span>
             </div>
             <div className="flex items-center space-x-2 text-gray-300">
               <Activity className="h-4 w-4 text-accent" />
@@ -179,25 +188,37 @@ const PatientCard = ({ patient, index }) => {
           </div>
         </div>
 
-        <div className="mb-4 p-3 bg-white/5 rounded-lg border border-white/10">
-          <div className="flex items-center space-x-2 mb-2">
+        <div className="mb-4 rounded-lg border border-white/10 bg-white/5 p-3">
+          <div className="mb-2 flex items-center space-x-2">
             <MapPin className="h-4 w-4 text-accent" />
             <span className="text-gray-400 text-sm">Endereço</span>
           </div>
-          <p className="text-white text-sm">{patient.address}</p>
+          <p className="text-sm text-white">{patient.address}</p>
         </div>
 
         <div className="flex space-x-2">
-          <CosmicGlowButton variant="primary" size="sm" className="flex-1 flex items-center justify-center">
-            <Eye className="h-4 w-4 mr-1" />
+          <CosmicGlowButton
+            className="flex flex-1 items-center justify-center"
+            size="sm"
+            variant="primary"
+          >
+            <Eye className="mr-1 h-4 w-4" />
             Visualizar
           </CosmicGlowButton>
-          <CosmicGlowButton variant="secondary" size="sm" className="flex-1 flex items-center justify-center">
-            <Edit className="h-4 w-4 mr-1" />
+          <CosmicGlowButton
+            className="flex flex-1 items-center justify-center"
+            size="sm"
+            variant="secondary"
+          >
+            <Edit className="mr-1 h-4 w-4" />
             Editar
           </CosmicGlowButton>
-          <CosmicGlowButton variant="success" size="sm" className="flex-1 flex items-center justify-center">
-            <Calendar className="h-4 w-4 mr-1" />
+          <CosmicGlowButton
+            className="flex flex-1 items-center justify-center"
+            size="sm"
+            variant="success"
+          >
+            <Calendar className="mr-1 h-4 w-4" />
             Agendar
           </CosmicGlowButton>
         </div>
@@ -207,23 +228,21 @@ const PatientCard = ({ patient, index }) => {
 };
 
 const StatCard = ({ icon: Icon, title, value, gradient, subtitle }) => (
-  <NeonGradientCard gradient={gradient} className="group">
+  <NeonGradientCard className="group" gradient={gradient}>
     <div className="flex items-center justify-between">
       <div className="space-y-2">
-        <p className="text-gray-400 text-sm font-medium">{title}</p>
-        <motion.p 
-          className="text-3xl font-bold text-white"
-          initial={{ scale: 0.8 }}
+        <p className="font-medium text-gray-400 text-sm">{title}</p>
+        <motion.p
           animate={{ scale: 1 }}
+          className="font-bold text-3xl text-white"
+          initial={{ scale: 0.8 }}
           transition={{ delay: 0.2 }}
         >
           {value}
         </motion.p>
-        {subtitle && (
-          <p className="text-gray-400 text-xs">{subtitle}</p>
-        )}
+        {subtitle && <p className="text-gray-400 text-xs">{subtitle}</p>}
       </div>
-      <div className="p-3 rounded-lg bg-white/10 backdrop-blur-sm">
+      <div className="rounded-lg bg-white/10 p-3 backdrop-blur-sm">
         <Icon className="h-8 w-8 text-accent" />
       </div>
     </div>
@@ -235,75 +254,75 @@ export default function Pacientes() {
   const [filterStatus, setFilterStatus] = useState('todos');
   const [filterPlan, setFilterPlan] = useState('todos');
 
-  const filteredPatients = pacientesData.patients.filter(patient => {
-    const matchesSearch = patient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         patient.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         patient.phone.includes(searchTerm);
-    const matchesStatus = filterStatus === 'todos' || patient.status === filterStatus;
+  const filteredPatients = pacientesData.patients.filter((patient) => {
+    const matchesSearch =
+      patient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      patient.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      patient.phone.includes(searchTerm);
+    const matchesStatus =
+      filterStatus === 'todos' || patient.status === filterStatus;
     const matchesPlan = filterPlan === 'todos' || patient.plan === filterPlan;
     return matchesSearch && matchesStatus && matchesPlan;
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 animate-background-position-spin">
+    <div className="min-h-screen animate-background-position-spin bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
       <div className="container mx-auto px-6 py-8">
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
+          initial={{ opacity: 0, y: -20 }}
         >
-          <h1 className="text-4xl font-bold text-white mb-2">
+          <h1 className="mb-2 font-bold text-4xl text-white">
             Pacientes NEONPROV1
           </h1>
-          <p className="text-gray-400">
-            Gerencie informações dos pacientes
-          </p>
+          <p className="text-gray-400">Gerencie informações dos pacientes</p>
         </motion.div>
 
         {/* Estatísticas */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
           <StatCard
+            gradient="primary"
             icon={Users}
+            subtitle="Registrados no sistema"
             title="Total de Pacientes"
             value={pacientesData.stats.total}
-            gradient="primary"
-            subtitle="Registrados no sistema"
           />
           <StatCard
+            gradient="success"
             icon={UserPlus}
+            subtitle="Com consultas recentes"
             title="Pacientes Ativos"
             value={pacientesData.stats.active}
-            gradient="success"
-            subtitle="Com consultas recentes"
           />
           <StatCard
+            gradient="danger"
             icon={Activity}
+            subtitle="Sem consultas há 3+ meses"
             title="Pacientes Inativos"
             value={pacientesData.stats.inactive}
-            gradient="danger"
-            subtitle="Sem consultas há 3+ meses"
           />
           <StatCard
+            gradient="accent"
             icon={Calendar}
+            subtitle="Cadastrados em janeiro"
             title="Novos Este Mês"
             value={pacientesData.stats.newThisMonth}
-            gradient="accent"
-            subtitle="Cadastrados em janeiro"
           />
         </div>
 
         {/* Controles de filtro */}
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
+        <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-5">
           <div className="md:col-span-2">
             <NeonGradientCard gradient="secondary">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Search className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 transform text-gray-400" />
                 <input
-                  type="text"
-                  placeholder="Buscar por nome, email ou telefone..."
-                  value={searchTerm}
+                  className="w-full rounded-lg border border-white/20 bg-white/10 py-2 pr-4 pl-10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent"
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent"
+                  placeholder="Buscar por nome, email ou telefone..."
+                  type="text"
+                  value={searchTerm}
                 />
               </div>
             </NeonGradientCard>
@@ -311,11 +330,11 @@ export default function Pacientes() {
 
           <NeonGradientCard gradient="accent">
             <div className="relative">
-              <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Filter className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 transform text-gray-400" />
               <select
-                value={filterStatus}
+                className="w-full appearance-none rounded-lg border border-white/20 bg-white/10 py-2 pr-4 pl-10 text-white focus:outline-none focus:ring-2 focus:ring-accent"
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-accent appearance-none"
+                value={filterStatus}
               >
                 <option value="todos">Todos os Status</option>
                 <option value="ativo">Ativos</option>
@@ -326,11 +345,11 @@ export default function Pacientes() {
 
           <NeonGradientCard gradient="warning">
             <div className="relative">
-              <FileText className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <FileText className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 transform text-gray-400" />
               <select
-                value={filterPlan}
+                className="w-full appearance-none rounded-lg border border-white/20 bg-white/10 py-2 pr-4 pl-10 text-white focus:outline-none focus:ring-2 focus:ring-accent"
                 onChange={(e) => setFilterPlan(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-accent appearance-none"
+                value={filterPlan}
               >
                 <option value="todos">Todos os Planos</option>
                 <option value="Básico">Básico</option>
@@ -340,37 +359,36 @@ export default function Pacientes() {
             </div>
           </NeonGradientCard>
 
-          <CosmicGlowButton variant="success" className="h-full flex items-center justify-center">
-            <Plus className="h-5 w-5 mr-2" />
+          <CosmicGlowButton
+            className="flex h-full items-center justify-center"
+            variant="success"
+          >
+            <Plus className="mr-2 h-5 w-5" />
             Novo Paciente
           </CosmicGlowButton>
         </div>
 
         {/* Lista de pacientes */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <AnimatePresence>
             {filteredPatients.map((patient, index) => (
-              <PatientCard
-                key={patient.id}
-                patient={patient}
-                index={index}
-              />
+              <PatientCard index={index} key={patient.id} patient={patient} />
             ))}
           </AnimatePresence>
         </div>
 
         {filteredPatients.length === 0 && (
           <motion.div
-            initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="text-center py-12"
+            className="py-12 text-center"
+            initial={{ opacity: 0 }}
           >
-            <NeonGradientCard gradient="primary" className="max-w-md mx-auto">
-              <Users className="h-16 w-16 text-accent mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-white mb-2">
+            <NeonGradientCard className="mx-auto max-w-md" gradient="primary">
+              <Users className="mx-auto mb-4 h-16 w-16 text-accent" />
+              <h3 className="mb-2 font-semibold text-white text-xl">
                 Nenhum paciente encontrado
               </h3>
-              <p className="text-gray-400 mb-4">
+              <p className="mb-4 text-gray-400">
                 Não há pacientes que correspondam aos filtros selecionados.
               </p>
               <CosmicGlowButton variant="primary">

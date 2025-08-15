@@ -7,14 +7,14 @@ import { createClient } from '@/app/utils/supabase/server';
 export async function GET(request: Request) {
   try {
     const supabase = createClient();
-    
+
     // Check authentication
-    const { data: { session }, error: authError } = await supabase.auth.getSession();
+    const {
+      data: { session },
+      error: authError,
+    } = await supabase.auth.getSession();
     if (authError || !session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
@@ -92,55 +92,83 @@ export async function GET(request: Request) {
     const stats = {
       tax_calculations: {
         total: taxCalculations.length,
-        total_base_amount: taxCalculations.reduce((sum, calc) => sum + (calc.base_amount || 0), 0),
+        total_base_amount: taxCalculations.reduce(
+          (sum, calc) => sum + (calc.base_amount || 0),
+          0
+        ),
         total_tax_amount: taxCalculations.reduce((sum, calc) => {
           const taxes = calc.taxes || {};
-          return sum + Object.values(taxes).reduce((taxSum: number, tax: any) => taxSum + (tax.amount || 0), 0);
+          return (
+            sum +
+            Object.values(taxes).reduce(
+              (taxSum: number, tax: any) => taxSum + (tax.amount || 0),
+              0
+            )
+          );
         }, 0),
-        total_final_amount: taxCalculations.reduce((sum, calc) => sum + (calc.total_amount || 0), 0),
-        by_service_type: {}
+        total_final_amount: taxCalculations.reduce(
+          (sum, calc) => sum + (calc.total_amount || 0),
+          0
+        ),
+        by_service_type: {},
       },
       nfe_documents: {
         total: nfeDocuments.length,
-        by_status: nfeDocuments.reduce((acc, nfe) => {
-          acc[nfe.status] = (acc[nfe.status] || 0) + 1;
-          return acc;
-        }, {} as Record<string, number>),
+        by_status: nfeDocuments.reduce(
+          (acc, nfe) => {
+            acc[nfe.status] = (acc[nfe.status] || 0) + 1;
+            return acc;
+          },
+          {} as Record<string, number>
+        ),
         total_value: nfeDocuments.reduce((sum, nfe) => {
           const totals = nfe.totals || {};
           return sum + (totals.total || 0);
         }, 0),
-        authorized_count: nfeDocuments.filter(nfe => nfe.status === 'authorized').length,
-        cancelled_count: nfeDocuments.filter(nfe => nfe.status === 'cancelled').length
+        authorized_count: nfeDocuments.filter(
+          (nfe) => nfe.status === 'authorized'
+        ).length,
+        cancelled_count: nfeDocuments.filter(
+          (nfe) => nfe.status === 'cancelled'
+        ).length,
       },
       compliance: {
-        authorization_rate: nfeDocuments.length > 0 
-          ? (nfeDocuments.filter(nfe => nfe.status === 'authorized').length / nfeDocuments.length) * 100 
-          : 0,
+        authorization_rate:
+          nfeDocuments.length > 0
+            ? (nfeDocuments.filter((nfe) => nfe.status === 'authorized')
+                .length /
+                nfeDocuments.length) *
+              100
+            : 0,
         average_processing_time: 0, // TODO: Calculate based on actual processing times
-        pending_authorizations: nfeDocuments.filter(nfe => nfe.status === 'draft').length
-      }
+        pending_authorizations: nfeDocuments.filter(
+          (nfe) => nfe.status === 'draft'
+        ).length,
+      },
     };
 
     // Calculate service type breakdown
-    taxCalculations.forEach(calc => {
+    taxCalculations.forEach((calc) => {
       const serviceType = calc.service_type || 'unknown';
       if (!stats.tax_calculations.by_service_type[serviceType]) {
         stats.tax_calculations.by_service_type[serviceType] = {
           count: 0,
           total_base: 0,
           total_tax: 0,
-          total_final: 0
+          total_final: 0,
         };
       }
-      
+
       const serviceStats = stats.tax_calculations.by_service_type[serviceType];
       serviceStats.count++;
       serviceStats.total_base += calc.base_amount || 0;
       serviceStats.total_final += calc.total_amount || 0;
-      
+
       const taxes = calc.taxes || {};
-      serviceStats.total_tax += Object.values(taxes).reduce((sum: number, tax: any) => sum + (tax.amount || 0), 0);
+      serviceStats.total_tax += Object.values(taxes).reduce(
+        (sum: number, tax: any) => sum + (tax.amount || 0),
+        0
+      );
     });
 
     return NextResponse.json({
@@ -149,12 +177,11 @@ export async function GET(request: Request) {
         clinic_id: clinicId,
         period: {
           start_date: startDate,
-          end_date: endDate
+          end_date: endDate,
         },
-        statistics: stats
-      }
+        statistics: stats,
+      },
     });
-
   } catch (error) {
     console.error('Tax statistics error:', error);
     return NextResponse.json(

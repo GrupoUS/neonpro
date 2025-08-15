@@ -1,7 +1,7 @@
 /**
  * NFSe Generator - Brazilian Electronic Service Invoice Generator
  * NeonPro Healthcare System - Story 4.4 Architecture Alignment
- * 
+ *
  * This module handles automated NFSe (Nota Fiscal de Serviço Eletrônica) generation,
  * validation, and submission to municipal tax systems for Brazilian tax compliance.
  */
@@ -87,7 +87,13 @@ export interface NFSeResponse {
   protocol: string | null;
   errors: string[];
   warnings: string[];
-  status: 'generated' | 'sent' | 'approved' | 'rejected' | 'cancelled' | 'error';
+  status:
+    | 'generated'
+    | 'sent'
+    | 'approved'
+    | 'rejected'
+    | 'cancelled'
+    | 'error';
 }
 
 export interface NFSeBatchRequest {
@@ -113,7 +119,6 @@ export interface NFSeBatchResponse {
 
 export class NFSeGenerator {
   private config: NFSeConfig;
-  private readonly municipalityServices: Map<string, any> = new Map();
 
   constructor(config: NFSeConfig) {
     this.config = NFSeConfigSchema.parse(config);
@@ -138,10 +143,16 @@ export class NFSeGenerator {
       const signedXML = await this.signXML(xmlContent);
 
       // Submit to municipal system
-      const submissionResult = await this.submitToMunicipality(signedXML, validatedRequest);
+      const submissionResult = await this.submitToMunicipality(
+        signedXML,
+        validatedRequest
+      );
 
       // Process response
-      const response = await this.processSubmissionResponse(submissionResult, validatedRequest);
+      const response = await this.processSubmissionResponse(
+        submissionResult,
+        validatedRequest
+      );
 
       // Store in database
       await this.storeNFSeRecord(validatedRequest, response);
@@ -156,7 +167,9 @@ export class NFSeGenerator {
   /**
    * Generate multiple NFSe in batch
    */
-  async generateNFSeBatch(batchRequest: NFSeBatchRequest): Promise<NFSeBatchResponse> {
+  async generateNFSeBatch(
+    batchRequest: NFSeBatchRequest
+  ): Promise<NFSeBatchResponse> {
     try {
       const response: NFSeBatchResponse = {
         batchId: batchRequest.batchId,
@@ -174,12 +187,12 @@ export class NFSeGenerator {
       const batches = this.chunkArray(batchRequest.requests, batchSize);
 
       for (const batch of batches) {
-        const promises = batch.map(request => this.generateNFSe(request));
+        const promises = batch.map((request) => this.generateNFSe(request));
         const batchResults = await Promise.allSettled(promises);
 
         for (const result of batchResults) {
           response.processedRequests++;
-          
+
           if (result.status === 'fulfilled') {
             response.results.push(result.value);
             if (result.value.success) {
@@ -189,7 +202,9 @@ export class NFSeGenerator {
             }
           } else {
             response.failedRequests++;
-            response.results.push(this.createErrorResponse(result.reason, 'batch'));
+            response.results.push(
+              this.createErrorResponse(result.reason, 'batch')
+            );
           }
         }
 
@@ -217,7 +232,10 @@ export class NFSeGenerator {
   /**
    * Cancel NFSe
    */
-  async cancelNFSe(nfseNumber: string, reason: string): Promise<{
+  async cancelNFSe(
+    nfseNumber: string,
+    reason: string
+  ): Promise<{
     success: boolean;
     cancellationDate?: Date;
     protocol?: string;
@@ -225,18 +243,24 @@ export class NFSeGenerator {
   }> {
     try {
       // Validate cancellation request
-      if (!nfseNumber || !reason) {
+      if (!(nfseNumber && reason)) {
         throw new Error('NFSe number and cancellation reason are required');
       }
 
       // Generate cancellation XML
-      const cancellationXML = await this.generateCancellationXML(nfseNumber, reason);
+      const cancellationXML = await this.generateCancellationXML(
+        nfseNumber,
+        reason
+      );
 
       // Sign XML
       const signedXML = await this.signXML(cancellationXML);
 
       // Submit cancellation to municipality
-      const cancellationResult = await this.submitCancellation(signedXML, nfseNumber);
+      const cancellationResult = await this.submitCancellation(
+        signedXML,
+        nfseNumber
+      );
 
       // Update database record
       await this.updateNFSeStatus(nfseNumber, 'cancelled', cancellationResult);
@@ -293,13 +317,15 @@ export class NFSeGenerator {
     }
 
     // Validate tax calculations
-    const expectedIssAmount = request.serviceData.netAmount * request.serviceData.issRate;
+    const expectedIssAmount =
+      request.serviceData.netAmount * request.serviceData.issRate;
     if (Math.abs(request.serviceData.issAmount - expectedIssAmount) > 0.01) {
       throw new Error('ISS amount calculation is incorrect');
     }
 
     // Validate net amount
-    const expectedNetAmount = request.serviceData.grossAmount - request.serviceData.deductions;
+    const expectedNetAmount =
+      request.serviceData.grossAmount - request.serviceData.deductions;
     if (Math.abs(request.serviceData.netAmount - expectedNetAmount) > 0.01) {
       throw new Error('Net amount calculation is incorrect');
     }
@@ -311,7 +337,7 @@ export class NFSeGenerator {
   private async generateXML(request: NFSeRequest): Promise<string> {
     // This would generate the actual NFSe XML based on municipality schema
     // Implementation varies by municipality but follows ABRASF standards
-    
+
     const xmlTemplate = `<?xml version="1.0" encoding="UTF-8"?>
 <GerarNfseEnvio xmlns="http://www.abrasf.org.br/nfse.xsd">
   <LoteRps Id="${request.externalId}">
@@ -365,9 +391,10 @@ export class NFSeGenerator {
           <Tomador>
             <IdentificacaoTomador>
               <CpfCnpj>
-                ${request.customerData.documentType === 'cpf' 
-                  ? `<Cpf>${request.customerData.document.replace(/[^\d]/g, '')}</Cpf>`
-                  : `<Cnpj>${request.customerData.document.replace(/[^\d]/g, '')}</Cnpj>`
+                ${
+                  request.customerData.documentType === 'cpf'
+                    ? `<Cpf>${request.customerData.document.replace(/[^\d]/g, '')}</Cpf>`
+                    : `<Cnpj>${request.customerData.document.replace(/[^\d]/g, '')}</Cnpj>`
                 }
               </CpfCnpj>
             </IdentificacaoTomador>
@@ -399,21 +426,24 @@ export class NFSeGenerator {
     // Digital signature implementation would go here
     // This involves X.509 certificate handling and XML-DSig
     // Implementation depends on the digital certificate and signature requirements
-    
+
     // For now, return the unsigned XML (in production, this would be properly signed)
     return xmlContent;
   }
 
-  private async submitToMunicipality(signedXML: string, request: NFSeRequest): Promise<any> {
+  private async submitToMunicipality(
+    signedXML: string,
+    _request: NFSeRequest
+  ): Promise<any> {
     // HTTP/SOAP request to municipality webservice
     // Implementation varies by municipality but follows standard patterns
-    
+
     try {
       const response = await fetch(this.config.webserviceUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'text/xml; charset=utf-8',
-          'SOAPAction': 'GerarNfse',
+          SOAPAction: 'GerarNfse',
         },
         body: this.wrapInSOAPEnvelope(signedXML),
       });
@@ -430,10 +460,13 @@ export class NFSeGenerator {
     }
   }
 
-  private async processSubmissionResponse(submissionResult: any, request: NFSeRequest): Promise<NFSeResponse> {
+  private async processSubmissionResponse(
+    submissionResult: any,
+    _request: NFSeRequest
+  ): Promise<NFSeResponse> {
     // Process municipality response and extract NFSe data
     // Implementation varies by municipality response format
-    
+
     if (submissionResult.success) {
       return {
         success: true,
@@ -448,24 +481,23 @@ export class NFSeGenerator {
         warnings: submissionResult.warnings || [],
         status: 'approved',
       };
-    } else {
-      return {
-        success: false,
-        nfseNumber: null,
-        verificationCode: null,
-        accessKey: null,
-        issueDate: null,
-        xmlContent: null,
-        pdfUrl: null,
-        protocol: null,
-        errors: submissionResult.errors || [],
-        warnings: submissionResult.warnings || [],
-        status: 'rejected',
-      };
     }
+    return {
+      success: false,
+      nfseNumber: null,
+      verificationCode: null,
+      accessKey: null,
+      issueDate: null,
+      xmlContent: null,
+      pdfUrl: null,
+      protocol: null,
+      errors: submissionResult.errors || [],
+      warnings: submissionResult.warnings || [],
+      status: 'rejected',
+    };
   }
 
-  private createErrorResponse(error: any, externalId: string): NFSeResponse {
+  private createErrorResponse(error: any, _externalId: string): NFSeResponse {
     return {
       success: false,
       nfseNumber: null,
@@ -487,7 +519,7 @@ export class NFSeGenerator {
     // This would load specific configurations for different municipalities
   }
 
-  private validateMunicipalityRules(request: NFSeRequest): Promise<void> {
+  private validateMunicipalityRules(_request: NFSeRequest): Promise<void> {
     // Municipality-specific business rule validation
     return Promise.resolve();
   }
@@ -518,7 +550,7 @@ export class NFSeGenerator {
 </soap:Envelope>`;
   }
 
-  private parseSOAPResponse(responseText: string): any {
+  private parseSOAPResponse(_responseText: string): any {
     // Parse SOAP response and extract relevant data
     // This would include XML parsing and error handling
     return { success: true }; // Simplified for now
@@ -526,19 +558,27 @@ export class NFSeGenerator {
 
   private getBatchSize(priority: string): number {
     switch (priority) {
-      case 'high': return 2;
-      case 'normal': return 5;
-      case 'low': return 10;
-      default: return 5;
+      case 'high':
+        return 2;
+      case 'normal':
+        return 5;
+      case 'low':
+        return 10;
+      default:
+        return 5;
     }
   }
 
   private getBatchDelay(priority: string): number {
     switch (priority) {
-      case 'high': return 1000; // 1 second
-      case 'normal': return 2000; // 2 seconds
-      case 'low': return 5000; // 5 seconds
-      default: return 2000;
+      case 'high':
+        return 1000; // 1 second
+      case 'normal':
+        return 2000; // 2 seconds
+      case 'low':
+        return 5000; // 5 seconds
+      default:
+        return 2000;
     }
   }
 
@@ -551,23 +591,36 @@ export class NFSeGenerator {
   }
 
   private delay(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
-  private async storeNFSeRecord(request: NFSeRequest, response: NFSeResponse): Promise<void> {
+  private async storeNFSeRecord(
+    _request: NFSeRequest,
+    _response: NFSeResponse
+  ): Promise<void> {
     // Store NFSe record in database
     // Implementation would use Supabase/database integration
   }
 
-  private async updateNFSeStatus(nfseNumber: string, status: string, data: any): Promise<void> {
+  private async updateNFSeStatus(
+    _nfseNumber: string,
+    _status: string,
+    _data: any
+  ): Promise<void> {
     // Update NFSe status in database
   }
 
-  private async syncNFSeStatus(nfseNumber: string, queryResult: any): Promise<void> {
+  private async syncNFSeStatus(
+    _nfseNumber: string,
+    _queryResult: any
+  ): Promise<void> {
     // Sync NFSe status with database
   }
 
-  private async sendBatchCallback(callbackUrl: string, response: NFSeBatchResponse): Promise<void> {
+  private async sendBatchCallback(
+    callbackUrl: string,
+    response: NFSeBatchResponse
+  ): Promise<void> {
     // Send batch completion callback
     try {
       await fetch(callbackUrl, {
@@ -580,7 +633,10 @@ export class NFSeGenerator {
     }
   }
 
-  private async generateCancellationXML(nfseNumber: string, reason: string): Promise<string> {
+  private async generateCancellationXML(
+    nfseNumber: string,
+    _reason: string
+  ): Promise<string> {
     return `<?xml version="1.0" encoding="UTF-8"?>
 <CancelarNfseEnvio xmlns="http://www.abrasf.org.br/nfse.xsd">
   <Pedido>
@@ -597,12 +653,15 @@ export class NFSeGenerator {
 </CancelarNfseEnvio>`;
   }
 
-  private async submitCancellation(signedXML: string, nfseNumber: string): Promise<any> {
+  private async submitCancellation(
+    _signedXML: string,
+    _nfseNumber: string
+  ): Promise<any> {
     // Submit cancellation to municipality
     return { protocol: `CANCEL_${Date.now()}` };
   }
 
-  private async queryMunicipality(nfseNumber: string): Promise<any> {
+  private async queryMunicipality(_nfseNumber: string): Promise<any> {
     // Query municipality for NFSe status
     return { status: 'approved', issueDate: new Date(), errors: [] };
   }
@@ -629,43 +688,64 @@ export const NFSeUtils = {
   validateCNPJ: (cnpj: string): boolean => {
     const cleanCNPJ = cnpj.replace(/[^\d]/g, '');
     if (cleanCNPJ.length !== 14) return false;
-    
+
     // CNPJ validation algorithm
     const weights = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
     const digits = cleanCNPJ.split('').map(Number);
-    
-    const checkDigit1 = NFSeUtils.calculateCheckDigit(digits.slice(0, 12), weights);
-    const checkDigit2 = NFSeUtils.calculateCheckDigit(digits.slice(0, 13), [6, ...weights]);
-    
+
+    const checkDigit1 = NFSeUtils.calculateCheckDigit(
+      digits.slice(0, 12),
+      weights
+    );
+    const checkDigit2 = NFSeUtils.calculateCheckDigit(digits.slice(0, 13), [
+      6,
+      ...weights,
+    ]);
+
     return digits[12] === checkDigit1 && digits[13] === checkDigit2;
   },
 
   validateCPF: (cpf: string): boolean => {
     const cleanCPF = cpf.replace(/[^\d]/g, '');
     if (cleanCPF.length !== 11 || /^(\d)\1{10}$/.test(cleanCPF)) return false;
-    
+
     const digits = cleanCPF.split('').map(Number);
-    const checkDigit1 = NFSeUtils.calculateCPFCheckDigit(digits.slice(0, 9), [10, 9, 8, 7, 6, 5, 4, 3, 2]);
-    const checkDigit2 = NFSeUtils.calculateCPFCheckDigit(digits.slice(0, 10), [11, 10, 9, 8, 7, 6, 5, 4, 3, 2]);
-    
+    const checkDigit1 = NFSeUtils.calculateCPFCheckDigit(
+      digits.slice(0, 9),
+      [10, 9, 8, 7, 6, 5, 4, 3, 2]
+    );
+    const checkDigit2 = NFSeUtils.calculateCPFCheckDigit(
+      digits.slice(0, 10),
+      [11, 10, 9, 8, 7, 6, 5, 4, 3, 2]
+    );
+
     return digits[9] === checkDigit1 && digits[10] === checkDigit2;
   },
 
   calculateCheckDigit: (digits: number[], weights: number[]): number => {
-    const sum = digits.reduce((acc, digit, index) => acc + digit * weights[index], 0);
+    const sum = digits.reduce(
+      (acc, digit, index) => acc + digit * weights[index],
+      0
+    );
     const remainder = sum % 11;
     return remainder < 2 ? 0 : 11 - remainder;
   },
 
   calculateCPFCheckDigit: (digits: number[], weights: number[]): number => {
-    const sum = digits.reduce((acc, digit, index) => acc + digit * weights[index], 0);
+    const sum = digits.reduce(
+      (acc, digit, index) => acc + digit * weights[index],
+      0
+    );
     const remainder = sum % 11;
     return remainder < 2 ? 0 : 11 - remainder;
   },
 
   formatCNPJ: (cnpj: string): string => {
     const clean = cnpj.replace(/[^\d]/g, '');
-    return clean.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, '$1.$2.$3/$4-$5');
+    return clean.replace(
+      /^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/,
+      '$1.$2.$3/$4-$5'
+    );
   },
 
   formatCPF: (cpf: string): string => {

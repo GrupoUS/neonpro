@@ -1,6 +1,3 @@
-// lib/ai/insights-engine.ts
-import { createClient } from "@/app/utils/supabase/server";
-
 export interface InsightData {
   patientId: string;
   type: 'clinical' | 'behavioral' | 'predictive' | 'risk';
@@ -41,8 +38,6 @@ export interface ClinicalRecommendation {
 }
 
 export class AIInsightsEngine {
-  private supabase = createClient();
-
   /**
    * Gera insights abrangentes para um paciente usando IA
    */
@@ -55,49 +50,52 @@ export class AIInsightsEngine {
           type: 'clinical',
           priority: 'high',
           title: 'Risco Cardiovascular Elevado',
-          description: 'Análise dos dados clínicos indica risco aumentado para eventos cardiovasculares nos próximos 5 anos.',
+          description:
+            'Análise dos dados clínicos indica risco aumentado para eventos cardiovasculares nos próximos 5 anos.',
           confidence: 0.87,
           sources: ['historical_data', 'vitals', 'lab_results'],
           recommendations: [
             'Iniciar estatina de alta intensidade',
             'Implementar programa de exercícios supervisionado',
-            'Monitoramento mensal da pressão arterial'
+            'Monitoramento mensal da pressão arterial',
           ],
           createdAt: new Date(),
-          updatedAt: new Date()
+          updatedAt: new Date(),
         },
         {
           patientId,
           type: 'behavioral',
           priority: 'medium',
           title: 'Padrão de Não Aderência a Medicamentos',
-          description: 'IA detectou padrões sugestivos de baixa aderência medicamentosa baseado em refis e consultas.',
+          description:
+            'IA detectou padrões sugestivos de baixa aderência medicamentosa baseado em refis e consultas.',
           confidence: 0.73,
           sources: ['prescription_history', 'appointment_frequency'],
           recommendations: [
             'Implementar sistema de lembrete de medicação',
             'Considerar formulações de liberação prolongada',
-            'Consulta com farmacêutico clínico'
+            'Consulta com farmacêutico clínico',
           ],
           createdAt: new Date(),
-          updatedAt: new Date()
+          updatedAt: new Date(),
         },
         {
           patientId,
           type: 'predictive',
           priority: 'medium',
           title: 'Risco de Diabetes Tipo 2',
-          description: 'Modelo preditivo indica 68% de probabilidade de desenvolvimento de diabetes nos próximos 3 anos.',
+          description:
+            'Modelo preditivo indica 68% de probabilidade de desenvolvimento de diabetes nos próximos 3 anos.',
           confidence: 0.91,
           sources: ['lab_trends', 'bmi_progression', 'family_history'],
           recommendations: [
             'Teste de tolerância à glicose trimestral',
             'Programa de perda de peso supervisionado',
-            'Consulta nutricional especializada'
+            'Consulta nutricional especializada',
           ],
           createdAt: new Date(),
-          updatedAt: new Date()
-        }
+          updatedAt: new Date(),
+        },
       ];
 
       return insights;
@@ -110,7 +108,7 @@ export class AIInsightsEngine {
   /**
    * Avalia riscos de saúde usando algoritmos de IA
    */
-  async assessPatientRisk(patientId: string): Promise<PatientRiskAssessment> {
+  async assessPatientRisk(_patientId: string): Promise<PatientRiskAssessment> {
     try {
       // Simular análise avançada de risco
       const riskAssessment: PatientRiskAssessment = {
@@ -124,8 +122,8 @@ export class AIInsightsEngine {
           bmi: 0.67,
           lifestyle: 0.72,
           genetics: 0.58,
-          medication: 0.43
-        }
+          medication: 0.43,
+        },
       };
 
       return riskAssessment;
@@ -138,7 +136,9 @@ export class AIInsightsEngine {
   /**
    * Gera recomendações clínicas personalizadas
    */
-  async generateClinicalRecommendations(patientId: string): Promise<ClinicalRecommendation[]> {
+  async generateClinicalRecommendations(
+    _patientId: string
+  ): Promise<ClinicalRecommendation[]> {
     try {
       const recommendations: ClinicalRecommendation[] = [
         {
@@ -146,31 +146,39 @@ export class AIInsightsEngine {
           type: 'medication',
           urgency: 'soon',
           title: 'Ajuste da Medicação Anti-hipertensiva',
-          description: 'Considerar aumento da dose de IECA ou adição de diurético tiazídico',
-          rationale: 'Pressão arterial persistentemente elevada (>140/90) nas últimas 3 consultas',
+          description:
+            'Considerar aumento da dose de IECA ou adição de diurético tiazídico',
+          rationale:
+            'Pressão arterial persistentemente elevada (>140/90) nas últimas 3 consultas',
           expectedOutcome: 'Redução da PA para <130/80 em 4-6 semanas',
-          timeframe: '2-4 semanas'
+          timeframe: '2-4 semanas',
         },
         {
           id: `rec_${Date.now()}_2`,
           type: 'lifestyle',
           urgency: 'routine',
           title: 'Programa de Atividade Física Estruturado',
-          description: 'Implementar regime de exercícios aeróbicos e resistência muscular',
-          rationale: 'Sedentarismo e IMC elevado contribuindo para riscos metabólicos',
-          expectedOutcome: 'Melhora da capacidade cardiorrespiratória e controle glicêmico',
-          timeframe: '3-6 meses'
+          description:
+            'Implementar regime de exercícios aeróbicos e resistência muscular',
+          rationale:
+            'Sedentarismo e IMC elevado contribuindo para riscos metabólicos',
+          expectedOutcome:
+            'Melhora da capacidade cardiorrespiratória e controle glicêmico',
+          timeframe: '3-6 meses',
         },
         {
           id: `rec_${Date.now()}_3`,
           type: 'followup',
           urgency: 'soon',
           title: 'Consulta de Seguimento Cardiológico',
-          description: 'Encaminhamento para cardiologista para avaliação especializada',
-          rationale: 'Múltiplos fatores de risco cardiovascular e histórico familiar',
-          expectedOutcome: 'Estratificação de risco mais precisa e otimização terapêutica',
-          timeframe: '4-6 semanas'
-        }
+          description:
+            'Encaminhamento para cardiologista para avaliação especializada',
+          rationale:
+            'Múltiplos fatores de risco cardiovascular e histórico familiar',
+          expectedOutcome:
+            'Estratificação de risco mais precisa e otimização terapêutica',
+          timeframe: '4-6 semanas',
+        },
       ];
 
       return recommendations;
@@ -183,7 +191,10 @@ export class AIInsightsEngine {
   /**
    * Analisa tendências temporais nos dados do paciente
    */
-  async analyzeTrends(patientId: string, timeframe: string = '6months'): Promise<any> {
+  async analyzeTrends(
+    _patientId: string,
+    _timeframe = '6months'
+  ): Promise<any> {
     try {
       // Simular análise de tendências
       const trends = {
@@ -192,40 +203,40 @@ export class AIInsightsEngine {
             trend: 'increasing',
             rate: 2.3,
             significance: 'moderate',
-            concern: 'Tendência de aumento da pressão sistólica'
+            concern: 'Tendência de aumento da pressão sistólica',
           },
           weight: {
             trend: 'stable',
             rate: 0.1,
             significance: 'low',
-            concern: null
+            concern: null,
           },
           heartRate: {
             trend: 'decreasing',
             rate: -1.8,
             significance: 'low',
-            concern: null
-          }
+            concern: null,
+          },
         },
         labs: {
           glucose: {
             trend: 'increasing',
             rate: 3.2,
             significance: 'high',
-            concern: 'Progressão para pré-diabetes'
+            concern: 'Progressão para pré-diabetes',
           },
           cholesterol: {
             trend: 'stable',
             rate: 0.5,
             significance: 'low',
-            concern: null
-          }
+            concern: null,
+          },
         },
         appointments: {
           frequency: 'optimal',
           adherence: 0.87,
-          cancellations: 2
-        }
+          cancellations: 2,
+        },
       };
 
       return trends;
@@ -238,7 +249,7 @@ export class AIInsightsEngine {
   /**
    * Detecta anomalias nos dados do paciente
    */
-  async detectAnomalies(patientId: string): Promise<any[]> {
+  async detectAnomalies(_patientId: string): Promise<any[]> {
     try {
       const anomalies = [
         {
@@ -248,7 +259,7 @@ export class AIInsightsEngine {
           value: '165/95',
           threshold: '140/90',
           timestamp: new Date(),
-          description: 'Pressão arterial significativamente elevada'
+          description: 'Pressão arterial significativamente elevada',
         },
         {
           type: 'lab_result',
@@ -257,8 +268,8 @@ export class AIInsightsEngine {
           value: '118 mg/dL',
           threshold: '100 mg/dL',
           timestamp: new Date(),
-          description: 'Glicemia de jejum borderline elevada'
-        }
+          description: 'Glicemia de jejum borderline elevada',
+        },
       ];
 
       return anomalies;
@@ -273,13 +284,14 @@ export class AIInsightsEngine {
    */
   async generateInsightsReport(patientId: string): Promise<any> {
     try {
-      const [insights, riskAssessment, recommendations, trends, anomalies] = await Promise.all([
-        this.generatePatientInsights(patientId),
-        this.assessPatientRisk(patientId),
-        this.generateClinicalRecommendations(patientId),
-        this.analyzeTrends(patientId),
-        this.detectAnomalies(patientId)
-      ]);
+      const [insights, riskAssessment, recommendations, trends, anomalies] =
+        await Promise.all([
+          this.generatePatientInsights(patientId),
+          this.assessPatientRisk(patientId),
+          this.generateClinicalRecommendations(patientId),
+          this.analyzeTrends(patientId),
+          this.detectAnomalies(patientId),
+        ]);
 
       return {
         patientId,
@@ -291,11 +303,20 @@ export class AIInsightsEngine {
         anomalies,
         summary: {
           totalInsights: insights.length,
-          highPriorityInsights: insights.filter(i => i.priority === 'high' || i.priority === 'critical').length,
-          overallRiskLevel: riskAssessment.overall > 0.7 ? 'high' : riskAssessment.overall > 0.4 ? 'medium' : 'low',
-          urgentRecommendations: recommendations.filter(r => r.urgency === 'urgent' || r.urgency === 'immediate').length,
-          activeAnomalies: anomalies.filter(a => a.severity !== 'low').length
-        }
+          highPriorityInsights: insights.filter(
+            (i) => i.priority === 'high' || i.priority === 'critical'
+          ).length,
+          overallRiskLevel:
+            riskAssessment.overall > 0.7
+              ? 'high'
+              : riskAssessment.overall > 0.4
+                ? 'medium'
+                : 'low',
+          urgentRecommendations: recommendations.filter(
+            (r) => r.urgency === 'urgent' || r.urgency === 'immediate'
+          ).length,
+          activeAnomalies: anomalies.filter((a) => a.severity !== 'low').length,
+        },
       };
     } catch (error) {
       console.error('Erro ao gerar relatório de insights:', error);

@@ -1,5 +1,5 @@
 // This file configures the initialization of Sentry for edge runtime (middleware, edge API routes)
-import * as Sentry from '@sentry/nextjs'
+import * as Sentry from '@sentry/nextjs';
 
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
@@ -27,7 +27,7 @@ Sentry.init({
   },
 
   // Enhanced error context for edge runtime
-  beforeSend(event, hint) {
+  beforeSend(event, _hint) {
     // Add edge runtime specific context
     event.contexts = {
       ...event.contexts,
@@ -36,19 +36,19 @@ Sentry.init({
         version: 'next.js',
         env: process.env.NODE_ENV,
       },
-    }
+    };
 
     // Filter out known edge runtime issues
     if (process.env.NODE_ENV === 'production') {
-      const errorMessage = event.exception?.values?.[0]?.value || ''
-      
+      const errorMessage = event.exception?.values?.[0]?.value || '';
+
       // Skip edge runtime limitations errors
       if (errorMessage.includes('Dynamic Code Evaluation')) {
-        return null
+        return null;
       }
     }
 
-    return event
+    return event;
   },
 
   // Edge runtime specific options
@@ -59,4 +59,4 @@ Sentry.init({
 
   // Minimal debugging for edge runtime
   debug: false,
-})
+});

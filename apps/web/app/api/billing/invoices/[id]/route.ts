@@ -1,10 +1,10 @@
-import { createClient } from "@/app/utils/supabase/server";
-import { NextResponse } from "next/server";
-import { z } from "zod";
+import { NextResponse } from 'next/server';
+import { z } from 'zod';
+import { createClient } from '@/app/utils/supabase/server';
 
 const UpdateInvoiceSchema = z.object({
   status: z
-    .enum(["draft", "pending", "paid", "overdue", "cancelled"])
+    .enum(['draft', 'pending', 'paid', 'overdue', 'cancelled'])
     .optional(),
   due_date: z.string().optional(),
   notes: z.string().optional(),
@@ -12,7 +12,7 @@ const UpdateInvoiceSchema = z.object({
 });
 
 export async function GET(
-  request: Request,
+  _request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
@@ -23,12 +23,12 @@ export async function GET(
     } = await supabase.auth.getUser();
 
     if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const resolvedParams = await params;
     const { data: invoice, error } = await supabase
-      .from("invoices")
+      .from('invoices')
       .select(
         `
         *,
@@ -66,18 +66,18 @@ export async function GET(
         )
       `
       )
-      .eq("id", resolvedParams.id)
+      .eq('id', resolvedParams.id)
       .single();
 
     if (error || !invoice) {
-      return NextResponse.json({ error: "Invoice not found" }, { status: 404 });
+      return NextResponse.json({ error: 'Invoice not found' }, { status: 404 });
     }
 
     return NextResponse.json({ invoice });
   } catch (error) {
-    console.error("API Error:", error);
+    console.error('API Error:', error);
     return NextResponse.json(
-      { error: "Internal Server Error" },
+      { error: 'Internal Server Error' },
       { status: 500 }
     );
   }
@@ -95,7 +95,7 @@ export async function PUT(
     } = await supabase.auth.getUser();
 
     if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
@@ -103,9 +103,9 @@ export async function PUT(
 
     const resolvedParams = await params;
     const { data: invoice, error } = await supabase
-      .from("invoices")
+      .from('invoices')
       .update(validatedData)
-      .eq("id", resolvedParams.id)
+      .eq('id', resolvedParams.id)
       .select(
         `
         *,
@@ -131,9 +131,9 @@ export async function PUT(
       .single();
 
     if (error) {
-      console.error("Error updating invoice:", error);
+      console.error('Error updating invoice:', error);
       return NextResponse.json(
-        { error: "Failed to update invoice" },
+        { error: 'Failed to update invoice' },
         { status: 500 }
       );
     }
@@ -142,21 +142,21 @@ export async function PUT(
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: "Validation failed", details: error.errors },
+        { error: 'Validation failed', details: error.errors },
         { status: 400 }
       );
     }
 
-    console.error("API Error:", error);
+    console.error('API Error:', error);
     return NextResponse.json(
-      { error: "Internal Server Error" },
+      { error: 'Internal Server Error' },
       { status: 500 }
     );
   }
 }
 
 export async function DELETE(
-  request: Request,
+  _request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
@@ -167,21 +167,21 @@ export async function DELETE(
     } = await supabase.auth.getUser();
 
     if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const resolvedParams = await params;
     // Check if invoice has payments
     const { data: payments, error: paymentError } = await supabase
-      .from("payments")
-      .select("id")
-      .eq("invoice_id", resolvedParams.id)
+      .from('payments')
+      .select('id')
+      .eq('invoice_id', resolvedParams.id)
       .limit(1);
 
     if (paymentError) {
-      console.error("Error checking invoice payments:", paymentError);
+      console.error('Error checking invoice payments:', paymentError);
       return NextResponse.json(
-        { error: "Failed to check invoice payments" },
+        { error: 'Failed to check invoice payments' },
         { status: 500 }
       );
     }
@@ -189,59 +189,59 @@ export async function DELETE(
     if (payments && payments.length > 0) {
       // Don't delete, just mark as cancelled
       const { data: invoice, error } = await supabase
-        .from("invoices")
-        .update({ status: "cancelled" })
-        .eq("id", resolvedParams.id)
+        .from('invoices')
+        .update({ status: 'cancelled' })
+        .eq('id', resolvedParams.id)
         .select()
         .single();
 
       if (error) {
-        console.error("Error cancelling invoice:", error);
+        console.error('Error cancelling invoice:', error);
         return NextResponse.json(
-          { error: "Failed to cancel invoice" },
+          { error: 'Failed to cancel invoice' },
           { status: 500 }
         );
       }
 
       return NextResponse.json({
         invoice,
-        message: "Invoice cancelled due to existing payments",
+        message: 'Invoice cancelled due to existing payments',
       });
     }
 
     // First delete invoice items
     const { error: itemsError } = await supabase
-      .from("invoice_items")
+      .from('invoice_items')
       .delete()
-      .eq("invoice_id", resolvedParams.id);
+      .eq('invoice_id', resolvedParams.id);
 
     if (itemsError) {
-      console.error("Error deleting invoice items:", itemsError);
+      console.error('Error deleting invoice items:', itemsError);
       return NextResponse.json(
-        { error: "Failed to delete invoice items" },
+        { error: 'Failed to delete invoice items' },
         { status: 500 }
       );
     }
 
     // Then delete invoice
     const { error } = await supabase
-      .from("invoices")
+      .from('invoices')
       .delete()
-      .eq("id", resolvedParams.id);
+      .eq('id', resolvedParams.id);
 
     if (error) {
-      console.error("Error deleting invoice:", error);
+      console.error('Error deleting invoice:', error);
       return NextResponse.json(
-        { error: "Failed to delete invoice" },
+        { error: 'Failed to delete invoice' },
         { status: 500 }
       );
     }
 
-    return NextResponse.json({ message: "Invoice deleted successfully" });
+    return NextResponse.json({ message: 'Invoice deleted successfully' });
   } catch (error) {
-    console.error("API Error:", error);
+    console.error('API Error:', error);
     return NextResponse.json(
-      { error: "Internal Server Error" },
+      { error: 'Internal Server Error' },
       { status: 500 }
     );
   }

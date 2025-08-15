@@ -5,45 +5,46 @@
 // Author: Dev Agent
 // Date: 2025-01-26
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
-  TrendingUp,
-  TrendingDown,
-  DollarSign,
-  Users,
-  Calendar,
   AlertTriangle,
-  Settings,
-  Download,
-  RefreshCw,
-  Filter,
   BarChart3,
-  PieChart,
-  LineChart,
-  Eye,
   Edit,
-  Copy,
+  Eye,
+  PieChart,
+  RefreshCw,
+  Settings,
   Trash2,
-  Plus,
-  Grid3X3,
+  TrendingDown,
+  TrendingUp,
 } from 'lucide-react';
+import type React from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 import type {
+  DashboardFilters,
+  DashboardLayout,
+  DrillDownResult,
   FinancialKPI,
   KPIAlert,
-  DashboardLayout,
-  DashboardWidget,
-  DrillDownResult,
-  KPICalculationResult,
-  DashboardFilters,
 } from '@/lib/types/kpi-types';
 
 interface KPIDashboardProps {
@@ -76,7 +77,13 @@ interface AlertsPanelProps {
   onViewDetails: (alert: KPIAlert) => void;
 }
 
-const KPICard: React.FC<KPICardProps> = ({ kpi, isEditing, onDrillDown, onEdit, onRemove }) => {
+const KPICard: React.FC<KPICardProps> = ({
+  kpi,
+  isEditing,
+  onDrillDown,
+  onEdit,
+  onRemove,
+}) => {
   const formatValue = (value: number, category: string): string => {
     if (category === 'revenue' || category === 'profitability') {
       if (kpi.kpi_name.includes('Margin') || kpi.kpi_name.includes('Rate')) {
@@ -122,76 +129,78 @@ const KPICard: React.FC<KPICardProps> = ({ kpi, isEditing, onDrillDown, onEdit, 
   };
 
   return (
-    <Card className="relative hover:shadow-md transition-shadow">
+    <Card className="relative transition-shadow hover:shadow-md">
       {isEditing && (
-        <div className="absolute top-2 right-2 flex gap-1 z-10">
-          <Button size="sm" variant="ghost" onClick={onEdit}>
+        <div className="absolute top-2 right-2 z-10 flex gap-1">
+          <Button onClick={onEdit} size="sm" variant="ghost">
             <Edit className="h-3 w-3" />
           </Button>
-          <Button size="sm" variant="ghost" onClick={onRemove}>
+          <Button onClick={onRemove} size="sm" variant="ghost">
             <Trash2 className="h-3 w-3" />
           </Button>
         </div>
       )}
-      
+
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-medium text-gray-600">
+          <CardTitle className="font-medium text-gray-600 text-sm">
             {kpi.kpi_name}
           </CardTitle>
-          <Badge variant="outline" className="text-xs">
+          <Badge className="text-xs" variant="outline">
             {kpi.kpi_category}
           </Badge>
         </div>
       </CardHeader>
-      
+
       <CardContent>
         <div className="flex items-center justify-between">
           <div>
-            <div className="text-2xl font-bold">
+            <div className="font-bold text-2xl">
               {formatValue(kpi.current_value, kpi.kpi_category)}
             </div>
             {kpi.target_value && (
-              <div className="text-sm text-gray-500">
+              <div className="text-gray-500 text-sm">
                 Target: {formatValue(kpi.target_value, kpi.kpi_category)}
               </div>
             )}
           </div>
-          
+
           <div className="flex items-center gap-2">
             {getTrendIcon(kpi.trend_direction)}
             {kpi.variance_percent !== undefined && (
-              <span className={`text-sm font-medium ${getTrendColor(kpi.trend_direction)}`}>
+              <span
+                className={`font-medium text-sm ${getTrendColor(kpi.trend_direction)}`}
+              >
                 {getVarianceDisplay(kpi.variance_percent)}
               </span>
             )}
           </div>
         </div>
-        
+
         {!isEditing && onDrillDown && (
           <div className="mt-3 flex gap-1">
             <Button
+              className="text-xs"
+              onClick={() => onDrillDown(kpi.id, 'time')}
               size="sm"
               variant="outline"
-              onClick={() => onDrillDown(kpi.id, 'time')}
-              className="text-xs"
             >
-              <BarChart3 className="h-3 w-3 mr-1" />
+              <BarChart3 className="mr-1 h-3 w-3" />
               Trend
             </Button>
             <Button
+              className="text-xs"
+              onClick={() => onDrillDown(kpi.id, 'service_type')}
               size="sm"
               variant="outline"
-              onClick={() => onDrillDown(kpi.id, 'service_type')}
-              className="text-xs"
             >
-              <PieChart className="h-3 w-3 mr-1" />
+              <PieChart className="mr-1 h-3 w-3" />
               Breakdown
             </Button>
           </div>
         )}
-        
-        <div className="mt-2 text-xs text-gray-400">
+
+        <div className="mt-2 text-gray-400 text-xs">
           Updated: {new Date(kpi.last_updated).toLocaleString('pt-BR')}
         </div>
       </CardContent>
@@ -199,7 +208,11 @@ const KPICard: React.FC<KPICardProps> = ({ kpi, isEditing, onDrillDown, onEdit, 
   );
 };
 
-const AlertsPanel: React.FC<AlertsPanelProps> = ({ alerts, onAcknowledge, onViewDetails }) => {
+const AlertsPanel: React.FC<AlertsPanelProps> = ({
+  alerts,
+  onAcknowledge,
+  onViewDetails,
+}) => {
   const getAlertIcon = (type: string) => {
     switch (type) {
       case 'critical':
@@ -229,8 +242,8 @@ const AlertsPanel: React.FC<AlertsPanelProps> = ({ alerts, onAcknowledge, onView
           <CardTitle className="text-sm">Alerts</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-center text-gray-500 py-4">
-            <AlertTriangle className="h-8 w-8 mx-auto mb-2 text-gray-300" />
+          <div className="py-4 text-center text-gray-500">
+            <AlertTriangle className="mx-auto mb-2 h-8 w-8 text-gray-300" />
             <p>No active alerts</p>
           </div>
         </CardContent>
@@ -241,7 +254,7 @@ const AlertsPanel: React.FC<AlertsPanelProps> = ({ alerts, onAcknowledge, onView
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-sm flex items-center justify-between">
+        <CardTitle className="flex items-center justify-between text-sm">
           Alerts
           <Badge variant="destructive">{alerts.length}</Badge>
         </CardTitle>
@@ -249,34 +262,34 @@ const AlertsPanel: React.FC<AlertsPanelProps> = ({ alerts, onAcknowledge, onView
       <CardContent className="space-y-2">
         {alerts.slice(0, 5).map((alert) => (
           <div
+            className={`rounded-lg border p-3 ${getAlertColor(alert.alert_type)}`}
             key={alert.id}
-            className={`p-3 rounded-lg border ${getAlertColor(alert.alert_type)}`}
           >
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-2">
                 {getAlertIcon(alert.alert_type)}
                 <div>
-                  <div className="text-sm font-medium">
+                  <div className="font-medium text-sm">
                     {alert.alert_message}
                   </div>
-                  <div className="text-xs text-gray-500">
+                  <div className="text-gray-500 text-xs">
                     {new Date(alert.created_at).toLocaleString('pt-BR')}
                   </div>
                 </div>
               </div>
               <div className="flex gap-1">
                 <Button
+                  onClick={() => onViewDetails(alert)}
                   size="sm"
                   variant="ghost"
-                  onClick={() => onViewDetails(alert)}
                 >
                   <Eye className="h-3 w-3" />
                 </Button>
                 {!alert.is_acknowledged && (
                   <Button
+                    onClick={() => onAcknowledge(alert.id)}
                     size="sm"
                     variant="outline"
-                    onClick={() => onAcknowledge(alert.id)}
                   >
                     Acknowledge
                   </Button>
@@ -286,7 +299,7 @@ const AlertsPanel: React.FC<AlertsPanelProps> = ({ alerts, onAcknowledge, onView
           </div>
         ))}
         {alerts.length > 5 && (
-          <Button variant="ghost" size="sm" className="w-full">
+          <Button className="w-full" size="sm" variant="ghost">
             View {alerts.length - 5} more alerts
           </Button>
         )}
@@ -306,7 +319,10 @@ const DrillDownModal: React.FC<DrillDownModalProps> = ({
   if (!kpi) return null;
 
   const formatValue = (value: number): string => {
-    if (kpi.kpi_category === 'revenue' || kpi.kpi_category === 'profitability') {
+    if (
+      kpi.kpi_category === 'revenue' ||
+      kpi.kpi_category === 'profitability'
+    ) {
       if (kpi.kpi_name.includes('Margin') || kpi.kpi_name.includes('Rate')) {
         return `${value.toFixed(1)}%`;
       }
@@ -322,32 +338,34 @@ const DrillDownModal: React.FC<DrillDownModalProps> = ({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+    <Dialog onOpenChange={onClose} open={isOpen}>
+      <DialogContent className="max-h-[80vh] max-w-4xl overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
-            {kpi.kpi_name} - {dimension.replace('_', ' ').toUpperCase()} Analysis
+            {kpi.kpi_name} - {dimension.replace('_', ' ').toUpperCase()}{' '}
+            Analysis
           </DialogTitle>
           <DialogDescription>
-            Detailed breakdown of {kpi.kpi_name} by {dimension.replace('_', ' ')}
+            Detailed breakdown of {kpi.kpi_name} by{' '}
+            {dimension.replace('_', ' ')}
           </DialogDescription>
         </DialogHeader>
-        
+
         <div className="space-y-4">
           {results.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
+            <div className="py-8 text-center text-gray-500">
               No data available for this breakdown
             </div>
           ) : (
             <div className="space-y-2">
               {results.map((result, index) => (
                 <div
+                  className="flex items-center justify-between rounded-lg bg-gray-50 p-3 transition-colors hover:bg-gray-100"
                   key={index}
-                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                 >
                   <div className="flex-1">
                     <div className="font-medium">{result.dimension_value}</div>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-gray-500 text-sm">
                       {result.percentage_of_total.toFixed(1)}% of total
                       {result.transaction_count && (
                         <span className="ml-2">
@@ -356,26 +374,31 @@ const DrillDownModal: React.FC<DrillDownModalProps> = ({
                       )}
                     </div>
                   </div>
-                  
+
                   <div className="text-right">
-                    <div className="font-bold">
-                      {formatValue(result.value)}
-                    </div>
+                    <div className="font-bold">{formatValue(result.value)}</div>
                     {result.variance_from_previous !== undefined && (
-                      <div className={`text-sm ${
-                        result.variance_from_previous >= 0 ? 'text-green-600' : 'text-red-600'
-                      }`}>
-                        {result.variance_from_previous >= 0 ? '+' : ''}{result.variance_from_previous.toFixed(1)}%
+                      <div
+                        className={`text-sm ${
+                          result.variance_from_previous >= 0
+                            ? 'text-green-600'
+                            : 'text-red-600'
+                        }`}
+                      >
+                        {result.variance_from_previous >= 0 ? '+' : ''}
+                        {result.variance_from_previous.toFixed(1)}%
                       </div>
                     )}
                   </div>
-                  
+
                   {onDrillDeeper && (
                     <Button
+                      className="ml-2"
+                      onClick={() =>
+                        onDrillDeeper('service_type', result.dimension_value)
+                      }
                       size="sm"
                       variant="ghost"
-                      onClick={() => onDrillDeeper('service_type', result.dimension_value)}
-                      className="ml-2"
                     >
                       <BarChart3 className="h-3 w-3" />
                     </Button>
@@ -394,20 +417,24 @@ export const KPIDashboard: React.FC<KPIDashboardProps> = ({
   userId,
   dashboardId,
   isEditable = false,
-  refreshInterval = 30000,
+  refreshInterval = 30_000,
 }) => {
   const [kpis, setKpis] = useState<FinancialKPI[]>([]);
   const [alerts, setAlerts] = useState<KPIAlert[]>([]);
-  const [dashboard, setDashboard] = useState<DashboardLayout | null>(null);
+  const [_dashboard, setDashboard] = useState<DashboardLayout | null>(null);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [selectedKpi, setSelectedKpi] = useState<FinancialKPI | null>(null);
-  const [drillDownResults, setDrillDownResults] = useState<DrillDownResult[]>([]);
+  const [drillDownResults, setDrillDownResults] = useState<DrillDownResult[]>(
+    []
+  );
   const [drillDownDimension, setDrillDownDimension] = useState<string>('');
   const [showDrillDown, setShowDrillDown] = useState(false);
   const [filters, setFilters] = useState<DashboardFilters>({
     time_period: {
-      start_date: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      start_date: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+        .toISOString()
+        .split('T')[0],
       end_date: new Date().toISOString().split('T')[0],
       preset: 'month',
     },
@@ -416,19 +443,19 @@ export const KPIDashboard: React.FC<KPIDashboardProps> = ({
   // Load initial data
   useEffect(() => {
     loadDashboardData();
-  }, [dashboardId]);
+  }, [loadDashboardData]);
 
   // Auto-refresh
   useEffect(() => {
     if (refreshInterval <= 0) return;
-    
+
     const interval = setInterval(() => {
       loadKPIData();
       loadAlerts();
     }, refreshInterval);
 
     return () => clearInterval(interval);
-  }, [refreshInterval, filters]);
+  }, [refreshInterval, loadAlerts, loadKPIData]);
 
   const loadDashboardData = async () => {
     setLoading(true);
@@ -456,7 +483,7 @@ export const KPIDashboard: React.FC<KPIDashboardProps> = ({
           include_variance: true,
         }),
       });
-      
+
       const data = await response.json();
       if (data.success) {
         setKpis(data.data);
@@ -468,7 +495,9 @@ export const KPIDashboard: React.FC<KPIDashboardProps> = ({
 
   const loadAlerts = async () => {
     try {
-      const response = await fetch('/api/analytics/alerts?is_acknowledged=false');
+      const response = await fetch(
+        '/api/analytics/alerts?is_acknowledged=false'
+      );
       const data = await response.json();
       if (data.success) {
         setAlerts(data.data);
@@ -480,7 +509,7 @@ export const KPIDashboard: React.FC<KPIDashboardProps> = ({
 
   const loadDashboard = async () => {
     if (!dashboardId) return;
-    
+
     try {
       const response = await fetch(`/api/analytics/dashboards/${dashboardId}`);
       const data = await response.json();
@@ -494,7 +523,7 @@ export const KPIDashboard: React.FC<KPIDashboardProps> = ({
   };
 
   const handleDrillDown = async (kpiId: string, dimension: string) => {
-    const kpi = kpis.find(k => k.id === kpiId);
+    const kpi = kpis.find((k) => k.id === kpiId);
     if (!kpi) return;
 
     try {
@@ -504,12 +533,12 @@ export const KPIDashboard: React.FC<KPIDashboardProps> = ({
         body: JSON.stringify({
           kpi_id: kpiId,
           dimension,
-          filters: filters,
+          filters,
           aggregation_level: dimension === 'time' ? 'month' : undefined,
           limit: 20,
         }),
       });
-      
+
       const data = await response.json();
       if (data.success) {
         setSelectedKpi(kpi);
@@ -524,12 +553,15 @@ export const KPIDashboard: React.FC<KPIDashboardProps> = ({
 
   const handleAcknowledgeAlert = async (alertId: string) => {
     try {
-      const response = await fetch(`/api/analytics/alerts/${alertId}/acknowledge`, {
-        method: 'PATCH',
-      });
-      
+      const response = await fetch(
+        `/api/analytics/alerts/${alertId}/acknowledge`,
+        {
+          method: 'PATCH',
+        }
+      );
+
       if (response.ok) {
-        setAlerts(alerts.filter(alert => alert.id !== alertId));
+        setAlerts(alerts.filter((alert) => alert.id !== alertId));
       }
     } catch (error) {
       console.error('Error acknowledging alert:', error);
@@ -541,19 +573,22 @@ export const KPIDashboard: React.FC<KPIDashboardProps> = ({
   };
 
   const groupedKpis = useMemo(() => {
-    return kpis.reduce((groups, kpi) => {
-      const category = kpi.kpi_category;
-      if (!groups[category]) {
-        groups[category] = [];
-      }
-      groups[category].push(kpi);
-      return groups;
-    }, {} as Record<string, FinancialKPI[]>);
+    return kpis.reduce(
+      (groups, kpi) => {
+        const category = kpi.kpi_category;
+        if (!groups[category]) {
+          groups[category] = [];
+        }
+        groups[category].push(kpi);
+        return groups;
+      },
+      {} as Record<string, FinancialKPI[]>
+    );
   }, [kpis]);
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
+      <div className="flex h-64 items-center justify-center">
         <RefreshCw className="h-8 w-8 animate-spin" />
       </div>
     );
@@ -564,27 +599,27 @@ export const KPIDashboard: React.FC<KPIDashboardProps> = ({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Financial KPI Dashboard</h1>
+          <h1 className="font-bold text-2xl">Financial KPI Dashboard</h1>
           <p className="text-gray-600">
             Real-time financial metrics and performance indicators
           </p>
         </div>
-        
+
         <div className="flex items-center gap-2">
-          <Button variant="outline" onClick={loadDashboardData}>
-            <RefreshCw className="h-4 w-4 mr-2" />
+          <Button onClick={loadDashboardData} variant="outline">
+            <RefreshCw className="mr-2 h-4 w-4" />
             Refresh
           </Button>
           {isEditable && (
             <Button
-              variant={isEditing ? 'default' : 'outline'}
               onClick={() => setIsEditing(!isEditing)}
+              variant={isEditing ? 'default' : 'outline'}
             >
               {isEditing ? 'Done' : 'Edit'}
             </Button>
           )}
           <Button variant="outline">
-            <Settings className="h-4 w-4 mr-2" />
+            <Settings className="mr-2 h-4 w-4" />
             Settings
           </Button>
         </div>
@@ -595,24 +630,37 @@ export const KPIDashboard: React.FC<KPIDashboardProps> = ({
         <CardContent className="pt-6">
           <div className="flex items-center gap-4">
             <Select
-              value={filters.time_period?.preset || 'custom'}
               onValueChange={(value) => {
                 if (value !== 'custom') {
                   const now = new Date();
                   let startDate: Date;
-                  
+
                   switch (value) {
                     case 'today':
-                      startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                      startDate = new Date(
+                        now.getFullYear(),
+                        now.getMonth(),
+                        now.getDate()
+                      );
                       break;
                     case 'week':
-                      startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                      startDate = new Date(
+                        now.getTime() - 7 * 24 * 60 * 60 * 1000
+                      );
                       break;
                     case 'month':
-                      startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+                      startDate = new Date(
+                        now.getFullYear(),
+                        now.getMonth(),
+                        1
+                      );
                       break;
                     case 'quarter':
-                      startDate = new Date(now.getFullYear(), Math.floor(now.getMonth() / 3) * 3, 1);
+                      startDate = new Date(
+                        now.getFullYear(),
+                        Math.floor(now.getMonth() / 3) * 3,
+                        1
+                      );
                       break;
                     case 'year':
                       startDate = new Date(now.getFullYear(), 0, 1);
@@ -620,7 +668,7 @@ export const KPIDashboard: React.FC<KPIDashboardProps> = ({
                     default:
                       return;
                   }
-                  
+
                   handleFilterChange({
                     time_period: {
                       start_date: startDate.toISOString().split('T')[0],
@@ -630,6 +678,7 @@ export const KPIDashboard: React.FC<KPIDashboardProps> = ({
                   });
                 }
               }}
+              value={filters.time_period?.preset || 'custom'}
             >
               <SelectTrigger className="w-40">
                 <SelectValue placeholder="Time Period" />
@@ -643,70 +692,80 @@ export const KPIDashboard: React.FC<KPIDashboardProps> = ({
                 <SelectItem value="custom">Custom</SelectItem>
               </SelectContent>
             </Select>
-            
+
             <Input
+              className="w-40"
+              onChange={(e) =>
+                handleFilterChange({
+                  time_period: {
+                    ...filters.time_period!,
+                    start_date: e.target.value,
+                    preset: 'custom',
+                  },
+                })
+              }
               type="date"
               value={filters.time_period?.start_date || ''}
-              onChange={(e) => handleFilterChange({
-                time_period: {
-                  ...filters.time_period!,
-                  start_date: e.target.value,
-                  preset: 'custom',
-                },
-              })}
-              className="w-40"
             />
-            
+
             <Input
+              className="w-40"
+              onChange={(e) =>
+                handleFilterChange({
+                  time_period: {
+                    ...filters.time_period!,
+                    end_date: e.target.value,
+                    preset: 'custom',
+                  },
+                })
+              }
               type="date"
               value={filters.time_period?.end_date || ''}
-              onChange={(e) => handleFilterChange({
-                time_period: {
-                  ...filters.time_period!,
-                  end_date: e.target.value,
-                  preset: 'custom',
-                },
-              })}
-              className="w-40"
             />
           </div>
         </CardContent>
       </Card>
 
       {/* Main Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
         {/* KPI Cards */}
         <div className="lg:col-span-3">
-          <Tabs defaultValue="overview" className="space-y-4">
+          <Tabs className="space-y-4" defaultValue="overview">
             <TabsList>
               <TabsTrigger value="overview">Overview</TabsTrigger>
               <TabsTrigger value="revenue">Revenue</TabsTrigger>
               <TabsTrigger value="profitability">Profitability</TabsTrigger>
               <TabsTrigger value="operational">Operational</TabsTrigger>
-              <TabsTrigger value="financial_health">Financial Health</TabsTrigger>
+              <TabsTrigger value="financial_health">
+                Financial Health
+              </TabsTrigger>
             </TabsList>
-            
-            <TabsContent value="overview" className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+
+            <TabsContent className="space-y-4" value="overview">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {kpis.slice(0, 6).map((kpi) => (
                   <KPICard
+                    isEditing={isEditing}
                     key={kpi.id}
                     kpi={kpi}
-                    isEditing={isEditing}
                     onDrillDown={handleDrillDown}
                   />
                 ))}
               </div>
             </TabsContent>
-            
+
             {Object.entries(groupedKpis).map(([category, categoryKpis]) => (
-              <TabsContent key={category} value={category} className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <TabsContent
+                className="space-y-4"
+                key={category}
+                value={category}
+              >
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                   {categoryKpis.map((kpi) => (
                     <KPICard
+                      isEditing={isEditing}
                       key={kpi.id}
                       kpi={kpi}
-                      isEditing={isEditing}
                       onDrillDown={handleDrillDown}
                     />
                   ))}
@@ -728,14 +787,14 @@ export const KPIDashboard: React.FC<KPIDashboardProps> = ({
 
       {/* Drill-down Modal */}
       <DrillDownModal
-        kpi={selectedKpi}
         dimension={drillDownDimension}
-        results={drillDownResults}
         isOpen={showDrillDown}
+        kpi={selectedKpi}
         onClose={() => setShowDrillDown(false)}
         onDrillDeeper={(dimension, value) => {
           console.log('Drill deeper:', dimension, value);
         }}
+        results={drillDownResults}
       />
     </div>
   );

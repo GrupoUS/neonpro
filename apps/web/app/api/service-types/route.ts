@@ -1,7 +1,7 @@
-import { createClient } from "@/app/utils/supabase/server";
-import { NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
+import { createClient } from '@/app/utils/supabase/server';
 
-export async function GET(request: Request) {
+export async function GET(_request: Request) {
   try {
     const supabase = await createClient();
 
@@ -11,23 +11,23 @@ export async function GET(request: Request) {
     } = await supabase.auth.getUser();
 
     if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Get clinic_id from user's profile
     const { data: profile } = await supabase
-      .from("profiles")
-      .select("clinic_id")
-      .eq("id", user.id)
+      .from('profiles')
+      .select('clinic_id')
+      .eq('id', user.id)
       .single();
 
     if (!profile?.clinic_id) {
-      return NextResponse.json({ error: "Clinic not found" }, { status: 400 });
+      return NextResponse.json({ error: 'Clinic not found' }, { status: 400 });
     }
 
     // Get service types for this clinic
     const { data: serviceTypes, error } = await supabase
-      .from("service_types")
+      .from('service_types')
       .select(
         `
         id,
@@ -38,9 +38,9 @@ export async function GET(request: Request) {
         is_active
       `
       )
-      .eq("clinic_id", profile.clinic_id)
-      .eq("is_active", true)
-      .order("name", { ascending: true });
+      .eq('clinic_id', profile.clinic_id)
+      .eq('is_active', true)
+      .order('name', { ascending: true });
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
@@ -48,9 +48,9 @@ export async function GET(request: Request) {
 
     return NextResponse.json(serviceTypes);
   } catch (error) {
-    console.error("API Error:", error);
+    console.error('API Error:', error);
     return NextResponse.json(
-      { error: "Internal Server Error" },
+      { error: 'Internal Server Error' },
       { status: 500 }
     );
   }

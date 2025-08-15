@@ -2,10 +2,10 @@
 // Global keyboard shortcuts hook for appointments
 // Story 1.1 Task 8 - Accessibility and Keyboard Navigation
 
-"use client";
+'use client';
 
-import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useRouter } from 'next/navigation';
+import { useCallback, useEffect, useState } from 'react';
 
 export interface KeyboardShortcut {
   key: string;
@@ -38,42 +38,42 @@ export function useKeyboardShortcuts({
   // Define keyboard shortcuts
   const shortcuts: KeyboardShortcut[] = [
     {
-      key: "n",
+      key: 'n',
       ctrlKey: true,
-      description: "Criar novo agendamento",
+      description: 'Criar novo agendamento',
       action: useCallback(() => {
         if (onNewAppointment) {
           onNewAppointment();
         } else {
-          router.push("/dashboard/appointments/new");
+          router.push('/dashboard/appointments/new');
         }
       }, [onNewAppointment, router]),
     },
     {
-      key: "f",
-      description: "Alternar filtros",
+      key: 'f',
+      description: 'Alternar filtros',
       action: useCallback(() => {
         onToggleFilters?.();
       }, [onToggleFilters]),
     },
     {
-      key: "r",
-      description: "Atualizar agendamentos",
+      key: 'r',
+      description: 'Atualizar agendamentos',
       action: useCallback(() => {
         onRefresh?.();
       }, [onRefresh]),
     },
     {
-      key: "Escape",
-      description: "Fechar diálogos e modais",
+      key: 'Escape',
+      description: 'Fechar diálogos e modais',
       action: useCallback(() => {
         onCloseDialog?.();
       }, [onCloseDialog]),
     },
     {
-      key: "?",
+      key: '?',
       shiftKey: true,
-      description: "Mostrar atalhos de teclado",
+      description: 'Mostrar atalhos de teclado',
       action: useCallback(() => {
         if (onShowHelp) {
           onShowHelp();
@@ -91,9 +91,9 @@ export function useKeyboardShortcuts({
       const target = event.target as HTMLElement;
       if (
         !isEnabled ||
-        target.tagName === "INPUT" ||
-        target.tagName === "TEXTAREA" ||
-        target.contentEditable === "true"
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.contentEditable === 'true'
       ) {
         return;
       }
@@ -118,10 +118,10 @@ export function useKeyboardShortcuts({
 
   // Set up event listeners
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      window.addEventListener("keydown", handleKeyDown);
+    if (typeof window !== 'undefined') {
+      window.addEventListener('keydown', handleKeyDown);
       return () => {
-        window.removeEventListener("keydown", handleKeyDown);
+        window.removeEventListener('keydown', handleKeyDown);
       };
     }
   }, [handleKeyDown]);
@@ -130,14 +130,14 @@ export function useKeyboardShortcuts({
   const formatShortcut = (shortcut: KeyboardShortcut): string => {
     const parts: string[] = [];
 
-    if (shortcut.ctrlKey) parts.push("Ctrl");
-    if (shortcut.altKey) parts.push("Alt");
-    if (shortcut.shiftKey) parts.push("Shift");
+    if (shortcut.ctrlKey) parts.push('Ctrl');
+    if (shortcut.altKey) parts.push('Alt');
+    if (shortcut.shiftKey) parts.push('Shift');
 
-    const key = shortcut.key === "?" ? "?" : shortcut.key.toUpperCase();
+    const key = shortcut.key === '?' ? '?' : shortcut.key.toUpperCase();
     parts.push(key);
 
-    return parts.join(" + ");
+    return parts.join(' + ');
   };
 
   return {

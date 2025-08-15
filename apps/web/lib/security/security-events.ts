@@ -9,12 +9,14 @@ export interface SecurityEvent {
   metadata?: Record<string, any>;
 }
 
-export function logSecurityEvent(event: Omit<SecurityEvent, 'id' | 'timestamp'>) {
+export function logSecurityEvent(
+  event: Omit<SecurityEvent, 'id' | 'timestamp'>
+) {
   console.log('Security Event:', event);
   return {
     id: Math.random().toString(36),
     timestamp: new Date(),
-    ...event
+    ...event,
   };
 }
 

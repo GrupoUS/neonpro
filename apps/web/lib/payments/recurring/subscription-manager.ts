@@ -3,10 +3,10 @@
 // Comprehensive subscription lifecycle management
 
 import { createClient } from '@supabase/supabase-js';
+import { addDays, addMonths, addYears } from 'date-fns';
 import Stripe from 'stripe';
-import { addDays, addMonths, addYears, isBefore, isAfter } from 'date-fns';
-import { logger } from '@/lib/utils/logger';
 import { sendNotification } from '@/lib/notifications/notification-service';
+import { logger } from '@/lib/utils/logger';
 import { PaymentProcessor } from '../payment-processor';
 
 // Types and Interfaces
@@ -29,7 +29,13 @@ export interface Subscription {
   id: string;
   customer_id: string;
   plan_id: string;
-  status: 'active' | 'past_due' | 'canceled' | 'unpaid' | 'trialing' | 'incomplete';
+  status:
+    | 'active'
+    | 'past_due'
+    | 'canceled'
+    | 'unpaid'
+    | 'trialing'
+    | 'incomplete';
   current_period_start: Date;
   current_period_end: Date;
   trial_start?: Date;
@@ -108,47 +114,45 @@ export interface PaymentRetryConfig {
 export class SubscriptionManager {
   private supabase: any;
   private stripe: Stripe;
-  private paymentProcessor: PaymentProcessor;
-  private retryConfig: PaymentRetryConfig;
 
   constructor() {
     this.supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
-    
+
     this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
       apiVersion: '2023-10-16',
     });
-    
+
     this.paymentProcessor = new PaymentProcessor();
-    
+
     this.retryConfig = {
       max_attempts: 4,
       retry_intervals: [24, 72, 168], // 1 day, 3 days, 7 days
-      notification_triggers: [1, 2, 4] // Send notifications on attempts 1, 2, and 4
+      notification_triggers: [1, 2, 4], // Send notifications on attempts 1, 2, and 4
     };
   }
 
   // Subscription Plans Management
-  async getSubscriptionPlans(activeOnly: boolean = true): Promise<SubscriptionPlan[]> {
+  async getSubscriptionPlans(activeOnly = true): Promise<SubscriptionPlan[]> {
     try {
       let query = this.supabase
         .from('subscription_plans')
         .select('*')
         .order('price', { ascending: true });
-      
+
       if (activeOnly) {
         query = query.eq('is_active', true);
       }
-      
+
       const { data, error } = await query;
-      
+
       if (error) {
         logger.error('Error fetching subscription plans:', error);
         throw new Error(`Failed to fetch subscription plans: ${error.message}`);
       }
-      
+
       return data || [];
     } catch (error) {
       logger.error('Error in getSubscriptionPlans:', error);
@@ -163,12 +167,12 @@ export class SubscriptionManager {
         .select('*')
         .eq('id', planId)
         .single();
-      
+
       if (error && error.code !== 'PGRST116') {
         logger.error('Error fetching subscription plan:', error);
         throw new Error(`Failed to fetch subscription plan: ${error.message}`);
       }
-      
+
       return data;
     } catch (error) {
       logger.error('Error in getSubscriptionPlan:', error);
@@ -177,7 +181,9 @@ export class SubscriptionManager {
   }
 
   // Subscription Lifecycle Management
-  async createSubscription(params: CreateSubscriptionParams): Promise<Subscription> {
+  async createSubscription(
+    params: CreateSubscriptionParams
+  ): Promise<Subscription> {
     try {
       const plan = await this.getSubscriptionPlan(params.plan_id);
       if (!plan) {
@@ -189,9 +195,12 @@ export class SubscriptionManager {
       const trialDays = params.trial_days ?? plan.trial_days;
       const trialStart = trialDays > 0 ? now : undefined;
       const trialEnd = trialDays > 0 ? addDays(now, trialDays) : undefined;
-      
+
       const periodStart = trialEnd || now;
-      const periodEnd = this.calculateNextBillingDate(periodStart, plan.billing_cycle);
+      const periodEnd = this.calculateNextBillingDate(
+        periodStart,
+        plan.billing_cycle
+      );
 
       // Create Stripe subscription if payment method provided
       let stripeSubscriptionId: string | undefined;
@@ -201,7 +210,7 @@ export class SubscriptionManager {
           price_id: plan.stripe_price_id,
           payment_method_id: params.payment_method_id,
           trial_end: trialEnd,
-          metadata: params.metadata
+          metadata: params.metadata,
         });
         stripeSubscriptionId = stripeSubscription.id;
       }
@@ -217,7 +226,7 @@ export class SubscriptionManager {
         trial_end: trialEnd?.toISOString(),
         cancel_at_period_end: false,
         stripe_subscription_id: stripeSubscriptionId,
-        metadata: params.metadata || {}
+        metadata: params.metadata || {},
       };
 
       const { data, error } = await this.supabase
@@ -238,7 +247,7 @@ export class SubscriptionManager {
       await this.logBillingEvent(data.id, 'subscription_created', {
         plan_id: params.plan_id,
         trial_days: trialDays,
-        stripe_subscription_id: stripeSubscriptionId
+        stripe_subscription_id: stripeSubscriptionId,
       });
 
       // Send welcome notification
@@ -253,7 +262,7 @@ export class SubscriptionManager {
   }
 
   async updateSubscription(
-    subscriptionId: string, 
+    subscriptionId: string,
     params: UpdateSubscriptionParams
   ): Promise<Subscription> {
     try {
@@ -263,7 +272,7 @@ export class SubscriptionManager {
       }
 
       const updateData: any = {
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       };
 
       // Handle plan change
@@ -280,21 +289,21 @@ export class SubscriptionManager {
             subscription.plan_id,
             params.plan_id
           );
-          
+
           if (proration) {
             await this.saveProrationCalculation(proration);
           }
         }
 
         updateData.plan_id = params.plan_id;
-        
+
         // Update Stripe subscription if exists
         if (subscription.stripe_subscription_id && newPlan.stripe_price_id) {
           await this.updateStripeSubscription(
             subscription.stripe_subscription_id,
             {
               price_id: newPlan.stripe_price_id,
-              proration_behavior: params.proration_behavior
+              proration_behavior: params.proration_behavior,
             }
           );
         }
@@ -303,7 +312,7 @@ export class SubscriptionManager {
       // Handle cancellation
       if (params.cancel_at_period_end !== undefined) {
         updateData.cancel_at_period_end = params.cancel_at_period_end;
-        
+
         if (params.cancel_at_period_end) {
           // Schedule cancellation
           if (subscription.stripe_subscription_id) {
@@ -312,9 +321,9 @@ export class SubscriptionManager {
               { cancel_at_period_end: true }
             );
           }
-          
+
           await this.logBillingEvent(subscriptionId, 'cancellation_scheduled', {
-            cancel_at: subscription.current_period_end
+            cancel_at: subscription.current_period_end,
           });
         } else {
           // Reactivate subscription
@@ -324,8 +333,12 @@ export class SubscriptionManager {
               { cancel_at_period_end: false }
             );
           }
-          
-          await this.logBillingEvent(subscriptionId, 'cancellation_removed', {});
+
+          await this.logBillingEvent(
+            subscriptionId,
+            'cancellation_removed',
+            {}
+          );
         }
       }
 
@@ -333,7 +346,7 @@ export class SubscriptionManager {
       if (params.metadata) {
         updateData.metadata = {
           ...subscription.metadata,
-          ...params.metadata
+          ...params.metadata,
         };
       }
 
@@ -359,8 +372,8 @@ export class SubscriptionManager {
   }
 
   async cancelSubscription(
-    subscriptionId: string, 
-    immediate: boolean = false
+    subscriptionId: string,
+    immediate = false
   ): Promise<Subscription> {
     try {
       const subscription = await this.getSubscription(subscriptionId);
@@ -369,22 +382,28 @@ export class SubscriptionManager {
       }
 
       const updateData: any = {
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       };
 
       if (immediate) {
         updateData.status = 'canceled';
         updateData.canceled_at = new Date().toISOString();
-        
+
         // Cancel immediately in Stripe
         if (subscription.stripe_subscription_id) {
-          await this.stripe.subscriptions.cancel(subscription.stripe_subscription_id);
+          await this.stripe.subscriptions.cancel(
+            subscription.stripe_subscription_id
+          );
         }
-        
-        await this.logBillingEvent(subscriptionId, 'subscription_canceled_immediate', {});
+
+        await this.logBillingEvent(
+          subscriptionId,
+          'subscription_canceled_immediate',
+          {}
+        );
       } else {
         updateData.cancel_at_period_end = true;
-        
+
         // Schedule cancellation in Stripe
         if (subscription.stripe_subscription_id) {
           await this.stripe.subscriptions.update(
@@ -392,10 +411,14 @@ export class SubscriptionManager {
             { cancel_at_period_end: true }
           );
         }
-        
-        await this.logBillingEvent(subscriptionId, 'subscription_canceled_scheduled', {
-          cancel_at: subscription.current_period_end
-        });
+
+        await this.logBillingEvent(
+          subscriptionId,
+          'subscription_canceled_scheduled',
+          {
+            cancel_at: subscription.current_period_end,
+          }
+        );
       }
 
       // Update subscription in database
@@ -413,7 +436,7 @@ export class SubscriptionManager {
 
       // Send cancellation notification
       await this.sendSubscriptionNotification(
-        subscriptionId, 
+        subscriptionId,
         immediate ? 'subscription_canceled' : 'subscription_cancel_scheduled'
       );
 
@@ -436,12 +459,12 @@ export class SubscriptionManager {
         `)
         .eq('id', subscriptionId)
         .single();
-      
+
       if (error && error.code !== 'PGRST116') {
         logger.error('Error fetching subscription:', error);
         throw new Error(`Failed to fetch subscription: ${error.message}`);
       }
-      
+
       return data;
     } catch (error) {
       logger.error('Error in getSubscription:', error);
@@ -459,12 +482,14 @@ export class SubscriptionManager {
         `)
         .eq('customer_id', customerId)
         .order('created_at', { ascending: false });
-      
+
       if (error) {
         logger.error('Error fetching customer subscriptions:', error);
-        throw new Error(`Failed to fetch customer subscriptions: ${error.message}`);
+        throw new Error(
+          `Failed to fetch customer subscriptions: ${error.message}`
+        );
       }
-      
+
       return data || [];
     } catch (error) {
       logger.error('Error in getCustomerSubscriptions:', error);
@@ -476,7 +501,7 @@ export class SubscriptionManager {
   async trackUsage(
     subscriptionId: string,
     usageType: string,
-    count: number = 1
+    count = 1
   ): Promise<void> {
     try {
       const subscription = await this.getSubscription(subscriptionId);
@@ -505,7 +530,7 @@ export class SubscriptionManager {
           .from('subscription_usage')
           .update({
             usage_count: currentUsage.usage_count + count,
-            updated_at: new Date().toISOString()
+            updated_at: new Date().toISOString(),
           })
           .eq('id', currentUsage.id);
 
@@ -522,7 +547,7 @@ export class SubscriptionManager {
             usage_type: usageType,
             usage_count: count,
             period_start: subscription.current_period_start,
-            period_end: subscription.current_period_end
+            period_end: subscription.current_period_end,
           });
 
         if (insertError) {
@@ -531,7 +556,9 @@ export class SubscriptionManager {
         }
       }
 
-      logger.info(`Usage tracked: ${usageType} +${count} for subscription ${subscriptionId}`);
+      logger.info(
+        `Usage tracked: ${usageType} +${count} for subscription ${subscriptionId}`
+      );
     } catch (error) {
       logger.error('Error in trackUsage:', error);
       throw error;
@@ -548,18 +575,18 @@ export class SubscriptionManager {
         .select('*')
         .eq('subscription_id', subscriptionId)
         .order('created_at', { ascending: false });
-      
+
       if (usageType) {
         query = query.eq('usage_type', usageType);
       }
-      
+
       const { data, error } = await query;
-      
+
       if (error) {
         logger.error('Error fetching usage:', error);
         throw new Error(`Failed to fetch usage: ${error.message}`);
       }
-      
+
       return data || [];
     } catch (error) {
       logger.error('Error in getUsage:', error);
@@ -568,7 +595,10 @@ export class SubscriptionManager {
   }
 
   // Helper Methods
-  private calculateNextBillingDate(startDate: Date, billingCycle: string): Date {
+  private calculateNextBillingDate(
+    startDate: Date,
+    billingCycle: string
+  ): Date {
     switch (billingCycle) {
       case 'monthly':
         return addMonths(startDate, 1);
@@ -605,11 +635,13 @@ export class SubscriptionManager {
         items: [{ price: params.price_id }],
         default_payment_method: params.payment_method_id,
         expand: ['latest_invoice.payment_intent'],
-        metadata: params.metadata || {}
+        metadata: params.metadata || {},
       };
 
       if (params.trial_end) {
-        subscriptionParams.trial_end = Math.floor(params.trial_end.getTime() / 1000);
+        subscriptionParams.trial_end = Math.floor(
+          params.trial_end.getTime() / 1000
+        );
       }
 
       return await this.stripe.subscriptions.create(subscriptionParams);
@@ -627,20 +659,27 @@ export class SubscriptionManager {
     }
   ): Promise<Stripe.Subscription> {
     try {
-      const subscription = await this.stripe.subscriptions.retrieve(subscriptionId);
-      
+      const subscription =
+        await this.stripe.subscriptions.retrieve(subscriptionId);
+
       const updateParams: Stripe.SubscriptionUpdateParams = {
-        proration_behavior: params.proration_behavior as any || 'create_prorations'
+        proration_behavior:
+          (params.proration_behavior as any) || 'create_prorations',
       };
 
       if (params.price_id) {
-        updateParams.items = [{
-          id: subscription.items.data[0].id,
-          price: params.price_id
-        }];
+        updateParams.items = [
+          {
+            id: subscription.items.data[0].id,
+            price: params.price_id,
+          },
+        ];
       }
 
-      return await this.stripe.subscriptions.update(subscriptionId, updateParams);
+      return await this.stripe.subscriptions.update(
+        subscriptionId,
+        updateParams
+      );
     } catch (error) {
       logger.error('Error updating Stripe subscription:', error);
       throw error;
@@ -657,18 +696,22 @@ export class SubscriptionManager {
       const oldPlan = await this.getSubscriptionPlan(oldPlanId);
       const newPlan = await this.getSubscriptionPlan(newPlanId);
 
-      if (!subscription || !oldPlan || !newPlan) {
+      if (!(subscription && oldPlan && newPlan)) {
         return null;
       }
 
       const now = new Date();
       const periodStart = new Date(subscription.current_period_start);
       const periodEnd = new Date(subscription.current_period_end);
-      
-      const totalDays = Math.ceil((periodEnd.getTime() - periodStart.getTime()) / (1000 * 60 * 60 * 24));
-      const usedDays = Math.ceil((now.getTime() - periodStart.getTime()) / (1000 * 60 * 60 * 24));
+
+      const totalDays = Math.ceil(
+        (periodEnd.getTime() - periodStart.getTime()) / (1000 * 60 * 60 * 24)
+      );
+      const usedDays = Math.ceil(
+        (now.getTime() - periodStart.getTime()) / (1000 * 60 * 60 * 24)
+      );
       const remainingDays = totalDays - usedDays;
-      
+
       const prorationFactor = remainingDays / totalDays;
       const originalAmount = oldPlan.price;
       const prorationCredit = originalAmount * prorationFactor;
@@ -685,7 +728,7 @@ export class SubscriptionManager {
         days_used: usedDays,
         days_total: totalDays,
         proration_factor: prorationFactor,
-        effective_date: now
+        effective_date: now,
       };
     } catch (error) {
       logger.error('Error calculating proration:', error);
@@ -693,7 +736,9 @@ export class SubscriptionManager {
     }
   }
 
-  private async saveProrationCalculation(proration: ProrationCalculation): Promise<void> {
+  private async saveProrationCalculation(
+    proration: ProrationCalculation
+  ): Promise<void> {
     try {
       const { error } = await this.supabase
         .from('proration_calculations')
@@ -706,12 +751,14 @@ export class SubscriptionManager {
           days_used: proration.days_used,
           days_total: proration.days_total,
           proration_factor: proration.proration_factor,
-          effective_date: proration.effective_date.toISOString()
+          effective_date: proration.effective_date.toISOString(),
         });
 
       if (error) {
         logger.error('Error saving proration calculation:', error);
-        throw new Error(`Failed to save proration calculation: ${error.message}`);
+        throw new Error(
+          `Failed to save proration calculation: ${error.message}`
+        );
       }
     } catch (error) {
       logger.error('Error in saveProrationCalculation:', error);
@@ -729,23 +776,33 @@ export class SubscriptionManager {
 
       // Initialize common usage types based on plan features
       const usageTypes = [
-        { type: 'appointments', limit: this.extractUsageLimit(plan.features, 'appointments') },
-        { type: 'patients', limit: this.extractUsageLimit(plan.features, 'patients') },
-        { type: 'storage_gb', limit: this.extractUsageLimit(plan.features, 'storage') },
-        { type: 'api_calls', limit: this.extractUsageLimit(plan.features, 'api') }
+        {
+          type: 'appointments',
+          limit: this.extractUsageLimit(plan.features, 'appointments'),
+        },
+        {
+          type: 'patients',
+          limit: this.extractUsageLimit(plan.features, 'patients'),
+        },
+        {
+          type: 'storage_gb',
+          limit: this.extractUsageLimit(plan.features, 'storage'),
+        },
+        {
+          type: 'api_calls',
+          limit: this.extractUsageLimit(plan.features, 'api'),
+        },
       ];
 
       for (const usage of usageTypes) {
-        await this.supabase
-          .from('subscription_usage')
-          .insert({
-            subscription_id: subscriptionId,
-            usage_type: usage.type,
-            usage_count: 0,
-            usage_limit: usage.limit,
-            period_start: subscription.current_period_start,
-            period_end: subscription.current_period_end
-          });
+        await this.supabase.from('subscription_usage').insert({
+          subscription_id: subscriptionId,
+          usage_type: usage.type,
+          usage_count: 0,
+          usage_limit: usage.limit,
+          period_start: subscription.current_period_start,
+          period_end: subscription.current_period_end,
+        });
       }
     } catch (error) {
       logger.error('Error initializing usage tracking:', error);
@@ -753,12 +810,15 @@ export class SubscriptionManager {
     }
   }
 
-  private extractUsageLimit(features: string[], usageType: string): number | null {
-    const feature = features.find(f => f.toLowerCase().includes(usageType));
+  private extractUsageLimit(
+    features: string[],
+    usageType: string
+  ): number | null {
+    const feature = features.find((f) => f.toLowerCase().includes(usageType));
     if (!feature) return null;
-    
+
     const match = feature.match(/(\d+)/);
-    return match ? parseInt(match[1]) : null;
+    return match ? Number.parseInt(match[1], 10) : null;
   }
 
   private async logBillingEvent(
@@ -767,13 +827,11 @@ export class SubscriptionManager {
     eventData: Record<string, any>
   ): Promise<void> {
     try {
-      await this.supabase
-        .from('billing_events')
-        .insert({
-          subscription_id: subscriptionId,
-          event_type: eventType,
-          event_data: eventData
-        });
+      await this.supabase.from('billing_events').insert({
+        subscription_id: subscriptionId,
+        event_type: eventType,
+        event_data: eventData,
+      });
     } catch (error) {
       logger.error('Error logging billing event:', error);
       // Don't throw error as this is not critical
@@ -793,8 +851,8 @@ export class SubscriptionManager {
         recipient_id: subscription.customer_id,
         data: {
           subscription_id: subscriptionId,
-          plan_name: subscription.plan?.name
-        }
+          plan_name: subscription.plan?.name,
+        },
       });
     } catch (error) {
       logger.error('Error sending subscription notification:', error);

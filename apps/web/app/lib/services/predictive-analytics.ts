@@ -1,16 +1,16 @@
-import { createClient } from '@/app/utils/supabase/server';
-import {
-  ForecastingModel,
+import type {
+  CreateAlertRequest,
+  CreatePredictionRequest,
+  DemandAlert,
   DemandPrediction,
   ForecastAccuracy,
-  DemandAlert,
+  ForecastingModel,
+  ForecastingRecommendation,
   ForecastingSettings,
   ModelTrainingHistory,
-  CreatePredictionRequest,
   UpdateModelRequest,
-  CreateAlertRequest,
-  ForecastingRecommendation
 } from '@/app/types/predictive-analytics';
+import { createClient } from '@/app/utils/supabase/server';
 
 export class PredictiveAnalyticsService {
   private supabase;
@@ -41,7 +41,9 @@ export class PredictiveAnalyticsService {
     return data;
   }
 
-  async createModel(model: Omit<ForecastingModel, 'id' | 'created_at' | 'updated_at'>): Promise<ForecastingModel> {
+  async createModel(
+    model: Omit<ForecastingModel, 'id' | 'created_at' | 'updated_at'>
+  ): Promise<ForecastingModel> {
     const { data, error } = await this.supabase
       .from('forecasting_models')
       .insert(model)
@@ -52,7 +54,10 @@ export class PredictiveAnalyticsService {
     return data;
   }
 
-  async updateModel(id: string, updates: UpdateModelRequest): Promise<ForecastingModel> {
+  async updateModel(
+    id: string,
+    updates: UpdateModelRequest
+  ): Promise<ForecastingModel> {
     const { data, error } = await this.supabase
       .from('forecasting_models')
       .update({ ...updates, updated_at: new Date().toISOString() })
@@ -89,7 +94,9 @@ export class PredictiveAnalyticsService {
     return data || [];
   }
 
-  async createPrediction(prediction: CreatePredictionRequest): Promise<DemandPrediction> {
+  async createPrediction(
+    prediction: CreatePredictionRequest
+  ): Promise<DemandPrediction> {
     const { data, error } = await this.supabase
       .from('demand_predictions')
       .insert(prediction)
@@ -137,7 +144,9 @@ export class PredictiveAnalyticsService {
     return data || [];
   }
 
-  async createAccuracyRecord(accuracy: Omit<ForecastAccuracy, 'id' | 'created_at'>): Promise<ForecastAccuracy> {
+  async createAccuracyRecord(
+    accuracy: Omit<ForecastAccuracy, 'id' | 'created_at'>
+  ): Promise<ForecastAccuracy> {
     const { data, error } = await this.supabase
       .from('forecast_accuracy')
       .insert(accuracy)
@@ -175,14 +184,17 @@ export class PredictiveAnalyticsService {
     return data;
   }
 
-  async acknowledgeAlert(id: string, acknowledgedBy: string): Promise<DemandAlert> {
+  async acknowledgeAlert(
+    id: string,
+    acknowledgedBy: string
+  ): Promise<DemandAlert> {
     const { data, error } = await this.supabase
       .from('demand_alerts')
       .update({
         is_acknowledged: true,
         acknowledged_by: acknowledgedBy,
         acknowledged_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', id)
       .select()
@@ -199,7 +211,7 @@ export class PredictiveAnalyticsService {
         is_active: false,
         resolved_by: resolvedBy,
         resolved_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', id)
       .select()
@@ -220,7 +232,11 @@ export class PredictiveAnalyticsService {
     return data || [];
   }
 
-  async updateSettings(settingKey: string, settingValue: any, updatedBy: string): Promise<ForecastingSettings> {
+  async updateSettings(
+    settingKey: string,
+    settingValue: any,
+    updatedBy: string
+  ): Promise<ForecastingSettings> {
     const existingSetting = await this.supabase
       .from('forecasting_settings')
       .select('*')
@@ -233,7 +249,7 @@ export class PredictiveAnalyticsService {
         .update({
           setting_value: settingValue,
           updated_by: updatedBy,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('setting_key', settingKey)
         .select()
@@ -241,21 +257,20 @@ export class PredictiveAnalyticsService {
 
       if (error) throw error;
       return data;
-    } else {
-      const { data, error } = await this.supabase
-        .from('forecasting_settings')
-        .insert({
-          setting_key: settingKey,
-          setting_value: settingValue,
-          created_by: updatedBy,
-          updated_by: updatedBy
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-      return data;
     }
+    const { data, error } = await this.supabase
+      .from('forecasting_settings')
+      .insert({
+        setting_key: settingKey,
+        setting_value: settingValue,
+        created_by: updatedBy,
+        updated_by: updatedBy,
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
   }
 
   // Model Training History
@@ -274,7 +289,9 @@ export class PredictiveAnalyticsService {
     return data || [];
   }
 
-  async createTrainingRecord(training: Omit<ModelTrainingHistory, 'id' | 'created_at'>): Promise<ModelTrainingHistory> {
+  async createTrainingRecord(
+    training: Omit<ModelTrainingHistory, 'id' | 'created_at'>
+  ): Promise<ModelTrainingHistory> {
     const { data, error } = await this.supabase
       .from('model_training_history')
       .insert(training)
@@ -291,7 +308,7 @@ export class PredictiveAnalyticsService {
     // For now, we'll return mock recommendations based on recent data
     const recentPredictions = await this.getPredictions();
     const recentAlerts = await this.getAlerts(true);
-    
+
     const recommendations: ForecastingRecommendation[] = [];
 
     // Generate recommendations based on alerts
@@ -300,11 +317,12 @@ export class PredictiveAnalyticsService {
         id: 'rec-1',
         type: 'optimization',
         title: 'Otimizar Agendamentos',
-        description: 'Ajustar horários de pico baseado nas previsões de demanda',
+        description:
+          'Ajustar horários de pico baseado nas previsões de demanda',
         priority: 'high',
         impact: 'Redução de 15% no tempo de espera',
         actionRequired: 'Revisar configurações de agendamento',
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
       });
     }
 
@@ -318,7 +336,7 @@ export class PredictiveAnalyticsService {
         priority: 'medium',
         impact: 'Melhoria de 20% na satisfação do cliente',
         actionRequired: 'Agendar reunião de planejamento de equipe',
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
       });
     }
 
@@ -334,27 +352,33 @@ export class PredictiveAnalyticsService {
     mape: number;
   }> {
     const accuracyMetrics = await this.getAccuracyMetrics(modelId);
-    
+
     if (accuracyMetrics.length === 0) {
       return {
         accuracy: 0,
         precision: 0,
         recall: 0,
         f1Score: 0,
-        mape: 0
+        mape: 0,
       };
     }
 
     // Calculate average metrics
-    const avgAccuracy = accuracyMetrics.reduce((sum, metric) => sum + metric.accuracy_percentage, 0) / accuracyMetrics.length;
-    const avgMape = accuracyMetrics.reduce((sum, metric) => sum + (metric.mape || 0), 0) / accuracyMetrics.length;
+    const avgAccuracy =
+      accuracyMetrics.reduce(
+        (sum, metric) => sum + metric.accuracy_percentage,
+        0
+      ) / accuracyMetrics.length;
+    const avgMape =
+      accuracyMetrics.reduce((sum, metric) => sum + (metric.mape || 0), 0) /
+      accuracyMetrics.length;
 
     return {
       accuracy: avgAccuracy,
       precision: avgAccuracy * 0.95, // Simplified calculation
-      recall: avgAccuracy * 0.90,
+      recall: avgAccuracy * 0.9,
       f1Score: avgAccuracy * 0.92,
-      mape: avgMape
+      mape: avgMape,
     };
   }
 
@@ -368,16 +392,16 @@ export class PredictiveAnalyticsService {
     // For now, we'll generate mock forecasts
     const forecasts: DemandPrediction[] = [];
     const baseDate = new Date();
-    
+
     for (let i = 1; i <= horizon; i++) {
       const predictionDate = new Date(baseDate);
-      
+
       switch (timeframe) {
         case 'daily':
           predictionDate.setDate(baseDate.getDate() + i);
           break;
         case 'weekly':
-          predictionDate.setDate(baseDate.getDate() + (i * 7));
+          predictionDate.setDate(baseDate.getDate() + i * 7);
           break;
         case 'monthly':
           predictionDate.setMonth(baseDate.getMonth() + i);
@@ -385,10 +409,10 @@ export class PredictiveAnalyticsService {
       }
 
       // Generate realistic demand values with some randomness
-      const baseDemand = 50 + (Math.random() * 100);
-      const seasonalFactor = 1 + (Math.sin((i / horizon) * Math.PI) * 0.3);
+      const baseDemand = 50 + Math.random() * 100;
+      const seasonalFactor = 1 + Math.sin((i / horizon) * Math.PI) * 0.3;
       const predictedDemand = Math.round(baseDemand * seasonalFactor);
-      
+
       forecasts.push({
         id: `forecast-${i}`,
         model_id: 'default-model',
@@ -397,14 +421,14 @@ export class PredictiveAnalyticsService {
         predicted_demand: predictedDemand,
         confidence_interval_lower: Math.round(predictedDemand * 0.85),
         confidence_interval_upper: Math.round(predictedDemand * 1.15),
-        confidence_score: 0.85 + (Math.random() * 0.10),
+        confidence_score: 0.85 + Math.random() * 0.1,
         factors: JSON.stringify({
           seasonal: seasonalFactor,
           trend: 'stable',
-          external: 'normal'
+          external: 'normal',
         }),
         created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       });
     }
 

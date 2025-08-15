@@ -2,119 +2,131 @@
 // Created: 2025-01-22
 // Comprehensive export interface with real-time progress tracking
 
-'use client'
+'use client';
 
-import React, { useState, useEffect, useCallback } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Progress } from '@/components/ui/progress'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Textarea } from '@/components/ui/textarea'
-import { Calendar } from '@/components/ui/calendar'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { Separator } from '@/components/ui/separator'
-import { ScrollArea } from '@/components/ui/scroll-area'
+import { format, subDays } from 'date-fns';
 import {
-  Download,
-  FileText,
-  FileSpreadsheet,
-  FileImage,
-  Calendar as CalendarIcon,
-  Settings,
-  Clock,
-  CheckCircle,
-  XCircle,
   AlertCircle,
-  Loader2,
-  Trash2,
-  Eye,
-  Mail,
-  Filter,
   BarChart3,
+  Calendar as CalendarIcon,
+  CheckCircle,
+  Clock,
+  DollarSign,
+  Download,
+  Eye,
+  FileImage,
+  FileSpreadsheet,
+  FileText,
+  Loader2,
+  Settings,
+  Target,
+  Trash2,
   TrendingUp,
   Users,
-  DollarSign,
-  Target,
-  Zap
-} from 'lucide-react'
-import { format, addDays, subDays } from 'date-fns'
-import { cn } from '@/lib/utils'
-import { toast } from 'sonner'
+  XCircle,
+  Zap,
+} from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
+import { toast } from 'sonner';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { Progress } from '@/components/ui/progress';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Separator } from '@/components/ui/separator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type {
+  CSVExportOptions,
+  ExcelExportOptions,
+  ExportConfig,
   ExportFormat,
-  ReportType,
   ExportRequest,
   ExportResponse,
-  ExportConfig,
   PDFExportOptions,
-  ExcelExportOptions,
-  CSVExportOptions
-} from '@/lib/analytics/export/types'
+  ReportType,
+} from '@/lib/analytics/export/types';
+import { cn } from '@/lib/utils';
 
 // ============================================================================
 // TYPES AND INTERFACES
 // ============================================================================
 
 interface ExportDashboardProps {
-  className?: string
+  className?: string;
   defaultDateRange?: {
-    startDate: Date
-    endDate: Date
-  }
-  onExportComplete?: (response: ExportResponse) => void
-  onExportError?: (error: any) => void
+    startDate: Date;
+    endDate: Date;
+  };
+  onExportComplete?: (response: ExportResponse) => void;
+  onExportError?: (error: any) => void;
 }
 
 interface ActiveExport {
-  id: string
-  config: ExportConfig
-  status: 'pending' | 'processing' | 'completed' | 'failed' | 'cancelled'
+  id: string;
+  config: ExportConfig;
+  status: 'pending' | 'processing' | 'completed' | 'failed' | 'cancelled';
   progress?: {
-    percentage: number
-    currentStep: string
-    estimatedTimeRemaining?: number
-  }
-  createdAt: Date
-  completedAt?: Date
-  downloadUrl?: string
-  fileName?: string
-  fileSize?: number
+    percentage: number;
+    currentStep: string;
+    estimatedTimeRemaining?: number;
+  };
+  createdAt: Date;
+  completedAt?: Date;
+  downloadUrl?: string;
+  fileName?: string;
+  fileSize?: number;
   error?: {
-    code: string
-    message: string
-  }
+    code: string;
+    message: string;
+  };
 }
 
 interface ExportFormData {
-  format: ExportFormat
-  reportType: ReportType
+  format: ExportFormat;
+  reportType: ReportType;
   dateRange: {
-    startDate: Date
-    endDate: Date
-  }
-  filters: Record<string, any>
-  includeSummary: boolean
+    startDate: Date;
+    endDate: Date;
+  };
+  filters: Record<string, any>;
+  includeSummary: boolean;
   customization: {
-    title?: string
-    subtitle?: string
-    logo?: string
+    title?: string;
+    subtitle?: string;
+    logo?: string;
     branding?: {
-      primaryColor?: string
-      secondaryColor?: string
-      fontFamily?: string
-    }
-  }
-  pdfOptions: PDFExportOptions
-  excelOptions: ExcelExportOptions
-  csvOptions: CSVExportOptions
-  notifyOnComplete: boolean
-  email?: string
+      primaryColor?: string;
+      secondaryColor?: string;
+      fontFamily?: string;
+    };
+  };
+  pdfOptions: PDFExportOptions;
+  excelOptions: ExcelExportOptions;
+  csvOptions: CSVExportOptions;
+  notifyOnComplete: boolean;
+  email?: string;
 }
 
 // ============================================================================
@@ -125,17 +137,17 @@ export function ExportDashboard({
   className,
   defaultDateRange = {
     startDate: subDays(new Date(), 30),
-    endDate: new Date()
+    endDate: new Date(),
   },
   onExportComplete,
-  onExportError
+  onExportError,
 }: ExportDashboardProps) {
   // State management
-  const [activeTab, setActiveTab] = useState<'create' | 'history'>('create')
-  const [isLoading, setIsLoading] = useState(false)
-  const [activeExports, setActiveExports] = useState<ActiveExport[]>([])
-  const [exportHistory, setExportHistory] = useState<ActiveExport[]>([])
-  
+  const [activeTab, setActiveTab] = useState<'create' | 'history'>('create');
+  const [isLoading, setIsLoading] = useState(false);
+  const [activeExports, setActiveExports] = useState<ActiveExport[]>([]);
+  const [exportHistory, setExportHistory] = useState<ActiveExport[]>([]);
+
   // Form state
   const [formData, setFormData] = useState<ExportFormData>({
     format: 'pdf',
@@ -149,8 +161,8 @@ export function ExportDashboard({
       branding: {
         primaryColor: '#1f2937',
         secondaryColor: '#6b7280',
-        fontFamily: 'Inter'
-      }
+        fontFamily: 'Inter',
+      },
     },
     pdfOptions: {
       orientation: 'portrait',
@@ -160,17 +172,17 @@ export function ExportDashboard({
         fontFamily: 'helvetica',
         fontSize: 12,
         primaryColor: '#1f2937',
-        secondaryColor: '#6b7280'
+        secondaryColor: '#6b7280',
       },
       header: {
         text: 'NeonPro Analytics Report',
         fontSize: 16,
-        alignment: 'center'
+        alignment: 'center',
       },
       footer: {
         includePageNumbers: true,
-        includeTimestamp: true
-      }
+        includeTimestamp: true,
+      },
     },
     excelOptions: {
       worksheets: {
@@ -179,235 +191,249 @@ export function ExportDashboard({
         conversion: true,
         cohorts: true,
         forecasts: true,
-        rawData: false
+        rawData: false,
       },
       formatting: {
         autoWidth: true,
         freezeHeaders: true,
         alternatingRows: true,
-        numberFormat: '#,##0.00'
-      }
+        numberFormat: '#,##0.00',
+      },
     },
     csvOptions: {
       delimiter: ',',
       encoding: 'utf8',
       includeHeaders: true,
-      compression: 'none'
+      compression: 'none',
     },
-    notifyOnComplete: false
-  })
+    notifyOnComplete: false,
+  });
 
   // ========================================================================
   // EFFECTS
   // ========================================================================
 
   useEffect(() => {
-    loadExportHistory()
-    const interval = setInterval(pollActiveExports, 2000)
-    return () => clearInterval(interval)
-  }, [])
+    loadExportHistory();
+    const interval = setInterval(pollActiveExports, 2000);
+    return () => clearInterval(interval);
+  }, [loadExportHistory, pollActiveExports]);
 
   // ========================================================================
   // API FUNCTIONS
   // ========================================================================
 
   const createExport = useCallback(async () => {
-    setIsLoading(true)
-    
+    setIsLoading(true);
+
     try {
-      const exportRequest: Omit<ExportRequest, 'id' | 'userId' | 'createdAt' | 'priority'> = {
+      const exportRequest: Omit<
+        ExportRequest,
+        'id' | 'userId' | 'createdAt' | 'priority'
+      > = {
         config: {
           format: formData.format,
           reportType: formData.reportType,
           dateRange: formData.dateRange,
           filters: formData.filters,
           includeSummary: formData.includeSummary,
-          customization: formData.customization
+          customization: formData.customization,
         },
         pdfOptions: formData.pdfOptions,
         excelOptions: formData.excelOptions,
         csvOptions: formData.csvOptions,
         notifyOnComplete: formData.notifyOnComplete,
-        email: formData.notifyOnComplete ? formData.email : undefined
-      }
+        email: formData.notifyOnComplete ? formData.email : undefined,
+      };
 
       const response = await fetch('/api/analytics/export', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(exportRequest)
-      })
+        body: JSON.stringify(exportRequest),
+      });
 
       if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error?.message || 'Export request failed')
+        const errorData = await response.json();
+        throw new Error(errorData.error?.message || 'Export request failed');
       }
 
-      const result = await response.json()
-      
+      const result = await response.json();
+
       // Add to active exports
       const newExport: ActiveExport = {
         id: result.id,
         config: exportRequest.config,
         status: 'pending',
-        createdAt: new Date()
-      }
-      
-      setActiveExports(prev => [newExport, ...prev])
-      setActiveTab('history')
-      
+        createdAt: new Date(),
+      };
+
+      setActiveExports((prev) => [newExport, ...prev]);
+      setActiveTab('history');
+
       toast.success('Export request created successfully', {
-        description: `Estimated completion time: ${result.estimatedCompletionTime} seconds`
-      })
-      
+        description: `Estimated completion time: ${result.estimatedCompletionTime} seconds`,
+      });
     } catch (error) {
-      console.error('Export creation failed:', error)
+      console.error('Export creation failed:', error);
       toast.error('Failed to create export', {
-        description: error instanceof Error ? error.message : 'Unknown error occurred'
-      })
-      onExportError?.(error)
+        description:
+          error instanceof Error ? error.message : 'Unknown error occurred',
+      });
+      onExportError?.(error);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }, [formData, onExportError])
+  }, [formData, onExportError]);
 
   const pollActiveExports = useCallback(async () => {
-    if (activeExports.length === 0) return
+    if (activeExports.length === 0) return;
 
-    const pendingExports = activeExports.filter(exp => 
-      exp.status === 'pending' || exp.status === 'processing'
-    )
+    const pendingExports = activeExports.filter(
+      (exp) => exp.status === 'pending' || exp.status === 'processing'
+    );
 
-    if (pendingExports.length === 0) return
+    if (pendingExports.length === 0) return;
 
     try {
       const statusPromises = pendingExports.map(async (exp) => {
-        const response = await fetch(`/api/analytics/export/${exp.id}`)
+        const response = await fetch(`/api/analytics/export/${exp.id}`);
         if (response.ok) {
-          return await response.json()
+          return await response.json();
         }
-        return null
-      })
+        return null;
+      });
 
-      const statuses = await Promise.all(statusPromises)
-      
-      setActiveExports(prev => prev.map(exp => {
-        const statusIndex = pendingExports.findIndex(pending => pending.id === exp.id)
-        if (statusIndex >= 0 && statuses[statusIndex]) {
-          const status = statuses[statusIndex]
-          const updatedExport = {
-            ...exp,
-            status: status.status,
-            progress: status.progress,
-            downloadUrl: status.downloadUrl,
-            fileName: status.fileName,
-            fileSize: status.fileSize,
-            completedAt: status.completedAt ? new Date(status.completedAt) : undefined,
-            error: status.error
+      const statuses = await Promise.all(statusPromises);
+
+      setActiveExports((prev) =>
+        prev.map((exp) => {
+          const statusIndex = pendingExports.findIndex(
+            (pending) => pending.id === exp.id
+          );
+          if (statusIndex >= 0 && statuses[statusIndex]) {
+            const status = statuses[statusIndex];
+            const updatedExport = {
+              ...exp,
+              status: status.status,
+              progress: status.progress,
+              downloadUrl: status.downloadUrl,
+              fileName: status.fileName,
+              fileSize: status.fileSize,
+              completedAt: status.completedAt
+                ? new Date(status.completedAt)
+                : undefined,
+              error: status.error,
+            };
+
+            // Notify on completion
+            if (status.status === 'completed' && exp.status !== 'completed') {
+              toast.success('Export completed successfully', {
+                description: `${status.fileName} is ready for download`,
+              });
+              onExportComplete?.(status);
+            } else if (status.status === 'failed' && exp.status !== 'failed') {
+              toast.error('Export failed', {
+                description: status.error?.message || 'Unknown error occurred',
+              });
+            }
+
+            return updatedExport;
           }
-          
-          // Notify on completion
-          if (status.status === 'completed' && exp.status !== 'completed') {
-            toast.success('Export completed successfully', {
-              description: `${status.fileName} is ready for download`
-            })
-            onExportComplete?.(status)
-          } else if (status.status === 'failed' && exp.status !== 'failed') {
-            toast.error('Export failed', {
-              description: status.error?.message || 'Unknown error occurred'
-            })
-          }
-          
-          return updatedExport
-        }
-        return exp
-      }))
-      
+          return exp;
+        })
+      );
     } catch (error) {
-      console.error('Failed to poll export status:', error)
+      console.error('Failed to poll export status:', error);
     }
-  }, [activeExports, onExportComplete])
+  }, [activeExports, onExportComplete]);
 
   const loadExportHistory = useCallback(async () => {
     try {
       // This would typically load from a user exports endpoint
       // For now, we'll use localStorage as a simple cache
-      const cached = localStorage.getItem('export-history')
+      const cached = localStorage.getItem('export-history');
       if (cached) {
-        const history = JSON.parse(cached)
-        setExportHistory(history.map((item: any) => ({
-          ...item,
-          createdAt: new Date(item.createdAt),
-          completedAt: item.completedAt ? new Date(item.completedAt) : undefined
-        })))
+        const history = JSON.parse(cached);
+        setExportHistory(
+          history.map((item: any) => ({
+            ...item,
+            createdAt: new Date(item.createdAt),
+            completedAt: item.completedAt
+              ? new Date(item.completedAt)
+              : undefined,
+          }))
+        );
       }
     } catch (error) {
-      console.error('Failed to load export history:', error)
+      console.error('Failed to load export history:', error);
     }
-  }, [])
+  }, []);
 
   const cancelExport = useCallback(async (exportId: string) => {
     try {
       const response = await fetch(`/api/analytics/export/${exportId}`, {
-        method: 'DELETE'
-      })
+        method: 'DELETE',
+      });
 
       if (response.ok) {
-        setActiveExports(prev => prev.map(exp => 
-          exp.id === exportId ? { ...exp, status: 'cancelled' as const } : exp
-        ))
-        toast.success('Export cancelled successfully')
+        setActiveExports((prev) =>
+          prev.map((exp) =>
+            exp.id === exportId ? { ...exp, status: 'cancelled' as const } : exp
+          )
+        );
+        toast.success('Export cancelled successfully');
       }
     } catch (error) {
-      console.error('Failed to cancel export:', error)
-      toast.error('Failed to cancel export')
+      console.error('Failed to cancel export:', error);
+      toast.error('Failed to cancel export');
     }
-  }, [])
+  }, []);
 
   const downloadExport = useCallback(async (exportItem: ActiveExport) => {
-    if (!exportItem.downloadUrl) return
-    
+    if (!exportItem.downloadUrl) return;
+
     try {
-      const link = document.createElement('a')
-      link.href = exportItem.downloadUrl
-      link.download = exportItem.fileName || 'export'
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-      
-      toast.success('Download started')
+      const link = document.createElement('a');
+      link.href = exportItem.downloadUrl;
+      link.download = exportItem.fileName || 'export';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      toast.success('Download started');
     } catch (error) {
-      console.error('Download failed:', error)
-      toast.error('Failed to download file')
+      console.error('Download failed:', error);
+      toast.error('Failed to download file');
     }
-  }, [])
+  }, []);
 
   // ========================================================================
   // FORM HANDLERS
   // ========================================================================
 
   const updateFormData = useCallback((updates: Partial<ExportFormData>) => {
-    setFormData(prev => ({ ...prev, ...updates }))
-  }, [])
+    setFormData((prev) => ({ ...prev, ...updates }));
+  }, []);
 
   const updateNestedFormData = useCallback((path: string, value: any) => {
-    setFormData(prev => {
-      const newData = { ...prev }
-      const keys = path.split('.')
-      let current: any = newData
-      
+    setFormData((prev) => {
+      const newData = { ...prev };
+      const keys = path.split('.');
+      let current: any = newData;
+
       for (let i = 0; i < keys.length - 1; i++) {
         if (!(keys[i] in current)) {
-          current[keys[i]] = {}
+          current[keys[i]] = {};
         }
-        current = current[keys[i]]
+        current = current[keys[i]];
       }
-      
-      current[keys[keys.length - 1]] = value
-      return newData
-    })
-  }, [])
+
+      current[keys[keys.length - 1]] = value;
+      return newData;
+    });
+  }, []);
 
   // ========================================================================
   // RENDER HELPERS
@@ -415,65 +441,89 @@ export function ExportDashboard({
 
   const getFormatIcon = (format: ExportFormat) => {
     switch (format) {
-      case 'pdf': return <FileText className="h-4 w-4" />
-      case 'excel': return <FileSpreadsheet className="h-4 w-4" />
-      case 'csv': return <FileText className="h-4 w-4" />
-      case 'json': return <FileText className="h-4 w-4" />
-      default: return <FileText className="h-4 w-4" />
+      case 'pdf':
+        return <FileText className="h-4 w-4" />;
+      case 'excel':
+        return <FileSpreadsheet className="h-4 w-4" />;
+      case 'csv':
+        return <FileText className="h-4 w-4" />;
+      case 'json':
+        return <FileText className="h-4 w-4" />;
+      default:
+        return <FileText className="h-4 w-4" />;
     }
-  }
+  };
 
   const getReportTypeIcon = (reportType: ReportType) => {
     switch (reportType) {
-      case 'revenue': return <DollarSign className="h-4 w-4" />
-      case 'conversion': return <Target className="h-4 w-4" />
-      case 'trial': return <Zap className="h-4 w-4" />
-      case 'cohort': return <Users className="h-4 w-4" />
-      case 'forecast': return <TrendingUp className="h-4 w-4" />
-      case 'comprehensive': return <BarChart3 className="h-4 w-4" />
-      default: return <BarChart3 className="h-4 w-4" />
+      case 'revenue':
+        return <DollarSign className="h-4 w-4" />;
+      case 'conversion':
+        return <Target className="h-4 w-4" />;
+      case 'trial':
+        return <Zap className="h-4 w-4" />;
+      case 'cohort':
+        return <Users className="h-4 w-4" />;
+      case 'forecast':
+        return <TrendingUp className="h-4 w-4" />;
+      case 'comprehensive':
+        return <BarChart3 className="h-4 w-4" />;
+      default:
+        return <BarChart3 className="h-4 w-4" />;
     }
-  }
+  };
 
   const getStatusIcon = (status: ActiveExport['status']) => {
     switch (status) {
-      case 'pending': return <Clock className="h-4 w-4 text-yellow-500" />
-      case 'processing': return <Loader2 className="h-4 w-4 text-blue-500 animate-spin" />
-      case 'completed': return <CheckCircle className="h-4 w-4 text-green-500" />
-      case 'failed': return <XCircle className="h-4 w-4 text-red-500" />
-      case 'cancelled': return <AlertCircle className="h-4 w-4 text-gray-500" />
-      default: return <Clock className="h-4 w-4" />
+      case 'pending':
+        return <Clock className="h-4 w-4 text-yellow-500" />;
+      case 'processing':
+        return <Loader2 className="h-4 w-4 animate-spin text-blue-500" />;
+      case 'completed':
+        return <CheckCircle className="h-4 w-4 text-green-500" />;
+      case 'failed':
+        return <XCircle className="h-4 w-4 text-red-500" />;
+      case 'cancelled':
+        return <AlertCircle className="h-4 w-4 text-gray-500" />;
+      default:
+        return <Clock className="h-4 w-4" />;
     }
-  }
+  };
 
   const getStatusBadgeVariant = (status: ActiveExport['status']) => {
     switch (status) {
-      case 'pending': return 'secondary'
-      case 'processing': return 'default'
-      case 'completed': return 'default'
-      case 'failed': return 'destructive'
-      case 'cancelled': return 'outline'
-      default: return 'secondary'
+      case 'pending':
+        return 'secondary';
+      case 'processing':
+        return 'default';
+      case 'completed':
+        return 'default';
+      case 'failed':
+        return 'destructive';
+      case 'cancelled':
+        return 'outline';
+      default:
+        return 'secondary';
     }
-  }
+  };
 
   const formatFileSize = (bytes?: number) => {
-    if (!bytes) return 'Unknown'
-    const sizes = ['Bytes', 'KB', 'MB', 'GB']
-    const i = Math.floor(Math.log(bytes) / Math.log(1024))
-    return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i]
-  }
+    if (!bytes) return 'Unknown';
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(1024));
+    return `${Math.round((bytes / 1024 ** i) * 100) / 100} ${sizes[i]}`;
+  };
 
   const formatDuration = (ms?: number) => {
-    if (!ms) return 'Unknown'
-    const seconds = Math.floor(ms / 1000)
-    const minutes = Math.floor(seconds / 60)
-    const hours = Math.floor(minutes / 60)
-    
-    if (hours > 0) return `${hours}h ${minutes % 60}m`
-    if (minutes > 0) return `${minutes}m ${seconds % 60}s`
-    return `${seconds}s`
-  }
+    if (!ms) return 'Unknown';
+    const seconds = Math.floor(ms / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+
+    if (hours > 0) return `${hours}h ${minutes % 60}m`;
+    if (minutes > 0) return `${minutes}m ${seconds % 60}s`;
+    return `${seconds}s`;
+  };
 
   // ========================================================================
   // RENDER
@@ -484,39 +534,47 @@ export function ExportDashboard({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight">Analytics Export</h2>
+          <h2 className="font-bold text-2xl tracking-tight">
+            Analytics Export
+          </h2>
           <p className="text-muted-foreground">
-            Export your analytics data in multiple formats with customizable options
+            Export your analytics data in multiple formats with customizable
+            options
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Badge variant="outline" className="text-xs">
-            {activeExports.filter(exp => exp.status === 'processing').length} Processing
+          <Badge className="text-xs" variant="outline">
+            {activeExports.filter((exp) => exp.status === 'processing').length}{' '}
+            Processing
           </Badge>
-          <Badge variant="outline" className="text-xs">
-            {activeExports.filter(exp => exp.status === 'completed').length} Completed
+          <Badge className="text-xs" variant="outline">
+            {activeExports.filter((exp) => exp.status === 'completed').length}{' '}
+            Completed
           </Badge>
         </div>
       </div>
 
       {/* Main Content */}
-      <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'create' | 'history')}>
+      <Tabs
+        onValueChange={(value) => setActiveTab(value as 'create' | 'history')}
+        value={activeTab}
+      >
         <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="create" className="flex items-center gap-2">
+          <TabsTrigger className="flex items-center gap-2" value="create">
             <Download className="h-4 w-4" />
             Create Export
           </TabsTrigger>
-          <TabsTrigger value="history" className="flex items-center gap-2">
+          <TabsTrigger className="flex items-center gap-2" value="history">
             <Clock className="h-4 w-4" />
             Export History
           </TabsTrigger>
         </TabsList>
 
         {/* Create Export Tab */}
-        <TabsContent value="create" className="space-y-6">
+        <TabsContent className="space-y-6" value="create">
           <div className="grid gap-6 lg:grid-cols-3">
             {/* Export Configuration */}
-            <div className="lg:col-span-2 space-y-6">
+            <div className="space-y-6 lg:col-span-2">
               {/* Basic Configuration */}
               <Card>
                 <CardHeader>
@@ -534,8 +592,10 @@ export function ExportDashboard({
                     <div className="space-y-2">
                       <Label htmlFor="format">Export Format</Label>
                       <Select
+                        onValueChange={(value: ExportFormat) =>
+                          updateFormData({ format: value })
+                        }
                         value={formData.format}
-                        onValueChange={(value: ExportFormat) => updateFormData({ format: value })}
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Select format" />
@@ -573,8 +633,10 @@ export function ExportDashboard({
                     <div className="space-y-2">
                       <Label htmlFor="reportType">Report Type</Label>
                       <Select
+                        onValueChange={(value: ReportType) =>
+                          updateFormData({ reportType: value })
+                        }
                         value={formData.reportType}
-                        onValueChange={(value: ReportType) => updateFormData({ reportType: value })}
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Select report type" />
@@ -628,11 +690,12 @@ export function ExportDashboard({
                       <Popover>
                         <PopoverTrigger asChild>
                           <Button
-                            variant="outline"
                             className={cn(
                               'justify-start text-left font-normal',
-                              !formData.dateRange.startDate && 'text-muted-foreground'
+                              !formData.dateRange.startDate &&
+                                'text-muted-foreground'
                             )}
+                            variant="outline"
                           >
                             <CalendarIcon className="mr-2 h-4 w-4" />
                             {formData.dateRange.startDate ? (
@@ -644,22 +707,26 @@ export function ExportDashboard({
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0">
                           <Calendar
-                            mode="single"
-                            selected={formData.dateRange.startDate}
-                            onSelect={(date) => date && updateNestedFormData('dateRange.startDate', date)}
                             initialFocus
+                            mode="single"
+                            onSelect={(date) =>
+                              date &&
+                              updateNestedFormData('dateRange.startDate', date)
+                            }
+                            selected={formData.dateRange.startDate}
                           />
                         </PopoverContent>
                       </Popover>
-                      
+
                       <Popover>
                         <PopoverTrigger asChild>
                           <Button
-                            variant="outline"
                             className={cn(
                               'justify-start text-left font-normal',
-                              !formData.dateRange.endDate && 'text-muted-foreground'
+                              !formData.dateRange.endDate &&
+                                'text-muted-foreground'
                             )}
+                            variant="outline"
                           >
                             <CalendarIcon className="mr-2 h-4 w-4" />
                             {formData.dateRange.endDate ? (
@@ -671,10 +738,13 @@ export function ExportDashboard({
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0">
                           <Calendar
-                            mode="single"
-                            selected={formData.dateRange.endDate}
-                            onSelect={(date) => date && updateNestedFormData('dateRange.endDate', date)}
                             initialFocus
+                            mode="single"
+                            onSelect={(date) =>
+                              date &&
+                              updateNestedFormData('dateRange.endDate', date)
+                            }
+                            selected={formData.dateRange.endDate}
                           />
                         </PopoverContent>
                       </Popover>
@@ -685,31 +755,41 @@ export function ExportDashboard({
                   <div className="space-y-3">
                     <div className="flex items-center space-x-2">
                       <Checkbox
-                        id="includeSummary"
                         checked={formData.includeSummary}
-                        onCheckedChange={(checked) => updateFormData({ includeSummary: !!checked })}
+                        id="includeSummary"
+                        onCheckedChange={(checked) =>
+                          updateFormData({ includeSummary: !!checked })
+                        }
                       />
-                      <Label htmlFor="includeSummary">Include executive summary</Label>
+                      <Label htmlFor="includeSummary">
+                        Include executive summary
+                      </Label>
                     </div>
-                    
+
                     <div className="flex items-center space-x-2">
                       <Checkbox
-                        id="notifyOnComplete"
                         checked={formData.notifyOnComplete}
-                        onCheckedChange={(checked) => updateFormData({ notifyOnComplete: !!checked })}
+                        id="notifyOnComplete"
+                        onCheckedChange={(checked) =>
+                          updateFormData({ notifyOnComplete: !!checked })
+                        }
                       />
-                      <Label htmlFor="notifyOnComplete">Email notification when complete</Label>
+                      <Label htmlFor="notifyOnComplete">
+                        Email notification when complete
+                      </Label>
                     </div>
-                    
+
                     {formData.notifyOnComplete && (
                       <div className="space-y-2">
                         <Label htmlFor="email">Email Address</Label>
                         <Input
                           id="email"
-                          type="email"
+                          onChange={(e) =>
+                            updateFormData({ email: e.target.value })
+                          }
                           placeholder="your@email.com"
+                          type="email"
                           value={formData.email || ''}
-                          onChange={(e) => updateFormData({ email: e.target.value })}
                         />
                       </div>
                     )}
@@ -734,49 +814,82 @@ export function ExportDashboard({
                       <Label htmlFor="title">Report Title</Label>
                       <Input
                         id="title"
+                        onChange={(e) =>
+                          updateNestedFormData(
+                            'customization.title',
+                            e.target.value
+                          )
+                        }
                         placeholder="Analytics Report"
                         value={formData.customization.title || ''}
-                        onChange={(e) => updateNestedFormData('customization.title', e.target.value)}
                       />
                     </div>
-                    
+
                     <div className="space-y-2">
                       <Label htmlFor="subtitle">Report Subtitle</Label>
                       <Input
                         id="subtitle"
+                        onChange={(e) =>
+                          updateNestedFormData(
+                            'customization.subtitle',
+                            e.target.value
+                          )
+                        }
                         placeholder="Generated by NeonPro Analytics"
                         value={formData.customization.subtitle || ''}
-                        onChange={(e) => updateNestedFormData('customization.subtitle', e.target.value)}
                       />
                     </div>
                   </div>
-                  
+
                   <div className="grid gap-4 md:grid-cols-3">
                     <div className="space-y-2">
                       <Label htmlFor="primaryColor">Primary Color</Label>
                       <Input
                         id="primaryColor"
+                        onChange={(e) =>
+                          updateNestedFormData(
+                            'customization.branding.primaryColor',
+                            e.target.value
+                          )
+                        }
                         type="color"
-                        value={formData.customization.branding?.primaryColor || '#1f2937'}
-                        onChange={(e) => updateNestedFormData('customization.branding.primaryColor', e.target.value)}
+                        value={
+                          formData.customization.branding?.primaryColor ||
+                          '#1f2937'
+                        }
                       />
                     </div>
-                    
+
                     <div className="space-y-2">
                       <Label htmlFor="secondaryColor">Secondary Color</Label>
                       <Input
                         id="secondaryColor"
+                        onChange={(e) =>
+                          updateNestedFormData(
+                            'customization.branding.secondaryColor',
+                            e.target.value
+                          )
+                        }
                         type="color"
-                        value={formData.customization.branding?.secondaryColor || '#6b7280'}
-                        onChange={(e) => updateNestedFormData('customization.branding.secondaryColor', e.target.value)}
+                        value={
+                          formData.customization.branding?.secondaryColor ||
+                          '#6b7280'
+                        }
                       />
                     </div>
-                    
+
                     <div className="space-y-2">
                       <Label htmlFor="fontFamily">Font Family</Label>
                       <Select
-                        value={formData.customization.branding?.fontFamily || 'Inter'}
-                        onValueChange={(value) => updateNestedFormData('customization.branding.fontFamily', value)}
+                        onValueChange={(value) =>
+                          updateNestedFormData(
+                            'customization.branding.fontFamily',
+                            value
+                          )
+                        }
+                        value={
+                          formData.customization.branding?.fontFamily || 'Inter'
+                        }
                       >
                         <SelectTrigger>
                           <SelectValue />
@@ -809,26 +922,46 @@ export function ExportDashboard({
                   <div className="space-y-2">
                     <div className="flex items-center gap-2 text-sm">
                       {getFormatIcon(formData.format)}
-                      <span className="font-medium">{formData.format.toUpperCase()}</span>
+                      <span className="font-medium">
+                        {formData.format.toUpperCase()}
+                      </span>
                     </div>
-                    
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+
+                    <div className="flex items-center gap-2 text-muted-foreground text-sm">
                       {getReportTypeIcon(formData.reportType)}
-                      <span>{formData.reportType.charAt(0).toUpperCase() + formData.reportType.slice(1)} Report</span>
+                      <span>
+                        {formData.reportType.charAt(0).toUpperCase() +
+                          formData.reportType.slice(1)}{' '}
+                        Report
+                      </span>
                     </div>
-                    
-                    <div className="text-sm text-muted-foreground">
-                      {format(formData.dateRange.startDate, 'MMM d, yyyy')} - {format(formData.dateRange.endDate, 'MMM d, yyyy')}
+
+                    <div className="text-muted-foreground text-sm">
+                      {format(formData.dateRange.startDate, 'MMM d, yyyy')} -{' '}
+                      {format(formData.dateRange.endDate, 'MMM d, yyyy')}
                     </div>
                   </div>
-                  
+
                   <Separator />
-                  
-                  <div className="space-y-2 text-xs text-muted-foreground">
-                    <div>Title: {formData.customization.title || 'Analytics Report'}</div>
-                    <div>Subtitle: {formData.customization.subtitle || 'Generated by NeonPro Analytics'}</div>
-                    <div>Summary: {formData.includeSummary ? 'Included' : 'Not included'}</div>
-                    <div>Notification: {formData.notifyOnComplete ? 'Enabled' : 'Disabled'}</div>
+
+                  <div className="space-y-2 text-muted-foreground text-xs">
+                    <div>
+                      Title:{' '}
+                      {formData.customization.title || 'Analytics Report'}
+                    </div>
+                    <div>
+                      Subtitle:{' '}
+                      {formData.customization.subtitle ||
+                        'Generated by NeonPro Analytics'}
+                    </div>
+                    <div>
+                      Summary:{' '}
+                      {formData.includeSummary ? 'Included' : 'Not included'}
+                    </div>
+                    <div>
+                      Notification:{' '}
+                      {formData.notifyOnComplete ? 'Enabled' : 'Disabled'}
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -837,9 +970,9 @@ export function ExportDashboard({
               <Card>
                 <CardContent className="pt-6">
                   <Button
-                    onClick={createExport}
-                    disabled={isLoading}
                     className="w-full"
+                    disabled={isLoading}
+                    onClick={createExport}
                     size="lg"
                   >
                     {isLoading ? (
@@ -864,8 +997,6 @@ export function ExportDashboard({
                 </CardHeader>
                 <CardContent className="space-y-2">
                   <Button
-                    variant="outline"
-                    size="sm"
                     className="w-full justify-start"
                     onClick={() => {
                       updateFormData({
@@ -873,18 +1004,18 @@ export function ExportDashboard({
                         reportType: 'comprehensive',
                         dateRange: {
                           startDate: subDays(new Date(), 30),
-                          endDate: new Date()
-                        }
-                      })
+                          endDate: new Date(),
+                        },
+                      });
                     }}
+                    size="sm"
+                    variant="outline"
                   >
                     <FileText className="mr-2 h-4 w-4" />
                     Monthly PDF Report
                   </Button>
-                  
+
                   <Button
-                    variant="outline"
-                    size="sm"
                     className="w-full justify-start"
                     onClick={() => {
                       updateFormData({
@@ -892,18 +1023,18 @@ export function ExportDashboard({
                         reportType: 'revenue',
                         dateRange: {
                           startDate: subDays(new Date(), 90),
-                          endDate: new Date()
-                        }
-                      })
+                          endDate: new Date(),
+                        },
+                      });
                     }}
+                    size="sm"
+                    variant="outline"
                   >
                     <FileSpreadsheet className="mr-2 h-4 w-4" />
                     Quarterly Excel
                   </Button>
-                  
+
                   <Button
-                    variant="outline"
-                    size="sm"
                     className="w-full justify-start"
                     onClick={() => {
                       updateFormData({
@@ -911,10 +1042,12 @@ export function ExportDashboard({
                         reportType: 'cohort',
                         dateRange: {
                           startDate: subDays(new Date(), 7),
-                          endDate: new Date()
-                        }
-                      })
+                          endDate: new Date(),
+                        },
+                      });
                     }}
+                    size="sm"
+                    variant="outline"
                   >
                     <FileText className="mr-2 h-4 w-4" />
                     Weekly CSV Data
@@ -926,7 +1059,7 @@ export function ExportDashboard({
         </TabsContent>
 
         {/* Export History Tab */}
-        <TabsContent value="history" className="space-y-6">
+        <TabsContent className="space-y-6" value="history">
           {/* Active Exports */}
           {activeExports.length > 0 && (
             <Card>
@@ -935,66 +1068,87 @@ export function ExportDashboard({
                   <Loader2 className="h-5 w-5" />
                   Active Exports
                 </CardTitle>
-                <CardDescription>
-                  Currently processing exports
-                </CardDescription>
+                <CardDescription>Currently processing exports</CardDescription>
               </CardHeader>
               <CardContent>
                 <ScrollArea className="h-[300px]">
                   <div className="space-y-4">
                     {activeExports.map((exportItem) => (
                       <div
+                        className="flex items-center justify-between rounded-lg border p-4"
                         key={exportItem.id}
-                        className="flex items-center justify-between p-4 border rounded-lg"
                       >
                         <div className="flex items-center gap-3">
                           {getFormatIcon(exportItem.config.format)}
                           <div>
                             <div className="font-medium">
-                              {exportItem.config.reportType.charAt(0).toUpperCase() + exportItem.config.reportType.slice(1)} Report
+                              {exportItem.config.reportType
+                                .charAt(0)
+                                .toUpperCase() +
+                                exportItem.config.reportType.slice(1)}{' '}
+                              Report
                             </div>
-                            <div className="text-sm text-muted-foreground">
-                              {exportItem.config.format.toUpperCase()} • {format(exportItem.createdAt, 'MMM d, HH:mm')}
+                            <div className="text-muted-foreground text-sm">
+                              {exportItem.config.format.toUpperCase()} •{' '}
+                              {format(exportItem.createdAt, 'MMM d, HH:mm')}
                             </div>
-                            {exportItem.progress && exportItem.status === 'processing' && (
-                              <div className="mt-2 space-y-1">
-                                <div className="flex items-center justify-between text-xs">
-                                  <span>{exportItem.progress.currentStep}</span>
-                                  <span>{exportItem.progress.percentage}%</span>
-                                </div>
-                                <Progress value={exportItem.progress.percentage} className="h-1" />
-                                {exportItem.progress.estimatedTimeRemaining && (
-                                  <div className="text-xs text-muted-foreground">
-                                    ~{formatDuration(exportItem.progress.estimatedTimeRemaining)} remaining
+                            {exportItem.progress &&
+                              exportItem.status === 'processing' && (
+                                <div className="mt-2 space-y-1">
+                                  <div className="flex items-center justify-between text-xs">
+                                    <span>
+                                      {exportItem.progress.currentStep}
+                                    </span>
+                                    <span>
+                                      {exportItem.progress.percentage}%
+                                    </span>
                                   </div>
-                                )}
-                              </div>
-                            )}
+                                  <Progress
+                                    className="h-1"
+                                    value={exportItem.progress.percentage}
+                                  />
+                                  {exportItem.progress
+                                    .estimatedTimeRemaining && (
+                                    <div className="text-muted-foreground text-xs">
+                                      ~
+                                      {formatDuration(
+                                        exportItem.progress
+                                          .estimatedTimeRemaining
+                                      )}{' '}
+                                      remaining
+                                    </div>
+                                  )}
+                                </div>
+                              )}
                           </div>
                         </div>
-                        
+
                         <div className="flex items-center gap-2">
-                          <Badge variant={getStatusBadgeVariant(exportItem.status)}>
+                          <Badge
+                            variant={getStatusBadgeVariant(exportItem.status)}
+                          >
                             <div className="flex items-center gap-1">
                               {getStatusIcon(exportItem.status)}
                               {exportItem.status}
                             </div>
                           </Badge>
-                          
-                          {exportItem.status === 'completed' && exportItem.downloadUrl && (
+
+                          {exportItem.status === 'completed' &&
+                            exportItem.downloadUrl && (
+                              <Button
+                                onClick={() => downloadExport(exportItem)}
+                                size="sm"
+                              >
+                                <Download className="h-4 w-4" />
+                              </Button>
+                            )}
+
+                          {(exportItem.status === 'pending' ||
+                            exportItem.status === 'processing') && (
                             <Button
-                              size="sm"
-                              onClick={() => downloadExport(exportItem)}
-                            >
-                              <Download className="h-4 w-4" />
-                            </Button>
-                          )}
-                          
-                          {(exportItem.status === 'pending' || exportItem.status === 'processing') && (
-                            <Button
+                              onClick={() => cancelExport(exportItem.id)}
                               size="sm"
                               variant="outline"
-                              onClick={() => cancelExport(exportItem.id)}
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>
@@ -1015,59 +1169,72 @@ export function ExportDashboard({
                 <Clock className="h-5 w-5" />
                 Export History
               </CardTitle>
-              <CardDescription>
-                Previous exports and downloads
-              </CardDescription>
+              <CardDescription>Previous exports and downloads</CardDescription>
             </CardHeader>
             <CardContent>
               {exportHistory.length === 0 ? (
-                <div className="text-center py-8 text-muted-foreground">
-                  <FileText className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <div className="py-8 text-center text-muted-foreground">
+                  <FileText className="mx-auto mb-4 h-12 w-12 opacity-50" />
                   <p>No export history yet</p>
-                  <p className="text-sm">Create your first export to see it here</p>
+                  <p className="text-sm">
+                    Create your first export to see it here
+                  </p>
                 </div>
               ) : (
                 <ScrollArea className="h-[400px]">
                   <div className="space-y-4">
                     {exportHistory.map((exportItem) => (
                       <div
+                        className="flex items-center justify-between rounded-lg border p-4"
                         key={exportItem.id}
-                        className="flex items-center justify-between p-4 border rounded-lg"
                       >
                         <div className="flex items-center gap-3">
                           {getFormatIcon(exportItem.config.format)}
                           <div>
                             <div className="font-medium">
-                              {exportItem.fileName || `${exportItem.config.reportType}-export`}
+                              {exportItem.fileName ||
+                                `${exportItem.config.reportType}-export`}
                             </div>
-                            <div className="text-sm text-muted-foreground">
-                              {exportItem.config.format.toUpperCase()} • {formatFileSize(exportItem.fileSize)} • {format(exportItem.createdAt, 'MMM d, yyyy HH:mm')}
+                            <div className="text-muted-foreground text-sm">
+                              {exportItem.config.format.toUpperCase()} •{' '}
+                              {formatFileSize(exportItem.fileSize)} •{' '}
+                              {format(
+                                exportItem.createdAt,
+                                'MMM d, yyyy HH:mm'
+                              )}
                             </div>
                             {exportItem.completedAt && (
-                              <div className="text-xs text-muted-foreground">
-                                Completed in {formatDuration(exportItem.completedAt.getTime() - exportItem.createdAt.getTime())}
+                              <div className="text-muted-foreground text-xs">
+                                Completed in{' '}
+                                {formatDuration(
+                                  exportItem.completedAt.getTime() -
+                                    exportItem.createdAt.getTime()
+                                )}
                               </div>
                             )}
                           </div>
                         </div>
-                        
+
                         <div className="flex items-center gap-2">
-                          <Badge variant={getStatusBadgeVariant(exportItem.status)}>
+                          <Badge
+                            variant={getStatusBadgeVariant(exportItem.status)}
+                          >
                             <div className="flex items-center gap-1">
                               {getStatusIcon(exportItem.status)}
                               {exportItem.status}
                             </div>
                           </Badge>
-                          
-                          {exportItem.status === 'completed' && exportItem.downloadUrl && (
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => downloadExport(exportItem)}
-                            >
-                              <Download className="h-4 w-4" />
-                            </Button>
-                          )}
+
+                          {exportItem.status === 'completed' &&
+                            exportItem.downloadUrl && (
+                              <Button
+                                onClick={() => downloadExport(exportItem)}
+                                size="sm"
+                                variant="outline"
+                              >
+                                <Download className="h-4 w-4" />
+                              </Button>
+                            )}
                         </div>
                       </div>
                     ))}
@@ -1079,7 +1246,7 @@ export function ExportDashboard({
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }
 
-export default ExportDashboard
+export default ExportDashboard;

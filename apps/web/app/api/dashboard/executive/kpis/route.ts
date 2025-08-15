@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { KPICalculationService } from '@/lib/dashboard/executive/kpi-calculation-service';
 
@@ -8,25 +8,27 @@ import { KPICalculationService } from '@/lib/dashboard/executive/kpi-calculation
 const CalculateKPIsSchema = z.object({
   period: z.object({
     start: z.string().datetime(),
-    end: z.string().datetime()
+    end: z.string().datetime(),
   }),
-  categories: z.array(z.enum(['financial', 'operational', 'patients', 'staff'])).optional(),
+  categories: z
+    .array(z.enum(['financial', 'operational', 'patients', 'staff']))
+    .optional(),
   kpiIds: z.array(z.string()).optional(),
-  forceRecalculation: z.boolean().default(false)
+  forceRecalculation: z.boolean().default(false),
 });
 
 // GET /api/dashboard/executive/kpis
 export async function GET(request: NextRequest) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    
+
     // Verify authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Não autorizado' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
     // Get user's clinic
@@ -82,14 +84,14 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    
+
     // Verify authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Não autorizado' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
     // Get user's clinic
@@ -110,8 +112,11 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const validatedData = CalculateKPIsSchema.parse(body);
 
-    const kpiService = new KPICalculationService(supabase, clinicUser.clinic_id);
-    
+    const kpiService = new KPICalculationService(
+      supabase,
+      clinicUser.clinic_id
+    );
+
     // Calculate KPIs based on request
     const results = await kpiService.calculateKPIsForPeriod(
       new Date(validatedData.period.start),
@@ -119,7 +124,7 @@ export async function POST(request: NextRequest) {
       {
         categories: validatedData.categories,
         kpiIds: validatedData.kpiIds,
-        forceRecalculation: validatedData.forceRecalculation
+        forceRecalculation: validatedData.forceRecalculation,
       }
     );
 

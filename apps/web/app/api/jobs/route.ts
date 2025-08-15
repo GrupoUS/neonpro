@@ -1,16 +1,19 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
-import { processBackgroundJobs, JobScheduler } from '@/lib/jobs/background-processor';
+import {
+  JobScheduler,
+  processBackgroundJobs,
+} from '@/lib/jobs/background-processor';
 
 /**
  * Background Jobs API Endpoint - Research-Backed Implementation
- * 
+ *
  * Provides endpoints for:
  * - Manual job processing trigger
  * - Job scheduling and management
  * - Job status monitoring
  * - Cron-based job execution
- * 
+ *
  * Security: Validates API keys and implements rate limiting
  * Based on serverless job processing patterns and Next.js best practices
  */
@@ -28,12 +31,12 @@ interface JobProcessingStats {
 function verifyApiKey(request: NextRequest): boolean {
   const apiKey = request.headers.get('x-api-key');
   const validApiKey = process.env.JOBS_API_KEY;
-  
+
   if (!validApiKey) {
     console.error('JOBS_API_KEY not configured');
     return false;
   }
-  
+
   return apiKey === validApiKey;
 }
 
@@ -47,16 +50,14 @@ async function logJobActivity(
   details?: any
 ) {
   try {
-    await supabase
-      .from('job_processing_logs')
-      .insert({
-        activity_type: activityType,
-        processed_count: stats.processed,
-        error_count: stats.errors,
-        duration_ms: stats.duration,
-        details: details || {},
-        created_at: stats.timestamp
-      });
+    await supabase.from('job_processing_logs').insert({
+      activity_type: activityType,
+      processed_count: stats.processed,
+      error_count: stats.errors,
+      duration_ms: stats.duration,
+      details: details || {},
+      created_at: stats.timestamp,
+    });
   } catch (error) {
     console.error('Failed to log job activity:', error);
   }
@@ -68,10 +69,7 @@ async function logJobActivity(
 export async function GET(request: NextRequest) {
   try {
     if (!verifyApiKey(request)) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const url = new URL(request.url);
@@ -79,33 +77,43 @@ export async function GET(request: NextRequest) {
     const supabase = await createClient();
 
     switch (action) {
-      case 'status':
+      case 'status': {
         // Get job queue status
         const { data: queueStats } = await supabase
           .from('background_jobs')
           .select('status, count(*)', { count: 'exact' })
-          .gte('created_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()); // Last 24 hours
+          .gte(
+            'created_at',
+            new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+          ); // Last 24 hours
 
         const { data: processingLogs } = await supabase
           .from('job_processing_logs')
           .select('*')
-          .gte('created_at', new Date(Date.now() - 60 * 60 * 1000).toISOString()) // Last hour
+          .gte(
+            'created_at',
+            new Date(Date.now() - 60 * 60 * 1000).toISOString()
+          ) // Last hour
           .order('created_at', { ascending: false })
           .limit(10);
 
         return NextResponse.json({
           queue: queueStats,
           recentActivity: processingLogs,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
+      }
 
-      case 'health':
+      case 'health': {
         // Get system health metrics
         const { data: failedJobs } = await supabase
           .from('background_jobs')
           .select('count(*)', { count: 'exact' })
           .eq('status', 'failed')
-          .gte('created_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
+          .gte(
+            'created_at',
+            new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+          );
 
         const { data: pendingJobs } = await supabase
           .from('background_jobs')
@@ -116,10 +124,11 @@ export async function GET(request: NextRequest) {
           health: 'ok',
           metrics: {
             failedJobsLast24h: failedJobs?.[0]?.count || 0,
-            pendingJobs: pendingJobs?.[0]?.count || 0
+            pendingJobs: pendingJobs?.[0]?.count || 0,
           },
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
+      }
 
       default:
         return NextResponse.json(
@@ -127,7 +136,6 @@ export async function GET(request: NextRequest) {
           { status: 400 }
         );
     }
-
   } catch (error) {
     console.error('Jobs API GET error:', error);
     return NextResponse.json(
@@ -143,10 +151,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     if (!verifyApiKey(request)) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
@@ -155,17 +160,17 @@ export async function POST(request: NextRequest) {
     const supabase = await createClient();
 
     switch (action) {
-      case 'process':
+      case 'process': {
         // Manual job processing trigger
         console.log('Starting manual job processing...');
         const stats = await processBackgroundJobs();
         const duration = Date.now() - startTime;
-        
+
         const processStats: JobProcessingStats = {
           processed: stats.processed,
           errors: stats.errors,
           duration,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
 
         await logJobActivity(supabase, 'manual_processing', processStats);
@@ -173,39 +178,45 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({
           success: true,
           stats: processStats,
-          message: `Processed ${stats.processed} jobs with ${stats.errors} errors`
+          message: `Processed ${stats.processed} jobs with ${stats.errors} errors`,
         });
+      }
 
-      case 'schedule_token_refresh':
+      case 'schedule_token_refresh': {
         // Schedule token refresh jobs
         const scheduler = new JobScheduler();
         await scheduler.scheduleTokenRefreshJobs();
-        
+
         const refreshStats: JobProcessingStats = {
           processed: 0,
           errors: 0,
           duration: Date.now() - startTime,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
 
-        await logJobActivity(supabase, 'token_refresh_scheduling', refreshStats);
+        await logJobActivity(
+          supabase,
+          'token_refresh_scheduling',
+          refreshStats
+        );
 
         return NextResponse.json({
           success: true,
           message: 'Token refresh jobs scheduled',
-          duration: refreshStats.duration
+          duration: refreshStats.duration,
         });
+      }
 
-      case 'schedule_daily_sync':
+      case 'schedule_daily_sync': {
         // Schedule daily synchronization jobs
         const syncScheduler = new JobScheduler();
         await syncScheduler.scheduleDailySyncJobs();
-        
+
         const syncStats: JobProcessingStats = {
           processed: 0,
           errors: 0,
           duration: Date.now() - startTime,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
 
         await logJobActivity(supabase, 'daily_sync_scheduling', syncStats);
@@ -213,13 +224,16 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({
           success: true,
           message: 'Daily sync jobs scheduled',
-          duration: syncStats.duration
+          duration: syncStats.duration,
         });
+      }
 
-      case 'cleanup':
+      case 'cleanup': {
         // Cleanup old completed jobs
-        const cutoffDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(); // 7 days ago
-        
+        const cutoffDate = new Date(
+          Date.now() - 7 * 24 * 60 * 60 * 1000
+        ).toISOString(); // 7 days ago
+
         const { data: deletedJobs, error: cleanupError } = await supabase
           .from('background_jobs')
           .delete()
@@ -235,7 +249,7 @@ export async function POST(request: NextRequest) {
           processed: deletedJobs?.[0]?.count || 0,
           errors: 0,
           duration: Date.now() - startTime,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
 
         await logJobActivity(supabase, 'job_cleanup', cleanupStats);
@@ -243,21 +257,24 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({
           success: true,
           message: `Cleaned up ${cleanupStats.processed} old jobs`,
-          duration: cleanupStats.duration
+          duration: cleanupStats.duration,
         });
+      }
 
-      case 'retry_failed':
+      case 'retry_failed': {
         // Retry failed jobs
         const { maxAge = 24 } = params; // Hours
-        const retryDate = new Date(Date.now() - maxAge * 60 * 60 * 1000).toISOString();
-        
+        const retryDate = new Date(
+          Date.now() - maxAge * 60 * 60 * 1000
+        ).toISOString();
+
         const { data: retriedJobs, error: retryError } = await supabase
           .from('background_jobs')
           .update({
             status: 'pending',
             retry_count: 0,
             scheduled_at: new Date().toISOString(),
-            error_message: null
+            error_message: null,
           })
           .eq('status', 'failed')
           .gte('failed_at', retryDate)
@@ -271,7 +288,7 @@ export async function POST(request: NextRequest) {
           processed: retriedJobs?.[0]?.count || 0,
           errors: 0,
           duration: Date.now() - startTime,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
 
         await logJobActivity(supabase, 'job_retry', retryStats);
@@ -279,16 +296,13 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({
           success: true,
           message: `Retried ${retryStats.processed} failed jobs`,
-          duration: retryStats.duration
+          duration: retryStats.duration,
         });
+      }
 
       default:
-        return NextResponse.json(
-          { error: 'Invalid action' },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     }
-
   } catch (error) {
     console.error('Jobs API POST error:', error);
     return NextResponse.json(
@@ -304,10 +318,7 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     if (!verifyApiKey(request)) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
@@ -315,20 +326,17 @@ export async function PUT(request: NextRequest) {
     const supabase = await createClient();
 
     if (!jobId) {
-      return NextResponse.json(
-        { error: 'Job ID required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Job ID required' }, { status: 400 });
     }
 
     switch (action) {
-      case 'cancel':
+      case 'cancel': {
         // Cancel a specific job
         const { error: cancelError } = await supabase
           .from('background_jobs')
           .update({
             status: 'cancelled',
-            cancelled_at: new Date().toISOString()
+            cancelled_at: new Date().toISOString(),
           })
           .eq('id', jobId)
           .in('status', ['pending', 'processing']);
@@ -339,10 +347,11 @@ export async function PUT(request: NextRequest) {
 
         return NextResponse.json({
           success: true,
-          message: `Job ${jobId} cancelled`
+          message: `Job ${jobId} cancelled`,
         });
+      }
 
-      case 'retry':
+      case 'retry': {
         // Retry a specific failed job
         const { error: retryError } = await supabase
           .from('background_jobs')
@@ -350,7 +359,7 @@ export async function PUT(request: NextRequest) {
             status: 'pending',
             retry_count: 0,
             scheduled_at: new Date().toISOString(),
-            error_message: null
+            error_message: null,
           })
           .eq('id', jobId)
           .eq('status', 'failed');
@@ -361,16 +370,13 @@ export async function PUT(request: NextRequest) {
 
         return NextResponse.json({
           success: true,
-          message: `Job ${jobId} scheduled for retry`
+          message: `Job ${jobId} scheduled for retry`,
         });
+      }
 
       default:
-        return NextResponse.json(
-          { error: 'Invalid action' },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     }
-
   } catch (error) {
     console.error('Jobs API PUT error:', error);
     return NextResponse.json(
@@ -386,10 +392,7 @@ export async function PUT(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     if (!verifyApiKey(request)) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const url = new URL(request.url);
@@ -397,10 +400,7 @@ export async function DELETE(request: NextRequest) {
     const supabase = await createClient();
 
     if (!jobId) {
-      return NextResponse.json(
-        { error: 'Job ID required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Job ID required' }, { status: 400 });
     }
 
     const { error: deleteError } = await supabase
@@ -415,9 +415,8 @@ export async function DELETE(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: `Job ${jobId} deleted`
+      message: `Job ${jobId} deleted`,
     });
-
   } catch (error) {
     console.error('Jobs API DELETE error:', error);
     return NextResponse.json(

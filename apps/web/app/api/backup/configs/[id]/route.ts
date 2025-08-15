@@ -3,10 +3,10 @@
  * Story 1.8: Sistema de Backup e Recovery
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { BackupManager } from '@/lib/backup/backup-manager';
 import { createClient } from '@/lib/supabase/server';
-import { z } from 'zod';
 
 const backupManager = new BackupManager();
 
@@ -15,7 +15,9 @@ const updateConfigSchema = z.object({
   name: z.string().min(1).optional(),
   description: z.string().optional(),
   enabled: z.boolean().optional(),
-  schedule_frequency: z.enum(['HOURLY', 'DAILY', 'WEEKLY', 'MONTHLY', 'CUSTOM']).optional(),
+  schedule_frequency: z
+    .enum(['HOURLY', 'DAILY', 'WEEKLY', 'MONTHLY', 'CUSTOM'])
+    .optional(),
   schedule_time: z.string().optional(),
   schedule_cron: z.string().optional(),
   retention_daily: z.number().min(1).max(365).optional(),
@@ -33,12 +35,14 @@ const updateConfigSchema = z.object({
  * Busca configuração específica de backup
  */
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
     if (!user) {
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
@@ -63,13 +67,15 @@ export async function GET(
 /**
  * PUT /api/backup/configs/[id]
  * Atualiza configuração de backup
- */export async function PUT(
+ */ export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
     if (!user) {
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
@@ -84,14 +90,14 @@ export async function GET(
     });
 
     return NextResponse.json(result, {
-      status: result.success ? 200 : 400
+      status: result.success ? 200 : 400,
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { 
-          error: 'Dados inválidos', 
-          details: error.errors 
+        {
+          error: 'Dados inválidos',
+          details: error.errors,
         },
         { status: 400 }
       );
@@ -110,12 +116,14 @@ export async function GET(
  * Remove configuração de backup
  */
 export async function DELETE(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
     if (!user) {
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
@@ -124,7 +132,7 @@ export async function DELETE(
     const result = await backupManager.deleteBackupConfig(params.id);
 
     return NextResponse.json(result, {
-      status: result.success ? 200 : 400
+      status: result.success ? 200 : 400,
     });
   } catch (error) {
     console.error('Erro ao remover configuração de backup:', error);

@@ -1,14 +1,14 @@
-import { Database } from '@/types/supabase';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
+import type { Database } from '@/types/supabase';
 
 /**
  * Get Patient Profile
  * Retrieves comprehensive patient profile data
  */
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
@@ -16,7 +16,10 @@ export async function GET(
     const { id: patientId } = await params;
 
     // Get user session
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    const {
+      data: { session },
+      error: sessionError,
+    } = await supabase.auth.getSession();
     if (sessionError || !session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -28,8 +31,11 @@ export async function GET(
       .eq('user_id', session.user.id)
       .single();
 
-    if (!userRole || !['admin', 'doctor', 'nurse'].includes(userRole.role)) {
-      return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 });
+    if (!(userRole && ['admin', 'doctor', 'nurse'].includes(userRole.role))) {
+      return NextResponse.json(
+        { error: 'Insufficient permissions' },
+        { status: 403 }
+      );
     }
 
     // Get patient profile
@@ -46,17 +52,22 @@ export async function GET(
 
     if (profileError) {
       console.error('Error fetching patient profile:', profileError);
-      return NextResponse.json({ error: 'Failed to fetch patient profile' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Failed to fetch patient profile' },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json({
       profile,
-      message: 'Patient profile retrieved successfully'
+      message: 'Patient profile retrieved successfully',
     });
-
   } catch (error) {
     console.error('Error in GET /api/patients/[id]/profile:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
 
@@ -74,7 +85,10 @@ export async function PUT(
     const body = await request.json();
 
     // Get user session
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    const {
+      data: { session },
+      error: sessionError,
+    } = await supabase.auth.getSession();
     if (sessionError || !session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -86,8 +100,11 @@ export async function PUT(
       .eq('user_id', session.user.id)
       .single();
 
-    if (!userRole || !['admin', 'doctor', 'nurse'].includes(userRole.role)) {
-      return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 });
+    if (!(userRole && ['admin', 'doctor', 'nurse'].includes(userRole.role))) {
+      return NextResponse.json(
+        { error: 'Insufficient permissions' },
+        { status: 403 }
+      );
     }
 
     // Validate input
@@ -100,7 +117,7 @@ export async function PUT(
       bmi,
       blood_type,
       emergency_contacts,
-      care_preferences
+      care_preferences,
     } = body;
 
     // Update patient profile
@@ -115,7 +132,7 @@ export async function PUT(
         bmi,
         blood_type,
         care_preferences: care_preferences || {},
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('patient_id', patientId)
       .select()
@@ -123,7 +140,10 @@ export async function PUT(
 
     if (updateError) {
       console.error('Error updating patient profile:', updateError);
-      return NextResponse.json({ error: 'Failed to update patient profile' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Failed to update patient profile' },
+        { status: 500 }
+      );
     }
 
     // Update emergency contacts if provided
@@ -140,7 +160,7 @@ export async function PUT(
         .insert(
           emergency_contacts.map((contact: any) => ({
             patient_id: patientId,
-            ...contact
+            ...contact,
           }))
         );
 
@@ -151,11 +171,13 @@ export async function PUT(
 
     return NextResponse.json({
       profile: updatedProfile,
-      message: 'Patient profile updated successfully'
+      message: 'Patient profile updated successfully',
     });
-
   } catch (error) {
     console.error('Error in PUT /api/patients/[id]/profile:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }

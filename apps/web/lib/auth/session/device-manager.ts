@@ -3,66 +3,66 @@
 // Story 1.4: Session Management & Security
 // =====================================================
 
-import { SupabaseClient } from '@supabase/supabase-js'
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 // Types
 export interface DeviceRegistration {
-  id: string
-  userId: string
-  deviceFingerprint: string
-  deviceName?: string
-  deviceType?: string
-  browserInfo?: BrowserInfo
-  trusted: boolean
-  lastUsedAt?: Date
-  registeredAt: Date
-  createdAt: Date
-  updatedAt: Date
+  id: string;
+  userId: string;
+  deviceFingerprint: string;
+  deviceName?: string;
+  deviceType?: string;
+  browserInfo?: BrowserInfo;
+  trusted: boolean;
+  lastUsedAt?: Date;
+  registeredAt: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface BrowserInfo {
-  name?: string
-  version?: string
-  os?: string
-  platform?: string
-  language?: string
-  timezone?: string
-  screenResolution?: string
-  colorDepth?: number
-  cookieEnabled?: boolean
-  javaEnabled?: boolean
-  plugins?: string[]
+  name?: string;
+  version?: string;
+  os?: string;
+  platform?: string;
+  language?: string;
+  timezone?: string;
+  screenResolution?: string;
+  colorDepth?: number;
+  cookieEnabled?: boolean;
+  javaEnabled?: boolean;
+  plugins?: string[];
 }
 
 export interface DeviceInfo {
-  fingerprint: string
-  name?: string
-  type?: string
-  browserInfo?: BrowserInfo
-  trusted?: boolean
+  fingerprint: string;
+  name?: string;
+  type?: string;
+  browserInfo?: BrowserInfo;
+  trusted?: boolean;
 }
 
 export interface DeviceValidationResult {
-  isValid: boolean
-  isKnown: boolean
-  isTrusted: boolean
-  registration?: DeviceRegistration
-  riskScore: number
-  riskFactors: string[]
+  isValid: boolean;
+  isKnown: boolean;
+  isTrusted: boolean;
+  registration?: DeviceRegistration;
+  riskScore: number;
+  riskFactors: string[];
 }
 
 export interface DeviceTrustUpdate {
-  deviceId: string
-  trusted: boolean
-  reason?: string
+  deviceId: string;
+  trusted: boolean;
+  reason?: string;
 }
 
 // Device Manager Service
 export class DeviceManager {
-  private supabase: SupabaseClient
+  private supabase: SupabaseClient;
 
   constructor(supabase: SupabaseClient) {
-    this.supabase = supabase
+    this.supabase = supabase;
   }
 
   // =====================================================
@@ -75,11 +75,14 @@ export class DeviceManager {
   async registerOrUpdateDevice(
     userId: string,
     deviceInfo: DeviceInfo,
-    ipAddress: string
+    _ipAddress: string
   ): Promise<DeviceRegistration> {
     try {
       // Check if device already exists
-      const existingDevice = await this.getDeviceByFingerprint(userId, deviceInfo.fingerprint)
+      const existingDevice = await this.getDeviceByFingerprint(
+        userId,
+        deviceInfo.fingerprint
+      );
 
       if (existingDevice) {
         // Update existing device
@@ -90,43 +93,42 @@ export class DeviceManager {
             device_type: deviceInfo.type || existingDevice.deviceType,
             browser_info: deviceInfo.browserInfo || existingDevice.browserInfo,
             last_used_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
+            updated_at: new Date().toISOString(),
           })
           .eq('id', existingDevice.id)
           .select()
-          .single()
+          .single();
 
         if (error) {
-          throw new Error(`Failed to update device: ${error.message}`)
+          throw new Error(`Failed to update device: ${error.message}`);
         }
 
-        return this.mapDeviceRegistration(data)
-      } else {
-        // Register new device
-        const { data, error } = await this.supabase
-          .from('device_registrations')
-          .insert({
-            user_id: userId,
-            device_fingerprint: deviceInfo.fingerprint,
-            device_name: deviceInfo.name,
-            device_type: deviceInfo.type,
-            browser_info: deviceInfo.browserInfo,
-            trusted: deviceInfo.trusted || false,
-            last_used_at: new Date().toISOString(),
-            registered_at: new Date().toISOString()
-          })
-          .select()
-          .single()
-
-        if (error) {
-          throw new Error(`Failed to register device: ${error.message}`)
-        }
-
-        return this.mapDeviceRegistration(data)
+        return this.mapDeviceRegistration(data);
       }
+      // Register new device
+      const { data, error } = await this.supabase
+        .from('device_registrations')
+        .insert({
+          user_id: userId,
+          device_fingerprint: deviceInfo.fingerprint,
+          device_name: deviceInfo.name,
+          device_type: deviceInfo.type,
+          browser_info: deviceInfo.browserInfo,
+          trusted: deviceInfo.trusted,
+          last_used_at: new Date().toISOString(),
+          registered_at: new Date().toISOString(),
+        })
+        .select()
+        .single();
+
+      if (error) {
+        throw new Error(`Failed to register device: ${error.message}`);
+      }
+
+      return this.mapDeviceRegistration(data);
     } catch (error) {
-      console.error('Device registration error:', error)
-      throw error
+      console.error('Device registration error:', error);
+      throw error;
     }
   }
 
@@ -143,16 +145,16 @@ export class DeviceManager {
         .select('*')
         .eq('user_id', userId)
         .eq('device_fingerprint', fingerprint)
-        .single()
+        .single();
 
       if (error && error.code !== 'PGRST116') {
-        throw new Error(`Failed to get device: ${error.message}`)
+        throw new Error(`Failed to get device: ${error.message}`);
       }
 
-      return data ? this.mapDeviceRegistration(data) : null
+      return data ? this.mapDeviceRegistration(data) : null;
     } catch (error) {
-      console.error('Get device error:', error)
-      return null
+      console.error('Get device error:', error);
+      return null;
     }
   }
 
@@ -165,16 +167,16 @@ export class DeviceManager {
         .from('device_registrations')
         .select('*')
         .eq('user_id', userId)
-        .order('last_used_at', { ascending: false })
+        .order('last_used_at', { ascending: false });
 
       if (error) {
-        throw new Error(`Failed to get user devices: ${error.message}`)
+        throw new Error(`Failed to get user devices: ${error.message}`);
       }
 
-      return data.map(this.mapDeviceRegistration)
+      return data.map(this.mapDeviceRegistration);
     } catch (error) {
-      console.error('Get user devices error:', error)
-      return []
+      console.error('Get user devices error:', error);
+      return [];
     }
   }
 
@@ -191,9 +193,12 @@ export class DeviceManager {
     ipAddress: string
   ): Promise<DeviceValidationResult> {
     try {
-      const registration = await this.getDeviceByFingerprint(userId, deviceInfo.fingerprint)
-      const isKnown = !!registration
-      const isTrusted = registration?.trusted || false
+      const registration = await this.getDeviceByFingerprint(
+        userId,
+        deviceInfo.fingerprint
+      );
+      const isKnown = !!registration;
+      const isTrusted = registration?.trusted;
 
       // Calculate risk score
       const riskScore = await this.calculateDeviceRiskScore(
@@ -201,7 +206,7 @@ export class DeviceManager {
         deviceInfo,
         ipAddress,
         registration
-      )
+      );
 
       // Determine risk factors
       const riskFactors = await this.identifyRiskFactors(
@@ -209,7 +214,7 @@ export class DeviceManager {
         deviceInfo,
         ipAddress,
         registration
-      )
+      );
 
       return {
         isValid: true,
@@ -217,17 +222,17 @@ export class DeviceManager {
         isTrusted,
         registration: registration || undefined,
         riskScore,
-        riskFactors
-      }
+        riskFactors,
+      };
     } catch (error) {
-      console.error('Device validation error:', error)
+      console.error('Device validation error:', error);
       return {
         isValid: false,
         isKnown: false,
         isTrusted: false,
         riskScore: 100,
-        riskFactors: ['validation_error']
-      }
+        riskFactors: ['validation_error'],
+      };
     }
   }
 
@@ -240,13 +245,13 @@ export class DeviceManager {
     ipAddress: string,
     registration?: DeviceRegistration | null
   ): Promise<number> {
-    let riskScore = 0
+    let riskScore = 0;
 
     // New device risk
     if (!registration) {
-      riskScore += 30
+      riskScore += 30;
     } else if (!registration.trusted) {
-      riskScore += 15
+      riskScore += 15;
     }
 
     // Browser fingerprint consistency
@@ -254,25 +259,28 @@ export class DeviceManager {
       const browserChanges = this.detectBrowserChanges(
         registration.browserInfo,
         deviceInfo.browserInfo
-      )
-      riskScore += browserChanges * 5
+      );
+      riskScore += browserChanges * 5;
     }
 
     // IP address history
-    const ipRisk = await this.calculateIPRisk(userId, ipAddress)
-    riskScore += ipRisk
+    const ipRisk = await this.calculateIPRisk(userId, ipAddress);
+    riskScore += ipRisk;
 
     // Device usage patterns
     if (registration) {
-      const usageRisk = await this.calculateUsagePatternRisk(userId, registration)
-      riskScore += usageRisk
+      const usageRisk = await this.calculateUsagePatternRisk(
+        userId,
+        registration
+      );
+      riskScore += usageRisk;
     }
 
     // Time-based risk (unusual login times)
-    const timeRisk = this.calculateTimeBasedRisk()
-    riskScore += timeRisk
+    const timeRisk = this.calculateTimeBasedRisk();
+    riskScore += timeRisk;
 
-    return Math.min(100, Math.max(0, riskScore))
+    return Math.min(100, Math.max(0, riskScore));
   }
 
   /**
@@ -284,13 +292,13 @@ export class DeviceManager {
     ipAddress: string,
     registration?: DeviceRegistration | null
   ): Promise<string[]> {
-    const factors: string[] = []
+    const factors: string[] = [];
 
     // New device
     if (!registration) {
-      factors.push('new_device')
+      factors.push('new_device');
     } else if (!registration.trusted) {
-      factors.push('untrusted_device')
+      factors.push('untrusted_device');
     }
 
     // Browser changes
@@ -298,37 +306,40 @@ export class DeviceManager {
       const changes = this.detectBrowserChanges(
         registration.browserInfo,
         deviceInfo.browserInfo
-      )
+      );
       if (changes > 2) {
-        factors.push('browser_fingerprint_changed')
+        factors.push('browser_fingerprint_changed');
       }
     }
 
     // IP address risk
-    const isNewIP = await this.isNewIPAddress(userId, ipAddress)
+    const isNewIP = await this.isNewIPAddress(userId, ipAddress);
     if (isNewIP) {
-      factors.push('new_ip_address')
+      factors.push('new_ip_address');
     }
 
     // Suspicious IP
-    const isSuspiciousIP = await this.isSuspiciousIP(ipAddress)
+    const isSuspiciousIP = await this.isSuspiciousIP(ipAddress);
     if (isSuspiciousIP) {
-      factors.push('suspicious_ip')
+      factors.push('suspicious_ip');
     }
 
     // Unusual time
-    const isUnusualTime = await this.isUnusualLoginTime(userId)
+    const isUnusualTime = await this.isUnusualLoginTime(userId);
     if (isUnusualTime) {
-      factors.push('unusual_login_time')
+      factors.push('unusual_login_time');
     }
 
     // Rapid requests
-    const hasRapidRequests = await this.hasRapidLoginAttempts(userId, ipAddress)
+    const hasRapidRequests = await this.hasRapidLoginAttempts(
+      userId,
+      ipAddress
+    );
     if (hasRapidRequests) {
-      factors.push('rapid_login_attempts')
+      factors.push('rapid_login_attempts');
     }
 
-    return factors
+    return factors;
   }
 
   // =====================================================
@@ -349,24 +360,24 @@ export class DeviceManager {
         .from('device_registrations')
         .update({
           trusted,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', deviceId)
         .eq('user_id', userId)
         .select()
-        .single()
+        .single();
 
       if (error) {
-        throw new Error(`Failed to update device trust: ${error.message}`)
+        throw new Error(`Failed to update device trust: ${error.message}`);
       }
 
       // Log the trust change
-      await this.logDeviceTrustChange(userId, deviceId, trusted, reason)
+      await this.logDeviceTrustChange(userId, deviceId, trusted, reason);
 
-      return this.mapDeviceRegistration(data)
+      return this.mapDeviceRegistration(data);
     } catch (error) {
-      console.error('Update device trust error:', error)
-      throw error
+      console.error('Update device trust error:', error);
+      throw error;
     }
   }
 
@@ -378,7 +389,7 @@ export class DeviceManager {
     updates: DeviceTrustUpdate[]
   ): Promise<DeviceRegistration[]> {
     try {
-      const results: DeviceRegistration[] = []
+      const results: DeviceRegistration[] = [];
 
       for (const update of updates) {
         const result = await this.updateDeviceTrust(
@@ -386,14 +397,14 @@ export class DeviceManager {
           update.deviceId,
           update.trusted,
           update.reason
-        )
-        results.push(result)
+        );
+        results.push(result);
       }
 
-      return results
+      return results;
     } catch (error) {
-      console.error('Bulk update device trust error:', error)
-      throw error
+      console.error('Bulk update device trust error:', error);
+      throw error;
     }
   }
 
@@ -406,19 +417,19 @@ export class DeviceManager {
         .from('device_registrations')
         .delete()
         .eq('id', deviceId)
-        .eq('user_id', userId)
+        .eq('user_id', userId);
 
       if (error) {
-        throw new Error(`Failed to remove device: ${error.message}`)
+        throw new Error(`Failed to remove device: ${error.message}`);
       }
 
       // Log device removal
-      await this.logDeviceRemoval(userId, deviceId)
+      await this.logDeviceRemoval(userId, deviceId);
 
-      return true
+      return true;
     } catch (error) {
-      console.error('Remove device error:', error)
-      return false
+      console.error('Remove device error:', error);
+      return false;
     }
   }
 
@@ -430,41 +441,41 @@ export class DeviceManager {
    * Get device usage statistics
    */
   async getDeviceStatistics(userId: string): Promise<{
-    totalDevices: number
-    trustedDevices: number
-    activeDevices: number
-    recentDevices: number
-    deviceTypes: Record<string, number>
-    browserTypes: Record<string, number>
+    totalDevices: number;
+    trustedDevices: number;
+    activeDevices: number;
+    recentDevices: number;
+    deviceTypes: Record<string, number>;
+    browserTypes: Record<string, number>;
   }> {
     try {
-      const devices = await this.getUserDevices(userId)
-      const now = new Date()
-      const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
-      const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+      const devices = await this.getUserDevices(userId);
+      const now = new Date();
+      const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
-      const totalDevices = devices.length
-      const trustedDevices = devices.filter(d => d.trusted).length
-      const activeDevices = devices.filter(d => 
-        d.lastUsedAt && d.lastUsedAt > thirtyDaysAgo
-      ).length
-      const recentDevices = devices.filter(d => 
-        d.lastUsedAt && d.lastUsedAt > sevenDaysAgo
-      ).length
+      const totalDevices = devices.length;
+      const trustedDevices = devices.filter((d) => d.trusted).length;
+      const activeDevices = devices.filter(
+        (d) => d.lastUsedAt && d.lastUsedAt > thirtyDaysAgo
+      ).length;
+      const recentDevices = devices.filter(
+        (d) => d.lastUsedAt && d.lastUsedAt > sevenDaysAgo
+      ).length;
 
       // Device type distribution
-      const deviceTypes: Record<string, number> = {}
-      devices.forEach(device => {
-        const type = device.deviceType || 'unknown'
-        deviceTypes[type] = (deviceTypes[type] || 0) + 1
-      })
+      const deviceTypes: Record<string, number> = {};
+      devices.forEach((device) => {
+        const type = device.deviceType || 'unknown';
+        deviceTypes[type] = (deviceTypes[type] || 0) + 1;
+      });
 
       // Browser type distribution
-      const browserTypes: Record<string, number> = {}
-      devices.forEach(device => {
-        const browser = device.browserInfo?.name || 'unknown'
-        browserTypes[browser] = (browserTypes[browser] || 0) + 1
-      })
+      const browserTypes: Record<string, number> = {};
+      devices.forEach((device) => {
+        const browser = device.browserInfo?.name || 'unknown';
+        browserTypes[browser] = (browserTypes[browser] || 0) + 1;
+      });
 
       return {
         totalDevices,
@@ -472,18 +483,18 @@ export class DeviceManager {
         activeDevices,
         recentDevices,
         deviceTypes,
-        browserTypes
-      }
+        browserTypes,
+      };
     } catch (error) {
-      console.error('Get device statistics error:', error)
+      console.error('Get device statistics error:', error);
       return {
         totalDevices: 0,
         trustedDevices: 0,
         activeDevices: 0,
         recentDevices: 0,
         deviceTypes: {},
-        browserTypes: {}
-      }
+        browserTypes: {},
+      };
     }
   }
 
@@ -506,8 +517,8 @@ export class DeviceManager {
       lastUsedAt: data.last_used_at ? new Date(data.last_used_at) : undefined,
       registeredAt: new Date(data.registered_at),
       createdAt: new Date(data.created_at),
-      updatedAt: new Date(data.updated_at)
-    }
+      updatedAt: new Date(data.updated_at),
+    };
   }
 
   /**
@@ -517,26 +528,39 @@ export class DeviceManager {
     oldBrowser?: BrowserInfo,
     newBrowser?: BrowserInfo
   ): number {
-    if (!oldBrowser || !newBrowser) {
-      return 0
+    if (!(oldBrowser && newBrowser)) {
+      return 0;
     }
 
-    let changes = 0
-    const fields = ['name', 'version', 'os', 'platform', 'language', 'timezone']
+    let changes = 0;
+    const fields = [
+      'name',
+      'version',
+      'os',
+      'platform',
+      'language',
+      'timezone',
+    ];
 
-    fields.forEach(field => {
-      if (oldBrowser[field as keyof BrowserInfo] !== newBrowser[field as keyof BrowserInfo]) {
-        changes++
+    fields.forEach((field) => {
+      if (
+        oldBrowser[field as keyof BrowserInfo] !==
+        newBrowser[field as keyof BrowserInfo]
+      ) {
+        changes++;
       }
-    })
+    });
 
-    return changes
+    return changes;
   }
 
   /**
    * Calculate IP address risk
    */
-  private async calculateIPRisk(userId: string, ipAddress: string): Promise<number> {
+  private async calculateIPRisk(
+    userId: string,
+    ipAddress: string
+  ): Promise<number> {
     try {
       // Check if IP is new for this user
       const { data, error } = await this.supabase
@@ -544,20 +568,20 @@ export class DeviceManager {
         .select('ip_address')
         .eq('user_id', userId)
         .eq('ip_address', ipAddress)
-        .limit(1)
+        .limit(1);
 
       if (error) {
-        return 10 // Default risk for query error
+        return 10; // Default risk for query error
       }
 
       // New IP adds risk
       if (!data || data.length === 0) {
-        return 20
+        return 20;
       }
 
-      return 0
-    } catch (error) {
-      return 10
+      return 0;
+    } catch (_error) {
+      return 10;
     }
   }
 
@@ -575,22 +599,25 @@ export class DeviceManager {
         .select('created_at')
         .eq('user_id', userId)
         .eq('device_fingerprint', registration.deviceFingerprint)
-        .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
+        .gte(
+          'created_at',
+          new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+        );
 
       if (error) {
-        return 5
+        return 5;
       }
 
-      const sessionCount = data.length
-      
+      const sessionCount = data.length;
+
       // Infrequent usage adds risk
       if (sessionCount < 3) {
-        return 10
+        return 10;
       }
-      
-      return 0
-    } catch (error) {
-      return 5
+
+      return 0;
+    } catch (_error) {
+      return 5;
     }
   }
 
@@ -598,39 +625,42 @@ export class DeviceManager {
    * Calculate time-based risk
    */
   private calculateTimeBasedRisk(): number {
-    const now = new Date()
-    const hour = now.getHours()
-    
+    const now = new Date();
+    const hour = now.getHours();
+
     // Higher risk for unusual hours (late night/early morning)
     if (hour >= 2 && hour <= 5) {
-      return 15
+      return 15;
     }
     if (hour >= 23 || hour <= 1) {
-      return 10
+      return 10;
     }
-    
-    return 0
+
+    return 0;
   }
 
   /**
    * Check if IP address is new for user
    */
-  private async isNewIPAddress(userId: string, ipAddress: string): Promise<boolean> {
+  private async isNewIPAddress(
+    userId: string,
+    ipAddress: string
+  ): Promise<boolean> {
     try {
       const { data, error } = await this.supabase
         .from('user_sessions')
         .select('id')
         .eq('user_id', userId)
         .eq('ip_address', ipAddress)
-        .limit(1)
+        .limit(1);
 
       if (error) {
-        return true // Assume new if query fails
+        return true; // Assume new if query fails
       }
 
-      return !data || data.length === 0
-    } catch (error) {
-      return true
+      return !data || data.length === 0;
+    } catch (_error) {
+      return true;
     }
   }
 
@@ -645,16 +675,19 @@ export class DeviceManager {
         .select('id')
         .eq('ip_address', ipAddress)
         .in('event_type', ['suspicious_login', 'session_hijack_attempt'])
-        .gte('timestamp', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString())
-        .limit(1)
+        .gte(
+          'timestamp',
+          new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+        )
+        .limit(1);
 
       if (error) {
-        return false
+        return false;
       }
 
-      return data && data.length > 0
-    } catch (error) {
-      return false
+      return data && data.length > 0;
+    } catch (_error) {
+      return false;
     }
   }
 
@@ -663,61 +696,69 @@ export class DeviceManager {
    */
   private async isUnusualLoginTime(userId: string): Promise<boolean> {
     try {
-      const now = new Date()
-      const currentHour = now.getHours()
-      
+      const now = new Date();
+      const currentHour = now.getHours();
+
       // Get user's typical login hours from last 30 days
       const { data, error } = await this.supabase
         .from('user_sessions')
         .select('created_at')
         .eq('user_id', userId)
-        .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
+        .gte(
+          'created_at',
+          new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+        );
 
       if (error || !data || data.length < 5) {
-        return false // Not enough data to determine pattern
+        return false; // Not enough data to determine pattern
       }
 
       // Calculate typical hours
-      const hours = data.map(session => new Date(session.created_at).getHours())
-      const hourCounts: Record<number, number> = {}
-      
-      hours.forEach(hour => {
-        hourCounts[hour] = (hourCounts[hour] || 0) + 1
-      })
+      const hours = data.map((session) =>
+        new Date(session.created_at).getHours()
+      );
+      const hourCounts: Record<number, number> = {};
+
+      hours.forEach((hour) => {
+        hourCounts[hour] = (hourCounts[hour] || 0) + 1;
+      });
 
       // Check if current hour is in top 50% of usage
       const sortedHours = Object.entries(hourCounts)
-        .sort(([,a], [,b]) => b - a)
+        .sort(([, a], [, b]) => b - a)
         .slice(0, Math.ceil(Object.keys(hourCounts).length / 2))
-        .map(([hour]) => parseInt(hour))
+        .map(([hour]) => Number.parseInt(hour, 10));
 
-      return !sortedHours.includes(currentHour)
-    } catch (error) {
-      return false
+      return !sortedHours.includes(currentHour);
+    } catch (_error) {
+      return false;
     }
   }
 
   /**
    * Check for rapid login attempts
    */
-  private async hasRapidLoginAttempts(userId: string, ipAddress: string): Promise<boolean> {
+  private async hasRapidLoginAttempts(
+    userId: string,
+    ipAddress: string
+  ): Promise<boolean> {
     try {
-      const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000)
-      
+      const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+
       const { data, error } = await this.supabase
         .from('user_sessions')
         .select('id')
         .eq('user_id', userId)
         .eq('ip_address', ipAddress)
-        .gte('created_at', fiveMinutesAgo.toISOString())
+        .gte('created_at', fiveMinutesAgo.toISOString());
 
       if (error) {
-        return false
+        return false;
       }
 
-      return data && data.length > 3
-    } catch (error) {
-      return false
+      return data && data.length > 3;
+    } catch (_error) {
+      return false;
     }
   }
 
@@ -731,40 +772,39 @@ export class DeviceManager {
     reason?: string
   ): Promise<void> {
     try {
-      await this.supabase
-        .from('session_audit_logs')
-        .insert({
-          user_id: userId,
-          action: 'device_trust_updated',
-          details: {
-            device_id: deviceId,
-            trusted,
-            reason
-          }
-        })
+      await this.supabase.from('session_audit_logs').insert({
+        user_id: userId,
+        action: 'device_trust_updated',
+        details: {
+          device_id: deviceId,
+          trusted,
+          reason,
+        },
+      });
     } catch (error) {
-      console.error('Log device trust change error:', error)
+      console.error('Log device trust change error:', error);
     }
   }
 
   /**
    * Log device removal
    */
-  private async logDeviceRemoval(userId: string, deviceId: string): Promise<void> {
+  private async logDeviceRemoval(
+    userId: string,
+    deviceId: string
+  ): Promise<void> {
     try {
-      await this.supabase
-        .from('session_audit_logs')
-        .insert({
-          user_id: userId,
-          action: 'device_removed',
-          details: {
-            device_id: deviceId
-          }
-        })
+      await this.supabase.from('session_audit_logs').insert({
+        user_id: userId,
+        action: 'device_removed',
+        details: {
+          device_id: deviceId,
+        },
+      });
     } catch (error) {
-      console.error('Log device removal error:', error)
+      console.error('Log device removal error:', error);
     }
   }
 }
 
-export default DeviceManager
+export default DeviceManager;

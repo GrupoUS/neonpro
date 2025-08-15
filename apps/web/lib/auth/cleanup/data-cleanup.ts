@@ -2,7 +2,6 @@
 // Automated cleanup of expired sessions, tokens, and sensitive data
 // LGPD compliance and data retention management
 
-import { UserSession, SecurityEvent } from '@/types/session';
 import { SessionConfig } from '@/lib/auth/config/session-config';
 import { SessionUtils } from '@/lib/auth/utils/session-utils';
 
@@ -26,7 +25,7 @@ export interface CleanupTask {
   metadata: TaskMetadata;
 }
 
-export type CleanupType = 
+export type CleanupType =
   | 'session_cleanup'
   | 'token_cleanup'
   | 'cache_cleanup'
@@ -38,7 +37,7 @@ export type CleanupType =
   | 'compliance_cleanup'
   | 'security_cleanup';
 
-export type CleanupCategory = 
+export type CleanupCategory =
   | 'security'
   | 'privacy'
   | 'performance'
@@ -46,33 +45,33 @@ export type CleanupCategory =
   | 'storage'
   | 'maintenance';
 
-export type CleanupPriority = 
-  | 'critical'    // Immediate cleanup required
-  | 'high'        // Cleanup within hours
-  | 'medium'      // Cleanup within days
-  | 'low'         // Cleanup when convenient
+export type CleanupPriority =
+  | 'critical' // Immediate cleanup required
+  | 'high' // Cleanup within hours
+  | 'medium' // Cleanup within days
+  | 'low' // Cleanup when convenient
   | 'background'; // Continuous background cleanup
 
 export interface CleanupSchedule {
   type: ScheduleType;
-  interval?: number;        // milliseconds
-  cron?: string;           // cron expression
+  interval?: number; // milliseconds
+  cron?: string; // cron expression
   triggers?: TriggerType[];
   timezone?: string;
   enabled: boolean;
-  maxDuration?: number;    // max execution time
+  maxDuration?: number; // max execution time
   retryAttempts?: number;
   retryDelay?: number;
 }
 
-export type ScheduleType = 
-  | 'interval'     // Fixed interval
-  | 'cron'         // Cron schedule
-  | 'trigger'      // Event-based
-  | 'manual'       // Manual execution only
-  | 'continuous';  // Continuous background
+export type ScheduleType =
+  | 'interval' // Fixed interval
+  | 'cron' // Cron schedule
+  | 'trigger' // Event-based
+  | 'manual' // Manual execution only
+  | 'continuous'; // Continuous background
 
-export type TriggerType = 
+export type TriggerType =
   | 'session_expired'
   | 'user_logout'
   | 'storage_threshold'
@@ -83,9 +82,9 @@ export type TriggerType =
   | 'data_request';
 
 export interface RetentionPolicy {
-  maxAge: number;           // milliseconds
-  maxCount?: number;        // maximum number of items
-  maxSize?: number;         // maximum size in bytes
+  maxAge: number; // milliseconds
+  maxCount?: number; // maximum number of items
+  maxSize?: number; // maximum size in bytes
   conditions: RetentionCondition[];
   exceptions: RetentionException[];
   archiveBeforeDelete: boolean;
@@ -96,7 +95,17 @@ export interface RetentionPolicy {
 
 export interface RetentionCondition {
   field: string;
-  operator: 'eq' | 'ne' | 'gt' | 'gte' | 'lt' | 'lte' | 'in' | 'nin' | 'exists' | 'regex';
+  operator:
+    | 'eq'
+    | 'ne'
+    | 'gt'
+    | 'gte'
+    | 'lt'
+    | 'lte'
+    | 'in'
+    | 'nin'
+    | 'exists'
+    | 'regex';
   value: any;
   logicalOperator?: 'and' | 'or';
 }
@@ -120,7 +129,7 @@ export interface CleanupTarget {
   estimatedSize?: number;
 }
 
-export type TargetType = 
+export type TargetType =
   | 'sessions'
   | 'tokens'
   | 'cache_entries'
@@ -157,14 +166,14 @@ export interface CleanupCondition {
   required: boolean;
 }
 
-export type ConditionType = 
-  | 'age_based'        // Based on creation/modification time
-  | 'usage_based'      // Based on last access time
-  | 'size_based'       // Based on data size
-  | 'count_based'      // Based on number of items
-  | 'status_based'     // Based on status/state
+export type ConditionType =
+  | 'age_based' // Based on creation/modification time
+  | 'usage_based' // Based on last access time
+  | 'size_based' // Based on data size
+  | 'count_based' // Based on number of items
+  | 'status_based' // Based on status/state
   | 'compliance_based' // Based on compliance requirements
-  | 'custom';          // Custom condition
+  | 'custom'; // Custom condition
 
 export interface CleanupAction {
   id: string;
@@ -176,19 +185,19 @@ export interface CleanupAction {
   rollbackable: boolean;
 }
 
-export type ActionType = 
-  | 'delete'           // Permanently delete
-  | 'archive'          // Move to archive
-  | 'anonymize'        // Remove PII
-  | 'encrypt'          // Encrypt data
-  | 'compress'         // Compress data
-  | 'backup'           // Create backup
-  | 'notify'           // Send notification
-  | 'log'              // Log action
-  | 'validate'         // Validate before cleanup
-  | 'custom';          // Custom action
+export type ActionType =
+  | 'delete' // Permanently delete
+  | 'archive' // Move to archive
+  | 'anonymize' // Remove PII
+  | 'encrypt' // Encrypt data
+  | 'compress' // Compress data
+  | 'backup' // Create backup
+  | 'notify' // Send notification
+  | 'log' // Log action
+  | 'validate' // Validate before cleanup
+  | 'custom'; // Custom action
 
-export type TaskStatus = 
+export type TaskStatus =
   | 'scheduled'
   | 'running'
   | 'completed'
@@ -221,10 +230,10 @@ export interface PerformanceMetrics {
 }
 
 export interface ComplianceInfo {
-  frameworks: string[];        // LGPD, GDPR, etc.
-  requirements: string[];      // Specific requirements
-  dataCategories: string[];    // Types of data being cleaned
-  legalBasis: string;         // Legal basis for processing
+  frameworks: string[]; // LGPD, GDPR, etc.
+  requirements: string[]; // Specific requirements
+  dataCategories: string[]; // Types of data being cleaned
+  legalBasis: string; // Legal basis for processing
   retentionJustification: string;
   dataSubjectRights: string[]; // Rights being respected
   auditRequired: boolean;
@@ -239,8 +248,8 @@ export interface TaskMetadata {
   modifiedBy: string;
   version: string;
   tags: string[];
-  dependencies: string[];      // Other tasks this depends on
-  conflicts: string[];         // Tasks that conflict with this
+  dependencies: string[]; // Other tasks this depends on
+  conflicts: string[]; // Tasks that conflict with this
   environment: string;
   region: string;
 }
@@ -394,15 +403,14 @@ export interface ApprovalResult {
 }
 
 export class DataCleanupManager {
-  private config: SessionConfig;
   private utils: SessionUtils;
   private tasks: Map<string, CleanupTask> = new Map();
   private scheduledTasks: Map<string, NodeJS.Timeout> = new Map();
   private runningTasks: Map<string, Promise<CleanupResult>> = new Map();
   private eventListeners: Map<string, Function[]> = new Map();
-  private isInitialized: boolean = false;
+  private isInitialized = false;
   private cleanupHistory: CleanupResult[] = [];
-  private maxHistorySize: number = 1000;
+  private maxHistorySize = 1000;
   private auditLogger: AuditLogger;
   private complianceEngine: ComplianceEngine;
   private notificationService: NotificationService;
@@ -428,15 +436,15 @@ export class DataCleanupManager {
       await this.auditLogger.initialize();
       await this.complianceEngine.initialize();
       await this.notificationService.initialize();
-      
+
       // Load default cleanup tasks
       await this.loadDefaultTasks();
-      
+
       // Schedule tasks
       await this.scheduleAllTasks();
-      
+
       this.isInitialized = true;
-      
+
       // Log initialization
       await this.auditLogger.logEvent({
         type: 'system_event',
@@ -445,7 +453,7 @@ export class DataCleanupManager {
         action: 'cleanup_manager_initialized',
         description: 'Data cleanup manager initialized successfully',
         actor: { type: 'system', id: 'cleanup_manager' },
-        target: { type: 'system', id: 'cleanup_system' }
+        target: { type: 'system', id: 'cleanup_system' },
       });
     } catch (error) {
       console.error('Error initializing cleanup manager:', error);
@@ -470,32 +478,48 @@ export class DataCleanupManager {
           enabled: true,
           maxDuration: 30 * 60 * 1000, // 30 minutes
           retryAttempts: 3,
-          retryDelay: 5 * 60 * 1000 // 5 minutes
+          retryDelay: 5 * 60 * 1000, // 5 minutes
         },
         retention: {
           maxAge: 24 * 60 * 60 * 1000, // 24 hours
           conditions: [
             { field: 'status', operator: 'eq', value: 'expired' },
-            { field: 'lastActivity', operator: 'lt', value: Date.now() - 24 * 60 * 60 * 1000 }
+            {
+              field: 'lastActivity',
+              operator: 'lt',
+              value: Date.now() - 24 * 60 * 60 * 1000,
+            },
           ],
           exceptions: [],
           archiveBeforeDelete: true,
           complianceFramework: ['LGPD'],
-          legalHold: false
+          legalHold: false,
         },
-        targets: [{
-          type: 'sessions',
-          source: {
-            type: 'database',
-            connection: 'main',
-            table: 'user_sessions'
+        targets: [
+          {
+            type: 'sessions',
+            source: {
+              type: 'database',
+              connection: 'main',
+              table: 'user_sessions',
+            },
+            filters: [
+              {
+                field: 'expires_at',
+                operator: 'lt',
+                value: 'NOW()',
+                type: 'date',
+              },
+              {
+                field: 'status',
+                operator: 'eq',
+                value: 'expired',
+                type: 'string',
+              },
+            ],
+            batchSize: 100,
           },
-          filters: [
-            { field: 'expires_at', operator: 'lt', value: 'NOW()', type: 'date' },
-            { field: 'status', operator: 'eq', value: 'expired', type: 'string' }
-          ],
-          batchSize: 100
-        }],
+        ],
         conditions: [
           {
             id: 'session_expired',
@@ -503,8 +527,8 @@ export class DataCleanupManager {
             type: 'age_based',
             expression: 'expires_at < NOW()',
             parameters: {},
-            required: true
-          }
+            required: true,
+          },
         ],
         actions: [
           {
@@ -514,7 +538,7 @@ export class DataCleanupManager {
             parameters: { location: 'session_archive' },
             order: 1,
             required: true,
-            rollbackable: true
+            rollbackable: true,
           },
           {
             id: 'delete_session',
@@ -523,7 +547,7 @@ export class DataCleanupManager {
             parameters: {},
             order: 2,
             required: true,
-            rollbackable: false
+            rollbackable: false,
           },
           {
             id: 'log_cleanup',
@@ -532,8 +556,8 @@ export class DataCleanupManager {
             parameters: { level: 'info' },
             order: 3,
             required: true,
-            rollbackable: false
-          }
+            rollbackable: false,
+          },
         ],
         compliance: {
           frameworks: ['LGPD'],
@@ -544,8 +568,8 @@ export class DataCleanupManager {
           dataSubjectRights: ['right_to_erasure'],
           auditRequired: true,
           approvalRequired: false,
-          notificationRequired: false
-        }
+          notificationRequired: false,
+        },
       },
       {
         name: 'expired_tokens_cleanup',
@@ -559,30 +583,37 @@ export class DataCleanupManager {
           enabled: true,
           maxDuration: 15 * 60 * 1000, // 15 minutes
           retryAttempts: 3,
-          retryDelay: 2 * 60 * 1000 // 2 minutes
+          retryDelay: 2 * 60 * 1000, // 2 minutes
         },
         retention: {
           maxAge: 60 * 60 * 1000, // 1 hour after expiration
           conditions: [
-            { field: 'expires_at', operator: 'lt', value: Date.now() }
+            { field: 'expires_at', operator: 'lt', value: Date.now() },
           ],
           exceptions: [],
           archiveBeforeDelete: false,
           complianceFramework: ['LGPD'],
-          legalHold: false
+          legalHold: false,
         },
-        targets: [{
-          type: 'tokens',
-          source: {
-            type: 'database',
-            connection: 'main',
-            table: 'auth_tokens'
+        targets: [
+          {
+            type: 'tokens',
+            source: {
+              type: 'database',
+              connection: 'main',
+              table: 'auth_tokens',
+            },
+            filters: [
+              {
+                field: 'expires_at',
+                operator: 'lt',
+                value: 'NOW() - INTERVAL 1 HOUR',
+                type: 'date',
+              },
+            ],
+            batchSize: 500,
           },
-          filters: [
-            { field: 'expires_at', operator: 'lt', value: 'NOW() - INTERVAL 1 HOUR', type: 'date' }
-          ],
-          batchSize: 500
-        }],
+        ],
         conditions: [
           {
             id: 'token_expired',
@@ -590,8 +621,8 @@ export class DataCleanupManager {
             type: 'age_based',
             expression: 'expires_at < NOW() - INTERVAL 1 HOUR',
             parameters: {},
-            required: true
-          }
+            required: true,
+          },
         ],
         actions: [
           {
@@ -601,8 +632,8 @@ export class DataCleanupManager {
             parameters: {},
             order: 1,
             required: true,
-            rollbackable: false
-          }
+            rollbackable: false,
+          },
         ],
         compliance: {
           frameworks: ['LGPD'],
@@ -613,8 +644,8 @@ export class DataCleanupManager {
           dataSubjectRights: ['right_to_erasure'],
           auditRequired: true,
           approvalRequired: false,
-          notificationRequired: false
-        }
+          notificationRequired: false,
+        },
       },
       {
         name: 'old_audit_logs_cleanup',
@@ -628,12 +659,16 @@ export class DataCleanupManager {
           enabled: true,
           maxDuration: 2 * 60 * 60 * 1000, // 2 hours
           retryAttempts: 2,
-          retryDelay: 30 * 60 * 1000 // 30 minutes
+          retryDelay: 30 * 60 * 1000, // 30 minutes
         },
         retention: {
           maxAge: 365 * 24 * 60 * 60 * 1000, // 1 year active
           conditions: [
-            { field: 'timestamp', operator: 'lt', value: Date.now() - 365 * 24 * 60 * 60 * 1000 }
+            {
+              field: 'timestamp',
+              operator: 'lt',
+              value: Date.now() - 365 * 24 * 60 * 60 * 1000,
+            },
           ],
           exceptions: [
             {
@@ -641,30 +676,41 @@ export class DataCleanupManager {
               description: 'Security incidents require extended retention',
               conditions: [
                 { field: 'category', operator: 'eq', value: 'security' },
-                { field: 'severity', operator: 'in', value: ['high', 'critical'] }
+                {
+                  field: 'severity',
+                  operator: 'in',
+                  value: ['high', 'critical'],
+                },
               ],
               extendedRetention: 7 * 365 * 24 * 60 * 60 * 1000, // 7 years
               reason: 'Security compliance requirement',
-              approvedBy: 'security_team'
-            }
+              approvedBy: 'security_team',
+            },
           ],
           archiveBeforeDelete: true,
           archiveLocation: 'audit_archive',
           complianceFramework: ['LGPD', 'ISO27001'],
-          legalHold: false
+          legalHold: false,
         },
-        targets: [{
-          type: 'audit_events',
-          source: {
-            type: 'database',
-            connection: 'audit',
-            table: 'audit_events'
+        targets: [
+          {
+            type: 'audit_events',
+            source: {
+              type: 'database',
+              connection: 'audit',
+              table: 'audit_events',
+            },
+            filters: [
+              {
+                field: 'timestamp',
+                operator: 'lt',
+                value: 'NOW() - INTERVAL 1 YEAR',
+                type: 'date',
+              },
+            ],
+            batchSize: 1000,
           },
-          filters: [
-            { field: 'timestamp', operator: 'lt', value: 'NOW() - INTERVAL 1 YEAR', type: 'date' }
-          ],
-          batchSize: 1000
-        }],
+        ],
         conditions: [
           {
             id: 'audit_age',
@@ -672,30 +718,32 @@ export class DataCleanupManager {
             type: 'age_based',
             expression: 'timestamp < NOW() - INTERVAL 1 YEAR',
             parameters: {},
-            required: true
+            required: true,
           },
           {
             id: 'not_security_critical',
-            description: 'Not a critical security event requiring extended retention',
+            description:
+              'Not a critical security event requiring extended retention',
             type: 'custom',
-            expression: 'NOT (category = "security" AND severity IN ("high", "critical"))',
+            expression:
+              'NOT (category = "security" AND severity IN ("high", "critical"))',
             parameters: {},
-            required: true
-          }
+            required: true,
+          },
         ],
         actions: [
           {
             id: 'archive_audit',
             type: 'archive',
             description: 'Archive audit events to long-term storage',
-            parameters: { 
+            parameters: {
               location: 'audit_archive',
               compression: true,
-              encryption: true
+              encryption: true,
             },
             order: 1,
             required: true,
-            rollbackable: true
+            rollbackable: true,
           },
           {
             id: 'delete_audit',
@@ -704,20 +752,21 @@ export class DataCleanupManager {
             parameters: {},
             order: 2,
             required: true,
-            rollbackable: false
-          }
+            rollbackable: false,
+          },
         ],
         compliance: {
           frameworks: ['LGPD', 'ISO27001'],
           requirements: ['audit_retention', 'data_minimization'],
           dataCategories: ['audit_logs', 'system_logs'],
           legalBasis: 'legal_obligation',
-          retentionJustification: 'Regulatory compliance and security monitoring',
+          retentionJustification:
+            'Regulatory compliance and security monitoring',
           dataSubjectRights: ['right_to_information'],
           auditRequired: true,
           approvalRequired: true,
-          notificationRequired: false
-        }
+          notificationRequired: false,
+        },
       },
       {
         name: 'cache_cleanup',
@@ -731,29 +780,31 @@ export class DataCleanupManager {
           enabled: true,
           maxDuration: 5 * 60 * 1000, // 5 minutes
           retryAttempts: 2,
-          retryDelay: 60 * 1000 // 1 minute
+          retryDelay: 60 * 1000, // 1 minute
         },
         retention: {
           maxAge: 0, // Immediate cleanup of expired items
           conditions: [
-            { field: 'expires_at', operator: 'lt', value: Date.now() }
+            { field: 'expires_at', operator: 'lt', value: Date.now() },
           ],
           exceptions: [],
           archiveBeforeDelete: false,
           complianceFramework: [],
-          legalHold: false
+          legalHold: false,
         },
-        targets: [{
-          type: 'cache_entries',
-          source: {
-            type: 'cache',
-            connection: 'redis'
+        targets: [
+          {
+            type: 'cache_entries',
+            source: {
+              type: 'cache',
+              connection: 'redis',
+            },
+            filters: [
+              { field: 'ttl', operator: 'lt', value: '0', type: 'number' },
+            ],
+            batchSize: 1000,
           },
-          filters: [
-            { field: 'ttl', operator: 'lt', value: '0', type: 'number' }
-          ],
-          batchSize: 1000
-        }],
+        ],
         conditions: [
           {
             id: 'cache_expired',
@@ -761,8 +812,8 @@ export class DataCleanupManager {
             type: 'age_based',
             expression: 'TTL < 0',
             parameters: {},
-            required: true
-          }
+            required: true,
+          },
         ],
         actions: [
           {
@@ -772,8 +823,8 @@ export class DataCleanupManager {
             parameters: {},
             order: 1,
             required: true,
-            rollbackable: false
-          }
+            rollbackable: false,
+          },
         ],
         compliance: {
           frameworks: [],
@@ -784,9 +835,9 @@ export class DataCleanupManager {
           dataSubjectRights: [],
           auditRequired: false,
           approvalRequired: false,
-          notificationRequired: false
-        }
-      }
+          notificationRequired: false,
+        },
+      },
     ];
 
     for (const taskData of defaultTasks) {
@@ -798,7 +849,9 @@ export class DataCleanupManager {
   /**
    * Create cleanup task
    */
-  public async createTask(taskData: Partial<CleanupTask>): Promise<CleanupTask> {
+  public async createTask(
+    taskData: Partial<CleanupTask>
+  ): Promise<CleanupTask> {
     const task: CleanupTask = {
       id: this.utils.generateSessionToken(),
       name: taskData.name || 'unnamed_task',
@@ -809,7 +862,7 @@ export class DataCleanupManager {
       schedule: {
         type: 'manual',
         enabled: false,
-        ...taskData.schedule
+        ...taskData.schedule,
       },
       retention: {
         maxAge: 24 * 60 * 60 * 1000, // 24 hours default
@@ -818,7 +871,7 @@ export class DataCleanupManager {
         archiveBeforeDelete: false,
         complianceFramework: [],
         legalHold: false,
-        ...taskData.retention
+        ...taskData.retention,
       },
       targets: taskData.targets || [],
       conditions: taskData.conditions || [],
@@ -840,8 +893,8 @@ export class DataCleanupManager {
           cpuUsage: 0,
           memoryUsage: 0,
           diskIO: 0,
-          networkIO: 0
-        }
+          networkIO: 0,
+        },
       },
       compliance: {
         frameworks: [],
@@ -853,7 +906,7 @@ export class DataCleanupManager {
         auditRequired: false,
         approvalRequired: false,
         notificationRequired: false,
-        ...taskData.compliance
+        ...taskData.compliance,
       },
       metadata: {
         createdAt: Date.now(),
@@ -866,8 +919,8 @@ export class DataCleanupManager {
         conflicts: [],
         environment: process.env.NODE_ENV || 'development',
         region: process.env.AWS_REGION || 'local',
-        ...taskData.metadata
-      }
+        ...taskData.metadata,
+      },
     };
 
     // Validate task
@@ -903,7 +956,10 @@ export class DataCleanupManager {
     }
 
     // Validate compliance requirements
-    if (task.compliance.approvalRequired && !task.compliance.frameworks.length) {
+    if (
+      task.compliance.approvalRequired &&
+      !task.compliance.frameworks.length
+    ) {
       errors.push('Compliance framework required when approval is needed');
     }
 
@@ -947,7 +1003,10 @@ export class DataCleanupManager {
               try {
                 await this.executeTask(taskId);
               } catch (error) {
-                console.error(`Error executing scheduled task ${taskId}:`, error);
+                console.error(
+                  `Error executing scheduled task ${taskId}:`,
+                  error
+                );
               }
             }, task.schedule.interval);
             this.scheduledTasks.set(taskId, timer);
@@ -992,11 +1051,14 @@ export class DataCleanupManager {
   /**
    * Execute cleanup task
    */
-  public async executeTask(taskId: string, options?: {
-    dryRun?: boolean;
-    batchSize?: number;
-    maxItems?: number;
-  }): Promise<CleanupResult> {
+  public async executeTask(
+    taskId: string,
+    options?: {
+      dryRun?: boolean;
+      batchSize?: number;
+      maxItems?: number;
+    }
+  ): Promise<CleanupResult> {
     const task = this.tasks.get(taskId);
     if (!task) {
       throw new Error(`Task ${taskId} not found`);
@@ -1016,7 +1078,11 @@ export class DataCleanupManager {
       task.lastRun = startTime;
 
       // Create execution promise
-      const executionPromise = this.performTaskExecution(task, executionId, options);
+      const executionPromise = this.performTaskExecution(
+        task,
+        executionId,
+        options
+      );
       this.runningTasks.set(taskId, executionPromise);
 
       // Execute task
@@ -1049,31 +1115,33 @@ export class DataCleanupManager {
           itemsAnonymized: 0,
           sizeFreed: 0,
           errorsEncountered: 1,
-          warningsGenerated: 0
+          warningsGenerated: 0,
         },
         details: {
           targetResults: [],
           actionResults: [],
           conditionResults: [],
-          batchResults: []
+          batchResults: [],
         },
-        errors: [{
-          id: this.utils.generateSessionToken(),
-          type: 'execution',
-          severity: 'critical',
-          message: error.message,
-          details: error.stack || '',
-          timestamp: Date.now(),
-          context: { taskId, executionId },
-          recoverable: false
-        }],
+        errors: [
+          {
+            id: this.utils.generateSessionToken(),
+            type: 'execution',
+            severity: 'critical',
+            message: error.message,
+            details: error.stack || '',
+            timestamp: Date.now(),
+            context: { taskId, executionId },
+            recoverable: false,
+          },
+        ],
         warnings: [],
         compliance: {
           frameworkResults: [],
           dataSubjectRights: [],
           auditTrail: [],
           notifications: [],
-          approvals: []
+          approvals: [],
         },
         performance: {
           itemsPerSecond: 0,
@@ -1081,8 +1149,8 @@ export class DataCleanupManager {
           cpuUsage: 0,
           memoryUsage: 0,
           diskIO: 0,
-          networkIO: 0
-        }
+          networkIO: 0,
+        },
       };
 
       // Update task statistics
@@ -1125,13 +1193,13 @@ export class DataCleanupManager {
         itemsAnonymized: 0,
         sizeFreed: 0,
         errorsEncountered: 0,
-        warningsGenerated: 0
+        warningsGenerated: 0,
       },
       details: {
         targetResults: [],
         actionResults: [],
         conditionResults: [],
-        batchResults: []
+        batchResults: [],
       },
       errors: [],
       warnings: [],
@@ -1140,7 +1208,7 @@ export class DataCleanupManager {
         dataSubjectRights: [],
         auditTrail: [],
         notifications: [],
-        approvals: []
+        approvals: [],
       },
       performance: {
         itemsPerSecond: 0,
@@ -1148,8 +1216,8 @@ export class DataCleanupManager {
         cpuUsage: 0,
         memoryUsage: 0,
         diskIO: 0,
-        networkIO: 0
-      }
+        networkIO: 0,
+      },
     };
 
     try {
@@ -1162,7 +1230,7 @@ export class DataCleanupManager {
         description: `Cleanup task '${task.name}' execution started`,
         actor: { type: 'system', id: 'cleanup_manager' },
         target: { type: 'system', id: task.id },
-        context: { taskId: task.id, executionId }
+        context: { taskId: task.id, executionId },
       });
 
       // Check compliance requirements
@@ -1177,7 +1245,7 @@ export class DataCleanupManager {
       for (const condition of task.conditions) {
         const conditionResult = await this.evaluateCondition(condition, task);
         result.details.conditionResults.push(conditionResult);
-        
+
         if (condition.required && !conditionResult.result) {
           throw new Error(`Required condition '${condition.id}' not met`);
         }
@@ -1187,7 +1255,7 @@ export class DataCleanupManager {
       for (const target of task.targets) {
         const targetResult = await this.processTarget(target, task, options);
         result.details.targetResults.push(targetResult);
-        
+
         // Update summary
         result.summary.itemsProcessed += targetResult.itemsProcessed;
       }
@@ -1196,9 +1264,11 @@ export class DataCleanupManager {
       for (const action of task.actions.sort((a, b) => a.order - b.order)) {
         const actionResult = await this.executeAction(action, task, result);
         result.details.actionResults.push(actionResult);
-        
+
         if (action.required && actionResult.status === 'failure') {
-          throw new Error(`Required action '${action.id}' failed: ${actionResult.error}`);
+          throw new Error(
+            `Required action '${action.id}' failed: ${actionResult.error}`
+          );
         }
       }
 
@@ -1220,7 +1290,7 @@ export class DataCleanupManager {
         description: `Cleanup task '${task.name}' execution completed successfully`,
         actor: { type: 'system', id: 'cleanup_manager' },
         target: { type: 'system', id: task.id },
-        context: { taskId: task.id, executionId, summary: result.summary }
+        context: { taskId: task.id, executionId, summary: result.summary },
       });
 
       return result;
@@ -1236,7 +1306,7 @@ export class DataCleanupManager {
         details: error.stack || '',
         timestamp: Date.now(),
         context: { taskId: task.id, executionId },
-        recoverable: false
+        recoverable: false,
       });
 
       // Log task execution failure
@@ -1248,7 +1318,7 @@ export class DataCleanupManager {
         description: `Cleanup task '${task.name}' execution failed: ${error.message}`,
         actor: { type: 'system', id: 'cleanup_manager' },
         target: { type: 'system', id: task.id },
-        context: { taskId: task.id, executionId, error: error.message }
+        context: { taskId: task.id, executionId, error: error.message },
       });
 
       throw error;
@@ -1270,7 +1340,7 @@ export class DataCleanupManager {
       itemsProcessed: 0,
       sizeProcessed: 0,
       duration: 0,
-      status: 'success'
+      status: 'success',
     };
 
     try {
@@ -1281,16 +1351,21 @@ export class DataCleanupManager {
       // Process items in batches
       const batchSize = options?.batchSize || target.batchSize;
       const maxItems = options?.maxItems;
-      
+
       let processedCount = 0;
       for (let i = 0; i < items.length; i += batchSize) {
         if (maxItems && processedCount >= maxItems) {
           break;
         }
-        
+
         const batch = items.slice(i, i + batchSize);
-        const batchResult = await this.processBatch(batch, target, task, options);
-        
+        const batchResult = await this.processBatch(
+          batch,
+          target,
+          task,
+          options
+        );
+
         targetResult.itemsProcessed += batchResult.itemsProcessed;
         targetResult.sizeProcessed += batchResult.sizeProcessed || 0;
         processedCount += batchResult.itemsProcessed;
@@ -1309,10 +1384,15 @@ export class DataCleanupManager {
   /**
    * Get target items
    */
-  private async getTargetItems(target: CleanupTarget, task: CleanupTask): Promise<any[]> {
+  private async getTargetItems(
+    target: CleanupTarget,
+    _task: CleanupTask
+  ): Promise<any[]> {
     // This would implement the actual data retrieval logic
     // For now, return mock data
-    console.log(`Getting items for target ${target.type} from ${target.source.type}`);
+    console.log(
+      `Getting items for target ${target.type} from ${target.source.type}`
+    );
     return [];
   }
 
@@ -1321,9 +1401,9 @@ export class DataCleanupManager {
    */
   private async processBatch(
     batch: any[],
-    target: CleanupTarget,
-    task: CleanupTask,
-    options?: any
+    _target: CleanupTarget,
+    _task: CleanupTask,
+    _options?: any
   ): Promise<{ itemsProcessed: number; sizeProcessed?: number }> {
     // This would implement the actual batch processing logic
     console.log(`Processing batch of ${batch.length} items`);
@@ -1343,7 +1423,7 @@ export class DataCleanupManager {
       action,
       itemsAffected: 0,
       duration: 0,
-      status: 'success'
+      status: 'success',
     };
 
     try {
@@ -1352,17 +1432,17 @@ export class DataCleanupManager {
           actionResult.itemsAffected = result.summary.itemsProcessed;
           result.summary.itemsDeleted += actionResult.itemsAffected;
           break;
-          
+
         case 'archive':
           actionResult.itemsAffected = result.summary.itemsProcessed;
           result.summary.itemsArchived += actionResult.itemsAffected;
           break;
-          
+
         case 'anonymize':
           actionResult.itemsAffected = result.summary.itemsProcessed;
           result.summary.itemsAnonymized += actionResult.itemsAffected;
           break;
-          
+
         case 'log':
           await this.auditLogger.logEvent({
             type: 'system_event',
@@ -1371,15 +1451,15 @@ export class DataCleanupManager {
             action: 'cleanup_action_executed',
             description: `Cleanup action '${action.type}' executed for task '${task.name}'`,
             actor: { type: 'system', id: 'cleanup_manager' },
-            target: { type: 'system', id: task.id }
+            target: { type: 'system', id: task.id },
           });
           break;
-          
+
         case 'notify':
           await this.notificationService.sendNotification({
             type: 'cleanup_notification',
             message: `Cleanup task '${task.name}' executed`,
-            details: result.summary
+            details: result.summary,
           });
           break;
       }
@@ -1399,14 +1479,14 @@ export class DataCleanupManager {
    */
   private async evaluateCondition(
     condition: CleanupCondition,
-    task: CleanupTask
+    _task: CleanupTask
   ): Promise<ConditionResult> {
     const startTime = Date.now();
     const conditionResult: ConditionResult = {
       condition,
       evaluated: true,
       result: false,
-      duration: 0
+      duration: 0,
     };
 
     try {
@@ -1426,30 +1506,36 @@ export class DataCleanupManager {
    * Process compliance
    */
   private async processCompliance(
-    task: CleanupTask,
-    result: CleanupResult
+    _task: CleanupTask,
+    _result: CleanupResult
   ): Promise<ComplianceResult> {
     return {
       frameworkResults: [],
       dataSubjectRights: [],
       auditTrail: [],
       notifications: [],
-      approvals: []
+      approvals: [],
     };
   }
 
   /**
    * Calculate performance metrics
    */
-  private calculatePerformanceMetrics(result: CleanupResult): PerformanceMetrics {
+  private calculatePerformanceMetrics(
+    result: CleanupResult
+  ): PerformanceMetrics {
     const durationSeconds = result.duration / 1000;
     return {
-      itemsPerSecond: durationSeconds > 0 ? result.summary.itemsProcessed / durationSeconds : 0,
-      bytesPerSecond: durationSeconds > 0 ? result.summary.sizeFreed / durationSeconds : 0,
+      itemsPerSecond:
+        durationSeconds > 0
+          ? result.summary.itemsProcessed / durationSeconds
+          : 0,
+      bytesPerSecond:
+        durationSeconds > 0 ? result.summary.sizeFreed / durationSeconds : 0,
       cpuUsage: 0,
       memoryUsage: 0,
       diskIO: 0,
-      networkIO: 0
+      networkIO: 0,
     };
   }
 
@@ -1458,19 +1544,20 @@ export class DataCleanupManager {
    */
   private updateTaskStatistics(task: CleanupTask, result: CleanupResult): void {
     task.statistics.totalRuns++;
-    
+
     if (result.status === 'success') {
       task.statistics.successfulRuns++;
     } else {
       task.statistics.failedRuns++;
       task.statistics.lastError = result.errors[0]?.message;
     }
-    
+
     task.statistics.lastRunDuration = result.duration;
-    task.statistics.averageRunDuration = 
-      (task.statistics.averageRunDuration * (task.statistics.totalRuns - 1) + result.duration) / 
+    task.statistics.averageRunDuration =
+      (task.statistics.averageRunDuration * (task.statistics.totalRuns - 1) +
+        result.duration) /
       task.statistics.totalRuns;
-    
+
     task.statistics.totalItemsProcessed += result.summary.itemsProcessed;
     task.statistics.totalItemsDeleted += result.summary.itemsDeleted;
     task.statistics.totalItemsArchived += result.summary.itemsArchived;
@@ -1483,7 +1570,7 @@ export class DataCleanupManager {
    */
   private addToHistory(result: CleanupResult): void {
     this.cleanupHistory.push(result);
-    
+
     // Maintain history size limit
     if (this.cleanupHistory.length > this.maxHistorySize) {
       this.cleanupHistory = this.cleanupHistory.slice(-this.maxHistorySize);
@@ -1495,15 +1582,15 @@ export class DataCleanupManager {
    */
   private calculateNextRun(task: CleanupTask): number {
     const now = Date.now();
-    
+
     switch (task.schedule.type) {
       case 'interval':
         return now + (task.schedule.interval || 0);
-        
+
       case 'cron':
         // This would use a cron parser to calculate next run
         return now + 24 * 60 * 60 * 1000; // Default to 24 hours
-        
+
       default:
         return 0;
     }
@@ -1520,7 +1607,7 @@ export class DataCleanupManager {
   /**
    * Check approval
    */
-  private async checkApproval(task: CleanupTask): Promise<boolean> {
+  private async checkApproval(_task: CleanupTask): Promise<boolean> {
     // This would implement the actual approval checking logic
     return true;
   }
@@ -1545,7 +1632,10 @@ export class DataCleanupManager {
     return limit ? history.slice(0, limit) : history;
   }
 
-  public async updateTask(taskId: string, updates: Partial<CleanupTask>): Promise<void> {
+  public async updateTask(
+    taskId: string,
+    updates: Partial<CleanupTask>
+  ): Promise<void> {
     const task = this.tasks.get(taskId);
     if (!task) {
       throw new Error(`Task ${taskId} not found`);
@@ -1585,7 +1675,7 @@ export class DataCleanupManager {
     if (!this.eventListeners.has(event)) {
       this.eventListeners.set(event, []);
     }
-    this.eventListeners.get(event)!.push(callback);
+    this.eventListeners.get(event)?.push(callback);
   }
 
   public off(event: string, callback: Function): void {
@@ -1601,7 +1691,7 @@ export class DataCleanupManager {
   private emit(event: string, data: any): void {
     const listeners = this.eventListeners.get(event);
     if (listeners) {
-      listeners.forEach(callback => {
+      listeners.forEach((callback) => {
         try {
           callback(data);
         } catch (error) {
@@ -1658,21 +1748,23 @@ export class DataCleanupManager {
         historySize: this.cleanupHistory.length,
         auditLogger: await this.auditLogger.healthCheck(),
         complianceEngine: await this.complianceEngine.healthCheck(),
-        notificationService: await this.notificationService.healthCheck()
+        notificationService: await this.notificationService.healthCheck(),
       };
 
-      const allHealthy = Object.values(checks).every(check => 
-        typeof check === 'boolean' || typeof check === 'number' ? true : check.status === 'healthy'
+      const allHealthy = Object.values(checks).every((check) =>
+        typeof check === 'boolean' || typeof check === 'number'
+          ? true
+          : check.status === 'healthy'
       );
 
       return {
         status: allHealthy ? 'healthy' : 'unhealthy',
-        details: checks
+        details: checks,
       };
     } catch (error) {
       return {
         status: 'error',
-        details: { error: error.message }
+        details: { error: error.message },
       };
     }
   }

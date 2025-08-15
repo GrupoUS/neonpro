@@ -2,13 +2,13 @@
  * Payment Processing API
  * Epic: EPIC-001 - Advanced Subscription Management
  * Story: EPIC-001.1 - Subscription Middleware & Management System
- * 
+ *
  * POST /api/subscription/payment/create-checkout - Create payment checkout session
  */
 
-import { NextRequest, NextResponse } from 'next/server';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
+import { type NextRequest, NextResponse } from 'next/server';
 import type { Database } from '@/types/database';
 
 // Note: Stripe/MercadoPago integration to be implemented in next phase
@@ -17,20 +17,19 @@ import type { Database } from '@/types/database';
 export async function POST(request: NextRequest) {
   try {
     const supabase = createRouteHandlerClient<Database>({ cookies });
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
     if (!session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
     const { plan_id, billing_cycle, payment_provider = 'stripe' } = body;
 
     // Validate input
-    if (!plan_id || !billing_cycle) {
+    if (!(plan_id && billing_cycle)) {
       return NextResponse.json(
         { error: 'Missing required fields: plan_id, billing_cycle' },
         { status: 400 }
@@ -103,10 +102,11 @@ export async function POST(request: NextRequest) {
 
     if (existingSubscription && !existingSubscription.cancel_at_period_end) {
       return NextResponse.json(
-        { 
+        {
           error: 'Existing active subscription found',
           code: 'EXISTING_SUBSCRIPTION',
-          message: 'Você já possui uma assinatura ativa. Para alterar o plano, use a função de upgrade/downgrade.'
+          message:
+            'Você já possui uma assinatura ativa. Para alterar o plano, use a função de upgrade/downgrade.',
         },
         { status: 409 }
       );
@@ -114,14 +114,14 @@ export async function POST(request: NextRequest) {
 
     // Create checkout session based on payment provider
     let checkoutData;
-    
+
     if (payment_provider === 'stripe') {
       checkoutData = await createStripeCheckout({
         plan,
         billing_cycle,
         price,
         user: session.user,
-        clinic_id: userClinic.clinic_id
+        clinic_id: userClinic.clinic_id,
       });
     } else if (payment_provider === 'mercado_pago') {
       checkoutData = await createMercadoPagoCheckout({
@@ -129,7 +129,7 @@ export async function POST(request: NextRequest) {
         billing_cycle,
         price,
         user: session.user,
-        clinic_id: userClinic.clinic_id
+        clinic_id: userClinic.clinic_id,
       });
     } else {
       return NextResponse.json(
@@ -139,23 +139,21 @@ export async function POST(request: NextRequest) {
     }
 
     // Create billing event record
-    await supabase
-      .from('billing_events')
-      .insert({
-        subscription_id: existingSubscription?.id || null,
-        event_type: 'invoice_created',
-        amount: price,
-        currency: 'BRL',
-        status: 'pending',
-        external_event_id: checkoutData.session_id,
-        metadata: {
-          plan_id,
-          billing_cycle,
-          payment_provider,
-          clinic_id: userClinic.clinic_id,
-          user_id: session.user.id
-        }
-      });
+    await supabase.from('billing_events').insert({
+      subscription_id: existingSubscription?.id || null,
+      event_type: 'invoice_created',
+      amount: price,
+      currency: 'BRL',
+      status: 'pending',
+      external_event_id: checkoutData.session_id,
+      metadata: {
+        plan_id,
+        billing_cycle,
+        payment_provider,
+        clinic_id: userClinic.clinic_id,
+        user_id: session.user.id,
+      },
+    });
 
     return NextResponse.json({
       success: true,
@@ -169,11 +167,10 @@ export async function POST(request: NextRequest) {
         plan: {
           id: plan.id,
           name: plan.name,
-          display_name: plan.display_name
-        }
-      }
+          display_name: plan.display_name,
+        },
+      },
     });
-
   } catch (error) {
     console.error('Payment creation API error:', error);
     return NextResponse.json(
@@ -187,13 +184,13 @@ export async function POST(request: NextRequest) {
 async function createStripeCheckout(params: any) {
   // TODO: Implement Stripe checkout session creation
   // This is a placeholder structure
-  
+
   const { plan, billing_cycle, price, user, clinic_id } = params;
-  
+
   // Placeholder response - replace with actual Stripe implementation
   return {
     url: `${process.env.NEXT_PUBLIC_APP_URL}/subscription/checkout/stripe?session_id=placeholder_session_id`,
-    session_id: `cs_test_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+    session_id: `cs_test_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
   };
 }
 
@@ -201,12 +198,12 @@ async function createStripeCheckout(params: any) {
 async function createMercadoPagoCheckout(params: any) {
   // TODO: Implement MercadoPago checkout session creation
   // This is a placeholder structure
-  
+
   const { plan, billing_cycle, price, user, clinic_id } = params;
-  
+
   // Placeholder response - replace with actual MercadoPago implementation
   return {
     url: `${process.env.NEXT_PUBLIC_APP_URL}/subscription/checkout/mercado-pago?session_id=placeholder_session_id`,
-    session_id: `mp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+    session_id: `mp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
   };
 }

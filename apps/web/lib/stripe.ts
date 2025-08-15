@@ -1,4 +1,4 @@
-import { loadStripe, Stripe as StripeJS } from '@stripe/stripe-js';
+import { loadStripe, type Stripe as StripeJS } from '@stripe/stripe-js';
 import Stripe from 'stripe';
 
 // Client-side Stripe instance
@@ -6,9 +6,7 @@ let stripePromise: Promise<StripeJS | null>;
 
 export const getStripe = () => {
   if (!stripePromise) {
-    stripePromise = loadStripe(
-      process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
-    );
+    stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
   }
   return stripePromise;
 };
@@ -39,11 +37,7 @@ export const STRIPE_CONFIG = {
 } as const;
 
 // Payment method types for Brazil
-export const BRAZIL_PAYMENT_METHODS = [
-  'card',
-  'boleto',
-  'pix',
-] as const;
+export const BRAZIL_PAYMENT_METHODS = ['card', 'boleto', 'pix'] as const;
 
 // Currency formatter for Brazil
 export const formatCurrency = (amount: number): string => {

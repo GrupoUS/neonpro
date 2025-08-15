@@ -1,15 +1,15 @@
-import type { Metadata } from "next";
-import "./globals.css";
+import type { Metadata } from 'next';
+import './globals.css';
+import { Toaster } from 'sonner';
 // Adicionando providers necessários para autenticação e tema
-import { ServiceWorkerRegistration } from "@/components/service-worker-registration";
-import { ThemeProvider } from "@/components/theme-provider";
-import { CriticalErrorBoundary } from "@/components/ui/error-boundary";
-import { AuthProvider } from "@/contexts/auth-context";
-import { Toaster } from "sonner";
+import { ServiceWorkerRegistration } from '@/components/service-worker-registration';
+import { ThemeProvider } from '@/components/theme-provider';
+import { CriticalErrorBoundary } from '@/components/ui/error-boundary';
+import { AuthProvider } from '@/contexts/auth-context';
 
 export const metadata: Metadata = {
-  title: "NEON PRO - Sistema de Gestão",
-  description: "Sistema completo para gestão de clínicas e consultórios",
+  title: 'NEON PRO - Sistema de Gestão',
+  description: 'Sistema completo para gestão de clínicas e consultórios',
 };
 
 export default function RootLayout({
@@ -28,7 +28,7 @@ export default function RootLayout({
         </CriticalErrorBoundary>
 
         {/* Notifications Toast Container */}
-        <Toaster position="top-right" richColors closeButton />
+        <Toaster closeButton position="top-right" richColors />
 
         {/* Service Worker Registration for PWA */}
         <ServiceWorkerRegistration />

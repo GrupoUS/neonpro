@@ -1,10 +1,14 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { SessionUtils } from '@/lib/auth/utils/session-utils';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { SessionConfig } from '@/lib/auth/config/session-config';
-import type { SecurityEvent, SuspiciousActivity, UserDevice } from '@/types/session';
+import { SessionUtils } from '@/lib/auth/utils/session-utils';
+import type {
+  SecurityEvent,
+  SuspiciousActivity,
+  UserDevice,
+} from '@/types/session';
 
 interface SecurityMonitorState {
   alerts: SecurityEvent[];
@@ -17,7 +21,12 @@ interface SecurityMonitorState {
 
 interface SecurityThreat {
   id: string;
-  type: 'suspicious_login' | 'unusual_location' | 'device_anomaly' | 'session_hijack' | 'brute_force';
+  type:
+    | 'suspicious_login'
+    | 'unusual_location'
+    | 'device_anomaly'
+    | 'session_hijack'
+    | 'brute_force';
   severity: 'low' | 'medium' | 'high' | 'critical';
   description: string;
   timestamp: Date;
@@ -41,35 +50,35 @@ export function useSecurityMonitor() {
     riskScore: 0,
     isMonitoring: false,
     lastCheck: null,
-    threatLevel: 'low'
+    threatLevel: 'low',
   });
-  
+
   const [threats, setThreats] = useState<SecurityThreat[]>([]);
   const [metrics, setMetrics] = useState<SecurityMetrics>({
     failedLogins: 0,
     suspiciousIPs: [],
     deviceAnomalies: 0,
     sessionViolations: 0,
-    lastIncident: null
+    lastIncident: null,
   });
-  
+
   const monitoringInterval = useRef<NodeJS.Timeout | null>(null);
   const alertCallbacks = useRef<((threat: SecurityThreat) => void)[]>([]);
 
   // Start security monitoring
   const startMonitoring = useCallback(async () => {
     if (state.isMonitoring) return;
-    
-    setState(prev => ({ ...prev, isMonitoring: true }));
-    
+
+    setState((prev) => ({ ...prev, isMonitoring: true }));
+
     // Initial security check
     await performSecurityCheck();
-    
+
     // Set up periodic monitoring
     monitoringInterval.current = setInterval(async () => {
       await performSecurityCheck();
     }, SessionConfig.security.monitoringInterval);
-    
+
     console.log('Security monitoring started');
   }, [state.isMonitoring]);
 
@@ -79,53 +88,59 @@ export function useSecurityMonitor() {
       clearInterval(monitoringInterval.current);
       monitoringInterval.current = null;
     }
-    
-    setState(prev => ({ ...prev, isMonitoring: false }));
+
+    setState((prev) => ({ ...prev, isMonitoring: false }));
     console.log('Security monitoring stopped');
   }, []);
 
   // Perform comprehensive security check
   const performSecurityCheck = useCallback(async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) return;
-      
+
       // Check for security events
       await checkSecurityEvents(user.id);
-      
+
       // Check for suspicious activities
       await checkSuspiciousActivities(user.id);
-      
+
       // Analyze device patterns
       await analyzeDevicePatterns(user.id);
-      
+
       // Calculate risk score
       await calculateRiskScore();
-      
+
       // Update last check timestamp
-      setState(prev => ({ ...prev, lastCheck: new Date() }));
-      
+      setState((prev) => ({ ...prev, lastCheck: new Date() }));
     } catch (error) {
       console.error('Security check failed:', error);
     }
   }, [supabase]);
 
   // Check for new security events
-  const checkSecurityEvents = useCallback(async (userId: string) => {
+  const checkSecurityEvents = useCallback(async (_userId: string) => {
     try {
-      const response = await fetch(`/api/auth/session/security?limit=50&severity=medium,high,critical`, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' }
-      });
-      
+      const response = await fetch(
+        '/api/auth/session/security?limit=50&severity=medium,high,critical',
+        {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
+
       if (response.ok) {
         const data = await response.json();
         const newEvents = data.events || [];
-        
-        setState(prev => {
-          const existingIds = new Set(prev.alerts.map(alert => alert.id));
-          const freshEvents = newEvents.filter((event: SecurityEvent) => !existingIds.has(event.id));
-          
+
+        setState((prev) => {
+          const existingIds = new Set(prev.alerts.map((alert) => alert.id));
+          const freshEvents = newEvents.filter(
+            (event: SecurityEvent) => !existingIds.has(event.id)
+          );
+
           // Trigger alerts for new high-severity events
           freshEvents.forEach((event: SecurityEvent) => {
             if (event.severity === 'high' || event.severity === 'critical') {
@@ -133,17 +148,18 @@ export function useSecurityMonitor() {
                 id: event.id,
                 type: event.eventType as any,
                 severity: event.severity,
-                description: event.description || `Security event: ${event.eventType}`,
+                description:
+                  event.description || `Security event: ${event.eventType}`,
                 timestamp: new Date(event.createdAt),
                 metadata: event.metadata || {},
-                resolved: false
+                resolved: false,
               });
             }
           });
-          
+
           return {
             ...prev,
-            alerts: [...freshEvents, ...prev.alerts].slice(0, 100) // Keep last 100 alerts
+            alerts: [...freshEvents, ...prev.alerts].slice(0, 100), // Keep last 100 alerts
           };
         });
       }
@@ -153,117 +169,135 @@ export function useSecurityMonitor() {
   }, []);
 
   // Check for suspicious activities
-  const checkSuspiciousActivities = useCallback(async (userId: string) => {
-    try {
-      const { data: activities, error } = await supabase
-        .from('suspicious_activities')
-        .select('*')
-        .eq('userId', userId)
-        .eq('resolved', false)
-        .order('createdAt', { ascending: false })
-        .limit(20);
-      
-      if (error) throw error;
-      
-      setState(prev => ({ ...prev, suspiciousActivities: activities || [] }));
-      
-      // Check for new suspicious activities
-      activities?.forEach(activity => {
-        if (activity.riskScore >= 70) {
-          triggerThreatAlert({
-            id: activity.id,
-            type: 'suspicious_login',
-            severity: activity.riskScore >= 90 ? 'critical' : 'high',
-            description: activity.description,
-            timestamp: new Date(activity.createdAt),
-            metadata: activity.metadata || {},
-            resolved: activity.resolved
-          });
-        }
-      });
-      
-    } catch (error) {
-      console.error('Failed to check suspicious activities:', error);
-    }
-  }, [supabase]);
+  const checkSuspiciousActivities = useCallback(
+    async (userId: string) => {
+      try {
+        const { data: activities, error } = await supabase
+          .from('suspicious_activities')
+          .select('*')
+          .eq('userId', userId)
+          .eq('resolved', false)
+          .order('createdAt', { ascending: false })
+          .limit(20);
+
+        if (error) throw error;
+
+        setState((prev) => ({
+          ...prev,
+          suspiciousActivities: activities || [],
+        }));
+
+        // Check for new suspicious activities
+        activities?.forEach((activity) => {
+          if (activity.riskScore >= 70) {
+            triggerThreatAlert({
+              id: activity.id,
+              type: 'suspicious_login',
+              severity: activity.riskScore >= 90 ? 'critical' : 'high',
+              description: activity.description,
+              timestamp: new Date(activity.createdAt),
+              metadata: activity.metadata || {},
+              resolved: activity.resolved,
+            });
+          }
+        });
+      } catch (error) {
+        console.error('Failed to check suspicious activities:', error);
+      }
+    },
+    [supabase]
+  );
 
   // Analyze device usage patterns
-  const analyzeDevicePatterns = useCallback(async (userId: string) => {
-    try {
-      const { data: devices, error } = await supabase
-        .from('user_devices')
-        .select('*')
-        .eq('userId', userId)
-        .order('lastUsed', { ascending: false });
-      
-      if (error) throw error;
-      
-      const currentFingerprint = SessionUtils.generateDeviceFingerprint();
-      const currentDevice = devices?.find(device => device.fingerprint === currentFingerprint);
-      
-      // Check for device anomalies
-      if (devices) {
-        const anomalies = detectDeviceAnomalies(devices, currentDevice);
-        
-        anomalies.forEach(anomaly => {
-          triggerThreatAlert({
-            id: `device-anomaly-${Date.now()}`,
-            type: 'device_anomaly',
-            severity: 'medium',
-            description: anomaly.description,
-            timestamp: new Date(),
-            metadata: anomaly.metadata,
-            resolved: false
+  const analyzeDevicePatterns = useCallback(
+    async (userId: string) => {
+      try {
+        const { data: devices, error } = await supabase
+          .from('user_devices')
+          .select('*')
+          .eq('userId', userId)
+          .order('lastUsed', { ascending: false });
+
+        if (error) throw error;
+
+        const currentFingerprint = SessionUtils.generateDeviceFingerprint();
+        const currentDevice = devices?.find(
+          (device) => device.fingerprint === currentFingerprint
+        );
+
+        // Check for device anomalies
+        if (devices) {
+          const anomalies = detectDeviceAnomalies(devices, currentDevice);
+
+          anomalies.forEach((anomaly) => {
+            triggerThreatAlert({
+              id: `device-anomaly-${Date.now()}`,
+              type: 'device_anomaly',
+              severity: 'medium',
+              description: anomaly.description,
+              timestamp: new Date(),
+              metadata: anomaly.metadata,
+              resolved: false,
+            });
           });
-        });
+        }
+      } catch (error) {
+        console.error('Failed to analyze device patterns:', error);
       }
-      
-    } catch (error) {
-      console.error('Failed to analyze device patterns:', error);
-    }
-  }, [supabase]);
+    },
+    [supabase]
+  );
 
   // Detect device anomalies
-  const detectDeviceAnomalies = (devices: UserDevice[], currentDevice?: UserDevice) => {
+  const detectDeviceAnomalies = (
+    devices: UserDevice[],
+    currentDevice?: UserDevice
+  ) => {
     const anomalies: { description: string; metadata: any }[] = [];
-    
+
     // Check for too many devices
     if (devices.length > SessionConfig.security.maxDevicesPerUser) {
       anomalies.push({
         description: `Too many devices registered (${devices.length}/${SessionConfig.security.maxDevicesPerUser})`,
-        metadata: { deviceCount: devices.length, maxAllowed: SessionConfig.security.maxDevicesPerUser }
+        metadata: {
+          deviceCount: devices.length,
+          maxAllowed: SessionConfig.security.maxDevicesPerUser,
+        },
       });
     }
-    
+
     // Check for untrusted device usage
-    const untrustedDevices = devices.filter(device => !device.isTrusted && device.lastUsed);
+    const untrustedDevices = devices.filter(
+      (device) => !device.isTrusted && device.lastUsed
+    );
     if (untrustedDevices.length > 0) {
       anomalies.push({
         description: `${untrustedDevices.length} untrusted device(s) recently used`,
-        metadata: { untrustedDevices: untrustedDevices.map(d => d.id) }
+        metadata: { untrustedDevices: untrustedDevices.map((d) => d.id) },
       });
     }
-    
+
     // Check for suspicious device locations
-    if (currentDevice && currentDevice.location) {
-      const recentDevices = devices.filter(device => 
-        device.lastUsed && 
-        new Date(device.lastUsed) > new Date(Date.now() - 24 * 60 * 60 * 1000) // Last 24 hours
+    if (currentDevice?.location) {
+      const recentDevices = devices.filter(
+        (device) =>
+          device.lastUsed &&
+          new Date(device.lastUsed) > new Date(Date.now() - 24 * 60 * 60 * 1000) // Last 24 hours
       );
-      
+
       const locations = recentDevices
-        .map(device => device.location)
+        .map((device) => device.location)
         .filter(Boolean) as string[];
-      
+
       const uniqueLocations = new Set(locations);
       if (uniqueLocations.size > 3) {
         anomalies.push({
           description: `Multiple locations detected in 24h (${uniqueLocations.size} locations)`,
-          metadata: { locations: Array.from(uniqueLocations) }
+          metadata: { locations: Array.from(uniqueLocations) },
         });
       }
     }
-    
+
     return anomalies;
   };
 
@@ -271,121 +305,157 @@ export function useSecurityMonitor() {
   const calculateRiskScore = useCallback(async () => {
     let riskScore = 0;
     let threatLevel: 'low' | 'medium' | 'high' | 'critical' = 'low';
-    
+
     // Factor in recent security events
-    const recentAlerts = state.alerts.filter(alert => 
-      new Date(alert.createdAt) > new Date(Date.now() - 24 * 60 * 60 * 1000)
+    const recentAlerts = state.alerts.filter(
+      (alert) =>
+        new Date(alert.createdAt) > new Date(Date.now() - 24 * 60 * 60 * 1000)
     );
-    
-    recentAlerts.forEach(alert => {
+
+    recentAlerts.forEach((alert) => {
       switch (alert.severity) {
-        case 'low': riskScore += 10; break;
-        case 'medium': riskScore += 25; break;
-        case 'high': riskScore += 50; break;
-        case 'critical': riskScore += 100; break;
+        case 'low':
+          riskScore += 10;
+          break;
+        case 'medium':
+          riskScore += 25;
+          break;
+        case 'high':
+          riskScore += 50;
+          break;
+        case 'critical':
+          riskScore += 100;
+          break;
       }
     });
-    
+
     // Factor in suspicious activities
-    const recentSuspicious = state.suspiciousActivities.filter(activity => 
-      new Date(activity.createdAt) > new Date(Date.now() - 24 * 60 * 60 * 1000)
+    const recentSuspicious = state.suspiciousActivities.filter(
+      (activity) =>
+        new Date(activity.createdAt) >
+        new Date(Date.now() - 24 * 60 * 60 * 1000)
     );
-    
-    recentSuspicious.forEach(activity => {
+
+    recentSuspicious.forEach((activity) => {
       riskScore += activity.riskScore || 0;
     });
-    
+
     // Factor in unresolved threats
-    const unresolvedThreats = threats.filter(threat => !threat.resolved);
+    const unresolvedThreats = threats.filter((threat) => !threat.resolved);
     riskScore += unresolvedThreats.length * 15;
-    
+
     // Determine threat level
     if (riskScore >= 200) threatLevel = 'critical';
     else if (riskScore >= 100) threatLevel = 'high';
     else if (riskScore >= 50) threatLevel = 'medium';
     else threatLevel = 'low';
-    
-    setState(prev => ({ ...prev, riskScore, threatLevel }));
-    
+
+    setState((prev) => ({ ...prev, riskScore, threatLevel }));
+
     // Update metrics
-    setMetrics(prev => ({
+    setMetrics((prev) => ({
       ...prev,
-      failedLogins: recentAlerts.filter(alert => alert.eventType === 'login_failed').length,
-      deviceAnomalies: unresolvedThreats.filter(threat => threat.type === 'device_anomaly').length,
-      sessionViolations: recentAlerts.filter(alert => alert.eventType === 'session_violation').length,
-      lastIncident: recentAlerts.length > 0 ? new Date(Math.max(...recentAlerts.map(alert => new Date(alert.createdAt).getTime()))) : null
+      failedLogins: recentAlerts.filter(
+        (alert) => alert.eventType === 'login_failed'
+      ).length,
+      deviceAnomalies: unresolvedThreats.filter(
+        (threat) => threat.type === 'device_anomaly'
+      ).length,
+      sessionViolations: recentAlerts.filter(
+        (alert) => alert.eventType === 'session_violation'
+      ).length,
+      lastIncident:
+        recentAlerts.length > 0
+          ? new Date(
+              Math.max(
+                ...recentAlerts.map((alert) =>
+                  new Date(alert.createdAt).getTime()
+                )
+              )
+            )
+          : null,
     }));
   }, [state.alerts, state.suspiciousActivities, threats]);
 
   // Trigger threat alert
   const triggerThreatAlert = useCallback((threat: SecurityThreat) => {
-    setThreats(prev => {
-      const exists = prev.some(t => t.id === threat.id);
+    setThreats((prev) => {
+      const exists = prev.some((t) => t.id === threat.id);
       if (exists) return prev;
-      
+
       const newThreats = [threat, ...prev].slice(0, 50); // Keep last 50 threats
-      
+
       // Notify callbacks
-      alertCallbacks.current.forEach(callback => {
+      alertCallbacks.current.forEach((callback) => {
         try {
           callback(threat);
         } catch (error) {
           console.error('Alert callback failed:', error);
         }
       });
-      
+
       return newThreats;
     });
   }, []);
 
   // Resolve threat
   const resolveThreat = useCallback((threatId: string) => {
-    setThreats(prev => 
-      prev.map(threat => 
+    setThreats((prev) =>
+      prev.map((threat) =>
         threat.id === threatId ? { ...threat, resolved: true } : threat
       )
     );
   }, []);
 
   // Subscribe to threat alerts
-  const onThreatAlert = useCallback((callback: (threat: SecurityThreat) => void) => {
-    alertCallbacks.current.push(callback);
-    
-    // Return unsubscribe function
-    return () => {
-      alertCallbacks.current = alertCallbacks.current.filter(cb => cb !== callback);
-    };
-  }, []);
+  const onThreatAlert = useCallback(
+    (callback: (threat: SecurityThreat) => void) => {
+      alertCallbacks.current.push(callback);
+
+      // Return unsubscribe function
+      return () => {
+        alertCallbacks.current = alertCallbacks.current.filter(
+          (cb) => cb !== callback
+        );
+      };
+    },
+    []
+  );
 
   // Get security recommendations
   const getSecurityRecommendations = useCallback(() => {
     const recommendations: string[] = [];
-    
+
     if (state.riskScore > 100) {
       recommendations.push('Consider changing your password immediately');
       recommendations.push('Review and remove untrusted devices');
     }
-    
+
     if (state.suspiciousActivities.length > 0) {
       recommendations.push('Review recent login activities');
     }
-    
+
     if (metrics.deviceAnomalies > 0) {
       recommendations.push('Verify all registered devices are yours');
     }
-    
+
     if (state.threatLevel === 'critical') {
       recommendations.push('Contact support immediately');
       recommendations.push('Consider temporarily disabling account access');
     }
-    
+
     return recommendations;
-  }, [state.riskScore, state.suspiciousActivities.length, state.threatLevel, metrics.deviceAnomalies]);
+  }, [
+    state.riskScore,
+    state.suspiciousActivities.length,
+    state.threatLevel,
+    metrics.deviceAnomalies,
+  ]);
 
   // Initialize monitoring on mount
   useEffect(() => {
     startMonitoring();
-    
+
     return () => {
       stopMonitoring();
     };
@@ -405,7 +475,7 @@ export function useSecurityMonitor() {
     ...state,
     threats,
     metrics,
-    
+
     // Actions
     startMonitoring,
     stopMonitoring,
@@ -413,11 +483,16 @@ export function useSecurityMonitor() {
     resolveThreat,
     onThreatAlert,
     getSecurityRecommendations,
-    
+
     // Computed
-    hasActiveThreats: threats.some(threat => !threat.resolved),
-    criticalThreats: threats.filter(threat => !threat.resolved && threat.severity === 'critical'),
-    isHighRisk: state.riskScore > 100 || state.threatLevel === 'high' || state.threatLevel === 'critical'
+    hasActiveThreats: threats.some((threat) => !threat.resolved),
+    criticalThreats: threats.filter(
+      (threat) => !threat.resolved && threat.severity === 'critical'
+    ),
+    isHighRisk:
+      state.riskScore > 100 ||
+      state.threatLevel === 'high' ||
+      state.threatLevel === 'critical',
   };
 }
 

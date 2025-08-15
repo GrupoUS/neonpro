@@ -1,18 +1,18 @@
-import { describe, test, expect, beforeEach, jest } from '@jest/globals';
-import { sessionManager } from '@/lib/auth/session-manager';
+import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import { securityAuditFramework } from '@/lib/auth/security-audit-framework';
+import { sessionManager } from '@/lib/auth/session-manager';
 
 // Mock Supabase client
 jest.mock('@/app/utils/supabase/server', () => ({
-  createClient: jest.fn(() => ({
+  createServerClient: jest.fn(() => ({
     auth: {
       getSession: jest.fn(() => ({
         data: {
           session: {
             user: { id: 'test-user-id' },
             expires_at: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
-          }
-        }
+          },
+        },
       })),
       refreshSession: jest.fn(() => ({ error: null })),
     },
@@ -21,67 +21,47 @@ jest.mock('@/app/utils/supabase/server', () => ({
         eq: jest.fn(() => ({
           eq: jest.fn(() => ({
             gte: jest.fn(() => ({
-              lte: jest.fn(() => ({
-                order: jest.fn(() => ({
-                  data: [],
-                  error: null
-                }))
-              })),
               data: [],
-              error: null
-            }))
+              error: null,
+            })),
           })),
-          single: jest.fn(() => ({
-            data: {
-              session_id: 'test-session-id',
-              user_id: 'test-user-id',
-              device_info: {
-                userAgent: 'test-agent',
-                ip: '127.0.0.1',
-                deviceType: 'desktop',
-                browser: 'chrome'
-              },
-              created_at: new Date().toISOString(),
-              last_activity: new Date().toISOString(),
-              expires_at: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
-              is_active: true,
-              risk_score: 0,
-            },
-            error: null
-          }))
         })),
-        in: jest.fn(() => ({
-          gte: jest.fn(() => ({
-            lte: jest.fn(() => ({
-              order: jest.fn(() => ({
-                data: [],
-                error: null
-              }))
-            }))
-          }))
-        }))
       })),
       insert: jest.fn(() => ({
-        error: null
+        error: null,
       })),
       update: jest.fn(() => ({
         eq: jest.fn(() => ({
-          error: null
-        }))
-      }))
+          error: null,
+        })),
+      })),
+      single: jest.fn(() => ({
+        data: {
+          session_id: 'test-session-id',
+          user_id: 'test-user-id',
+          device_info: {
+            userAgent: 'test-agent',
+            ip: '127.0.0.1',
+            deviceType: 'desktop',
+            browser: 'chrome',
+          },
+          created_at: new Date().toISOString(),
+          last_activity: new Date().toISOString(),
+          expires_at: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
+          is_active: true,
+          risk_score: 0,
+        },
+        error: null,
+      })),
     })),
-    raw: jest.fn(() => ({
-      data: null,
-      error: null
-    }))
-  }))
+  })),
 }));
 
 // Mock performance tracker
 jest.mock('@/lib/auth/performance-tracker', () => ({
   performanceTracker: {
     recordMetric: jest.fn(),
-  }
+  },
 }));
 
 describe('TASK-002 Final Integration Tests - Advanced Authentication Features', () => {
@@ -91,15 +71,19 @@ describe('TASK-002 Final Integration Tests - Advanced Authentication Features', 
 
   describe('Advanced Session Management', () => {
     test('should extend session when within threshold', async () => {
-      const result = await sessionManager.extendSessionIfNeeded('test-session-id');
+      const result =
+        await sessionManager.extendSessionIfNeeded('test-session-id');
       expect(typeof result).toBe('boolean');
     });
 
     test('should validate session security and detect risks', async () => {
-      const validation = await sessionManager.validateSessionSecurity('test-session-id', {
-        userAgent: 'test-agent',
-        ip: '127.0.0.1',
-      });
+      const validation = await sessionManager.validateSessionSecurity(
+        'test-session-id',
+        {
+          userAgent: 'test-agent',
+          ip: '127.0.0.1',
+        }
+      );
 
       expect(validation).toHaveProperty('isValid');
       expect(validation).toHaveProperty('riskLevel');
@@ -108,12 +92,18 @@ describe('TASK-002 Final Integration Tests - Advanced Authentication Features', 
 
     test('should manage concurrent sessions', async () => {
       await expect(
-        sessionManager.manageConcurrentSessions('test-user-id', 'current-session-id')
+        sessionManager.manageConcurrentSessions(
+          'test-user-id',
+          'current-session-id'
+        )
       ).resolves.not.toThrow();
     });
 
     test('should check reauth requirements for sensitive operations', async () => {
-      const requiresReauth = await sessionManager.requiresReauth('test-session-id', 'change_password');
+      const requiresReauth = await sessionManager.requiresReauth(
+        'test-session-id',
+        'change_password'
+      );
       expect(typeof requiresReauth).toBe('boolean');
     });
 
@@ -122,7 +112,7 @@ describe('TASK-002 Final Integration Tests - Advanced Authentication Features', 
         sessionManager.updateSessionActivity('test-session-id', {
           action: 'page_view',
           resource: '/dashboard',
-          metadata: { page: 'home' }
+          metadata: { page: 'home' },
         })
       ).resolves.not.toThrow();
     });
@@ -152,27 +142,34 @@ describe('TASK-002 Final Integration Tests - Advanced Authentication Features', 
         end: new Date(),
       };
 
-      const report = await securityAuditFramework.generateComplianceReport(period);
+      const report =
+        await securityAuditFramework.generateComplianceReport(period);
 
       expect(report).toHaveProperty('period');
       expect(report).toHaveProperty('lgpdCompliance');
       expect(report).toHaveProperty('securityMetrics');
       expect(report).toHaveProperty('riskAssessment');
-      
+
       expect(report.lgpdCompliance).toHaveProperty('dataAccessRequests');
       expect(report.lgpdCompliance).toHaveProperty('dataExportRequests');
       expect(report.lgpdCompliance).toHaveProperty('dataDeletionRequests');
-      
+
       expect(report.securityMetrics).toHaveProperty('failedLoginAttempts');
       expect(report.securityMetrics).toHaveProperty('suspiciousActivities');
-      
+
       expect(report.riskAssessment).toHaveProperty('overallRiskScore');
       expect(report.riskAssessment).toHaveProperty('recommendations');
       expect(Array.isArray(report.riskAssessment.recommendations)).toBe(true);
     });
 
     test('should handle different security event types', async () => {
-      const eventTypes = ['authentication', 'authorization', 'data_access', 'configuration', 'security_violation'];
+      const eventTypes = [
+        'authentication',
+        'authorization',
+        'data_access',
+        'configuration',
+        'security_violation',
+      ];
       const severities = ['low', 'medium', 'high', 'critical'];
       const outcomes = ['success', 'failure', 'blocked'];
 
@@ -201,10 +198,13 @@ describe('TASK-002 Final Integration Tests - Advanced Authentication Features', 
   describe('Integration Between Session Management and Security Audit', () => {
     test('should integrate session validation with security logging', async () => {
       // Test session validation
-      const validation = await sessionManager.validateSessionSecurity('test-session-id', {
-        userAgent: 'suspicious-agent',
-        ip: '192.168.1.100',
-      });
+      const validation = await sessionManager.validateSessionSecurity(
+        'test-session-id',
+        {
+          userAgent: 'suspicious-agent',
+          ip: '192.168.1.100',
+        }
+      );
 
       // Validate that security event would be logged appropriately
       expect(validation).toHaveProperty('isValid');
@@ -229,7 +229,8 @@ describe('TASK-002 Final Integration Tests - Advanced Authentication Features', 
 
     test('should integrate session extension with audit logging', async () => {
       // Test session extension
-      const extended = await sessionManager.extendSessionIfNeeded('test-session-id');
+      const extended =
+        await sessionManager.extendSessionIfNeeded('test-session-id');
 
       // Test corresponding audit log
       await expect(
@@ -252,19 +253,19 @@ describe('TASK-002 Final Integration Tests - Advanced Authentication Features', 
   describe('Performance and Quality Validation', () => {
     test('should maintain performance targets', async () => {
       const start = Date.now();
-      
+
       // Test session operations performance
       await sessionManager.extendSessionIfNeeded('test-session-id');
       await sessionManager.validateSessionSecurity('test-session-id', {
         userAgent: 'test-agent',
         ip: '127.0.0.1',
       });
-      
+
       const sessionTime = Date.now() - start;
       expect(sessionTime).toBeLessThan(1000); // Should complete within 1 second
-      
+
       const auditStart = Date.now();
-      
+
       // Test audit framework performance
       await securityAuditFramework.logSecurityEvent({
         eventType: 'authentication',
@@ -277,25 +278,28 @@ describe('TASK-002 Final Integration Tests - Advanced Authentication Features', 
         ipAddress: '127.0.0.1',
         userAgent: 'test-agent',
       });
-      
+
       const auditTime = Date.now() - auditStart;
       expect(auditTime).toBeLessThan(500); // Should complete within 500ms
     });
 
     test('should handle error scenarios gracefully', async () => {
       // Test with invalid session ID
-      const validation = await sessionManager.validateSessionSecurity('invalid-session', {
-        userAgent: 'test-agent',
-        ip: '127.0.0.1',
-      });
-      
+      const validation = await sessionManager.validateSessionSecurity(
+        'invalid-session',
+        {
+          userAgent: 'test-agent',
+          ip: '127.0.0.1',
+        }
+      );
+
       expect(validation.isValid).toBe(false);
       expect(validation.riskLevel).toBe('high');
-      
+
       // Test with missing data
-      await expect(
-        sessionManager.extendSessionIfNeeded('')
-      ).resolves.toBe(false);
+      await expect(sessionManager.extendSessionIfNeeded('')).resolves.toBe(
+        false
+      );
     });
   });
 
@@ -310,10 +314,10 @@ describe('TASK-002 Final Integration Tests - Advanced Authentication Features', 
           resource: 'personal_data',
           action: 'data_access_request',
           outcome: 'success',
-          metadata: { 
+          metadata: {
             dataType: 'personal_information',
             requestType: 'access',
-            consentVerified: true
+            consentVerified: true,
           },
           ipAddress: '127.0.0.1',
           userAgent: 'test-agent',
@@ -329,10 +333,10 @@ describe('TASK-002 Final Integration Tests - Advanced Authentication Features', 
           resource: 'personal_data',
           action: 'data_export',
           outcome: 'success',
-          metadata: { 
+          metadata: {
             exportFormat: 'json',
             consentVerified: true,
-            dataRetentionCompliance: true
+            dataRetentionCompliance: true,
           },
           ipAddress: '127.0.0.1',
           userAgent: 'test-agent',
@@ -346,8 +350,9 @@ describe('TASK-002 Final Integration Tests - Advanced Authentication Features', 
         end: new Date(),
       };
 
-      const report = await securityAuditFramework.generateComplianceReport(period);
-      
+      const report =
+        await securityAuditFramework.generateComplianceReport(period);
+
       expect(report.lgpdCompliance).toBeDefined();
       expect(typeof report.lgpdCompliance.dataAccessRequests).toBe('number');
       expect(typeof report.lgpdCompliance.dataExportRequests).toBe('number');
@@ -362,8 +367,8 @@ describe('TASK-002 Completion Validation', () => {
   test('should confirm all TASK-002 components are operational', async () => {
     // Validate all core components are working
     const components = {
-      sessionManager: sessionManager,
-      securityAuditFramework: securityAuditFramework,
+      sessionManager,
+      securityAuditFramework,
     };
 
     expect(components.sessionManager).toBeDefined();
@@ -377,7 +382,9 @@ describe('TASK-002 Completion Validation', () => {
     expect(typeof sessionManager.updateSessionActivity).toBe('function');
 
     expect(typeof securityAuditFramework.logSecurityEvent).toBe('function');
-    expect(typeof securityAuditFramework.generateComplianceReport).toBe('function');
+    expect(typeof securityAuditFramework.generateComplianceReport).toBe(
+      'function'
+    );
   });
 
   test('should validate TASK-002 quality standards', async () => {
@@ -386,7 +393,7 @@ describe('TASK-002 Completion Validation', () => {
       sessionManager.validateSessionSecurity('', { userAgent: '', ip: '' })
     ).resolves.toMatchObject({
       isValid: false,
-      riskLevel: 'high'
+      riskLevel: 'high',
     });
 
     // Test input validation
@@ -395,7 +402,8 @@ describe('TASK-002 Completion Validation', () => {
       end: new Date('2025-01-24'),
     };
 
-    const report = await securityAuditFramework.generateComplianceReport(period);
+    const report =
+      await securityAuditFramework.generateComplianceReport(period);
     expect(report.period.start).toEqual(period.start);
     expect(report.period.end).toEqual(period.end);
   });
@@ -409,7 +417,7 @@ describe('TASK-002 Performance Benchmarks', () => {
 
     for (let i = 0; i < iterations; i++) {
       const start = Date.now();
-      
+
       await sessionManager.extendSessionIfNeeded('test-session-id');
       await sessionManager.validateSessionSecurity('test-session-id', {
         userAgent: 'test-agent',
@@ -437,10 +445,8 @@ describe('TASK-002 Performance Benchmarks', () => {
     expect(averageTime).toBeLessThan(350); // Average should be under 350ms
     expect(maxTime).toBeLessThan(1000); // Max should be under 1 second
 
-    console.log(`TASK-002 Performance Results:
-      Average: ${averageTime.toFixed(2)}ms
-      Maximum: ${maxTime}ms
-      Target: <350ms average, <1000ms maximum
-      Status: ${averageTime < 350 && maxTime < 1000 ? '✅ PASSED' : '❌ FAILED'}`);
+    console.log(
+      `TASK-002 Performance Results:\n      Average: ${averageTime.toFixed(2)}ms\n      Maximum: ${maxTime}ms\n      Target: <350ms average, <1000ms maximum\n      Status: ${averageTime < 350 && maxTime < 1000 ? '✅ PASSED' : '❌ FAILED'}`
+    );
   });
 });

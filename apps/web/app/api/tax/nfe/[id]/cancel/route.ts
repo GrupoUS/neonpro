@@ -2,12 +2,15 @@
 // Story 5.5: Cancel authorized NFe documents
 
 import { NextResponse } from 'next/server';
+import { z } from 'zod';
 import { createClient } from '@/app/utils/supabase/server';
 import { nfeService } from '@/lib/services/tax/nfe-service';
-import { z } from 'zod';
 
 const cancelRequestSchema = z.object({
-  reason: z.string().min(15, 'Reason must be at least 15 characters').max(255, 'Reason must be at most 255 characters')
+  reason: z
+    .string()
+    .min(15, 'Reason must be at least 15 characters')
+    .max(255, 'Reason must be at most 255 characters'),
 });
 
 export async function POST(
@@ -16,19 +19,19 @@ export async function POST(
 ) {
   try {
     const supabase = createClient();
-    
+
     // Check authentication
-    const { data: { session }, error: authError } = await supabase.auth.getSession();
+    const {
+      data: { session },
+      error: authError,
+    } = await supabase.auth.getSession();
     if (authError || !session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { id } = params;
     const body = await request.json();
-    
+
     // Validate request data
     const { reason } = cancelRequestSchema.parse(body);
 
@@ -54,10 +57,7 @@ export async function POST(
       .single();
 
     if (clinicError || !clinic) {
-      return NextResponse.json(
-        { error: 'Access denied' },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: 'Access denied' }, { status: 403 });
     }
 
     // Check if NFe can be cancelled
@@ -72,7 +72,7 @@ export async function POST(
     const authDate = new Date(nfeDocument.authorization_date);
     const now = new Date();
     const hoursDiff = (now.getTime() - authDate.getTime()) / (1000 * 60 * 60);
-    
+
     if (hoursDiff > 24) {
       return NextResponse.json(
         { error: 'NFe can only be cancelled within 24 hours of authorization' },
@@ -89,10 +89,12 @@ export async function POST(
       .update({
         status: cancelResult.success ? 'cancelled' : 'authorized',
         cancellation_code: cancelResult.cancellationCode,
-        cancellation_date: cancelResult.success ? new Date().toISOString() : null,
+        cancellation_date: cancelResult.success
+          ? new Date().toISOString()
+          : null,
         cancellation_reason: reason,
         cancellation_response: cancelResult.sefazResponse,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', id)
       .select()
@@ -107,28 +109,25 @@ export async function POST(
     }
 
     // Log cancellation attempt
-    await supabase
-      .from('nfe_audit_log')
-      .insert({
-        nfe_document_id: id,
-        action: 'cancel',
-        user_id: session.user.id,
-        result: cancelResult.success ? 'success' : 'failure',
-        details: { reason, ...cancelResult },
-        created_at: new Date().toISOString()
-      });
+    await supabase.from('nfe_audit_log').insert({
+      nfe_document_id: id,
+      action: 'cancel',
+      user_id: session.user.id,
+      result: cancelResult.success ? 'success' : 'failure',
+      details: { reason, ...cancelResult },
+      created_at: new Date().toISOString(),
+    });
 
     return NextResponse.json({
       success: true,
       data: {
         nfe: updatedNfe,
-        cancellation: cancelResult
-      }
+        cancellation: cancelResult,
+      },
     });
-
   } catch (error) {
     console.error('NFe cancellation error:', error);
-    
+
     if (error instanceof Error && error.name === 'ZodError') {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.message },

@@ -1,17 +1,17 @@
 /**
  * TASK-001: Foundation Setup & Baseline
  * Health Check API
- * 
+ *
  * Provides comprehensive system health monitoring with uptime tracking,
  * component status, and resource monitoring for baseline establishment.
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   const startTime = Date.now();
-  
+
   try {
     // Initialize health data structure
     const healthData = {
@@ -38,57 +38,90 @@ export async function GET(request: NextRequest) {
     healthData.response_time_avg = Date.now() - startTime;
 
     // Determine overall status based on components
-    const componentStatuses = Object.values(healthData.components).map(c => c.status);
-    if (componentStatuses.some(status => status === 'unhealthy')) {
+    const componentStatuses = Object.values(healthData.components).map(
+      (c) => c.status
+    );
+    if (componentStatuses.some((status) => status === 'unhealthy')) {
       healthData.overall_status = 'unhealthy';
-    } else if (componentStatuses.some(status => status === 'degraded')) {
+    } else if (componentStatuses.some((status) => status === 'degraded')) {
       healthData.overall_status = 'degraded';
     }
 
     // Calculate average error rate
-    const componentErrorRates = Object.values(healthData.components).map(c => c.error_rate);
-    healthData.error_rate = componentErrorRates.reduce((sum, rate) => sum + rate, 0) / componentErrorRates.length;
+    const componentErrorRates = Object.values(healthData.components).map(
+      (c) => c.error_rate
+    );
+    healthData.error_rate =
+      componentErrorRates.reduce((sum, rate) => sum + rate, 0) /
+      componentErrorRates.length;
 
     return NextResponse.json({
       success: true,
       health: healthData,
     });
-
   } catch (error) {
     console.error('Error checking system health:', error);
-    
-    return NextResponse.json({
-      success: false,
-      health: {
-        overall_status: 'unhealthy',
-        uptime_percentage: 0,
-        response_time_avg: Date.now() - startTime,
-        error_rate: 100,
-        last_updated: new Date().toISOString(),
-        components: {
-          database: { status: 'unhealthy', response_time: 0, error_rate: 100, uptime_percentage: 0 },
-          api: { status: 'unhealthy', response_time: 0, error_rate: 100, uptime_percentage: 0 },
-          frontend: { status: 'unhealthy', response_time: 0, error_rate: 100, uptime_percentage: 0 },
-          authentication: { status: 'unhealthy', response_time: 0, error_rate: 100, uptime_percentage: 0 },
-          monitoring: { status: 'unhealthy', response_time: 0, error_rate: 100, uptime_percentage: 0 },
+
+    return NextResponse.json(
+      {
+        success: false,
+        health: {
+          overall_status: 'unhealthy',
+          uptime_percentage: 0,
+          response_time_avg: Date.now() - startTime,
+          error_rate: 100,
+          last_updated: new Date().toISOString(),
+          components: {
+            database: {
+              status: 'unhealthy',
+              response_time: 0,
+              error_rate: 100,
+              uptime_percentage: 0,
+            },
+            api: {
+              status: 'unhealthy',
+              response_time: 0,
+              error_rate: 100,
+              uptime_percentage: 0,
+            },
+            frontend: {
+              status: 'unhealthy',
+              response_time: 0,
+              error_rate: 100,
+              uptime_percentage: 0,
+            },
+            authentication: {
+              status: 'unhealthy',
+              response_time: 0,
+              error_rate: 100,
+              uptime_percentage: 0,
+            },
+            monitoring: {
+              status: 'unhealthy',
+              response_time: 0,
+              error_rate: 100,
+              uptime_percentage: 0,
+            },
+          },
+          resource_usage: {
+            cpu_percentage: 0,
+            memory_percentage: 0,
+            storage_percentage: 0,
+          },
         },
-        resource_usage: {
-          cpu_percentage: 0,
-          memory_percentage: 0,
-          storage_percentage: 0,
-        },
+        error: 'System health check failed',
       },
-      error: 'System health check failed',
-    }, { status: 500 });
+      { status: 500 }
+    );
   }
 }
 
 async function checkDatabaseHealth() {
   const startTime = Date.now();
-  
+
   try {
     const supabase = await createClient();
-    
+
     // Simple health check query
     const { data, error } = await supabase
       .from('profiles')
@@ -108,12 +141,11 @@ async function checkDatabaseHealth() {
     }
 
     return {
-      status: responseTime > 100 ? 'degraded' as const : 'healthy' as const,
+      status: responseTime > 100 ? ('degraded' as const) : ('healthy' as const),
       response_time: responseTime,
       error_rate: 0.1,
       uptime_percentage: 99.9,
     };
-
   } catch (error) {
     return {
       status: 'unhealthy' as const,
@@ -127,13 +159,19 @@ async function checkDatabaseHealth() {
 
 async function checkApiHealth() {
   const startTime = Date.now();
-  
+
   try {
     // Test API health by checking performance metrics endpoint
-    const response = await fetch(new URL('/api/monitoring/metrics', process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'), {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
-    });
+    const response = await fetch(
+      new URL(
+        '/api/monitoring/metrics',
+        process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+      ),
+      {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
 
     const responseTime = Date.now() - startTime;
 
@@ -148,12 +186,11 @@ async function checkApiHealth() {
     }
 
     return {
-      status: responseTime > 500 ? 'degraded' as const : 'healthy' as const,
+      status: responseTime > 500 ? ('degraded' as const) : ('healthy' as const),
       response_time: responseTime,
       error_rate: 0.5,
       uptime_percentage: 99.8,
     };
-
   } catch (error) {
     return {
       status: 'unhealthy' as const,
@@ -176,20 +213,21 @@ async function checkFrontendHealth() {
 
 async function checkAuthHealth() {
   const startTime = Date.now();
-  
+
   try {
     const supabase = await createClient();
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
     const responseTime = Date.now() - startTime;
 
     return {
-      status: responseTime > 200 ? 'degraded' as const : 'healthy' as const,
+      status: responseTime > 200 ? ('degraded' as const) : ('healthy' as const),
       response_time: responseTime,
       error_rate: 0.3,
       uptime_percentage: 99.6,
     };
-
   } catch (error) {
     return {
       status: 'degraded' as const,

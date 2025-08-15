@@ -1,6 +1,13 @@
-import { describe, expect, test, beforeEach, afterEach, jest } from '@jest/globals';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  jest,
+  test,
+} from '@jest/globals';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import AnalyticsDashboard from '@/components/dashboard/analytics-dashboard';
 
 // Mock the recharts library
@@ -25,12 +32,12 @@ jest.mock('recharts', () => ({
   CartesianGrid: () => <div data-testid="cartesian-grid" />,
   Tooltip: () => <div data-testid="tooltip" />,
   Legend: () => <div data-testid="legend" />,
-  Pie: () => <div data-testid="pie" />
+  Pie: () => <div data-testid="pie" />,
 }));
 
 // Mock date-fns
 jest.mock('date-fns', () => ({
-  format: jest.fn((date, formatStr) => {
+  format: jest.fn((_date, formatStr) => {
     if (formatStr === 'MMM yyyy') return 'Jan 2024';
     if (formatStr === 'dd/MM/yyyy') return '01/01/2024';
     return '2024-01-01';
@@ -38,7 +45,7 @@ jest.mock('date-fns', () => ({
   subMonths: jest.fn(() => new Date('2023-12-01')),
   startOfMonth: jest.fn(() => new Date('2024-01-01')),
   endOfMonth: jest.fn(() => new Date('2024-01-31')),
-  parseISO: jest.fn((dateStr) => new Date(dateStr))
+  parseISO: jest.fn((dateStr) => new Date(dateStr)),
 }));
 
 // Mock analytics service
@@ -47,14 +54,22 @@ jest.mock('@/lib/analytics/service', () => ({
     getDashboardMetrics: jest.fn(),
     getSubscriptionTrends: jest.fn(),
     getTrialMetrics: jest.fn(),
-    getRevenueAnalytics: jest.fn()
-  }
+    getRevenueAnalytics: jest.fn(),
+  },
 }));
 
 // Mock UI components
 jest.mock('@/components/ui/card', () => ({
-  Card: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div data-testid="card" className={className}>{children}</div>
+  Card: ({
+    children,
+    className,
+  }: {
+    children: React.ReactNode;
+    className?: string;
+  }) => (
+    <div className={className} data-testid="card">
+      {children}
+    </div>
   ),
   CardHeader: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="card-header">{children}</div>
@@ -64,38 +79,48 @@ jest.mock('@/components/ui/card', () => ({
   ),
   CardContent: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="card-content">{children}</div>
-  )
+  ),
 }));
 
 jest.mock('@/components/ui/button', () => ({
   Button: ({ children, onClick, variant, size }: any) => (
-    <button 
-      data-testid="button" 
-      onClick={onClick}
-      data-variant={variant}
+    <button
       data-size={size}
+      data-testid="button"
+      data-variant={variant}
+      onClick={onClick}
     >
       {children}
     </button>
-  )
+  ),
 }));
 
 jest.mock('@/components/ui/select', () => ({
   Select: ({ children, onValueChange }: any) => (
-    <div data-testid="select" data-onchange={onValueChange}>{children}</div>
+    <div data-onchange={onValueChange} data-testid="select">
+      {children}
+    </div>
   ),
   SelectContent: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="select-content">{children}</div>
   ),
-  SelectItem: ({ children, value }: { children: React.ReactNode; value: string }) => (
-    <div data-testid="select-item" data-value={value}>{children}</div>
+  SelectItem: ({
+    children,
+    value,
+  }: {
+    children: React.ReactNode;
+    value: string;
+  }) => (
+    <div data-testid="select-item" data-value={value}>
+      {children}
+    </div>
   ),
   SelectTrigger: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="select-trigger">{children}</div>
   ),
   SelectValue: ({ placeholder }: { placeholder: string }) => (
     <div data-testid="select-value">{placeholder}</div>
-  )
+  ),
 }));
 
 const { analyticsService } = require('@/lib/analytics/service');
@@ -135,20 +160,20 @@ describe('AnalyticsDashboard Component', () => {
         subscriptionMetrics: {
           totalSubscriptions: 150,
           activeSubscriptions: 125,
-          mrr: 15000,
-          arr: 180000,
+          mrr: 15_000,
+          arr: 180_000,
           churnRate: 0.05,
-          growthRate: 0.12
+          growthRate: 0.12,
         },
         trialMetrics: {
           totalTrials: 500,
           activeTrials: 150,
-          conversionRate: 0.25
+          conversionRate: 0.25,
         },
         revenueMetrics: {
-          totalRevenue: 180000,
-          monthlyGrowth: 0.12
-        }
+          totalRevenue: 180_000,
+          monthlyGrowth: 0.12,
+        },
       };
 
       analyticsService.getDashboardMetrics.mockResolvedValue(mockMetrics);
@@ -191,7 +216,9 @@ describe('AnalyticsDashboard Component', () => {
 
       // Assert
       await waitFor(() => {
-        expect(screen.getByText('Error loading analytics data')).toBeInTheDocument();
+        expect(
+          screen.getByText('Error loading analytics data')
+        ).toBeInTheDocument();
         expect(screen.getByText('Failed to fetch data')).toBeInTheDocument();
         expect(screen.getByText('Retry')).toBeInTheDocument();
       });
@@ -203,18 +230,18 @@ describe('AnalyticsDashboard Component', () => {
         subscriptionMetrics: {
           totalSubscriptions: 150,
           activeSubscriptions: 125,
-          mrr: 15000,
-          arr: 180000,
+          mrr: 15_000,
+          arr: 180_000,
           churnRate: 0.05,
-          growthRate: 0.12
+          growthRate: 0.12,
         },
         chartData: {
           subscriptionTrends: [
-            { month: 'Jan', subscriptions: 100, revenue: 10000 },
-            { month: 'Feb', subscriptions: 125, revenue: 12500 },
-            { month: 'Mar', subscriptions: 150, revenue: 15000 }
-          ]
-        }
+            { month: 'Jan', subscriptions: 100, revenue: 10_000 },
+            { month: 'Feb', subscriptions: 125, revenue: 12_500 },
+            { month: 'Mar', subscriptions: 150, revenue: 15_000 },
+          ],
+        },
       };
 
       analyticsService.getDashboardMetrics.mockResolvedValue(mockMetrics);
@@ -238,8 +265,8 @@ describe('AnalyticsDashboard Component', () => {
         subscriptionMetrics: {
           totalSubscriptions: 150,
           activeSubscriptions: 125,
-          mrr: 15000
-        }
+          mrr: 15_000,
+        },
       };
 
       analyticsService.getDashboardMetrics.mockResolvedValue(mockMetrics);
@@ -262,7 +289,7 @@ describe('AnalyticsDashboard Component', () => {
         expect(analyticsService.getDashboardMetrics).toHaveBeenCalledWith({
           period: 'last_month',
           startDate: expect.any(Date),
-          endDate: expect.any(Date)
+          endDate: expect.any(Date),
         });
       });
     });
@@ -273,8 +300,8 @@ describe('AnalyticsDashboard Component', () => {
         subscriptionMetrics: {
           totalSubscriptions: 150,
           activeSubscriptions: 125,
-          mrr: 15000
-        }
+          mrr: 15_000,
+        },
       };
 
       analyticsService.getDashboardMetrics.mockResolvedValue(mockMetrics);
@@ -306,8 +333,8 @@ describe('AnalyticsDashboard Component', () => {
           subscriptionMetrics: {
             totalSubscriptions: 150,
             activeSubscriptions: 125,
-            mrr: 15000
-          }
+            mrr: 15_000,
+          },
         });
 
       renderWithQueryClient(<AnalyticsDashboard />);
@@ -333,11 +360,11 @@ describe('AnalyticsDashboard Component', () => {
         subscriptionMetrics: {
           totalSubscriptions: 150,
           activeSubscriptions: 125,
-          mrr: 15000
+          mrr: 15_000,
         },
         chartData: {
-          subscriptionTrends: []
-        }
+          subscriptionTrends: [],
+        },
       };
 
       analyticsService.getDashboardMetrics.mockResolvedValue(mockMetrics);
@@ -366,12 +393,12 @@ describe('AnalyticsDashboard Component', () => {
         subscriptionMetrics: {
           totalSubscriptions: 150,
           activeSubscriptions: 125,
-          mrr: 15000,
-          arr: 180000
+          mrr: 15_000,
+          arr: 180_000,
         },
         revenueMetrics: {
-          totalRevenue: 2500000 // $2.5M
-        }
+          totalRevenue: 2_500_000, // $2.5M
+        },
       };
 
       analyticsService.getDashboardMetrics.mockResolvedValue(mockMetrics);
@@ -393,11 +420,11 @@ describe('AnalyticsDashboard Component', () => {
         subscriptionMetrics: {
           totalSubscriptions: 150,
           churnRate: 0.0534, // 5.34%
-          growthRate: 0.1256 // 12.56%
+          growthRate: 0.1256, // 12.56%
         },
         trialMetrics: {
-          conversionRate: 0.2489 // 24.89%
-        }
+          conversionRate: 0.2489, // 24.89%
+        },
       };
 
       analyticsService.getDashboardMetrics.mockResolvedValue(mockMetrics);
@@ -419,8 +446,8 @@ describe('AnalyticsDashboard Component', () => {
         subscriptionMetrics: {
           totalSubscriptions: 150,
           subscriptionsTrend: 0.12, // +12%
-          mrrTrend: -0.05 // -5%
-        }
+          mrrTrend: -0.05, // -5%
+        },
       };
 
       analyticsService.getDashboardMetrics.mockResolvedValue(mockMetrics);
@@ -451,8 +478,8 @@ describe('AnalyticsDashboard Component', () => {
         subscriptionMetrics: {
           totalSubscriptions: 150,
           activeSubscriptions: 125,
-          mrr: 15000
-        }
+          mrr: 15_000,
+        },
       };
 
       analyticsService.getDashboardMetrics.mockResolvedValue(mockMetrics);
@@ -479,12 +506,12 @@ describe('AnalyticsDashboard Component', () => {
         subscriptionMetrics: {
           totalSubscriptions: 150,
           activeSubscriptions: 125,
-          mrr: 15000,
+          mrr: 15_000,
           detailedMetrics: {
             averageSubscriptionValue: 120,
-            lifetimeValue: 1200
-          }
-        }
+            lifetimeValue: 1200,
+          },
+        },
       };
 
       analyticsService.getDashboardMetrics.mockResolvedValue(mockMetrics);
@@ -495,8 +522,12 @@ describe('AnalyticsDashboard Component', () => {
       // Assert
       await waitFor(() => {
         // Detailed metrics should be hidden on smaller screens
-        expect(screen.queryByText('Average Subscription Value')).not.toBeInTheDocument();
-        expect(screen.queryByText('Customer Lifetime Value')).not.toBeInTheDocument();
+        expect(
+          screen.queryByText('Average Subscription Value')
+        ).not.toBeInTheDocument();
+        expect(
+          screen.queryByText('Customer Lifetime Value')
+        ).not.toBeInTheDocument();
       });
     });
   });
@@ -508,8 +539,8 @@ describe('AnalyticsDashboard Component', () => {
         subscriptionMetrics: {
           totalSubscriptions: 150,
           activeSubscriptions: 125,
-          mrr: 15000
-        }
+          mrr: 15_000,
+        },
       };
 
       analyticsService.getDashboardMetrics.mockResolvedValue(mockMetrics);
@@ -519,10 +550,18 @@ describe('AnalyticsDashboard Component', () => {
 
       // Assert
       await waitFor(() => {
-        expect(screen.getByRole('main', { name: 'Analytics Dashboard' })).toBeInTheDocument();
-        expect(screen.getByRole('region', { name: 'Subscription Metrics' })).toBeInTheDocument();
-        expect(screen.getByRole('region', { name: 'Trial Metrics' })).toBeInTheDocument();
-        expect(screen.getByRole('region', { name: 'Revenue Charts' })).toBeInTheDocument();
+        expect(
+          screen.getByRole('main', { name: 'Analytics Dashboard' })
+        ).toBeInTheDocument();
+        expect(
+          screen.getByRole('region', { name: 'Subscription Metrics' })
+        ).toBeInTheDocument();
+        expect(
+          screen.getByRole('region', { name: 'Trial Metrics' })
+        ).toBeInTheDocument();
+        expect(
+          screen.getByRole('region', { name: 'Revenue Charts' })
+        ).toBeInTheDocument();
       });
     });
 
@@ -532,8 +571,8 @@ describe('AnalyticsDashboard Component', () => {
         subscriptionMetrics: {
           totalSubscriptions: 150,
           activeSubscriptions: 125,
-          mrr: 15000
-        }
+          mrr: 15_000,
+        },
       };
 
       analyticsService.getDashboardMetrics.mockResolvedValue(mockMetrics);
@@ -561,8 +600,8 @@ describe('AnalyticsDashboard Component', () => {
         subscriptionMetrics: {
           totalSubscriptions: 150,
           activeSubscriptions: 125,
-          mrr: 15000
-        }
+          mrr: 15_000,
+        },
       };
 
       analyticsService.getDashboardMetrics.mockResolvedValue(mockMetrics);
@@ -592,12 +631,14 @@ describe('AnalyticsDashboard Component', () => {
         subscriptionMetrics: {
           totalSubscriptions: 150,
           activeSubscriptions: 125,
-          mrr: 15000
+          mrr: 15_000,
         },
-        rawData: Array(1000).fill(null).map((_, i) => ({
-          id: i,
-          value: Math.random() * 1000
-        }))
+        rawData: Array(1000)
+          .fill(null)
+          .map((_, i) => ({
+            id: i,
+            value: Math.random() * 1000,
+          })),
       };
 
       analyticsService.getDashboardMetrics.mockResolvedValue(mockMetrics);
@@ -621,13 +662,15 @@ describe('AnalyticsDashboard Component', () => {
         subscriptionMetrics: {
           totalSubscriptions: 150,
           activeSubscriptions: 125,
-          mrr: 15000
+          mrr: 15_000,
         },
-        detailsList: Array(10000).fill(null).map((_, i) => ({
-          id: i,
-          name: `Subscription ${i}`,
-          value: Math.random() * 1000
-        }))
+        detailsList: Array(10_000)
+          .fill(null)
+          .map((_, i) => ({
+            id: i,
+            name: `Subscription ${i}`,
+            value: Math.random() * 1000,
+          })),
       };
 
       analyticsService.getDashboardMetrics.mockResolvedValue(mockMetrics);

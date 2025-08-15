@@ -1,7 +1,13 @@
 // lib/types.ts
 // Type definitions for NeonPro application
 
-import { Tenant, Profile, Product, SubscriptionPlan, SubscriptionStatus } from '@prisma/client';
+import type {
+  Product,
+  Profile,
+  SubscriptionPlan,
+  SubscriptionStatus,
+  Tenant,
+} from '@prisma/client';
 
 // =============================================================================================
 // 🎯 CORE TYPES FROM PRISMA SCHEMA
@@ -60,7 +66,8 @@ export interface PaginatedResponse<T = any> {
 }
 
 // Tenant list response
-export interface TenantsResponse extends PaginatedResponse<TenantWithProducts> {}
+export interface TenantsResponse
+  extends PaginatedResponse<TenantWithProducts> {}
 
 // =============================================================================================
 // 📝 FORM TYPES

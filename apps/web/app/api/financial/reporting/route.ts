@@ -5,22 +5,12 @@
 // Author: VoidBeast V4.0 (BMad Method Implementation)
 // =====================================================================================
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
-import { 
-  FinancialReportingEngine 
-} from '@/lib/financial/reporting-engine';
-import { 
-  FinancialAnalyticsCore 
-} from '@/lib/financial/analytics-core';
-import {
-  reportParametersSchema,
-  exportOptionsSchema
-} from '@/lib/validations/financial-reporting';
-import { 
-  REPORT_TYPES,
-  FINANCIAL_CONSTANTS 
-} from '@/lib/types/financial-reporting';
+import { FinancialAnalyticsCore } from '@/lib/financial/analytics-core';
+import { FinancialReportingEngine } from '@/lib/financial/reporting-engine';
+import { REPORT_TYPES } from '@/lib/types/financial-reporting';
+import { reportParametersSchema } from '@/lib/validations/financial-reporting';
 
 // Initialize services
 const reportingEngine = new FinancialReportingEngine();
@@ -34,12 +24,12 @@ export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
     const { searchParams } = new URL(request.url);
-    
+
     // Extract and validate parameters
     const clinicId = searchParams.get('clinic_id');
     const reportType = searchParams.get('report_type');
     const action = searchParams.get('action') || 'dashboard';
-    
+
     if (!clinicId) {
       return NextResponse.json(
         { error: 'clinic_id é obrigatório' },
@@ -48,7 +38,10 @@ export async function GET(request: NextRequest) {
     }
 
     // Verify user has access to clinic
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Usuário não autenticado' },
@@ -60,19 +53,23 @@ export async function GET(request: NextRequest) {
     switch (action) {
       case 'dashboard':
         return await handleDashboardRequest(clinicId);
-        
+
       case 'kpis':
         return await handleKPIRequest(clinicId, searchParams);
-        
+
       case 'reports':
         return await handleReportsListRequest(clinicId, searchParams);
-        
+
       case 'generate-report':
-        return await handleReportGenerationRequest(clinicId, reportType, searchParams);
-        
+        return await handleReportGenerationRequest(
+          clinicId,
+          reportType,
+          searchParams
+        );
+
       case 'performance':
         return await handlePerformanceRequest(clinicId, searchParams);
-        
+
       default:
         return NextResponse.json(
           { error: `Ação '${action}' não reconhecida` },
@@ -106,7 +103,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Verify user authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Usuário não autenticado' },
@@ -118,19 +118,19 @@ export async function POST(request: NextRequest) {
     switch (action) {
       case 'generate-profit-loss':
         return await handleProfitLossGeneration(clinic_id, parameters);
-        
+
       case 'generate-balance-sheet':
         return await handleBalanceSheetGeneration(clinic_id, parameters);
-        
+
       case 'generate-cash-flow':
         return await handleCashFlowGeneration(clinic_id, parameters);
-        
+
       case 'export-report':
         return await handleReportExport(clinic_id, parameters, options);
-        
+
       case 'schedule-report':
         return await handleReportScheduling(clinic_id, parameters, options);
-        
+
       default:
         return NextResponse.json(
           { error: `Ação '${action}' não reconhecida` },
@@ -156,11 +156,11 @@ export async function POST(request: NextRequest) {
 async function handleDashboardRequest(clinicId: string) {
   try {
     const dashboardData = await analyticsCore.generateDashboardData(clinicId);
-    
+
     return NextResponse.json({
       success: true,
       data: dashboardData,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   } catch (error) {
     console.error('Dashboard request error:', error);
@@ -174,31 +174,39 @@ async function handleDashboardRequest(clinicId: string) {
 /**
  * Handle KPI calculation request
  */
-async function handleKPIRequest(clinicId: string, searchParams: URLSearchParams) {
+async function handleKPIRequest(
+  clinicId: string,
+  searchParams: URLSearchParams
+) {
   try {
     const periodStart = searchParams.get('period_start');
     const periodEnd = searchParams.get('period_end');
-    
-    if (!periodStart || !periodEnd) {
+
+    if (!(periodStart && periodEnd)) {
       // Default to current month
       const now = new Date();
       const parameters = {
-        period_start: new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0],
-        period_end: now.toISOString().split('T')[0]
+        period_start: new Date(now.getFullYear(), now.getMonth(), 1)
+          .toISOString()
+          .split('T')[0],
+        period_end: now.toISOString().split('T')[0],
       };
-      
-      const kpis = await analyticsCore.calculateFinancialKPIs(clinicId, parameters);
-      
+
+      const kpis = await analyticsCore.calculateFinancialKPIs(
+        clinicId,
+        parameters
+      );
+
       return NextResponse.json({
         success: true,
         data: kpis,
-        parameters
+        parameters,
       });
     }
 
     const parameters = { period_start: periodStart, period_end: periodEnd };
     const validation = reportParametersSchema.safeParse(parameters);
-    
+
     if (!validation.success) {
       return NextResponse.json(
         { error: 'Parâmetros inválidos', details: validation.error.errors },
@@ -206,12 +214,15 @@ async function handleKPIRequest(clinicId: string, searchParams: URLSearchParams)
       );
     }
 
-    const kpis = await analyticsCore.calculateFinancialKPIs(clinicId, parameters);
-    
+    const kpis = await analyticsCore.calculateFinancialKPIs(
+      clinicId,
+      parameters
+    );
+
     return NextResponse.json({
       success: true,
       data: kpis,
-      parameters
+      parameters,
     });
   } catch (error) {
     console.error('KPI request error:', error);
@@ -225,22 +236,28 @@ async function handleKPIRequest(clinicId: string, searchParams: URLSearchParams)
 /**
  * Handle reports list request
  */
-async function handleReportsListRequest(clinicId: string, searchParams: URLSearchParams) {
+async function handleReportsListRequest(
+  clinicId: string,
+  searchParams: URLSearchParams
+) {
   try {
     const reportType = searchParams.get('report_type');
     const status = searchParams.get('status');
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '20');
-    
+    const page = Number.parseInt(searchParams.get('page') || '1', 10);
+    const limit = Number.parseInt(searchParams.get('limit') || '20', 10);
+
     const filters = {
       report_type: reportType || undefined,
       status: status || undefined,
       page,
-      limit
+      limit,
     };
 
-    const reports = await reportingEngine.getFinancialReports(clinicId, filters);
-    
+    const reports = await reportingEngine.getFinancialReports(
+      clinicId,
+      filters
+    );
+
     return NextResponse.json({
       success: true,
       data: reports.reports,
@@ -248,8 +265,8 @@ async function handleReportsListRequest(clinicId: string, searchParams: URLSearc
         page,
         limit,
         total: reports.total,
-        pages: Math.ceil(reports.total / limit)
-      }
+        pages: Math.ceil(reports.total / limit),
+      },
     });
   } catch (error) {
     console.error('Reports list request error:', error);
@@ -264,12 +281,14 @@ async function handleReportsListRequest(clinicId: string, searchParams: URLSearc
  * Handle report generation request
  */
 async function handleReportGenerationRequest(
-  clinicId: string, 
-  reportType: string | null, 
+  clinicId: string,
+  reportType: string | null,
   searchParams: URLSearchParams
 ) {
   try {
-    if (!reportType || !Object.values(REPORT_TYPES).includes(reportType as any)) {
+    if (
+      !(reportType && Object.values(REPORT_TYPES).includes(reportType as any))
+    ) {
       return NextResponse.json(
         { error: 'Tipo de relatório inválido' },
         { status: 400 }
@@ -278,8 +297,8 @@ async function handleReportGenerationRequest(
 
     const periodStart = searchParams.get('period_start');
     const periodEnd = searchParams.get('period_end');
-    
-    if (!periodStart || !periodEnd) {
+
+    if (!(periodStart && periodEnd)) {
       return NextResponse.json(
         { error: 'period_start e period_end são obrigatórios' },
         { status: 400 }
@@ -288,7 +307,7 @@ async function handleReportGenerationRequest(
 
     const parameters = { period_start: periodStart, period_end: periodEnd };
     const validation = reportParametersSchema.safeParse(parameters);
-    
+
     if (!validation.success) {
       return NextResponse.json(
         { error: 'Parâmetros inválidos', details: validation.error.errors },
@@ -297,16 +316,25 @@ async function handleReportGenerationRequest(
     }
 
     let reportData;
-    
+
     switch (reportType) {
       case REPORT_TYPES.PROFIT_LOSS:
-        reportData = await reportingEngine.generateProfitLossStatement(clinicId, parameters);
+        reportData = await reportingEngine.generateProfitLossStatement(
+          clinicId,
+          parameters
+        );
         break;
       case REPORT_TYPES.BALANCE_SHEET:
-        reportData = await reportingEngine.generateBalanceSheet(clinicId, periodEnd);
+        reportData = await reportingEngine.generateBalanceSheet(
+          clinicId,
+          periodEnd
+        );
         break;
       case REPORT_TYPES.CASH_FLOW:
-        reportData = await reportingEngine.generateCashFlowStatement(clinicId, parameters);
+        reportData = await reportingEngine.generateCashFlowStatement(
+          clinicId,
+          parameters
+        );
         break;
       default:
         return NextResponse.json(
@@ -316,20 +344,23 @@ async function handleReportGenerationRequest(
     }
 
     // Save report to database
-    const savedReport = await reportingEngine.saveFinancialReport({
-      clinic_id: clinicId,
-      report_type: reportType,
-      period_start: periodStart,
-      period_end: periodEnd,
-      generated_by: 'system' // TODO: Get user ID
-    }, reportData);
+    const savedReport = await reportingEngine.saveFinancialReport(
+      {
+        clinic_id: clinicId,
+        report_type: reportType,
+        period_start: periodStart,
+        period_end: periodEnd,
+        generated_by: 'system', // TODO: Get user ID
+      },
+      reportData
+    );
 
     return NextResponse.json({
       success: true,
       data: {
         report: savedReport,
-        content: reportData
-      }
+        content: reportData,
+      },
     });
   } catch (error) {
     console.error('Report generation error:', error);
@@ -343,12 +374,15 @@ async function handleReportGenerationRequest(
 /**
  * Handle performance metrics request
  */
-async function handlePerformanceRequest(clinicId: string, searchParams: URLSearchParams) {
+async function handlePerformanceRequest(
+  clinicId: string,
+  searchParams: URLSearchParams
+) {
   try {
     const periodStart = searchParams.get('period_start');
     const periodEnd = searchParams.get('period_end');
-    
-    if (!periodStart || !periodEnd) {
+
+    if (!(periodStart && periodEnd)) {
       return NextResponse.json(
         { error: 'period_start e period_end são obrigatórios' },
         { status: 400 }
@@ -357,7 +391,7 @@ async function handlePerformanceRequest(clinicId: string, searchParams: URLSearc
 
     const parameters = { period_start: periodStart, period_end: periodEnd };
     const validation = reportParametersSchema.safeParse(parameters);
-    
+
     if (!validation.success) {
       return NextResponse.json(
         { error: 'Parâmetros inválidos', details: validation.error.errors },
@@ -365,12 +399,15 @@ async function handlePerformanceRequest(clinicId: string, searchParams: URLSearc
       );
     }
 
-    const performance = await analyticsCore.calculatePerformanceMetrics(clinicId, parameters);
-    
+    const performance = await analyticsCore.calculatePerformanceMetrics(
+      clinicId,
+      parameters
+    );
+
     return NextResponse.json({
       success: true,
       data: performance,
-      parameters
+      parameters,
     });
   } catch (error) {
     console.error('Performance request error:', error);
@@ -387,7 +424,7 @@ async function handlePerformanceRequest(clinicId: string, searchParams: URLSearc
 async function handleProfitLossGeneration(clinicId: string, parameters: any) {
   try {
     const validation = reportParametersSchema.safeParse(parameters);
-    
+
     if (!validation.success) {
       return NextResponse.json(
         { error: 'Parâmetros inválidos', details: validation.error.errors },
@@ -396,31 +433,31 @@ async function handleProfitLossGeneration(clinicId: string, parameters: any) {
     }
 
     const profitLoss = await reportingEngine.generateProfitLossStatement(
-      clinicId, 
+      clinicId,
       validation.data
     );
 
-    const savedReport = await reportingEngine.saveFinancialReport({
-      clinic_id: clinicId,
-      report_type: REPORT_TYPES.PROFIT_LOSS,
-      period_start: parameters.period_start,
-      period_end: parameters.period_end,
-      generated_by: 'system'
-    }, profitLoss);
+    const savedReport = await reportingEngine.saveFinancialReport(
+      {
+        clinic_id: clinicId,
+        report_type: REPORT_TYPES.PROFIT_LOSS,
+        period_start: parameters.period_start,
+        period_end: parameters.period_end,
+        generated_by: 'system',
+      },
+      profitLoss
+    );
 
     return NextResponse.json({
       success: true,
       data: {
         report: savedReport,
-        content: profitLoss
-      }
+        content: profitLoss,
+      },
     });
   } catch (error) {
     console.error('P&L generation error:', error);
-    return NextResponse.json(
-      { error: 'Erro ao gerar DRE' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Erro ao gerar DRE' }, { status: 500 });
   }
 }
 
@@ -437,24 +474,27 @@ async function handleBalanceSheetGeneration(clinicId: string, parameters: any) {
     }
 
     const balanceSheet = await reportingEngine.generateBalanceSheet(
-      clinicId, 
+      clinicId,
       parameters.as_of_date
     );
 
-    const savedReport = await reportingEngine.saveFinancialReport({
-      clinic_id: clinicId,
-      report_type: REPORT_TYPES.BALANCE_SHEET,
-      period_start: parameters.as_of_date,
-      period_end: parameters.as_of_date,
-      generated_by: 'system'
-    }, balanceSheet);
+    const savedReport = await reportingEngine.saveFinancialReport(
+      {
+        clinic_id: clinicId,
+        report_type: REPORT_TYPES.BALANCE_SHEET,
+        period_start: parameters.as_of_date,
+        period_end: parameters.as_of_date,
+        generated_by: 'system',
+      },
+      balanceSheet
+    );
 
     return NextResponse.json({
       success: true,
       data: {
         report: savedReport,
-        content: balanceSheet
-      }
+        content: balanceSheet,
+      },
     });
   } catch (error) {
     console.error('Balance sheet generation error:', error);
@@ -471,7 +511,7 @@ async function handleBalanceSheetGeneration(clinicId: string, parameters: any) {
 async function handleCashFlowGeneration(clinicId: string, parameters: any) {
   try {
     const validation = reportParametersSchema.safeParse(parameters);
-    
+
     if (!validation.success) {
       return NextResponse.json(
         { error: 'Parâmetros inválidos', details: validation.error.errors },
@@ -480,24 +520,27 @@ async function handleCashFlowGeneration(clinicId: string, parameters: any) {
     }
 
     const cashFlow = await reportingEngine.generateCashFlowStatement(
-      clinicId, 
+      clinicId,
       validation.data
     );
 
-    const savedReport = await reportingEngine.saveFinancialReport({
-      clinic_id: clinicId,
-      report_type: REPORT_TYPES.CASH_FLOW,
-      period_start: parameters.period_start,
-      period_end: parameters.period_end,
-      generated_by: 'system'
-    }, cashFlow);
+    const savedReport = await reportingEngine.saveFinancialReport(
+      {
+        clinic_id: clinicId,
+        report_type: REPORT_TYPES.CASH_FLOW,
+        period_start: parameters.period_start,
+        period_end: parameters.period_end,
+        generated_by: 'system',
+      },
+      cashFlow
+    );
 
     return NextResponse.json({
       success: true,
       data: {
         report: savedReport,
-        content: cashFlow
-      }
+        content: cashFlow,
+      },
     });
   } catch (error) {
     console.error('Cash flow generation error:', error);
@@ -511,7 +554,11 @@ async function handleCashFlowGeneration(clinicId: string, parameters: any) {
 /**
  * Handle report export (placeholder)
  */
-async function handleReportExport(clinicId: string, parameters: any, options: any) {
+async function handleReportExport(
+  clinicId: string,
+  parameters: any,
+  options: any
+) {
   try {
     // TODO: Implement report export functionality (PDF, Excel, CSV)
     return NextResponse.json({
@@ -520,8 +567,8 @@ async function handleReportExport(clinicId: string, parameters: any, options: an
       data: {
         clinic_id: clinicId,
         parameters,
-        options
-      }
+        options,
+      },
     });
   } catch (error) {
     console.error('Report export error:', error);
@@ -535,7 +582,11 @@ async function handleReportExport(clinicId: string, parameters: any, options: an
 /**
  * Handle report scheduling (placeholder)
  */
-async function handleReportScheduling(clinicId: string, parameters: any, options: any) {
+async function handleReportScheduling(
+  clinicId: string,
+  parameters: any,
+  options: any
+) {
   try {
     // TODO: Implement report scheduling functionality
     return NextResponse.json({
@@ -544,8 +595,8 @@ async function handleReportScheduling(clinicId: string, parameters: any, options
       data: {
         clinic_id: clinicId,
         parameters,
-        options
-      }
+        options,
+      },
     });
   } catch (error) {
     console.error('Report scheduling error:', error);

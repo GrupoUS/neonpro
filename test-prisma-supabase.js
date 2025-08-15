@@ -12,7 +12,7 @@ async function testPrismaSupabaseConnection() {
   console.log('📊 Variáveis de Ambiente:');
   console.log('DATABASE_URL:', dbUrl ? '✅ Configurada' : '❌ Ausente');
   console.log('DIRECT_URL:', directUrl ? '✅ Configurada' : '❌ Ausente');
-  
+
   if (!dbUrl) {
     console.error('❌ DATABASE_URL não configurada!');
     return;
@@ -25,14 +25,14 @@ async function testPrismaSupabaseConnection() {
 
   try {
     console.log('\n🔌 Testando conexão...');
-    
+
     // Teste básico de conectividade
     await prisma.$connect();
     console.log('✅ Conexão Prisma estabelecida!');
 
     // Listar tabelas disponíveis
     console.log('\n📋 Testando acesso às tabelas:');
-    
+
     try {
       const tenants = await prisma.tenant.count();
       console.log(`✅ Tenants: ${tenants} registros`);
@@ -57,22 +57,22 @@ async function testPrismaSupabaseConnection() {
     // Teste de query bruta (verificar se consegue acessar outras tabelas do Supabase)
     console.log('\n🔍 Testando acesso direto ao banco (SQL):');
     try {
-      const result = await prisma.$queryRaw`SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' ORDER BY table_name LIMIT 10`;
+      const result =
+        await prisma.$queryRaw`SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' ORDER BY table_name LIMIT 10`;
       console.log('✅ Primeiras 10 tabelas do banco:');
-      result.forEach((row, i) => console.log(`   ${i+1}. ${row.table_name}`));
+      result.forEach((row, i) => console.log(`   ${i + 1}. ${row.table_name}`));
     } catch (e) {
       console.log('❌ Query SQL falhou:', e.message);
     }
-
   } catch (error) {
     console.error('❌ Erro na conexão Prisma:', error.message);
-    
+
     if (error.message.includes('password authentication failed')) {
       console.log('\n💡 SOLUÇÃO: Verifique a senha do banco Supabase em:');
       console.log('   1. Supabase Dashboard > Settings > Database');
       console.log('   2. Atualize SUPABASE_DB_PASSWORD no .env.local');
     }
-    
+
     if (error.message.includes('connection refused')) {
       console.log('\n💡 SOLUÇÃO: Verifique a URL de conexão do Supabase');
     }

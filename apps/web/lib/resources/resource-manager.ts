@@ -13,9 +13,24 @@ const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 // =====================================================
 
 export type ResourceType = 'room' | 'equipment' | 'staff';
-export type ResourceStatus = 'available' | 'occupied' | 'maintenance' | 'cleaning' | 'reserved';
-export type AllocationStatus = 'pending' | 'confirmed' | 'in_use' | 'completed' | 'cancelled';
-export type AllocationType = 'appointment' | 'maintenance' | 'cleaning' | 'training' | 'personal_use';
+export type ResourceStatus =
+  | 'available'
+  | 'occupied'
+  | 'maintenance'
+  | 'cleaning'
+  | 'reserved';
+export type AllocationStatus =
+  | 'pending'
+  | 'confirmed'
+  | 'in_use'
+  | 'completed'
+  | 'cancelled';
+export type AllocationType =
+  | 'appointment'
+  | 'maintenance'
+  | 'cleaning'
+  | 'training'
+  | 'personal_use';
 export type ConflictSeverity = 'low' | 'medium' | 'high' | 'critical';
 
 export interface Resource {
@@ -27,7 +42,7 @@ export interface Resource {
   location?: string;
   status: ResourceStatus;
   capacity: number;
-  
+
   // Equipment specific
   manufacturer?: string;
   model?: string;
@@ -37,22 +52,22 @@ export interface Resource {
   last_maintenance?: string;
   next_maintenance?: string;
   maintenance_interval_days?: number;
-  
+
   // Staff specific
   skills?: string[];
   availability_schedule?: Record<string, any>;
   hourly_rate?: number;
-  
+
   // Room specific
   equipment_ids?: string[];
   amenities?: Record<string, any>;
-  
+
   // Common
   specifications?: Record<string, any>;
   usage_instructions?: string;
   safety_requirements?: Record<string, any>;
   cost_per_hour?: number;
-  
+
   created_at: string;
   updated_at: string;
   created_by?: string;
@@ -135,7 +150,9 @@ export class ResourceManager {
   // Resource Management
   // =====================================================
 
-  async createResource(resourceData: Omit<Resource, 'id' | 'created_at' | 'updated_at'>): Promise<Resource> {
+  async createResource(
+    resourceData: Omit<Resource, 'id' | 'created_at' | 'updated_at'>
+  ): Promise<Resource> {
     try {
       const { data, error } = await this.supabase
         .from('resources')
@@ -151,11 +168,14 @@ export class ResourceManager {
     }
   }
 
-  async getResources(clinicId: string, filters?: {
-    type?: ResourceType;
-    status?: ResourceStatus;
-    category?: string;
-  }): Promise<Resource[]> {
+  async getResources(
+    clinicId: string,
+    filters?: {
+      type?: ResourceType;
+      status?: ResourceStatus;
+      category?: string;
+    }
+  ): Promise<Resource[]> {
     try {
       let query = this.supabase
         .from('resources')
@@ -199,7 +219,10 @@ export class ResourceManager {
     }
   }
 
-  async updateResource(resourceId: string, updates: Partial<Resource>): Promise<Resource> {
+  async updateResource(
+    resourceId: string,
+    updates: Partial<Resource>
+  ): Promise<Resource> {
     try {
       const { data, error } = await this.supabase
         .from('resources')
@@ -216,13 +239,16 @@ export class ResourceManager {
     }
   }
 
-  async updateResourceStatus(resourceId: string, status: ResourceStatus): Promise<void> {
+  async updateResourceStatus(
+    resourceId: string,
+    status: ResourceStatus
+  ): Promise<void> {
     try {
       const { error } = await this.supabase
         .from('resources')
-        .update({ 
+        .update({
           status,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', resourceId);
 
@@ -251,7 +277,10 @@ export class ResourceManager {
   // Resource Allocation Management
   // =====================================================
 
-  async createAllocation(allocationData: AllocationRequest, userId: string): Promise<ResourceAllocation> {
+  async createAllocation(
+    allocationData: AllocationRequest,
+    userId: string
+  ): Promise<ResourceAllocation> {
     try {
       // Check for conflicts first
       const conflicts = await this.detectConflicts(
@@ -261,18 +290,22 @@ export class ResourceManager {
       );
 
       if (conflicts.length > 0) {
-        throw new Error(`Resource conflict detected. ${conflicts.length} overlapping allocations found.`);
+        throw new Error(
+          `Resource conflict detected. ${conflicts.length} overlapping allocations found.`
+        );
       }
 
       const { data, error } = await this.supabase
         .from('resource_allocations')
-        .insert([{
-          ...allocationData,
-          allocated_by: userId,
-          status: 'pending',
-          preparation_time: allocationData.preparation_time || 0,
-          cleanup_time: allocationData.cleanup_time || 0
-        }])
+        .insert([
+          {
+            ...allocationData,
+            allocated_by: userId,
+            status: 'pending',
+            preparation_time: allocationData.preparation_time || 0,
+            cleanup_time: allocationData.cleanup_time || 0,
+          },
+        ])
         .select()
         .single();
 
@@ -284,7 +317,11 @@ export class ResourceManager {
     }
   }
 
-  async getAllocations(resourceId: string, startDate?: string, endDate?: string): Promise<ResourceAllocation[]> {
+  async getAllocations(
+    resourceId: string,
+    startDate?: string,
+    endDate?: string
+  ): Promise<ResourceAllocation[]> {
     try {
       let query = this.supabase
         .from('resource_allocations')
@@ -308,13 +345,16 @@ export class ResourceManager {
     }
   }
 
-  async updateAllocationStatus(allocationId: string, status: AllocationStatus): Promise<void> {
+  async updateAllocationStatus(
+    allocationId: string,
+    status: AllocationStatus
+  ): Promise<void> {
     try {
       const { error } = await this.supabase
         .from('resource_allocations')
-        .update({ 
+        .update({
           status,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', allocationId);
 
@@ -367,26 +407,31 @@ export class ResourceManager {
     }
   }
 
-  async createConflict(conflictData: {
-    resource_id: string;
-    conflict_type: string;
-    severity: ConflictSeverity;
-    description: string;
-    primary_allocation_id?: string;
-    conflicting_allocation_id?: string;
-    impact_score?: number;
-    revenue_impact?: number;
-  }, userId: string): Promise<ResourceConflict> {
+  async createConflict(
+    conflictData: {
+      resource_id: string;
+      conflict_type: string;
+      severity: ConflictSeverity;
+      description: string;
+      primary_allocation_id?: string;
+      conflicting_allocation_id?: string;
+      impact_score?: number;
+      revenue_impact?: number;
+    },
+    userId: string
+  ): Promise<ResourceConflict> {
     try {
       const { data, error } = await this.supabase
         .from('resource_conflicts')
-        .insert([{
-          ...conflictData,
-          created_by: userId,
-          status: 'pending',
-          impact_score: conflictData.impact_score || 1,
-          revenue_impact: conflictData.revenue_impact || 0
-        }])
+        .insert([
+          {
+            ...conflictData,
+            created_by: userId,
+            status: 'pending',
+            impact_score: conflictData.impact_score || 1,
+            revenue_impact: conflictData.revenue_impact || 0,
+          },
+        ])
         .select()
         .single();
 
@@ -415,7 +460,7 @@ export class ResourceManager {
           resolution_details: resolution.details,
           resolved_at: new Date().toISOString(),
           resolved_by: userId,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', conflictId);
 
@@ -439,16 +484,20 @@ export class ResourceManager {
   ): Promise<Resource[]> {
     try {
       // Get all resources of the specified type
-      const resources = await this.getResources(clinicId, { 
+      const resources = await this.getResources(clinicId, {
         type: resourceType,
-        status: 'available' 
+        status: 'available',
       });
 
       // Filter out resources that have conflicting allocations
       const availableResources: Resource[] = [];
-      
+
       for (const resource of resources) {
-        const conflicts = await this.detectConflicts(resource.id, startTime, endTime);
+        const conflicts = await this.detectConflicts(
+          resource.id,
+          startTime,
+          endTime
+        );
         if (conflicts.length === 0) {
           // Check if resource meets requirements
           if (!requirements || this.meetsRequirements(resource, requirements)) {
@@ -464,7 +513,10 @@ export class ResourceManager {
     }
   }
 
-  private meetsRequirements(resource: Resource, requirements: Record<string, any>): boolean {
+  private meetsRequirements(
+    resource: Resource,
+    requirements: Record<string, any>
+  ): boolean {
     // Simple requirement matching - can be extended based on needs
     if (requirements.category && resource.category !== requirements.category) {
       return false;
@@ -475,7 +527,7 @@ export class ResourceManager {
     if (requirements.skills && resource.type === 'staff') {
       const resourceSkills = resource.skills || [];
       const requiredSkills = requirements.skills as string[];
-      if (!requiredSkills.every(skill => resourceSkills.includes(skill))) {
+      if (!requiredSkills.every((skill) => resourceSkills.includes(skill))) {
         return false;
       }
     }
@@ -505,7 +557,9 @@ export class ResourceManager {
       );
 
       // Filter out the original resource
-      return alternatives.filter(resource => resource.id !== originalResourceId);
+      return alternatives.filter(
+        (resource) => resource.id !== originalResourceId
+      );
     } catch (error) {
       console.error('Error suggesting alternatives:', error);
       throw new Error('Failed to suggest alternative resources');
@@ -552,19 +606,24 @@ export class ResourceManager {
         let potentialSavings = 0;
 
         if (utilization < 50) {
-          actions.push('Consider reducing operating hours or finding additional bookings');
+          actions.push(
+            'Consider reducing operating hours or finding additional bookings'
+          );
           potentialSavings += (resource.cost_per_hour || 0) * 2;
         } else if (utilization > 90) {
-          actions.push('Consider adding additional resources or extending hours');
+          actions.push(
+            'Consider adding additional resources or extending hours'
+          );
         }
 
         if (resource.type === 'equipment' && resource.next_maintenance) {
           const maintenanceDate = new Date(resource.next_maintenance);
           const today = new Date(date);
           const daysUntilMaintenance = Math.ceil(
-            (maintenanceDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
+            (maintenanceDate.getTime() - today.getTime()) /
+              (1000 * 60 * 60 * 24)
           );
-          
+
           if (daysUntilMaintenance <= 7) {
             actions.push('Schedule maintenance soon to prevent downtime');
           }
@@ -574,13 +633,13 @@ export class ResourceManager {
           resource_id: resource.id,
           current_utilization: Math.round(utilization),
           recommended_actions: actions,
-          potential_savings: potentialSavings
+          potential_savings: potentialSavings,
         });
       }
 
       return {
         recommendations,
-        overall_efficiency: Math.round(totalUtilization / resources.length)
+        overall_efficiency: Math.round(totalUtilization / resources.length),
       };
     } catch (error) {
       console.error('Error optimizing resource allocation:', error);
@@ -596,28 +655,34 @@ export class ResourceManager {
     resourceId: string,
     startDate: string,
     endDate: string
-  ): Promise<Array<{
-    date: string;
-    utilization_percentage: number;
-    total_revenue: number;
-    appointment_count: number;
-  }>> {
+  ): Promise<
+    Array<{
+      date: string;
+      utilization_percentage: number;
+      total_revenue: number;
+      appointment_count: number;
+    }>
+  > {
     try {
       const { data, error } = await this.supabase
         .from('resource_analytics')
-        .select('date, utilization_percentage, revenue_generated, appointment_count')
+        .select(
+          'date, utilization_percentage, revenue_generated, appointment_count'
+        )
         .eq('resource_id', resourceId)
         .gte('date', startDate)
         .lte('date', endDate)
         .order('date', { ascending: true });
 
       if (error) throw error;
-      return data?.map(item => ({
-        date: item.date,
-        utilization_percentage: item.utilization_percentage,
-        total_revenue: item.revenue_generated,
-        appointment_count: item.appointment_count
-      })) || [];
+      return (
+        data?.map((item) => ({
+          date: item.date,
+          utilization_percentage: item.utilization_percentage,
+          total_revenue: item.revenue_generated,
+          appointment_count: item.appointment_count,
+        })) || []
+      );
     } catch (error) {
       console.error('Error fetching utilization data:', error);
       throw new Error('Failed to fetch utilization data');
@@ -626,7 +691,7 @@ export class ResourceManager {
 
   async getConflictHistory(
     resourceId: string,
-    limit: number = 50
+    limit = 50
   ): Promise<ResourceConflict[]> {
     try {
       const { data, error } = await this.supabase

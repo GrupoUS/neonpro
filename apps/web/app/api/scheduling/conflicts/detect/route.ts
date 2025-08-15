@@ -1,20 +1,20 @@
 /**
  * Conflict Detection API Route
  * Story 2.2: Intelligent conflict detection and resolution
- * 
+ *
  * POST /api/scheduling/conflicts/detect
  * Detects scheduling conflicts for a proposed appointment
  */
 
-import { NextRequest, NextResponse } from 'next/server';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
-import { ConflictDetectionService } from '@/lib/scheduling/conflict-resolution';
+import { type NextRequest, NextResponse } from 'next/server';
 import { AuditLogger } from '@/lib/auth/audit/audit-logger';
+import { ConflictDetectionService } from '@/lib/scheduling/conflict-resolution';
 
 interface ConflictDetectionRequest {
   appointmentStart: string; // ISO string
-  appointmentEnd: string;   // ISO string
+  appointmentEnd: string; // ISO string
   professionalId: string;
   treatmentType: string;
   roomId?: string;
@@ -24,26 +24,36 @@ interface ConflictDetectionRequest {
 
 export async function POST(request: NextRequest) {
   const auditLogger = new AuditLogger();
-  
+
   try {
     // Get user session
     const supabase = createRouteHandlerClient({ cookies });
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    const {
+      data: { session },
+      error: sessionError,
+    } = await supabase.auth.getSession();
 
     if (sessionError || !session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Parse request body
     const body: ConflictDetectionRequest = await request.json();
-    
+
     // Validate required fields
-    if (!body.appointmentStart || !body.appointmentEnd || !body.professionalId || !body.treatmentType) {
+    if (
+      !(
+        body.appointmentStart &&
+        body.appointmentEnd &&
+        body.professionalId &&
+        body.treatmentType
+      )
+    ) {
       return NextResponse.json(
-        { error: 'Missing required fields: appointmentStart, appointmentEnd, professionalId, treatmentType' },
+        {
+          error:
+            'Missing required fields: appointmentStart, appointmentEnd, professionalId, treatmentType',
+        },
         { status: 400 }
       );
     }
@@ -52,7 +62,7 @@ export async function POST(request: NextRequest) {
     const startDate = new Date(body.appointmentStart);
     const endDate = new Date(body.appointmentEnd);
 
-    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+    if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
       return NextResponse.json(
         { error: 'Invalid date format. Use ISO 8601 format.' },
         { status: 400 }
@@ -89,7 +99,7 @@ export async function POST(request: NextRequest) {
         treatmentType: body.treatmentType,
         conflictCount: result.conflicts.length,
         processingTimeMs: result.processingTimeMs,
-        hasConflicts: result.hasConflicts
+        hasConflicts: result.hasConflicts,
       }
     );
 
@@ -100,19 +110,18 @@ export async function POST(request: NextRequest) {
       metadata: {
         processingTime: result.processingTimeMs,
         timestamp: new Date().toISOString(),
-        apiVersion: '2.2.0'
-      }
+        apiVersion: '2.2.0',
+      },
     });
-
   } catch (error) {
     console.error('Conflict detection error:', error);
-    
+
     await auditLogger.logError('Conflict detection API failed', error);
 
     return NextResponse.json(
-      { 
+      {
         error: 'Internal server error during conflict detection',
-        details: process.env.NODE_ENV === 'development' ? error : undefined
+        details: process.env.NODE_ENV === 'development' ? error : undefined,
       },
       { status: 500 }
     );
@@ -120,7 +129,7 @@ export async function POST(request: NextRequest) {
 }
 
 // Options handler for CORS
-export async function OPTIONS(request: NextRequest) {
+export async function OPTIONS(_request: NextRequest) {
   return new NextResponse(null, {
     status: 200,
     headers: {

@@ -1,6 +1,97 @@
-// Export all UI components here
-// Example: export { Button } from './button';
-// Add more component exports as they are created
+// Basic Components
 
-// Temporary empty export to make this a valid module
-export {};
+export type {
+  AppointmentCalendarProps,
+  CalendarTimeSlot,
+  CalendarView,
+} from './AppointmentCalendar';
+export { AppointmentCalendar } from './AppointmentCalendar';
+export type { AppointmentCardProps, AppointmentData } from './AppointmentCard';
+export { AppointmentCard } from './AppointmentCard';
+export type { AuthLayoutProps } from './AuthLayout';
+export { AuthLayout } from './AuthLayout';
+export type { AvatarProps } from './Avatar';
+export { Avatar, AvatarFallback, AvatarImage } from './Avatar';
+export type { BadgeProps } from './Badge';
+export { Badge } from './Badge';
+// UI Components
+export {
+  Breadcrumb,
+  BreadcrumbEllipsis,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from './Breadcrumb';
+export type { ButtonProps } from './Button';
+export { Button } from './Button';
+export { Checkbox } from './Checkbox';
+export type { DashboardLayoutProps } from './DashboardLayout';
+// Layout Components
+export { DashboardLayout } from './DashboardLayout';
+export type {
+  DashboardSidebarProps,
+  SidebarItem,
+  UserProfile,
+} from './DashboardSidebar';
+export { DashboardSidebar } from './DashboardSidebar';
+export type { DatePickerProps } from './DatePicker';
+export { DatePicker } from './DatePicker';
+export type { FormFieldProps } from './FormField';
+export { FormField } from './FormField';
+export type { HealthRecordViewerProps } from './HealthRecordViewer';
+export { HealthRecordViewer } from './HealthRecordViewer';
+export type { InputProps } from './Input';
+export { Input } from './Input';
+export type { PatientCardProps, PatientData } from './PatientCard';
+export { PatientCard } from './PatientCard';
+export type {
+  PatientDetailLayoutProps,
+  PatientTab,
+} from './PatientDetailLayout';
+export { PatientDetailLayout } from './PatientDetailLayout';
+export type {
+  PatientTableAction,
+  PatientTableColumn,
+  PatientTablePagination,
+  PatientTableProps,
+  PatientTableSort,
+  PatientTableViewMode,
+} from './PatientTable';
+// Complex Components
+export { PatientTable } from './PatientTable';
+export {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from './Popover';
+export type { ProcedureFormProps } from './ProcedureForm';
+export { ProcedureForm } from './ProcedureForm';
+export type { ProgressBarProps } from './ProgressBar';
+// Supporting Components
+export { ProgressBar } from './ProgressBar';
+export type { SearchBoxProps } from './SearchBox';
+// Composite Components
+export { SearchBox } from './SearchBox';
+export {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectScrollDownButton,
+  SelectScrollUpButton,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
+} from './Select';
+export { Tabs, TabsContent, TabsList, TabsTrigger } from './Tabs';
+export type { TextareaProps } from './Textarea';
+export { Textarea } from './Textarea';
+export type { TimePickerProps } from './TimePicker';
+
+export { TimePicker } from './TimePicker';
+export type { TreatmentCardProps } from './TreatmentCard';
+// Healthcare Specialized Components
+export { TreatmentCard } from './TreatmentCard';

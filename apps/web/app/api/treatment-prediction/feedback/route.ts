@@ -1,17 +1,20 @@
 // GET/POST /api/treatment-prediction/feedback - Prediction feedback management
+
+import { type NextRequest, NextResponse } from 'next/server';
 import { TreatmentPredictionService } from '@/app/lib/services/treatment-prediction';
 import { createServerClient } from '@/app/utils/supabase/server';
-import { NextRequest, NextResponse } from 'next/server';
 
 // GET /api/treatment-prediction/feedback - Get prediction feedback
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    
+
     // Validate authentication
     const supabase = await createServerClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -19,13 +22,14 @@ export async function GET(request: NextRequest) {
     const predictionId = searchParams.get('prediction_id');
 
     const predictionService = new TreatmentPredictionService();
-    const feedback = await predictionService.getFeedback(predictionId || undefined);
+    const feedback = await predictionService.getFeedback(
+      predictionId || undefined
+    );
 
     return NextResponse.json({
       feedback,
-      total: feedback.length
+      total: feedback.length,
     });
-
   } catch (error) {
     console.error('Error fetching prediction feedback:', error);
     return NextResponse.json(
@@ -39,8 +43,10 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createServerClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -48,9 +54,15 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
 
     // Validate required fields
-    if (!body.prediction_id || !body.feedback_type || body.rating === undefined) {
+    if (
+      !(body.prediction_id && body.feedback_type) ||
+      body.rating === undefined
+    ) {
       return NextResponse.json(
-        { error: 'Missing required fields: prediction_id, feedback_type, rating' },
+        {
+          error:
+            'Missing required fields: prediction_id, feedback_type, rating',
+        },
         { status: 400 }
       );
     }
@@ -80,17 +92,19 @@ export async function POST(request: NextRequest) {
     // Prepare feedback data
     const feedbackData = {
       ...body,
-      provider_id: session.user.id
+      provider_id: session.user.id,
     };
 
     const predictionService = new TreatmentPredictionService();
     const feedback = await predictionService.createFeedback(feedbackData);
 
-    return NextResponse.json({
-      feedback,
-      message: 'Prediction feedback created successfully'
-    }, { status: 201 });
-
+    return NextResponse.json(
+      {
+        feedback,
+        message: 'Prediction feedback created successfully',
+      },
+      { status: 201 }
+    );
   } catch (error) {
     console.error('Error creating prediction feedback:', error);
     return NextResponse.json(

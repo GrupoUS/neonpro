@@ -2,8 +2,22 @@
 // Story 7.4: Advanced patient retention analytics with predictive modeling
 
 export type ChurnRiskLevel = 'low' | 'medium' | 'high' | 'critical';
-export type InterventionChannel = 'email' | 'sms' | 'whatsapp' | 'phone' | 'in_person' | 'push';
-export type InterventionStatus = 'planned' | 'scheduled' | 'sent' | 'delivered' | 'opened' | 'clicked' | 'responded' | 'failed';
+export type InterventionChannel =
+  | 'email'
+  | 'sms'
+  | 'whatsapp'
+  | 'phone'
+  | 'in_person'
+  | 'push';
+export type InterventionStatus =
+  | 'planned'
+  | 'scheduled'
+  | 'sent'
+  | 'delivered'
+  | 'opened'
+  | 'clicked'
+  | 'responded'
+  | 'failed';
 
 export interface PatientRetentionAnalytics {
   id: string;
@@ -98,7 +112,15 @@ export interface RetentionIntervention {
   trigger_conditions: Record<string, any>;
   scheduled_date?: string;
   executed_date?: string;
-  status: 'planned' | 'scheduled' | 'sent' | 'delivered' | 'opened' | 'clicked' | 'responded' | 'failed';
+  status:
+    | 'planned'
+    | 'scheduled'
+    | 'sent'
+    | 'delivered'
+    | 'opened'
+    | 'clicked'
+    | 'responded'
+    | 'failed';
   response_data: Record<string, any>;
   effectiveness_score?: number;
   cost: number;
@@ -190,7 +212,11 @@ export interface RetentionModelPerformance {
 export interface RetentionBenchmark {
   id: string;
   industry_segment: string;
-  benchmark_type: 'retention_rate' | 'churn_rate' | 'ltv' | 'intervention_effectiveness';
+  benchmark_type:
+    | 'retention_rate'
+    | 'churn_rate'
+    | 'ltv'
+    | 'intervention_effectiveness';
   benchmark_value: number;
   percentile_rank: number;
   data_source: string;
@@ -211,7 +237,12 @@ export interface ChurnFactor {
   factor_name: string;
   factor_value: number;
   weight: number;
-  category: 'behavioral' | 'financial' | 'clinical' | 'satisfaction' | 'demographic';
+  category:
+    | 'behavioral'
+    | 'financial'
+    | 'clinical'
+    | 'satisfaction'
+    | 'demographic';
   description: string;
 }
 
@@ -370,4 +401,3 @@ export interface BenchmarkConfigurationForm {
   geographic_region: string;
   clinic_size_category?: string;
 }
-

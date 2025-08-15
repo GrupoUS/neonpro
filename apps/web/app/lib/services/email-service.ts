@@ -1,26 +1,26 @@
+import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
 import nodemailer from 'nodemailer';
-import { SESClient, SendEmailCommand, SendBulkEmailCommand } from '@aws-sdk/client-ses';
-import {
-  EmailProvider,
-  EmailMessage,
-  EmailServiceResponse,
+import type {
   BulkEmailResponse,
-  EmailStatus,
-  EmailTemplate,
-  EmailSettings,
   EmailAnalytics,
-  EmailProviderConfig,
-  SMTPConfig,
-  SESConfig,
-  SendGridConfig,
-  MailgunConfig,
-  ResendConfig,
-  PostmarkConfig,
-  EmailServiceInterface,
-  EmailValidationResult,
-  EmailPreview,
   EmailDeliveryReport,
   EmailEvent,
+  EmailMessage,
+  EmailPreview,
+  EmailProvider,
+  EmailProviderConfig,
+  EmailServiceInterface,
+  EmailServiceResponse,
+  EmailSettings,
+  EmailStatus,
+  EmailTemplate,
+  EmailValidationResult,
+  MailgunConfig,
+  PostmarkConfig,
+  ResendConfig,
+  SESConfig,
+  SendGridConfig,
+  SMTPConfig,
 } from '@/app/types/email';
 
 // =======================================
@@ -31,7 +31,10 @@ export class EmailService {
   private providers: Map<EmailProvider, EmailServiceInterface> = new Map();
   private settings: EmailSettings | null = null;
 
-  constructor(private supabase: any, private clinicId: string) {}
+  constructor(
+    private supabase: any,
+    private clinicId: string
+  ) {}
 
   // =======================================
   // PROVIDER MANAGEMENT
@@ -47,12 +50,17 @@ export class EmailService {
           this.providers.set(config.provider, provider);
         }
       } catch (error) {
-        console.error(`Failed to initialize email provider ${config.provider}:`, error);
+        console.error(
+          `Failed to initialize email provider ${config.provider}:`,
+          error
+        );
       }
     }
   }
 
-  private async createProvider(config: EmailProviderConfig): Promise<EmailServiceInterface | null> {
+  private async createProvider(
+    config: EmailProviderConfig
+  ): Promise<EmailServiceInterface | null> {
     switch (config.provider) {
       case 'smtp':
         return new SMTPEmailProvider(config.settings as SMTPConfig);
@@ -76,7 +84,10 @@ export class EmailService {
   // EMAIL SENDING
   // =======================================
 
-  async sendEmail(message: EmailMessage, providerPreference?: EmailProvider): Promise<EmailServiceResponse> {
+  async sendEmail(
+    message: EmailMessage,
+    providerPreference?: EmailProvider
+  ): Promise<EmailServiceResponse> {
     try {
       // Select best provider
       const provider = this.selectProvider(providerPreference);
@@ -87,7 +98,9 @@ export class EmailService {
       // Validate message
       const validationResult = await this.validateMessage(message);
       if (!validationResult.isValid) {
-        throw new Error(`Message validation failed: ${validationResult.reason}`);
+        throw new Error(
+          `Message validation failed: ${validationResult.reason}`
+        );
       }
 
       // Apply settings
@@ -116,7 +129,8 @@ export class EmailService {
       console.error('Email sending failed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error occurred',
+        error:
+          error instanceof Error ? error.message : 'Unknown error occurred',
       };
     }
   }
@@ -124,7 +138,7 @@ export class EmailService {
   async sendBulkEmail(
     messages: EmailMessage[],
     providerPreference?: EmailProvider,
-    batchSize: number = 10
+    batchSize = 10
   ): Promise<BulkEmailResponse> {
     try {
       const provider = this.selectProvider(providerPreference);
@@ -139,7 +153,7 @@ export class EmailService {
       // Process in batches
       for (let i = 0; i < messages.length; i += batchSize) {
         const batch = messages.slice(i, i + batchSize);
-        
+
         try {
           const batchResult = await provider.sendBulkEmail(batch);
           results.push(...batchResult.results);
@@ -148,7 +162,7 @@ export class EmailService {
 
           // Add delay between batches to respect rate limits
           if (i + batchSize < messages.length) {
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            await new Promise((resolve) => setTimeout(resolve, 1000));
           }
 
           // Log batch events
@@ -168,14 +182,20 @@ export class EmailService {
             });
           }
         } catch (batchError) {
-          console.error(`Batch ${Math.floor(i / batchSize) + 1} failed:`, batchError);
-          
+          console.error(
+            `Batch ${Math.floor(i / batchSize) + 1} failed:`,
+            batchError
+          );
+
           // Mark all emails in batch as failed
           for (const message of batch) {
             results.push({
               email: message.to[0]?.email || 'unknown',
               success: false,
-              error: batchError instanceof Error ? batchError.message : 'Batch failed',
+              error:
+                batchError instanceof Error
+                  ? batchError.message
+                  : 'Batch failed',
             });
             totalFailed++;
           }
@@ -192,10 +212,11 @@ export class EmailService {
       console.error('Bulk email sending failed:', error);
       return {
         success: false,
-        results: messages.map(msg => ({
+        results: messages.map((msg) => ({
           email: msg.to[0]?.email || 'unknown',
           success: false,
-          error: error instanceof Error ? error.message : 'Unknown error occurred',
+          error:
+            error instanceof Error ? error.message : 'Unknown error occurred',
         })),
         totalSent: 0,
         totalFailed: messages.length,
@@ -207,15 +228,19 @@ export class EmailService {
   // TEMPLATE MANAGEMENT
   // =======================================
 
-  async createTemplate(template: Omit<EmailTemplate, 'id' | 'createdAt' | 'updatedAt'>): Promise<EmailTemplate> {
+  async createTemplate(
+    template: Omit<EmailTemplate, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<EmailTemplate> {
     const { data, error } = await this.supabase
       .from('email_templates')
-      .insert([{
-        ...template,
-        id: crypto.randomUUID(),
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      }])
+      .insert([
+        {
+          ...template,
+          id: crypto.randomUUID(),
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        },
+      ])
       .select()
       .single();
 
@@ -226,7 +251,10 @@ export class EmailService {
     return this.mapDatabaseTemplate(data);
   }
 
-  async updateTemplate(id: string, updates: Partial<EmailTemplate>): Promise<EmailTemplate> {
+  async updateTemplate(
+    id: string,
+    updates: Partial<EmailTemplate>
+  ): Promise<EmailTemplate> {
     const { data, error } = await this.supabase
       .from('email_templates')
       .update({
@@ -293,7 +321,9 @@ export class EmailService {
     }
 
     if (filters?.search) {
-      query = query.or(`name.ilike.%${filters.search}%,subject.ilike.%${filters.search}%`);
+      query = query.or(
+        `name.ilike.%${filters.search}%,subject.ilike.%${filters.search}%`
+      );
     }
 
     const { data, error } = await query;
@@ -309,7 +339,10 @@ export class EmailService {
   // PREVIEW & VALIDATION
   // =======================================
 
-  async previewTemplate(templateId: string, variables: Record<string, any>): Promise<EmailPreview> {
+  async previewTemplate(
+    templateId: string,
+    variables: Record<string, any>
+  ): Promise<EmailPreview> {
     const template = await this.getTemplate(templateId);
     if (!template) {
       throw new Error('Template not found');
@@ -318,7 +351,9 @@ export class EmailService {
     return {
       subject: this.interpolateTemplate(template.subject, variables),
       htmlContent: this.interpolateTemplate(template.htmlContent, variables),
-      textContent: template.textContent ? this.interpolateTemplate(template.textContent, variables) : undefined,
+      textContent: template.textContent
+        ? this.interpolateTemplate(template.textContent, variables)
+        : undefined,
       variables,
     };
   }
@@ -396,7 +431,9 @@ export class EmailService {
     return this.calculateAnalytics(events);
   }
 
-  async getDeliveryReport(messageId: string): Promise<EmailDeliveryReport | null> {
+  async getDeliveryReport(
+    messageId: string
+  ): Promise<EmailDeliveryReport | null> {
     const { data, error } = await this.supabase
       .from('email_events')
       .select('*')
@@ -412,11 +449,11 @@ export class EmailService {
     }
 
     const events = data.map(this.mapDatabaseEvent);
-    const sentEvent = events.find(e => e.event === 'sent');
-    const deliveredEvent = events.find(e => e.event === 'delivered');
-    const openedEvent = events.find(e => e.event === 'opened');
-    const clickedEvent = events.find(e => e.event === 'clicked');
-    const bouncedEvent = events.find(e => e.event === 'bounced');
+    const sentEvent = events.find((e) => e.event === 'sent');
+    const deliveredEvent = events.find((e) => e.event === 'delivered');
+    const openedEvent = events.find((e) => e.event === 'opened');
+    const clickedEvent = events.find((e) => e.event === 'clicked');
+    const bouncedEvent = events.find((e) => e.event === 'bounced');
 
     return {
       messageId,
@@ -436,7 +473,9 @@ export class EmailService {
   // PRIVATE HELPER METHODS
   // =======================================
 
-  private selectProvider(preference?: EmailProvider): EmailServiceInterface | null {
+  private selectProvider(
+    preference?: EmailProvider
+  ): EmailServiceInterface | null {
     if (preference && this.providers.has(preference)) {
       return this.providers.get(preference)!;
     }
@@ -453,7 +492,9 @@ export class EmailService {
     return 'unknown';
   }
 
-  private async validateMessage(message: EmailMessage): Promise<{ isValid: boolean; reason?: string }> {
+  private async validateMessage(
+    message: EmailMessage
+  ): Promise<{ isValid: boolean; reason?: string }> {
     if (!message.to || message.to.length === 0) {
       return { isValid: false, reason: 'No recipients specified' };
     }
@@ -469,7 +510,10 @@ export class EmailService {
     for (const recipient of message.to) {
       const validation = await this.validateEmail(recipient.email);
       if (!validation.isValid) {
-        return { isValid: false, reason: `Invalid recipient ${recipient.email}: ${validation.reason}` };
+        return {
+          isValid: false,
+          reason: `Invalid recipient ${recipient.email}: ${validation.reason}`,
+        };
       }
     }
 
@@ -509,7 +553,10 @@ export class EmailService {
     return data;
   }
 
-  private interpolateTemplate(template: string, variables: Record<string, any>): string {
+  private interpolateTemplate(
+    template: string,
+    variables: Record<string, any>
+  ): string {
     return template.replace(/\{\{(\w+)\}\}/g, (match, key) => {
       return variables[key] !== undefined ? String(variables[key]) : match;
     });
@@ -549,10 +596,13 @@ export class EmailService {
   }
 
   private calculateAnalytics(events: any[]): EmailAnalytics {
-    const eventCounts = events.reduce((acc, event) => {
-      acc[event.event] = (acc[event.event] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+    const eventCounts = events.reduce(
+      (acc, event) => {
+        acc[event.event] = (acc[event.event] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>
+    );
 
     const totalSent = eventCounts.sent || 0;
     const delivered = eventCounts.delivered || 0;
@@ -582,13 +632,13 @@ export class EmailService {
 
   private async logEmailEvent(event: EmailEvent): Promise<void> {
     try {
-      await this.supabase
-        .from('email_events')
-        .insert([{
+      await this.supabase.from('email_events').insert([
+        {
           ...event,
           clinic_id: this.clinicId,
           timestamp: event.timestamp.toISOString(),
-        }]);
+        },
+      ]);
     } catch (error) {
       console.error('Failed to log email event:', error);
     }
@@ -602,7 +652,7 @@ export class EmailService {
 class SMTPEmailProvider implements EmailServiceInterface {
   private transporter: nodemailer.Transporter;
 
-  constructor(private config: SMTPConfig) {
+  constructor(config: SMTPConfig) {
     this.transporter = nodemailer.createTransporter({
       host: config.host,
       port: config.port,
@@ -618,14 +668,16 @@ class SMTPEmailProvider implements EmailServiceInterface {
     try {
       const result = await this.transporter.sendMail({
         from: `${message.from.name || ''} <${message.from.email}>`,
-        to: message.to.map(r => `${r.name || ''} <${r.email}>`).join(', '),
-        cc: message.cc?.map(r => `${r.name || ''} <${r.email}>`).join(', '),
-        bcc: message.bcc?.map(r => `${r.name || ''} <${r.email}>`).join(', '),
-        replyTo: message.replyTo ? `${message.replyTo.name || ''} <${message.replyTo.email}>` : undefined,
+        to: message.to.map((r) => `${r.name || ''} <${r.email}>`).join(', '),
+        cc: message.cc?.map((r) => `${r.name || ''} <${r.email}>`).join(', '),
+        bcc: message.bcc?.map((r) => `${r.name || ''} <${r.email}>`).join(', '),
+        replyTo: message.replyTo
+          ? `${message.replyTo.name || ''} <${message.replyTo.email}>`
+          : undefined,
         subject: message.subject,
         html: message.htmlContent,
         text: message.textContent,
-        attachments: message.attachments?.map(att => ({
+        attachments: message.attachments?.map((att) => ({
           filename: att.filename,
           content: att.content,
           contentType: att.contentType,
@@ -675,7 +727,7 @@ class SMTPEmailProvider implements EmailServiceInterface {
     };
   }
 
-  async getDeliveryStatus(messageId: string): Promise<EmailStatus> {
+  async getDeliveryStatus(_messageId: string): Promise<EmailStatus> {
     // SMTP doesn't provide delivery status by default
     return 'sent';
   }
@@ -689,7 +741,11 @@ class SMTPEmailProvider implements EmailServiceInterface {
     }
   }
 
-  async getQuotaUsage(): Promise<{ used: number; limit: number; resetDate?: Date }> {
+  async getQuotaUsage(): Promise<{
+    used: number;
+    limit: number;
+    resetDate?: Date;
+  }> {
     // SMTP doesn't have quota limits by default
     return { used: 0, limit: Number.MAX_SAFE_INTEGER };
   }
@@ -713,18 +769,22 @@ class SESEmailProvider implements EmailServiceInterface {
       const command = new SendEmailCommand({
         Source: `${message.from.name || ''} <${message.from.email}>`,
         Destination: {
-          ToAddresses: message.to.map(r => `${r.name || ''} <${r.email}>`),
-          CcAddresses: message.cc?.map(r => `${r.name || ''} <${r.email}>`),
-          BccAddresses: message.bcc?.map(r => `${r.name || ''} <${r.email}>`),
+          ToAddresses: message.to.map((r) => `${r.name || ''} <${r.email}>`),
+          CcAddresses: message.cc?.map((r) => `${r.name || ''} <${r.email}>`),
+          BccAddresses: message.bcc?.map((r) => `${r.name || ''} <${r.email}>`),
         },
         Message: {
           Subject: { Data: message.subject },
           Body: {
             Html: { Data: message.htmlContent },
-            Text: message.textContent ? { Data: message.textContent } : undefined,
+            Text: message.textContent
+              ? { Data: message.textContent }
+              : undefined,
           },
         },
-        ReplyToAddresses: message.replyTo ? [`${message.replyTo.name || ''} <${message.replyTo.email}>`] : undefined,
+        ReplyToAddresses: message.replyTo
+          ? [`${message.replyTo.name || ''} <${message.replyTo.email}>`]
+          : undefined,
         ConfigurationSetName: this.config.configurationSet,
       });
 
@@ -774,7 +834,7 @@ class SESEmailProvider implements EmailServiceInterface {
     };
   }
 
-  async getDeliveryStatus(messageId: string): Promise<EmailStatus> {
+  async getDeliveryStatus(_messageId: string): Promise<EmailStatus> {
     // Would need to implement SES event tracking
     return 'sent';
   }
@@ -789,7 +849,11 @@ class SESEmailProvider implements EmailServiceInterface {
     }
   }
 
-  async getQuotaUsage(): Promise<{ used: number; limit: number; resetDate?: Date }> {
+  async getQuotaUsage(): Promise<{
+    used: number;
+    limit: number;
+    resetDate?: Date;
+  }> {
     // Would need to implement SES quota checking
     return { used: 0, limit: 200 }; // SES default for new accounts
   }
@@ -797,18 +861,23 @@ class SESEmailProvider implements EmailServiceInterface {
 
 // Placeholder implementations for other providers
 class SendGridEmailProvider implements EmailServiceInterface {
-  constructor(private config: SendGridConfig) {}
+  constructor(_config: SendGridConfig) {}
 
-  async sendEmail(message: EmailMessage): Promise<EmailServiceResponse> {
+  async sendEmail(_message: EmailMessage): Promise<EmailServiceResponse> {
     // SendGrid implementation would go here
     return { success: false, error: 'SendGrid not implemented yet' };
   }
 
   async sendBulkEmail(messages: EmailMessage[]): Promise<BulkEmailResponse> {
-    return { success: false, results: [], totalSent: 0, totalFailed: messages.length };
+    return {
+      success: false,
+      results: [],
+      totalSent: 0,
+      totalFailed: messages.length,
+    };
   }
 
-  async getDeliveryStatus(messageId: string): Promise<EmailStatus> {
+  async getDeliveryStatus(_messageId: string): Promise<EmailStatus> {
     return 'sent';
   }
 
@@ -816,23 +885,32 @@ class SendGridEmailProvider implements EmailServiceInterface {
     return false;
   }
 
-  async getQuotaUsage(): Promise<{ used: number; limit: number; resetDate?: Date }> {
+  async getQuotaUsage(): Promise<{
+    used: number;
+    limit: number;
+    resetDate?: Date;
+  }> {
     return { used: 0, limit: 100 };
   }
 }
 
 class MailgunEmailProvider implements EmailServiceInterface {
-  constructor(private config: MailgunConfig) {}
+  constructor(_config: MailgunConfig) {}
 
-  async sendEmail(message: EmailMessage): Promise<EmailServiceResponse> {
+  async sendEmail(_message: EmailMessage): Promise<EmailServiceResponse> {
     return { success: false, error: 'Mailgun not implemented yet' };
   }
 
   async sendBulkEmail(messages: EmailMessage[]): Promise<BulkEmailResponse> {
-    return { success: false, results: [], totalSent: 0, totalFailed: messages.length };
+    return {
+      success: false,
+      results: [],
+      totalSent: 0,
+      totalFailed: messages.length,
+    };
   }
 
-  async getDeliveryStatus(messageId: string): Promise<EmailStatus> {
+  async getDeliveryStatus(_messageId: string): Promise<EmailStatus> {
     return 'sent';
   }
 
@@ -840,23 +918,32 @@ class MailgunEmailProvider implements EmailServiceInterface {
     return false;
   }
 
-  async getQuotaUsage(): Promise<{ used: number; limit: number; resetDate?: Date }> {
+  async getQuotaUsage(): Promise<{
+    used: number;
+    limit: number;
+    resetDate?: Date;
+  }> {
     return { used: 0, limit: 100 };
   }
 }
 
 class ResendEmailProvider implements EmailServiceInterface {
-  constructor(private config: ResendConfig) {}
+  constructor(_config: ResendConfig) {}
 
-  async sendEmail(message: EmailMessage): Promise<EmailServiceResponse> {
+  async sendEmail(_message: EmailMessage): Promise<EmailServiceResponse> {
     return { success: false, error: 'Resend not implemented yet' };
   }
 
   async sendBulkEmail(messages: EmailMessage[]): Promise<BulkEmailResponse> {
-    return { success: false, results: [], totalSent: 0, totalFailed: messages.length };
+    return {
+      success: false,
+      results: [],
+      totalSent: 0,
+      totalFailed: messages.length,
+    };
   }
 
-  async getDeliveryStatus(messageId: string): Promise<EmailStatus> {
+  async getDeliveryStatus(_messageId: string): Promise<EmailStatus> {
     return 'sent';
   }
 
@@ -864,23 +951,32 @@ class ResendEmailProvider implements EmailServiceInterface {
     return false;
   }
 
-  async getQuotaUsage(): Promise<{ used: number; limit: number; resetDate?: Date }> {
+  async getQuotaUsage(): Promise<{
+    used: number;
+    limit: number;
+    resetDate?: Date;
+  }> {
     return { used: 0, limit: 100 };
   }
 }
 
 class PostmarkEmailProvider implements EmailServiceInterface {
-  constructor(private config: PostmarkConfig) {}
+  constructor(_config: PostmarkConfig) {}
 
-  async sendEmail(message: EmailMessage): Promise<EmailServiceResponse> {
+  async sendEmail(_message: EmailMessage): Promise<EmailServiceResponse> {
     return { success: false, error: 'Postmark not implemented yet' };
   }
 
   async sendBulkEmail(messages: EmailMessage[]): Promise<BulkEmailResponse> {
-    return { success: false, results: [], totalSent: 0, totalFailed: messages.length };
+    return {
+      success: false,
+      results: [],
+      totalSent: 0,
+      totalFailed: messages.length,
+    };
   }
 
-  async getDeliveryStatus(messageId: string): Promise<EmailStatus> {
+  async getDeliveryStatus(_messageId: string): Promise<EmailStatus> {
     return 'sent';
   }
 
@@ -888,7 +984,11 @@ class PostmarkEmailProvider implements EmailServiceInterface {
     return false;
   }
 
-  async getQuotaUsage(): Promise<{ used: number; limit: number; resetDate?: Date }> {
+  async getQuotaUsage(): Promise<{
+    used: number;
+    limit: number;
+    resetDate?: Date;
+  }> {
     return { used: 0, limit: 100 };
   }
 }

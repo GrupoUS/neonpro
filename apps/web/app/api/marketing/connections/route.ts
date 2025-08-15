@@ -1,13 +1,13 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { createClient } from '@/app/utils/supabase/server';
 
 /**
  * Marketing Platform Connections API Route
- * 
+ *
  * Handles CRUD operations for marketing platform connections
  * Manages OAuth tokens, sync configurations, and connection health
- * 
+ *
  * Research-backed implementation following:
  * - HubSpot OAuth 2.0 flow
  * - Mailchimp API key authentication
@@ -27,14 +27,18 @@ const createConnectionSchema = z.object({
   webhook_url: z.string().url().optional(),
   webhook_secret: z.string().optional(), // Will be encrypted
   sync_configuration: z.record(z.any()).default({}),
-  data_flow_direction: z.enum(['inbound', 'outbound', 'bidirectional']).default('bidirectional')
+  data_flow_direction: z
+    .enum(['inbound', 'outbound', 'bidirectional'])
+    .default('bidirectional'),
 });
 
 const updateConnectionSchema = z.object({
   connection_name: z.string().min(1).max(255).optional(),
   sync_configuration: z.record(z.any()).optional(),
   sync_status: z.enum(['active', 'error', 'paused', 'disconnected']).optional(),
-  data_flow_direction: z.enum(['inbound', 'outbound', 'bidirectional']).optional()
+  data_flow_direction: z
+    .enum(['inbound', 'outbound', 'bidirectional'])
+    .optional(),
 });
 
 type CreateConnectionData = z.infer<typeof createConnectionSchema>;
@@ -42,15 +46,17 @@ type UpdateConnectionData = z.infer<typeof updateConnectionSchema>;
 
 /**
  * GET /api/marketing/connections
- * 
+ *
  * Retrieves all marketing platform connections for the user's clinic
  */
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Verify authentication
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session) {
       return NextResponse.json(
         { error: 'Authentication required' },
@@ -112,8 +118,9 @@ export async function GET(request: NextRequest) {
       query = query.eq('sync_status', syncStatus);
     }
 
-    const { data: connections, error } = await query
-      .order('created_at', { ascending: false });
+    const { data: connections, error } = await query.order('created_at', {
+      ascending: false,
+    });
 
     if (error) {
       console.error('Error fetching marketing connections:', error);
@@ -124,26 +131,26 @@ export async function GET(request: NextRequest) {
     }
 
     // Remove sensitive credential data from response
-    const sanitizedConnections = connections?.map(connection => ({
+    const sanitizedConnections = connections?.map((connection) => ({
       ...connection,
       has_api_key: !!connection.api_key,
       has_access_token: !!connection.access_token,
       has_refresh_token: !!connection.refresh_token,
       has_webhook_secret: !!connection.webhook_secret,
-      token_valid: connection.token_expires_at ? 
-        new Date(connection.token_expires_at) > new Date() : null,
+      token_valid: connection.token_expires_at
+        ? new Date(connection.token_expires_at) > new Date()
+        : null,
       api_key: undefined,
       access_token: undefined,
       refresh_token: undefined,
-      webhook_secret: undefined
+      webhook_secret: undefined,
     }));
 
     return NextResponse.json({
       success: true,
       data: sanitizedConnections,
-      total: connections?.length || 0
+      total: connections?.length || 0,
     });
-
   } catch (error) {
     console.error('Marketing connections GET error:', error);
     return NextResponse.json(
@@ -155,16 +162,18 @@ export async function GET(request: NextRequest) {
 
 /**
  * POST /api/marketing/connections
- * 
+ *
  * Creates a new marketing platform connection
  * Typically called after OAuth flow completion or API key setup
  */
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Verify authentication
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session) {
       return NextResponse.json(
         { error: 'Authentication required' },
@@ -267,15 +276,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    return NextResponse.json({
-      success: true,
-      data: newConnection,
-      message: 'Marketing platform connected successfully'
-    }, { status: 201 });
-
+    return NextResponse.json(
+      {
+        success: true,
+        data: newConnection,
+        message: 'Marketing platform connected successfully',
+      },
+      { status: 201 }
+    );
   } catch (error) {
     console.error('Marketing connections POST error:', error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },

@@ -1,66 +1,64 @@
 /**
  * Performance Metrics Panel Component
  * Epic 10 - Story 10.5: Vision Analytics Dashboard (Real-time Insights)
- * 
+ *
  * Displays comprehensive system and application performance metrics including:
  * - Real-time system resource monitoring (CPU, Memory, Disk, Network)
  * - Application performance metrics (Response times, Throughput, Error rates)
  * - Database performance tracking (Query times, Connection pools)
  * - AI model performance and inference metrics
  * - Performance trends and historical analysis
- * 
+ *
  * BMAD METHOD + VOIDBEAST V6.0 ENHANCED - Quality ≥9.8/10
  */
 
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  AreaChart,
-  Area,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  PieChart,
-  Pie,
-  Cell
-} from 'recharts';
 import {
   Activity,
-  Cpu,
-  HardDrive,
-  Wifi,
-  Database,
+  AlertTriangle,
   Brain,
   Clock,
-  AlertTriangle,
-  TrendingUp,
-  TrendingDown,
-  Zap,
-  Server,
+  Cpu,
+  Database,
+  HardDrive,
   Monitor,
-  RefreshCw
+  RefreshCw,
+  Server,
+  TrendingDown,
+  TrendingUp,
+  Wifi,
+  Zap,
 } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import {
+  CartesianGrid,
+  Legend,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 // Analytics Engine
 import {
+  type AnalyticsTimeframe,
+  AnalyticsUtils,
   performanceMonitoringEngine,
   type RealtimePerformanceData,
-  type PerformanceCategory,
-  type AnalyticsTimeframe,
-  AnalyticsUtils
 } from '@/lib/analytics';
 
 // Types
@@ -96,10 +94,13 @@ export function PerformanceMetricsPanel({
   data,
   isLoading,
   timeframe,
-  clinicId
+  clinicId,
 }: PerformanceMetricsPanelProps) {
-  const [selectedCategory, setSelectedCategory] = useState<keyof RealtimePerformanceData['categories']>('system');
-  const [historicalData, setHistoricalData] = useState<PerformanceChartData[]>([]);
+  const [selectedCategory, setSelectedCategory] =
+    useState<keyof RealtimePerformanceData['categories']>('system');
+  const [historicalData, setHistoricalData] = useState<PerformanceChartData[]>(
+    []
+  );
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
 
   /**
@@ -110,7 +111,7 @@ export function PerformanceMetricsPanel({
 
     try {
       setIsLoadingHistory(true);
-      
+
       const history = await performanceMonitoringEngine.getHistoricalData(
         clinicId,
         AnalyticsUtils.getTimeRangeStart(timeframe),
@@ -127,7 +128,7 @@ export function PerformanceMetricsPanel({
 
   useEffect(() => {
     loadHistoricalData();
-  }, [timeframe, clinicId]);
+  }, [loadHistoricalData]);
 
   /**
    * MetricCard component for individual performance metrics
@@ -139,37 +140,38 @@ export function PerformanceMetricsPanel({
     icon,
     status,
     trend,
-    description
+    description,
   }) => {
     const statusColors = {
       optimal: 'text-green-600 bg-green-50 border-green-200',
       good: 'text-lime-600 bg-lime-50 border-lime-200',
       warning: 'text-amber-600 bg-amber-50 border-amber-200',
-      critical: 'text-red-600 bg-red-50 border-red-200'
+      critical: 'text-red-600 bg-red-50 border-red-200',
     };
 
     return (
       <Card className={`${statusColors[status]}`}>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">{title}</CardTitle>
+          <CardTitle className="font-medium text-sm">{title}</CardTitle>
           {icon}
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">
-            {value.toFixed(1)}{unit}
+          <div className="font-bold text-2xl">
+            {value.toFixed(1)}
+            {unit}
           </div>
           {trend !== undefined && (
-            <div className="flex items-center text-xs text-muted-foreground mt-1">
+            <div className="mt-1 flex items-center text-muted-foreground text-xs">
               {trend > 0 ? (
-                <TrendingUp className="w-3 h-3 text-red-500 mr-1" />
+                <TrendingUp className="mr-1 h-3 w-3 text-red-500" />
               ) : (
-                <TrendingDown className="w-3 h-3 text-green-500 mr-1" />
+                <TrendingDown className="mr-1 h-3 w-3 text-green-500" />
               )}
               {Math.abs(trend).toFixed(1)}% vs last period
             </div>
           )}
           {description && (
-            <p className="text-xs text-muted-foreground mt-1">{description}</p>
+            <p className="mt-1 text-muted-foreground text-xs">{description}</p>
           )}
         </CardContent>
       </Card>
@@ -193,35 +195,50 @@ export function PerformanceMetricsPanel({
         icon: <Activity className="h-4 w-4" />,
         status: AnalyticsUtils.getStatusFromScore(data.healthScore) as any,
         trend: data.trends?.healthScore || 0,
-        description: 'Overall system health'
+        description: 'Overall system health',
       },
       {
         title: 'Availability',
         value: data.summary.availability,
         unit: '%',
         icon: <Server className="h-4 w-4" />,
-        status: data.summary.availability > 99.5 ? 'optimal' : data.summary.availability > 99 ? 'good' : 'warning' as any,
+        status:
+          data.summary.availability > 99.5
+            ? 'optimal'
+            : data.summary.availability > 99
+              ? 'good'
+              : ('warning' as any),
         trend: data.trends?.availability || 0,
-        description: 'System uptime'
+        description: 'System uptime',
       },
       {
         title: 'Efficiency',
         value: data.summary.efficiency,
         unit: '%',
         icon: <Zap className="h-4 w-4" />,
-        status: data.summary.efficiency > 90 ? 'optimal' : data.summary.efficiency > 80 ? 'good' : 'warning' as any,
+        status:
+          data.summary.efficiency > 90
+            ? 'optimal'
+            : data.summary.efficiency > 80
+              ? 'good'
+              : ('warning' as any),
         trend: data.trends?.efficiency || 0,
-        description: 'Resource utilization efficiency'
+        description: 'Resource utilization efficiency',
       },
       {
         title: 'Security Score',
         value: data.summary.securityScore,
         unit: '%',
         icon: <Monitor className="h-4 w-4" />,
-        status: data.summary.securityScore > 95 ? 'optimal' : data.summary.securityScore > 90 ? 'good' : 'warning' as any,
+        status:
+          data.summary.securityScore > 95
+            ? 'optimal'
+            : data.summary.securityScore > 90
+              ? 'good'
+              : ('warning' as any),
         trend: data.trends?.securityScore || 0,
-        description: 'Security compliance score'
-      }
+        description: 'Security compliance score',
+      },
     ];
   }, [data]);
 
@@ -230,7 +247,7 @@ export function PerformanceMetricsPanel({
 
     const metrics = Object.entries(categoryData.metrics).map(([key, value]) => {
       let title, unit, icon, threshold;
-      
+
       switch (key) {
         case 'cpu_usage':
           title = 'CPU Usage';
@@ -287,7 +304,9 @@ export function PerformanceMetricsPanel({
           threshold = { optimal: 300, good: 500, warning: 1000 };
           break;
         default:
-          title = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+          title = key
+            .replace(/_/g, ' ')
+            .replace(/\b\w/g, (l) => l.toUpperCase());
           unit = '';
           icon = <Activity className="h-4 w-4" />;
           threshold = { optimal: 80, good: 60, warning: 40 };
@@ -295,17 +314,32 @@ export function PerformanceMetricsPanel({
 
       let status: 'optimal' | 'good' | 'warning' | 'critical';
       if (key === 'error_rate') {
-        status = value <= threshold.optimal ? 'optimal' : 
-                value <= threshold.good ? 'good' : 
-                value <= threshold.warning ? 'warning' : 'critical';
+        status =
+          value <= threshold.optimal
+            ? 'optimal'
+            : value <= threshold.good
+              ? 'good'
+              : value <= threshold.warning
+                ? 'warning'
+                : 'critical';
       } else if (key === 'throughput') {
-        status = value >= threshold.optimal ? 'optimal' : 
-                value >= threshold.good ? 'good' : 
-                value >= threshold.warning ? 'warning' : 'critical';
+        status =
+          value >= threshold.optimal
+            ? 'optimal'
+            : value >= threshold.good
+              ? 'good'
+              : value >= threshold.warning
+                ? 'warning'
+                : 'critical';
       } else {
-        status = value <= threshold.optimal ? 'optimal' : 
-                value <= threshold.good ? 'good' : 
-                value <= threshold.warning ? 'warning' : 'critical';
+        status =
+          value <= threshold.optimal
+            ? 'optimal'
+            : value <= threshold.good
+              ? 'good'
+              : value <= threshold.warning
+                ? 'warning'
+                : 'critical';
       }
 
       return {
@@ -314,7 +348,7 @@ export function PerformanceMetricsPanel({
         unit,
         icon,
         status,
-        trend: data?.trends?.[key] || 0
+        trend: data?.trends?.[key] || 0,
       };
     });
 
@@ -327,20 +361,20 @@ export function PerformanceMetricsPanel({
     secondary: '#10b981',
     accent: '#f59e0b',
     danger: '#ef4444',
-    muted: '#6b7280'
+    muted: '#6b7280',
   };
 
   if (isLoading) {
     return (
       <div className="space-y-6">
         <div className="animate-pulse">
-          <div className="h-8 bg-gray-200 rounded w-1/3 mb-4"></div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <div className="mb-4 h-8 w-1/3 rounded bg-gray-200" />
+          <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="h-32 bg-gray-200 rounded"></div>
+              <div className="h-32 rounded bg-gray-200" key={i} />
             ))}
           </div>
-          <div className="h-96 bg-gray-200 rounded"></div>
+          <div className="h-96 rounded bg-gray-200" />
         </div>
       </div>
     );
@@ -349,13 +383,17 @@ export function PerformanceMetricsPanel({
   if (!data) {
     return (
       <Card>
-        <CardContent className="flex items-center justify-center h-96">
+        <CardContent className="flex h-96 items-center justify-center">
           <div className="text-center">
-            <AlertTriangle className="h-12 w-12 text-amber-500 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">No Performance Data</h3>
-            <p className="text-gray-600">Unable to load performance metrics at this time.</p>
+            <AlertTriangle className="mx-auto mb-4 h-12 w-12 text-amber-500" />
+            <h3 className="mb-2 font-semibold text-gray-900 text-lg">
+              No Performance Data
+            </h3>
+            <p className="text-gray-600">
+              Unable to load performance metrics at this time.
+            </p>
             <Button className="mt-4" onClick={() => window.location.reload()}>
-              <RefreshCw className="w-4 h-4 mr-2" />
+              <RefreshCw className="mr-2 h-4 w-4" />
               Retry
             </Button>
           </div>
@@ -368,8 +406,10 @@ export function PerformanceMetricsPanel({
     <div className="space-y-6">
       {/* Overall Performance Metrics */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Overall Performance</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <h3 className="mb-4 font-semibold text-gray-900 text-lg">
+          Overall Performance
+        </h3>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
           {overallMetrics.map((metric) => (
             <MetricCard key={metric.title} {...metric} />
           ))}
@@ -380,7 +420,7 @@ export function PerformanceMetricsPanel({
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Activity className="w-5 h-5 text-blue-600" />
+            <Activity className="h-5 w-5 text-blue-600" />
             Detailed Performance Metrics
           </CardTitle>
           <CardDescription>
@@ -388,7 +428,10 @@ export function PerformanceMetricsPanel({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs value={selectedCategory} onValueChange={(value) => setSelectedCategory(value as any)}>
+          <Tabs
+            onValueChange={(value) => setSelectedCategory(value as any)}
+            value={selectedCategory}
+          >
             <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="system">System</TabsTrigger>
               <TabsTrigger value="application">Application</TabsTrigger>
@@ -396,30 +439,40 @@ export function PerformanceMetricsPanel({
               <TabsTrigger value="ai_models">AI Models</TabsTrigger>
             </TabsList>
 
-            <TabsContent value={selectedCategory} className="space-y-6">
+            <TabsContent className="space-y-6" value={selectedCategory}>
               {/* Category Health Score */}
               <div className="flex items-center justify-between">
                 <div>
-                  <h4 className="text-sm font-medium text-gray-700">
-                    {selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)} Health
+                  <h4 className="font-medium text-gray-700 text-sm">
+                    {selectedCategory.charAt(0).toUpperCase() +
+                      selectedCategory.slice(1)}{' '}
+                    Health
                   </h4>
-                  <div className="flex items-center gap-2 mt-1">
-                    <Progress value={categoryData?.healthScore || 0} className="w-32" />
-                    <span className="text-sm font-mono">
+                  <div className="mt-1 flex items-center gap-2">
+                    <Progress
+                      className="w-32"
+                      value={categoryData?.healthScore || 0}
+                    />
+                    <span className="font-mono text-sm">
                       {(categoryData?.healthScore || 0).toFixed(0)}%
                     </span>
                   </div>
                 </div>
-                <Badge variant={
-                  (categoryData?.healthScore || 0) > 90 ? 'default' : 
-                  (categoryData?.healthScore || 0) > 70 ? 'secondary' : 'destructive'
-                }>
+                <Badge
+                  variant={
+                    (categoryData?.healthScore || 0) > 90
+                      ? 'default'
+                      : (categoryData?.healthScore || 0) > 70
+                        ? 'secondary'
+                        : 'destructive'
+                  }
+                >
                   {categoryData?.status || 'Unknown'}
                 </Badge>
               </div>
 
               {/* Category Metrics */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {categoryMetrics.map((metric) => (
                   <MetricCard key={metric.title} {...metric} />
                 ))}
@@ -434,7 +487,7 @@ export function PerformanceMetricsPanel({
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-green-600" />
+              <TrendingUp className="h-5 w-5 text-green-600" />
               Performance Trends
             </CardTitle>
             <CardDescription>
@@ -443,49 +496,53 @@ export function PerformanceMetricsPanel({
           </CardHeader>
           <CardContent>
             <div className="h-96">
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer height="100%" width="100%">
                 <LineChart data={historicalData}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis 
-                    dataKey="timestamp" 
-                    tickFormatter={(value) => new Date(value).toLocaleTimeString()}
+                  <XAxis
+                    dataKey="timestamp"
+                    tickFormatter={(value) =>
+                      new Date(value).toLocaleTimeString()
+                    }
                   />
                   <YAxis />
-                  <Tooltip 
-                    labelFormatter={(value) => new Date(value).toLocaleString()}
+                  <Tooltip
                     formatter={(value: number, name: string) => [
                       `${value.toFixed(1)}${name.includes('time') ? 'ms' : name.includes('rate') ? '%' : name.includes('usage') ? '%' : ''}`,
-                      name.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
+                      name
+                        .replace(/_/g, ' ')
+                        .replace(/\b\w/g, (l) => l.toUpperCase()),
                     ]}
+                    labelFormatter={(value) => new Date(value).toLocaleString()}
                   />
                   <Legend />
-                  <Line 
-                    type="monotone" 
-                    dataKey="cpu" 
-                    stroke={chartColors.primary} 
-                    strokeWidth={2}
+                  <Line
+                    dataKey="cpu"
                     name="CPU Usage"
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="memory" 
-                    stroke={chartColors.secondary} 
+                    stroke={chartColors.primary}
                     strokeWidth={2}
+                    type="monotone"
+                  />
+                  <Line
+                    dataKey="memory"
                     name="Memory Usage"
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="response_time" 
-                    stroke={chartColors.accent} 
+                    stroke={chartColors.secondary}
                     strokeWidth={2}
+                    type="monotone"
+                  />
+                  <Line
+                    dataKey="response_time"
                     name="Response Time"
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="error_rate" 
-                    stroke={chartColors.danger} 
+                    stroke={chartColors.accent}
                     strokeWidth={2}
+                    type="monotone"
+                  />
+                  <Line
+                    dataKey="error_rate"
                     name="Error Rate"
+                    stroke={chartColors.danger}
+                    strokeWidth={2}
+                    type="monotone"
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -499,7 +556,7 @@ export function PerformanceMetricsPanel({
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <AlertTriangle className="w-5 h-5 text-amber-600" />
+              <AlertTriangle className="h-5 w-5 text-amber-600" />
               Active Performance Alerts
             </CardTitle>
             <CardDescription>
@@ -509,24 +566,40 @@ export function PerformanceMetricsPanel({
           <CardContent>
             <div className="space-y-3">
               {data.alerts.map((alert, index) => (
-                <div key={index} className="flex items-start gap-3 p-3 border rounded-lg">
-                  <AlertTriangle className={`w-5 h-5 mt-0.5 ${
-                    alert.severity === 'critical' ? 'text-red-600' :
-                    alert.severity === 'warning' ? 'text-amber-600' :
-                    'text-blue-600'
-                  }`} />
+                <div
+                  className="flex items-start gap-3 rounded-lg border p-3"
+                  key={index}
+                >
+                  <AlertTriangle
+                    className={`mt-0.5 h-5 w-5 ${
+                      alert.severity === 'critical'
+                        ? 'text-red-600'
+                        : alert.severity === 'warning'
+                          ? 'text-amber-600'
+                          : 'text-blue-600'
+                    }`}
+                  />
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
-                      <h4 className="font-medium text-gray-900">{alert.title}</h4>
-                      <Badge variant={
-                        alert.severity === 'critical' ? 'destructive' :
-                        alert.severity === 'warning' ? 'secondary' : 'default'
-                      }>
+                      <h4 className="font-medium text-gray-900">
+                        {alert.title}
+                      </h4>
+                      <Badge
+                        variant={
+                          alert.severity === 'critical'
+                            ? 'destructive'
+                            : alert.severity === 'warning'
+                              ? 'secondary'
+                              : 'default'
+                        }
+                      >
                         {alert.severity}
                       </Badge>
                     </div>
-                    <p className="text-sm text-gray-600 mt-1">{alert.description}</p>
-                    <p className="text-xs text-gray-500 mt-2">
+                    <p className="mt-1 text-gray-600 text-sm">
+                      {alert.description}
+                    </p>
+                    <p className="mt-2 text-gray-500 text-xs">
                       {new Date(alert.timestamp).toLocaleString()}
                     </p>
                   </div>

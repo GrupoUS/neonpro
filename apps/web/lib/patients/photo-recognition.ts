@@ -1,6 +1,3 @@
-// lib/patients/photo-recognition.ts
-import { createClient } from "@/app/utils/supabase/server";
-
 export interface PhotoData {
   id: string;
   patientId: string;
@@ -66,14 +63,12 @@ export interface BiometricTemplate {
 }
 
 export class PhotoRecognitionSystem {
-  private supabase = createClient();
-
   /**
    * Faz upload e processamento inicial da foto
    */
   async uploadPatientPhoto(
-    patientId: string, 
-    photoFile: File, 
+    patientId: string,
+    photoFile: File,
     uploadedBy: string
   ): Promise<PhotoData> {
     try {
@@ -101,17 +96,17 @@ export class PhotoRecognitionSystem {
                 leftEye: { x: 320, y: 280 },
                 rightEye: { x: 480, y: 280 },
                 nose: { x: 400, y: 350 },
-                mouth: { x: 400, y: 420 }
+                mouth: { x: 400, y: 420 },
               },
               attributes: {
                 age: 35,
                 gender: 'male',
                 emotion: 'neutral',
-                glasses: false
-              }
-            }
-          ]
-        }
+                glasses: false,
+              },
+            },
+          ],
+        },
       };
 
       // Simular processamento assíncrono
@@ -133,7 +128,7 @@ export class PhotoRecognitionSystem {
     try {
       // Simular processamento de reconhecimento facial
       console.log(`Processando reconhecimento facial para foto ${photoId}`);
-      
+
       // Atualizar status para verified após processamento
       await this.updatePhotoStatus(photoId, 'verified', 0.92);
     } catch (error) {
@@ -146,8 +141,8 @@ export class PhotoRecognitionSystem {
    * Atualiza status da foto
    */
   private async updatePhotoStatus(
-    photoId: string, 
-    status: PhotoData['status'], 
+    photoId: string,
+    status: PhotoData['status'],
     verificationScore?: number
   ): Promise<void> {
     try {
@@ -164,7 +159,10 @@ export class PhotoRecognitionSystem {
   /**
    * Verifica identidade usando reconhecimento facial
    */
-  async verifyPatientIdentity(patientId: string, photoFile: File): Promise<VerificationResult> {
+  async verifyPatientIdentity(
+    patientId: string,
+    _photoFile: File
+  ): Promise<VerificationResult> {
     try {
       // Simular verificação de identidade
       const verification: VerificationResult = {
@@ -173,19 +171,19 @@ export class PhotoRecognitionSystem {
         matchedPatientId: patientId,
         similarPatients: [
           { patientId: 'pat_456', similarity: 0.72 },
-          { patientId: 'pat_789', similarity: 0.65 }
+          { patientId: 'pat_789', similarity: 0.65 },
         ],
         recommendations: [
           'Qualidade da imagem é adequada para verificação',
-          'Considerar foto adicional para maior precisão'
-        ]
+          'Considerar foto adicional para maior precisão',
+        ],
       };
 
       if (verification.confidence < 0.7) {
         verification.success = false;
         verification.issues = [
           'Confiança baixa na verificação',
-          'Foto pode estar com qualidade insuficiente'
+          'Foto pode estar com qualidade insuficiente',
         ];
       }
 
@@ -199,11 +197,16 @@ export class PhotoRecognitionSystem {
   /**
    * Busca pacientes similares usando reconhecimento facial
    */
-  async findSimilarPatients(photoFile: File, threshold: number = 0.7): Promise<Array<{
-    patientId: string;
-    similarity: number;
-    metadata: any;
-  }>> {
+  async findSimilarPatients(
+    _photoFile: File,
+    threshold = 0.7
+  ): Promise<
+    Array<{
+      patientId: string;
+      similarity: number;
+      metadata: any;
+    }>
+  > {
     try {
       // Simular busca por pacientes similares
       const similarPatients = [
@@ -213,8 +216,8 @@ export class PhotoRecognitionSystem {
           metadata: {
             name: 'João Silva',
             lastSeen: new Date('2024-01-15'),
-            photoCount: 2
-          }
+            photoCount: 2,
+          },
         },
         {
           patientId: 'pat_456',
@@ -222,12 +225,14 @@ export class PhotoRecognitionSystem {
           metadata: {
             name: 'José Santos',
             lastSeen: new Date('2024-02-20'),
-            photoCount: 1
-          }
-        }
+            photoCount: 1,
+          },
+        },
       ];
 
-      return similarPatients.filter(patient => patient.similarity >= threshold);
+      return similarPatients.filter(
+        (patient) => patient.similarity >= threshold
+      );
     } catch (error) {
       console.error('Erro na busca de pacientes similares:', error);
       throw new Error('Falha na busca de pacientes similares');
@@ -237,7 +242,10 @@ export class PhotoRecognitionSystem {
   /**
    * Gera template biométrico da foto
    */
-  async generateBiometricTemplate(photoId: string, algorithm: string = 'facenet'): Promise<BiometricTemplate> {
+  async generateBiometricTemplate(
+    _photoId: string,
+    algorithm = 'facenet'
+  ): Promise<BiometricTemplate> {
     try {
       // Simular geração de template biométrico
       const template: BiometricTemplate = {
@@ -246,7 +254,7 @@ export class PhotoRecognitionSystem {
         template: 'encoded_biometric_data_placeholder',
         algorithm,
         quality: 0.92,
-        createdAt: new Date()
+        createdAt: new Date(),
       };
 
       return template;
@@ -259,7 +267,10 @@ export class PhotoRecognitionSystem {
   /**
    * Compara duas fotos para verificação
    */
-  async comparePhotos(photo1Id: string, photo2Id: string): Promise<{
+  async comparePhotos(
+    _photo1Id: string,
+    _photo2Id: string
+  ): Promise<{
     similarity: number;
     confidence: number;
     match: boolean;
@@ -279,9 +290,9 @@ export class PhotoRecognitionSystem {
           landmarks: {
             eyeDistance: 0.96,
             nosePosition: 0.91,
-            mouthShape: 0.84
-          }
-        }
+            mouthShape: 0.84,
+          },
+        },
       };
 
       return comparison;
@@ -306,17 +317,19 @@ export class PhotoRecognitionSystem {
         isValid: true,
         quality: 0.85,
         issues: [] as string[],
-        recommendations: [] as string[]
+        recommendations: [] as string[],
       };
 
       // Verificações simuladas
-      if (photoFile.size < 50000) {
+      if (photoFile.size < 50_000) {
         validation.isValid = false;
         validation.issues.push('Arquivo muito pequeno');
-        validation.recommendations.push('Use foto com resolução mínima de 800x600');
+        validation.recommendations.push(
+          'Use foto com resolução mínima de 800x600'
+        );
       }
 
-      if (photoFile.size > 10000000) {
+      if (photoFile.size > 10_000_000) {
         validation.issues.push('Arquivo muito grande');
         validation.recommendations.push('Comprima a imagem para menos de 10MB');
       }
@@ -345,7 +358,7 @@ export class PhotoRecognitionSystem {
           id: 'photo_001',
           patientId,
           fileName: 'profile_photo.jpg',
-          fileSize: 245760,
+          fileSize: 245_760,
           mimeType: 'image/jpeg',
           uploadedAt: new Date('2024-01-15'),
           uploadedBy: 'user_123',
@@ -355,9 +368,9 @@ export class PhotoRecognitionSystem {
             width: 1024,
             height: 768,
             quality: 85,
-            faceDetected: true
-          }
-        }
+            faceDetected: true,
+          },
+        },
       ];
 
       return photos;
@@ -370,7 +383,10 @@ export class PhotoRecognitionSystem {
   /**
    * Remove foto do sistema
    */
-  async deletePatientPhoto(photoId: string, deletedBy: string): Promise<boolean> {
+  async deletePatientPhoto(
+    photoId: string,
+    deletedBy: string
+  ): Promise<boolean> {
     try {
       // Simular remoção da foto
       console.log(`Foto ${photoId} removida por ${deletedBy}`);
@@ -384,7 +400,7 @@ export class PhotoRecognitionSystem {
   /**
    * Gera relatório de uso do sistema de reconhecimento
    */
-  async generateRecognitionReport(timeframe: string = '30days'): Promise<any> {
+  async generateRecognitionReport(timeframe = '30days'): Promise<any> {
     try {
       const report = {
         generatedAt: new Date(),
@@ -395,26 +411,26 @@ export class PhotoRecognitionSystem {
           failedVerifications: 14,
           averageConfidence: 0.87,
           duplicatesDetected: 3,
-          qualityIssues: 8
+          qualityIssues: 8,
         },
         qualityMetrics: {
           averagePhotoQuality: 0.84,
           faceDetectionRate: 0.96,
-          verificationAccuracy: 0.91
+          verificationAccuracy: 0.91,
         },
         usage: {
           dailyUploads: 12,
           peakHours: ['09:00-11:00', '14:00-16:00'],
           topUsers: [
             { userId: 'user_123', uploads: 45 },
-            { userId: 'user_456', uploads: 32 }
-          ]
+            { userId: 'user_456', uploads: 32 },
+          ],
         },
         recommendations: [
           'Implementar orientações de qualidade para usuários',
           'Considerar upgrade do algoritmo para melhor precisão',
-          'Adicionar validação de qualidade em tempo real'
-        ]
+          'Adicionar validação de qualidade em tempo real',
+        ],
       };
 
       return report;

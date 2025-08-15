@@ -2,44 +2,44 @@
 // Story 6.1 - Task 2: Recurring Payment System
 // Recurring payment processing endpoints
 
-import { NextRequest, NextResponse } from 'next/server';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { recurringPaymentProcessor } from '@/lib/payments/recurring/recurring-payment-processor';
 import { logger } from '@/lib/utils/logger';
-import { z } from 'zod';
 
 // Validation Schemas
 const processPaymentSchema = z.object({
   subscription_id: z.string().uuid(),
   amount: z.number().min(0).optional(),
   force_process: z.boolean().default(false),
-  metadata: z.record(z.any()).optional()
+  metadata: z.record(z.any()).optional(),
 });
 
-const retryPaymentSchema = z.object({
+const _retryPaymentSchema = z.object({
   billing_event_id: z.string().uuid(),
   retry_attempt: z.number().min(1).max(5).optional(),
-  metadata: z.record(z.any()).optional()
+  metadata: z.record(z.any()).optional(),
 });
 
 const bulkProcessSchema = z.object({
   subscription_ids: z.array(z.string().uuid()).max(100),
   force_process: z.boolean().default(false),
-  metadata: z.record(z.any()).optional()
+  metadata: z.record(z.any()).optional(),
 });
 
 // GET /api/recurring-payments - Get payment processing status
 export async function GET(request: NextRequest) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Check if user is admin
@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
       .eq('user_id', user.id)
       .single();
 
-    if (!userProfile || !['admin', 'owner'].includes(userProfile.role)) {
+    if (!(userProfile && ['admin', 'owner'].includes(userProfile.role))) {
       return NextResponse.json(
         { error: 'Insufficient permissions' },
         { status: 403 }
@@ -60,8 +60,8 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get('status');
     const subscriptionId = searchParams.get('subscription_id');
     const customerId = searchParams.get('customer_id');
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '20');
+    const page = Number.parseInt(searchParams.get('page') || '1', 10);
+    const limit = Number.parseInt(searchParams.get('limit') || '20', 10);
 
     // Build query for billing events
     let query = supabase
@@ -104,16 +104,28 @@ export async function GET(request: NextRequest) {
     const { data: summaryData } = await supabase
       .from('billing_events')
       .select('status, amount')
-      .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString());
+      .gte(
+        'created_at',
+        new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+      );
 
     const summary = {
       total_events: summaryData?.length || 0,
-      successful_payments: summaryData?.filter(e => e.status === 'paid').length || 0,
-      failed_payments: summaryData?.filter(e => e.status === 'payment_failed').length || 0,
-      pending_payments: summaryData?.filter(e => e.status === 'pending').length || 0,
-      total_amount: summaryData?.reduce((sum, e) => sum + (e.amount || 0), 0) || 0,
-      success_rate: summaryData?.length ? 
-        ((summaryData.filter(e => e.status === 'paid').length / summaryData.length) * 100).toFixed(2) : '0'
+      successful_payments:
+        summaryData?.filter((e) => e.status === 'paid').length || 0,
+      failed_payments:
+        summaryData?.filter((e) => e.status === 'payment_failed').length || 0,
+      pending_payments:
+        summaryData?.filter((e) => e.status === 'pending').length || 0,
+      total_amount:
+        summaryData?.reduce((sum, e) => sum + (e.amount || 0), 0) || 0,
+      success_rate: summaryData?.length
+        ? (
+            (summaryData.filter((e) => e.status === 'paid').length /
+              summaryData.length) *
+            100
+          ).toFixed(2)
+        : '0',
     };
 
     // Get total count for pagination
@@ -128,8 +140,8 @@ export async function GET(request: NextRequest) {
         page,
         limit,
         total: totalCount || 0,
-        pages: Math.ceil((totalCount || 0) / limit)
-      }
+        pages: Math.ceil((totalCount || 0) / limit),
+      },
     });
   } catch (error) {
     logger.error('Error in GET /api/recurring-payments:', error);
@@ -144,13 +156,13 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Check if user is admin
@@ -160,7 +172,7 @@ export async function POST(request: NextRequest) {
       .eq('user_id', user.id)
       .single();
 
-    if (!userProfile || !['admin', 'owner'].includes(userProfile.role)) {
+    if (!(userProfile && ['admin', 'owner'].includes(userProfile.role))) {
       return NextResponse.json(
         { error: 'Insufficient permissions' },
         { status: 403 }
@@ -168,14 +180,14 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    
+
     // Validate request body
     const validationResult = processPaymentSchema.safeParse(body);
     if (!validationResult.success) {
       return NextResponse.json(
-        { 
+        {
           error: 'Invalid request data',
-          details: validationResult.error.errors
+          details: validationResult.error.errors,
         },
         { status: 400 }
       );
@@ -216,20 +228,22 @@ export async function POST(request: NextRequest) {
       paymentData.metadata
     );
 
-    logger.info(`Recurring payment processed for subscription: ${paymentData.subscription_id} by user: ${user.id}`);
+    logger.info(
+      `Recurring payment processed for subscription: ${paymentData.subscription_id} by user: ${user.id}`
+    );
 
-    return NextResponse.json({
-      data: result,
-      message: 'Payment processed successfully'
-    }, { status: 201 });
+    return NextResponse.json(
+      {
+        data: result,
+        message: 'Payment processed successfully',
+      },
+      { status: 201 }
+    );
   } catch (error) {
     logger.error('Error in POST /api/recurring-payments:', error);
-    
+
     if (error instanceof Error) {
-      return NextResponse.json(
-        { error: error.message },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: error.message }, { status: 400 });
     }
 
     return NextResponse.json(
@@ -243,13 +257,13 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Check if user is admin
@@ -259,7 +273,7 @@ export async function PUT(request: NextRequest) {
       .eq('user_id', user.id)
       .single();
 
-    if (!userProfile || !['admin', 'owner'].includes(userProfile.role)) {
+    if (!(userProfile && ['admin', 'owner'].includes(userProfile.role))) {
       return NextResponse.json(
         { error: 'Insufficient permissions' },
         { status: 403 }
@@ -267,14 +281,14 @@ export async function PUT(request: NextRequest) {
     }
 
     const body = await request.json();
-    
+
     // Validate request body
     const validationResult = bulkProcessSchema.safeParse(body);
     if (!validationResult.success) {
       return NextResponse.json(
-        { 
+        {
           error: 'Invalid request data',
-          details: validationResult.error.errors
+          details: validationResult.error.errors,
         },
         { status: 400 }
       );
@@ -288,36 +302,39 @@ export async function PUT(request: NextRequest) {
     // Process each subscription payment
     for (const subscriptionId of subscription_ids) {
       try {
-        const result = await recurringPaymentProcessor.processSubscriptionPayment(
-          subscriptionId,
-          undefined,
-          force_process,
-          metadata
-        );
+        const result =
+          await recurringPaymentProcessor.processSubscriptionPayment(
+            subscriptionId,
+            undefined,
+            force_process,
+            metadata
+          );
         results.push({
           subscription_id: subscriptionId,
-          result
+          result,
         });
       } catch (error) {
         errors.push({
           subscription_id: subscriptionId,
-          error: error instanceof Error ? error.message : 'Unknown error'
+          error: error instanceof Error ? error.message : 'Unknown error',
         });
       }
     }
 
-    logger.info(`Bulk payment processing completed: ${results.length} successful, ${errors.length} errors by user: ${user.id}`);
+    logger.info(
+      `Bulk payment processing completed: ${results.length} successful, ${errors.length} errors by user: ${user.id}`
+    );
 
     return NextResponse.json({
       data: results,
-      errors: errors,
+      errors,
       summary: {
         total_processed: subscription_ids.length,
         successful: results.length,
         failed: errors.length,
-        success_rate: ((results.length / subscription_ids.length) * 100).toFixed(2) + '%'
+        success_rate: `${((results.length / subscription_ids.length) * 100).toFixed(2)}%`,
       },
-      message: `Processed ${results.length} payments, ${errors.length} errors`
+      message: `Processed ${results.length} payments, ${errors.length} errors`,
     });
   } catch (error) {
     logger.error('Error in PUT /api/recurring-payments:', error);

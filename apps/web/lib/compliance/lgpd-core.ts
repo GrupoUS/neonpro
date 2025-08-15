@@ -1,30 +1,29 @@
 /**
  * LGPD Compliance Framework - Core System
  * Sistema principal de conformidade com LGPD
- * 
+ *
  * @author APEX Master Developer
  * @version 1.0.0
  * @compliance LGPD Art. 7º, 8º, 9º, 18º, 46º
  */
 
+import crypto from 'node:crypto';
 import { createClient } from '@supabase/supabase-js';
-import crypto from 'crypto';
 import {
-  ConsentType,
-  ConsentStatus,
-  LegalBasis,
-  ConsentRecord,
-  DataSubjectRight,
-  DataSubjectRequest,
-  RequestStatus,
   AuditEventType,
-  LGPDAuditLog,
-  SensitiveDataType,
-  EncryptedData,
-  EncryptionConfig,
-  LGPDContext,
-  ConsentCheckResult,
-  LGPDApiResponse
+  type ConsentCheckResult,
+  type ConsentRecord,
+  ConsentStatus,
+  type ConsentType,
+  type DataSubjectRequest,
+  DataSubjectRight,
+  type EncryptedData,
+  type EncryptionConfig,
+  LegalBasis,
+  type LGPDApiResponse,
+  type LGPDAuditLog,
+  type LGPDContext,
+  RequestStatus,
 } from '../../types/lgpd';
 
 // ============================================================================
@@ -37,15 +36,15 @@ export class LGPDEncryptionService {
     keySize: 32,
     ivSize: 16,
     saltSize: 32,
-    iterations: 100000
+    iterations: 100_000,
   };
 
   private static getEncryptionKey(password: string, salt: Buffer): Buffer {
     return crypto.pbkdf2Sync(
       password,
       salt,
-      this.DEFAULT_CONFIG.iterations,
-      this.DEFAULT_CONFIG.keySize,
+      LGPDEncryptionService.DEFAULT_CONFIG.iterations,
+      LGPDEncryptionService.DEFAULT_CONFIG.keySize,
       'sha512'
     );
   }
@@ -55,24 +54,31 @@ export class LGPDEncryptionService {
    */
   static encrypt(data: string, masterKey: string): EncryptedData {
     try {
-      const salt = crypto.randomBytes(this.DEFAULT_CONFIG.saltSize);
-      const iv = crypto.randomBytes(this.DEFAULT_CONFIG.ivSize);
-      const key = this.getEncryptionKey(masterKey, salt);
-      
-      const cipher = crypto.createCipher(this.DEFAULT_CONFIG.algorithm, key);
+      const salt = crypto.randomBytes(
+        LGPDEncryptionService.DEFAULT_CONFIG.saltSize
+      );
+      const iv = crypto.randomBytes(
+        LGPDEncryptionService.DEFAULT_CONFIG.ivSize
+      );
+      const key = LGPDEncryptionService.getEncryptionKey(masterKey, salt);
+
+      const cipher = crypto.createCipher(
+        LGPDEncryptionService.DEFAULT_CONFIG.algorithm,
+        key
+      );
       cipher.setAAD(Buffer.from('lgpd-compliance'));
-      
+
       let encrypted = cipher.update(data, 'utf8', 'hex');
       encrypted += cipher.final('hex');
-      
+
       const authTag = cipher.getAuthTag();
-      
+
       return {
-        data: encrypted + ':' + authTag.toString('hex'),
+        data: `${encrypted}:${authTag.toString('hex')}`,
         iv: iv.toString('hex'),
         salt: salt.toString('hex'),
-        algorithm: this.DEFAULT_CONFIG.algorithm,
-        timestamp: new Date()
+        algorithm: LGPDEncryptionService.DEFAULT_CONFIG.algorithm,
+        timestamp: new Date(),
       };
     } catch (error) {
       throw new Error(`Encryption failed: ${error.message}`);
@@ -85,19 +91,19 @@ export class LGPDEncryptionService {
   static decrypt(encryptedData: EncryptedData, masterKey: string): string {
     try {
       const salt = Buffer.from(encryptedData.salt, 'hex');
-      const iv = Buffer.from(encryptedData.iv, 'hex');
-      const key = this.getEncryptionKey(masterKey, salt);
-      
+      const _iv = Buffer.from(encryptedData.iv, 'hex');
+      const key = LGPDEncryptionService.getEncryptionKey(masterKey, salt);
+
       const [encrypted, authTagHex] = encryptedData.data.split(':');
       const authTag = Buffer.from(authTagHex, 'hex');
-      
+
       const decipher = crypto.createDecipher(encryptedData.algorithm, key);
       decipher.setAAD(Buffer.from('lgpd-compliance'));
       decipher.setAuthTag(authTag);
-      
+
       let decrypted = decipher.update(encrypted, 'hex', 'utf8');
       decrypted += decipher.final('utf8');
-      
+
       return decrypted;
     } catch (error) {
       throw new Error(`Decryption failed: ${error.message}`);
@@ -144,20 +150,21 @@ export class LGPDConsentService {
     description: string,
     expiresAt?: Date
   ): Promise<ConsentRecord> {
-    const consentRecord: Omit<ConsentRecord, 'id' | 'createdAt' | 'updatedAt'> = {
-      userId: context.userId,
-      clinicId: context.clinicId,
-      consentType,
-      status: ConsentStatus.GRANTED,
-      legalBasis,
-      purpose,
-      description,
-      grantedAt: context.timestamp,
-      expiresAt,
-      ipAddress: context.ipAddress,
-      userAgent: context.userAgent,
-      version: '1.0.0'
-    };
+    const consentRecord: Omit<ConsentRecord, 'id' | 'createdAt' | 'updatedAt'> =
+      {
+        userId: context.userId,
+        clinicId: context.clinicId,
+        consentType,
+        status: ConsentStatus.GRANTED,
+        legalBasis,
+        purpose,
+        description,
+        grantedAt: context.timestamp,
+        expiresAt,
+        ipAddress: context.ipAddress,
+        userAgent: context.userAgent,
+        version: '1.0.0',
+      };
 
     const { data, error } = await this.supabase
       .from('lgpd_consent_records')
@@ -180,7 +187,7 @@ export class LGPDConsentService {
       userAgent: context.userAgent,
       timestamp: context.timestamp,
       riskLevel: 'low',
-      processed: true
+      processed: true,
     });
 
     return data;
@@ -198,7 +205,7 @@ export class LGPDConsentService {
       .update({
         status: ConsentStatus.WITHDRAWN,
         withdrawnAt: context.timestamp,
-        updatedAt: context.timestamp
+        updatedAt: context.timestamp,
       })
       .eq('id', consentId)
       .eq('userId', context.userId)
@@ -221,7 +228,7 @@ export class LGPDConsentService {
       userAgent: context.userAgent,
       timestamp: context.timestamp,
       riskLevel: 'medium',
-      processed: true
+      processed: true,
     });
 
     return data;
@@ -252,7 +259,7 @@ export class LGPDConsentService {
         consentType,
         legalBasis: LegalBasis.CONSENT,
         canProcess: false,
-        warnings: ['No valid consent found']
+        warnings: ['No valid consent found'],
       };
     }
 
@@ -266,7 +273,7 @@ export class LGPDConsentService {
       expiresAt: data.expiresAt ? new Date(data.expiresAt) : undefined,
       legalBasis: data.legalBasis,
       canProcess: !isExpired,
-      warnings: isExpired ? ['Consent has expired'] : undefined
+      warnings: isExpired ? ['Consent has expired'] : undefined,
     };
   }
 
@@ -313,7 +320,6 @@ export class LGPDConsentService {
 
 export class LGPDDataSubjectService {
   private supabase: any;
-  private encryptionService: typeof LGPDEncryptionService;
 
   constructor() {
     this.supabase = createClient(
@@ -331,14 +337,15 @@ export class LGPDDataSubjectService {
     requestType: DataSubjectRight,
     description: string
   ): Promise<DataSubjectRequest> {
-    const request: Omit<DataSubjectRequest, 'id' | 'createdAt' | 'updatedAt'> = {
-      userId: context.userId,
-      clinicId: context.clinicId,
-      requestType,
-      status: RequestStatus.PENDING,
-      description,
-      requestedAt: context.timestamp
-    };
+    const request: Omit<DataSubjectRequest, 'id' | 'createdAt' | 'updatedAt'> =
+      {
+        userId: context.userId,
+        clinicId: context.clinicId,
+        requestType,
+        status: RequestStatus.PENDING,
+        description,
+        requestedAt: context.timestamp,
+      };
 
     const { data, error } = await this.supabase
       .from('lgpd_data_subject_requests')
@@ -382,7 +389,7 @@ export class LGPDDataSubjectService {
         status: RequestStatus.COMPLETED,
         processorId,
         processedAt: new Date(),
-        completedAt: new Date()
+        completedAt: new Date(),
       })
       .eq('id', requestId);
   }
@@ -401,7 +408,7 @@ export class LGPDDataSubjectService {
       phone: null,
       address: null,
       anonymized: true,
-      anonymizedAt: new Date()
+      anonymizedAt: new Date(),
     };
 
     // Anonimizar na tabela de usuários
@@ -417,7 +424,7 @@ export class LGPDDataSubjectService {
       .update({
         notes: 'DADOS ANONIMIZADOS',
         anonymized: true,
-        anonymizedAt: new Date()
+        anonymizedAt: new Date(),
       })
       .eq('patient_id', userId)
       .eq('clinic_id', clinicId);
@@ -489,7 +496,7 @@ export class LGPDComplianceService {
    * Valida contexto LGPD
    */
   static validateContext(context: Partial<LGPDContext>): LGPDContext {
-    if (!context.userId || !context.clinicId) {
+    if (!(context.userId && context.clinicId)) {
       throw new Error('User ID and Clinic ID are required');
     }
 
@@ -498,7 +505,7 @@ export class LGPDComplianceService {
       clinicId: context.clinicId,
       ipAddress: context.ipAddress || 'unknown',
       userAgent: context.userAgent || 'unknown',
-      timestamp: context.timestamp || new Date()
+      timestamp: context.timestamp || new Date(),
     };
   }
 
@@ -517,7 +524,7 @@ export class LGPDComplianceService {
       success: true,
       data,
       compliance,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
   }
 
@@ -531,9 +538,9 @@ export class LGPDComplianceService {
       compliance: {
         processed: false,
         auditLogged: true,
-        consentVerified: false
+        consentVerified: false,
       },
-      timestamp: new Date()
+      timestamp: new Date(),
     };
   }
 }

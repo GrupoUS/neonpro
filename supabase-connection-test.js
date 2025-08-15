@@ -9,16 +9,22 @@ async function testSupabaseConnection() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-  if (!supabaseUrl || !supabaseKey) {
+  if (!(supabaseUrl && supabaseKey)) {
     console.error('❌ Variáveis de ambiente não configuradas:');
-    console.log('NEXT_PUBLIC_SUPABASE_URL:', supabaseUrl ? '✅ Configurada' : '❌ Ausente');
-    console.log('NEXT_PUBLIC_SUPABASE_ANON_KEY:', supabaseKey ? '✅ Configurada' : '❌ Ausente');
+    console.log(
+      'NEXT_PUBLIC_SUPABASE_URL:',
+      supabaseUrl ? '✅ Configurada' : '❌ Ausente'
+    );
+    console.log(
+      'NEXT_PUBLIC_SUPABASE_ANON_KEY:',
+      supabaseKey ? '✅ Configurada' : '❌ Ausente'
+    );
     return;
   }
 
   console.log('✅ Variáveis de ambiente configuradas');
   console.log('URL:', supabaseUrl);
-  console.log('Key:', supabaseKey.substring(0, 20) + '...\n');
+  console.log('Key:', `${supabaseKey.substring(0, 20)}...\n`);
 
   // Cliente Supabase
   const supabase = createClient(supabaseUrl, supabaseKey);
@@ -26,7 +32,10 @@ async function testSupabaseConnection() {
   try {
     // Teste 1: Conectividade básica
     console.log('📡 Teste 1: Conectividade básica...');
-    const { data: healthCheck, error: healthError } = await supabase.from('tenants').select('count').limit(1);
+    const { data: healthCheck, error: healthError } = await supabase
+      .from('tenants')
+      .select('count')
+      .limit(1);
     if (healthError) {
       console.error('❌ Erro de conectividade:', healthError.message);
       return;
@@ -35,7 +44,10 @@ async function testSupabaseConnection() {
 
     // Teste 2: Autenticação (usuário anônimo)
     console.log('🔐 Teste 2: Status de autenticação...');
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError) {
       console.log('⚠️  Usuário não autenticado (normal para teste)');
     } else if (user) {
@@ -47,8 +59,15 @@ async function testSupabaseConnection() {
 
     // Teste 3: Schema de tabelas críticas
     console.log('📋 Teste 3: Verificando tabelas críticas...');
-    const criticalTables = ['tenants', 'profiles', 'professionals', 'patients', 'appointments', 'clinics'];
-    
+    const criticalTables = [
+      'tenants',
+      'profiles',
+      'professionals',
+      'patients',
+      'appointments',
+      'clinics',
+    ];
+
     for (const table of criticalTables) {
       const { data, error } = await supabase.from(table).select('*').limit(1);
       if (error) {
@@ -61,13 +80,14 @@ async function testSupabaseConnection() {
 
     // Teste 4: RLS Status
     console.log('🔒 Teste 4: Verificando RLS...');
-    const { data: rlsData, error: rlsError } = await supabase.rpc('get_table_rls_status');
+    const { data: rlsData, error: rlsError } = await supabase.rpc(
+      'get_table_rls_status'
+    );
     if (rlsError) {
       console.log('⚠️  Não foi possível verificar RLS automaticamente');
     } else {
       console.log('✅ RLS verificado');
     }
-
   } catch (error) {
     console.error('❌ Erro durante testes:', error.message);
   }
