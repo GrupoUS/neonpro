@@ -5,7 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
-import { BankReconciliationManager } from '@/lib/payments/reconciliation/bank-reconciliation-manager';
+import { EnhancedBankReconciliationService } from '@/lib/payments/reconciliation/enhanced-bank-reconciliation-service';
 
 // Validation schemas
 const GetTransactionsQuerySchema = z.object({
@@ -245,7 +245,7 @@ export async function POST(request: NextRequest) {
     switch (action) {
       case 'match_transaction': {
         const validatedData = MatchTransactionSchema.parse(body);
-        const reconciliationManager = new BankReconciliationManager();
+        const reconciliationManager = new EnhancedBankReconciliationService();
         
         const result = await reconciliationManager.performManualMatching(
           validatedData.transactionId,
@@ -325,7 +325,7 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        const reconciliationManager = new BankReconciliationManager();
+        const reconciliationManager = new EnhancedBankReconciliationService();
         const matches = await reconciliationManager.findPotentialMatches(transactionId);
 
         return NextResponse.json({

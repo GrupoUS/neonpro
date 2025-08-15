@@ -60,20 +60,56 @@ NeonPro implements an **AI-First Edge-Native SaaS architecture** designed specif
 
 ### Repository Structure
 
-**Structure:** Monorepo with domain-driven boundaries
+**Structure:** Monorepo with domain-driven boundaries and shared packages
 
-**Monorepo Tool:** Built-in Next.js + pnpm workspaces (optimized for Vercel deployment)
+**Monorepo Tool:** PNPM Workspaces + Turborepo (optimized for Vercel deployment)
 
 **Package Organization:**
 ```
 neonpro/
-├── app/                    # Next.js 15 App Router
-├── components/            # Shared React components
-├── lib/                   # Shared utilities and configurations
-├── types/                 # Global TypeScript definitions
-├── middleware.ts          # Edge middleware for auth/routing
-└── packages/              # Future microservices (when needed)
+├── apps/
+│   └── web/               # Next.js 15 App Router (Main Application)
+│       ├── app/           # Next.js App Router pages
+│       ├── components/    # Application-specific components
+│       ├── lib/           # Application utilities
+│       └── middleware.ts  # Edge middleware for auth/routing
+├── packages/              # Shared packages for monorepo
+│   ├── ui/               # @neonpro/ui - Shared UI components
+│   │   ├── src/
+│   │   │   ├── components/  # Reusable UI components
+│   │   │   ├── lib/         # UI utilities (cn, etc.)
+│   │   │   └── index.ts     # Package exports
+│   │   └── package.json
+│   ├── utils/            # @neonpro/utils - Shared utilities
+│   │   ├── src/
+│   │   │   ├── date.ts      # Date formatting functions
+│   │   │   ├── validation.ts # Validation utilities
+│   │   │   ├── format.ts    # Text formatting utilities
+│   │   │   └── index.ts     # Package exports
+│   │   └── package.json
+│   ├── types/            # @neonpro/types - Shared TypeScript definitions
+│   │   ├── src/
+│   │   │   ├── common.ts    # Common interfaces (BaseEntity, etc.)
+│   │   │   ├── user.ts      # User-related types
+│   │   │   ├── patient.ts   # Patient data types
+│   │   │   ├── appointment.ts # Appointment types
+│   │   │   └── index.ts     # Package exports
+│   │   └── package.json
+│   └── config/           # @neonpro/config - Shared configurations
+│       ├── eslint-config.js # ESLint shared config
+│       ├── tailwind.config.js # Tailwind shared config
+│       ├── tsconfig.json    # TypeScript shared config
+│       └── package.json
+├── pnpm-workspace.yaml   # PNPM workspace configuration
+├── turbo.json           # Turborepo pipeline configuration
+└── package.json         # Root package.json with workspace scripts
 ```
+
+**Shared Package Architecture:**
+- **@neonpro/ui**: Reusable UI components built with shadcn/ui and Radix UI
+- **@neonpro/utils**: Common utility functions for date handling, validation, and formatting
+- **@neonpro/types**: Shared TypeScript interfaces and types for healthcare entities
+- **@neonpro/config**: Shared configuration files for ESLint, Tailwind, and TypeScript
 
 ### High Level Architecture Diagram
 
@@ -186,6 +222,8 @@ This is the DEFINITIVE technology selection for the entire project. All developm
 | Frontend Testing | Jest + Testing Library | 29+ / 14+ | Unit and integration tests | Comprehensive testing for healthcare workflows |
 | Backend Testing | Jest + Supertest | 29+ / 6+ | API endpoint testing | Ensure API reliability for critical clinic operations |
 | E2E Testing | Playwright | 1.40+ | End-to-end testing | Full user journey testing for compliance validation |
+| Package Manager | PNPM | 8.15+ | Monorepo package management | Fast, disk-efficient package management with workspaces |
+| Build Orchestrator | Turborepo | 2.5+ | Monorepo build coordination | Intelligent caching and parallel builds across packages |
 | Build Tool | Next.js + Turbopack | 15.0+ | Development and production builds | Optimized builds with edge deployment |
 | Bundler | Built-in Next.js | 15.0+ | Asset bundling | Optimized for Vercel deployment |
 | IaC Tool | Vercel CLI + Supabase CLI | Latest | Infrastructure as code | Declarative infrastructure management |
@@ -193,6 +231,87 @@ This is the DEFINITIVE technology selection for the entire project. All developm
 | Monitoring | Vercel Analytics + Sentry | Latest | Performance and error tracking | Real-time monitoring for healthcare applications |
 | Logging | Vercel Functions + Supabase | Latest | Centralized logging | Audit trails for compliance reporting |
 | CSS Framework | Tailwind CSS | 3.4+ | Utility-first styling | Consistent design system with customization flexibility |
+
+## Monorepo Architecture
+
+### Workspace Configuration
+
+**PNPM Workspaces** provides efficient package management with shared dependencies and intelligent hoisting.
+
+```yaml
+# pnpm-workspace.yaml
+packages:
+  - apps/*
+  - packages/*
+  - tools/*
+
+catalog:
+  '@radix-ui/react-accordion': ^1.2.1
+  '@radix-ui/react-avatar': ^1.1.1
+  '@types/node': ^22.10.2
+  '@types/react': ^18.3.18
+  next: ^15.1.0
+  react: ^18.3.1
+  typescript: ^5.7.2
+  zod: ^3.23.8
+```
+
+### Turborepo Configuration
+
+**Turborepo** orchestrates builds across packages with intelligent caching and parallel execution.
+
+```json
+{
+  "pipeline": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", ".next/**"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "lint": {
+      "dependsOn": ["^build"]
+    },
+    "test": {
+      "dependsOn": ["^build"],
+      "outputs": ["coverage/**"]
+    }
+  }
+}
+```
+
+### Shared Package Benefits
+
+**Code Reusability**: Common utilities, types, and components shared across applications
+**Type Safety**: Shared TypeScript definitions ensure consistency across the entire system
+**Build Optimization**: Turborepo's caching reduces build times by 60-80%
+**Dependency Management**: PNPM's catalog ensures consistent package versions
+**Scalability**: Easy addition of new applications and packages as the system grows
+
+### Development Workflow
+
+```bash
+# Install dependencies across entire monorepo
+pnpm install
+
+# Start development server for main application
+pnpm dev
+
+# Build all packages and applications
+pnpm build
+
+# Lint all packages
+pnpm lint
+
+# Build specific package
+pnpm --filter @neonpro/ui build
+
+# Add dependency to specific package
+pnpm --filter @neonpro/web add lodash
+```
+
 ## Data Models
 
 ### Core Business Entities

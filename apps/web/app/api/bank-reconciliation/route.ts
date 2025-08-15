@@ -5,7 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
-import { BankReconciliationManager } from '@/lib/payments/reconciliation/bank-reconciliation-manager';
+import { EnhancedBankReconciliationService } from '@/lib/payments/reconciliation/enhanced-bank-reconciliation-service';
 import { BankStatementProcessor } from '@/lib/payments/reconciliation/bank-statement-processor';
 
 // Validation schemas
@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
     const queryParams = Object.fromEntries(url.searchParams.entries());
     const validatedQuery = GetReconciliationQuerySchema.parse(queryParams);
 
-    const reconciliationManager = new BankReconciliationManager();
+    const reconciliationService = new EnhancedBankReconciliationService();
 
     // Build filters
     const filters: any = {};
@@ -125,7 +125,7 @@ export async function GET(request: NextRequest) {
       totalStatements: count || 0,
       totalPages: Math.ceil((count || 0) / validatedQuery.limit),
       currentPage: validatedQuery.page,
-      reconciliationStats: await reconciliationManager.getReconciliationSummary({
+      reconciliationStats: await reconciliationService.getReconciliationSummary({
         dateFrom: validatedQuery.dateFrom,
         dateTo: validatedQuery.dateTo,
         bankName: validatedQuery.bankName,
@@ -222,9 +222,9 @@ export async function POST(request: NextRequest) {
     switch (action) {
       case 'reconcile': {
         const validatedData = ReconcileTransactionsSchema.parse(body);
-        const reconciliationManager = new BankReconciliationManager();
+        const reconciliationService = new EnhancedBankReconciliationService();
         
-        const result = await reconciliationManager.performAutoMatching(
+        const result = await reconciliationService.performAutoMatching(
           validatedData.statementId,
           {
             confidenceThreshold: validatedData.confidenceThreshold,
@@ -241,9 +241,9 @@ export async function POST(request: NextRequest) {
 
       case 'manual_match': {
         const validatedData = ManualMatchSchema.parse(body);
-        const reconciliationManager = new BankReconciliationManager();
+        const reconciliationService = new EnhancedBankReconciliationService();
         
-        const result = await reconciliationManager.performManualMatching(
+        const result = await reconciliationService.performManualMatching(
           validatedData.transactionId,
           validatedData.paymentId,
           validatedData.confidence,

@@ -6,7 +6,7 @@ import { z } from 'zod';
 import { createClient } from '@/lib/supabase/client';
 import Papa from 'papaparse';
 import * as XLSX from 'xlsx';
-import { BankStatement, BankTransaction } from './bank-reconciliation-manager';
+import { BankStatement, BankTransaction } from './enhanced-bank-reconciliation-service';
 
 // Validation schemas
 const BankStatementFileSchema = z.object({

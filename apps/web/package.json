@@ -5,18 +5,37 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev",
-    "start": "next start"
+    "start": "next start",
+    "lint": "next lint",
+    "vercel-build": "prisma generate && prisma migrate deploy && next build"
+  },
+  "prisma": {
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
   },
   "dependencies": {
+    "@prisma/client": "^5.7.1",
+    "@radix-ui/react-slot": "^1.0.2",
+    "@supabase/supabase-js": "^2.38.5",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.0.0",
     "next": "^15.1.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "tailwind-merge": "^2.2.0",
     "typescript": "^5.7.2",
     "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
     "@types/react": "^18.3.18",
-    "@types/react-dom": "^18.3.5"
+    "@types/react-dom": "^18.3.5",
+    "autoprefixer": "^10.0.1",
+    "eslint": "^8",
+    "eslint-config-next": "14.0.4",
+    "postcss": "^8",
+    "prisma": "^5.7.1",
+    "tailwindcss": "^3.3.0",
+    "tailwindcss-animate": "^1.0.7",
+    "ts-node": "^10.9.1"
   }
 }

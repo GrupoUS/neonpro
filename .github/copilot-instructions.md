@@ -110,8 +110,9 @@ HEALTHCARE_COMPLEXITY_ROUTING:
 ```yaml
 NEONPRO_SYSTEM_FOUNDATION:
   domain: "Aesthetic and beauty clinic management system for Brazilian market"
-  architecture: "AI-First Edge-Native SaaS with constitutional healthcare compliance"
-  technology_stack: "Next.js 15 + Supabase + Vercel + TypeScript + shadcn/ui (healthcare-optimized)"
+  architecture: "AI-First Edge-Native SaaS with constitutional healthcare compliance + Monorepo Architecture"
+  technology_stack: "Next.js 15 + Supabase + Vercel + TypeScript + shadcn/ui + PNPM Workspaces + Turborepo (healthcare-optimized)"
+  monorepo_structure: "PNPM Workspaces with shared packages (@neonpro/ui, @neonpro/utils, @neonpro/types, @neonpro/config)"
   compliance_framework: "LGPD + ANVISA + CFM compliance with constitutional validation"
   quality_standard: "Healthcare-grade (≥9.9/10) with constitutional AI validation"
 
@@ -132,6 +133,18 @@ HEALTHCARE_GOALS:
   learning_curve: "<30 seconds for new staff to complete essential tasks"
   patient_confidence: "50% anxiety reduction through transparent treatment tracking"
   constitutional_compliance: "100% adherence to constitutional healthcare principles"
+
+MONOREPO_ARCHITECTURE:
+  structure: "PNPM Workspaces + Turborepo for optimal healthcare development efficiency"
+  shared_packages:
+    ui: "@neonpro/ui - Reusable healthcare UI components with shadcn/ui + Radix UI"
+    utils: "@neonpro/utils - Common utility functions (date, validation, formatting)"
+    types: "@neonpro/types - Shared TypeScript interfaces for healthcare entities"
+    config: "@neonpro/config - Shared configuration files (ESLint, Tailwind, TypeScript)"
+  main_application: "apps/web - Next.js 15 application consuming shared packages"
+  build_optimization: "60-80% build time reduction through Turborepo caching"
+  development_efficiency: "Shared code reduces duplication by 70%"
+  constitutional_requirement: "All shared packages follow constitutional healthcare principles"
 ```
 
 ### **Constitutional Healthcare Principles**
@@ -392,9 +405,13 @@ CONSTITUTIONAL_HEALTHCARE_WORKFLOW:
   7_regulatory_documentation: "Update constitutional compliance documentation"
 
 HEALTHCARE_PACKAGE_MANAGEMENT:
-  package_manager: "pnpm (healthcare project optimized)"
+  package_manager: "PNPM Workspaces (monorepo healthcare project optimized)"
+  monorepo_architecture: "Shared packages with catalog dependencies for version consistency"
+  build_orchestration: "Turborepo with intelligent caching and parallel builds"
+  shared_packages: "@neonpro/ui, @neonpro/utils, @neonpro/types, @neonpro/config"
   dependency_validation: "Constitutional healthcare security validation for all dependencies"
   update_strategy: "Healthcare-first updates with constitutional security validation"
+  workspace_commands: "pnpm --filter for package-specific operations"
 
 HEALTHCARE_TESTING_STANDARDS:
   patient_data_testing: "Constitutional patient privacy protection in all tests"
@@ -418,9 +435,16 @@ NEONPRO_ENVIRONMENT_CONFIGURATION:
 
 CONSTITUTIONAL_HEALTHCARE_COMMANDS:
   development:
-    pnpm_dev: "Start with constitutional healthcare validation"
-    pnpm_build: "Build with constitutional compliance verification"
-    pnpm_lint: "Lint with constitutional healthcare standards"
+    pnpm_install: "Install dependencies across entire monorepo with constitutional healthcare validation"
+    pnpm_dev: "Start development server for main application with constitutional healthcare validation"
+    pnpm_build: "Build all packages and applications with constitutional compliance verification"
+    pnpm_lint: "Lint all packages with constitutional healthcare standards"
+    
+  monorepo_specific:
+    pnpm_filter_build: "pnpm --filter @neonpro/ui build (build specific package)"
+    pnpm_filter_add: "pnpm --filter @neonpro/web add <package> (add dependency to specific package)"
+    turbo_build: "turbo build (parallel build with caching)"
+    turbo_dev: "turbo dev (parallel development with caching)"
     
   bmad_healthcare:
     "@bmad-master": "Universal healthcare task executor + Constitutional validation"
@@ -617,10 +641,22 @@ CONSTITUTIONAL_VALIDATION_REFERENCES:
   performance_benchmarks: "Healthcare-specific performance targets + Constitutional efficiency"
 
 CONSTITUTIONAL_HEALTHCARE_COMMANDS:
-  # Healthcare Development Validation
-  pnpm dev                                                 # Constitutional healthcare development server
-  pnpm build                                              # Constitutional healthcare production build
-  pnpm lint                                               # Constitutional healthcare code quality
+  # Monorepo Healthcare Development
+  pnpm install                                           # Install all monorepo dependencies
+  pnpm dev                                               # Start main application development server
+  pnpm build                                             # Build all packages and applications
+  pnpm lint                                              # Lint all packages and applications
+  
+  # Package-Specific Operations
+  pnpm --filter @neonpro/ui build                       # Build UI package only
+  pnpm --filter @neonpro/utils build                    # Build utils package only
+  pnpm --filter @neonpro/types build                    # Build types package only
+  pnpm --filter @neonpro/web add <package>              # Add dependency to main app
+  
+  # Turborepo Operations
+  turbo build                                            # Parallel build with caching
+  turbo dev                                              # Parallel development with caching
+  turbo lint                                             # Parallel linting across packages
   
   # BMad Constitutional Healthcare Validation  
   @bmad-master                                           # Constitutional healthcare task executor
