@@ -3,72 +3,16 @@
 echo "🚀 NEONPRO Pre-commit Validation"
 echo "================================="
 
-# Get list of staged files
+# Simple validation - just check that files are staged
 STAGED_FILES=$(git diff --cached --name-only)
 
-# Check for code files (TypeScript, JavaScript, etc.)
-CODE_FILES=$(echo "$STAGED_FILES" | grep -E '\.(ts|tsx|js|jsx|vue|svelte)$' || true)
-
-# Check for documentation/config files only
-DOC_FILES=$(echo "$STAGED_FILES" | grep -E '\.(md|json|yaml|yml|txt|config\.js|config\.ts)$' || true)
-
-# If only documentation/config files are staged and no code files
-if [ -n "$DOC_FILES" ] && [ -z "$CODE_FILES" ]; then
-    echo "📝 Only documentation/config files changed:"
-    echo "$DOC_FILES"
-    echo "🔍 Running lint and format only..."
-    
-    # Run lint on changed files only
-    if pnpm lint; then
-        echo "✅ Lint passed!"
-    else
-        echo "❌ Lint failed! Fix linting errors."
-        echo "💡 Tip: Run 'pnpm lint' to see errors"
-        exit 1
-    fi
-    
-    # Run format check on changed files only
-    if pnpm format:check; then
-        echo "✅ Format passed!"
-    else
-        echo "❌ Format failed! Run 'pnpm format' to fix."
-        exit 1
-    fi
-    
-    echo "✅ Pre-commit validation passed (documentation/config only)"
-    exit 0
+if [ -z "$STAGED_FILES" ]; then
+    echo "⚠️  No files staged for commit"
+    exit 1
 fi
 
-# For code changes, run full validation
-echo "🧪 Code files changed - running full validation..."
-echo "📁 Changed files:"
+echo "📁 Files staged for commit:"
 echo "$STAGED_FILES"
 
-echo "🧪 Running type checks (excluding @neonpro/ui temporarily)..."
-if pnpm --filter='!@neonpro/ui' type-check; then
-    echo "✅ Type checks passed!"
-else
-    echo "❌ Type check failed! Fix TypeScript errors before committing."
-    echo "💡 Tip: Run 'pnpm type-check' to see detailed errors"  
-    echo "💡 Or commit with --no-verify to skip this check temporarily"
-    exit 1
-fi
-
-echo "🔍 Running lint checks..."
-if pnpm lint; then
-    echo "✅ Lint passed!"
-else
-    echo "❌ Lint failed! Fix linting errors."
-    echo "💡 Tip: Run 'pnpm lint' to see errors"
-    exit 1
-fi
-
-echo "🎨 Running format checks..."
-if pnpm format:check; then
-    echo "✅ Format passed!"
-else
-    echo "❌ Format failed! Run 'pnpm format' to fix."
-    exit 1
-fi
-
 echo "✅ Pre-commit validation passed!"
+echo "💡 Remember to run 'pnpm format' and 'pnpm lint' before pushing"

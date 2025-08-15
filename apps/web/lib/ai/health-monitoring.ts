@@ -1317,7 +1317,7 @@ export class AIHealthMonitoringEngine {
     patient: Patient,
     treatment: TreatmentEffectiveness
   ): Promise<EarlyWarning> {
-  return {
+    return {
         warning_id: `treatment_failure_${Date.now()}`,
         warning_type: 'treatment_failure',
         severity: 'moderate',
@@ -1671,25 +1671,21 @@ export class AIHealthMonitoringEngine {
           .map(t => t.metric_name);
   }
 
-  private
-  analyzeBehaviorHealthCorrelations(
+  private analyzeBehaviorHealthCorrelations(
       trendAnalysis: HealthTrendAnalysis,
       behaviorAnalysis: BehaviorAnalysis
-    )
-  : any
-  return {
-        appointment_adherence_impact: 'High adherence correlates with better health outcomes',
-        communication_effectiveness: 'Regular communication improves treatment compliance',
-        lifestyle_factors: 'Lifestyle modifications show positive health impact'
-      };
+    ): any {
+    return {
+          appointment_adherence_impact: 'High adherence correlates with better health outcomes',
+          communication_effectiveness: 'Regular communication improves treatment compliance',
+          lifestyle_factors: 'Lifestyle modifications show positive health impact'
+        };
+  }
 
-  private
-  generatePersonalizedGoals(
+  private generatePersonalizedGoals(
       patient: Patient,
       analysis: HealthTrendAnalysis
-    )
-  : any[]
-  {
+    ): any[] {
     const goals = [];
 
     for (const trend of analysis.health_trends) {
@@ -1706,13 +1702,11 @@ export class AIHealthMonitoringEngine {
     return goals;
   }
 
-  private
-  generateMotivationStrategies(
+  private generateMotivationStrategies(
       patient: Patient,
       behaviorAnalysis: BehaviorAnalysis
-    )
-  : any[]
-  return [
+    ): any[] {
+    return [
         {
           strategy: 'Progress visualization',
           description: 'Show visual progress charts and achievements',
@@ -1729,6 +1723,7 @@ export class AIHealthMonitoringEngine {
           effectiveness: 'High for socially motivated individuals'
         }
       ];
+  }
 }
 
 export default AIHealthMonitoringEngine;
