@@ -9,6 +9,7 @@
 ### ✅ **O QUE FOI MIGRADO COM SUCESSO:**
 
 **🏗️ Estrutura Monorepo Criada:**
+
 ```
 neonpro/
 ├── apps/
@@ -25,12 +26,14 @@ neonpro/
 ```
 
 **📦 Pacotes Criados:**
+
 - `@neonpro/ui` - Componentes UI reutilizáveis
 - `@neonpro/utils` - Funções utilitárias (data, validação, formatação)
 - `@neonpro/types` - Interfaces TypeScript (User, Patient, Appointment)
 - `@neonpro/config` - Configurações ESLint, Tailwind, TypeScript
 
 **🔧 Configurações Implementadas:**
+
 - ✅ PNPM Workspace com catalog dependencies
 - ✅ Turborepo pipeline (build, dev, lint, test)
 - ✅ TypeScript project references
@@ -39,6 +42,7 @@ neonpro/
 ## 🚧 PRÓXIMOS PASSOS OBRIGATÓRIOS
 
 ### **1. INSTALAR DEPENDÊNCIAS (CRÍTICO)**
+
 ```bash
 # Instalar PNPM se não tiver
 npm install -g pnpm
@@ -51,6 +55,7 @@ pnpm list --depth=0
 ```
 
 ### **2. CONFIGURAR VARIÁVEIS DE AMBIENTE**
+
 ```bash
 # Copiar variáveis para o app web
 cp .env.example apps/web/.env.local
@@ -61,6 +66,7 @@ cp .env.example apps/web/.env.local
 ```
 
 ### **3. TESTAR O BUILD**
+
 ```bash
 # Testar build de todos os pacotes
 pnpm build
@@ -73,6 +79,7 @@ pnpm build:web
 ```
 
 ### **4. VALIDAR FUNCIONALIDADES**
+
 - [ ] Testar login/autenticação
 - [ ] Verificar dashboard
 - [ ] Testar componentes UI
@@ -82,6 +89,7 @@ pnpm build:web
 ## 📋 COMANDOS DISPONÍVEIS
 
 ### **Comandos Globais (Root):**
+
 ```bash
 pnpm dev              # Roda todos os apps em desenvolvimento
 pnpm build            # Build de todos os pacotes
@@ -92,6 +100,7 @@ pnpm clean            # Limpa builds
 ```
 
 ### **Comandos Específicos:**
+
 ```bash
 pnpm dev:web          # Apenas app web
 pnpm build:web        # Build apenas app web
@@ -101,12 +110,14 @@ pnpm --filter @neonpro/ui build    # Build apenas UI package
 ## 🎯 BENEFÍCIOS OBTIDOS
 
 ### **✅ Imediatos:**
+
 - 🔄 **Reutilização de código**: Componentes UI compartilhados
 - ⚡ **Builds otimizados**: Cache incremental com Turborepo
 - 📦 **Dependências centralizadas**: Catalog no pnpm-workspace
 - 🏗️ **Arquitetura escalável**: Pronto para novos apps
 
 ### **✅ Longo Prazo:**
+
 - 🛠️ **Manutenção simplificada**: Mudanças propagam automaticamente
 - 👥 **Desenvolvimento paralelo**: Times independentes
 - 🚀 **CI/CD otimizado**: Builds apenas do que mudou
@@ -115,7 +126,9 @@ pnpm --filter @neonpro/ui build    # Build apenas UI package
 ## ⚠️ OBSERVAÇÕES IMPORTANTES
 
 ### **Dependencies Resolution:**
+
 O sistema de `catalog:` no pnpm-workspace.yaml centraliza versões:
+
 ```yaml
 catalog:
   react: ^18.3.1
@@ -124,7 +137,9 @@ catalog:
 ```
 
 ### **Workspace Dependencies:**
+
 Apps referenciam packages internos com `workspace:*`:
+
 ```json
 {
   "dependencies": {
@@ -135,7 +150,9 @@ Apps referenciam packages internos com `workspace:*`:
 ```
 
 ### **TypeScript Paths:**
+
 Configurado paths mapping no tsconfig.json root:
+
 ```json
 {
   "paths": {
@@ -148,6 +165,7 @@ Configurado paths mapping no tsconfig.json root:
 ## 🔧 TROUBLESHOOTING
 
 ### **Se `pnpm install` falhar:**
+
 ```bash
 # Limpar caches
 pnpm store prune
@@ -159,6 +177,7 @@ pnpm install
 ```
 
 ### **Se builds falharem:**
+
 ```bash
 # Verificar dependências
 pnpm list --depth=0
@@ -171,6 +190,7 @@ pnpm --filter @neonpro/web build
 ```
 
 ### **Se Next.js não encontrar módulos:**
+
 ```bash
 # Verificar se paths estão corretos
 cat apps/web/tsconfig.json

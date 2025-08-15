@@ -328,10 +328,12 @@ async function extractPortabilityData(
   if (categories.includes('all') || categories.includes('appointments')) {
     const { data: appointments } = await supabase
       .from('appointments')
-      .select(`
+      .select(
+        `
         *,
         treatment_plans (*)
-      `)
+      `
+      )
       .eq('patient_id', userId)
       .order('appointment_date', { ascending: false });
 
@@ -348,10 +350,12 @@ async function extractPortabilityData(
   if (categories.includes('all') || categories.includes('treatments')) {
     const { data: treatments } = await supabase
       .from('treatments')
-      .select(`
+      .select(
+        `
         *,
         treatment_sessions (*)
-      `)
+      `
+      )
       .eq('patient_id', userId)
       .order('start_date', { ascending: false });
 
@@ -382,10 +386,12 @@ async function extractPortabilityData(
   if (categories.includes('all') || categories.includes('payments')) {
     const { data: payments } = await supabase
       .from('payments')
-      .select(`
+      .select(
+        `
         *,
         payment_installments (*)
-      `)
+      `
+      )
       .eq('patient_id', userId)
       .order('payment_date', { ascending: false });
 

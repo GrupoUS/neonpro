@@ -248,7 +248,8 @@ export class BankReconciliationService {
 
     const { data: payments, error: paymentsError } = await supabase
       .from('ap_payments')
-      .select(`
+      .select(
+        `
         id,
         amount,
         payment_date,
@@ -259,7 +260,8 @@ export class BankReconciliationService {
           description,
           supplier_name
         )
-      `)
+      `
+      )
       .gte('payment_date', ninetyDaysAgo.toISOString())
       .in('status', ['completed', 'pending']);
 

@@ -647,7 +647,8 @@ export class SessionAuthService {
     try {
       const { data, error } = await this.supabase
         .from('profiles')
-        .select(`
+        .select(
+          `
           id,
           email,
           full_name,
@@ -656,7 +657,8 @@ export class SessionAuthService {
           phone_verified,
           mfa_enabled,
           last_login_at
-        `)
+        `
+        )
         .eq('id', userId)
         .single();
 

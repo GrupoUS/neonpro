@@ -99,13 +99,15 @@ export class SchedulingCommunicationWorkflow {
       // Get appointment details
       const { data: appointment, error: appointmentError } = await this.supabase
         .from('appointments')
-        .select(`
+        .select(
+          `
           *,
           patients(*),
           professionals(*),
           services(*),
           clinics(*)
-        `)
+        `
+        )
         .eq('id', appointmentId)
         .single();
 
@@ -346,13 +348,15 @@ export class SchedulingCommunicationWorkflow {
     // Get appointment and patient data
     const { data: appointment } = await this.supabase
       .from('appointments')
-      .select(`
+      .select(
+        `
         *,
         patients(*),
         professionals(*),
         services(*),
         clinics(*)
-      `)
+      `
+      )
       .eq('id', workflow.appointmentId)
       .single();
 

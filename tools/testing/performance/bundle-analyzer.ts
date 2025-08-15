@@ -272,7 +272,11 @@ export function generateBundleReport(analysis: BundleAnalysis): string {
   report += '## Chunks\n';
   analysis.chunks.forEach((chunk) => {
     const status =
-      chunk.status === 'error' ? '🚨' : chunk.status === 'warning' ? '⚠️' : '✅';
+      chunk.status === 'error'
+        ? '🚨'
+        : chunk.status === 'warning'
+          ? '⚠️'
+          : '✅';
     report += `- ${status} **${chunk.name}**: ${formatBytes(chunk.size)}\n`;
   });
   report += '\n';

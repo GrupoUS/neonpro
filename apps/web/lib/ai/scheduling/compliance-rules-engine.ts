@@ -413,21 +413,25 @@ class ComplianceRulesEngine {
       // Load staff data
       const { data: staff } = await this.supabase
         .from('staff')
-        .select(`
+        .select(
+          `
           *,
           staff_certifications(*),
           staff_specializations(*)
-        `)
+        `
+        )
         .eq('id', recommendation.staffId)
         .single();
 
       // Load equipment requirements
       const { data: equipmentRequirements } = await this.supabase
         .from('treatment_equipment_requirements')
-        .select(`
+        .select(
+          `
           *,
           equipment(*)
-        `)
+        `
+        )
         .eq('treatment_id', criteria.treatmentId);
 
       return {
@@ -588,12 +592,14 @@ class ComplianceRulesEngine {
     try {
       const { data: rules } = await this.supabase
         .from('compliance_rules')
-        .select(`
+        .select(
+          `
           *,
           rule_conditions(*),
           rule_actions(*),
           rule_exceptions(*)
-        `)
+        `
+        )
         .eq('status', 'active');
 
       if (rules) {

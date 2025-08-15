@@ -42,10 +42,12 @@ export class RBACPermissionManager {
 
       const { data: userRole, error } = await this.supabase
         .from('user_roles')
-        .select(`
+        .select(
+          `
           *,
           role:roles(*)
-        `)
+        `
+        )
         .eq('user_id', userId)
         .eq('clinic_id', clinicId)
         .eq('is_active', true)

@@ -183,11 +183,13 @@ export class NoShowPredictionEngine {
   ): Promise<NoShowPrediction[]> {
     const { data, error } = await this.supabase
       .from('no_show_predictions')
-      .select(`
+      .select(
+        `
         *,
         appointments!inner(*),
         patients!inner(*)
-      `)
+      `
+      )
       .gte('prediction_date', startDate)
       .lte('prediction_date', endDate)
       .gte('risk_score', this.config.confidenceThreshold)
@@ -591,12 +593,14 @@ export class NoShowPredictionEngine {
   private async getAppointmentDetails(appointmentId: string) {
     const { data, error } = await this.supabase
       .from('appointments')
-      .select(`
+      .select(
+        `
         *,
         service_types(*),
         patients(*),
         professionals(*)
-      `)
+      `
+      )
       .eq('id', appointmentId)
       .single();
 

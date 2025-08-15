@@ -30,7 +30,8 @@ export const invoiceEmailDelivery = task({
       // Buscar detalhes da fatura no sistema existente
       const { data: invoice, error } = await supabase
         .from('billing_invoices')
-        .select(`
+        .select(
+          `
           id,
           invoice_number,
           amount,
@@ -49,7 +50,8 @@ export const invoiceEmailDelivery = task({
             unit_price,
             total_price
           )
-        `)
+        `
+        )
         .eq('id', payload.invoiceId)
         .single();
 

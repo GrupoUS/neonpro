@@ -54,7 +54,8 @@ export async function GET(
     // Get subscription with related data
     const { data: subscription, error } = await supabase
       .from('subscriptions')
-      .select(`
+      .select(
+        `
         *,
         plan:subscription_plans(*),
         customer:customers(*),
@@ -63,7 +64,8 @@ export async function GET(
           *,
           payment_retry_logs(*)
         )
-      `)
+      `
+      )
       .eq('id', subscriptionId)
       .single();
 
@@ -141,10 +143,12 @@ export async function PUT(
     // Check if subscription exists and user has permission
     const { data: subscription, error: fetchError } = await supabase
       .from('subscriptions')
-      .select(`
+      .select(
+        `
         *,
         customer:customers(*)
-      `)
+      `
+      )
       .eq('id', subscriptionId)
       .single();
 
@@ -224,10 +228,12 @@ export async function DELETE(
     // Check if subscription exists and user has permission
     const { data: subscription, error: fetchError } = await supabase
       .from('subscriptions')
-      .select(`
+      .select(
+        `
         *,
         customer:customers(*)
-      `)
+      `
+      )
       .eq('id', subscriptionId)
       .single();
 

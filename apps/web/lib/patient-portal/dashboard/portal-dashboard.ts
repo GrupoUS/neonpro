@@ -274,11 +274,13 @@ export class PortalDashboard {
   private async getPatientInfo(patientId: string): Promise<any> {
     const { data, error } = await this.supabase
       .from('patients')
-      .select(`
+      .select(
+        `
         id, name, email, phone, birth_date, gender,
         profile_photo_url, membership_start_date,
         emergency_contact_name, emergency_contact_phone
-      `)
+      `
+      )
       .eq('id', patientId)
       .single();
     if (error) {
@@ -300,12 +302,14 @@ export class PortalDashboard {
     // Get upcoming appointments
     const { data: upcomingData, error: upcomingError } = await this.supabase
       .from('appointments')
-      .select(`
+      .select(
+        `
         id, appointment_date, appointment_time, status,
         estimated_duration, location,
         services(name, category),
         staff(name, specialization)
-      `)
+      `
+      )
       .eq('patient_id', patientId)
       .gte('appointment_date', now.toISOString().split('T')[0])
       .order('appointment_date', { ascending: true })
@@ -317,12 +321,14 @@ export class PortalDashboard {
     // Get recent appointments
     const { data: recentData, error: recentError } = await this.supabase
       .from('appointments')
-      .select(`
+      .select(
+        `
         id, appointment_date, appointment_time, status,
         estimated_duration, location,
         services(name, category),
         staff(name, specialization)
-      `)
+      `
+      )
       .eq('patient_id', patientId)
       .lt('appointment_date', now.toISOString().split('T')[0])
       .gte('appointment_date', thirtyDaysAgo.toISOString().split('T')[0])
@@ -375,11 +381,13 @@ export class PortalDashboard {
   ): Promise<TreatmentProgressSummary[]> {
     const { data, error } = await this.supabase
       .from('treatment_progress')
-      .select(`
+      .select(
+        `
         id, treatment_name, progress_percentage,
         current_session, total_sessions, next_session_date,
         last_update, status
-      `)
+      `
+      )
       .eq('patient_id', patientId)
       .eq('status', 'active')
       .order('last_update', { ascending: false })
@@ -410,10 +418,12 @@ export class PortalDashboard {
   private async getRecentUploads(patientId: string): Promise<UploadSummary[]> {
     const { data, error } = await this.supabase
       .from('patient_uploads')
-      .select(`
+      .select(
+        `
         id, filename, category, upload_date,
         is_processed, is_verified, file_size
-      `)
+      `
+      )
       .eq('patient_id', patientId)
       .order('upload_date', { ascending: false })
       .limit(this.config.maxRecentItems);
@@ -473,10 +483,12 @@ export class PortalDashboard {
   ): Promise<NotificationSummary[]> {
     const { data, error } = await this.supabase
       .from('notifications')
-      .select(`
+      .select(
+        `
         id, title, message, type, is_read,
         created_at, action_url, action_text
-      `)
+      `
+      )
       .eq('patient_id', patientId)
       .order('created_at', { ascending: false })
       .limit(10);

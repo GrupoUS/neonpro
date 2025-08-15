@@ -151,12 +151,14 @@ export class AppointmentManager {
       // Get available staff for the service
       const { data: availableStaff, error: staffError } = await this.supabase
         .from('staff')
-        .select(`
+        .select(
+          `
           id, name, specialization,
           staff_availability!inner(
             day_of_week, start_time, end_time, is_available
           )
-        `)
+        `
+        )
         .match(staffFilter)
         .eq('staff_availability.is_available', true);
 

@@ -125,7 +125,8 @@ export function useAppointmentsManager() {
 
       let query = supabase
         .from('appointments')
-        .select(`
+        .select(
+          `
           *,
           patient:profiles!appointments_patient_id_fkey(
             id,
@@ -150,7 +151,8 @@ export function useAppointmentsManager() {
             start_time,
             end_time
           )
-        `)
+        `
+        )
         .gte('time_slot.date', format(dateRange.start, 'yyyy-MM-dd'))
         .lte('time_slot.date', format(dateRange.end, 'yyyy-MM-dd'))
         .order('time_slot(date)', { ascending: true })

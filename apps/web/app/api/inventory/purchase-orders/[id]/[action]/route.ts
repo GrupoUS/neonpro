@@ -193,7 +193,8 @@ async function checkApprovalPermissions(
     // Get user role and permissions
     const { data: userProfile, error } = await supabase
       .from('profiles')
-      .select(`
+      .select(
+        `
         id,
         role,
         permissions,
@@ -202,7 +203,8 @@ async function checkApprovalPermissions(
           role,
           permissions
         )
-      `)
+      `
+      )
       .eq('id', userId)
       .single();
 

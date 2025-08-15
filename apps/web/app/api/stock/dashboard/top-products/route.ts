@@ -70,7 +70,8 @@ export async function GET(request: NextRequest) {
     // Get top products by consumption
     const { data: topProductsData, error: topProductsError } = await supabase
       .from('stock_movement_transactions')
-      .select(`
+      .select(
+        `
         product_id,
         quantity_out,
         unit_cost,
@@ -80,7 +81,8 @@ export async function GET(request: NextRequest) {
           category_id,
           product_categories (name)
         )
-      `)
+      `
+      )
       .eq('clinic_id', params.clinicId)
       .eq('movement_type', 'out')
       .gte('transaction_date', startDate.toISOString())

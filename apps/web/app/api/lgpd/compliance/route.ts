@@ -87,7 +87,8 @@ export async function GET(request: NextRequest) {
       // Get recent assessments
       const { data: assessmentsData } = await supabase
         .from('lgpd_compliance_assessments')
-        .select(`
+        .select(
+          `
           id,
           name,
           status,
@@ -95,7 +96,8 @@ export async function GET(request: NextRequest) {
           compliance_percentage,
           completed_at,
           next_assessment_due
-        `)
+        `
+        )
         .order('completed_at', { ascending: false })
         .limit(5);
 
@@ -259,7 +261,8 @@ export async function PUT(_request: NextRequest) {
     // Get the created assessment
     const { data: assessment } = await supabase
       .from('lgpd_compliance_assessments')
-      .select(`
+      .select(
+        `
         id,
         name,
         status,
@@ -268,7 +271,8 @@ export async function PUT(_request: NextRequest) {
         findings,
         recommendations,
         completed_at
-      `)
+      `
+      )
       .eq('id', assessmentId)
       .single();
 

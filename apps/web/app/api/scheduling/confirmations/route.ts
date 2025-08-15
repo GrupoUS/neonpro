@@ -67,13 +67,15 @@ export async function POST(request: NextRequest) {
     // Get appointment details
     const { data: appointment, error: appointmentError } = await supabase
       .from('appointments')
-      .select(`
+      .select(
+        `
         *,
         patients(*),
         professionals(*),
         services(*),
         clinics(*)
-      `)
+      `
+      )
       .eq('id', validatedData.appointmentId)
       .single();
 
@@ -259,12 +261,14 @@ export async function PUT(request: NextRequest) {
     // Find confirmation by token
     const { data: confirmation, error: confirmationError } = await supabase
       .from('appointment_confirmations')
-      .select(`
+      .select(
+        `
         *,
         appointments(*),
         patients(*),
         clinics(*)
-      `)
+      `
+      )
       .eq('confirmation_token', validatedData.confirmationToken)
       .single();
 
@@ -422,14 +426,16 @@ export async function GET(request: NextRequest) {
     if (confirmationToken) {
       const { data: confirmation, error: tokenError } = await supabase
         .from('appointment_confirmations')
-        .select(`
+        .select(
+          `
           *,
           appointments(*),
           patients(name),
           professionals(name),
           services(name),
           clinics(name, address, phone)
-        `)
+        `
+        )
         .eq('confirmation_token', confirmationToken)
         .single();
 

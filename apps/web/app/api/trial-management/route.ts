@@ -323,11 +323,13 @@ async function getTrials(
 ) {
   let query = supabase
     .from('trials')
-    .select(`
+    .select(
+      `
       *,
       campaigns(name, description),
       users(email, created_at)
-    `)
+    `
+    )
     .eq('user_id', userId)
     .order('created_at', { ascending: false });
 
@@ -355,10 +357,12 @@ async function getTrials(
 async function getCampaigns() {
   const { data, error } = await supabase
     .from('campaigns')
-    .select(`
+    .select(
+      `
       *,
       trials(count)
-    `)
+    `
+    )
     .order('created_at', { ascending: false });
 
   if (error) {

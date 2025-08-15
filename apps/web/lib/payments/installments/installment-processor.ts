@@ -94,7 +94,8 @@ export class InstallmentProcessor {
       // Get installment details
       const { data: installment, error: installmentError } = await this.supabase
         .from('installments')
-        .select(`
+        .select(
+          `
           *,
           payment_plans!inner(
             id,
@@ -108,7 +109,8 @@ export class InstallmentProcessor {
               stripe_customer_id
             )
           )
-        `)
+        `
+        )
         .eq('id', installmentId)
         .single();
 

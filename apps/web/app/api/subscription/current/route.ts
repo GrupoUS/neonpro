@@ -41,11 +41,13 @@ export async function GET(_request: NextRequest) {
     // Get current subscription with plan details and usage
     const { data: subscription, error } = await supabase
       .from('user_subscriptions')
-      .select(`
+      .select(
+        `
         *,
         plan:subscription_plans(*),
         usage:subscription_usage(*)
-      `)
+      `
+      )
       .eq('clinic_id', userClinic.clinic_id)
       .in('status', ['trial', 'active'])
       .single();

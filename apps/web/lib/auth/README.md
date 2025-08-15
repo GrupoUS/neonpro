@@ -49,10 +49,10 @@ O **NeonPro Advanced Authentication System** é um sistema de autenticação emp
 ### Instalação Básica
 
 ```typescript
-import { 
-  AdvancedAuthSystem, 
+import {
+  AdvancedAuthSystem,
   initializeAuthSystem,
-  setupSecureAuth 
+  setupSecureAuth,
 } from '@/lib/auth';
 
 // Configuração rápida com segurança alta
@@ -65,7 +65,7 @@ const customAuthSystem = await initializeAuthSystem({
   securityLevel: 'high',
   enableSuspiciousDetection: true,
   enableSecurityMonitoring: true,
-  complianceFrameworks: ['LGPD', 'GDPR']
+  complianceFrameworks: ['LGPD', 'GDPR'],
 });
 ```
 
@@ -106,7 +106,7 @@ await timeoutManager.initialize();
 await timeoutManager.initializeSession(sessionId, {
   userId: 'user123',
   role: 'admin',
-  timeout: 30 * 60 * 1000 // 30 minutos base
+  timeout: 30 * 60 * 1000, // 30 minutos base
 });
 
 // Atualizar atividade (ajusta timeout automaticamente)
@@ -114,6 +114,7 @@ await timeoutManager.updateActivity(sessionId);
 ```
 
 **Características**:
+
 - Timeouts adaptativos baseados em padrões de uso
 - Detecção de inatividade inteligente
 - Avisos antes do timeout
@@ -140,6 +141,7 @@ if (canCreate.allowed) {
 ```
 
 **Características**:
+
 - Limite configurável de sessões simultâneas
 - Detecção de conflitos (mesmo dispositivo, localização suspeita)
 - Transferência de dados entre sessões
@@ -163,11 +165,12 @@ await detector.startMonitoring(sessionId, userId);
 await detector.recordActivity(sessionId, {
   type: 'mouse_movement',
   data: { x: 100, y: 200, speed: 5 },
-  timestamp: Date.now()
+  timestamp: Date.now(),
 });
 ```
 
 **Características**:
+
 - Análise de padrões de digitação
 - Monitoramento de movimento do mouse
 - Detecção de mudanças de localização
@@ -191,11 +194,12 @@ await securityMonitor.processAnomaly({
   type: 'suspicious_login',
   severity: 'high',
   confidence: 0.9,
-  details: { reason: 'Login de localização incomum' }
+  details: { reason: 'Login de localização incomum' },
 });
 ```
 
 **Características**:
+
 - Detecção de ameaças em tempo real
 - Resposta automatizada (bloqueio, suspensão, MFA)
 - Correlação de eventos de segurança
@@ -215,18 +219,19 @@ const syncManager = new SessionSyncManager();
 
 // Inicializar com WebSocket
 await syncManager.initialize({
-  websocketUrl: 'ws://localhost:8080/sync'
+  websocketUrl: 'ws://localhost:8080/sync',
 });
 
 // Sincronizar evento
 await syncManager.syncEvent({
   type: 'preference_updated',
   data: { theme: 'dark' },
-  deviceId: 'device123'
+  deviceId: 'device123',
 });
 ```
 
 **Características**:
+
 - Sincronização em tempo real via WebSocket
 - Resolução de conflitos automática
 - Estratégias configuráveis (last-write-wins, merge, etc.)
@@ -247,7 +252,7 @@ const preservationManager = new SessionPreservationManager();
 const snapshot = await preservationManager.createSnapshot(sessionId, {
   reason: 'before_critical_operation',
   preserveFormData: true,
-  preserveNavigationState: true
+  preserveNavigationState: true,
 });
 
 // Restaurar snapshot
@@ -255,6 +260,7 @@ await preservationManager.restoreSnapshot(sessionId, snapshot.id);
 ```
 
 **Características**:
+
 - Snapshots automáticos em pontos críticos
 - Compressão e criptografia de dados
 - Múltiplos backends de armazenamento
@@ -276,11 +282,12 @@ await emergencyManager.triggerEmergency({
   type: 'security_breach',
   severity: 'critical',
   reason: 'Múltiplas tentativas de acesso não autorizado',
-  actions: ['terminate_sessions', 'block_ips', 'notify_admins']
+  actions: ['terminate_sessions', 'block_ips', 'notify_admins'],
 });
 ```
 
 **Características**:
+
 - Resposta automatizada a ameaças críticas
 - Múltiplas ações de mitigação
 - Notificações em tempo real
@@ -305,18 +312,19 @@ await auditManager.logEvent({
   severity: 'info',
   action: 'login_successful',
   actor: { type: 'user', id: userId },
-  target: { type: 'system', id: 'auth_system' }
+  target: { type: 'system', id: 'auth_system' },
 });
 
 // Gerar relatório de conformidade
 const report = await auditManager.generateComplianceReport({
   framework: 'LGPD',
   startDate: new Date('2024-01-01'),
-  endDate: new Date('2024-12-31')
+  endDate: new Date('2024-12-31'),
 });
 ```
 
 **Características**:
+
 - Logging completo de eventos
 - Relatórios de conformidade (LGPD, GDPR)
 - Integridade criptográfica
@@ -342,13 +350,16 @@ await cleanupManager.scheduleTask({
   target: {
     type: 'database',
     table: 'sessions',
-    conditions: [{ field: 'lastActivity', operator: '<', value: '30 days ago' }]
+    conditions: [
+      { field: 'lastActivity', operator: '<', value: '30 days ago' },
+    ],
   },
-  actions: [{ type: 'delete' }]
+  actions: [{ type: 'delete' }],
 });
 ```
 
 **Características**:
+
 - Limpeza automática agendada
 - Políticas de retenção configuráveis
 - Conformidade com LGPD/GDPR
@@ -364,26 +375,26 @@ const advancedConfig = {
   // Core
   sessionTimeout: 30 * 60 * 1000,
   maxConcurrentSessions: 5,
-  
+
   // Segurança
   securityLevel: 'high',
   anomalyThreshold: 0.7,
   threatResponseLevel: 'active',
-  
+
   // Conformidade
   complianceFrameworks: ['LGPD', 'GDPR'],
   dataRetentionPeriod: 365 * 24 * 60 * 60 * 1000,
   auditLevel: 'detailed',
-  
+
   // Performance
   batchSize: 100,
   cleanupInterval: 60 * 60 * 1000,
   monitoringInterval: 5 * 60 * 1000,
-  
+
   // Integração
   websocketUrl: 'ws://localhost:8080/sync',
   encryptionKey: 'your-encryption-key',
-  notificationEndpoints: ['https://api.slack.com/webhook']
+  notificationEndpoints: ['https://api.slack.com/webhook'],
 };
 
 const authSystem = await initializeAuthSystem(advancedConfig);
@@ -391,12 +402,12 @@ const authSystem = await initializeAuthSystem(advancedConfig);
 
 ### Níveis de Segurança
 
-| Nível | Timeout | Sessões | Detecção | Monitoramento | Auditoria |
-|-------|---------|---------|----------|---------------|----------|
-| **Low** | 1h | 10 | ❌ | ✅ | Básica |
-| **Medium** | 45min | 7 | ✅ | ✅ | Detalhada |
-| **High** | 30min | 5 | ✅ | ✅ | Detalhada |
-| **Maximum** | 15min | 3 | ✅ | ✅ | Completa |
+| Nível       | Timeout | Sessões | Detecção | Monitoramento | Auditoria |
+| ----------- | ------- | ------- | -------- | ------------- | --------- |
+| **Low**     | 1h      | 10      | ❌       | ✅            | Básica    |
+| **Medium**  | 45min   | 7       | ✅       | ✅            | Detalhada |
+| **High**    | 30min   | 5       | ✅       | ✅            | Detalhada |
+| **Maximum** | 15min   | 3       | ✅       | ✅            | Completa  |
 
 ## 📊 Monitoramento e Métricas
 
@@ -466,7 +477,7 @@ const authSystem = await setupSecureAuth();
 const session = await authSystem.createSession('user123', {
   deviceId: 'device456',
   userAgent: 'Mozilla/5.0...',
-  ipAddress: '192.168.1.100'
+  ipAddress: '192.168.1.100',
 });
 
 // Validar sessão
@@ -498,7 +509,7 @@ authSystem.on('security_threat', (event) => {
 // Reportar atividade suspeita
 await authSystem.reportSuspiciousActivity(sessionId, {
   type: 'unusual_location',
-  details: { newLocation: 'São Paulo', previousLocation: 'Rio de Janeiro' }
+  details: { newLocation: 'São Paulo', previousLocation: 'Rio de Janeiro' },
 });
 ```
 
@@ -548,7 +559,7 @@ process.env.AUTH_DEBUG = 'true';
 
 // Verificar saúde dos componentes
 const status = authSystem.getSystemStatus();
-status.components.forEach(component => {
+status.components.forEach((component) => {
   if (component.status !== 'healthy') {
     console.log(`Problema em ${component.name}:`, component.details);
   }
@@ -569,7 +580,10 @@ status.components.forEach(component => {
 
 ```typescript
 const metrics = authSystem.getMetrics();
-console.log('Tempo médio de resposta:', metrics.performance.averageResponseTime);
+console.log(
+  'Tempo médio de resposta:',
+  metrics.performance.averageResponseTime
+);
 console.log('Uso de memória:', metrics.performance.memoryUsage, 'MB');
 console.log('Taxa de erro:', metrics.performance.errorRate);
 console.log('Throughput:', metrics.performance.throughput, 'ops/sec');
@@ -612,6 +626,7 @@ Este projeto está licenciado sob a MIT License - veja o arquivo LICENSE para de
 ## 📞 Suporte
 
 Para suporte técnico:
+
 - 📧 Email: suporte@neonpro.com
 - 💬 Discord: [NeonPro Community](https://discord.gg/neonpro)
 - 📚 Docs: [docs.neonpro.com](https://docs.neonpro.com)

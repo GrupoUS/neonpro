@@ -5,6 +5,7 @@ A comprehensive patient portal system for NeonPro that provides secure patient a
 ## Features
 
 ### 🔐 Authentication & Security
+
 - Secure session management with JWT tokens
 - Device fingerprinting and tracking
 - LGPD compliance with audit logging
@@ -12,6 +13,7 @@ A comprehensive patient portal system for NeonPro that provides secure patient a
 - Two-factor authentication support
 
 ### 📊 Dashboard
+
 - Personalized patient dashboard
 - Real-time updates and notifications
 - Treatment progress tracking
@@ -19,6 +21,7 @@ A comprehensive patient portal system for NeonPro that provides secure patient a
 - Document management overview
 
 ### 📅 Appointment Management
+
 - Online appointment booking
 - Available time slot discovery
 - Appointment rescheduling and cancellation
@@ -26,6 +29,7 @@ A comprehensive patient portal system for NeonPro that provides secure patient a
 - Waitlist functionality
 
 ### 📄 Document Management
+
 - Secure file upload with encryption
 - Virus scanning and validation
 - Automatic thumbnail generation
@@ -33,6 +37,7 @@ A comprehensive patient portal system for NeonPro that provides secure patient a
 - LGPD-compliant retention policies
 
 ### 💬 Communication
+
 - Secure messaging with healthcare providers
 - File attachments support
 - Message encryption
@@ -42,9 +47,9 @@ A comprehensive patient portal system for NeonPro that provides secure patient a
 ## Installation
 
 ```typescript
-import { 
-  PatientPortal, 
-  createDefaultPortalConfig 
+import {
+  PatientPortal,
+  createDefaultPortalConfig,
 } from '@neonpro/patient-portal';
 
 // Initialize with default configuration
@@ -76,9 +81,9 @@ const sessionResult = await portal.sessionManager.createSession({
   deviceInfo: {
     userAgent: req.headers['user-agent'],
     ipAddress: req.ip,
-    deviceType: 'desktop'
+    deviceType: 'desktop',
   },
-  loginMethod: 'password'
+  loginMethod: 'password',
 });
 
 if (sessionResult.success) {
@@ -114,29 +119,35 @@ const slots = await portal.appointments.getAvailableSlots(
 );
 
 // Book an appointment
-const bookingResult = await portal.appointments.bookAppointment({
-  patientId: 'patient-123',
-  serviceId: 'service-456',
-  staffId: 'staff-789',
-  preferredDate: new Date('2024-02-05'),
-  preferredTime: '14:00',
-  notes: 'Follow-up consultation',
-  isUrgent: false
-}, sessionToken);
+const bookingResult = await portal.appointments.bookAppointment(
+  {
+    patientId: 'patient-123',
+    serviceId: 'service-456',
+    staffId: 'staff-789',
+    preferredDate: new Date('2024-02-05'),
+    preferredTime: '14:00',
+    notes: 'Follow-up consultation',
+    isUrgent: false,
+  },
+  sessionToken
+);
 ```
 
 ### File Upload
 
 ```typescript
 // Upload patient documents
-const uploadResult = await portal.uploads.uploadFiles({
-  patientId: 'patient-123',
-  files: [file1, file2],
-  category: 'medical_records',
-  description: 'Lab results from external clinic',
-  isPrivate: true,
-  tags: ['lab-results', 'external']
-}, sessionToken);
+const uploadResult = await portal.uploads.uploadFiles(
+  {
+    patientId: 'patient-123',
+    files: [file1, file2],
+    category: 'medical_records',
+    description: 'Lab results from external clinic',
+    isPrivate: true,
+    tags: ['lab-results', 'external'],
+  },
+  sessionToken
+);
 
 if (uploadResult.success) {
   console.log('Files uploaded:', uploadResult.files);
@@ -147,15 +158,18 @@ if (uploadResult.success) {
 
 ```typescript
 // Send a message to healthcare provider
-const messageResult = await portal.communication.sendMessage({
-  patientId: 'patient-123',
-  recipientId: 'doctor-456',
-  recipientType: 'staff',
-  subject: 'Question about medication',
-  content: 'I have a question about the dosage...',
-  messageType: 'general_inquiry',
-  priority: 'normal'
-}, sessionToken);
+const messageResult = await portal.communication.sendMessage(
+  {
+    patientId: 'patient-123',
+    recipientId: 'doctor-456',
+    recipientType: 'staff',
+    subject: 'Question about medication',
+    content: 'I have a question about the dosage...',
+    messageType: 'general_inquiry',
+    priority: 'normal',
+  },
+  sessionToken
+);
 ```
 
 ## Configuration
@@ -168,7 +182,7 @@ const config: PatientPortalConfig = {
     secretKey: process.env.SESSION_SECRET_KEY,
     tokenExpiration: 24 * 60 * 60 * 1000, // 24 hours
     maxConcurrentSessions: 3,
-    deviceTrackingEnabled: true
+    deviceTrackingEnabled: true,
   },
   features: {
     appointmentBooking: true,
@@ -176,13 +190,13 @@ const config: PatientPortalConfig = {
     messaging: true,
     treatmentTracking: true,
     billingAccess: false,
-    telehealth: true
+    telehealth: true,
   },
   security: {
     twoFactorRequired: true,
     sessionTimeout: 30 * 60 * 1000, // 30 minutes
-    maxLoginAttempts: 5
-  }
+    maxLoginAttempts: 5,
+  },
 };
 ```
 
@@ -191,31 +205,30 @@ const config: PatientPortalConfig = {
 ```typescript
 const uploadConfig: UploadConfig = {
   maxFileSize: 10 * 1024 * 1024, // 10MB
-  allowedFileTypes: [
-    'application/pdf',
-    'image/jpeg',
-    'image/png'
-  ],
+  allowedFileTypes: ['application/pdf', 'image/jpeg', 'image/png'],
   maxFilesPerUpload: 5,
   virusScanEnabled: true,
-  encryptionEnabled: true
+  encryptionEnabled: true,
 };
 ```
 
 ## Security Features
 
 ### Data Encryption
+
 - All sensitive data is encrypted at rest and in transit
 - File uploads are encrypted using AES-256
 - Messages are end-to-end encrypted
 
 ### LGPD Compliance
+
 - Comprehensive audit logging
 - Data retention policies
 - Patient consent management
 - Right to be forgotten implementation
 
 ### Session Security
+
 - JWT tokens with short expiration
 - Refresh token rotation
 - Device fingerprinting

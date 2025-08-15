@@ -47,7 +47,8 @@ export async function POST(request: NextRequest) {
     // Get stock movements for cost analysis
     const { data: stockMovements, error: movementsError } = await supabase
       .from('stock_movement_transactions')
-      .select(`
+      .select(
+        `
         movement_type,
         quantity_in,
         quantity_out,
@@ -62,7 +63,8 @@ export async function POST(request: NextRequest) {
           category_id,
           product_categories (name)
         )
-      `)
+      `
+      )
       .eq('clinic_id', params.clinicId)
       .gte('transaction_date', params.startDate)
       .lte('transaction_date', params.endDate);
@@ -78,7 +80,8 @@ export async function POST(request: NextRequest) {
     // Get current inventory value
     const { data: currentInventory, error: inventoryError } = await supabase
       .from('stock_inventory')
-      .select(`
+      .select(
+        `
         product_id,
         quantity_available,
         unit_cost,
@@ -87,7 +90,8 @@ export async function POST(request: NextRequest) {
           category_id,
           product_categories (name)
         )
-      `)
+      `
+      )
       .eq('clinic_id', params.clinicId)
       .eq('is_active', true);
 

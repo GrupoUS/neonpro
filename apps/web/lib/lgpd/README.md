@@ -7,6 +7,7 @@ O Sistema de Automação de Conformidade LGPD é uma solução abrangente para g
 ## 🚀 Funcionalidades Principais
 
 ### 1. Gerenciamento de Consentimento (`consent-management.ts`)
+
 - ✅ Processamento automatizado de consentimento
 - ✅ Validação de consentimento granular
 - ✅ Renovação automática de consentimento
@@ -15,6 +16,7 @@ O Sistema de Automação de Conformidade LGPD é uma solução abrangente para g
 - ✅ Análises e relatórios de conformidade
 
 ### 2. Direitos dos Titulares de Dados (`data-subject-rights.ts`)
+
 - ✅ Processamento automatizado de requisições
 - ✅ Suporte a todos os direitos LGPD (acesso, retificação, eliminação, etc.)
 - ✅ Verificação de identidade
@@ -23,6 +25,7 @@ O Sistema de Automação de Conformidade LGPD é uma solução abrangente para g
 - ✅ Relatórios de desempenho
 
 ### 3. Monitoramento de Conformidade (`compliance-monitor.ts`)
+
 - ✅ Monitoramento em tempo real
 - ✅ Detecção automática de violações
 - ✅ Pontuação de conformidade
@@ -31,6 +34,7 @@ O Sistema de Automação de Conformidade LGPD é uma solução abrangente para g
 - ✅ Análise de tendências
 
 ### 4. Políticas de Retenção de Dados (`data-retention.ts`)
+
 - ✅ Gerenciamento automatizado de políticas
 - ✅ Agendamento de retenção
 - ✅ Retenção legal (legal hold)
@@ -39,6 +43,7 @@ O Sistema de Automação de Conformidade LGPD é uma solução abrangente para g
 - ✅ Conformidade com prazos LGPD
 
 ### 5. Detecção de Violações (`breach-detection.ts`)
+
 - ✅ Detecção em tempo real
 - ✅ Classificação automática de severidade
 - ✅ Notificação automática à ANPD
@@ -47,6 +52,7 @@ O Sistema de Automação de Conformidade LGPD é uma solução abrangente para g
 - ✅ Relatórios de conformidade
 
 ### 6. Minimização de Dados (`data-minimization.ts`)
+
 - ✅ Aplicação automática de princípios de minimização
 - ✅ Validação de necessidade de dados
 - ✅ Esquemas de coleta otimizados
@@ -54,6 +60,7 @@ O Sistema de Automação de Conformidade LGPD é uma solução abrangente para g
 - ✅ Conformidade com finalidades
 
 ### 7. Avaliação de Impacto (`impact-assessment.ts`)
+
 - ✅ DPIA (Data Protection Impact Assessment) automatizada
 - ✅ Análise de risco automatizada
 - ✅ Identificação de lacunas de conformidade
@@ -62,6 +69,7 @@ O Sistema de Automação de Conformidade LGPD é uma solução abrangente para g
 - ✅ Modelos de avaliação
 
 ### 8. Documentação Legal (`legal-documentation.ts`)
+
 - ✅ Geração automática de políticas de privacidade
 - ✅ Templates personalizáveis
 - ✅ Suporte multi-idioma
@@ -90,10 +98,7 @@ lgpd/
 ### Instalação
 
 ```typescript
-import { 
-  LGPDComplianceSystem, 
-  createDefaultLGPDConfig 
-} from './lib/lgpd';
+import { LGPDComplianceSystem, createDefaultLGPDConfig } from './lib/lgpd';
 ```
 
 ### Configuração Básica
@@ -109,18 +114,18 @@ const organizationInfo = {
     city: 'São Paulo',
     state: 'SP',
     zipCode: '01234-567',
-    country: 'Brasil'
+    country: 'Brasil',
   },
   contact: {
     email: 'contato@minhaempresa.com',
     phone: '+55 11 1234-5678',
-    website: 'https://minhaempresa.com'
+    website: 'https://minhaempresa.com',
   },
   dpo: {
     name: 'João Silva',
     email: 'dpo@minhaempresa.com',
-    phone: '+55 11 9876-5432'
-  }
+    phone: '+55 11 9876-5432',
+  },
 };
 
 // Criar configuração padrão
@@ -144,12 +149,12 @@ const consentResult = await lgpdSystem.consent.processConsent({
   consentMethod: 'explicit',
   ipAddress: '192.168.1.1',
   userAgent: 'Mozilla/5.0...',
-  timestamp: new Date()
+  timestamp: new Date(),
 });
 
 // Validar consentimento
 const validation = await lgpdSystem.consent.validateConsent(
-  'user123', 
+  'user123',
   'marketing'
 );
 ```
@@ -165,8 +170,8 @@ const request = await lgpdSystem.dataSubjectRights.processRequest({
   description: 'Solicito acesso aos meus dados pessoais',
   verificationData: {
     documentType: 'cpf',
-    documentNumber: '123.456.789-00'
-  }
+    documentNumber: '123.456.789-00',
+  },
 });
 ```
 
@@ -179,7 +184,7 @@ const compliance = await lgpdSystem.compliance.checkOperationCompliance({
   dataType: 'personal_data',
   purpose: 'service_provision',
   legalBasis: 'contract',
-  timestamp: new Date()
+  timestamp: new Date(),
 });
 
 // Obter pontuação de conformidade
@@ -196,7 +201,7 @@ const result = await lgpdSystem.processData({
   purpose: 'newsletter',
   legalBasis: 'consent',
   dataSubject: 'user123',
-  data: { email: 'user@example.com' }
+  data: { email: 'user@example.com' },
 });
 
 if (result.allowed) {
@@ -252,29 +257,29 @@ const customConfig: LGPDSystemConfiguration = {
     auditTrailEnabled: true,
     notificationsEnabled: true,
     encryptionEnabled: true,
-    backupEnabled: true
+    backupEnabled: true,
   },
   modules: {
     consent: {
       enabled: true,
       autoExpiry: true,
       expiryDays: 365,
-      granularConsent: true
+      granularConsent: true,
     },
     dataSubjectRights: {
       enabled: true,
       autoProcessing: false, // Processamento manual
-      responseTimeHours: 48,  // SLA personalizado
-      verificationRequired: true
+      responseTimeHours: 48, // SLA personalizado
+      verificationRequired: true,
     },
     compliance: {
       enabled: true,
       continuousMonitoring: true,
       alertThreshold: 0.9, // Limite mais rigoroso
-      autoRemediation: false
+      autoRemediation: false,
     },
     // ... outras configurações
-  }
+  },
 };
 ```
 
@@ -291,18 +296,16 @@ const supabase = createClient(url, key);
 // Configurar persistência personalizada
 class CustomConsentManager extends ConsentManager {
   async saveConsent(consent: ConsentRecord): Promise<void> {
-    await supabase
-      .from('consent_records')
-      .insert(consent);
+    await supabase.from('consent_records').insert(consent);
   }
-  
+
   async loadConsent(id: string): Promise<ConsentRecord | null> {
     const { data } = await supabase
       .from('consent_records')
       .select('*')
       .eq('id', id)
       .single();
-    
+
     return data;
   }
 }
@@ -311,16 +314,19 @@ class CustomConsentManager extends ConsentManager {
 ## 🔒 Segurança
 
 ### Criptografia
+
 - Todos os dados sensíveis são criptografados em repouso
 - Comunicações protegidas por TLS
 - Chaves de criptografia gerenciadas de forma segura
 
 ### Auditoria
+
 - Trilha de auditoria completa para todas as operações
 - Logs imutáveis com timestamp
 - Rastreabilidade de todas as ações
 
 ### Controle de Acesso
+
 - Autenticação obrigatória para operações sensíveis
 - Autorização baseada em papéis
 - Princípio do menor privilégio
@@ -329,14 +335,14 @@ class CustomConsentManager extends ConsentManager {
 
 ### Artigos Cobertos
 
-| Artigo | Descrição | Módulo Responsável |
-|--------|-----------|--------------------|
-| Art. 8º | Consentimento | consent-management |
-| Art. 9º | Direitos dos titulares | data-subject-rights |
-| Art. 18 | Direito de acesso | data-subject-rights |
-| Art. 46 | Medidas de segurança | breach-detection |
-| Art. 48 | Comunicação de incidentes | breach-detection |
-| Art. 38 | Relatório de impacto | impact-assessment |
+| Artigo  | Descrição                 | Módulo Responsável  |
+| ------- | ------------------------- | ------------------- |
+| Art. 8º | Consentimento             | consent-management  |
+| Art. 9º | Direitos dos titulares    | data-subject-rights |
+| Art. 18 | Direito de acesso         | data-subject-rights |
+| Art. 46 | Medidas de segurança      | breach-detection    |
+| Art. 48 | Comunicação de incidentes | breach-detection    |
+| Art. 38 | Relatório de impacto      | impact-assessment   |
 
 ### Princípios LGPD
 
@@ -360,21 +366,21 @@ import { ConsentManager } from './consent-management';
 
 describe('ConsentManager', () => {
   let manager: ConsentManager;
-  
+
   beforeEach(async () => {
     manager = new ConsentManager();
     await manager.initialize();
   });
-  
+
   test('should process valid consent', async () => {
     const result = await manager.processConsent({
       dataSubjectId: 'test123',
       purposes: ['marketing'],
       legalBasis: 'consent',
       consentMethod: 'explicit',
-      timestamp: new Date()
+      timestamp: new Date(),
     });
-    
+
     expect(result.success).toBe(true);
     expect(result.consentId).toBeDefined();
   });
@@ -388,16 +394,16 @@ describe('LGPD System Integration', () => {
   test('should handle complete data processing workflow', async () => {
     const system = new LGPDComplianceSystem(config);
     await system.initialize();
-    
+
     // Processar consentimento
     const consent = await system.consent.processConsent({
       dataSubjectId: 'user123',
       purposes: ['service'],
       legalBasis: 'consent',
       consentMethod: 'explicit',
-      timestamp: new Date()
+      timestamp: new Date(),
     });
-    
+
     // Processar dados
     const result = await system.processData({
       type: 'collect',
@@ -405,9 +411,9 @@ describe('LGPD System Integration', () => {
       purpose: 'service',
       legalBasis: 'consent',
       dataSubject: 'user123',
-      data: { email: 'test@example.com' }
+      data: { email: 'test@example.com' },
     });
-    
+
     expect(result.allowed).toBe(true);
   });
 });
@@ -416,12 +422,14 @@ describe('LGPD System Integration', () => {
 ## 📈 Performance
 
 ### Otimizações
+
 - Cache em memória para consultas frequentes
 - Processamento assíncrono para operações pesadas
 - Índices otimizados para consultas de auditoria
 - Compressão de dados históricos
 
 ### Métricas
+
 - Tempo de resposta < 100ms para validações
 - Throughput > 1000 operações/segundo
 - Disponibilidade > 99.9%
@@ -458,7 +466,7 @@ await lgpdSystem.retention.cleanupExpiredData();
 // Limpeza manual
 await lgpdSystem.retention.cleanupData({
   category: 'marketing_data',
-  olderThan: new Date('2020-01-01')
+  olderThan: new Date('2020-01-01'),
 });
 ```
 
@@ -479,6 +487,7 @@ lgpdSystem.on('system:error', (error) => {
 ### Troubleshooting
 
 #### Problema: Consentimento não validando
+
 ```typescript
 // Verificar status do consentimento
 const consent = await lgpdSystem.consent.getConsent('user123', 'marketing');
@@ -487,6 +496,7 @@ console.log('Expiração:', consent?.expiresAt);
 ```
 
 #### Problema: Requisições de titular não processando
+
 ```typescript
 // Verificar fila de requisições
 const queue = await lgpdSystem.dataSubjectRights.getRequestQueue();
@@ -496,11 +506,13 @@ console.log('Requisições pendentes:', queue.length);
 ## 📚 Recursos Adicionais
 
 ### Documentação LGPD
+
 - [Lei 13.709/2018 - LGPD](https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709.htm)
 - [Guia ANPD](https://www.gov.br/anpd/pt-br)
 - [Regulamentação LGPD](https://www.in.gov.br/en/web/dou/-/decreto-n-10.474-de-26-de-agosto-de-2020-274177147)
 
 ### Templates e Exemplos
+
 - [Política de Privacidade Template](./templates/privacy-policy.md)
 - [Formulário de Consentimento](./templates/consent-form.html)
 - [Procedimentos DPO](./templates/dpo-procedures.md)
@@ -515,6 +527,7 @@ Para contribuir com o desenvolvimento:
 4. Submeta um pull request
 
 ### Padrões de Código
+
 - TypeScript strict mode
 - ESLint + Prettier
 - Cobertura de testes > 90%

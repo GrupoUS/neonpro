@@ -74,18 +74,21 @@ pnpm type-check
 ## 🎯 Categorias de Teste
 
 ### 1. Testes Unitários
+
 - **Componentes React**: Rendering, props, interações
 - **Hooks**: Estado, efeitos, callbacks
 - **Utilitários**: Funções puras, helpers
 - **Contextos**: State management, providers
 
 ### 2. Testes de Integração
+
 - **API Routes**: Request/response cycles
 - **Database Operations**: CRUD operations
 - **Authentication Flow**: Login/logout/signup
 - **Form Submissions**: Validation and processing
 
 ### 3. Testes E2E
+
 - **User Journeys**: Complete user workflows
 - **Authentication**: Login, signup, OAuth
 - **Error Handling**: Error boundaries, error states
@@ -95,12 +98,14 @@ pnpm type-check
 ## 🔧 Configuração de Teste
 
 ### Jest Configuration
+
 - **Ambiente**: jsdom para componentes React
 - **Setup**: `jest.setup.js` para configurações globais
 - **Coverage**: Reports em HTML, JSON e LCOV
 - **Transformers**: TypeScript support via ts-jest
 
 ### Playwright Configuration
+
 - **Browsers**: Chrome, Firefox, Safari
 - **Mobile**: Chrome Mobile, Safari Mobile
 - **Screenshots**: On failure
@@ -110,70 +115,75 @@ pnpm type-check
 ## 📝 Padrões de Teste
 
 ### Estrutura de Teste Unitário
+
 ```typescript
 describe('ComponentName', () => {
   beforeEach(() => {
     // Setup comum
-  })
+  });
 
   it('should render correctly', () => {
     // Teste de rendering básico
-  })
+  });
 
   it('should handle user interactions', () => {
     // Teste de interações
-  })
+  });
 
   it('should handle error states', () => {
     // Teste de estados de erro
-  })
-})
+  });
+});
 ```
 
 ### Estrutura de Teste E2E
+
 ```typescript
 test.describe('Feature Name', () => {
   test.beforeEach(async ({ page }) => {
     // Setup da página
-  })
+  });
 
   test('should complete user journey', async ({ page }) => {
     // Teste do fluxo completo
-  })
-})
+  });
+});
 ```
 
 ## 🛡️ Mocking Strategy
 
 ### Supabase
+
 ```typescript
 const mockSupabase = {
   auth: {
     getSession: jest.fn(),
     signInWithPassword: jest.fn(),
     // ... outros métodos
-  }
-}
+  },
+};
 
 jest.mock('@/app/utils/supabase/client', () => ({
-  createClient: () => mockSupabase
-}))
+  createClient: () => mockSupabase,
+}));
 ```
 
 ### Next.js Router
+
 ```typescript
 jest.mock('next/navigation', () => ({
   useRouter: () => ({
     push: jest.fn(),
     replace: jest.fn(),
     // ... outros métodos
-  })
-}))
+  }),
+}));
 ```
 
 ## 🎨 Teste de Componentes UI
 
 ### Error Boundaries
+
 - Renderização de children sem erro
 - Exibição de UI de erro quando ocorre erro
 - Funcionamento do botão de retry
@@ -181,6 +191,7 @@ jest.mock('next/navigation', () => ({
 - Detalhes técnicos quando habilitado
 
 ### Auth Context
+
 - Estados de loading, user, session
 - Funções de signIn, signUp, signOut
 - Tratamento de erros de autenticação
@@ -188,6 +199,7 @@ jest.mock('next/navigation', () => ({
 - Cleanup de subscriptions
 
 ### Form Components
+
 - Validação com Zod schemas
 - Estados de loading e erro
 - Submissão de formulários
@@ -196,6 +208,7 @@ jest.mock('next/navigation', () => ({
 ## 🚨 Testes Críticos
 
 ### Autenticação
+
 - ✅ Login com email/senha
 - ✅ Cadastro de novos usuários
 - ✅ OAuth com Google
@@ -204,12 +217,14 @@ jest.mock('next/navigation', () => ({
 - ✅ Redirecionamentos corretos
 
 ### Error Handling
+
 - ✅ Captura de erros JavaScript
 - ✅ Exibição de UI de erro
 - ✅ Recovery de erros
 - ✅ Logging de erros críticos
 
 ### Performance
+
 - ✅ Carregamento de página ≤3s
 - ✅ Core Web Vitals dentro dos limites
 - ✅ Medição de tempo de API
@@ -217,12 +232,15 @@ jest.mock('next/navigation', () => ({
 ## 📈 Relatórios
 
 ### Coverage Report
+
 Gerado em `coverage/lcov-report/index.html`
 
 ### E2E Report
+
 Gerado em `playwright-report/index.html`
 
 ### CI/CD Integration
+
 ```yaml
 # GitHub Actions example
 - name: Run Tests
@@ -234,6 +252,7 @@ Gerado em `playwright-report/index.html`
 ## 🔍 Debugging
 
 ### Jest Tests
+
 ```bash
 # Debug specific test
 pnpm test --testNamePattern="should render correctly" --verbose
@@ -243,6 +262,7 @@ node --inspect-brk node_modules/.bin/jest --runInBand
 ```
 
 ### Playwright Tests
+
 ```bash
 # Debug mode with browser visible
 pnpm test:e2e:debug

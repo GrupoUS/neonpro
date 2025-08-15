@@ -16,7 +16,8 @@ export async function GET() {
     // Buscar dados de BI para estoque
     const { data: biMetrics, error } = await supabase
       .from('stock_items')
-      .select(`
+      .select(
+        `
         id,
         name,
         current_quantity,
@@ -37,7 +38,8 @@ export async function GET() {
           created_at,
           user_id
         )
-      `)
+      `
+      )
       .order('created_at', { ascending: false });
 
     if (error) {

@@ -922,13 +922,15 @@ class AIRiskAssessmentSystem {
   private async getPatientData(patientId: string): Promise<any> {
     const { data } = await this.supabase
       .from('patients')
-      .select(`
+      .select(
+        `
         *,
         medical_history(*),
         treatments(*),
         risk_assessments(*),
         vital_signs(*)
-      `)
+      `
+      )
       .eq('id', patientId)
       .single();
 

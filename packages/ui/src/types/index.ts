@@ -226,49 +226,12 @@ export type ButtonVariant =
   | 'link'
   | 'medical';
 
-// Export all types
-export type {
-  PatientData as Patient,
-  AppointmentData as Appointment,
-  UserProfile as User,
-  MedicalRecord,
-  Treatment,
-  MenuItem,
-  BreadcrumbItem,
-  SelectOption,
-  FilterOption,
-  TableColumn,
-  PaginationConfig,
-  SortConfig,
-  BaseComponentProps,
-  ClickableComponentProps,
-  FormComponentProps,
-  StatusVariant,
-  SizeVariant,
-  ButtonVariant,
-};
+// Export aliases removed to avoid conflicts
 // Basic Types
 export interface BaseEntity {
   id: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-// Patient Data Types
-export interface PatientData extends BaseEntity {
-  name: string;
-  email: string;
-  phone: string;
-  birthDate: Date;
-  cpf: string;
-  rg: string;
-  avatar?: string;
-  status: 'active' | 'inactive' | 'pending';
-  lastVisit?: Date;
-  nextAppointment?: Date;
-  treatments?: number;
-  emergency?: boolean;
-  emergencyContact?: EmergencyContact;
+  createdAt: Date | string;
+  updatedAt: Date | string;
 }
 
 export interface EmergencyContact {
@@ -278,28 +241,7 @@ export interface EmergencyContact {
   email?: string;
 }
 
-// Appointment Data Types
-export interface AppointmentData extends BaseEntity {
-  patientId: string;
-  patientName: string;
-  practitionerId: string;
-  practitionerName: string;
-  date: Date;
-  time: string;
-  duration: number;
-  type: string;
-  status:
-    | 'scheduled'
-    | 'confirmed'
-    | 'in_progress'
-    | 'completed'
-    | 'cancelled'
-    | 'no_show';
-  notes?: string;
-  location?: string;
-  price?: number;
-  confirmed?: boolean;
-}
+// Removed duplicate AppointmentData interface
 
 // Practitioner Data Types
 export interface PractitionerData extends BaseEntity {

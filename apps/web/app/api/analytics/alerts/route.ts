@@ -65,10 +65,12 @@ export async function GET(request: NextRequest) {
     // Build query
     let query = supabase
       .from('kpi_alerts')
-      .select(`
+      .select(
+        `
         *,
         financial_kpis(kpi_name, kpi_category)
-      `)
+      `
+      )
       .order('created_at', { ascending: false })
       .range(
         validatedFilters.offset,

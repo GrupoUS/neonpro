@@ -1354,12 +1354,14 @@ class PredictiveInsightsEngine {
   private async getPatientData(patientId: string): Promise<any> {
     const { data } = await this.supabase
       .from('patients')
-      .select(`
+      .select(
+        `
         *,
         treatments(*),
         risk_assessments(*),
         medical_history(*)
-      `)
+      `
+      )
       .eq('id', patientId)
       .single();
 

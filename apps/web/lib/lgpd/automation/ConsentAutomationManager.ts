@@ -262,14 +262,16 @@ export class ConsentAutomationManager {
     try {
       const { data: pendingRenewals, error } = await this.supabase
         .from('lgpd_consent_renewals')
-        .select(`
+        .select(
+          `
           *,
           lgpd_user_consents!inner(
             user_id,
             purpose_id,
             granted
           )
-        `)
+        `
+        )
         .eq('renewal_completed', false)
         .lte('renewal_due', new Date().toISOString());
 

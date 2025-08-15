@@ -93,13 +93,15 @@ export async function GET(request: NextRequest) {
     // Build the query
     let query = supabase
       .from('retention_campaigns')
-      .select(`
+      .select(
+        `
         *,
         campaign_metrics:retention_campaign_metrics(*),
         executions:retention_campaign_executions(
           count
         )
-      `)
+      `
+      )
       .eq('clinic_id', clinicId)
       .order('created_at', { ascending: false });
 

@@ -13,12 +13,14 @@
 ## 🛠️ Pré-requisitos
 
 ### Requisitos de Sistema
+
 - **Sistema Operacional**: Windows 10/11, macOS 12+, Ubuntu 20.04+
 - **Memória RAM**: Mínimo 8GB, recomendado 16GB
 - **Espaço em Disco**: Mínimo 5GB livres
 - **Conexão Internet**: Estável para download de dependências
 
 ### Requisitos de Software
+
 - **Node.js** ≥ 18.17.0 ([Download](https://nodejs.org/))
 - **npm** ≥ 9.0.0 (incluído com Node.js)
 - **Git** ≥ 2.40.0 ([Download](https://git-scm.com/))
@@ -29,6 +31,7 @@
   - ES7+ React/Redux/React-Native snippets
 
 ### Verificação dos Pré-requisitos
+
 ```bash
 # Verificar versão do Node.js
 node --version
@@ -46,6 +49,7 @@ git --version
 ## 🔧 Configuração do Ambiente
 
 ### 1. Clone do Repositório
+
 ```bash
 # Clone o repositório
 git clone [repository-url]
@@ -56,6 +60,7 @@ git branch
 ```
 
 ### 2. Instalação das Dependências
+
 ```bash
 # Instalar dependências do projeto
 npm install
@@ -65,6 +70,7 @@ npm ls --depth=0
 ```
 
 ### 3. Configuração das Variáveis de Ambiente
+
 ```bash
 # Copiar arquivo de exemplo
 cp .env.example .env.local
@@ -74,6 +80,7 @@ code .env.local
 ```
 
 #### Variáveis de Ambiente Obrigatórias
+
 ```env
 # Database Configuration
 DATABASE_URL="postgresql://username:password@localhost:5432/neonpro"
@@ -111,6 +118,7 @@ SMS_API_KEY="your-sms-api-key"
 ### Opção 1: Usar Supabase (Recomendado)
 
 #### 1. Criar Projeto no Supabase
+
 1. Acesse [supabase.com](https://supabase.com)
 2. Crie uma nova conta ou faça login
 3. Clique em "New Project"
@@ -121,6 +129,7 @@ SMS_API_KEY="your-sms-api-key"
    - **Region**: South America (São Paulo)
 
 #### 2. Configurar Variáveis de Ambiente
+
 ```bash
 # No painel do Supabase, vá para Settings > API
 NEXT_PUBLIC_SUPABASE_URL="https://xxxxxxxxxxxxxxxx.supabase.co"
@@ -135,6 +144,7 @@ DIRECT_URL="postgresql://postgres:[password]@db.[project-id].supabase.co:5432/po
 ### Opção 2: PostgreSQL Local
 
 #### 1. Instalar PostgreSQL
+
 ```bash
 # Ubuntu/Debian
 sudo apt update
@@ -149,6 +159,7 @@ brew services start postgresql
 ```
 
 #### 2. Criar Banco de Dados
+
 ```sql
 -- Conectar ao PostgreSQL
 psql -U postgres
@@ -167,6 +178,7 @@ GRANT ALL PRIVILEGES ON DATABASE neonpro TO neonpro_user;
 ```
 
 #### 3. Configurar URL de Conexão
+
 ```env
 DATABASE_URL="postgresql://neonpro_user:sua_senha_segura@localhost:5432/neonpro"
 DIRECT_URL="postgresql://neonpro_user:sua_senha_segura@localhost:5432/neonpro"
@@ -175,11 +187,13 @@ DIRECT_URL="postgresql://neonpro_user:sua_senha_segura@localhost:5432/neonpro"
 ## 💾 Inicialização do Banco de Dados
 
 ### 1. Gerar Cliente Prisma
+
 ```bash
 npx prisma generate
 ```
 
 ### 2. Executar Migrações
+
 ```bash
 # Aplicar schema ao banco de dados
 npx prisma db push
@@ -189,6 +203,7 @@ npx prisma migrate dev --name init
 ```
 
 ### 3. Verificar Conexão
+
 ```bash
 # Abrir Prisma Studio para verificar
 npx prisma studio
@@ -196,6 +211,7 @@ npx prisma studio
 ```
 
 ### 4. Popular Dados Iniciais (Opcional)
+
 ```bash
 # Se existir arquivo de seed
 npm run db:seed
@@ -204,16 +220,20 @@ npm run db:seed
 ## 🚀 Instalação Local
 
 ### 1. Iniciar Servidor de Desenvolvimento
+
 ```bash
 npm run dev
 ```
 
 ### 2. Verificar Instalação
+
 Abra o navegador e acesse:
+
 - **Frontend**: [http://localhost:3000](http://localhost:3000)
 - **Prisma Studio**: [http://localhost:5555](http://localhost:5555)
 
 ### 3. Executar Testes (Opcional)
+
 ```bash
 # Testes unitários
 npm run test
@@ -230,14 +250,17 @@ npm run check
 ### Vercel (Recomendado)
 
 #### 1. Conectar Repositório
+
 1. Acesse [vercel.com](https://vercel.com)
 2. Conecte sua conta GitHub
 3. Importe o repositório NeonPro
 
 #### 2. Configurar Variáveis de Ambiente
+
 No painel da Vercel, adicione todas as variáveis do `.env.local`
 
 #### 3. Configurar Build
+
 ```json
 // vercel.json
 {
@@ -259,16 +282,19 @@ No painel da Vercel, adicione todas as variáveis do `.env.local`
 ### Deploy Manual
 
 #### 1. Build do Projeto
+
 ```bash
 npm run build
 ```
 
 #### 2. Iniciar em Produção
+
 ```bash
 npm run start
 ```
 
 #### 3. Usar PM2 (Recomendado para VPS)
+
 ```bash
 # Instalar PM2 globalmente
 npm install -g pm2
@@ -284,6 +310,7 @@ pm2 save
 ## 🔒 Configurações de Segurança
 
 ### 1. Configurar HTTPS
+
 ```bash
 # Para desenvolvimento (certificado self-signed)
 npm install -g mkcert
@@ -292,22 +319,24 @@ mkcert localhost 127.0.0.1 ::1
 ```
 
 ### 2. Configurar Content Security Policy
+
 ```javascript
 // next.config.js
 const securityHeaders = [
   {
     key: 'Content-Security-Policy',
-    value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';"
+    value:
+      "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';",
   },
   {
     key: 'X-Frame-Options',
-    value: 'DENY'
+    value: 'DENY',
   },
   {
     key: 'X-Content-Type-Options',
-    value: 'nosniff'
-  }
-]
+    value: 'nosniff',
+  },
+];
 
 module.exports = {
   async headers() {
@@ -316,9 +345,9 @@ module.exports = {
         source: '/(.*)',
         headers: securityHeaders,
       },
-    ]
+    ];
   },
-}
+};
 ```
 
 ## 🐛 Troubleshooting
@@ -326,6 +355,7 @@ module.exports = {
 ### Problemas Comuns
 
 #### 1. Erro "Module not found"
+
 ```bash
 # Limpar cache e reinstalar
 rm -rf node_modules package-lock.json
@@ -333,6 +363,7 @@ npm install
 ```
 
 #### 2. Erro de conexão com banco
+
 ```bash
 # Verificar se o banco está rodando
 npx prisma db push
@@ -342,6 +373,7 @@ npx prisma generate
 ```
 
 #### 3. Porta já em uso
+
 ```bash
 # Encontrar processo na porta 3000
 lsof -i :3000  # macOS/Linux
@@ -353,6 +385,7 @@ taskkill /PID [PID] /F  # Windows
 ```
 
 #### 4. Problemas de permissão
+
 ```bash
 # Corrigir permissões npm (macOS/Linux)
 sudo chown -R $(whoami) ~/.npm
@@ -363,6 +396,7 @@ npx prisma generate
 ```
 
 #### 5. Erro de tipos TypeScript
+
 ```bash
 # Verificar tipos
 npm run type-check
@@ -374,10 +408,12 @@ npm install --save-dev @types/node @types/react @types/react-dom
 ### Logs e Debugging
 
 #### 1. Verificar logs do Supabase
+
 - Acesse o painel do Supabase
 - Vá para Logs > Function Logs
 
 #### 2. Debug local
+
 ```bash
 # Modo verbose
 DEBUG=* npm run dev
@@ -387,6 +423,7 @@ DEBUG=next:* npm run dev
 ```
 
 #### 3. Prisma debugging
+
 ```env
 # .env.local
 DATABASE_URL_NON_POOLING="postgresql://..."
@@ -396,12 +433,15 @@ DEBUG="prisma:query"
 ## 📞 Suporte
 
 ### Recursos de Ajuda
+
 - **Documentação**: [./docs/](./docs/)
 - **Issues**: [GitHub Issues](https://github.com/your-org/neonpro/issues)
 - **Discord**: [Servidor da Comunidade](https://discord.gg/neonpro)
 
 ### Informações do Sistema
+
 Para reportar problemas, inclua:
+
 ```bash
 # Informações do sistema
 node --version
@@ -415,9 +455,10 @@ npm ls --depth=0
 
 ---
 
-✅ **Instalação concluída com sucesso!** 
+✅ **Instalação concluída com sucesso!**
 
 Para próximos passos, consulte:
+
 - [README.md](./README.md) - Visão geral do projeto
 - [docs/](./docs/) - Documentação completa
 - [CONTRIBUTING.md](./CONTRIBUTING.md) - Guia de contribuição

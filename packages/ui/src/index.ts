@@ -64,11 +64,7 @@ export type {
 } from './components/PatientTable';
 // Complex Components
 export { PatientTable } from './components/PatientTable';
-export {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from './components/Popover';
+export { Popover, PopoverContent, PopoverTrigger } from './components/Popover';
 export type { ProcedureFormProps } from './components/ProcedureForm';
 
 export { ProcedureForm } from './components/ProcedureForm';

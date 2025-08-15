@@ -7,30 +7,35 @@ Sistema completo de backup automático e recuperação de dados para o NeonPro, 
 ## 🚀 Características Principais
 
 ### ✅ Backup Automático
+
 - **Tipos de Backup**: Full, Incremental, Diferencial, Database, Files
 - **Agendamento Flexível**: Horário, Diário, Semanal, Mensal
 - **Compressão e Criptografia**: Algoritmos otimizados para segurança e performance
 - **Retenção Inteligente**: Políticas automáticas de limpeza
 
 ### ✅ Storage Multi-Provider
+
 - **Local Storage**: Armazenamento local com permissões configuráveis
 - **AWS S3**: Integração completa com Amazon S3
 - **Google Cloud Storage**: Suporte nativo ao GCS
 - **Azure Blob Storage**: Compatibilidade com Azure
 
 ### ✅ Monitoramento e Alertas
+
 - **Métricas em Tempo Real**: Dashboard com estatísticas atualizadas
 - **Sistema de Alertas**: Notificações por email, SMS, push e webhook
 - **Health Checks**: Verificação contínua da saúde do sistema
 - **Performance Tracking**: Histórico de performance e tendências
 
 ### ✅ Recovery Avançado
+
 - **Restore Completo**: Restauração total de backups
 - **Restore Parcial**: Recuperação seletiva de arquivos
 - **Point-in-Time Recovery**: Restauração para momento específico
 - **Verificação de Integridade**: Validação automática de backups
 
 ### ✅ Disaster Recovery
+
 - **Planos de DR**: Estratégias predefinidas de recuperação
 - **Testes Automatizados**: Validação regular dos backups
 - **Replicação**: Cópias em múltiplas localizações
@@ -94,8 +99,8 @@ import { BackupSystem, initializeBackupSystem } from './lib/backup';
 const result = await initializeBackupSystem({
   provider: 'LOCAL', // ou 'S3', 'GCS', 'AZURE'
   local: {
-    basePath: './backups'
-  }
+    basePath: './backups',
+  },
 });
 
 if (result.success) {
@@ -117,7 +122,7 @@ const fileBackup = await backupSystem.setupFileBackup(
   {
     frequency: BackupFrequency.DAILY,
     time: '02:00',
-    excludePatterns: ['*.tmp', '*.log']
+    excludePatterns: ['*.tmp', '*.log'],
   }
 );
 
@@ -128,7 +133,7 @@ const dbBackup = await backupSystem.setupDatabaseBackup(
   {
     frequency: BackupFrequency.DAILY,
     time: '01:00',
-    retention: 30
+    retention: 30,
   }
 );
 ```
@@ -174,13 +179,15 @@ const recoveryRequest = await backupSystem.recover.createRecoveryRequest(
   {
     targetPath: '/restore/path',
     overwrite: true,
-    priority: 'HIGH'
+    priority: 'HIGH',
   },
   'user-id'
 );
 
 // Acompanhar progresso
-const status = await backupSystem.recover.getRecoveryStatus(recoveryRequest.data.id);
+const status = await backupSystem.recover.getRecoveryStatus(
+  recoveryRequest.data.id
+);
 console.log('Progresso:', status.data.progress);
 ```
 
@@ -219,26 +226,31 @@ console.log('Progresso:', status.data.progress);
 ## 📊 Tipos de Backup
 
 ### Full Backup
+
 - Backup completo de todos os dados
 - Maior tempo e espaço, mas recovery mais rápido
 - Recomendado semanalmente
 
 ### Incremental Backup
+
 - Apenas dados alterados desde último backup
 - Menor tempo e espaço, recovery mais lento
 - Recomendado diariamente
 
 ### Differential Backup
+
 - Dados alterados desde último full backup
 - Meio termo entre full e incremental
 - Recomendado para estratégias híbridas
 
 ### Database Backup
+
 - Backup específico para bancos de dados
 - Inclui schema, dados e configurações
 - Suporte a PostgreSQL, MySQL, MongoDB
 
 ### Files Backup
+
 - Backup de arquivos e diretórios
 - Suporte a filtros e exclusões
 - Preserva permissões e metadados
@@ -246,18 +258,21 @@ console.log('Progresso:', status.data.progress);
 ## 🔐 Segurança
 
 ### Criptografia
+
 - **Algoritmo**: AES-256-GCM
 - **Chaves**: Rotação automática de chaves
 - **Transporte**: TLS 1.3 para uploads
 - **Armazenamento**: Chaves separadas dos dados
 
 ### Controle de Acesso
+
 - **Autenticação**: Integração com Supabase Auth
 - **Autorização**: RLS (Row Level Security)
 - **Auditoria**: Log completo de todas as operações
 - **Permissões**: Controle granular por usuário/role
 
 ### Compliance
+
 - **LGPD**: Anonimização e direito ao esquecimento
 - **SOX**: Retenção e integridade de dados
 - **HIPAA**: Criptografia e controle de acesso
@@ -266,18 +281,21 @@ console.log('Progresso:', status.data.progress);
 ## 📈 Monitoramento
 
 ### Métricas Disponíveis
+
 - **Backups**: Total, sucessos, falhas, taxa de sucesso
 - **Performance**: Tempo médio, throughput, latência
 - **Storage**: Uso total, crescimento, distribuição
 - **Sistema**: CPU, memória, disco, rede
 
 ### Alertas Configuráveis
+
 - **Falhas**: Backup falhou ou demorou muito
 - **Espaço**: Pouco espaço em disco
 - **Performance**: Degradação de performance
 - **Agendamento**: Backup atrasado ou perdido
 
 ### Dashboards
+
 - **Tempo Real**: Métricas atualizadas continuamente
 - **Histórico**: Tendências e análises temporais
 - **Alertas**: Central de alertas e notificações
@@ -286,18 +304,21 @@ console.log('Progresso:', status.data.progress);
 ## 🚨 Disaster Recovery
 
 ### Estratégias
+
 - **3-2-1 Rule**: 3 cópias, 2 mídias, 1 offsite
 - **Hot Standby**: Réplica ativa em tempo real
 - **Warm Standby**: Réplica com delay mínimo
 - **Cold Standby**: Backup para recuperação manual
 
 ### RTO/RPO Targets
+
 - **RTO (Recovery Time Objective)**: < 4 horas
 - **RPO (Recovery Point Objective)**: < 1 hora
 - **MTTR (Mean Time To Recovery)**: < 2 horas
 - **MTBF (Mean Time Between Failures)**: > 720 horas
 
 ### Testes de DR
+
 - **Automatizados**: Testes regulares de integridade
 - **Manuais**: Simulações de disaster recovery
 - **Documentados**: Relatórios de todos os testes
@@ -315,8 +336,8 @@ const config = {
     chunkSize: 2097152, // 2MB
     timeout: 7200, // 2 horas
     retryAttempts: 3,
-    retryDelay: 30000 // 30 segundos
-  }
+    retryDelay: 30000, // 30 segundos
+  },
 };
 ```
 
@@ -324,14 +345,14 @@ const config = {
 
 ```typescript
 const retention = {
-  daily: 14,    // 14 dias
-  weekly: 8,    // 8 semanas
-  monthly: 24,  // 24 meses
-  yearly: 10,   // 10 anos
+  daily: 14, // 14 dias
+  weekly: 8, // 8 semanas
+  monthly: 24, // 24 meses
+  yearly: 10, // 10 anos
   custom: [
     { pattern: 'first-of-month', keep: 60 },
-    { pattern: 'last-of-year', keep: 'forever' }
-  ]
+    { pattern: 'last-of-year', keep: 'forever' },
+  ],
 };
 ```
 
@@ -339,19 +360,15 @@ const retention = {
 
 ```typescript
 const filters = {
-  includePatterns: [
-    '**/*.sql',
-    '**/*.json',
-    'config/**'
-  ],
+  includePatterns: ['**/*.sql', '**/*.json', 'config/**'],
   excludePatterns: [
     '**/node_modules/**',
     '**/.git/**',
     '**/tmp/**',
-    '**/*.log'
+    '**/*.log',
   ],
   sizeLimit: 1073741824, // 1GB
-  modifiedSince: '2024-01-01'
+  modifiedSince: '2024-01-01',
 };
 ```
 
@@ -360,6 +377,7 @@ const filters = {
 ### Problemas Comuns
 
 #### Backup Falha
+
 ```bash
 # Verificar logs
 tail -f /var/log/neonpro/backup.log
@@ -372,6 +390,7 @@ ls -la /backup/path
 ```
 
 #### Recovery Lento
+
 ```bash
 # Verificar rede
 ping storage-provider.com
@@ -384,12 +403,13 @@ top -p backup-process-pid
 ```
 
 #### Alertas Falsos
+
 ```typescript
 // Ajustar thresholds
 const alertConfig = {
   failureRate: 0.05, // 5%
   maxBackupTime: 7200, // 2 horas
-  minFreeSpace: 5368709120 // 5GB
+  minFreeSpace: 5368709120, // 5GB
 };
 ```
 
@@ -405,14 +425,15 @@ const logger = {
   format: 'json',
   transports: [
     { type: 'file', filename: 'backup.log' },
-    { type: 'console', colorize: true }
-  ]
+    { type: 'console', colorize: true },
+  ],
 };
 ```
 
 ## 📚 API Reference
 
 ### BackupManager
+
 - `createConfig(config, userId)` - Criar configuração
 - `updateConfig(id, config, userId)` - Atualizar configuração
 - `deleteConfig(id, userId)` - Deletar configuração
@@ -420,6 +441,7 @@ const logger = {
 - `listBackups(filters, pagination)` - Listar backups
 
 ### StorageManager
+
 - `upload(path, data, options)` - Upload de arquivo
 - `download(path, options)` - Download de arquivo
 - `delete(path)` - Deletar arquivo
@@ -427,6 +449,7 @@ const logger = {
 - `exists(path)` - Verificar existência
 
 ### MonitoringService
+
 - `getRealTimeMetrics()` - Métricas em tempo real
 - `calculateMetrics(period)` - Calcular métricas
 - `getActiveAlerts()` - Alertas ativos
@@ -434,6 +457,7 @@ const logger = {
 - `performHealthCheck()` - Health check
 
 ### RecoveryService
+
 - `createRecoveryRequest(backupId, type, options)` - Solicitar recovery
 - `getRecoveryStatus(requestId)` - Status do recovery
 - `cancelRecovery(requestId, userId)` - Cancelar recovery

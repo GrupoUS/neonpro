@@ -87,7 +87,8 @@ export function useRealTimeAvailability({
 
       let query = supabase
         .from('appointment_slots')
-        .select(`
+        .select(
+          `
           id,
           professional_id,
           service_id,
@@ -98,7 +99,8 @@ export function useRealTimeAvailability({
           version,
           reserved_until,
           reserved_by
-        `)
+        `
+        )
         .gte('date', dateRange.start)
         .lte('date', dateRange.end)
         .eq('available', true)

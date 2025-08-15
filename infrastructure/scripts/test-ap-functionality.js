@@ -76,9 +76,9 @@ async function testAPFunctionality() {
     }
 
     console.log('\n💸 4. TESTANDO PAGAMENTOS...');
-    const { data: payments, error: paymentsError } = await supabase
-      .from('ap_payments')
-      .select(`
+    const { data: payments, error: paymentsError } = await supabase.from(
+      'ap_payments'
+    ).select(`
         *,
         vendors:vendor_id(company_name),
         accounts_payable:accounts_payable_id(invoice_number)
@@ -96,9 +96,9 @@ async function testAPFunctionality() {
     }
 
     console.log('\n📅 5. TESTANDO CRONOGRAMAS DE PAGAMENTO...');
-    const { data: schedules, error: schedulesError } = await supabase
-      .from('payment_schedules')
-      .select(`
+    const { data: schedules, error: schedulesError } = await supabase.from(
+      'payment_schedules'
+    ).select(`
         *,
         vendors:vendor_id(company_name),
         expense_categories:expense_category_id(category_name)

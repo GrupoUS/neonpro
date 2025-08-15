@@ -478,13 +478,15 @@ export class PhotoRecognitionManager {
       // Query stored facial encodings
       let query = this.supabase
         .from('patient_photos')
-        .select(`
+        .select(
+          `
           id,
           patient_id,
           recognition_data,
           upload_date,
           patients!inner(id, name)
-        `)
+        `
+        )
         .not('recognition_data', 'is', null)
         .eq('photo_type', 'profile');
 

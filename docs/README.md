@@ -62,18 +62,18 @@ docs/
 
 ### Core Technologies
 
-| Category | Technology | Version | Purpose |
-|----------|------------|---------|----------|
-| **Frontend** | Next.js | 15.0+ | React framework with App Router |
-| **Backend** | Supabase | Latest | Backend-as-a-Service with PostgreSQL |
-| **Database** | PostgreSQL | 15+ | Primary database with RLS |
-| **Deployment** | Vercel | Latest | Edge deployment platform |
-| **UI Framework** | Tailwind CSS | 3.4+ | Utility-first CSS framework |
-| **Components** | shadcn/ui | Latest | Accessible React components |
-| **State Management** | Zustand | 4.5+ | Lightweight state management |
-| **Forms** | React Hook Form | Latest | Performant forms with validation |
-| **Validation** | Zod | Latest | TypeScript-first schema validation |
-| **Language** | TypeScript | 5.6+ | Type-safe JavaScript |
+| Category             | Technology      | Version | Purpose                              |
+| -------------------- | --------------- | ------- | ------------------------------------ |
+| **Frontend**         | Next.js         | 15.0+   | React framework with App Router      |
+| **Backend**          | Supabase        | Latest  | Backend-as-a-Service with PostgreSQL |
+| **Database**         | PostgreSQL      | 15+     | Primary database with RLS            |
+| **Deployment**       | Vercel          | Latest  | Edge deployment platform             |
+| **UI Framework**     | Tailwind CSS    | 3.4+    | Utility-first CSS framework          |
+| **Components**       | shadcn/ui       | Latest  | Accessible React components          |
+| **State Management** | Zustand         | 4.5+    | Lightweight state management         |
+| **Forms**            | React Hook Form | Latest  | Performant forms with validation     |
+| **Validation**       | Zod             | Latest  | TypeScript-first schema validation   |
+| **Language**         | TypeScript      | 5.6+    | Type-safe JavaScript                 |
 
 ### Healthcare-Specific Integrations
 

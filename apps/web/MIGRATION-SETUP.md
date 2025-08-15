@@ -7,6 +7,7 @@
 Todos os arquivos do projeto incorreto (`e:\vscode\neonpro`) foram migrados para o projeto principal (`e:\neonpro\apps\web`).
 
 ### 📁 Arquivos Migrados:
+
 - ✅ **Schema Prisma** - `prisma/schema.prisma`
 - ✅ **Componentes UI** - `components/ui/` (badge, button, card, skeleton, alert)
 - ✅ **TenantList** - `components/TenantList.tsx`
@@ -16,7 +17,9 @@ Todos os arquivos do projeto incorreto (`e:\vscode\neonpro`) foram migrados para
 - ✅ **Tipos TypeScript** - `lib/types.ts`
 
 ### 🗑️ Limpeza Necessária
+
 **IMPORTANTE:** Você pode agora remover a pasta incorreta:
+
 ```bash
 rmdir /s /q "e:\vscode\neonpro"
 ```
@@ -34,6 +37,7 @@ rmdir /s /q "e:\vscode\neonpro"
    ```
 
 O script irá automaticamente:
+
 - 📦 Instalar dependências
 - 🗄️ Executar migrações do Prisma
 - 🔧 Gerar cliente Prisma
@@ -69,20 +73,25 @@ npm run dev
 ## 🧪 Teste das Funcionalidades
 
 ### Teste Automático
+
 Após o servidor estar rodando, execute em outro terminal:
+
 ```bash
 node test-migration.js
 ```
 
 ### Teste Manual
+
 Acesse as seguintes URLs no navegador:
 
 1. **📱 Aplicação Principal:**
+
    ```
    http://localhost:3000
    ```
 
 2. **🏢 Página de Tenants:**
+
    ```
    http://localhost:3000/tenants
    ```
@@ -99,6 +108,7 @@ Acesse as seguintes URLs no navegador:
 O seed criará automaticamente:
 
 ### 🏢 Tenants de Exemplo:
+
 1. **Clínica Bella Vita** (PRO)
    - Slug: `clinica-bella-vita`
    - Especializada em estética facial
@@ -112,6 +122,7 @@ O seed criará automaticamente:
    - Tratamentos relaxantes
 
 ### 🛍️ Produtos por Tenant:
+
 - **Bella Vita:** Limpeza de Pele, Peeling, Botox
 - **Premium:** Laser CO2, Preenchimento, Criolipólise
 - **Harmonia:** Massagem, Drenagem, Aromaterapia
@@ -121,7 +132,9 @@ O seed criará automaticamente:
 ## 🔧 Configurações Importantes
 
 ### 📄 Variáveis de Ambiente
+
 Verifique se o arquivo `.env.local` contém:
+
 ```env
 # Supabase
 NEXT_PUBLIC_SUPABASE_URL=sua_url_supabase
@@ -134,7 +147,9 @@ DIRECT_URL=sua_url_direta_postgresql
 ```
 
 ### 🗄️ Banco de Dados
+
 O schema Prisma inclui:
+
 - **Tenants** - Sistema multi-tenant
 - **Profiles** - Perfis de usuário
 - **Products** - Produtos por tenant
@@ -160,6 +175,7 @@ O schema Prisma inclui:
 ## 🆘 Solução de Problemas
 
 ### Erro de Migração
+
 ```bash
 # Resetar banco (CUIDADO: apaga dados)
 npx prisma migrate reset
@@ -169,12 +185,14 @@ npx prisma migrate dev --name init
 ```
 
 ### Erro de Cliente Prisma
+
 ```bash
 # Regenerar cliente
 npx prisma generate
 ```
 
 ### Erro de Dependências
+
 ```bash
 # Limpar cache e reinstalar
 rm -rf node_modules package-lock.json
@@ -182,7 +200,9 @@ npm install
 ```
 
 ### Erro de Porta
+
 Se a porta 3000 estiver ocupada:
+
 ```bash
 # Usar porta diferente
 npm run dev -- -p 3001

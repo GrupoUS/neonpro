@@ -85,7 +85,8 @@ export async function GET(
     // Get campaign with metrics and recent executions
     const { data: campaign, error } = await supabase
       .from('retention_campaigns')
-      .select(`
+      .select(
+        `
         *,
         campaign_metrics:retention_campaign_metrics(*),
         recent_executions:retention_campaign_executions(
@@ -96,7 +97,8 @@ export async function GET(
           status,
           execution_summary
         )
-      `)
+      `
+      )
       .eq('id', campaignId)
       .single();
 
@@ -287,13 +289,15 @@ export async function POST(
       // Execute for eligible patients based on campaign conditions
       const { data: patients, error: patientsError } = await supabase
         .from('retention_analytics')
-        .select(`
+        .select(
+          `
           patient_id,
           churn_probability,
           risk_level,
           predicted_churn_date,
           patients!inner(id, name, email, phone, clinic_id)
-        `)
+        `
+        )
         .eq('clinic_id', campaign.clinic_id)
         .gte(
           'churn_probability',

@@ -244,7 +244,8 @@ export class HealthTrendMonitor {
 
     const { data } = await this.supabase
       .from('patients')
-      .select(`
+      .select(
+        `
         *,
         vital_signs!inner(
           *,
@@ -266,7 +267,8 @@ export class HealthTrendMonitor {
           *,
           created_at >= '${timeWindow.start.toISOString()}'
         )
-      `)
+      `
+      )
       .eq('id', patientId)
       .single();
 
@@ -295,10 +297,12 @@ export class HealthTrendMonitor {
   private async getTreatmentPlan(treatmentPlanId: string) {
     const { data } = await this.supabase
       .from('treatment_plans')
-      .select(`
+      .select(
+        `
         *,
         treatment_plan_items (*)
-      `)
+      `
+      )
       .eq('id', treatmentPlanId)
       .single();
 

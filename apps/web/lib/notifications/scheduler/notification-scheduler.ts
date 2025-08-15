@@ -356,10 +356,12 @@ export class NotificationScheduler {
       // Buscar notificações prontas para envio
       const { data: notifications, error } = await this.supabase
         .from('scheduled_notifications')
-        .select(`
+        .select(
+          `
           *,
           notification_schedules!inner(*)
-        `)
+        `
+        )
         .eq('status', 'pending')
         .lte('scheduled_for', now.toISOString())
         .limit(100);

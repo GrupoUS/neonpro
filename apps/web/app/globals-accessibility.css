@@ -142,7 +142,7 @@
 }
 
 .form-label.required::after {
-  content: " *";
+  content: ' *';
   color: hsl(var(--destructive));
   font-weight: bold;
 }
@@ -290,7 +290,7 @@
 }
 
 .status-indicator::before {
-  content: "";
+  content: '';
   width: 8px;
   height: 8px;
   border-radius: 50%;

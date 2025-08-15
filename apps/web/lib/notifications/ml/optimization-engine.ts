@@ -892,10 +892,12 @@ export class NotificationMLEngine {
       // Buscar dados de treinamento
       const { data: trainingData, error } = await this.supabase
         .from('notifications')
-        .select(`
+        .select(
+          `
           *,
           profiles!inner(*)
-        `)
+        `
+        )
         .eq('profiles.clinic_id', clinicId)
         .not('opened_at', 'is', null)
         .order('sent_at', { ascending: false })

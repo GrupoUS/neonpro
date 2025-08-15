@@ -411,10 +411,7 @@ export const WEBHOOK_EVENTS = {
 // EXPORTAÇÕES
 // ============================================================================
 
-export {
-  NotificationChannel,
-  NotificationPriority,
-} from './types';
+export { NotificationChannel, NotificationPriority } from './types';
 
 export const config = createNotificationConfig();
 export default config;

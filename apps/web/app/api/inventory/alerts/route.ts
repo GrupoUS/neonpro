@@ -63,11 +63,13 @@ export async function GET(request: NextRequest) {
     // Build query
     let query = supabase
       .from('inventory_alerts')
-      .select(`
+      .select(
+        `
         *,
         inventory_items(name, sku),
         inventory_locations(name)
-      `)
+      `
+      )
       .order('created_at', { ascending: false })
       .range(filters.offset, filters.offset + filters.limit - 1);
 
@@ -175,11 +177,13 @@ export async function POST(request: NextRequest) {
         is_read: false,
         created_by: user.id,
       })
-      .select(`
+      .select(
+        `
         *,
         inventory_items(name, sku),
         inventory_locations(name)
-      `)
+      `
+      )
       .single();
 
     if (error) {

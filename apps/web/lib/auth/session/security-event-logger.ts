@@ -236,11 +236,13 @@ export class SecurityEventLogger {
     try {
       const { data, error } = await this.supabase
         .from('session_security_events')
-        .select(`
+        .select(
+          `
           *,
           profiles:user_id(email, full_name),
           resolver:resolved_by(email, full_name)
-        `)
+        `
+        )
         .eq('id', eventId)
         .single();
 
@@ -454,10 +456,12 @@ export class SecurityEventLogger {
       // Get top users
       const { data: userData } = await this.supabase
         .from('session_security_events')
-        .select(`
+        .select(
+          `
           user_id,
           profiles:user_id(email)
-        `)
+        `
+        )
         .gte('timestamp', start.toISOString())
         .lte('timestamp', end.toISOString())
         .not('user_id', 'is', null);

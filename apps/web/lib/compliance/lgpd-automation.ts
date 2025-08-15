@@ -736,14 +736,16 @@ export class LGPDAutoAuditService {
     // Verificar usuários sem consentimento para dados sensíveis
     const { data: usersWithoutConsent } = await this.supabase
       .from('users')
-      .select(`
+      .select(
+        `
         id,
         lgpd_consent_records!inner(
           id,
           consentType,
           status
         )
-      `)
+      `
+      )
       .eq('clinic_id', clinicId)
       .neq('lgpd_consent_records.consentType', ConsentType.SENSITIVE_DATA)
       .eq('lgpd_consent_records.status', ConsentStatus.GRANTED);

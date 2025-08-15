@@ -102,11 +102,13 @@ export class AccountsPayableService {
     try {
       const { data: ap, error } = await supabase
         .from('accounts_payable')
-        .select(`
+        .select(
+          `
           *,
           vendor:vendors(*),
           expense_category:expense_categories(*)
-        `)
+        `
+        )
         .eq('id', id)
         .is('deleted_at', null)
         .single();
@@ -141,11 +143,13 @@ export class AccountsPayableService {
             created_by: (await supabase.auth.getUser()).data.user?.id,
           },
         ])
-        .select(`
+        .select(
+          `
           *,
           vendor:vendors(*),
           expense_category:expense_categories(*)
-        `)
+        `
+        )
         .single();
 
       if (error) {
@@ -177,11 +181,13 @@ export class AccountsPayableService {
         })
         .eq('id', id)
         .is('deleted_at', null)
-        .select(`
+        .select(
+          `
           *,
           vendor:vendors(*),
           expense_category:expense_categories(*)
-        `)
+        `
+        )
         .single();
 
       if (error) {
@@ -252,11 +258,13 @@ export class AccountsPayableService {
         .update(updateData)
         .eq('id', id)
         .is('deleted_at', null)
-        .select(`
+        .select(
+          `
           *,
           vendor:vendors(*),
           expense_category:expense_categories(*)
-        `)
+        `
+        )
         .single();
 
       if (error) {
@@ -352,11 +360,13 @@ export class AccountsPayableService {
 
       const { data: aps, error } = await supabase
         .from('accounts_payable')
-        .select(`
+        .select(
+          `
           *,
           vendor:vendors(company_name),
           expense_category:expense_categories(category_name)
-        `)
+        `
+        )
         .gte('due_date', today.toISOString().split('T')[0])
         .lte('due_date', endDate.toISOString().split('T')[0])
         .in('status', ['pending', 'approved', 'scheduled'])

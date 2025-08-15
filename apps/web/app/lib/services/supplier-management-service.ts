@@ -265,10 +265,12 @@ export class SupplierManagementService {
     const { data, error } = await supabase
       .from('supplier_contracts')
       .insert([contractToCreate])
-      .select(`
+      .select(
+        `
         *,
         supplier:suppliers(*)
-      `)
+      `
+      )
       .single();
 
     if (error) {
@@ -283,10 +285,12 @@ export class SupplierManagementService {
 
     const { data, error } = await supabase
       .from('supplier_contracts')
-      .select(`
+      .select(
+        `
         *,
         supplier:suppliers(*)
-      `)
+      `
+      )
       .eq('id', contractId)
       .single();
 
@@ -312,10 +316,12 @@ export class SupplierManagementService {
       .from('supplier_contracts')
       .update(updateData)
       .eq('id', contractId)
-      .select(`
+      .select(
+        `
         *,
         supplier:suppliers(*)
-      `)
+      `
+      )
       .single();
 
     if (error) {
@@ -330,10 +336,12 @@ export class SupplierManagementService {
 
     const { data, error } = await supabase
       .from('supplier_contracts')
-      .select(`
+      .select(
+        `
         *,
         supplier:suppliers(*)
-      `)
+      `
+      )
       .eq('supplier_id', supplierId)
       .order('created_at', { ascending: false });
 
@@ -383,10 +391,12 @@ export class SupplierManagementService {
     const { data, error } = await supabase
       .from('supplier_contacts')
       .insert([contactToCreate])
-      .select(`
+      .select(
+        `
         *,
         supplier:suppliers(*)
-      `)
+      `
+      )
       .single();
 
     if (error) {
@@ -401,10 +411,12 @@ export class SupplierManagementService {
 
     const { data, error } = await supabase
       .from('supplier_contacts')
-      .select(`
+      .select(
+        `
         *,
         supplier:suppliers(*)
-      `)
+      `
+      )
       .eq('supplier_id', supplierId)
       .eq('is_active', true)
       .order('is_primary', { ascending: false })
@@ -432,10 +444,12 @@ export class SupplierManagementService {
       .from('supplier_contacts')
       .update(updateData)
       .eq('id', contactId)
-      .select(`
+      .select(
+        `
         *,
         supplier:suppliers(*)
-      `)
+      `
+      )
       .single();
 
     if (error) {
@@ -505,10 +519,12 @@ export class SupplierManagementService {
     const { data, error } = await supabase
       .from('supplier_performance')
       .insert([performanceData])
-      .select(`
+      .select(
+        `
         *,
         supplier:suppliers(*)
-      `)
+      `
+      )
       .single();
 
     if (error) {
@@ -555,10 +571,12 @@ export class SupplierManagementService {
     const { data, error } = await supabase
       .from('supplier_evaluations')
       .insert([evaluationToCreate])
-      .select(`
+      .select(
+        `
         *,
         supplier:suppliers(*)
-      `)
+      `
+      )
       .single();
 
     if (error) {
@@ -575,10 +593,12 @@ export class SupplierManagementService {
 
     const { data, error } = await supabase
       .from('supplier_evaluations')
-      .select(`
+      .select(
+        `
         *,
         supplier:suppliers(*)
-      `)
+      `
+      )
       .eq('supplier_id', supplierId)
       .order('evaluation_date', { ascending: false });
 
@@ -609,10 +629,12 @@ export class SupplierManagementService {
     const { data, error } = await supabase
       .from('supplier_quality_issues')
       .insert([issueToCreate])
-      .select(`
+      .select(
+        `
         *,
         supplier:suppliers(*)
-      `)
+      `
+      )
       .single();
 
     if (error) {
@@ -637,10 +659,12 @@ export class SupplierManagementService {
       .from('supplier_quality_issues')
       .update(updateData)
       .eq('id', issueId)
-      .select(`
+      .select(
+        `
         *,
         supplier:suppliers(*)
-      `)
+      `
+      )
       .single();
 
     if (error) {
@@ -688,11 +712,13 @@ export class SupplierManagementService {
     const { data, error } = await supabase
       .from('supplier_communications')
       .insert([communicationToCreate])
-      .select(`
+      .select(
+        `
         *,
         supplier:suppliers(*),
         contact:supplier_contacts(*)
-      `)
+      `
+      )
       .single();
 
     if (error) {
@@ -709,11 +735,13 @@ export class SupplierManagementService {
 
     const { data, error } = await supabase
       .from('supplier_communications')
-      .select(`
+      .select(
+        `
         *,
         supplier:suppliers(*),
         contact:supplier_contacts(*)
-      `)
+      `
+      )
       .eq('supplier_id', supplierId)
       .order('communication_date', { ascending: false });
 
@@ -765,11 +793,13 @@ export class SupplierManagementService {
     // Get recent communications
     const { data: recentCommunications } = await supabase
       .from('supplier_communications')
-      .select(`
+      .select(
+        `
         *,
         supplier:suppliers(*),
         contact:supplier_contacts(*)
-      `)
+      `
+      )
       .eq('supplier.clinic_id', clinicId)
       .order('communication_date', { ascending: false })
       .limit(10);

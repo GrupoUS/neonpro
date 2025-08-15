@@ -48,11 +48,13 @@ export function useRealtimeAvailability({
       setIsLoading(true);
       let query = supabase
         .from('time_slots')
-        .select(`
+        .select(
+          `
           *,
           professional:professionals(name, email),
           service:services(name, duration, price)
-        `)
+        `
+        )
         .order('date', { ascending: true })
         .order('start_time', { ascending: true });
 

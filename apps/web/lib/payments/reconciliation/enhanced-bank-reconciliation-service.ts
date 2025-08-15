@@ -465,7 +465,8 @@ export class EnhancedBankReconciliationService {
     try {
       let query = supabase
         .from('payments')
-        .select(`
+        .select(
+          `
           id,
           amount,
           payment_date,
@@ -480,7 +481,8 @@ export class EnhancedBankReconciliationService {
           clinic_id,
           expected_settlement_date,
           metadata
-        `)
+        `
+        )
         .eq('status', 'completed')
         .gte(
           'payment_date',

@@ -190,10 +190,12 @@ async function processBillingRenewals(supabase: any) {
     // Find subscriptions due for renewal
     const { data: renewalDue, error } = await supabase
       .from('user_subscriptions')
-      .select(`
+      .select(
+        `
         *,
         plan:subscription_plans(*)
-      `)
+      `
+      )
       .eq('status', 'active')
       .lt('next_billing_date', renewalWindow.toISOString())
       .gt('next_billing_date', now.toISOString());

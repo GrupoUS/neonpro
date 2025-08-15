@@ -41,12 +41,14 @@ export async function GET(
     // Get patient profile
     const { data: profile, error: profileError } = await supabase
       .from('patient_profiles_extended')
-      .select(`
+      .select(
+        `
         *,
         patient_documents(*),
         emergency_contacts(*),
         patient_care_team(*)
-      `)
+      `
+      )
       .eq('patient_id', patientId)
       .single();
 

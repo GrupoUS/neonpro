@@ -1252,58 +1252,45 @@ export class AIHealthMonitoringEngine {
   private async createHealthDeclineWarning(
     patient: Patient,
     trend: HealthTrend
-  ): Promise<EarlyWarning>;
-  return;
-  {
-  warning_id: `health_decline_${Date.now()}`
-  ,
-  warning_type: 'health_decline';
-  ,
-  severity: trend.trend_strength;
-  > 0.8 ? 'high' : 'moderate',
-  probability: Math.abs;
-  (trend.trend_strength)
-  ,
-  trigger_metrics: [trend.metric_name];
-  ,
-  detection_date: new Date
-  ()
-  ,
-  predicted_timeline: '2-4 weeks';
-  ,
-  intervention_window: '1-2 weeks';
-  ,
-  recommended_actions: [
-    'Schedule immediate consultation',
-    'Increase monitoring frequency',
-    'Review current treatment plan',
-    'Consider intervention adjustments',
-  ];
-  ,
-  escalation_protocol: {
-    immediate_actions: [
-      'Notify primary care physician',
-      'Schedule urgent appointment',
-    ];
-    notification_list: ['Primary physician', 'Care coordinator'];
-    escalation_timeline: '24-48 hours';
-    emergency_contacts: ['Emergency services if critical'];
-    documentation_requirements: [
-      'Trend analysis report',
-      'Patient notification',
-    ];
-  };
-}
+  ): Promise<EarlyWarning> {
+    return {
+      warning_id: `health_decline_${Date.now()}`,
+      warning_type: 'health_decline',
+      severity: trend.trend_strength > 0.8 ? 'high' : 'moderate',
+      probability: Math.abs(trend.trend_strength),
+      trigger_metrics: [trend.metric_name],
+      detection_date: new Date(),
+      predicted_timeline: '2-4 weeks',
+      intervention_window: '1-2 weeks',
+      recommended_actions: [
+        'Schedule immediate consultation',
+        'Increase monitoring frequency',
+        'Review current treatment plan',
+        'Consider intervention adjustments',
+      ],
+      escalation_protocol: {
+        immediate_actions: [
+          'Notify primary care physician',
+          'Schedule urgent appointment',
+        ],
+        notification_list: ['Primary physician', 'Care coordinator'],
+        escalation_timeline: '24-48 hours',
+        emergency_contacts: ['Emergency services if critical'],
+        documentation_requirements: [
+          'Trend analysis report',
+          'Patient notification',
+        ],
+      },
+    };
+  }
 
-private
-async;
-createVitalSignWarning(
-      patient: Patient,
-      vitalTrend: VitalTrend,
-      alerts: VitalAlert[]
-    )
-: Promise<EarlyWarning>
-return {
+  private async createVitalSignWarning(
+    patient: Patient,
+    vitalTrend: VitalTrend,
+    alerts: VitalAlert[]
+  ): Promise<EarlyWarning>
+{
+  return {
         warning_id: `vital_sign_${Date.now()}`,
         warning_type: 'risk_elevation',
         severity: 'high',
@@ -1326,14 +1313,11 @@ return {
         }
       };
 
-private
-async;
-createTreatmentFailureWarning(
-      patient: Patient,
-      treatment: TreatmentEffectiveness
-    )
-: Promise<EarlyWarning>
-return {
+  private async createTreatmentFailureWarning(
+    patient: Patient,
+    treatment: TreatmentEffectiveness
+  ): Promise<EarlyWarning> {
+  return {
         warning_id: `treatment_failure_${Date.now()}`,
         warning_type: 'treatment_failure',
         severity: 'moderate',
@@ -1356,245 +1340,225 @@ return {
           documentation_requirements: ['Treatment review report', 'Alternative options analysis']
         }
       };
+  }
 
-private
-async;
-createTrendBasedRecommendation(
-      patient: Patient,
-      trend: HealthTrend
-    )
-: Promise<HealthRecommendation>
-return {
-        recommendation_id: `trend_rec_${Date.now()}`,
-        category: 'intervention',
-        priority: trend.trend_strength > 0.7 ? 'high' : 'medium',
-        title: `Address declining ${trend.metric_name}`,
-        description: `Your ${trend.metric_name} has shown a declining trend over the monitoring period.`,
-        rationale: `Trend analysis shows ${Math.abs(trend.change_percentage).toFixed(1)}% decline with high statistical significance.`,
-        implementation_steps: [
-          'Schedule consultation with healthcare provider',
-          'Review current lifestyle factors',
-          'Consider treatment adjustments',
-          'Increase monitoring frequency'
-        ],
-        expected_outcomes: [
-          'Stabilization of declining trend',
-          'Improvement in target metrics',
-          'Better overall health outcomes'
-        ],
-        timeline: '2-4 weeks',
-        success_metrics: [
-          'Trend reversal or stabilization',
-          'Improved metric values',
-          'Patient satisfaction'
-        ],
-        contraindications: []
-      };
+  private async createTrendBasedRecommendation(
+    patient: Patient,
+    trend: HealthTrend
+  ): Promise<HealthRecommendation> {
+    return {
+      recommendation_id: `trend_rec_${Date.now()}`,
+      category: 'intervention',
+      priority: trend.trend_strength > 0.7 ? 'high' : 'medium',
+      title: `Address declining ${trend.metric_name}`,
+      description: `Your ${trend.metric_name} has shown a declining trend over the monitoring period.`,
+      rationale: `Trend analysis shows ${Math.abs(trend.change_percentage).toFixed(1)}% decline with high statistical significance.`,
+      implementation_steps: [
+        'Schedule consultation with healthcare provider',
+        'Review current lifestyle factors',
+        'Consider treatment adjustments',
+        'Increase monitoring frequency'
+      ],
+      expected_outcomes: [
+        'Stabilization of declining trend',
+        'Improvement in target metrics',
+        'Better overall health outcomes'
+      ],
+      timeline: '2-4 weeks',
+      success_metrics: [
+        'Trend reversal or stabilization',
+        'Improved metric values',
+        'Patient satisfaction'
+      ],
+      contraindications: []
+    };
+  }
 
-private
-async;
-createWarningBasedRecommendation(
-      patient: Patient,
-      warning: EarlyWarning
-    )
-: Promise<HealthRecommendation>
-return {
-        recommendation_id: `warning_rec_${Date.now()}`,
-        category: 'intervention',
-        priority: warning.severity === 'critical' ? 'urgent' : 'high',
-        title: `Address ${warning.warning_type}`,
-        description: `Early warning detected for ${warning.warning_type} requiring immediate attention.`,
-        rationale: `Warning triggered with ${(warning.probability * 100).toFixed(1)}% probability.`,
-        implementation_steps: warning.recommended_actions,
-        expected_outcomes: [
-          'Risk mitigation',
-          'Prevention of complications',
-          'Improved safety profile'
-        ],
-        timeline: warning.intervention_window,
-        success_metrics: [
-          'Warning resolution',
-          'Risk reduction',
-          'Stable health metrics'
-        ],
-        contraindications: []
-      };
+  private async createWarningBasedRecommendation(
+    patient: Patient,
+    warning: EarlyWarning
+  ): Promise<HealthRecommendation> {
+    return {
+      recommendation_id: `warning_rec_${Date.now()}`,
+      category: 'intervention',
+      priority: warning.severity === 'critical' ? 'urgent' : 'high',
+      title: `Address ${warning.warning_type}`,
+      description: `Early warning detected for ${warning.warning_type} requiring immediate attention.`,
+      rationale: `Warning triggered with ${(warning.probability * 100).toFixed(1)}% probability.`,
+      implementation_steps: warning.recommended_actions,
+      expected_outcomes: [
+        'Risk mitigation',
+        'Prevention of complications',
+        'Improved safety profile'
+      ],
+      timeline: warning.intervention_window,
+      success_metrics: [
+        'Warning resolution',
+        'Risk reduction',
+        'Stable health metrics'
+      ],
+      contraindications: []
+    };
+  }
 
-private
-async;
-generatePreventiveRecommendations(
-      patient: Patient,
-      healthTrends: HealthTrend[],
-      vitalTrends: VitalTrend[]
-    )
-: Promise<HealthRecommendation[]>
-{
-  const recommendations: HealthRecommendation[] = [];
+  private async generatePreventiveRecommendations(
+    patient: Patient,
+    healthTrends: HealthTrend[],
+    vitalTrends: VitalTrend[]
+  ): Promise<HealthRecommendation[]> {
+    const recommendations: HealthRecommendation[] = [];
 
-  // General preventive recommendations
-  recommendations.push({
-    recommendation_id: `preventive_${Date.now()}_1`,
-    category: 'prevention',
-    priority: 'medium',
-    title: 'Maintain regular health monitoring',
-    description: 'Continue regular health monitoring to detect changes early.',
-    rationale:
-      'Consistent monitoring enables early detection and intervention.',
-    implementation_steps: [
-      'Schedule regular check-ups',
-      'Monitor vital signs daily',
-      'Track symptoms and changes',
-      'Maintain health diary',
-    ],
-    expected_outcomes: [
-      'Early detection of health changes',
-      'Better health outcomes',
-      'Improved quality of life',
-    ],
-    timeline: 'Ongoing',
-    success_metrics: [
-      'Consistent data collection',
-      'Early problem detection',
-      'Stable health trends',
-    ],
-    contraindications: [],
-  });
+    // General preventive recommendations
+    recommendations.push({
+      recommendation_id: `preventive_${Date.now()}_1`,
+      category: 'prevention',
+      priority: 'medium',
+      title: 'Maintain regular health monitoring',
+      description:
+        'Continue regular health monitoring to detect changes early.',
+      rationale:
+        'Consistent monitoring enables early detection and intervention.',
+      implementation_steps: [
+        'Schedule regular check-ups',
+        'Monitor vital signs daily',
+        'Track symptoms and changes',
+        'Maintain health diary',
+      ],
+      expected_outcomes: [
+        'Early detection of health changes',
+        'Better health outcomes',
+        'Improved quality of life',
+      ],
+      timeline: 'Ongoing',
+      success_metrics: [
+        'Consistent data collection',
+        'Early problem detection',
+        'Stable health trends',
+      ],
+      contraindications: [],
+    });
 
-  return recommendations;
-}
+    return recommendations;
+  }
 
-private
-calculateAnalysisConfidence(
+  private
+  calculateAnalysisConfidence(
       healthData: HealthMetric[],
       vitalSigns: VitalSigns[],
       period: MonitoringPeriod
     )
-: number
-{
-  // Calculate confidence based on data quality and quantity
-  const dataPoints = healthData.length + vitalSigns.length;
-  const expectedDataPoints = period.duration_days * 2; // Assuming 2 measurements per day
+  : number
+  {
+    // Calculate confidence based on data quality and quantity
+    const dataPoints = healthData.length + vitalSigns.length;
+    const expectedDataPoints = period.duration_days * 2; // Assuming 2 measurements per day
 
-  const dataCompleteness = Math.min(1, dataPoints / expectedDataPoints);
-  const timeSpanAdequacy =
-    period.duration_days >= 7 ? 1 : period.duration_days / 7;
+    const dataCompleteness = Math.min(1, dataPoints / expectedDataPoints);
+    const timeSpanAdequacy =
+      period.duration_days >= 7 ? 1 : period.duration_days / 7;
 
-  return (dataCompleteness * 0.6 + timeSpanAdequacy * 0.4) * 0.95; // Max 95% confidence
-}
+    return (dataCompleteness * 0.6 + timeSpanAdequacy * 0.4) * 0.95; // Max 95% confidence
+  }
 
-private
-calculateNextMonitoringDate(
+  private
+  calculateNextMonitoringDate(
       patient: Patient,
       warnings: EarlyWarning[],
       trends: HealthTrend[]
     )
-: Date
-{
-  const now = new Date();
+  : Date
+  {
+    const now = new Date();
 
-  // If there are critical warnings, monitor daily
-  if (warnings.some((w) => w.severity === 'critical')) {
-    return new Date(now.getTime() + 24 * 60 * 60 * 1000); // 1 day
+    // If there are critical warnings, monitor daily
+    if (warnings.some((w) => w.severity === 'critical')) {
+      return new Date(now.getTime() + 24 * 60 * 60 * 1000); // 1 day
+    }
+
+    // If there are concerning trends, monitor weekly
+    if (
+      trends.some(
+        (t) => t.trend_direction === 'declining' && t.trend_strength > 0.5
+      )
+    ) {
+      return new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000); // 1 week
+    }
+
+    // Otherwise, monitor monthly
+    return new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000); // 1 month
   }
 
-  // If there are concerning trends, monitor weekly
-  if (
-    trends.some(
-      (t) => t.trend_direction === 'declining' && t.trend_strength > 0.5
-    )
-  ) {
-    return new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000); // 1 week
-  }
+  // Real-time monitoring methods
+  private checkValueRange(patient: Patient, dataPoint: HealthDataPoint): VitalAlert | null {
+    const thresholds = this.alertThresholds.get(dataPoint.source);
+    if (!thresholds) {
+      return null;
+    }
 
-  // Otherwise, monitor monthly
-  return new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000); // 1 month
-}
-
-// Real-time monitoring methods
-private
-checkValueRange(patient: Patient, dataPoint: HealthDataPoint)
-: VitalAlert | null
-{
-  const thresholds = this.alertThresholds.get(dataPoint.source);
-  if (!thresholds) {
-    return null;
-  }
-
-  if (dataPoint.value > thresholds.critical) {
-    return {
+    if (dataPoint.value > thresholds.critical) {
+      return {
           alert_type: 'out_of_range',
           severity: 'critical',
           message: `Critical value detected: ${dataPoint.value}`,
           triggered_at: dataPoint.timestamp,
           auto_resolved: false
         };
-  }
+    }
 
-  if (dataPoint.value > thresholds.warning) {
-    return {
+    if (dataPoint.value > thresholds.warning) {
+      return {
           alert_type: 'out_of_range',
           severity: 'warning',
           message: `Warning value detected: ${dataPoint.value}`,
           triggered_at: dataPoint.timestamp,
           auto_resolved: false
         };
+    }
+
+    return null;
   }
 
-  return null;
-}
-
-private
-async;
-checkRapidChanges(patient: Patient, dataPoint: HealthDataPoint)
-: Promise<VitalAlert | null>
-// Check for rapid changes compared to recent values
-// This would require access to recent historical data
-return null; // Simplified implementation
-
-private
-async;
-checkTrendConcerns(patient: Patient, dataPoint: HealthDataPoint)
-: Promise<VitalAlert | null>
-// Check if this data point indicates a concerning trend
-// This would require trend analysis of recent data
-return null; // Simplified implementation
-
-private
-checkMissingData(patient: Patient, realtimeData: HealthDataPoint[])
-: VitalAlert[]
-{
-  const alerts: VitalAlert[] = [];
-  const now = new Date();
-  const _expectedInterval = 24 * 60 * 60 * 1000; // 24 hours
-
-  if (realtimeData.length === 0) {
-    alerts.push({
-      alert_type: 'missing_data',
-      severity: 'warning',
-      message: 'No recent health data available',
-      triggered_at: now,
-      auto_resolved: false,
-    });
+  private async checkRapidChanges(patient: Patient, dataPoint: HealthDataPoint): Promise<VitalAlert | null> {
+    // Check for rapid changes compared to recent values
+    // This would require access to recent historical data
+    return null; // Simplified implementation
   }
 
-  return alerts;
-}
+  private async checkTrendConcerns(patient: Patient, dataPoint: HealthDataPoint): Promise<VitalAlert | null> {
+    // Check if this data point indicates a concerning trend
+    // This would require trend analysis of recent data
+    return null; // Simplified implementation
+  }
 
-private
-async;
-generateHealthPrediction(
+  private checkMissingData(patient: Patient, realtimeData: HealthDataPoint[]): VitalAlert[] {
+    const alerts: VitalAlert[] = [];
+    const now = new Date();
+    const _expectedInterval = 24 * 60 * 60 * 1000; // 24 hours
+
+    if (realtimeData.length === 0) {
+      alerts.push({
+        alert_type: 'missing_data',
+        severity: 'warning',
+        message: 'No recent health data available',
+        triggered_at: now,
+        auto_resolved: false,
+      });
+    }
+
+    return alerts;
+  }
+
+  private async generateHealthPrediction(
       patient: Patient,
       trend: HealthTrend,
       timeHorizon: string
-    )
-: Promise<HealthPrediction>
-{
-  // Generate prediction based on current trend
-  const daysAhead = this.parseTimeHorizon(timeHorizon);
-  const predictedValue =
-    trend.current_value + trend.trend_analysis.slope * daysAhead;
+    ): Promise<HealthPrediction> {
+    // Generate prediction based on current trend
+    const daysAhead = this.parseTimeHorizon(timeHorizon);
+    const predictedValue =
+      trend.current_value + trend.trend_analysis.slope * daysAhead;
 
-  return {
+    return {
         prediction_id: `pred_${Date.now()}`,
         prediction_type: trend.metric_name,
         predicted_value: predictedValue,
@@ -1606,34 +1570,30 @@ generateHealthPrediction(
         factors_considered: [trend.metric_name, 'historical_trend', 'patient_profile'],
         model_accuracy: trend.trend_analysis.prediction_accuracy
       };
-}
+  }
 
-private
-parseTimeHorizon(timeHorizon: string)
-: number
-// Parse time horizon string to days
-if (timeHorizon.includes('week')) {
-  return 7;
-}
-if (timeHorizon.includes('month')) {
-  return 30;
-}
-if (timeHorizon.includes('day')) {
-  return 1;
-}
-return 30; // default to 30 days
+  private parseTimeHorizon(timeHorizon: string): number {
+    // Parse time horizon string to days
+    if (timeHorizon.includes('week')) {
+      return 7;
+    }
+    if (timeHorizon.includes('month')) {
+      return 30;
+    }
+    if (timeHorizon.includes('day')) {
+      return 1;
+    }
+    return 30; // default to 30 days
+  }
 
-private
-async;
-processWearableDataPoint(
+  private async processWearableDataPoint(
       data: any,
       deviceInfo: WearableIntegration,
       patient: Patient
-    )
-: Promise<HealthDataPoint | null>
-// Process wearable device data point
-try {
-  return {
+    ): Promise<HealthDataPoint | null> {
+    // Process wearable device data point
+    try {
+    return {
           timestamp: new Date(data.timestamp),
           value: data.value,
           source: 'device',
@@ -1646,122 +1606,113 @@ try {
             notes: `From ${deviceInfo.device_type}`
           }
         };
-} catch (error) {
-  console.error('Failed to process wearable data point:', error);
-  return null;
-}
-
-private
-validateDataQuality(dataPoint: HealthDataPoint)
-: boolean
-return dataPoint.quality_score > 0.7 && 
-             dataPoint.value !== null && 
-             dataPoint.value !== undefined &&
-             !Number.isNaN(dataPoint.value);
-
-private
-assessDataQuality(data: any, deviceInfo: WearableIntegration)
-: number
-{
-  let quality = 0.8; // Base quality for device data
-
-  // Adjust based on device type
-  if (deviceInfo.device_type === 'medical_grade') {
-    quality += 0.15;
-  }
-  if (deviceInfo.device_type === 'consumer') {
-    quality -= 0.1;
+  } catch (error) {
+    console.error('Failed to process wearable data point:', error);
+    return null;
   }
 
-  // Adjust based on data completeness
-  if (data.confidence) {
-    quality += (data.confidence - 0.5) * 0.2;
+  private validateDataQuality(dataPoint: HealthDataPoint): boolean {
+    return dataPoint.quality_score > 0.7 && 
+           dataPoint.value !== null && 
+           dataPoint.value !== undefined &&
+           !Number.isNaN(dataPoint.value);
   }
 
-  return Math.max(0, Math.min(1, quality));
-}
+  private assessDataQuality(data: any, deviceInfo: WearableIntegration): number {
+    let quality = 0.8; // Base quality for device data
 
-// Health insights methods
-private
-calculateOverallHealthScore(analysis: HealthTrendAnalysis)
-: number
-{
-  const trendScores = analysis.health_trends.map((t) => {
-    if (t.trend_direction === 'improving') {
-      return 0.8 + t.trend_strength * 0.2;
+    // Adjust based on device type
+    if (deviceInfo.device_type === 'medical_grade') {
+      quality += 0.15;
     }
-    if (t.trend_direction === 'stable') {
-      return 0.7;
+    if (deviceInfo.device_type === 'consumer') {
+      quality -= 0.1;
     }
-    if (t.trend_direction === 'declining') {
-      return 0.3 - t.trend_strength * 0.2;
+
+    // Adjust based on data completeness
+    if (data.confidence) {
+      quality += (data.confidence - 0.5) * 0.2;
     }
-    return 0.5; // fluctuating
-  });
 
-  const warningPenalty = analysis.early_warnings.length * 0.1;
-  const baseScore =
-    trendScores.reduce((sum, score) => sum + score, 0) / trendScores.length;
+    return Math.max(0, Math.min(1, quality));
+  }
 
-  return Math.max(0, Math.min(1, baseScore - warningPenalty));
-}
+  // Health insights methods
+  private calculateOverallHealthScore(analysis: HealthTrendAnalysis): number {
+    const trendScores = analysis.health_trends.map((t) => {
+      if (t.trend_direction === 'improving') {
+        return 0.8 + t.trend_strength * 0.2;
+      }
+      if (t.trend_direction === 'stable') {
+        return 0.7;
+      }
+      if (t.trend_direction === 'declining') {
+        return 0.3 - t.trend_strength * 0.2;
+      }
+      return 0.5; // fluctuating
+    });
 
-private
-identifyImprovementAreas(analysis: HealthTrendAnalysis)
-: string[]
-return analysis.health_trends
-        .filter(t => t.trend_direction === 'declining')
-        .map(t => t.metric_name);
+    const warningPenalty = analysis.early_warnings.length * 0.1;
+    const baseScore =
+      trendScores.reduce((sum, score) => sum + score, 0) / trendScores.length;
 
-private
-identifySuccessAreas(analysis: HealthTrendAnalysis)
-: string[]
-return analysis.health_trends
-        .filter(t => t.trend_direction === 'improving')
-        .map(t => t.metric_name);
+    return Math.max(0, Math.min(1, baseScore - warningPenalty));
+  }
 
-private
-analyzeBehaviorHealthCorrelations(
+  private identifyImprovementAreas(analysis: HealthTrendAnalysis): string[] {
+    return analysis.health_trends
+          .filter(t => t.trend_direction === 'declining')
+          .map(t => t.metric_name);
+  }
+
+  private identifySuccessAreas(analysis: HealthTrendAnalysis): string[] {
+    return analysis.health_trends
+          .filter(t => t.trend_direction === 'improving')
+          .map(t => t.metric_name);
+  }
+
+  private
+  analyzeBehaviorHealthCorrelations(
       trendAnalysis: HealthTrendAnalysis,
       behaviorAnalysis: BehaviorAnalysis
     )
-: any
-return {
+  : any
+  return {
         appointment_adherence_impact: 'High adherence correlates with better health outcomes',
         communication_effectiveness: 'Regular communication improves treatment compliance',
         lifestyle_factors: 'Lifestyle modifications show positive health impact'
       };
 
-private
-generatePersonalizedGoals(
+  private
+  generatePersonalizedGoals(
       patient: Patient,
       analysis: HealthTrendAnalysis
     )
-: any[]
-{
-  const goals = [];
+  : any[]
+  {
+    const goals = [];
 
-  for (const trend of analysis.health_trends) {
-    if (trend.trend_direction === 'declining') {
-      goals.push({
-        metric: trend.metric_name,
-        target: 'Stabilize and improve',
-        timeline: '4-6 weeks',
-        strategy: 'Targeted intervention and monitoring',
-      });
+    for (const trend of analysis.health_trends) {
+      if (trend.trend_direction === 'declining') {
+        goals.push({
+          metric: trend.metric_name,
+          target: 'Stabilize and improve',
+          timeline: '4-6 weeks',
+          strategy: 'Targeted intervention and monitoring',
+        });
+      }
     }
+
+    return goals;
   }
 
-  return goals;
-}
-
-private
-generateMotivationStrategies(
+  private
+  generateMotivationStrategies(
       patient: Patient,
       behaviorAnalysis: BehaviorAnalysis
     )
-: any[]
-return [
+  : any[]
+  return [
         {
           strategy: 'Progress visualization',
           description: 'Show visual progress charts and achievements',

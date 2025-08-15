@@ -136,7 +136,8 @@ export class IntelligentThresholdService {
 
     let query = supabase
       .from('reorder_thresholds')
-      .select(`
+      .select(
+        `
         *,
         inventory_items!inner(
           id,
@@ -146,7 +147,8 @@ export class IntelligentThresholdService {
           unit,
           current_stock
         )
-      `)
+      `
+      )
       .eq('clinic_id', clinicId)
       .eq('is_active', true);
 

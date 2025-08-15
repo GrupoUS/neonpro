@@ -334,11 +334,13 @@ export class MedicalRecordsManager {
     try {
       const { data, error } = await this.supabase
         .from('medical_records')
-        .select(`
+        .select(
+          `
           *,
           attachments:medical_attachments(*),
           digital_signatures(*)
-        `)
+        `
+        )
         .eq('id', recordId)
         .eq('status', RecordStatus.ACTIVE)
         .single();

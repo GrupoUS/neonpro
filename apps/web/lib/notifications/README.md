@@ -34,6 +34,7 @@ O Sistema de Notificações do NeonPro é uma solução robusta e escalável que
 ## ✨ Funcionalidades
 
 ### 🚀 Core Features
+
 - ✅ Notificações multi-canal (Email, SMS, Push, In-App)
 - ✅ Sistema de templates com variáveis dinâmicas
 - ✅ Agendamento de notificações
@@ -44,6 +45,7 @@ O Sistema de Notificações do NeonPro é uma solução robusta e escalável que
 - ✅ Modo silencioso (quiet hours)
 
 ### 🤖 Automação
+
 - ✅ Triggers baseados em eventos
 - ✅ Condições customizáveis
 - ✅ Ações em cadeia
@@ -51,6 +53,7 @@ O Sistema de Notificações do NeonPro é uma solução robusta e escalável que
 - ✅ Webhooks
 
 ### 📊 Analytics
+
 - ✅ Métricas de entrega por canal
 - ✅ Taxa de abertura e cliques
 - ✅ Relatórios diários/mensais
@@ -58,6 +61,7 @@ O Sistema de Notificações do NeonPro é uma solução robusta e escalável que
 - ✅ Exportação de dados
 
 ### 🔧 Administração
+
 - ✅ Dashboard de gerenciamento
 - ✅ Configuração de canais
 - ✅ Gerenciamento de templates
@@ -152,8 +156,8 @@ const notifications = createNotificationSystem({
     analytics: true,
     automation: true,
     templates: true,
-    scheduling: true
-  }
+    scheduling: true,
+  },
 });
 ```
 
@@ -167,12 +171,12 @@ const config: NotificationSystemConfig = {
     provider: 'resend',
     apiKey: process.env.EMAIL_API_KEY!,
     fromEmail: 'noreply@neonpro.com.br',
-    fromName: 'NeonPro'
+    fromName: 'NeonPro',
   },
   rateLimits: {
     EMAIL: { perMinute: 100, perHour: 1000, perDay: 10000 },
-    SMS: { perMinute: 10, perHour: 100, perDay: 1000 }
-  }
+    SMS: { perMinute: 10, perHour: 100, perDay: 1000 },
+  },
 };
 ```
 
@@ -189,10 +193,10 @@ await notificationManager.send({
   channel: NotificationChannel.EMAIL,
   recipient: {
     id: 'user-123',
-    email: 'user@example.com'
+    email: 'user@example.com',
   },
   subject: 'Lembrete de Consulta',
-  content: 'Sua consulta é amanhã às 14:00'
+  content: 'Sua consulta é amanhã às 14:00',
 });
 ```
 
@@ -205,14 +209,14 @@ await notificationManager.sendFromTemplate({
   channel: NotificationChannel.SMS,
   recipient: {
     id: 'patient-456',
-    phone: '+5511999999999'
+    phone: '+5511999999999',
   },
   variables: {
     'patient.firstName': 'João',
     'appointment.time': '14:00',
     'appointment.date': '2024-01-15',
-    'doctor.name': 'Dr. Silva'
-  }
+    'doctor.name': 'Dr. Silva',
+  },
 });
 ```
 
@@ -226,12 +230,12 @@ await notificationManager.sendMultiChannel({
   recipient: {
     id: 'user-789',
     email: 'user@example.com',
-    phone: '+5511888888888'
+    phone: '+5511888888888',
   },
   variables: {
     'payment.amount': 'R$ 150,00',
-    'payment.reference': 'PAY-123456'
-  }
+    'payment.reference': 'PAY-123456',
+  },
 });
 ```
 
@@ -334,7 +338,7 @@ const template = await templateEngine.createTemplate({
     Atenciosamente,
     Equipe NeonPro
   `,
-  variables: ['user.firstName', 'user.isFirstTime']
+  variables: ['user.firstName', 'user.isFirstTime'],
 });
 ```
 
@@ -381,25 +385,25 @@ const rule = await automationEngine.createRule({
     type: 'SCHEDULE',
     config: {
       event: 'appointment.created',
-      delay: '-24h' // 24 horas antes
-    }
+      delay: '-24h', // 24 horas antes
+    },
   },
   conditions: [
     {
       field: 'appointment.status',
       operator: 'equals',
-      value: 'confirmed'
-    }
+      value: 'confirmed',
+    },
   ],
   actions: [
     {
       type: 'SEND_NOTIFICATION',
       config: {
         templateId: 'appointment-reminder',
-        channels: ['SMS', 'PUSH']
-      }
-    }
-  ]
+        channels: ['SMS', 'PUSH'],
+      },
+    },
+  ],
 });
 ```
 
@@ -407,17 +411,17 @@ const rule = await automationEngine.createRule({
 
 ```typescript
 // Eventos do sistema
-'user.created'           // Usuário criado
-'appointment.created'    // Consulta agendada
-'appointment.updated'    // Consulta alterada
-'payment.completed'      // Pagamento confirmado
-'alert.triggered'        // Alerta disparado
+'user.created'; // Usuário criado
+'appointment.created'; // Consulta agendada
+'appointment.updated'; // Consulta alterada
+'payment.completed'; // Pagamento confirmado
+'alert.triggered'; // Alerta disparado
 
 // Agendamentos
-'schedule.daily'         // Diário
-'schedule.weekly'        // Semanal
-'schedule.monthly'       // Mensal
-'schedule.custom'        // Personalizado
+'schedule.daily'; // Diário
+'schedule.weekly'; // Semanal
+'schedule.monthly'; // Mensal
+'schedule.custom'; // Personalizado
 ```
 
 ## 📊 Analytics
@@ -440,7 +444,7 @@ import { notificationManager } from '@/lib/notifications';
 const stats = await notificationManager.getStats({
   startDate: '2024-01-01',
   endDate: '2024-01-31',
-  groupBy: 'channel'
+  groupBy: 'channel',
 });
 
 // Métricas por canal
@@ -449,7 +453,7 @@ const channelStats = await notificationManager.getChannelStats('EMAIL');
 // Taxa de entrega
 const deliveryRate = await notificationManager.getDeliveryRate({
   channel: 'SMS',
-  period: 'last_30_days'
+  period: 'last_30_days',
 });
 ```
 
@@ -460,22 +464,29 @@ const deliveryRate = await notificationManager.getDeliveryRate({
 ```typescript
 class NotificationManager {
   // Enviar notificação
-  async send(notification: NotificationRequest): Promise<NotificationDelivery>
-  
+  async send(notification: NotificationRequest): Promise<NotificationDelivery>;
+
   // Enviar com template
-  async sendFromTemplate(request: TemplateNotificationRequest): Promise<NotificationDelivery>
-  
+  async sendFromTemplate(
+    request: TemplateNotificationRequest
+  ): Promise<NotificationDelivery>;
+
   // Enviar multi-canal
-  async sendMultiChannel(request: MultiChannelRequest): Promise<NotificationDelivery[]>
-  
+  async sendMultiChannel(
+    request: MultiChannelRequest
+  ): Promise<NotificationDelivery[]>;
+
   // Agendar notificação
-  async schedule(notification: NotificationRequest, scheduledFor: Date): Promise<string>
-  
+  async schedule(
+    notification: NotificationRequest,
+    scheduledFor: Date
+  ): Promise<string>;
+
   // Cancelar notificação
-  async cancel(notificationId: string): Promise<void>
-  
+  async cancel(notificationId: string): Promise<void>;
+
   // Obter estatísticas
-  async getStats(options: StatsOptions): Promise<NotificationStats>
+  async getStats(options: StatsOptions): Promise<NotificationStats>;
 }
 ```
 
@@ -484,16 +495,24 @@ class NotificationManager {
 ```typescript
 class TemplateEngine {
   // Criar template
-  async createTemplate(template: NotificationTemplate): Promise<NotificationTemplate>
-  
+  async createTemplate(
+    template: NotificationTemplate
+  ): Promise<NotificationTemplate>;
+
   // Renderizar template
-  async render(templateId: string, variables: Record<string, any>): Promise<RenderedTemplate>
-  
+  async render(
+    templateId: string,
+    variables: Record<string, any>
+  ): Promise<RenderedTemplate>;
+
   // Listar templates
-  async listTemplates(filter?: TemplateFilter): Promise<NotificationTemplate[]>
-  
+  async listTemplates(filter?: TemplateFilter): Promise<NotificationTemplate[]>;
+
   // Atualizar template
-  async updateTemplate(id: string, updates: Partial<NotificationTemplate>): Promise<NotificationTemplate>
+  async updateTemplate(
+    id: string,
+    updates: Partial<NotificationTemplate>
+  ): Promise<NotificationTemplate>;
 }
 ```
 
@@ -502,10 +521,10 @@ class TemplateEngine {
 ### Exemplo Completo: Sistema de Lembretes
 
 ```typescript
-import { 
-  notificationManager, 
-  templateEngine, 
-  automationEngine 
+import {
+  notificationManager,
+  templateEngine,
+  automationEngine,
 } from '@/lib/notifications';
 
 // 1. Criar template
@@ -530,8 +549,8 @@ const reminderTemplate = await templateEngine.createTemplate({
     'appointment.date',
     'appointment.time',
     'doctor.name',
-    'appointment.location'
-  ]
+    'appointment.location',
+  ],
 });
 
 // 2. Criar regra de automação
@@ -541,20 +560,20 @@ const reminderRule = await automationEngine.createRule({
     type: 'EVENT',
     config: {
       event: 'appointment.confirmed',
-      delay: '-24h'
-    }
+      delay: '-24h',
+    },
   },
   conditions: [
     {
       field: 'appointment.status',
       operator: 'equals',
-      value: 'confirmed'
+      value: 'confirmed',
     },
     {
       field: 'patient.preferences.reminders',
       operator: 'equals',
-      value: true
-    }
+      value: true,
+    },
   ],
   actions: [
     {
@@ -562,10 +581,10 @@ const reminderRule = await automationEngine.createRule({
       config: {
         templateId: reminderTemplate.id,
         channels: ['SMS', 'PUSH'],
-        priority: 'HIGH'
-      }
-    }
-  ]
+        priority: 'HIGH',
+      },
+    },
+  ],
 });
 
 // 3. Simular evento de consulta confirmada
@@ -576,7 +595,7 @@ const appointment = {
   date: '2024-01-16',
   time: '14:00',
   status: 'confirmed',
-  location: 'Consultório 1'
+  location: 'Consultório 1',
 };
 
 // Disparar automação
@@ -585,12 +604,12 @@ await automationEngine.trigger('appointment.confirmed', {
   patient: {
     id: 'patient-456',
     firstName: 'João',
-    preferences: { reminders: true }
+    preferences: { reminders: true },
   },
   doctor: {
     id: 'doctor-789',
-    name: 'Dr. Silva'
-  }
+    name: 'Dr. Silva',
+  },
 });
 ```
 
@@ -617,7 +636,7 @@ const logs = await notificationManager.getLogs({
 ```typescript
 // Testar template
 const result = await templateEngine.render('template-id', {
-  'user.firstName': 'João'
+  'user.firstName': 'João',
 });
 console.log('Template renderizado:', result);
 ```

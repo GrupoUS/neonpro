@@ -90,10 +90,12 @@ export class ConsentService {
   async getPatientConsents(patientId: string): Promise<PatientConsent[]> {
     const { data, error } = await this.supabase
       .from('patient_consents')
-      .select(`
+      .select(
+        `
         *,
         consent_form:consent_forms(*)
-      `)
+      `
+      )
       .eq('patient_id', patientId)
       .order('created_at', { ascending: false });
 
@@ -108,10 +110,12 @@ export class ConsentService {
   async getActiveConsents(patientId: string): Promise<PatientConsent[]> {
     const { data, error } = await this.supabase
       .from('patient_consents')
-      .select(`
+      .select(
+        `
         *,
         consent_form:consent_forms(*)
-      `)
+      `
+      )
       .eq('patient_id', patientId)
       .eq('status', 'active')
       .or('expires_at.is.null,expires_at.gt.now()')
@@ -321,11 +325,13 @@ export class ConsentService {
 
     const { data, error } = await this.supabase
       .from('patient_consents')
-      .select(`
+      .select(
+        `
         *,
         consent_form:consent_forms(*),
         patient:patients(id, name, email)
-      `)
+      `
+      )
       .eq('clinic_id', clinicId)
       .eq('status', 'active')
       .not('expires_at', 'is', null)
@@ -389,11 +395,13 @@ export class ConsentService {
   async getClinicConsents(clinicId: string): Promise<PatientConsent[]> {
     const { data, error } = await this.supabase
       .from('patient_consents')
-      .select(`
+      .select(
+        `
         *,
         consent_form:consent_forms(*),
         patient:patients(*)
-      `)
+      `
+      )
       .eq('clinic_id', clinicId)
       .order('created_at', { ascending: false });
 

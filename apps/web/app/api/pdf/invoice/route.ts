@@ -33,14 +33,16 @@ export async function GET(request: NextRequest) {
     // Buscar dados da fatura
     const { data: invoice, error: invoiceError } = await supabase
       .from('invoices')
-      .select(`
+      .select(
+        `
         *,
         profiles:user_id (
           id,
           email,
           full_name
         )
-      `)
+      `
+      )
       .eq('id', invoiceId)
       .eq('user_id', user.id)
       .single();
@@ -128,14 +130,16 @@ export async function POST(request: NextRequest) {
     // Buscar dados da fatura
     const { data: invoice, error: invoiceError } = await supabase
       .from('invoices')
-      .select(`
+      .select(
+        `
         *,
         profiles:user_id (
           id,
           email,
           full_name
         )
-      `)
+      `
+      )
       .eq('id', invoiceId)
       .eq('user_id', user.id)
       .single();

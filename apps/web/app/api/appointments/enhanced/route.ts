@@ -248,7 +248,8 @@ export async function GET(request: Request) {
 
     let query = supabase
       .from('appointments')
-      .select(`
+      .select(
+        `
         id,
         patient_id,
         professional_id,
@@ -275,7 +276,8 @@ export async function GET(request: Request) {
           duration_minutes,
           price
         )
-      `)
+      `
+      )
       .eq('clinic_id', profile.clinic_id)
       .order('appointment_date', { ascending: true })
       .order('appointment_time', { ascending: true })

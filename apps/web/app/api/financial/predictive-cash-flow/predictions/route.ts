@@ -105,11 +105,13 @@ export async function GET(request: NextRequest) {
     // Build query
     let query = supabase
       .from('cash_flow_predictions')
-      .select(`
+      .select(
+        `
         *,
         prediction_models!inner(name, model_type, algorithm_type, accuracy_rate),
         forecasting_scenarios(name, description)
-      `)
+      `
+      )
       .eq('clinic_id', clinicId)
       .order('created_at', { ascending: false })
       .range(offset, offset + limit - 1);
@@ -266,11 +268,13 @@ export async function POST(request: NextRequest) {
     // Get the complete prediction with model details
     const { data: completePrediction, error: fetchError } = await supabase
       .from('cash_flow_predictions')
-      .select(`
+      .select(
+        `
         *,
         prediction_models!inner(name, model_type, algorithm_type, accuracy_rate),
         forecasting_scenarios(name, description)
-      `)
+      `
+      )
       .eq('id', prediction.id)
       .single();
 
@@ -345,10 +349,12 @@ export async function PUT(request: NextRequest) {
     // Check if prediction exists and user has access
     const { data: prediction, error: predictionError } = await supabase
       .from('cash_flow_predictions')
-      .select(`
+      .select(
+        `
         *,
         prediction_models!inner(name)
-      `)
+      `
+      )
       .eq('id', predictionId)
       .single();
 

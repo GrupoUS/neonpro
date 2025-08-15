@@ -147,7 +147,8 @@ export class NotificationAnalytics {
       // Query principal para métricas base
       const { data: baseMetrics, error } = await this.supabase
         .from('notifications')
-        .select(`
+        .select(
+          `
           status,
           channel,
           type,
@@ -157,7 +158,8 @@ export class NotificationAnalytics {
           clicked_at,
           cost,
           metadata
-        `)
+        `
+        )
         .eq('clinic_id', clinicId)
         .gte('sent_at', last24h.toISOString());
 

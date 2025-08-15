@@ -98,7 +98,8 @@ export async function GET(request: NextRequest) {
     // Build query
     let query = supabase
       .from('social_media_posts')
-      .select(`
+      .select(
+        `
         id,
         account_id,
         post_type,
@@ -134,7 +135,8 @@ export async function GET(request: NextRequest) {
           first_name,
           last_name
         )
-      `)
+      `
+      )
       .eq('clinic_id', profile.clinic_id);
 
     // Apply filters
@@ -293,7 +295,8 @@ export async function POST(request: NextRequest) {
     const { data: newPost, error } = await supabase
       .from('social_media_posts')
       .insert([postData])
-      .select(`
+      .select(
+        `
         id,
         account_id,
         post_type,
@@ -312,7 +315,8 @@ export async function POST(request: NextRequest) {
             platform_display_name
           )
         )
-      `)
+      `
+      )
       .single();
 
     if (error) {

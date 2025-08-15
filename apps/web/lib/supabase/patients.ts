@@ -530,12 +530,14 @@ export async function getPatientById(
     // Get patient with related data
     const { data: patient, error: patientError } = await supabase
       .from('patients')
-      .select(`
+      .select(
+        `
         *,
         consents:patient_consents(*),
         conditions:medical_conditions(*),
         allergies:allergies_intolerances(*)
-      `)
+      `
+      )
       .eq('id', patient_id)
       .eq('clinic_id', profile.clinic_id)
       .single();

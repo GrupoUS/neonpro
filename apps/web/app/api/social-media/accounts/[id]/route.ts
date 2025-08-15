@@ -64,7 +64,8 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
     // Get account details
     const { data: account, error } = await supabase
       .from('social_media_accounts')
-      .select(`
+      .select(
+        `
         id,
         platform_name,
         account_name,
@@ -85,7 +86,8 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
           supported_features,
           oauth_config
         )
-      `)
+      `
+      )
       .eq('id', id)
       .eq('clinic_id', profile.clinic_id)
       .single();
@@ -177,7 +179,8 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       })
       .eq('id', id)
       .eq('clinic_id', profile.clinic_id)
-      .select(`
+      .select(
+        `
         id,
         platform_name,
         account_name,
@@ -188,7 +191,8 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         sync_status,
         status,
         updated_at
-      `)
+      `
+      )
       .single();
 
     if (error) {

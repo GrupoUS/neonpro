@@ -139,14 +139,16 @@ export class MedicalTimelineService {
       const supabase = await this.getSupabase();
       let query = supabase
         .from('patient_timeline_events')
-        .select(`
+        .select(
+          `
           *,
           professional:professionals(name),
           attachments:timeline_attachments(*),
           before_after_photos:before_after_photos(*),
           outcome:treatment_outcomes(*),
           notes:progress_notes(*)
-        `)
+        `
+        )
         .eq('patient_id', patientId);
 
       // Apply filters
@@ -354,10 +356,12 @@ export class MedicalTimelineService {
       const supabase = await this.getSupabase();
       const { data, error } = await supabase
         .from('milestone_tracking')
-        .select(`
+        .select(
+          `
           *,
           milestones:milestones(*)
-        `)
+        `
+        )
         .eq('patient_id', patientId);
 
       if (error) {

@@ -20,37 +20,40 @@ Este sistema fornece automação abrangente para todos os aspectos da conformida
 ### Instalação
 
 ```typescript
-import { createClient } from '@supabase/supabase-js'
-import { LGPDComplianceManager } from '../LGPDComplianceManager'
-import { LGPDAutomationOrchestrator, getLGPDAutomationConfig } from './index'
+import { createClient } from '@supabase/supabase-js';
+import { LGPDComplianceManager } from '../LGPDComplianceManager';
+import { LGPDAutomationOrchestrator, getLGPDAutomationConfig } from './index';
 
 // Configurar cliente Supabase
-const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!)
+const supabase = createClient(
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_ANON_KEY!
+);
 
 // Inicializar gerenciador de conformidade
-const complianceManager = new LGPDComplianceManager(supabase)
+const complianceManager = new LGPDComplianceManager(supabase);
 
 // Obter configuração (development, production, ou default)
-const config = getLGPDAutomationConfig('production')
+const config = getLGPDAutomationConfig('production');
 
 // Inicializar orquestrador
 const orchestrator = new LGPDAutomationOrchestrator(
   supabase,
   complianceManager,
   config
-)
+);
 
 // Iniciar todos os módulos de automação
-const result = await orchestrator.startAllAutomation()
-console.log('Módulos iniciados:', result.started_modules)
-console.log('Módulos com falha:', result.failed_modules)
+const result = await orchestrator.startAllAutomation();
+console.log('Módulos iniciados:', result.started_modules);
+console.log('Módulos com falha:', result.failed_modules);
 ```
 
 ### Uso Individual de Módulos
 
 ```typescript
 // Acessar módulos individuais
-const modules = orchestrator.getModules()
+const modules = orchestrator.getModules();
 
 // Usar módulo de consentimento
 const consent = await modules.consentAutomation.collectConsentWithTracking({
@@ -59,16 +62,16 @@ const consent = await modules.consentAutomation.collectConsentWithTracking({
   consent_given: true,
   collection_method: 'web_form',
   ip_address: '192.168.1.1',
-  user_agent: 'Mozilla/5.0...'
-})
+  user_agent: 'Mozilla/5.0...',
+});
 
 // Processar solicitação de acesso
 const accessRequest = await modules.dataSubjectRights.processAccessRequest({
   user_id: 'user-123',
   request_type: 'access',
   identity_verified: true,
-  requested_data_categories: ['personal', 'usage']
-})
+  requested_data_categories: ['personal', 'usage'],
+});
 ```
 
 ## 📚 Módulos de Automação
@@ -76,6 +79,7 @@ const accessRequest = await modules.dataSubjectRights.processAccessRequest({
 ### 1. Consent Automation Manager
 
 **Funcionalidades:**
+
 - Coleta de consentimento com rastreamento granular
 - Renovação automática de consentimentos
 - Processamento de retiradas de consentimento
@@ -83,6 +87,7 @@ const accessRequest = await modules.dataSubjectRights.processAccessRequest({
 - Herança de consentimento
 
 **Configuração:**
+
 ```typescript
 const consentConfig = {
   auto_renewal_enabled: true,
@@ -91,13 +96,14 @@ const consentConfig = {
   inheritance_enabled: true,
   batch_processing_enabled: true,
   batch_size: 100,
-  processing_interval_minutes: 15
-}
+  processing_interval_minutes: 15,
+};
 ```
 
 ### 2. Data Subject Rights Automation
 
 **Funcionalidades:**
+
 - Processamento automático de solicitações de acesso
 - Retificação automática de dados
 - Exclusão segura de dados
@@ -105,6 +111,7 @@ const consentConfig = {
 - Verificação de identidade
 
 **Tipos de Solicitação:**
+
 - `access`: Acesso aos dados pessoais
 - `rectification`: Correção de dados
 - `deletion`: Exclusão de dados
@@ -113,6 +120,7 @@ const consentConfig = {
 ### 3. Real-Time Compliance Monitor
 
 **Funcionalidades:**
+
 - Monitoramento em tempo real da conformidade
 - Verificações automáticas de conformidade
 - Alertas e notificações
@@ -120,6 +128,7 @@ const consentConfig = {
 - Resolução automática de problemas
 
 **Métricas Monitoradas:**
+
 - Conformidade de consentimento
 - Tempo de resposta a solicitações
 - Conformidade de retenção de dados
@@ -129,6 +138,7 @@ const consentConfig = {
 ### 4. Data Retention Automation
 
 **Funcionalidades:**
+
 - Políticas automáticas de retenção
 - Agendamento de exclusões
 - Arquivamento de dados
@@ -136,6 +146,7 @@ const consentConfig = {
 - Rollback de operações
 
 **Tipos de Retenção:**
+
 - `hard_delete`: Exclusão permanente
 - `soft_delete`: Exclusão lógica
 - `anonymize`: Anonimização
@@ -144,6 +155,7 @@ const consentConfig = {
 ### 5. Breach Detection Automation
 
 **Funcionalidades:**
+
 - Detecção em tempo real de violações
 - Resposta automática a incidentes
 - Notificação à ANPD
@@ -151,6 +163,7 @@ const consentConfig = {
 - Análise forense
 
 **Regras de Detecção:**
+
 - Tentativas de login falhadas
 - Padrões de acesso incomuns
 - Monitoramento de exportação de dados
@@ -159,12 +172,14 @@ const consentConfig = {
 ### 6. Data Minimization Automation
 
 **Funcionalidades:**
+
 - Análise automática de oportunidades de minimização
 - Aplicação de técnicas de minimização
 - Avaliação de impacto nos negócios
 - Backup antes da minimização
 
 **Técnicas de Minimização:**
+
 - Anonimização
 - Pseudonimização
 - Agregação
@@ -175,6 +190,7 @@ const consentConfig = {
 ### 7. Third Party Compliance Automation
 
 **Funcionalidades:**
+
 - Monitoramento de fornecedores
 - Avaliações de conformidade
 - Validação de transferências de dados
@@ -184,6 +200,7 @@ const consentConfig = {
 ### 8. Audit Reporting Automation
 
 **Funcionalidades:**
+
 - Geração automática de relatórios
 - Dashboards executivos
 - Trilhas de auditoria
@@ -201,7 +218,7 @@ const consentConfig = {
 ### Personalização
 
 ```typescript
-import { defaultLGPDAutomationConfig } from './defaultConfig'
+import { defaultLGPDAutomationConfig } from './defaultConfig';
 
 // Personalizar configuração
 const customConfig = {
@@ -213,10 +230,10 @@ const customConfig = {
       email_enabled: true,
       sms_enabled: true,
       in_app_enabled: true,
-      webhook_enabled: true
-    }
-  }
-}
+      webhook_enabled: true,
+    },
+  },
+};
 ```
 
 ## 📊 Monitoramento e Alertas
@@ -225,19 +242,25 @@ const customConfig = {
 
 ```typescript
 // Obter dashboard unificado
-const dashboard = await orchestrator.getUnifiedDashboard()
-console.log('Status geral:', dashboard.overall_status)
-console.log('Módulos em execução:', dashboard.running_modules)
-console.log('Alertas recentes:', dashboard.recent_alerts)
+const dashboard = await orchestrator.getUnifiedDashboard();
+console.log('Status geral:', dashboard.overall_status);
+console.log('Módulos em execução:', dashboard.running_modules);
+console.log('Alertas recentes:', dashboard.recent_alerts);
 ```
 
 ### Métricas de Automação
 
 ```typescript
 // Obter métricas detalhadas
-const metrics = await orchestrator.getAutomationMetrics()
-console.log('Consentimentos processados:', metrics.consent_automation.total_consents_processed)
-console.log('Solicitações processadas:', metrics.data_subject_rights.total_requests_processed)
+const metrics = await orchestrator.getAutomationMetrics();
+console.log(
+  'Consentimentos processados:',
+  metrics.consent_automation.total_consents_processed
+);
+console.log(
+  'Solicitações processadas:',
+  metrics.data_subject_rights.total_requests_processed
+);
 ```
 
 ### Alertas
@@ -245,23 +268,23 @@ console.log('Solicitações processadas:', metrics.data_subject_rights.total_req
 ```typescript
 // Registrar callback para alertas
 orchestrator.onAlert((alert) => {
-  console.log(`Alerta ${alert.alert_type}: ${alert.title}`)
-  console.log('Detalhes:', alert.details)
-})
+  console.log(`Alerta ${alert.alert_type}: ${alert.title}`);
+  console.log('Detalhes:', alert.details);
+});
 
 // Obter alertas com filtros
 const alerts = await orchestrator.getAutomationAlerts({
   module: 'breach_detection',
   alert_type: 'critical',
-  resolved: false
-})
+  resolved: false,
+});
 
 // Resolver alerta
 await orchestrator.resolveAlert(
   'alert-id',
   'admin-user',
   'Problema resolvido através de patch de segurança'
-)
+);
 ```
 
 ## 🔧 Integração com Banco de Dados
@@ -306,10 +329,10 @@ O sistema utiliza funções RPC para operações complexas:
 const hasPermission = await complianceManager.checkUserPermission(
   'user-id',
   'data_deletion'
-)
+);
 
 if (!hasPermission) {
-  throw new Error('Usuário não autorizado para esta operação')
+  throw new Error('Usuário não autorizado para esta operação');
 }
 ```
 
@@ -329,8 +352,8 @@ const performanceConfig = {
   batch_size: 1000, // Tamanho do lote
   processing_interval_minutes: 15, // Intervalo de processamento
   cache_ttl_minutes: 30, // TTL do cache
-  max_concurrent_operations: 5 // Operações simultâneas
-}
+  max_concurrent_operations: 5, // Operações simultâneas
+};
 ```
 
 ## 🚨 Tratamento de Erros
@@ -354,9 +377,9 @@ const config = {
     ...defaultConfig.global_settings,
     unified_logging: true,
     performance_monitoring: true,
-    error_recovery: true
-  }
-}
+    error_recovery: true,
+  },
+};
 ```
 
 ## 📋 Conformidade Legal
@@ -386,22 +409,22 @@ O sistema gera automaticamente:
 
 ```typescript
 // Parar sistema para manutenção
-await orchestrator.stopAllAutomation()
+await orchestrator.stopAllAutomation();
 
 // Realizar atualizações...
 
 // Reiniciar sistema
-await orchestrator.startAllAutomation()
+await orchestrator.startAllAutomation();
 ```
 
 ### Backup e Restore
 
 ```typescript
 // Backup de configurações
-const backup = await orchestrator.exportConfiguration()
+const backup = await orchestrator.exportConfiguration();
 
 // Restore de configurações
-await orchestrator.importConfiguration(backup)
+await orchestrator.importConfiguration(backup);
 ```
 
 ## 📞 Suporte

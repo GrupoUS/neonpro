@@ -47,10 +47,12 @@ export async function POST(request: NextRequest) {
     // Check if payment exists and belongs to user or user has permission
     const { data: cardPayment, error: paymentError } = await supabase
       .from('card_payments')
-      .select(`
+      .select(
+        `
         *,
         profiles!card_payments_created_by_fkey(role)
-      `)
+      `
+      )
       .eq('stripe_payment_intent_id', validatedData.payment_intent_id)
       .single();
 

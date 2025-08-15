@@ -571,11 +571,13 @@ export class PersonalizedRecommendationService {
     const supabase = await createClient();
     const { data, error } = await supabase
       .from('treatment_recommendations')
-      .select(`
+      .select(
+        `
         *,
         patient:patient_id(id, email, raw_user_meta_data),
         provider:provider_id(id, email, raw_user_meta_data)
-      `)
+      `
+      )
       .eq('id', id)
       .single();
 

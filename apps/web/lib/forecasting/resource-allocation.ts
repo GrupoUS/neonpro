@@ -298,7 +298,8 @@ export class ResourceAllocationOptimizer {
       // Load staff data
       const { data: staff, error } = await supabase
         .from('staff')
-        .select(`
+        .select(
+          `
           id,
           name,
           role,
@@ -308,7 +309,8 @@ export class ResourceAllocationOptimizer {
           skills,
           certifications,
           availability_schedule
-        `)
+        `
+        )
         .eq('clinic_id', clinicId)
         .eq('status', 'active');
 
@@ -400,7 +402,8 @@ export class ResourceAllocationOptimizer {
       // Load equipment data
       const { data: equipment, error } = await supabase
         .from('equipment')
-        .select(`
+        .select(
+          `
           id,
           name,
           type,
@@ -410,7 +413,8 @@ export class ResourceAllocationOptimizer {
           replacement_cost,
           location,
           max_usage_hours_per_day
-        `)
+        `
+        )
         .eq('clinic_id', clinicId)
         .eq('status', 'active');
 
@@ -497,7 +501,8 @@ export class ResourceAllocationOptimizer {
       // Load room data
       const { data: rooms, error } = await supabase
         .from('rooms')
-        .select(`
+        .select(
+          `
           id,
           name,
           type,
@@ -507,7 +512,8 @@ export class ResourceAllocationOptimizer {
           setup_time_minutes,
           cleanup_time_minutes,
           availability_schedule
-        `)
+        `
+        )
         .eq('clinic_id', clinicId)
         .eq('status', 'active');
 
@@ -591,7 +597,8 @@ export class ResourceAllocationOptimizer {
       // Load inventory data
       const { data: inventory, error } = await supabase
         .from('inventory')
-        .select(`
+        .select(
+          `
           id,
           name,
           category,
@@ -602,7 +609,8 @@ export class ResourceAllocationOptimizer {
           holding_cost_per_unit,
           supplier_lead_time_days,
           expiration_days
-        `)
+        `
+        )
         .eq('clinic_id', clinicId)
         .eq('status', 'active');
 

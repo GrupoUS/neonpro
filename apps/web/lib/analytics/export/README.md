@@ -5,12 +5,14 @@ Comprehensive export system for analytics data with support for multiple formats
 ## 🚀 Features
 
 ### Export Formats
+
 - **PDF Reports**: Professional formatted reports with charts and branding
 - **Excel Workbooks**: Multi-sheet workbooks with formatting and formulas
 - **CSV Data**: Clean, structured data exports
 - **JSON Data**: Raw data exports for API integration
 
 ### Report Types
+
 - **Revenue Analytics**: Revenue metrics, trends, and forecasts
 - **Conversion Analytics**: Funnel analysis and conversion rates
 - **Trial Analytics**: Trial-to-paid conversion insights
@@ -19,6 +21,7 @@ Comprehensive export system for analytics data with support for multiple formats
 - **Comprehensive Reports**: All-in-one analytics overview
 
 ### Advanced Features
+
 - 🎨 **Custom Branding**: Logo, colors, fonts, and styling
 - 📊 **Interactive Charts**: Embedded charts in PDF reports
 - 🔄 **Real-time Progress**: Live export progress tracking
@@ -79,9 +82,9 @@ EXPORT_STORAGE_BUCKET=analytics-exports
 ### Basic Export Service
 
 ```typescript
-import { AnalyticsExportService } from '@/lib/analytics/export'
+import { AnalyticsExportService } from '@/lib/analytics/export';
 
-const exportService = new AnalyticsExportService()
+const exportService = new AnalyticsExportService();
 
 // Generate PDF export
 const pdfResult = await exportService.generatePDFExport({
@@ -89,10 +92,10 @@ const pdfResult = await exportService.generatePDFExport({
   reportType: 'revenue',
   dateRange: {
     startDate: new Date('2024-01-01'),
-    endDate: new Date('2024-01-31')
+    endDate: new Date('2024-01-31'),
   },
-  includeSummary: true
-})
+  includeSummary: true,
+});
 
 // Generate Excel export
 const excelResult = await exportService.generateExcelExport({
@@ -100,9 +103,9 @@ const excelResult = await exportService.generateExcelExport({
   reportType: 'comprehensive',
   dateRange: {
     startDate: new Date('2024-01-01'),
-    endDate: new Date('2024-01-31')
-  }
-})
+    endDate: new Date('2024-01-31'),
+  },
+});
 ```
 
 ### React Component Usage
@@ -141,7 +144,7 @@ function AnalyticsPage() {
 const response = await fetch('/api/analytics/export', {
   method: 'POST',
   headers: {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
   },
   body: JSON.stringify({
     config: {
@@ -149,37 +152,37 @@ const response = await fetch('/api/analytics/export', {
       reportType: 'revenue',
       dateRange: {
         startDate: '2024-01-01',
-        endDate: '2024-01-31'
+        endDate: '2024-01-31',
       },
       includeSummary: true,
       customization: {
         title: 'Monthly Revenue Report',
-        subtitle: 'January 2024'
-      }
+        subtitle: 'January 2024',
+      },
     },
     pdfOptions: {
       orientation: 'portrait',
-      pageSize: 'A4'
+      pageSize: 'A4',
     },
     notifyOnComplete: true,
-    email: 'user@example.com'
-  })
-})
+    email: 'user@example.com',
+  }),
+});
 
-const result = await response.json()
-console.log('Export ID:', result.id)
+const result = await response.json();
+console.log('Export ID:', result.id);
 ```
 
 #### Check Export Status
 
 ```typescript
 // GET /api/analytics/export/[id]
-const response = await fetch(`/api/analytics/export/${exportId}`)
-const status = await response.json()
+const response = await fetch(`/api/analytics/export/${exportId}`);
+const status = await response.json();
 
-console.log('Status:', status.status)
-console.log('Progress:', status.progress)
-console.log('Download URL:', status.downloadUrl)
+console.log('Status:', status.status);
+console.log('Progress:', status.progress);
+console.log('Download URL:', status.downloadUrl);
 ```
 
 #### Cancel Export
@@ -187,8 +190,8 @@ console.log('Download URL:', status.downloadUrl)
 ```typescript
 // DELETE /api/analytics/export/[id]
 const response = await fetch(`/api/analytics/export/${exportId}`, {
-  method: 'DELETE'
-})
+  method: 'DELETE',
+});
 ```
 
 ## 🎨 Customization Options
@@ -203,29 +206,29 @@ const pdfOptions: PDFExportOptions = {
     top: 20,
     right: 20,
     bottom: 20,
-    left: 20
+    left: 20,
   },
   styling: {
     fontFamily: 'helvetica',
     fontSize: 12,
     primaryColor: '#1f2937',
-    secondaryColor: '#6b7280'
+    secondaryColor: '#6b7280',
   },
   header: {
     text: 'Analytics Report',
     fontSize: 16,
-    alignment: 'center'
+    alignment: 'center',
   },
   footer: {
     includePageNumbers: true,
-    includeTimestamp: true
+    includeTimestamp: true,
   },
   charts: {
     includeCharts: true,
     chartWidth: 400,
-    chartHeight: 300
-  }
-}
+    chartHeight: 300,
+  },
+};
 ```
 
 ### Excel Customization
@@ -238,19 +241,19 @@ const excelOptions: ExcelExportOptions = {
     conversion: true,
     cohorts: true,
     forecasts: true,
-    rawData: false
+    rawData: false,
   },
   formatting: {
     autoWidth: true,
     freezeHeaders: true,
     alternatingRows: true,
-    numberFormat: '#,##0.00'
+    numberFormat: '#,##0.00',
   },
   charts: {
     includeCharts: true,
-    chartTypes: ['line', 'bar', 'pie']
-  }
-}
+    chartTypes: ['line', 'bar', 'pie'],
+  },
+};
 ```
 
 ### CSV Customization
@@ -260,8 +263,8 @@ const csvOptions: CSVExportOptions = {
   delimiter: ',', // ',' | ';' | '\t' | '|'
   encoding: 'utf8', // 'utf8' | 'utf16' | 'ascii'
   includeHeaders: true,
-  compression: 'gzip' // 'none' | 'gzip' | 'zip'
-}
+  compression: 'gzip', // 'none' | 'gzip' | 'zip'
+};
 ```
 
 ## 🔐 Security & Permissions
@@ -330,16 +333,16 @@ The system tracks comprehensive metrics:
 
 ```typescript
 interface ExportMetrics {
-  totalExports: number
-  exportsByFormat: Record<ExportFormat, number>
-  exportsByReportType: Record<ReportType, number>
-  averageProcessingTime: number
-  successRate: number
-  errorRate: number
+  totalExports: number;
+  exportsByFormat: Record<ExportFormat, number>;
+  exportsByReportType: Record<ReportType, number>;
+  averageProcessingTime: number;
+  successRate: number;
+  errorRate: number;
   popularDateRanges: Array<{
-    range: string
-    count: number
-  }>
+    range: string;
+    count: number;
+  }>;
 }
 ```
 
@@ -424,10 +427,10 @@ npm test:performance export
 
 ```typescript
 // Enable debug logging
-process.env.EXPORT_DEBUG = 'true'
+process.env.EXPORT_DEBUG = 'true';
 
 // Detailed error messages
-process.env.EXPORT_VERBOSE_ERRORS = 'true'
+process.env.EXPORT_VERBOSE_ERRORS = 'true';
 ```
 
 ## 📝 Contributing

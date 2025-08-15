@@ -360,12 +360,14 @@ export class ConflictDetectionEngine {
       // Get appointment details for better context
       const { data: appointments } = await this.supabase
         .from('appointments')
-        .select(`
+        .select(
+          `
           *,
           clients(name, email),
           professionals(name, specialties),
           services(name, duration)
-        `)
+        `
+        )
         .in('id', [conflict.appointment_a, conflict.appointment_b]);
 
       const enhancedConflict: SchedulingConflict = {

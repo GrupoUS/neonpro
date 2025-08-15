@@ -46,13 +46,15 @@ export class HealthcareAuth {
       // Get user profile with role and permissions
       const { data: profile, error: profileError } = await supabase
         .from('user_profiles')
-        .select(`
+        .select(
+          `
           *,
           user_roles!inner(
             role_name,
             permissions
           )
-        `)
+        `
+        )
         .eq('user_id', user.id)
         .single();
 

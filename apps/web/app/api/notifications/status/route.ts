@@ -115,7 +115,8 @@ export async function GET(request: NextRequest) {
     // Construir query do Supabase
     let dbQuery = supabase
       .from('notifications')
-      .select(`
+      .select(
+        `
         id,
         user_id,
         clinic_id,
@@ -132,7 +133,8 @@ export async function GET(request: NextRequest) {
         metadata,
         created_at,
         updated_at
-      `)
+      `
+      )
       .eq('clinic_id', profile.clinic_id)
       .order('created_at', { ascending: false });
 

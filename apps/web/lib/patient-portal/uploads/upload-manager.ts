@@ -505,10 +505,12 @@ export class UploadManager {
 
     const { data: uploads, error } = await this.supabase
       .from('patient_uploads')
-      .select(`
+      .select(
+        `
         *,
         patient_files(*)
-      `)
+      `
+      )
       .eq('patient_id', patientId);
 
     if (error) {

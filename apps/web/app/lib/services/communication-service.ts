@@ -219,7 +219,8 @@ export class CommunicationService {
     try {
       let query = this.supabase
         .from('communication_threads')
-        .select(`
+        .select(
+          `
           *,
           last_message:communication_messages(
             id, content, created_at, sender_type, status, type, channel
@@ -227,7 +228,8 @@ export class CommunicationService {
           participants:communication_thread_participants(
             user_id, role, name, avatar, joined_at, last_read_at
           )
-        `)
+        `
+        )
         .order('last_message_at', { ascending: false });
 
       if (patientId) {
@@ -370,10 +372,12 @@ export class CommunicationService {
     try {
       let query = this.supabase
         .from('communication_campaigns')
-        .select(`
+        .select(
+          `
           *,
           template:communication_templates(name, subject_template, content_template)
-        `)
+        `
+        )
         .order('created_at', { ascending: false });
 
       if (status) {

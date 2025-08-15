@@ -122,7 +122,8 @@ export function usePatientAppointments(): UsePatientAppointmentsResult {
       // Fetch all appointments with related data
       const { data: appointments, error: appointmentsError } = await supabase
         .from('appointments')
-        .select(`
+        .select(
+          `
           id,
           service_id,
           professional_id,
@@ -144,7 +145,8 @@ export function usePatientAppointments(): UsePatientAppointmentsResult {
             id,
             name
           )
-        `)
+        `
+        )
         .eq('patient_id', user.id)
         .order('appointment_date', { ascending: true })
         .order('appointment_time', { ascending: true });

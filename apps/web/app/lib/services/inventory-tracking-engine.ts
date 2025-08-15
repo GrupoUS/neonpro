@@ -764,10 +764,12 @@ export class InventoryTrackingEngine {
 
     const { data, error } = await supabase
       .from('stock_levels')
-      .select(`
+      .select(
+        `
         *,
         location:inventory_locations(*)
-      `)
+      `
+      )
       .eq('item_id', itemId)
       .gt('current_quantity', 0);
 

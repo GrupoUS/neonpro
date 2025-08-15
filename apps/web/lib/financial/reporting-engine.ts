@@ -43,7 +43,8 @@ export class FinancialReportingEngine {
     // Fetch revenue data from invoices and payments
     const { data: revenueData, error: revenueError } = await this.supabase
       .from('invoices')
-      .select(`
+      .select(
+        `
         total_amount,
         tax_amount,
         status,
@@ -52,7 +53,8 @@ export class FinancialReportingEngine {
           total_amount,
           description
         )
-      `)
+      `
+      )
       .eq('clinic_id', clinicId)
       .gte('issue_date', period_start)
       .lte('issue_date', period_end)
@@ -581,7 +583,8 @@ export class FinancialReportingEngine {
     // Fetch revenue data with service and provider details
     const { data: revenueData, error } = await this.supabase
       .from('invoices')
-      .select(`
+      .select(
+        `
         total_amount,
         issue_date,
         invoice_items (
@@ -595,7 +598,8 @@ export class FinancialReportingEngine {
             name
           )
         )
-      `)
+      `
+      )
       .eq('clinic_id', clinicId)
       .gte('issue_date', period_start)
       .lte('issue_date', period_end)

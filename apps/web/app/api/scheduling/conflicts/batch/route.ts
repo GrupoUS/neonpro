@@ -131,7 +131,8 @@ export async function POST(request: NextRequest) {
     // Single optimized query for all conflicts
     let conflictsQuery = supabase
       .from('schedule_conflicts')
-      .select(`
+      .select(
+        `
         *,
         appointments!inner(
           id, start_time, end_time, status, patient_id, professional_id,
@@ -143,7 +144,8 @@ export async function POST(request: NextRequest) {
           impact_description, estimated_time_minutes, 
           compliance_impact, status
         )
-      `)
+      `
+      )
       .eq('status', 'active')
       .eq('tenant_id', tenantId);
 

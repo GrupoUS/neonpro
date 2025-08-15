@@ -264,7 +264,8 @@ async function generateConsumptionReport(
   // Get consumption data
   const { data: movements, error } = await supabase
     .from('stock_movement_transactions')
-    .select(`
+    .select(
+      `
       product_id,
       quantity_out,
       unit_cost,
@@ -274,7 +275,8 @@ async function generateConsumptionReport(
         category_id,
         product_categories (name)
       )
-    `)
+    `
+    )
     .eq('clinic_id', clinicId)
     .eq('movement_type', 'out')
     .gte('transaction_date', startDate.toISOString())
@@ -346,7 +348,8 @@ async function generateValuationReport(
   // Get current inventory
   const { data: inventory, error } = await supabase
     .from('stock_inventory')
-    .select(`
+    .select(
+      `
       product_id,
       quantity_available,
       unit_cost,
@@ -357,7 +360,8 @@ async function generateValuationReport(
         category_id,
         product_categories (name)
       )
-    `)
+    `
+    )
     .eq('clinic_id', clinicId)
     .eq('is_active', true);
 
@@ -429,7 +433,8 @@ async function generateMovementReport(
   // Get all movements
   const { data: movements, error } = await supabase
     .from('stock_movement_transactions')
-    .select(`
+    .select(
+      `
       movement_type,
       quantity_in,
       quantity_out,
@@ -437,7 +442,8 @@ async function generateMovementReport(
       transaction_date,
       reference_type,
       reference_id
-    `)
+    `
+    )
     .eq('clinic_id', clinicId)
     .gte('transaction_date', startDate.toISOString())
     .lte('transaction_date', endDate.toISOString());

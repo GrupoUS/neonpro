@@ -72,15 +72,15 @@ const config = await backupSystem.manager.createConfig({
   type: 'FULL',
   source_type: 'DATABASE',
   source_config: {
-    connection_string: process.env.DATABASE_URL
+    connection_string: process.env.DATABASE_URL,
   },
   storage_provider: 'LOCAL',
   storage_config: {
-    path: './backups'
+    path: './backups',
   },
   schedule_frequency: 'DAILY',
   schedule_time: '02:00',
-  enabled: true
+  enabled: true,
 });
 
 // Run a manual backup
@@ -169,7 +169,7 @@ function MyBackupPage() {
       source_config: { paths: ['/app/data'] },
       storage_provider: 'LOCAL'
     });
-    
+
     await runManualBackup(config.id);
   };
 
@@ -201,17 +201,17 @@ export default async function handler(req, res) {
       const config = await backupSystem.manager.createConfig(req.body);
       res.json(config);
       break;
-      
+
     case 'run':
       const backup = await backupSystem.manager.runManualBackup(id);
       res.json(backup);
       break;
-      
+
     case 'status':
       const status = await backupSystem.manager.getBackupStatus(id);
       res.json(status);
       break;
-      
+
     default:
       res.status(404).json({ error: 'Not found' });
   }
@@ -233,8 +233,8 @@ backupSystem.on('backup:completed', async (backup) => {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      text: `Backup ${backup.id} completed successfully!`
-    })
+      text: `Backup ${backup.id} completed successfully!`,
+    }),
   });
 });
 
@@ -244,8 +244,8 @@ backupSystem.on('backup:failed', async (backup, error) => {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      text: `🚨 Backup ${backup.id} failed: ${error.message}`
-    })
+      text: `🚨 Backup ${backup.id} failed: ${error.message}`,
+    }),
   });
 });
 ```
@@ -285,15 +285,15 @@ describe('Backup Flow Integration', () => {
       type: 'FULL',
       source_type: 'FILES',
       source_config: { paths: ['./test-data'] },
-      storage_provider: 'LOCAL'
+      storage_provider: 'LOCAL',
     });
 
     const backup = await backupSystem.manager.runManualBackup(config.id);
     expect(backup.status).toBe('RUNNING');
 
     // Wait for completion
-    await new Promise(resolve => setTimeout(resolve, 5000));
-    
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+
     const completed = await backupSystem.manager.getBackupStatus(backup.id);
     expect(completed.status).toBe('COMPLETED');
   });
@@ -394,23 +394,23 @@ spec:
         app: neonpro-backup
     spec:
       containers:
-      - name: backup-system
-        image: neonpro/backup-system:latest
-        env:
-        - name: NODE_ENV
-          value: "production"
-        - name: SUPABASE_URL
-          valueFrom:
-            secretKeyRef:
-              name: backup-secrets
-              key: supabase-url
-        volumeMounts:
-        - name: backup-storage
-          mountPath: /app/backups
+        - name: backup-system
+          image: neonpro/backup-system:latest
+          env:
+            - name: NODE_ENV
+              value: 'production'
+            - name: SUPABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: backup-secrets
+                  key: supabase-url
+          volumeMounts:
+            - name: backup-storage
+              mountPath: /app/backups
       volumes:
-      - name: backup-storage
-        persistentVolumeClaim:
-          claimName: backup-pvc
+        - name: backup-storage
+          persistentVolumeClaim:
+            claimName: backup-pvc
 ```
 
 ## 🔍 Troubleshooting
@@ -444,8 +444,8 @@ if (!result.success) {
 const config = {
   performance: {
     chunkSize: 512 * 1024, // 512KB instead of 1MB
-    maxConcurrentBackups: 1 // Reduce concurrency
-  }
+    maxConcurrentBackups: 1, // Reduce concurrency
+  },
 };
 ```
 

@@ -170,14 +170,16 @@ class ApprovalService {
     try {
       const { data, error } = await this.supabase
         .from('approval_users')
-        .select(`
+        .select(
+          `
           *,
           approval_levels (
             id,
             level_name,
             level_order
           )
-        `)
+        `
+        )
         .eq('is_active', true)
         .order('user_name');
 
@@ -361,7 +363,8 @@ class ApprovalService {
       // Get request details
       const { data: request, error: requestError } = await this.supabase
         .from('approval_requests')
-        .select(`
+        .select(
+          `
           *,
           accounts_payable (
             id,
@@ -369,7 +372,8 @@ class ApprovalService {
             vendor_name,
             category
           )
-        `)
+        `
+        )
         .eq('id', id)
         .single();
 
@@ -429,14 +433,16 @@ class ApprovalService {
 
       const { data, error } = await this.supabase
         .from('approval_requests')
-        .select(`
+        .select(
+          `
           *,
           accounts_payable (
             invoice_number,
             vendor_name,
             category
           )
-        `)
+        `
+        )
         .eq('requester_id', user.id)
         .order('created_at', { ascending: false });
 
@@ -475,7 +481,8 @@ class ApprovalService {
       // Find requests where user can approve
       const { data, error } = await this.supabase
         .from('approval_requests')
-        .select(`
+        .select(
+          `
           *,
           accounts_payable (
             invoice_number,
@@ -489,7 +496,8 @@ class ApprovalService {
             status,
             deadline
           )
-        `)
+        `
+        )
         .eq('status', 'pending')
         .in('approval_steps.level_order', levelIds) // This would need proper join logic
         .order('created_at', { ascending: false });
@@ -521,10 +529,12 @@ class ApprovalService {
       // Get step details
       const { data: step, error: stepError } = await this.supabase
         .from('approval_steps')
-        .select(`
+        .select(
+          `
           *,
           approval_requests (*)
-        `)
+        `
+        )
         .eq('id', stepId)
         .single();
 

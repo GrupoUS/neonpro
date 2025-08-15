@@ -204,13 +204,15 @@ class InstallmentManager {
       // Get installment details
       const { data: installment, error: installmentError } = await supabase
         .from('installments')
-        .select(`
+        .select(
+          `
           *,
           payment_plan:payment_plans(
             *,
             customer:customers(*)
           )
-        `)
+        `
+        )
         .eq('id', installmentId)
         .single();
 
@@ -360,13 +362,15 @@ class InstallmentManager {
 
       const { data: overdueInstallments, error } = await supabase
         .from('installments')
-        .select(`
+        .select(
+          `
           *,
           payment_plan:payment_plans(
             *,
             customer:customers(*)
           )
-        `)
+        `
+        )
         .eq('status', 'pending')
         .lt('due_date', cutoffDate)
         .order('due_date', { ascending: true });
@@ -609,11 +613,13 @@ class InstallmentManager {
     try {
       const { data: paymentPlan, error } = await supabase
         .from('payment_plans')
-        .select(`
+        .select(
+          `
           *,
           customer:customers(*),
           installments(*)
-        `)
+        `
+        )
         .eq('id', paymentPlanId)
         .single();
 
@@ -633,10 +639,12 @@ class InstallmentManager {
     try {
       const { data: paymentPlans, error } = await supabase
         .from('payment_plans')
-        .select(`
+        .select(
+          `
           *,
           installments(*)
-        `)
+        `
+        )
         .eq('customer_id', customerId)
         .order('created_at', { ascending: false });
 

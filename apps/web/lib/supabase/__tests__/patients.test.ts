@@ -1,4 +1,3 @@
-import { createClient } from '@/app/utils/supabase/client';
 import type { FHIR } from '@/lib/types/fhir';
 import {
   createPatient,
@@ -168,6 +167,15 @@ describe('Patient Supabase Functions', () => {
       expect(insertedData.fhir_data.identifier).toBeDefined();
       expect(insertedData.fhir_data.name).toBeDefined();
     });
+
+    it('generates correct FHIR structure', async () => {
+      const mockInsertResult = {
+        data: [{ id: 123, medical_record_number: 'MR001' }],
+        error: null,
+      };
+
+      const insertMock = jest.fn().mockResolvedValue(mockInsertResult);
+      mockSupabase.from.mockReturnValue({
         insert: insertMock,
         select: jest.fn().mockReturnThis(),
       });

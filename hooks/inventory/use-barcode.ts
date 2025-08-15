@@ -111,9 +111,8 @@ export function useBarcode(options: UseBarcodeOptions = {}): UseBarcodeReturn {
     }
 
     try {
-      const audioContext = new (
-        window.AudioContext || (window as any).webkitAudioContext
-      )();
+      const audioContext = new (window.AudioContext ||
+        (window as any).webkitAudioContext)();
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
 

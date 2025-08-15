@@ -35,32 +35,38 @@ tools/testing/
 ### 🎯 Tipos de Teste
 
 #### 🔧 Testes Unitários (`unit/`)
+
 - **monitoring.test.ts**: Verificação da infraestrutura de monitoramento da TASK-001
 - Testa componentes isolados e utilitários
 - Cobertura de funções individuais
 
 #### 🔗 Testes de Integração (`integration/`)
+
 - **financial-integration.test.ts**: Integração do sistema financeiro
 - Testa interações entre componentes
 - Validação de fluxos de dados
 
 #### 🚀 Testes de Performance (`performance/`)
+
 - **load-testing.test.ts**: Testes de carga e desempenho
 - Benchmarks de tempo de resposta
 - Testes de estresse e concorrência
 
 #### 🛡️ Testes de Segurança (`security/`)
+
 - **security-audit.test.ts**: Auditoria de segurança abrangente
 - Validação de autenticação e autorização
 - Conformidade com LGPD e regulamentações de saúde
 
 #### 🔐 Testes de Autenticação (`auth/`)
+
 - **task-002-final-integration.test.ts**: Integração final da TASK-002
 - **webauthn-verification.test.ts**: Verificação WebAuthn/FIDO2
 - Gerenciamento avançado de sessões
 - Framework de auditoria de segurança
 
 #### ♿ Testes de Acessibilidade (`accessibility/`)
+
 - **accessibility-demo.spec.ts**: Demo de formulário acessível
 - **healthcare-accessibility.spec.ts**: Acessibilidade específica para saúde
 - Conformidade WCAG 2.1 AA
@@ -69,6 +75,7 @@ tools/testing/
 ### 🏃‍♂️ Executando os Testes
 
 #### Todos os Testes
+
 ```bash
 npm test
 # ou
@@ -76,6 +83,7 @@ yarn test
 ```
 
 #### Por Categoria
+
 ```bash
 # Testes unitários
 npm test -- --selectProjects="Unit Tests"
@@ -97,6 +105,7 @@ npm test -- --selectProjects="Accessibility Tests"
 ```
 
 #### Arquivo Específico
+
 ```bash
 # Teste específico
 npm test tools/testing/tests/auth/task-002-final-integration.test.ts
@@ -118,18 +127,20 @@ open tools/testing/coverage/lcov-report/index.html
 ### 🔧 Configuração
 
 - **jest.config.ts**: Configuração principal do Jest
-- **__tests__/setup.ts**: Configurações globais de teste
+- ****tests**/setup.ts**: Configurações globais de teste
 - Mapeamento de módulos para aliases `@/`
 - Timeout de 30 segundos para testes
 
 ### 📋 Padrões de Teste
 
 #### Nomenclatura
+
 - Testes unitários: `*.test.ts`
 - Testes de acessibilidade: `*.spec.ts`
 - Testes E2E: `*.e2e.ts`
 
 #### Estrutura
+
 ```typescript
 describe('Component/Feature Name', () => {
   beforeEach(() => {
@@ -156,6 +167,7 @@ describe('Component/Feature Name', () => {
 ### 🚀 Integração Contínua
 
 Os testes são executados automaticamente:
+
 - Em cada push para branches principais
 - Em pull requests
 - Deploy para produção

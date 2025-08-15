@@ -40,7 +40,8 @@ export class MarketingCampaignsService {
   }): Promise<MarketingCampaign[]> {
     let query = this.supabase
       .from('marketing_campaigns')
-      .select(`
+      .select(
+        `
         *,
         template:campaign_templates(name, category),
         executions:campaign_executions(
@@ -52,7 +53,8 @@ export class MarketingCampaignsService {
           click_count,
           conversion_count
         )
-      `)
+      `
+      )
       .order('created_at', { ascending: false });
 
     if (filters?.status) {
@@ -94,7 +96,8 @@ export class MarketingCampaignsService {
   async getCampaignById(id: string): Promise<MarketingCampaign | null> {
     const { data, error } = await this.supabase
       .from('marketing_campaigns')
-      .select(`
+      .select(
+        `
         *,
         template:campaign_templates(*),
         triggers:campaign_triggers(*),
@@ -112,7 +115,8 @@ export class MarketingCampaignsService {
           )
         ),
         metrics:campaign_metrics(*)
-      `)
+      `
+      )
       .eq('id', id)
       .single();
 

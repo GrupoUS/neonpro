@@ -81,19 +81,23 @@ export async function subscriptionMiddleware(
       // Get user profile data for role and permissions
       const { data: profile } = await supabase
         .from('profiles')
-        .select(`
+        .select(
+          `
           id, role, permissions, clinic_id, clinic_role
-        `)
+        `
+        )
         .eq('id', session.user.id)
         .single();
 
       // Get subscription data separately
       const { data: subscription } = await supabase
         .from('subscriptions')
-        .select(`
+        .select(
+          `
           status, tier, current_period_end, 
           plan:subscription_plans(name, features)
-        `)
+        `
+        )
         .eq('user_id', session.user.id)
         .order('created_at', { ascending: false })
         .limit(1)

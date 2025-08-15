@@ -38,13 +38,15 @@ export async function GET(
     // Fetch appointment with all related data
     const { data: appointment, error } = await supabase
       .from('appointments')
-      .select(`
+      .select(
+        `
         *,
         patients!inner(id, full_name, email, phone),
         professionals!inner(id, full_name, email, phone),
         service_types!inner(id, name, duration_minutes, price, color),
         clinics!inner(id, name)
-      `)
+      `
+      )
       .eq('id', appointmentId)
       .eq('deleted_at', null)
       .single();
@@ -166,13 +168,15 @@ export async function PATCH(
     // Fetch updated appointment with details
     const { data: updatedAppointment, error: fetchError } = await supabase
       .from('appointments')
-      .select(`
+      .select(
+        `
         *,
         patients!inner(full_name, email, phone),
         professionals!inner(full_name),
         service_types!inner(name, duration_minutes, price, color),
         clinics!inner(name)
-      `)
+      `
+      )
       .eq('id', appointmentId)
       .single();
 

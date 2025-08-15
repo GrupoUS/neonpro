@@ -256,7 +256,8 @@ export class BehaviorAnalysisEngine {
   private async getPatientBehaviorData(patientId: string) {
     const { data } = await this.supabase
       .from('patients')
-      .select(`
+      .select(
+        `
         *,
         appointments (*),
         treatment_sessions (*),
@@ -265,7 +266,8 @@ export class BehaviorAnalysisEngine {
         payment_history (*),
         support_tickets (*),
         preferences (*)
-      `)
+      `
+      )
       .eq('id', patientId)
       .single();
 
@@ -277,7 +279,8 @@ export class BehaviorAnalysisEngine {
 
     const { data } = await this.supabase
       .from('patients')
-      .select(`
+      .select(
+        `
         appointments!inner(
           *,
           created_at >= '${thirtyDaysAgo.toISOString()}'
@@ -290,7 +293,8 @@ export class BehaviorAnalysisEngine {
           *,
           created_at >= '${thirtyDaysAgo.toISOString()}'
         )
-      `)
+      `
+      )
       .eq('id', patientId)
       .single();
 
@@ -329,11 +333,13 @@ export class BehaviorAnalysisEngine {
     // Simplified similarity search - in production would use ML clustering
     const { data } = await this.supabase
       .from('patients')
-      .select(`
+      .select(
+        `
         *,
         appointments (*),
         satisfaction_scores (*)
-      `)
+      `
+      )
       .neq('id', patientId)
       .limit(10);
 

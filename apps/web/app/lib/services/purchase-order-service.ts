@@ -77,7 +77,8 @@ export class PurchaseOrderService {
 
     const { data, error } = await supabase
       .from('supplier_items')
-      .select(`
+      .select(
+        `
         supplier_id,
         unit_cost,
         lead_time_days,
@@ -91,7 +92,8 @@ export class PurchaseOrderService {
           reliability_score,
           cost_rating
         )
-      `)
+      `
+      )
       .eq('item_id', itemId)
       .order('cost_rating', { ascending: false });
 

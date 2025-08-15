@@ -227,11 +227,13 @@ export class ConflictDetectionEngine {
       // Buscar agendamentos conflitantes do staff
       let query = this.supabase
         .from('appointments')
-        .select(`
+        .select(
+          `
           id, start_time, end_time, service_id,
           staff:staff_id(id, name, specialties),
           service:service_id(name, duration_minutes)
-        `)
+        `
+        )
         .eq('staff_id', staffId)
         .eq('clinic_id', clinicId)
         .neq('status', 'cancelled')
@@ -316,10 +318,12 @@ export class ConflictDetectionEngine {
       // Buscar agendamentos conflitantes da sala
       let query = this.supabase
         .from('appointments')
-        .select(`
+        .select(
+          `
           id, start_time, end_time,
           room:room_id(id, name, capacity)
-        `)
+        `
+        )
         .eq('room_id', roomId)
         .eq('clinic_id', clinicId)
         .neq('status', 'cancelled')
@@ -443,10 +447,12 @@ export class ConflictDetectionEngine {
         // Verificar conflitos de uso
         let query = this.supabase
           .from('appointments')
-          .select(`
+          .select(
+            `
             id, start_time, end_time, required_equipment,
             equipment:required_equipment(id, name)
-          `)
+          `
+          )
           .eq('clinic_id', clinicId)
           .neq('status', 'cancelled')
           .contains('required_equipment', [equipmentId])

@@ -395,11 +395,13 @@ export class ContinuousLearningSystem {
   ): Promise<TrainingDataPoint[]> {
     const { data } = await this.supabase
       .from('treatment_outcomes')
-      .select(`
+      .select(
+        `
         *,
         patients (*),
         treatments (*)
-      `)
+      `
+      )
       .order('created_at', { ascending: false })
       .limit(limit);
 

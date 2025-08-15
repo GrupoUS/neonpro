@@ -150,10 +150,12 @@ export class ReportBuilderService {
 
     const { data: report, error } = await this.supabase
       .from('custom_reports')
-      .select(`
+      .select(
+        `
         *,
         report_collaborators!inner(permission_level)
-      `)
+      `
+      )
       .eq('id', reportId)
       .or(
         `user_id.eq.${user.id},is_public.eq.true,report_collaborators.user_id.eq.${user.id}`
@@ -541,14 +543,16 @@ export class ReportBuilderService {
   async getCollaborators(reportId: string): Promise<ReportCollaborator[]> {
     const { data: collaborators, error } = await this.supabase
       .from('report_collaborators')
-      .select(`
+      .select(
+        `
         *,
         user_profiles!inner(
           user_id,
           full_name,
           email
         )
-      `)
+      `
+      )
       .eq('report_id', reportId);
 
     if (error) {
@@ -595,13 +599,15 @@ export class ReportBuilderService {
   async getComments(reportId: string): Promise<ReportComment[]> {
     const { data: comments, error } = await this.supabase
       .from('report_comments')
-      .select(`
+      .select(
+        `
         *,
         user_profiles!inner(
           user_id,
           full_name
         )
-      `)
+      `
+      )
       .eq('report_id', reportId)
       .order('created_at', { ascending: true });
 

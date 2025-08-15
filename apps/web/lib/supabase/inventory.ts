@@ -36,11 +36,13 @@ export async function getInventoryItems(filters?: {
   try {
     let query = supabase
       .from('inventory_items')
-      .select(`
+      .select(
+        `
         *,
         category:inventory_categories(*),
         location:inventory_locations(*)
-      `)
+      `
+      )
       .eq('is_active', true)
       .order('name');
 
@@ -98,11 +100,13 @@ export async function getInventoryItemById(
   try {
     const { data, error } = await supabase
       .from('inventory_items')
-      .select(`
+      .select(
+        `
         *,
         category:inventory_categories(*),
         location:inventory_locations(*)
-      `)
+      `
+      )
       .eq('id', id)
       .single();
 
@@ -132,11 +136,13 @@ export async function getInventoryItemByBarcode(
   try {
     const { data, error } = await supabase
       .from('inventory_items')
-      .select(`
+      .select(
+        `
         *,
         category:inventory_categories(*),
         location:inventory_locations(*)
-      `)
+      `
+      )
       .or(`barcode.eq.${barcode},qr_code.eq.${barcode}`)
       .eq('is_active', true)
       .single();
@@ -175,11 +181,13 @@ export async function createInventoryItem(
         created_by: userData.user?.id,
         last_updated_by: userData.user?.id,
       })
-      .select(`
+      .select(
+        `
         *,
         category:inventory_categories(*),
         location:inventory_locations(*)
-      `)
+      `
+      )
       .single();
 
     if (error) {
@@ -216,11 +224,13 @@ export async function updateInventoryItem(
         last_updated_by: userData.user?.id,
       })
       .eq('id', id)
-      .select(`
+      .select(
+        `
         *,
         category:inventory_categories(*),
         location:inventory_locations(*)
-      `)
+      `
+      )
       .single();
 
     if (error) {
@@ -310,11 +320,13 @@ export async function getStockMovements(filters?: {
   try {
     let query = supabase
       .from('stock_movements')
-      .select(`
+      .select(
+        `
         *,
         inventory_item:inventory_items(*),
         location:inventory_locations(*)
-      `)
+      `
+      )
       .order('created_at', { ascending: false });
 
     // Apply filters
@@ -378,10 +390,12 @@ export async function getStockAlerts(filters?: {
   try {
     let query = supabase
       .from('stock_alerts')
-      .select(`
+      .select(
+        `
         *,
         inventory_item:inventory_items(*)
-      `)
+      `
+      )
       .order('created_at', { ascending: false });
 
     // Apply filters

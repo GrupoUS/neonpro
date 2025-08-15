@@ -2,10 +2,12 @@
 const nextConfig = {
   output: 'standalone',
   eslint: {
-    ignoreDuringBuilds: true,
+    // HEALTHCARE CRITICAL: ESLint errors MUST be fixed for medical accuracy
+    // ignoreDuringBuilds: true, // ❌ REMOVED - Patient safety requirement
   },
   typescript: {
-    ignoreBuildErrors: true,
+    // HEALTHCARE CRITICAL: TypeScript errors MUST be fixed for patient safety
+    // ignoreBuildErrors: true, // ❌ REMOVED - Patient safety requirement
   },
 };
 

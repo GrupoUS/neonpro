@@ -143,10 +143,12 @@ export async function GET(request: NextRequest) {
     const offset = (page - 1) * limit;
     const { data: consents, error } = await supabase
       .from('lgpd_consents')
-      .select(`
+      .select(
+        `
         *,
         user:users(id, email, full_name)
-      `)
+      `
+      )
       .match(filters)
       .order('created_at', { ascending: false })
       .range(offset, offset + limit - 1);

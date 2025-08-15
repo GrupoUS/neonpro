@@ -154,13 +154,15 @@ export class DelinquencyManager {
       // Get overdue invoices
       const { data: overdueInvoices, error: invoiceError } = await this.supabase
         .from('receipts_invoices')
-        .select(`
+        .select(
+          `
           id,
           number,
           data,
           customer_id,
           customers!inner(name, email, risk_profile)
-        `)
+        `
+        )
         .eq('type', 'invoice')
         .in('status', ['sent', 'overdue'])
         .lt('data->>dueDate', new Date().toISOString());
@@ -173,7 +175,8 @@ export class DelinquencyManager {
       const { data: overdueInstallments, error: installmentError } =
         await this.supabase
           .from('payment_installments')
-          .select(`
+          .select(
+            `
           id,
           amount,
           due_date,
@@ -182,7 +185,8 @@ export class DelinquencyManager {
             customer_id,
             customers!inner(name, email, risk_profile)
           )
-        `)
+        `
+          )
           .eq('status', 'pending')
           .lt('due_date', new Date().toISOString());
 

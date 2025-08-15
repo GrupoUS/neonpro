@@ -244,16 +244,31 @@ export default function AdvancedDashboard() {
     <AppLayout>
       <style global jsx>{`
         @keyframes background-position-spin {
-          0% { background-position: top center; }
-          100% { background-position: bottom center; }
+          0% {
+            background-position: top center;
+          }
+          100% {
+            background-position: bottom center;
+          }
         }
         @keyframes glow-scale {
-          0%, 100% { transform: scale(1); opacity: 0.4; }
-          50% { transform: scale(1.15); opacity: 0.7; }
+          0%,
+          100% {
+            transform: scale(1);
+            opacity: 0.4;
+          }
+          50% {
+            transform: scale(1.15);
+            opacity: 0.7;
+          }
         }
         @keyframes glow-slide {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
+          0% {
+            transform: rotate(0deg);
+          }
+          100% {
+            transform: rotate(360deg);
+          }
         }
       `}</style>
 

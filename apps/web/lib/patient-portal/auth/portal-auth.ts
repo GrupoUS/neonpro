@@ -168,7 +168,8 @@ export class PortalAuthManager {
       // Buscar paciente no banco
       const { data: patient, error: patientError } = await this.supabase
         .from('patients')
-        .select(`
+        .select(
+          `
           id,
           name,
           email,
@@ -180,7 +181,8 @@ export class PortalAuthManager {
           is_active,
           last_login,
           failed_login_attempts
-        `)
+        `
+        )
         .eq('email', email.toLowerCase())
         .eq('is_active', true)
         .single();
@@ -407,7 +409,8 @@ export class PortalAuthManager {
       // Buscar sessão no banco
       const { data: sessionData, error } = await this.supabase
         .from('patient_portal_sessions')
-        .select(`
+        .select(
+          `
           *,
           patients (
             id,
@@ -417,7 +420,8 @@ export class PortalAuthManager {
             clinic_id,
             is_active
           )
-        `)
+        `
+        )
         .eq('session_token', sessionToken)
         .single();
 

@@ -73,13 +73,15 @@ export class TreatmentRecommendationEngine {
   private async getPatientTreatmentHistory(patientId: string) {
     const { data } = await this.supabase
       .from('patients')
-      .select(`
+      .select(
+        `
         *,
         treatments (*),
         treatment_outcomes (*),
         medical_history (*),
         preferences (*)
-      `)
+      `
+      )
       .eq('id', patientId)
       .single();
 

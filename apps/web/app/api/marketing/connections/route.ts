@@ -86,7 +86,8 @@ export async function GET(request: NextRequest) {
     // Build query
     let query = supabase
       .from('marketing_platform_connections')
-      .select(`
+      .select(
+        `
         id,
         platform_id,
         connection_name,
@@ -107,7 +108,8 @@ export async function GET(request: NextRequest) {
           integration_complexity,
           documentation_url
         )
-      `)
+      `
+      )
       .eq('clinic_id', profile.clinic_id);
 
     // Apply filters
@@ -250,7 +252,8 @@ export async function POST(request: NextRequest) {
     const { data: newConnection, error } = await supabase
       .from('marketing_platform_connections')
       .insert([connectionData])
-      .select(`
+      .select(
+        `
         id,
         platform_id,
         connection_name,
@@ -265,7 +268,8 @@ export async function POST(request: NextRequest) {
           platform_type,
           features_supported
         )
-      `)
+      `
+      )
       .single();
 
     if (error) {

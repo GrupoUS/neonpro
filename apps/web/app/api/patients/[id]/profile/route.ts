@@ -25,13 +25,15 @@ export async function GET(
     // Fetch patient profile with related data
     const { data: patient, error } = await supabase
       .from('patients')
-      .select(`
+      .select(
+        `
         *,
         patient_profiles (*),
         emergency_contacts (*),
         lgpd_consents (*),
         contact_preferences (*)
-      `)
+      `
+      )
       .eq('id', id)
       .single();
 

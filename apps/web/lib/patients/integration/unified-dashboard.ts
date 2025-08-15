@@ -119,12 +119,14 @@ export class UnifiedPatientDashboard {
       // Get core patient data
       const { data: patient, error: patientError } = await supabase
         .from('patients')
-        .select(`
+        .select(
+          `
           *,
           patient_profiles_extended(*),
           patient_photos(*),
           emergency_contacts(*)
-        `)
+        `
+        )
         .eq('id', patientId)
         .single();
 

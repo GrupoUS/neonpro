@@ -161,7 +161,8 @@ async function evaluateClinicAlerts(
   // Get active alert configurations for the clinic
   const { data: configs, error: configError } = await supabase
     .from('stock_alert_configs')
-    .select(`
+    .select(
+      `
       *,
       product:products (
         id,
@@ -171,7 +172,8 @@ async function evaluateClinicAlerts(
         expiration_date,
         unit_cost
       )
-    `)
+    `
+    )
     .eq('clinic_id', clinicId)
     .eq('is_active', true);
 

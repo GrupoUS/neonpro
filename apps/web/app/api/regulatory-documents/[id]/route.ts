@@ -41,7 +41,8 @@ export async function GET(
     // Fetch document with related data
     const { data: document, error } = await supabase
       .from('regulatory_documents')
-      .select(`
+      .select(
+        `
         *,
         regulation_categories!inner(name, authority_name, description),
         document_versions(
@@ -62,7 +63,8 @@ export async function GET(
         ),
         profiles!regulatory_documents_created_by_fkey(full_name),
         profiles!regulatory_documents_updated_by_fkey(full_name)
-      `)
+      `
+      )
       .eq('id', id)
       .single();
 
@@ -142,10 +144,12 @@ export async function PUT(
         updated_at: new Date().toISOString(),
       })
       .eq('id', id)
-      .select(`
+      .select(
+        `
         *,
         regulation_categories!inner(name, authority_name)
-      `)
+      `
+      )
       .single();
 
     if (error) {

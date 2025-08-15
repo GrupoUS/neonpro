@@ -66,7 +66,8 @@ export async function GET(request: NextRequest) {
     // Build query for billing events
     let query = supabase
       .from('billing_events')
-      .select(`
+      .select(
+        `
         *,
         subscription:subscriptions(
           id,
@@ -75,7 +76,8 @@ export async function GET(request: NextRequest) {
           plan:subscription_plans(*)
         ),
         payment_retry_logs(*)
-      `)
+      `
+      )
       .order('created_at', { ascending: false })
       .range((page - 1) * limit, page * limit - 1);
 
@@ -198,11 +200,13 @@ export async function POST(request: NextRequest) {
     // Check if subscription exists and is active
     const { data: subscription, error: subscriptionError } = await supabase
       .from('subscriptions')
-      .select(`
+      .select(
+        `
         *,
         customer:customers(*),
         plan:subscription_plans(*)
-      `)
+      `
+      )
       .eq('id', paymentData.subscription_id)
       .single();
 

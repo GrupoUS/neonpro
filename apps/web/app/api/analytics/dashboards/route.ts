@@ -58,10 +58,12 @@ export async function GET(request: NextRequest) {
     // Get user's dashboards
     let query = supabase
       .from('dashboard_layouts')
-      .select(`
+      .select(
+        `
         *,
         dashboard_widgets(*)
-      `)
+      `
+      )
       .order('updated_at', { ascending: false });
 
     if (includePublic) {
@@ -166,10 +168,12 @@ export async function POST(request: NextRequest) {
     // Retrieve complete dashboard
     const { data: completeDashboard, error: fetchError } = await supabase
       .from('dashboard_layouts')
-      .select(`
+      .select(
+        `
         *,
         dashboard_widgets(*)
-      `)
+      `
+      )
       .eq('id', result.id)
       .single();
 

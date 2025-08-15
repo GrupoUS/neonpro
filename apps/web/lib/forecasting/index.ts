@@ -35,10 +35,7 @@ export {
   ForecastingUtils,
 } from './demand-forecasting';
 // Model Management System
-export {
-  ForecastModelManager,
-  forecastModelManager,
-} from './forecast-models';
+export { ForecastModelManager, forecastModelManager } from './forecast-models';
 // Resource Allocation Optimizer
 export {
   ResourceAllocationOptimizer,

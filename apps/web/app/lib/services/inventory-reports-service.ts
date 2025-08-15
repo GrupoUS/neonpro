@@ -385,7 +385,8 @@ class InventoryReportsService {
     // In a real implementation, you might have a separate batch tracking system
     let query = this.supabase
       .from('inventory_stock')
-      .select(`
+      .select(
+        `
         item_id,
         inventory_items!inner(name, sku, category),
         clinic_id,
@@ -396,7 +397,8 @@ class InventoryReportsService {
         cost_per_unit,
         expiry_date,
         batch_number
-      `)
+      `
+      )
       .not('expiry_date', 'is', null)
       .gt('current_quantity', 0);
 

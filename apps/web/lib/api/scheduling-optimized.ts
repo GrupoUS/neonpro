@@ -223,12 +223,14 @@ class BatchRequestManager {
 
     const { data, error } = await supabase
       .from('schedule_conflicts')
-      .select(`
+      .select(
+        `
         *,
         appointments!inner(*),
         professionals!inner(*),
         patients!inner(*)
-      `)
+      `
+      )
       .in('appointment_id', appointmentIds)
       .eq('status', 'active');
 
@@ -353,7 +355,8 @@ export class OptimizedSchedulingAPI {
       async () => {
         let query = this.supabase
           .from('schedule_conflicts')
-          .select(`
+          .select(
+            `
           *,
           appointments!inner(
             id, start_time, end_time, status,
@@ -361,7 +364,8 @@ export class OptimizedSchedulingAPI {
             professionals!inner(id, name, specialty)
           ),
           conflict_resolutions(*)
-        `)
+        `
+          )
           .eq('status', 'active')
           .order('created_at', { ascending: false });
 

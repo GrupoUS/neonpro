@@ -89,14 +89,16 @@ export async function POST(request: NextRequest) {
     // Buscar contexto relevante da clínica (últimos 5 agendamentos, por exemplo)
     const { data: recentAppointments } = await supabase
       .from('appointments')
-      .select(`
+      .select(
+        `
         id,
         date_time,
         status,
         service,
         notes,
         patients(name, phone)
-      `)
+      `
+      )
       .eq('user_id', user.id)
       .order('date_time', { ascending: false })
       .limit(5);

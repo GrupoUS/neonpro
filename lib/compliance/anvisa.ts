@@ -265,7 +265,8 @@ export class ANVISACompliance {
     try {
       const { data, error } = await this.supabase
         .from('compliance_tasks')
-        .select(`
+        .select(
+          `
           *,
           adverse_events:reference_id (
             id,
@@ -274,7 +275,8 @@ export class ANVISACompliance {
             outcome,
             reported_date
           )
-        `)
+        `
+        )
         .eq('type', 'anvisa_adverse_event_report')
         .eq('status', 'pending');
 

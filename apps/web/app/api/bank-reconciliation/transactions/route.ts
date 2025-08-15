@@ -86,7 +86,8 @@ export async function GET(request: NextRequest) {
     // Build query
     let query = supabase
       .from('bank_transactions')
-      .select(`
+      .select(
+        `
         *,
         bank_statements!inner(
           id,
@@ -100,7 +101,8 @@ export async function GET(request: NextRequest) {
           status,
           payment_method
         )
-      `)
+      `
+      )
       .eq('bank_statements.created_by', user.id);
 
     // Apply filters
@@ -335,10 +337,12 @@ export async function POST(request: NextRequest) {
           .from('bank_transactions')
           .update(updateData)
           .in('id', validatedData.transactionIds)
-          .select(`
+          .select(
+            `
             *,
             bank_statements!inner(created_by)
-          `)
+          `
+          )
           .eq('bank_statements.created_by', user.id);
 
         if (updateError) {
@@ -445,7 +449,8 @@ export async function PUT(request: NextRequest) {
       .from('bank_transactions')
       .update(updateData)
       .eq('id', validatedData.transactionId)
-      .select(`
+      .select(
+        `
         *,
         bank_statements!inner(
           id,
@@ -453,7 +458,8 @@ export async function PUT(request: NextRequest) {
           account_number,
           created_by
         )
-      `)
+      `
+      )
       .eq('bank_statements.created_by', user.id)
       .single();
 
@@ -551,10 +557,12 @@ export async function DELETE(request: NextRequest) {
         notes: 'Marked as ignored by user',
       })
       .in('id', transactionIds)
-      .select(`
+      .select(
+        `
           *,
           bank_statements!inner(created_by)
-        `)
+        `
+      )
       .eq('bank_statements.created_by', user.id);
 
     if (updateError) {

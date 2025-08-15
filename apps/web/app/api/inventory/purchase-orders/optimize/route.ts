@@ -40,7 +40,8 @@ export async function POST(request: NextRequest) {
     // Get additional item details for recommendations
     const { data: itemsData, error: itemsError } = await supabase
       .from('inventory_items')
-      .select(`
+      .select(
+        `
         id,
         name,
         sku,
@@ -50,7 +51,8 @@ export async function POST(request: NextRequest) {
         minimum_threshold,
         maximum_threshold,
         unit
-      `)
+      `
+      )
       .in('id', validatedData.item_ids);
 
     if (itemsError) {
@@ -152,7 +154,8 @@ async function analyzeBulkOpportunities(
     // Get supplier data for bulk discount analysis
     const { data: supplierItems, error } = await supabase
       .from('supplier_items')
-      .select(`
+      .select(
+        `
         item_id,
         supplier_id,
         unit_cost,
@@ -163,7 +166,8 @@ async function analyzeBulkOpportunities(
           name,
           bulk_order_incentives
         )
-      `)
+      `
+      )
       .in('item_id', itemIds)
       .not('bulk_discount_threshold', 'is', null);
 
@@ -215,7 +219,8 @@ async function generateSeasonalRecommendations(
     // Analyze historical consumption patterns for seasonality
     const { data: consumptionData, error } = await supabase
       .from('inventory_transactions')
-      .select(`
+      .select(
+        `
         item_id,
         quantity,
         created_at,
@@ -223,7 +228,8 @@ async function generateSeasonalRecommendations(
           name,
           category
         )
-      `)
+      `
+      )
       .in('item_id', itemIds)
       .eq('clinic_id', clinicId)
       .eq('transaction_type', 'consumption')

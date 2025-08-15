@@ -230,7 +230,8 @@ class StockNotificationsService {
       // Get clinic staff who should receive notifications for this alert type and severity
       const { data, error } = await this.supabase
         .from('clinic_staff')
-        .select(`
+        .select(
+          `
           user_id,
           role,
           users!inner(
@@ -240,7 +241,8 @@ class StockNotificationsService {
             phone,
             notification_preferences
           )
-        `)
+        `
+        )
         .eq('clinic_id', clinicId)
         .in('role', ['admin', 'manager', 'staff']);
 

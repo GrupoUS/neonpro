@@ -58,7 +58,8 @@ export class EquipmentMaintenanceService {
 
     const { data, error } = await supabase
       .from('equipment')
-      .select(`
+      .select(
+        `
         *,
         maintenance_schedules(*),
         active_alerts:maintenance_alerts!inner(
@@ -68,7 +69,8 @@ export class EquipmentMaintenanceService {
           title,
           created_at
         )
-      `)
+      `
+      )
       .eq('id', id)
       .eq('active_alerts.is_active', true)
       .single();
@@ -383,7 +385,8 @@ export class EquipmentMaintenanceService {
 
     let query = supabase
       .from('maintenance_alerts')
-      .select(`
+      .select(
+        `
         *,
         equipment:equipment!inner(
           id,
@@ -391,7 +394,8 @@ export class EquipmentMaintenanceService {
           location,
           department
         )
-      `)
+      `
+      )
       .eq('clinic_id', clinicId)
       .eq('is_active', true)
       .eq('is_resolved', false);

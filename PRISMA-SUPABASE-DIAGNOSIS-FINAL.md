@@ -30,6 +30,7 @@
 **⏳ 90% CONFIGURADO**
 
 ### ✅ Funcionando:
+
 - Prisma Client gerado
 - Dependencies instaladas
 - Schema definido (Tenant, Profile, Product)
@@ -37,14 +38,16 @@
 - @prisma/client disponível
 
 ### ⏳ Pendente:
+
 - **Senha do banco**: SUPABASE_DB_PASSWORD não configurada
 - **Teste de conexão**: Aguardando senha
 - **Sincronização schema**: Push/migrate pendente
 
 ### 📝 Schema Atual:
+
 ```prisma
 - Tenant (multi-tenancy)
-- Profile (linked to Supabase Auth)  
+- Profile (linked to Supabase Auth)
 - Product (per tenant)
 - Enums: SubscriptionPlan, SubscriptionStatus
 ```
@@ -56,13 +59,15 @@
 **❌ NÃO NECESSÁRIO**
 
 **Motivo**: Sistema já implementado com **Supabase Auth**:
+
 - ✅ OAuth Google/GitHub configurado
-- ✅ Callbacks e middleware implementados  
+- ✅ Callbacks e middleware implementados
 - ✅ RBAC healthcare-compliant
 - ✅ Multi-tenant authentication
 - ✅ Sessions e RLS funcionando
 
 **Arquivos de Auth encontrados**:
+
 - `app/auth/callback/route.ts` - OAuth callbacks
 - `middleware.ts` - Route protection
 - `lib/supabase/` - Client configuration
@@ -73,6 +78,7 @@
 ## 🚀 PRÓXIMOS PASSOS
 
 ### 1️⃣ **OBTER SENHA DO BANCO** (Crítico)
+
 ```bash
 # 1. Acesse: https://supabase.com/dashboard
 # 2. Projeto: NeonPro Brasil
@@ -83,6 +89,7 @@ SUPABASE_DB_PASSWORD=sua_senha_aqui
 ```
 
 ### 2️⃣ **SINCRONIZAR SCHEMA**
+
 ```bash
 cd apps/web
 
@@ -94,6 +101,7 @@ npx prisma migrate dev --name init
 ```
 
 ### 3️⃣ **VALIDAR INTEGRAÇÃO**
+
 ```bash
 # Testar conexão Prisma
 node test-prisma-supabase.js
@@ -103,6 +111,7 @@ node test-supabase-client.js
 ```
 
 ### 4️⃣ **SINCRONIZAR TABELAS**
+
 - Atualizar schema.prisma com tabelas do Supabase
 - Gerar client atualizado
 - Migrar queries para usar Prisma quando apropriado
@@ -117,11 +126,11 @@ node test-supabase-client.js
 🏗️ Data Layer:
 ├── Supabase (Primary)
 │   ├── Auth & Sessions
-│   ├── Real-time features  
+│   ├── Real-time features
 │   ├── Storage & Files
 │   └── Complex queries
 │
-└── Prisma (Secondary)  
+└── Prisma (Secondary)
     ├── Type safety
     ├── Migrations
     ├── Simple CRUD
@@ -129,6 +138,7 @@ node test-supabase-client.js
 ```
 
 ### **BENEFÍCIOS DESTA ABORDAGEM:**
+
 - ✅ Type safety com Prisma
 - ✅ Real-time com Supabase
 - ✅ Melhor DX para desenvolvimento
@@ -140,7 +150,7 @@ node test-supabase-client.js
 ## 📊 CHECKLIST FINAL
 
 - [x] Supabase configurado e funcional
-- [x] Prisma Client gerado  
+- [x] Prisma Client gerado
 - [x] Dependencies instaladas
 - [x] URLs de conexão configuradas
 - [x] Supabase Auth implementado

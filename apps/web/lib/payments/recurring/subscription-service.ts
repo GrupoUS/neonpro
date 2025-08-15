@@ -177,11 +177,13 @@ export class SubscriptionService {
     try {
       const { data: subscription } = await this.supabase
         .from('subscriptions')
-        .select(`
+        .select(
+          `
           *,
           subscription_plans(*),
           patients(id, name, email)
-        `)
+        `
+        )
         .eq('id', subscriptionId)
         .single();
 

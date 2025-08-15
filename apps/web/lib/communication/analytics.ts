@@ -131,10 +131,12 @@ export class CommunicationAnalytics {
     try {
       let query = supabase
         .from('communication_logs')
-        .select(`
+        .select(
+          `
           *,
           communication_events(*)
-        `)
+        `
+        )
         .eq('clinic_id', clinicId)
         .gte('created_at', startDate.toISOString())
         .lte('created_at', endDate.toISOString());
@@ -244,10 +246,12 @@ export class CommunicationAnalytics {
       // Get campaign communications
       const { data: logs, error: logsError } = await supabase
         .from('communication_logs')
-        .select(`
+        .select(
+          `
           *,
           communication_events(*)
-        `)
+        `
+        )
         .eq('campaign_id', campaignId);
 
       if (logsError) {
@@ -328,10 +332,12 @@ export class CommunicationAnalytics {
       // Get communication history
       const { data: communications } = await supabase
         .from('communication_logs')
-        .select(`
+        .select(
+          `
           *,
           communication_events(*)
-        `)
+        `
+        )
         .eq('patient_id', patientId)
         .eq('clinic_id', clinicId)
         .gte('created_at', thirtyDaysAgo.toISOString());
@@ -423,14 +429,16 @@ export class CommunicationAnalytics {
     try {
       const { data: logs } = await supabase
         .from('communication_logs')
-        .select(`
+        .select(
+          `
           template_id,
           message_type,
           channel,
           *,
           communication_events(*),
           message_templates(name)
-        `)
+        `
+        )
         .eq('clinic_id', clinicId)
         .gte('created_at', startDate.toISOString())
         .lte('created_at', endDate.toISOString())

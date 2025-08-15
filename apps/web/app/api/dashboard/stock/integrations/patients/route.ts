@@ -21,7 +21,8 @@ export async function GET(request: NextRequest) {
       // Buscar uso de materiais por paciente específico
       const { data: patientUsage, error } = await supabase
         .from('stock_movements')
-        .select(`
+        .select(
+          `
           id,
           movement_type,
           quantity,
@@ -44,7 +45,8 @@ export async function GET(request: NextRequest) {
               email
             )
           )
-        `)
+        `
+        )
         .eq('movement_type', 'out')
         .contains('reason', patientId)
         .order('created_at', { ascending: false });
@@ -61,7 +63,8 @@ export async function GET(request: NextRequest) {
     // Buscar estatísticas gerais de uso por pacientes
     const { data: generalStats, error } = await supabase
       .from('stock_movements')
-      .select(`
+      .select(
+        `
           id,
           movement_type,
           quantity,
@@ -73,7 +76,8 @@ export async function GET(request: NextRequest) {
             name,
             category
           )
-        `)
+        `
+      )
       .eq('movement_type', 'out')
       .like('reason', '%patient_%')
       .order('created_at', { ascending: false });

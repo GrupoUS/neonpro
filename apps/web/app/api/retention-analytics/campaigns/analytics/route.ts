@@ -94,7 +94,8 @@ export async function GET(request: NextRequest) {
     // Build base query for campaigns
     let campaignQuery = supabase
       .from('retention_campaigns')
-      .select(`
+      .select(
+        `
         id,
         name,
         target_segments,
@@ -102,7 +103,8 @@ export async function GET(request: NextRequest) {
         created_at,
         campaign_metrics:retention_campaign_metrics(*),
         executions:retention_campaign_executions(*)
-      `)
+      `
+      )
       .eq('clinic_id', clinicId);
 
     if (campaignIds && campaignIds.length > 0) {
@@ -421,11 +423,13 @@ export async function POST(request: NextRequest) {
     // Get campaign with A/B test data
     const { data: campaign, error: campaignError } = await supabase
       .from('retention_campaigns')
-      .select(`
+      .select(
+        `
         *,
         campaign_metrics:retention_campaign_metrics(*),
         executions:retention_campaign_executions(*)
-      `)
+      `
+      )
       .eq('id', campaignId)
       .single();
 

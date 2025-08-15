@@ -389,12 +389,14 @@ export class SystemIntegrationManager {
       // For now, return recent appointments
       const { data: recentAppointments } = await this.supabase
         .from('appointments')
-        .select(`
+        .select(
+          `
           patient_id,
           patients(name),
           appointment_date,
           status
-        `)
+        `
+        )
         .eq('staff_id', userId)
         .gte(
           'appointment_date',

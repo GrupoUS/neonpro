@@ -1,5 +1,5 @@
-# 🏦 Bank Reconciliation System - E2E Tests
-# Sistema de Reconciliação Bancária - Testes End-to-End Completos
+// 🏦 Bank Reconciliation System - E2E Tests
+// Sistema de Reconciliação Bancária - Testes End-to-End Completos
 
 import { expect, test } from '@playwright/test';
 

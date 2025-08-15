@@ -93,7 +93,8 @@ async function calculateFinancialMetrics(
     // Buscar dados de pacientes para CAC e LTV
     const { data: patientData, error: patientError } = await supabase
       .from('patients')
-      .select(`
+      .select(
+        `
         id,
         created_at,
         appointments (
@@ -102,7 +103,8 @@ async function calculateFinancialMetrics(
           status,
           created_at
         )
-      `)
+      `
+      )
       .eq('clinic_id', clinicId)
       .gte('created_at', startDate.toISOString());
 

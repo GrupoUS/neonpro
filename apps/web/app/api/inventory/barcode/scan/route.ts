@@ -132,13 +132,15 @@ export async function GET(request: NextRequest) {
       // Get scan history
       const { data: scanHistory, error } = await supabase
         .from('scan_activity_log')
-        .select(`
+        .select(
+          `
           *,
           inventory_items (
             name,
             sku
           )
-        `)
+        `
+        )
         .eq('user_id', session.user.id)
         .order('scanned_at', { ascending: false })
         .limit(limit);
@@ -170,7 +172,8 @@ export async function GET(request: NextRequest) {
     // Get all barcode data (paginated)
     const { data: allBarcodes, error } = await supabase
       .from('inventory_barcodes')
-      .select(`
+      .select(
+        `
         *,
         inventory_items (
           name,
@@ -180,7 +183,8 @@ export async function GET(request: NextRequest) {
         inventory_locations (
           location_name
         )
-      `)
+      `
+      )
       .order('created_at', { ascending: false })
       .limit(limit);
 

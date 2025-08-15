@@ -27,7 +27,8 @@ export async function GET(request: NextRequest) {
     // Buscar conversas do usuário com contagem de mensagens
     const { data: conversations, error } = await supabase
       .from('assistant_conversations')
-      .select(`
+      .select(
+        `
         id,
         title,
         model_used,
@@ -35,7 +36,8 @@ export async function GET(request: NextRequest) {
         created_at,
         updated_at,
         assistant_messages(count)
-      `)
+      `
+      )
       .eq('user_id', user.id)
       .order('updated_at', { ascending: false })
       .range(offset, offset + limit - 1);

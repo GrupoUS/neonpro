@@ -158,13 +158,15 @@ export async function getInvoiceById(id: string): Promise<Invoice> {
   try {
     const { data, error } = await supabase
       .from('invoices')
-      .select(`
+      .select(
+        `
         *,
         invoice_items(*),
         payments(*),
         patient:patients(id, name, email, phone, cpf),
         clinic:clinics(id, name, cnpj, address)
-      `)
+      `
+      )
       .eq('id', id)
       .single();
 
@@ -435,10 +437,12 @@ export async function getPaymentById(id: string): Promise<Payment> {
   try {
     const { data, error } = await supabase
       .from('payments')
-      .select(`
+      .select(
+        `
         *,
         installments:payment_installments(*)
-      `)
+      `
+      )
       .eq('id', id)
       .single();
 
@@ -515,10 +519,12 @@ export async function listPaymentsByInvoice(
   try {
     const { data, error } = await supabase
       .from('payments')
-      .select(`
+      .select(
+        `
         *,
         installments:payment_installments(*)
-      `)
+      `
+      )
       .eq('invoice_id', invoiceId)
       .order('created_at', { ascending: false });
 

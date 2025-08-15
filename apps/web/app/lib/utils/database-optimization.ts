@@ -332,7 +332,8 @@ export class StockAlertQueries {
 
     const { data, error } = await this.supabase
       .from('stock_alerts')
-      .select(`
+      .select(
+        `
         *,
         product:products (
           id,
@@ -343,7 +344,8 @@ export class StockAlertQueries {
           alert_type,
           severity_level
         )
-      `)
+      `
+      )
       .eq('clinic_id', clinicId)
       .eq('status', 'active')
       .order('triggered_at', { ascending: false })
@@ -389,7 +391,8 @@ export class StockAlertQueries {
     const [productsResult, alertsResult, metricsResult] = await Promise.all([
       this.supabase
         .from('products')
-        .select(`
+        .select(
+          `
           id,
           name,
           current_stock,
@@ -401,7 +404,8 @@ export class StockAlertQueries {
             id,
             name
           )
-        `)
+        `
+        )
         .eq('clinic_id', clinicId)
         .is('deleted_at', null),
 

@@ -221,7 +221,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     // Get feedback data
     const { data, error } = await supabase
       .from('prediction_feedback')
-      .select(`
+      .select(
+        `
         id,
         actual_duration,
         accuracy_score,
@@ -237,7 +238,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
           confidence_score,
           model_version
         )
-      `)
+      `
+      )
       .eq('appointment_id', appointmentId)
       .single();
 

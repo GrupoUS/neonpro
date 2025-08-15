@@ -25,12 +25,14 @@ export async function GET(request: NextRequest) {
 
     let query = supabase
       .from('budgets')
-      .select(`
+      .select(
+        `
         *,
         cost_center:cost_centers(name),
         approvals:budget_approvals(*),
         allocations:budget_allocations(*)
-      `)
+      `
+      )
       .eq('user_id', user.id);
 
     if (period) {

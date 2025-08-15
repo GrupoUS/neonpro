@@ -267,13 +267,15 @@ class StockAnalyticsService {
       const supabase = await this.getSupabaseClient();
       const { data: notifications, error } = await supabase
         .from('notification_deliveries')
-        .select(`
+        .select(
+          `
           *,
           stock_alerts_history!inner(
             alert_type,
             severity_level
           )
-        `)
+        `
+        )
         .eq('clinic_id', clinicId)
         .gte('created_at', startOfDay.toISOString())
         .lte('created_at', endOfDay.toISOString());
@@ -540,12 +542,14 @@ class StockAnalyticsService {
       const supabase = await this.getSupabaseClient();
       const { data: alerts, error } = await supabase
         .from('stock_alerts_history')
-        .select(`
+        .select(
+          `
           product_id,
           alert_type,
           created_at,
           products!inner(name)
-        `)
+        `
+        )
         .eq('clinic_id', clinicId)
         .gte('created_at', startDate.toISOString())
         .order('created_at', { ascending: true });

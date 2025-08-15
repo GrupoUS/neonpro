@@ -293,10 +293,12 @@ export class RecurringPaymentProcessor {
       // Get customer's default payment method
       const { data: customer } = await this.supabase
         .from('customers')
-        .select(`
+        .select(
+          `
           *,
           payment_methods(*)
-        `)
+        `
+        )
         .eq('id', subscription.customer_id)
         .single();
 
@@ -667,11 +669,13 @@ export class RecurringPaymentProcessor {
     try {
       const { data, error } = await this.supabase
         .from('subscriptions')
-        .select(`
+        .select(
+          `
           *,
           plan:subscription_plans(*),
           customer:customers(*)
-        `)
+        `
+        )
         .in('status', ['active', 'trialing'])
         .lte('current_period_end', new Date().toISOString());
 

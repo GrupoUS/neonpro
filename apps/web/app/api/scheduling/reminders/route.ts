@@ -139,13 +139,15 @@ async function handleImmediateReminder(
   // Get appointment details with all relations
   const { data: appointment, error: appointmentError } = await supabase
     .from('appointments')
-    .select(`
+    .select(
+      `
       *,
       patients(*),
       professionals(*),
       services(*),
       clinics(*)
-    `)
+    `
+    )
     .eq('id', data.appointmentId)
     .single();
 
@@ -266,13 +268,15 @@ async function handleLegacyReminders(
   // Get appointment details
   const { data: appointment, error: appointmentError } = await supabase
     .from('appointments')
-    .select(`
+    .select(
+      `
       *,
       patients(*),
       professionals(*),
       services(*),
       clinics(*)
-    `)
+    `
+    )
     .eq('id', data.appointmentId)
     .single();
 

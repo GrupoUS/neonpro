@@ -1,4 +1,7 @@
-import { PrismaClient } from '@prisma/client';
+// ❌ DEPRECATED FOR HEALTHCARE COMPLIANCE
+// NEONPRO HEALTHCARE: Prisma disabled in favor of Supabase native for LGPD compliance
+// Use /lib/supabase/client.ts for all database operations
+// import { PrismaClient } from '@prisma/client';
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;

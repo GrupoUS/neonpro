@@ -165,7 +165,8 @@ export async function POST(request: NextRequest) {
       })
       .eq('id', resolveData.alertId)
       .eq('clinic_id', clinicId)
-      .select(`
+      .select(
+        `
         *,
         product:products!stock_alerts_history_product_id_fkey (
           id,
@@ -178,7 +179,8 @@ export async function POST(request: NextRequest) {
           name,
           email
         )
-      `)
+      `
+      )
       .single();
 
     if (updateError) {

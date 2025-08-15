@@ -913,10 +913,12 @@ export class SuggestionEngine {
       // Buscar staff qualificado e disponível
       let query = this.supabase
         .from('staff')
-        .select(`
+        .select(
+          `
           id, name, specialties, hourly_rate,
           staff_availability(*)
-        `)
+        `
+        )
         .eq('clinic_id', clinicId)
         .eq('active', true);
 

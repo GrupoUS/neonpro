@@ -399,11 +399,13 @@ export function useConflictOverride() {
 
       const { data: requests, error } = await supabase
         .from('appointment_override_requests')
-        .select(`
+        .select(
+          `
           *,
           requested_by_profile:profiles!appointment_override_requests_requested_by_fkey(id, full_name),
           approved_by_profile:profiles!appointment_override_requests_approved_by_fkey(id, full_name)
-        `)
+        `
+        )
         .eq('status', 'pending')
         .order('created_at', { ascending: false });
 

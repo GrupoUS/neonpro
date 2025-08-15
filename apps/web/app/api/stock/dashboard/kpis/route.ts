@@ -68,7 +68,8 @@ export async function GET(request: NextRequest) {
     // Get current stock data
     const { data: stockData, error: stockError } = await supabase
       .from('stock_inventory')
-      .select(`
+      .select(
+        `
         id,
         product_id,
         quantity_available,
@@ -76,7 +77,8 @@ export async function GET(request: NextRequest) {
         max_stock_level,
         unit_cost,
         products (name, category_id)
-      `)
+      `
+      )
       .eq('clinic_id', params.clinicId)
       .eq('is_active', true);
 

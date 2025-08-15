@@ -92,10 +92,12 @@ export class DashboardLayoutEngine {
 
       const { data, error } = await this.supabase
         .from('executive_dashboards')
-        .select(`
+        .select(
+          `
           *,
           widgets:dashboard_widgets(*)
-        `)
+        `
+        )
         .eq('id', dashboardId)
         .single();
 
@@ -125,10 +127,12 @@ export class DashboardLayoutEngine {
     try {
       const { data, error } = await this.supabase
         .from('executive_dashboards')
-        .select(`
+        .select(
+          `
           *,
           widgets:dashboard_widgets(*)
-        `)
+        `
+        )
         .eq('clinic_id', clinicId)
         .order('created_at', { ascending: false });
 

@@ -162,11 +162,13 @@ export const POST = withRoleValidation(
       const { data: createdLog, error: logError } = await supabase
         .from('role_audit_log')
         .insert(logEntry)
-        .select(`
+        .select(
+          `
           *,
           user:profiles!role_audit_log_user_id_fkey(id, email, full_name),
           target_user:profiles!role_audit_log_target_user_id_fkey(id, email, full_name)
-        `)
+        `
+        )
         .single();
 
       if (logError) {

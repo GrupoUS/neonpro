@@ -46,10 +46,12 @@ export async function GET(
     // Get plan with subscription count
     const { data: plan, error } = await supabase
       .from('subscription_plans')
-      .select(`
+      .select(
+        `
         *,
         subscriptions:subscriptions(count)
-      `)
+      `
+      )
       .eq('id', planId)
       .single();
 

@@ -699,11 +699,13 @@ export class MedicalDocumentManager {
     try {
       const { data, error } = await this.supabase
         .from('before_after_pairs')
-        .select(`
+        .select(
+          `
           *,
           before_photo:medical_documents!before_after_pairs_before_photo_id_fkey(*),
           after_photo:medical_documents!before_after_pairs_after_photo_id_fkey(*)
-        `)
+        `
+        )
         .eq('patient_id', patientId)
         .order('procedure_date', { ascending: false });
 

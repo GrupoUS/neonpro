@@ -146,11 +146,13 @@ export async function getTreatmentPlan(
 ): Promise<TreatmentPlan | null> {
   const { data, error } = await supabase
     .from('treatment_plans')
-    .select(`
+    .select(
+      `
       *,
       patient:patients!treatment_plans_patient_id_fkey(id, given_name, family_name),
       provider:profiles!treatment_plans_provider_id_fkey(id, full_name, professional_title)
-    `)
+    `
+    )
     .eq('id', id)
     .single();
 
@@ -369,12 +371,14 @@ export async function updateProcedure(
 export async function getProcedure(id: string): Promise<Procedure | null> {
   const { data, error } = await supabase
     .from('procedures')
-    .select(`
+    .select(
+      `
       *,
       patient:patients!procedures_patient_id_fkey(id, given_name, family_name),
       provider:profiles!procedures_provider_id_fkey(id, full_name, professional_title),
       treatment_plan:treatment_plans!procedures_treatment_plan_id_fkey(id, title, status)
-    `)
+    `
+    )
     .eq('id', id)
     .single();
 
@@ -584,13 +588,15 @@ export async function getClinicalNote(
 ): Promise<ClinicalNote | null> {
   const { data, error } = await supabase
     .from('clinical_notes')
-    .select(`
+    .select(
+      `
       *,
       patient:patients!clinical_notes_patient_id_fkey(id, given_name, family_name),
       provider:profiles!clinical_notes_provider_id_fkey(id, full_name, professional_title),
       treatment_plan:treatment_plans!clinical_notes_treatment_plan_id_fkey(id, title, status),
       procedure:procedures!clinical_notes_procedure_id_fkey(id, code, status)
-    `)
+    `
+    )
     .eq('id', id)
     .single();
 

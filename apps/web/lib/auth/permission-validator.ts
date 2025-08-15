@@ -221,7 +221,8 @@ class PermissionValidator {
       // Get user roles
       const { data: userRoles } = await supabase
         .from('user_roles')
-        .select(`
+        .select(
+          `
           role_id,
           clinic_id,
           roles (
@@ -241,14 +242,16 @@ class PermissionValidator {
               )
             )
           )
-        `)
+        `
+        )
         .eq('user_id', userId)
         .eq('is_active', true);
 
       // Get direct permissions
       const { data: directPermissions } = await supabase
         .from('user_permissions')
-        .select(`
+        .select(
+          `
           permission_id,
           clinic_id,
           permissions (
@@ -259,7 +262,8 @@ class PermissionValidator {
             conditions,
             description
           )
-        `)
+        `
+        )
         .eq('user_id', userId)
         .eq('is_active', true);
 

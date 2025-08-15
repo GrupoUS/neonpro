@@ -61,11 +61,7 @@ export type {
 } from './PatientTable';
 // Complex Components
 export { PatientTable } from './PatientTable';
-export {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from './Popover';
+export { Popover, PopoverContent, PopoverTrigger } from './Popover';
 export type { ProcedureFormProps } from './ProcedureForm';
 export { ProcedureForm } from './ProcedureForm';
 export type { ProgressBarProps } from './ProgressBar';

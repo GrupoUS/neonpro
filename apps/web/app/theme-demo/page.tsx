@@ -162,8 +162,12 @@ export default function ThemeDemoPage() {
     <div className="min-h-screen bg-background p-6">
       <style global jsx>{`
         @keyframes background-position-spin {
-          0% { background-position: top center; }
-          100% { background-position: bottom center; }
+          0% {
+            background-position: top center;
+          }
+          100% {
+            background-position: bottom center;
+          }
         }
       `}</style>
 

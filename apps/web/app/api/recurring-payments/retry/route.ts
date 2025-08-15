@@ -68,7 +68,8 @@ export async function POST(request: NextRequest) {
     // Check if billing event exists and is retryable
     const { data: billingEvent, error: billingError } = await supabase
       .from('billing_events')
-      .select(`
+      .select(
+        `
         *,
         subscription:subscriptions(
           id,
@@ -77,7 +78,8 @@ export async function POST(request: NextRequest) {
           plan:subscription_plans(*)
         ),
         payment_retry_logs(*)
-      `)
+      `
+      )
       .eq('id', billing_event_id)
       .single();
 
@@ -191,14 +193,16 @@ export async function PUT(request: NextRequest) {
         // Check if billing event is retryable
         const { data: billingEvent } = await supabase
           .from('billing_events')
-          .select(`
+          .select(
+            `
             *,
             subscription:subscriptions(
               id,
               plan:subscription_plans(max_retry_attempts)
             ),
             payment_retry_logs(*)
-          `)
+          `
+          )
           .eq('id', billingEventId)
           .single();
 
@@ -300,7 +304,8 @@ export async function GET(request: NextRequest) {
     // Get retry statistics
     const { data: retryLogs } = await supabase
       .from('payment_retry_logs')
-      .select(`
+      .select(
+        `
         *,
         billing_event:billing_events(
           id,
@@ -311,7 +316,8 @@ export async function GET(request: NextRequest) {
             customer:customers(name, email)
           )
         )
-      `)
+      `
+      )
       .gte('created_at', startDate)
       .order('created_at', { ascending: false });
 
@@ -350,7 +356,8 @@ export async function GET(request: NextRequest) {
     // Get failed payments that can be retried
     const { data: retryablePayments } = await supabase
       .from('billing_events')
-      .select(`
+      .select(
+        `
         id,
         amount,
         created_at,
@@ -360,7 +367,8 @@ export async function GET(request: NextRequest) {
           plan:subscription_plans(max_retry_attempts)
         ),
         payment_retry_logs(retry_attempt)
-      `)
+      `
+      )
       .eq('status', 'payment_failed')
       .gte('created_at', startDate);
 

@@ -258,10 +258,12 @@ export class DataRetentionManager {
       // Get expired retention records
       let query = this.supabase
         .from('lgpd_retention_records')
-        .select(`
+        .select(
+          `
           *,
           lgpd_retention_policies!inner(*)
-        `)
+        `
+        )
         .lt('retentionExpiresAt', now.toISOString())
         .in('status', ['active', 'expiring_soon']);
 
@@ -384,10 +386,12 @@ export class DataRetentionManager {
       // Get records expiring soon
       let query = this.supabase
         .from('lgpd_retention_records')
-        .select(`
+        .select(
+          `
           *,
           lgpd_retention_policies!inner(*)
-        `)
+        `
+        )
         .eq('status', 'active');
 
       if (clinicId) {
@@ -461,10 +465,12 @@ export class DataRetentionManager {
     try {
       let query = this.supabase
         .from('lgpd_retention_records')
-        .select(`
+        .select(
+          `
           *,
           lgpd_retention_policies!inner(*)
-        `)
+        `
+        )
         .eq('lgpd_retention_policies.clinicId', clinicId);
 
       if (startDate) {

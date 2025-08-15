@@ -243,11 +243,13 @@ export class SubscriptionBillingService {
     try {
       const { data: subscription, error } = await this.supabase
         .from('subscriptions')
-        .select(`
+        .select(
+          `
           *,
           subscription_plans(*),
           customers(*)
-        `)
+        `
+        )
         .eq('id', subscriptionId)
         .single();
 
@@ -352,10 +354,12 @@ export class SubscriptionBillingService {
     try {
       const { data: subscription, error } = await this.supabase
         .from('subscriptions')
-        .select(`
+        .select(
+          `
           *,
           subscription_plans(*)
-        `)
+        `
+        )
         .eq('id', subscriptionId)
         .single();
 

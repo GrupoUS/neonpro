@@ -82,7 +82,8 @@ export async function GET(request: NextRequest) {
     // Get consents with pagination
     const { data: consents, error: consentsError } = await supabase
       .from('lgpd_consents')
-      .select(`
+      .select(
+        `
         id,
         user_id,
         purposes,
@@ -94,7 +95,8 @@ export async function GET(request: NextRequest) {
         metadata,
         created_at,
         updated_at
-      `)
+      `
+      )
       .eq('user_id', targetUserId)
       .order('created_at', { ascending: false })
       .range(

@@ -124,14 +124,16 @@ export class MarketingCampaignService {
     try {
       const { data: campaign, error } = await this.supabase
         .from('marketing_campaigns')
-        .select(`
+        .select(
+          `
           *,
           campaign_templates (*),
           campaign_executions (*),
           campaign_ab_tests (*),
           campaign_triggers (*),
           campaign_performance_metrics (*)
-        `)
+        `
+        )
         .eq('id', id)
         .single();
 

@@ -67,7 +67,8 @@ export async function GET(_request: NextRequest) {
     // Retrieve all social media platforms
     const { data: platforms, error } = await supabase
       .from('social_media_platforms')
-      .select(`
+      .select(
+        `
         id,
         platform_name,
         platform_display_name,
@@ -79,7 +80,8 @@ export async function GET(_request: NextRequest) {
         webhook_capabilities,
         created_at,
         updated_at
-      `)
+      `
+      )
       .order('platform_display_name');
 
     if (error) {

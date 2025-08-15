@@ -30,7 +30,8 @@ export const appointmentConfirmationEmail = task({
 
       const { data: appointment, error } = await supabase
         .from('appointments')
-        .select(`
+        .select(
+          `
           id,
           appointment_date,
           appointment_time,
@@ -50,7 +51,8 @@ export const appointmentConfirmationEmail = task({
             duration_minutes,
             price
           )
-        `)
+        `
+        )
         .eq('id', payload.appointmentId)
         .single();
 

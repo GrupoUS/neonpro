@@ -56,7 +56,9 @@ async function executeMigrations() {
           statement.toLowerCase().includes('commit') ||
           statement.toLowerCase().includes('end')
         ) {
-          console.log(`⏭️  Skipping transaction control statement ${index + 1}`);
+          console.log(
+            `⏭️  Skipping transaction control statement ${index + 1}`
+          );
           continue;
         }
 

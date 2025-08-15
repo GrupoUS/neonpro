@@ -51,12 +51,14 @@ export async function GET(request: NextRequest) {
     // Build query
     let query = supabase
       .from('subscriptions')
-      .select(`
+      .select(
+        `
         *,
         plan:subscription_plans(*),
         customer:customers(*),
         usage:subscription_usage(*)
-      `)
+      `
+      )
       .order('created_at', { ascending: false })
       .range((page - 1) * limit, page * limit - 1);
 

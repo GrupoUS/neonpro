@@ -508,10 +508,12 @@ export class StockOutputManager {
       // 1. Get standard procedure materials
       const { data: standardMaterials } = await this.supabase
         .from('procedimentos_materiais')
-        .select(`
+        .select(
+          `
           *,
           produto:produtos_estoque(nome, codigo_interno, categoria)
-        `)
+        `
+        )
         .eq('procedimento_id', data.procedimento_id)
         .eq('ativo', true);
 

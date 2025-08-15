@@ -173,10 +173,12 @@ export class NotificationService {
 
       const { data: payables, error } = await supabase
         .from('accounts_payable')
-        .select(`
+        .select(
+          `
           *,
           vendor:vendors(*)
-        `)
+        `
+        )
         .eq('clinic_id', clinicId)
         .in('status', ['pending', 'approved'])
         .lte(

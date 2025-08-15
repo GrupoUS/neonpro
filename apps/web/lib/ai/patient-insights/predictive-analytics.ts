@@ -250,7 +250,8 @@ export class PredictiveAnalyticsEngine {
   private async getPatientData(patientId: string) {
     const { data } = await this.supabase
       .from('patients')
-      .select(`
+      .select(
+        `
         *,
         medical_history (*),
         lifestyle_data (*),
@@ -259,7 +260,8 @@ export class PredictiveAnalyticsEngine {
         vital_signs (*),
         allergies (*),
         medications (*)
-      `)
+      `
+      )
       .eq('id', patientId)
       .single();
 

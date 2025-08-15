@@ -60,13 +60,15 @@ export function useSuppliers(
     queryFn: async () => {
       let query = supabase
         .from('suppliers')
-        .select(`
+        .select(
+          `
           *,
           contacts:supplier_contacts(*),
           products:supplier_products(*),
           contracts:supplier_contracts(*),
           performance:supplier_performance_metrics(*)
-        `)
+        `
+        )
         .eq('clinic_id', effectiveClinicId)
         .order('name');
 
@@ -258,14 +260,16 @@ export function useSupplier(supplierId: string) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('suppliers')
-        .select(`
+        .select(
+          `
           *,
           contacts:supplier_contacts(*),
           products:supplier_products(*),
           contracts:supplier_contracts(*),
           performance:supplier_performance_metrics(*),
           communications:supplier_communications(*)
-        `)
+        `
+        )
         .eq('id', supplierId)
         .single();
 
@@ -473,11 +477,13 @@ export function useProcurementRequests(
     queryFn: async () => {
       let query = supabase
         .from('procurement_requests')
-        .select(`
+        .select(
+          `
           *,
           items:procurement_items(*),
           bids:supplier_bids(*)
-        `)
+        `
+        )
         .eq('clinic_id', effectiveClinicId)
         .order('created_at', { ascending: false });
 
@@ -558,12 +564,14 @@ export function useSupplierBids(procurementRequestId: string) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('supplier_bids')
-        .select(`
+        .select(
+          `
           *,
           supplier:suppliers(*),
           bid_items:bid_items(*),
           documents:bid_documents(*)
-        `)
+        `
+        )
         .eq('procurement_request_id', procurementRequestId)
         .order('submitted_at', { ascending: false });
 
@@ -657,12 +665,14 @@ export function useQualityIssues(
     queryFn: async () => {
       let query = supabase
         .from('quality_issues')
-        .select(`
+        .select(
+          `
           *,
           supplier:suppliers(*),
           corrective_actions:corrective_actions(*),
           documents:quality_documents(*)
-        `)
+        `
+        )
         .eq('clinic_id', effectiveClinicId)
         .order('reported_date', { ascending: false });
 
@@ -816,11 +826,13 @@ export function useSupplierContracts(
     queryFn: async () => {
       let query = supabase
         .from('supplier_contracts')
-        .select(`
+        .select(
+          `
           *,
           supplier:suppliers(*),
           amendments:contract_amendments(*)
-        `)
+        `
+        )
         .eq('clinic_id', effectiveClinicId)
         .order('start_date', { ascending: false });
 
@@ -890,10 +902,12 @@ export function useSupplierCommunications(supplierId: string) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('supplier_communications')
-        .select(`
+        .select(
+          `
           *,
           attachments:communication_attachments(*)
-        `)
+        `
+        )
         .eq('supplier_id', supplierId)
         .order('timestamp', { ascending: false });
 
@@ -1034,10 +1048,12 @@ export function useSupplierProcurement(supplierId: string, clinicId?: string) {
       // Get procurement history
       const { data: procurements } = await supabase
         .from('supplier_products')
-        .select(`
+        .select(
+          `
           *,
           supplier_contracts!inner(*)
-        `)
+        `
+        )
         .eq('supplier_id', supplierId);
 
       return {

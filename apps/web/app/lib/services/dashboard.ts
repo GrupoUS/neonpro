@@ -112,12 +112,14 @@ export class DashboardService {
     const supabase = await this.getSupabase();
     let query = supabase
       .from('dashboard_configurations')
-      .select(`
+      .select(
+        `
         *,
         dashboard_widgets (
           *
         )
-      `)
+      `
+      )
       .eq('user_id', userId);
 
     if (configId) {
@@ -292,7 +294,8 @@ export class DashboardService {
     const supabase = await this.getSupabase();
     let query = supabase
       .from('appointments')
-      .select(`
+      .select(
+        `
         total_amount,
         paid_amount,
         appointment_date,
@@ -301,7 +304,8 @@ export class DashboardService {
           name,
           price
         )
-      `)
+      `
+      )
       .eq('status', 'completed');
 
     if (clinicId) {

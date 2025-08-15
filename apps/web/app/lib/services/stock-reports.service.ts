@@ -164,7 +164,8 @@ export class StockReportsService {
       // Consultar dados de consumo baseado no material_usage
       let query = supabase
         .from('material_usage')
-        .select(`
+        .select(
+          `
           *,
           profiles:user_id (name, email),
           appointments:appointment_id (
@@ -172,7 +173,8 @@ export class StockReportsService {
             appointment_date,
             status
           )
-        `)
+        `
+        )
         .eq('clinic_id', clinic_id);
 
       // Aplicar filtros de data

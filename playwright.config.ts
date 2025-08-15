@@ -78,8 +78,8 @@ export default defineConfig({
   },
 
   /* Global setup and teardown */
-  globalSetup: require.resolve('./playwright/global-setup.ts'),
-  globalTeardown: require.resolve('./playwright/global-teardown.ts'),
+  // globalSetup: require.resolve('./playwright/global-setup.ts'),
+  // globalTeardown: require.resolve('./playwright/global-teardown.ts'),
 
   /* Test timeout */
   timeout: 30 * 1000,

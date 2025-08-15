@@ -341,7 +341,8 @@ export class HealthcareRBACMiddleware {
     try {
       const { data, error } = await this.supabase
         .from('user_roles')
-        .select(`
+        .select(
+          `
           *,
           medical_licenses (
             license_number,
@@ -351,7 +352,8 @@ export class HealthcareRBACMiddleware {
             active,
             expires_at
           )
-        `)
+        `
+        )
         .eq('user_id', userId)
         .eq('active', true)
         .single();

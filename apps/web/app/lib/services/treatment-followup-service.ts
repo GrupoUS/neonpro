@@ -107,13 +107,15 @@ class TreatmentFollowupService {
     try {
       const { data, error } = await this.supabase
         .from('treatment_followups')
-        .select(`
+        .select(
+          `
           *,
           template:followup_templates(*),
           patient:patients(id, name, phone, email, whatsapp),
           responses:followup_responses(*),
           attachments:followup_attachments(*)
-        `)
+        `
+        )
         .eq('id', id)
         .single();
 
@@ -145,11 +147,13 @@ class TreatmentFollowupService {
       const { data: newFollowup, error } = await this.supabase
         .from('treatment_followups')
         .insert(followupData)
-        .select(`
+        .select(
+          `
           *,
           template:followup_templates(*),
           patient:patients(id, name, phone, email, whatsapp)
-        `)
+        `
+        )
         .single();
 
       if (error) {
@@ -176,11 +180,13 @@ class TreatmentFollowupService {
         .from('treatment_followups')
         .update(updates)
         .eq('id', id)
-        .select(`
+        .select(
+          `
           *,
           template:followup_templates(*),
           patient:patients(id, name, phone, email, whatsapp)
-        `)
+        `
+        )
         .single();
 
       if (error) {

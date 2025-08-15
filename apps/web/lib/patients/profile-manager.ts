@@ -434,12 +434,14 @@ export class PatientProfileManager {
     try {
       let searchQuery = this.supabase
         .from('patient_search_index')
-        .select(`
+        .select(
+          `
           patient_id,
           full_name_normalized,
           email_normalized,
           phone_normalized
-        `)
+        `
+        )
         .limit(limit);
 
       // Apply text search

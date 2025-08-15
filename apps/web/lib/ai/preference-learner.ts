@@ -99,7 +99,8 @@ export class PatientPreferenceLearner {
   ): Promise<AppointmentData[]> {
     const { data, error } = await this.supabase
       .from('appointments')
-      .select(`
+      .select(
+        `
         id,
         patient_id,
         staff_id,
@@ -110,7 +111,8 @@ export class PatientPreferenceLearner {
         no_show,
         rescheduled_count,
         wait_time_minutes
-      `)
+      `
+      )
       .eq('patient_id', patientId)
       .order('appointment_time', { ascending: false })
       .limit(50); // Last 50 appointments

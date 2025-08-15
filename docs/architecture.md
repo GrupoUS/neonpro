@@ -11,6 +11,7 @@ This unified approach combines what would traditionally be separate backend and 
 **Current State**: NeonPro is based on Next.js 15 + Supabase starter template with significant customizations for the Brazilian healthcare/aesthetic clinic market.
 
 **Pre-configured choices and constraints**:
+
 - **Next.js 15** with App Router (non-negotiable)
 - **Supabase** as primary backend-as-a-service
 - **TypeScript** throughout the entire stack
@@ -19,6 +20,7 @@ This unified approach combines what would traditionally be separate backend and 
 - **PWA capabilities** for offline support
 
 **Architectural decisions already made**:
+
 - AI-First sharded microservices pattern
 - Zero-trust security model
 - Multi-tenant architecture with RLS
@@ -27,11 +29,11 @@ This unified approach combines what would traditionally be separate backend and 
 
 ### Change Log
 
-| Date | Version | Description | Author |
-|------|---------|-------------|---------|
-| 2025-01-26 | 2.0 | Complete architecture overhaul - unified fullstack documentation | Winston (Architect) |
-| 2025-01-20 | 1.5 | Compliance integration and security patterns | Dev Team |
-| 2024-12-15 | 1.0 | Initial architecture foundation | Product Team |
+| Date       | Version | Description                                                      | Author              |
+| ---------- | ------- | ---------------------------------------------------------------- | ------------------- |
+| 2025-01-26 | 2.0     | Complete architecture overhaul - unified fullstack documentation | Winston (Architect) |
+| 2025-01-20 | 1.5     | Compliance integration and security patterns                     | Dev Team            |
+| 2024-12-15 | 1.0     | Initial architecture foundation                                  | Product Team        |
 
 ## High Level Architecture
 
@@ -44,6 +46,7 @@ NeonPro implements an **AI-First Edge-Native SaaS architecture** designed specif
 **Platform:** Vercel + Supabase + AWS (hybrid edge-cloud)
 
 **Key Services:**
+
 - **Frontend Hosting**: Vercel Edge Network with global CDN
 - **Edge Compute**: Vercel Edge Functions (v8 runtime)
 - **Primary Database**: Supabase PostgreSQL with real-time subscriptions
@@ -54,6 +57,7 @@ NeonPro implements an **AI-First Edge-Native SaaS architecture** designed specif
 - **Monitoring**: Vercel Analytics + Supabase Insights + Sentry
 
 **Deployment Host and Regions:**
+
 - **Primary**: South America (São Paulo) - sa-east-1
 - **Secondary**: North America (Virginia) - us-east-1
 - **Edge**: Global Vercel Edge Network (180+ locations)
@@ -65,6 +69,7 @@ NeonPro implements an **AI-First Edge-Native SaaS architecture** designed specif
 **Monorepo Tool:** PNPM Workspaces + Turborepo (optimized for Vercel deployment)
 
 **Package Organization:**
+
 ```
 neonpro/
 ├── apps/
@@ -106,6 +111,7 @@ neonpro/
 ```
 
 **Shared Package Architecture:**
+
 - **@neonpro/ui**: Reusable UI components built with shadcn/ui and Radix UI
 - **@neonpro/utils**: Common utility functions for date handling, validation, and formatting
 - **@neonpro/types**: Shared TypeScript interfaces and types for healthcare entities
@@ -120,67 +126,67 @@ graph TB
         P[👩‍💼 Patients]
         A[🤖 AI Agents]
     end
-    
+
     subgraph "Edge Layer (Vercel)"
         CDN[Global CDN]
         EF[Edge Functions]
         MW[Auth Middleware]
     end
-    
+
     subgraph "Application Layer"
         UI[Next.js 15 App]
         SC[Server Components]
         CC[Client Components]
     end
-    
+
     subgraph "API Layer"
         REST[REST API Routes]
         WS[WebSocket/Realtime]
         AI_API[AI Integration Layer]
     end
-    
+
     subgraph "Data Layer (Supabase)"
         PG[(PostgreSQL)]
         RLS[Row Level Security]
         STORAGE[File Storage]
         AUTH[Authentication]
     end
-    
+
     subgraph "Compliance Layer"
         LGPD[LGPD Controller]
         ANVISA[ANVISA Reporter]
         CFM[CFM Validator]
     end
-    
+
     subgraph "External Services"
         OPENAI[OpenAI GPT-4]
         CLAUDE[Anthropic Claude]
         PAYMENT[Payment Gateway]
         EMAIL[Email Service]
     end
-    
+
     U --> CDN
     P --> CDN
     A --> EF
-    
+
     CDN --> MW
     MW --> UI
-    
+
     UI --> SC
     UI --> CC
     SC --> REST
     CC --> WS
-    
+
     REST --> PG
     WS --> PG
     AI_API --> OPENAI
     AI_API --> CLAUDE
-    
+
     PG --> RLS
     RLS --> LGPD
     RLS --> ANVISA
     RLS --> CFM
-    
+
     AUTH --> STORAGE
     REST --> PAYMENT
     REST --> EMAIL
@@ -206,31 +212,31 @@ graph TB
 
 This is the DEFINITIVE technology selection for the entire project. All development must use these exact versions.
 
-| Category | Technology | Version | Purpose | Rationale |
-|----------|------------|---------|----------|-----------|
-| Frontend Language | TypeScript | 5.6+ | Type-safe development | Healthcare data requires strict typing and error prevention |
-| Frontend Framework | Next.js | 15.0+ | React SSR/SSG with App Router | Edge rendering, SEO, and performance for clinic management |
-| UI Component Library | shadcn/ui | Latest | Customizable components | Accessible, customizable, and consistent with design system |
-| State Management | Zustand + React Query | 4.5+ / 5.0+ | Client state + server state | Simplified state management with optimistic updates |
-| Backend Language | TypeScript | 5.6+ | Unified type safety | Shared types between frontend and backend |
-| Backend Framework | Next.js API Routes + Edge Functions | 15.0+ | Serverless API endpoints | Scalable, edge-optimized for low latency |
-| API Style | REST + WebSocket | OpenAPI 3.0 | RESTful with real-time updates | Standard REST with real-time for appointment updates |
-| Database | Supabase PostgreSQL | 15+ | Primary data store with RLS | Multi-tenant isolation and real-time subscriptions |
-| Cache | Vercel Edge + Supabase Cache | Native | Multi-layer caching | Edge caching + database query caching |
-| File Storage | Supabase Storage | Latest | Patient files and media | HIPAA-compliant storage with access controls |
-| Authentication | Supabase Auth + Custom RBAC | Latest | Multi-factor authentication | Healthcare-grade security with role-based access |
-| Frontend Testing | Jest + Testing Library | 29+ / 14+ | Unit and integration tests | Comprehensive testing for healthcare workflows |
-| Backend Testing | Jest + Supertest | 29+ / 6+ | API endpoint testing | Ensure API reliability for critical clinic operations |
-| E2E Testing | Playwright | 1.40+ | End-to-end testing | Full user journey testing for compliance validation |
-| Package Manager | PNPM | 8.15+ | Monorepo package management | Fast, disk-efficient package management with workspaces |
-| Build Orchestrator | Turborepo | 2.5+ | Monorepo build coordination | Intelligent caching and parallel builds across packages |
-| Build Tool | Next.js + Turbopack | 15.0+ | Development and production builds | Optimized builds with edge deployment |
-| Bundler | Built-in Next.js | 15.0+ | Asset bundling | Optimized for Vercel deployment |
-| IaC Tool | Vercel CLI + Supabase CLI | Latest | Infrastructure as code | Declarative infrastructure management |
-| CI/CD | GitHub Actions + Vercel | Latest | Automated deployment | Git-based deployment with preview environments |
-| Monitoring | Vercel Analytics + Sentry | Latest | Performance and error tracking | Real-time monitoring for healthcare applications |
-| Logging | Vercel Functions + Supabase | Latest | Centralized logging | Audit trails for compliance reporting |
-| CSS Framework | Tailwind CSS | 3.4+ | Utility-first styling | Consistent design system with customization flexibility |
+| Category             | Technology                          | Version     | Purpose                           | Rationale                                                   |
+| -------------------- | ----------------------------------- | ----------- | --------------------------------- | ----------------------------------------------------------- |
+| Frontend Language    | TypeScript                          | 5.6+        | Type-safe development             | Healthcare data requires strict typing and error prevention |
+| Frontend Framework   | Next.js                             | 15.0+       | React SSR/SSG with App Router     | Edge rendering, SEO, and performance for clinic management  |
+| UI Component Library | shadcn/ui                           | Latest      | Customizable components           | Accessible, customizable, and consistent with design system |
+| State Management     | Zustand + React Query               | 4.5+ / 5.0+ | Client state + server state       | Simplified state management with optimistic updates         |
+| Backend Language     | TypeScript                          | 5.6+        | Unified type safety               | Shared types between frontend and backend                   |
+| Backend Framework    | Next.js API Routes + Edge Functions | 15.0+       | Serverless API endpoints          | Scalable, edge-optimized for low latency                    |
+| API Style            | REST + WebSocket                    | OpenAPI 3.0 | RESTful with real-time updates    | Standard REST with real-time for appointment updates        |
+| Database             | Supabase PostgreSQL                 | 15+         | Primary data store with RLS       | Multi-tenant isolation and real-time subscriptions          |
+| Cache                | Vercel Edge + Supabase Cache        | Native      | Multi-layer caching               | Edge caching + database query caching                       |
+| File Storage         | Supabase Storage                    | Latest      | Patient files and media           | HIPAA-compliant storage with access controls                |
+| Authentication       | Supabase Auth + Custom RBAC         | Latest      | Multi-factor authentication       | Healthcare-grade security with role-based access            |
+| Frontend Testing     | Jest + Testing Library              | 29+ / 14+   | Unit and integration tests        | Comprehensive testing for healthcare workflows              |
+| Backend Testing      | Jest + Supertest                    | 29+ / 6+    | API endpoint testing              | Ensure API reliability for critical clinic operations       |
+| E2E Testing          | Playwright                          | 1.40+       | End-to-end testing                | Full user journey testing for compliance validation         |
+| Package Manager      | PNPM                                | 8.15+       | Monorepo package management       | Fast, disk-efficient package management with workspaces     |
+| Build Orchestrator   | Turborepo                           | 2.5+        | Monorepo build coordination       | Intelligent caching and parallel builds across packages     |
+| Build Tool           | Next.js + Turbopack                 | 15.0+       | Development and production builds | Optimized builds with edge deployment                       |
+| Bundler              | Built-in Next.js                    | 15.0+       | Asset bundling                    | Optimized for Vercel deployment                             |
+| IaC Tool             | Vercel CLI + Supabase CLI           | Latest      | Infrastructure as code            | Declarative infrastructure management                       |
+| CI/CD                | GitHub Actions + Vercel             | Latest      | Automated deployment              | Git-based deployment with preview environments              |
+| Monitoring           | Vercel Analytics + Sentry           | Latest      | Performance and error tracking    | Real-time monitoring for healthcare applications            |
+| Logging              | Vercel Functions + Supabase         | Latest      | Centralized logging               | Audit trails for compliance reporting                       |
+| CSS Framework        | Tailwind CSS                        | 3.4+        | Utility-first styling             | Consistent design system with customization flexibility     |
 
 ## Monorepo Architecture
 
@@ -323,6 +329,7 @@ The NeonPro system is built around key healthcare and business entities specific
 **Purpose:** Represents the clinic organization with compliance and operational data
 
 **Key Attributes:**
+
 - id: string (UUID) - Unique clinic identifier
 - name: string - Clinic name
 - cnpj: string - Brazilian business registration
@@ -356,6 +363,7 @@ interface ClinicSettings {
 ```
 
 **Relationships:**
+
 - Has many Users (staff members)
 - Has many Patients
 - Has many Services
@@ -366,6 +374,7 @@ interface ClinicSettings {
 **Purpose:** Stores patient information with LGPD compliance and consent management
 
 **Key Attributes:**
+
 - id: string (UUID) - Unique patient identifier
 - cpf: string - Brazilian taxpayer ID (encrypted)
 - name: string - Patient full name
@@ -410,6 +419,7 @@ interface ConsentForm {
 ```
 
 **Relationships:**
+
 - Belongs to Clinic
 - Has many Appointments
 - Has many TreatmentPlans
@@ -420,6 +430,7 @@ interface ConsentForm {
 **Purpose:** Defines available procedures and treatments with compliance requirements
 
 **Key Attributes:**
+
 - id: string (UUID) - Unique service identifier
 - name: string - Service name
 - category: enum - Service category (aesthetic, medical, etc.)
@@ -457,6 +468,7 @@ interface CFMRequirements {
 ```
 
 **Relationships:**
+
 - Belongs to Clinic
 - Has many Appointments
 - Has many TreatmentPlans
@@ -467,6 +479,7 @@ interface CFMRequirements {
 **Purpose:** Manages appointment scheduling with compliance tracking and real-time updates
 
 **Key Attributes:**
+
 - id: string (UUID) - Unique appointment identifier
 - patient_id: string - Reference to patient
 - service_id: string - Reference to service
@@ -484,7 +497,13 @@ interface Appointment {
   professional_id: string;
   scheduled_at: string;
   duration_minutes: number;
-  status: 'scheduled' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled' | 'no_show';
+  status:
+    | 'scheduled'
+    | 'confirmed'
+    | 'in_progress'
+    | 'completed'
+    | 'cancelled'
+    | 'no_show';
   notes: string;
   compliance_checks: ComplianceChecks;
   payment_info: PaymentInfo;
@@ -512,6 +531,7 @@ interface PaymentInfo {
 ```
 
 **Relationships:**
+
 - Belongs to Clinic
 - Belongs to Patient
 - Belongs to Service
@@ -524,6 +544,7 @@ interface PaymentInfo {
 **Purpose:** Staff members with role-based access and credential tracking
 
 **Key Attributes:**
+
 - id: string (UUID) - Unique user identifier
 - clinic_id: string - Reference to clinic
 - email: string - Login email
@@ -570,6 +591,7 @@ interface Permission {
 ```
 
 **Relationships:**
+
 - Belongs to Clinic
 - Has many Appointments (as professional)
 - Has many AuditLogs
@@ -579,7 +601,7 @@ interface Permission {
 
 ### REST API Specification
 
-```yaml
+````yaml
 openapi: 3.0.0
 info:
   title: NeonPro Clinic Management API
@@ -703,7 +725,7 @@ paths:
                       $ref: '#/components/schemas/Patient'
                   pagination:
                     $ref: '#/components/schemas/Pagination'
-    
+
     post:
       summary: Create new patient
       tags: [Patients]
@@ -745,7 +767,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Patient'
-    
+
     put:
       summary: Update patient
       tags: [Patients]
@@ -814,7 +836,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Appointment'
-    
+
     post:
       summary: Create new appointment
       tags: [Appointments]
@@ -1207,7 +1229,7 @@ type Subscription {
   patientUpdated(patientId: ID!): Patient
   complianceAlert(clinicId: ID!): ComplianceAlert
 }
-```
+````
 
 ### Real-time API (WebSocket)
 
@@ -1218,21 +1240,31 @@ interface SocketEvents {
   'appointment:created': { appointment: Appointment };
   'appointment:updated': { appointment: Appointment };
   'appointment:cancelled': { appointmentId: string; reason: string };
-  'appointment:reminder': { appointment: Appointment; timeToAppointment: number };
-  
+  'appointment:reminder': {
+    appointment: Appointment;
+    timeToAppointment: number;
+  };
+
   // Patient Updates
   'patient:checkin': { patientId: string; appointmentId: string };
   'patient:checkout': { patientId: string; appointmentId: string };
-  
+
   // Staff Notifications
-  'staff:notification': { userId: string; message: string; priority: 'low' | 'medium' | 'high' };
+  'staff:notification': {
+    userId: string;
+    message: string;
+    priority: 'low' | 'medium' | 'high';
+  };
   'staff:schedule_change': { userId: string; changes: ScheduleChange[] };
-  
+
   // Compliance Alerts
-  'compliance:license_expiry': { type: 'anvisa' | 'cfm' | 'certification'; expiryDate: string };
+  'compliance:license_expiry': {
+    type: 'anvisa' | 'cfm' | 'certification';
+    expiryDate: string;
+  };
   'compliance:consent_required': { patientId: string; consentType: string };
   'compliance:audit_log': { action: string; userId: string; timestamp: string };
-  
+
   // System Events
   'system:maintenance': { scheduledAt: string; estimatedDuration: number };
   'system:backup_complete': { timestamp: string; status: 'success' | 'failed' };
@@ -1244,6 +1276,7 @@ interface SocketEvents {
 ### Authentication & Authorization
 
 #### Multi-Factor Authentication (MFA)
+
 ```mermaid
 sequenceDiagram
     participant User
@@ -1251,7 +1284,7 @@ sequenceDiagram
     participant Auth Service
     participant MFA Provider
     participant Database
-    
+
     User->>Frontend: Login with email/password
     Frontend->>Auth Service: Authenticate
     Auth Service->>Database: Verify credentials
@@ -1267,6 +1300,7 @@ sequenceDiagram
 ```
 
 #### Role-Based Access Control (RBAC)
+
 ```typescript
 interface RolePermissions {
   admin: {
@@ -1278,7 +1312,7 @@ interface RolePermissions {
     compliance: ['manage', 'audit', 'configure'];
     billing: ['create', 'read', 'update', 'process'];
   };
-  
+
   doctor: {
     patients: ['create', 'read', 'update'];
     appointments: ['create', 'read', 'update'];
@@ -1287,7 +1321,7 @@ interface RolePermissions {
     compliance: ['view', 'record'];
     medical_records: ['create', 'read', 'update'];
   };
-  
+
   nurse: {
     patients: ['read', 'update'];
     appointments: ['read', 'update'];
@@ -1295,14 +1329,14 @@ interface RolePermissions {
     compliance: ['view', 'record'];
     medical_records: ['read', 'update'];
   };
-  
+
   receptionist: {
     patients: ['create', 'read', 'update'];
     appointments: ['create', 'read', 'update'];
     services: ['read'];
     billing: ['create', 'read'];
   };
-  
+
   manager: {
     patients: ['read', 'export'];
     appointments: ['read', 'export'];
@@ -1317,12 +1351,14 @@ interface RolePermissions {
 ### Data Security
 
 #### Encryption Standards
+
 - **At Rest**: AES-256 encryption for sensitive data (CPF, medical records, payment info)
 - **In Transit**: TLS 1.3 for all API communications
 - **Key Management**: AWS KMS for encryption key rotation and management
 - **Database**: Supabase row-level security with encrypted columns for PII
 
 #### Privacy Controls (LGPD Compliance)
+
 ```typescript
 interface LGPDControls {
   dataMinimization: {
@@ -1331,14 +1367,14 @@ interface LGPDControls {
     optionalFields: string[];
     retentionPeriod: number; // in months
   };
-  
+
   consentManagement: {
     purposes: ('treatment' | 'marketing' | 'analytics' | 'photography')[];
     granularConsent: boolean;
     withdrawalMechanism: 'immediate' | 'scheduled';
     consentExpiry: number; // in months
   };
-  
+
   dataSubjectRights: {
     accessRequest: boolean; // Right to access data
     rectification: boolean; // Right to correct data
@@ -1346,7 +1382,7 @@ interface LGPDControls {
     portability: boolean; // Right to data portability
     objection: boolean; // Right to object to processing
   };
-  
+
   auditTrail: {
     dataAccess: boolean;
     dataModification: boolean;
@@ -1357,18 +1393,19 @@ interface LGPDControls {
 ```
 
 #### Row Level Security (RLS) Policies
+
 ```sql
 -- Patients can only see their own data
 CREATE POLICY "patients_own_data" ON patients
   FOR ALL TO authenticated
   USING (
     auth.uid() IN (
-      SELECT user_id FROM patient_user_mapping 
+      SELECT user_id FROM patient_user_mapping
       WHERE patient_id = patients.id
     ) OR
     auth.uid() IN (
-      SELECT user_id FROM users 
-      WHERE clinic_id = patients.clinic_id 
+      SELECT user_id FROM users
+      WHERE clinic_id = patients.clinic_id
       AND role IN ('admin', 'doctor', 'nurse', 'manager')
     )
   );
@@ -1378,7 +1415,7 @@ CREATE POLICY "staff_clinic_patients" ON patients
   FOR ALL TO authenticated
   USING (
     clinic_id IN (
-      SELECT clinic_id FROM users 
+      SELECT clinic_id FROM users
       WHERE user_id = auth.uid()
     )
   );
@@ -1388,7 +1425,7 @@ CREATE POLICY "appointments_clinic_access" ON appointments
   FOR ALL TO authenticated
   USING (
     clinic_id IN (
-      SELECT clinic_id FROM users 
+      SELECT clinic_id FROM users
       WHERE user_id = auth.uid()
     ) AND
     (
@@ -1421,12 +1458,14 @@ CREATE POLICY "medical_records_restricted" ON medical_records
 ### Compliance Security
 
 #### ANVISA Compliance Security
+
 - **Audit Logging**: All procedure-related actions logged with timestamp and user
 - **Equipment Tracking**: Digital certificates for equipment calibration and maintenance
 - **Adverse Event Reporting**: Automated reporting workflow with data validation
 - **Document Management**: Secure storage and versioning of compliance documents
 
 #### CFM Compliance Security
+
 - **Professional Verification**: Digital verification of medical licenses and certifications
 - **Procedure Authorization**: Role-based authorization for medical procedures
 - **Telemedicine Security**: End-to-end encryption for remote consultations
@@ -1435,6 +1474,7 @@ CREATE POLICY "medical_records_restricted" ON medical_records
 ### Infrastructure Security
 
 #### Network Security
+
 ```yaml
 security_layers:
   edge:
@@ -1442,19 +1482,19 @@ security_layers:
     - Web Application Firewall (WAF)
     - Rate limiting per IP/user
     - Geo-blocking for suspicious regions
-    
+
   application:
     - JWT token authentication
     - API rate limiting
     - Input validation and sanitization
     - CORS configuration
-    
+
   database:
     - VPC isolation
     - Private subnets
     - Connection pooling with SSL
     - Automated backups with encryption
-    
+
   monitoring:
     - Real-time threat detection
     - Anomaly detection for data access
@@ -1463,6 +1503,7 @@ security_layers:
 ```
 
 #### Security Monitoring
+
 ```typescript
 interface SecurityMonitoring {
   threatDetection: {
@@ -1471,14 +1512,14 @@ interface SecurityMonitoring {
     privilegeEscalation: boolean;
     unauthorizedAccess: boolean;
   };
-  
+
   complianceMonitoring: {
     dataRetentionViolations: boolean;
     consentViolations: boolean;
     accessLogAudits: boolean;
     privacyPolicyCompliance: boolean;
   };
-  
+
   incidentResponse: {
     automaticBlocking: boolean;
     alertChannels: ('email' | 'sms' | 'slack' | 'webhook')[];
@@ -1493,17 +1534,19 @@ interface SecurityMonitoring {
 ### Testing Strategy
 
 #### Automated Testing Pyramid
+
 ```mermaid
 pyramid TD
     A[E2E Tests<br/>10%] --> B[Integration Tests<br/>20%]
     B --> C[Unit Tests<br/>70%]
-    
+
     style A fill:#ff6b6b
     style B fill:#4ecdc4
     style C fill:#45b7d1
 ```
 
 #### Test Coverage Requirements
+
 - **Unit Tests**: ≥90% code coverage for business logic
 - **Integration Tests**: All API endpoints and database operations
 - **E2E Tests**: Critical user journeys and compliance workflows
@@ -1511,6 +1554,7 @@ pyramid TD
 - **Performance Tests**: Load testing for peak clinic hours
 
 #### Test Categories
+
 ```typescript
 interface TestSuites {
   unit: {
@@ -1519,28 +1563,28 @@ interface TestSuites {
     components: string[];
     services: string[];
   };
-  
+
   integration: {
     apiEndpoints: string[];
     databaseOperations: string[];
     externalServices: string[];
     authenticationFlows: string[];
   };
-  
+
   endToEnd: {
     patientRegistration: string[];
     appointmentBooking: string[];
     complianceWorkflows: string[];
     billingProcesses: string[];
   };
-  
+
   security: {
     authentication: string[];
     authorization: string[];
     dataProtection: string[];
     complianceValidation: string[];
   };
-  
+
   performance: {
     loadTesting: string[];
     stressTesting: string[];
@@ -1553,6 +1597,7 @@ interface TestSuites {
 ### Code Quality Standards
 
 #### Code Quality Metrics
+
 - **Maintainability Index**: ≥85
 - **Cyclomatic Complexity**: ≤10 per function
 - **Technical Debt Ratio**: ≤5%
@@ -1560,27 +1605,28 @@ interface TestSuites {
 - **Security Hotspots**: 0 high/critical issues
 
 #### Quality Gates
+
 ```yaml
 quality_gates:
   sonarqube:
-    coverage: ">= 85%"
-    maintainability: "A"
-    reliability: "A"
-    security: "A"
-    duplicated_lines: "< 3%"
-    
+    coverage: '>= 85%'
+    maintainability: 'A'
+    reliability: 'A'
+    security: 'A'
+    duplicated_lines: '< 3%'
+
   eslint:
     max_warnings: 0
     max_errors: 0
-    
+
   typescript:
     strict_mode: true
     no_implicit_any: true
     no_unused_vars: true
-    
+
   prettier:
     enforce_formatting: true
-    
+
   husky:
     pre_commit_hooks:
       - lint
@@ -1592,6 +1638,7 @@ quality_gates:
 ### Monitoring & Observability
 
 #### Application Performance Monitoring (APM)
+
 ```typescript
 interface MonitoringConfig {
   metrics: {
@@ -1604,7 +1651,7 @@ interface MonitoringConfig {
     throughput: number; // Requests per minute
     availability: number; // Uptime percentage
   };
-  
+
   alerts: {
     responseTimeThreshold: 2000; // ms
     errorRateThreshold: 1; // %
@@ -1612,7 +1659,7 @@ interface MonitoringConfig {
     diskUsageThreshold: 80; // %
     memoryUsageThreshold: 85; // %
   };
-  
+
   dashboards: {
     businessMetrics: string[];
     technicalMetrics: string[];
@@ -1623,12 +1670,14 @@ interface MonitoringConfig {
 ```
 
 #### Business Metrics Monitoring
+
 - **Patient Satisfaction**: Net Promoter Score (NPS) tracking
 - **Appointment Efficiency**: No-show rates, wait times, utilization
 - **Revenue Metrics**: Treatment conversion, average ticket, growth rates
 - **Compliance Metrics**: Consent completion rates, audit readiness scores
 
 #### Technical Metrics Monitoring
+
 - **Infrastructure**: CPU, memory, disk, network utilization
 - **Application**: Response times, error rates, database performance
 - **Security**: Failed login attempts, suspicious activities, compliance violations
@@ -1639,6 +1688,7 @@ interface MonitoringConfig {
 ### Infrastructure as Code (IaC)
 
 #### AWS Infrastructure
+
 ```yaml
 # terraform/main.tf
 provider "aws" {
@@ -1648,17 +1698,17 @@ provider "aws" {
 # VPC and Networking
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
-  
+
   name = "neonpro-vpc"
   cidr = "10.0.0.0/16"
-  
+
   azs             = ["sa-east-1a", "sa-east-1b", "sa-east-1c"]
   private_subnets = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
   public_subnets  = ["10.0.101.0/24", "10.0.102.0/24", "10.0.103.0/24"]
-  
+
   enable_nat_gateway = true
   enable_vpn_gateway = true
-  
+
   tags = {
     Environment = "production"
     Project     = "neonpro"
@@ -1668,22 +1718,22 @@ module "vpc" {
 # EKS Cluster
 module "eks" {
   source = "terraform-aws-modules/eks/aws"
-  
+
   cluster_name    = "neonpro-cluster"
   cluster_version = "1.28"
-  
+
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
-  
+
   # Node groups
   node_groups = {
     main = {
       desired_capacity = 3
       max_capacity     = 10
       min_capacity     = 2
-      
+
       instance_types = ["t3.medium"]
-      
+
       k8s_labels = {
         Environment = "production"
         Application = "neonpro"
@@ -1695,28 +1745,28 @@ module "eks" {
 # RDS for Supabase
 resource "aws_db_instance" "supabase" {
   identifier = "neonpro-supabase"
-  
+
   engine         = "postgres"
   engine_version = "15.4"
   instance_class = "db.t3.micro"
-  
+
   allocated_storage     = 20
   max_allocated_storage = 100
-  
+
   db_name  = "neonpro"
   username = var.db_username
   password = var.db_password
-  
+
   vpc_security_group_ids = [aws_security_group.rds.id]
   db_subnet_group_name   = aws_db_subnet_group.main.name
-  
+
   backup_retention_period = 7
   backup_window          = "03:00-04:00"
   maintenance_window     = "sun:04:00-sun:05:00"
-  
+
   skip_final_snapshot = false
   deletion_protection = true
-  
+
   tags = {
     Environment = "production"
     Project     = "neonpro"
@@ -1725,6 +1775,7 @@ resource "aws_db_instance" "supabase" {
 ```
 
 #### Kubernetes Deployment
+
 ```yaml
 # k8s/namespace.yaml
 apiVersion: v1
@@ -1733,7 +1784,7 @@ metadata:
   name: neonpro
   labels:
     name: neonpro
-    
+
 ---
 # k8s/deployment.yaml
 apiVersion: apps/v1
@@ -1752,43 +1803,43 @@ spec:
         app: neonpro-frontend
     spec:
       containers:
-      - name: frontend
-        image: neonpro/frontend:latest
-        ports:
-        - containerPort: 3000
-        env:
-        - name: NODE_ENV
-          value: "production"
-        - name: NEXT_PUBLIC_SUPABASE_URL
-          valueFrom:
-            secretKeyRef:
-              name: neonpro-secrets
-              key: supabase-url
-        - name: NEXT_PUBLIC_SUPABASE_ANON_KEY
-          valueFrom:
-            secretKeyRef:
-              name: neonpro-secrets
-              key: supabase-anon-key
-        resources:
-          requests:
-            memory: "128Mi"
-            cpu: "100m"
-          limits:
-            memory: "512Mi"
-            cpu: "500m"
-        livenessProbe:
-          httpGet:
-            path: /api/health
-            port: 3000
-          initialDelaySeconds: 30
-          periodSeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /api/ready
-            port: 3000
-          initialDelaySeconds: 5
-          periodSeconds: 5
-          
+        - name: frontend
+          image: neonpro/frontend:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: NODE_ENV
+              value: 'production'
+            - name: NEXT_PUBLIC_SUPABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: neonpro-secrets
+                  key: supabase-url
+            - name: NEXT_PUBLIC_SUPABASE_ANON_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: neonpro-secrets
+                  key: supabase-anon-key
+          resources:
+            requests:
+              memory: '128Mi'
+              cpu: '100m'
+            limits:
+              memory: '512Mi'
+              cpu: '500m'
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /api/ready
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+
 ---
 # k8s/service.yaml
 apiVersion: v1
@@ -1800,11 +1851,11 @@ spec:
   selector:
     app: neonpro-frontend
   ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 3000
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
   type: ClusterIP
-  
+
 ---
 # k8s/ingress.yaml
 apiVersion: networking.k8s.io/v1
@@ -1820,21 +1871,22 @@ metadata:
     alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:sa-east-1:ACCOUNT:certificate/CERT-ID
 spec:
   rules:
-  - host: neonpro.app
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: neonpro-frontend-service
-            port:
-              number: 80
+    - host: neonpro.app
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: neonpro-frontend-service
+                port:
+                  number: 80
 ```
 
 ### CI/CD Pipeline
 
 #### GitHub Actions Workflow
+
 ```yaml
 # .github/workflows/deploy.yml
 name: Deploy NeonPro
@@ -1854,109 +1906,110 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ env.NODE_VERSION }}
-        cache: 'pnpm'
-        
-    - name: Install dependencies
-      run: pnpm install --frozen-lockfile
-      
-    - name: Run tests
-      run: |
-        pnpm test:unit
-        pnpm test:integration
-        pnpm test:e2e:headless
-        
-    - name: Code quality checks
-      run: |
-        pnpm lint
-        pnpm type-check
-        pnpm security-audit
-        
-    - name: Build application
-      run: pnpm build
-      
-    - name: Upload coverage
-      uses: codecov/codecov-action@v3
-      
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run tests
+        run: |
+          pnpm test:unit
+          pnpm test:integration
+          pnpm test:e2e:headless
+
+      - name: Code quality checks
+        run: |
+          pnpm lint
+          pnpm type-check
+          pnpm security-audit
+
+      - name: Build application
+        run: pnpm build
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3
+
   security:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Run Trivy vulnerability scanner
-      uses: aquasecurity/trivy-action@master
-      with:
-        scan-type: 'fs'
-        scan-ref: '.'
-        
-    - name: Run OWASP ZAP scan
-      uses: zaproxy/action-full-scan@v0.4.0
-      with:
-        target: 'https://staging.neonpro.app'
-        
+      - uses: actions/checkout@v4
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+
+      - name: Run OWASP ZAP scan
+        uses: zaproxy/action-full-scan@v0.4.0
+        with:
+          target: 'https://staging.neonpro.app'
+
   build:
     needs: [test, security]
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Log in to Container Registry
-      uses: docker/login-action@v2
-      with:
-        registry: ${{ env.REGISTRY }}
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-        
-    - name: Extract metadata
-      id: meta
-      uses: docker/metadata-action@v4
-      with:
-        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-        
-    - name: Build and push Docker image
-      uses: docker/build-push-action@v4
-      with:
-        context: .
-        push: true
-        tags: ${{ steps.meta.outputs.tags }}
-        labels: ${{ steps.meta.outputs.labels }}
-        
+      - uses: actions/checkout@v4
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
   deploy:
     needs: build
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     environment: production
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v2
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: sa-east-1
-        
-    - name: Deploy to EKS
-      run: |
-        aws eks update-kubeconfig --region sa-east-1 --name neonpro-cluster
-        kubectl set image deployment/neonpro-frontend neonpro-frontend=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:main -n neonpro
-        kubectl rollout status deployment/neonpro-frontend -n neonpro
-        
-    - name: Run smoke tests
-      run: |
-        kubectl run smoke-test --image=curlimages/curl --rm -i --restart=Never -- \
-          curl -f http://neonpro-frontend-service.neonpro.svc.cluster.local/api/health
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: sa-east-1
+
+      - name: Deploy to EKS
+        run: |
+          aws eks update-kubeconfig --region sa-east-1 --name neonpro-cluster
+          kubectl set image deployment/neonpro-frontend neonpro-frontend=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:main -n neonpro
+          kubectl rollout status deployment/neonpro-frontend -n neonpro
+
+      - name: Run smoke tests
+        run: |
+          kubectl run smoke-test --image=curlimages/curl --rm -i --restart=Never -- \
+            curl -f http://neonpro-frontend-service.neonpro.svc.cluster.local/api/health
 ```
 
 ### Environment Management
 
 #### Environment Configuration
+
 ```typescript
 interface EnvironmentConfig {
   development: {
@@ -1974,7 +2027,7 @@ interface EnvironmentConfig {
       enableTestPayments: true;
     };
   };
-  
+
   staging: {
     database: {
       host: 'staging-db.neonpro.app';
@@ -1990,7 +2043,7 @@ interface EnvironmentConfig {
       enableTestPayments: true;
     };
   };
-  
+
   production: {
     database: {
       host: 'prod-db.neonpro.app';
@@ -2010,23 +2063,24 @@ interface EnvironmentConfig {
 ```
 
 #### Feature Flags
+
 ```typescript
 interface FeatureFlags {
   // Experimental Features
   newAppointmentFlow: boolean;
   aiPoweredScheduling: boolean;
   telemedicineIntegration: boolean;
-  
+
   // Compliance Features
   anvisa2024Updates: boolean;
   enhancedLGPDControls: boolean;
   cfmDigitalSignatures: boolean;
-  
+
   // Performance Features
   edgeCaching: boolean;
   realtimeSync: boolean;
   offlineMode: boolean;
-  
+
   // Business Features
   multiClinicSupport: boolean;
   advancedReporting: boolean;
@@ -2039,9 +2093,10 @@ interface FeatureFlags {
 ### Performance Targets
 
 #### Response Time Targets
-- **API Response Time**: 
+
+- **API Response Time**:
   - p50 ≤ 200ms
-  - p95 ≤ 500ms  
+  - p95 ≤ 500ms
   - p99 ≤ 1000ms
 - **Page Load Time**:
   - First Contentful Paint ≤ 1.5s
@@ -2053,6 +2108,7 @@ interface FeatureFlags {
   - Reporting queries ≤ 2000ms
 
 #### Scalability Targets
+
 - **Concurrent Users**: Support 10,000+ concurrent users
 - **Database Connections**: Handle 1,000+ concurrent connections
 - **Storage**: Scale to 100TB+ of patient data
@@ -2061,6 +2117,7 @@ interface FeatureFlags {
 ### Caching Strategy
 
 #### Multi-Layer Caching
+
 ```mermaid
 graph TD
     A[Client Browser] --> B[CDN Cache]
@@ -2068,7 +2125,7 @@ graph TD
     C --> D[Application Cache]
     D --> E[Database Cache]
     E --> F[Database]
-    
+
     style A fill:#e1f5fe
     style B fill:#f3e5f5
     style C fill:#fff3e0
@@ -2078,6 +2135,7 @@ graph TD
 ```
 
 #### Cache Configuration
+
 ```typescript
 interface CacheStrategy {
   browser: {
@@ -2085,20 +2143,20 @@ interface CacheStrategy {
     apiResponses: '5m'; // Dynamic API responses
     userProfile: '30m'; // User-specific data
   };
-  
+
   cdn: {
     staticContent: '1y'; // Static files
     apiResponses: '1h'; // Cacheable API responses
     images: '30d'; // User-uploaded images
   };
-  
+
   application: {
     patientData: '15m'; // Patient information
     appointmentData: '5m'; // Appointment schedules
     serviceData: '1h'; // Service catalog
     userSessions: '8h'; // User authentication
   };
-  
+
   database: {
     queryCache: '10m'; // Frequent queries
     connectionPool: 100; // Max connections
@@ -2110,29 +2168,31 @@ interface CacheStrategy {
 ### Database Optimization
 
 #### Query Optimization
+
 ```sql
 -- Optimized patient search with proper indexing
-CREATE INDEX CONCURRENTLY idx_patients_search 
+CREATE INDEX CONCURRENTLY idx_patients_search
 ON patients USING gin(
   to_tsvector('portuguese', name || ' ' || coalesce(email, '') || ' ' || coalesce(phone, ''))
 );
 
 -- Appointment scheduling optimization
-CREATE INDEX CONCURRENTLY idx_appointments_scheduling 
+CREATE INDEX CONCURRENTLY idx_appointments_scheduling
 ON appointments (clinic_id, scheduled_at, status)
 WHERE status IN ('scheduled', 'confirmed');
 
 -- Compliance reporting optimization
-CREATE INDEX CONCURRENTLY idx_compliance_reports 
+CREATE INDEX CONCURRENTLY idx_compliance_reports
 ON appointments (clinic_id, created_at, service_id)
 WHERE status = 'completed';
 
 -- Patient history optimization
-CREATE INDEX CONCURRENTLY idx_patient_history 
+CREATE INDEX CONCURRENTLY idx_patient_history
 ON appointments (patient_id, scheduled_at DESC);
 ```
 
 #### Database Partitioning
+
 ```sql
 -- Partition appointments by date for better performance
 CREATE TABLE appointments_2024 PARTITION OF appointments
@@ -2149,6 +2209,7 @@ FOR VALUES FROM ('2024-01-01') TO ('2024-02-01');
 ### Load Balancing & Auto-scaling
 
 #### Kubernetes HPA Configuration
+
 ```yaml
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
@@ -2163,34 +2224,35 @@ spec:
   minReplicas: 3
   maxReplicas: 50
   metrics:
-  - type: Resource
-    resource:
-      name: cpu
-      target:
-        type: Utilization
-        averageUtilization: 70
-  - type: Resource
-    resource:
-      name: memory
-      target:
-        type: Utilization
-        averageUtilization: 80
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80
   behavior:
     scaleDown:
       stabilizationWindowSeconds: 300
       policies:
-      - type: Percent
-        value: 10
-        periodSeconds: 60
+        - type: Percent
+          value: 10
+          periodSeconds: 60
     scaleUp:
       stabilizationWindowSeconds: 60
       policies:
-      - type: Percent
-        value: 50
-        periodSeconds: 60
+        - type: Percent
+          value: 50
+          periodSeconds: 60
 ```
 
 #### Database Read Replicas
+
 ```typescript
 interface DatabaseConfiguration {
   primary: {
@@ -2198,7 +2260,7 @@ interface DatabaseConfiguration {
     role: 'write';
     maxConnections: 100;
   };
-  
+
   readReplicas: [
     {
       host: 'neonpro-read-1.cluster-xxx.sa-east-1.rds.amazonaws.com';
@@ -2211,9 +2273,9 @@ interface DatabaseConfiguration {
       role: 'read';
       maxConnections: 50;
       region: 'sa-east-1b';
-    }
+    },
   ];
-  
+
   routing: {
     writes: 'primary';
     reads: 'round_robin'; // Round robin across read replicas
@@ -2225,6 +2287,7 @@ interface DatabaseConfiguration {
 ### Performance Monitoring
 
 #### Application Performance Monitoring
+
 ```typescript
 interface PerformanceMetrics {
   responseTime: {
@@ -2242,20 +2305,20 @@ interface PerformanceMetrics {
       interactionTime: number;
     };
   };
-  
+
   throughput: {
     requestsPerSecond: number;
     transactionsPerSecond: number;
     concurrentUsers: number;
   };
-  
+
   errors: {
     errorRate: number; // Percentage
     errorTypes: {
       [errorCode: string]: number;
     };
   };
-  
+
   resources: {
     cpuUsage: number; // Percentage
     memoryUsage: number; // Percentage
@@ -2290,24 +2353,28 @@ NeonPro's architecture represents a modern, cloud-native approach to healthcare 
 ### Implementation Roadmap
 
 #### Phase 1: Foundation (Months 1-3)
+
 - Core infrastructure setup (AWS, Kubernetes, Supabase)
 - Basic patient and appointment management
 - Authentication and authorization system
 - LGPD compliance framework implementation
 
 #### Phase 2: Core Features (Months 4-6)
+
 - Complete appointment scheduling system
 - Service catalog and pricing management
 - Basic reporting and analytics
 - ANVISA compliance integration
 
 #### Phase 3: Advanced Features (Months 7-9)
+
 - AI-powered scheduling optimization
 - Advanced reporting and business intelligence
 - Mobile PWA with offline capabilities
 - CFM compliance and telemedicine features
 
 #### Phase 4: Scale & Optimize (Months 10-12)
+
 - Multi-clinic support and franchise management
 - Advanced AI features and predictive analytics
 - Performance optimization and scaling
@@ -2316,18 +2383,21 @@ NeonPro's architecture represents a modern, cloud-native approach to healthcare 
 ### Success Metrics
 
 #### Business Metrics
+
 - **User Adoption**: 1,000+ clinics within first year
 - **User Satisfaction**: NPS score ≥70
 - **Revenue Growth**: $10M+ ARR by end of Year 2
 - **Market Position**: #1 clinic management solution in Brazil
 
 #### Technical Metrics
+
 - **System Performance**: 99.9% uptime, <500ms average response time
 - **Security**: Zero critical security incidents
 - **Compliance**: 100% audit pass rate for LGPD/ANVISA/CFM
 - **Code Quality**: Maintainability index ≥85, technical debt ratio ≤5%
 
 #### Operational Metrics
+
 - **Deployment Frequency**: Daily deployments with zero-downtime
 - **Mean Time to Recovery**: <30 minutes for critical issues
 - **Customer Support**: <2 hour response time for critical issues
@@ -2336,12 +2406,14 @@ NeonPro's architecture represents a modern, cloud-native approach to healthcare 
 ### Risk Mitigation
 
 #### Technical Risks
+
 - **Database Performance**: Mitigated through read replicas, caching, and query optimization
 - **Third-party Dependencies**: Mitigated through redundancy and fallback mechanisms
 - **Security Vulnerabilities**: Mitigated through comprehensive security testing and monitoring
 - **Scalability Bottlenecks**: Mitigated through cloud-native architecture and auto-scaling
 
 #### Business Risks
+
 - **Regulatory Changes**: Mitigated through modular compliance framework
 - **Market Competition**: Mitigated through superior UX and AI-driven features
 - **Customer Churn**: Mitigated through exceptional customer support and continuous innovation
@@ -2350,12 +2422,14 @@ NeonPro's architecture represents a modern, cloud-native approach to healthcare 
 ### Future Enhancements
 
 #### Technical Evolution
+
 - **Edge Computing**: Deploy edge nodes for reduced latency in remote areas
 - **Blockchain Integration**: Immutable audit trails for compliance and trust
 - **IoT Integration**: Connected medical devices and equipment monitoring
 - **Advanced AI**: Predictive analytics, outcome optimization, and personalized recommendations
 
 #### Business Evolution
+
 - **International Expansion**: Adapt architecture for global compliance frameworks
 - **Ecosystem Platform**: Open API marketplace for third-party integrations
 - **White-label Solutions**: Configurable platform for different healthcare verticals
@@ -2371,10 +2445,10 @@ The NeonPro team is dedicated to delivering this vision through disciplined engi
 
 ---
 
-*Document Version: 2.0*  
-*Last Updated: January 2025*  
-*Authors: NeonPro Architecture Team*  
-*Status: Production Ready*### Implementation Recommendations
+_Document Version: 2.0_  
+_Last Updated: January 2025_  
+_Authors: NeonPro Architecture Team_  
+_Status: Production Ready_### Implementation Recommendations
 
 #### 🚀 **Immediate Actions** (Before Development Starts)
 
@@ -2419,20 +2493,20 @@ interface AccessibilityStandards {
 <!-- Patient Form Example -->
 <form role="form" aria-labelledby="patient-form-title">
   <h2 id="patient-form-title">Cadastro de Paciente</h2>
-  
+
   <fieldset>
     <legend>Informações Pessoais</legend>
-    
+
     <div class="form-group">
       <label for="patient-name">
         Nome Completo
         <span aria-label="obrigatório">*</span>
       </label>
-      <input 
-        type="text" 
-        id="patient-name" 
+      <input
+        type="text"
+        id="patient-name"
         name="name"
-        required 
+        required
         aria-describedby="name-help name-error"
         autocomplete="name"
       />
@@ -2443,21 +2517,19 @@ interface AccessibilityStandards {
         <!-- Error messages appear here -->
       </div>
     </div>
-    
+
     <div class="form-group">
       <label for="patient-cpf">CPF</label>
-      <input 
-        type="text" 
-        id="patient-cpf" 
+      <input
+        type="text"
+        id="patient-cpf"
         name="cpf"
         required
         pattern="[0-9]{3}\.?[0-9]{3}\.?[0-9]{3}-?[0-9]{2}"
         aria-describedby="cpf-format"
         autocomplete="off"
       />
-      <div id="cpf-format" class="help-text">
-        Formato: 000.000.000-00
-      </div>
+      <div id="cpf-format" class="help-text">Formato: 000.000.000-00</div>
     </div>
   </fieldset>
 </form>
@@ -2465,29 +2537,19 @@ interface AccessibilityStandards {
 <!-- Appointment Calendar Example -->
 <div role="application" aria-label="Calendário de Agendamentos">
   <div class="calendar-header">
-    <button 
-      type="button" 
-      aria-label="Mês anterior"
-      onclick="previousMonth()"
-    >
+    <button type="button" aria-label="Mês anterior" onclick="previousMonth()">
       <span aria-hidden="true">‹</span>
     </button>
-    
-    <h3 id="current-month" aria-live="polite">
-      Janeiro 2025
-    </h3>
-    
-    <button 
-      type="button" 
-      aria-label="Próximo mês"
-      onclick="nextMonth()"
-    >
+
+    <h3 id="current-month" aria-live="polite">Janeiro 2025</h3>
+
+    <button type="button" aria-label="Próximo mês" onclick="nextMonth()">
       <span aria-hidden="true">›</span>
     </button>
   </div>
-  
-  <table 
-    role="grid" 
+
+  <table
+    role="grid"
     aria-labelledby="current-month"
     aria-multiselectable="false"
   >
@@ -2500,8 +2562,8 @@ interface AccessibilityStandards {
     </thead>
     <tbody>
       <tr role="row">
-        <td 
-          role="gridcell" 
+        <td
+          role="gridcell"
           tabindex="-1"
           aria-label="1 de Janeiro, 3 agendamentos"
           data-date="2025-01-01"
@@ -2583,25 +2645,25 @@ interface KeyboardNavigation {
     'Alt + N': 'Novo agendamento';
     'Ctrl + /': 'Mostrar atalhos de teclado';
   };
-  
+
   formNavigation: {
-    'Tab': 'Próximo campo';
+    Tab: 'Próximo campo';
     'Shift + Tab': 'Campo anterior';
-    'Enter': 'Submeter formulário (em botão de submit)';
-    'Escape': 'Cancelar/fechar';
+    Enter: 'Submeter formulário (em botão de submit)';
+    Escape: 'Cancelar/fechar';
   };
-  
+
   tableNavigation: {
     'Arrow keys': 'Navegar entre células';
     'Home/End': 'Primeiro/último item da linha';
     'Page Up/Down': 'Navegar por páginas';
     'Enter/Space': 'Ativar item selecionado';
   };
-  
+
   calendarNavigation: {
     'Arrow keys': 'Navegar entre datas';
-    'Home': 'Primeiro dia do mês';
-    'End': 'Último dia do mês';
+    Home: 'Primeiro dia do mês';
+    End: 'Último dia do mês';
     'Page Up/Down': 'Mês anterior/próximo';
     'Enter/Space': 'Selecionar data';
   };
@@ -2617,13 +2679,13 @@ interface FocusManagement {
     focusTarget: 'h1' | 'main' | 'skip-link'; // Where to focus on route change
     skipLinks: string[]; // Skip navigation links
   };
-  
+
   modalDialogs: {
     trapFocus: boolean; // Keep focus within modal
     initialFocus: 'first-input' | 'close-button' | 'custom';
     restoreFocus: boolean; // Return to trigger element on close
   };
-  
+
   dynamicContent: {
     announceChanges: boolean; // Use aria-live regions
     preserveFocus: boolean; // Maintain focus position when possible
@@ -2645,13 +2707,13 @@ interface ScreenReaderOptimization {
       contentinfo: 'Rodapé do site';
     };
   };
-  
+
   statusUpdates: {
     formValidation: 'aria-live="polite"'; // Form errors
     dataLoading: 'aria-live="polite"'; // Loading states
     criticalAlerts: 'aria-live="assertive"'; // Critical system messages
   };
-  
+
   hiddenContent: {
     decorativeImages: 'alt=""'; // Hide decorative images
     skipLinks: 'Visually hidden but available to screen readers';
@@ -2665,74 +2727,74 @@ interface ScreenReaderOptimization {
 ```yaml
 testing_tools:
   automated:
-    - tool: "@axe-core/react"
-      purpose: "Runtime accessibility testing"
-      integration: "Jest test suite"
-      coverage: "Component and integration tests"
-      
-    - tool: "axe-playwright"
-      purpose: "E2E accessibility testing"
-      integration: "Playwright test suite"
-      coverage: "Full page accessibility scans"
-      
-    - tool: "lighthouse-ci"
-      purpose: "Accessibility scoring in CI/CD"
-      integration: "GitHub Actions"
-      threshold: "Score ≥ 95"
-      
-    - tool: "eslint-plugin-jsx-a11y"
-      purpose: "Static analysis for JSX accessibility"
-      integration: "ESLint configuration"
-      enforcement: "Error level for critical issues"
-  
+    - tool: '@axe-core/react'
+      purpose: 'Runtime accessibility testing'
+      integration: 'Jest test suite'
+      coverage: 'Component and integration tests'
+
+    - tool: 'axe-playwright'
+      purpose: 'E2E accessibility testing'
+      integration: 'Playwright test suite'
+      coverage: 'Full page accessibility scans'
+
+    - tool: 'lighthouse-ci'
+      purpose: 'Accessibility scoring in CI/CD'
+      integration: 'GitHub Actions'
+      threshold: 'Score ≥ 95'
+
+    - tool: 'eslint-plugin-jsx-a11y'
+      purpose: 'Static analysis for JSX accessibility'
+      integration: 'ESLint configuration'
+      enforcement: 'Error level for critical issues'
+
   manual:
-    - tool: "NVDA/JAWS Screen Reader"
-      frequency: "Weekly testing of key user flows"
-      scenarios: 
-        - "Patient registration process"
-        - "Appointment scheduling"
-        - "Search and navigation"
-        
-    - tool: "Keyboard-only navigation"
-      frequency: "Every feature release"
-      coverage: "All interactive elements accessible"
-      
-    - tool: "Color contrast analyzer"
-      frequency: "Design review stage"
-      requirement: "WCAG AA compliance (4.5:1 ratio)"
-      
-    - tool: "Voice control testing"
-      frequency: "Monthly"
-      software: "Dragon NaturallySpeaking or Voice Access"
+    - tool: 'NVDA/JAWS Screen Reader'
+      frequency: 'Weekly testing of key user flows'
+      scenarios:
+        - 'Patient registration process'
+        - 'Appointment scheduling'
+        - 'Search and navigation'
+
+    - tool: 'Keyboard-only navigation'
+      frequency: 'Every feature release'
+      coverage: 'All interactive elements accessible'
+
+    - tool: 'Color contrast analyzer'
+      frequency: 'Design review stage'
+      requirement: 'WCAG AA compliance (4.5:1 ratio)'
+
+    - tool: 'Voice control testing'
+      frequency: 'Monthly'
+      software: 'Dragon NaturallySpeaking or Voice Access'
 
 testing_procedures:
   development:
-    - "Run axe-core tests on every component"
-    - "Keyboard navigation testing for all interactive elements"
-    - "Screen reader testing for complex components"
-    
+    - 'Run axe-core tests on every component'
+    - 'Keyboard navigation testing for all interactive elements'
+    - 'Screen reader testing for complex components'
+
   pre_deployment:
-    - "Full accessibility audit using Lighthouse"
-    - "Manual testing with screen readers"
-    - "Keyboard navigation of entire user journeys"
-    
+    - 'Full accessibility audit using Lighthouse'
+    - 'Manual testing with screen readers'
+    - 'Keyboard navigation of entire user journeys'
+
   post_deployment:
-    - "User testing with actual assistive technology users"
-    - "Accessibility monitoring with real user data"
-    - "Regular compliance audits"
+    - 'User testing with actual assistive technology users'
+    - 'Accessibility monitoring with real user data'
+    - 'Regular compliance audits'
 
 compliance_targets:
-  level: "WCAG 2.1 Level AA"
-  success_criteria: "100% Level A, 100% Level AA"
-  testing_coverage: "≥95% of interactive elements"
-  user_testing: "Monthly sessions with assistive technology users"
+  level: 'WCAG 2.1 Level AA'
+  success_criteria: '100% Level A, 100% Level AA'
+  testing_coverage: '≥95% of interactive elements'
+  user_testing: 'Monthly sessions with assistive technology users'
 ```
 
 ##### 2. Frontend Directory Structure Enhancement
 
 ```typescript
 interface ProjectStructure {
-  description: "NeonPro Frontend Architecture - Next.js 15 App Router";
+  description: 'NeonPro Frontend Architecture - Next.js 15 App Router';
   structure: `
 ├── 📁 src/
 │   ├── 📁 app/                          # Next.js App Router (Pages & Layouts)
@@ -3020,26 +3082,26 @@ interface ProjectStructure {
 ├── 📄 docker-compose.yml                # Local development with Docker
 └── 📄 README.md                         # Project overview and setup
   `;
-  
+
   conventions: {
     naming: {
-      files: "kebab-case for directories, PascalCase for components";
-      components: "PascalCase (e.g., PatientForm.tsx)";
-      utilities: "camelCase (e.g., formatCurrency.ts)";
-      constants: "UPPER_SNAKE_CASE";
+      files: 'kebab-case for directories, PascalCase for components';
+      components: 'PascalCase (e.g., PatientForm.tsx)';
+      utilities: 'camelCase (e.g., formatCurrency.ts)';
+      constants: 'UPPER_SNAKE_CASE';
     };
-    
+
     organization: {
-      components: "Group by feature/domain, not by type";
-      pages: "Follow Next.js App Router conventions";
-      tests: "Mirror source structure in __tests__/";
-      types: "One file per domain/entity";
+      components: 'Group by feature/domain, not by type';
+      pages: 'Follow Next.js App Router conventions';
+      tests: 'Mirror source structure in __tests__/';
+      types: 'One file per domain/entity';
     };
-    
+
     imports: {
-      order: "React → Third-party → Internal → Relative";
-      aliases: "@/ for src/, @/components, @/lib, @/types";
-      absolutePaths: "Use path aliases for better refactoring";
+      order: 'React → Third-party → Internal → Relative';
+      aliases: '@/ for src/, @/components, @/lib, @/types';
+      absolutePaths: 'Use path aliases for better refactoring';
     };
   };
 }
@@ -3156,43 +3218,43 @@ echo "Development environment setup complete!"
 // eslint.config.js
 module.exports = {
   extends: [
-    "next/core-web-vitals",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:jsx-a11y/recommended"
+    'next/core-web-vitals',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:jsx-a11y/recommended',
   ],
-  plugins: ["jsx-a11y"],
+  plugins: ['jsx-a11y'],
   rules: {
     // Accessibility Rules (Errors)
-    "jsx-a11y/alt-text": "error",
-    "jsx-a11y/aria-props": "error",
-    "jsx-a11y/aria-proptypes": "error",
-    "jsx-a11y/aria-unsupported-elements": "error",
-    "jsx-a11y/role-has-required-aria-props": "error",
-    "jsx-a11y/role-supports-aria-props": "error",
-    "jsx-a11y/tabindex-no-positive": "error",
-    "jsx-a11y/label-has-associated-control": "error",
-    "jsx-a11y/no-aria-hidden-on-focusable": "error",
-    
+    'jsx-a11y/alt-text': 'error',
+    'jsx-a11y/aria-props': 'error',
+    'jsx-a11y/aria-proptypes': 'error',
+    'jsx-a11y/aria-unsupported-elements': 'error',
+    'jsx-a11y/role-has-required-aria-props': 'error',
+    'jsx-a11y/role-supports-aria-props': 'error',
+    'jsx-a11y/tabindex-no-positive': 'error',
+    'jsx-a11y/label-has-associated-control': 'error',
+    'jsx-a11y/no-aria-hidden-on-focusable': 'error',
+
     // Accessibility Rules (Warnings)
-    "jsx-a11y/click-events-have-key-events": "warn",
-    "jsx-a11y/no-static-element-interactions": "warn",
-    "jsx-a11y/anchor-is-valid": "warn",
-    "jsx-a11y/heading-has-content": "warn",
-    "jsx-a11y/img-redundant-alt": "warn",
-    
+    'jsx-a11y/click-events-have-key-events': 'warn',
+    'jsx-a11y/no-static-element-interactions': 'warn',
+    'jsx-a11y/anchor-is-valid': 'warn',
+    'jsx-a11y/heading-has-content': 'warn',
+    'jsx-a11y/img-redundant-alt': 'warn',
+
     // TypeScript Rules
-    "@typescript-eslint/no-unused-vars": "warn",
-    "@typescript-eslint/explicit-module-boundary-types": "off",
-    "@typescript-eslint/no-explicit-any": "warn"
+    '@typescript-eslint/no-unused-vars': 'warn',
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
+    '@typescript-eslint/no-explicit-any': 'warn',
   },
   overrides: [
     {
-      files: ["**/*.test.ts", "**/*.test.tsx"],
+      files: ['**/*.test.ts', '**/*.test.tsx'],
       env: {
-        jest: true
-      }
-    }
-  ]
+        jest: true,
+      },
+    },
+  ],
 };
 ```
 
@@ -3357,8 +3419,8 @@ CREATE INDEX IF NOT EXISTS idx_audit_log_table_name ON public.audit_log(table_na
 CREATE INDEX IF NOT EXISTS idx_audit_log_timestamp ON public.audit_log(timestamp);
 
 -- Text search indexes for patient search
-CREATE INDEX IF NOT EXISTS idx_patients_search 
-ON public.patients 
+CREATE INDEX IF NOT EXISTS idx_patients_search
+ON public.patients
 USING gin(to_tsvector('portuguese', name || ' ' || cpf || ' ' || email));
 ```
 
@@ -3539,7 +3601,7 @@ LGPD_AUDIT_WEBHOOK_URL=https://your-audit-system.com/webhook
 ANVISA_API_KEY=your_anvisa_api_key
 ANVISA_ENVIRONMENT=sandbox # or production
 
-# CFM Integration  
+# CFM Integration
 CFM_API_KEY=your_cfm_api_key
 CFM_ENVIRONMENT=sandbox # or production
 
@@ -3568,23 +3630,23 @@ JWT_SECRET=your_jwt_secret_key
 const securityHeaders = [
   {
     key: 'X-DNS-Prefetch-Control',
-    value: 'on'
+    value: 'on',
   },
   {
     key: 'X-XSS-Protection',
-    value: '1; mode=block'
+    value: '1; mode=block',
   },
   {
     key: 'X-Frame-Options',
-    value: 'SAMEORIGIN'
+    value: 'SAMEORIGIN',
   },
   {
     key: 'X-Content-Type-Options',
-    value: 'nosniff'
+    value: 'nosniff',
   },
   {
     key: 'Referrer-Policy',
-    value: 'origin-when-cross-origin'
+    value: 'origin-when-cross-origin',
   },
   {
     key: 'Content-Security-Policy',
@@ -3599,8 +3661,10 @@ const securityHeaders = [
       form-action 'self';
       frame-ancestors 'none';
       upgrade-insecure-requests;
-    `.replace(/\s{2,}/g, ' ').trim()
-  }
+    `
+      .replace(/\s{2,}/g, ' ')
+      .trim(),
+  },
 ];
 
 module.exports = {
@@ -3619,178 +3683,182 @@ module.exports = {
 This comprehensive Implementation Recommendations section provides everything needed to begin development with a strong foundation in accessibility, security, and compliance. The detailed configurations ensure the project starts with production-ready standards and best practices.#### 🎯 **Phase-Based Implementation Plan** (Next 30-90 Days)
 
 ##### Phase 1: Foundation (Days 1-14)
+
 **Priority: Core Infrastructure & Security**
 
 ```yaml
 sprint_1_foundation:
   week_1:
-    goals: "Establish development environment and core infrastructure"
+    goals: 'Establish development environment and core infrastructure'
     deliverables:
-      - "✅ Development environment setup (Node.js, Next.js, TypeScript)"
-      - "✅ Supabase project configuration with security policies"
-      - "✅ Core authentication system implementation"
-      - "✅ Basic UI component library (shadcn/ui integration)"
-      - "✅ Accessibility foundations (ARIA, semantic HTML)"
-    
+      - '✅ Development environment setup (Node.js, Next.js, TypeScript)'
+      - '✅ Supabase project configuration with security policies'
+      - '✅ Core authentication system implementation'
+      - '✅ Basic UI component library (shadcn/ui integration)'
+      - '✅ Accessibility foundations (ARIA, semantic HTML)'
+
     technical_tasks:
-      - "Configure Next.js 15 with App Router"
-      - "Set up Supabase database with RLS policies"
-      - "Implement user authentication with Supabase Auth"
-      - "Create base UI components with accessibility attributes"
-      - "Configure ESLint, Prettier, TypeScript strict mode"
-      - "Set up testing framework (Jest, React Testing Library)"
-    
+      - 'Configure Next.js 15 with App Router'
+      - 'Set up Supabase database with RLS policies'
+      - 'Implement user authentication with Supabase Auth'
+      - 'Create base UI components with accessibility attributes'
+      - 'Configure ESLint, Prettier, TypeScript strict mode'
+      - 'Set up testing framework (Jest, React Testing Library)'
+
     validation_criteria:
-      - "All accessibility linting rules pass"
-      - "Authentication flow works end-to-end"
-      - "Database policies enforce multi-tenancy"
-      - "Basic components meet WCAG 2.1 AA standards"
-  
+      - 'All accessibility linting rules pass'
+      - 'Authentication flow works end-to-end'
+      - 'Database policies enforce multi-tenancy'
+      - 'Basic components meet WCAG 2.1 AA standards'
+
   week_2:
-    goals: "Core business entities and compliance foundation"
+    goals: 'Core business entities and compliance foundation'
     deliverables:
-      - "✅ Clinic entity management (CRUD operations)"
-      - "✅ User role-based access control (RBAC)"
-      - "✅ LGPD consent management foundation"
-      - "✅ Audit logging system implementation"
-      - "✅ Basic dashboard layout with navigation"
-    
+      - '✅ Clinic entity management (CRUD operations)'
+      - '✅ User role-based access control (RBAC)'
+      - '✅ LGPD consent management foundation'
+      - '✅ Audit logging system implementation'
+      - '✅ Basic dashboard layout with navigation'
+
     technical_tasks:
-      - "Implement clinic registration and management"
-      - "Create RBAC middleware and permission checking"
-      - "Build LGPD consent forms and logging"
-      - "Set up audit trail for all data operations"
-      - "Design responsive dashboard layout"
-    
+      - 'Implement clinic registration and management'
+      - 'Create RBAC middleware and permission checking'
+      - 'Build LGPD consent forms and logging'
+      - 'Set up audit trail for all data operations'
+      - 'Design responsive dashboard layout'
+
     validation_criteria:
-      - "Multi-tenant isolation works correctly"
-      - "RBAC prevents unauthorized access"
-      - "LGPD consent is properly tracked"
-      - "All data changes are audited"
-      - "Dashboard is keyboard navigable"
+      - 'Multi-tenant isolation works correctly'
+      - 'RBAC prevents unauthorized access'
+      - 'LGPD consent is properly tracked'
+      - 'All data changes are audited'
+      - 'Dashboard is keyboard navigable'
 ```
 
 ##### Phase 2: Core Features (Days 15-45)
+
 **Priority: Patient Management & Appointments**
 
 ```yaml
 sprint_2_patients:
   week_3_4:
-    goals: "Complete patient management system"
+    goals: 'Complete patient management system'
     deliverables:
-      - "✅ Patient registration with LGPD compliance"
-      - "✅ Patient search and filtering capabilities"
-      - "✅ Medical history management"
-      - "✅ Patient data export for LGPD requests"
-      - "✅ Advanced accessibility features"
-    
+      - '✅ Patient registration with LGPD compliance'
+      - '✅ Patient search and filtering capabilities'
+      - '✅ Medical history management'
+      - '✅ Patient data export for LGPD requests'
+      - '✅ Advanced accessibility features'
+
     technical_tasks:
-      - "Build comprehensive patient forms"
-      - "Implement advanced search with text indexing"
-      - "Create medical history tracking system"
-      - "Develop LGPD data export functionality"
-      - "Add screen reader optimizations"
-    
+      - 'Build comprehensive patient forms'
+      - 'Implement advanced search with text indexing'
+      - 'Create medical history tracking system'
+      - 'Develop LGPD data export functionality'
+      - 'Add screen reader optimizations'
+
     accessibility_focus:
-      - "Form validation with screen reader announcements"
-      - "Complex table navigation with ARIA"
-      - "Search results with proper landmark regions"
-      - "Loading states with accessible feedback"
-  
+      - 'Form validation with screen reader announcements'
+      - 'Complex table navigation with ARIA'
+      - 'Search results with proper landmark regions'
+      - 'Loading states with accessible feedback'
+
   week_5_6:
-    goals: "Complete appointment scheduling system"
+    goals: 'Complete appointment scheduling system'
     deliverables:
-      - "✅ Calendar-based appointment booking"
-      - "✅ Service catalog management"
-      - "✅ Appointment conflict detection"
-      - "✅ Email/SMS notification system"
-      - "✅ Real-time appointment updates"
-    
+      - '✅ Calendar-based appointment booking'
+      - '✅ Service catalog management'
+      - '✅ Appointment conflict detection'
+      - '✅ Email/SMS notification system'
+      - '✅ Real-time appointment updates'
+
     technical_tasks:
-      - "Build accessible calendar component"
-      - "Implement service catalog with pricing"
-      - "Create conflict detection algorithms"
-      - "Set up notification service (email/SMS)"
-      - "Add real-time updates with Supabase subscriptions"
-    
+      - 'Build accessible calendar component'
+      - 'Implement service catalog with pricing'
+      - 'Create conflict detection algorithms'
+      - 'Set up notification service (email/SMS)'
+      - 'Add real-time updates with Supabase subscriptions'
+
     accessibility_focus:
-      - "Calendar keyboard navigation (arrow keys, shortcuts)"
-      - "Time slot selection with clear labels"
-      - "Appointment confirmation with screen reader support"
-      - "Status updates via ARIA live regions"
+      - 'Calendar keyboard navigation (arrow keys, shortcuts)'
+      - 'Time slot selection with clear labels'
+      - 'Appointment confirmation with screen reader support'
+      - 'Status updates via ARIA live regions'
 ```
 
 ##### Phase 3: Advanced Features (Days 46-75)
+
 **Priority: Compliance & Analytics**
 
 ```yaml
 sprint_3_compliance:
   week_7_8_9:
-    goals: "Full regulatory compliance implementation"
+    goals: 'Full regulatory compliance implementation'
     deliverables:
-      - "✅ ANVISA reporting and integration"
-      - "✅ CFM compliance validation"
-      - "✅ Complete LGPD data management"
-      - "✅ Advanced audit and reporting"
-      - "✅ Data retention policy automation"
-    
+      - '✅ ANVISA reporting and integration'
+      - '✅ CFM compliance validation'
+      - '✅ Complete LGPD data management'
+      - '✅ Advanced audit and reporting'
+      - '✅ Data retention policy automation'
+
     technical_tasks:
-      - "Integrate ANVISA reporting APIs"
-      - "Implement CFM registration validation"
-      - "Build comprehensive LGPD management dashboard"
-      - "Create automated compliance reporting"
-      - "Develop data retention policy enforcement"
-    
+      - 'Integrate ANVISA reporting APIs'
+      - 'Implement CFM registration validation'
+      - 'Build comprehensive LGPD management dashboard'
+      - 'Create automated compliance reporting'
+      - 'Develop data retention policy enforcement'
+
     compliance_features:
-      - "Automated LGPD consent renewal reminders"
-      - "Data anonymization for analytics"
-      - "Secure data export/import procedures"
-      - "Compliance audit trail generation"
-  
+      - 'Automated LGPD consent renewal reminders'
+      - 'Data anonymization for analytics'
+      - 'Secure data export/import procedures'
+      - 'Compliance audit trail generation'
+
   week_10_11:
-    goals: "Analytics and performance optimization"
+    goals: 'Analytics and performance optimization'
     deliverables:
-      - "✅ Business intelligence dashboard"
-      - "✅ Performance monitoring and alerts"
-      - "✅ Advanced reporting capabilities"
-      - "✅ Mobile PWA optimization"
-      - "✅ Accessibility audit completion"
-    
+      - '✅ Business intelligence dashboard'
+      - '✅ Performance monitoring and alerts'
+      - '✅ Advanced reporting capabilities'
+      - '✅ Mobile PWA optimization'
+      - '✅ Accessibility audit completion'
+
     technical_tasks:
-      - "Build analytics dashboard with charts"
-      - "Implement performance monitoring"
-      - "Create customizable report generation"
-      - "Optimize PWA performance and caching"
-      - "Complete accessibility audit and remediation"
+      - 'Build analytics dashboard with charts'
+      - 'Implement performance monitoring'
+      - 'Create customizable report generation'
+      - 'Optimize PWA performance and caching'
+      - 'Complete accessibility audit and remediation'
 ```
 
 ##### Phase 4: Production & Scaling (Days 76-90)
+
 **Priority: Deployment & Performance**
 
 ```yaml
 sprint_4_production:
   week_12_13:
-    goals: "Production deployment and monitoring"
+    goals: 'Production deployment and monitoring'
     deliverables:
-      - "✅ Production environment setup"
-      - "✅ CI/CD pipeline with accessibility testing"
-      - "✅ Monitoring and alerting system"
-      - "✅ Backup and disaster recovery"
-      - "✅ Security penetration testing"
-    
+      - '✅ Production environment setup'
+      - '✅ CI/CD pipeline with accessibility testing'
+      - '✅ Monitoring and alerting system'
+      - '✅ Backup and disaster recovery'
+      - '✅ Security penetration testing'
+
     devops_tasks:
-      - "Configure Vercel production deployment"
-      - "Set up GitHub Actions with accessibility checks"
-      - "Implement monitoring with Sentry and Vercel Analytics"
-      - "Configure automated backups"
-      - "Conduct security audit and penetration testing"
-    
+      - 'Configure Vercel production deployment'
+      - 'Set up GitHub Actions with accessibility checks'
+      - 'Implement monitoring with Sentry and Vercel Analytics'
+      - 'Configure automated backups'
+      - 'Conduct security audit and penetration testing'
+
     quality_assurance:
-      - "Load testing with realistic user scenarios"
-      - "Accessibility testing with real assistive technology users"
-      - "LGPD compliance validation with legal review"
-      - "ANVISA/CFM integration testing"
-      - "Mobile device testing across platforms"
+      - 'Load testing with realistic user scenarios'
+      - 'Accessibility testing with real assistive technology users'
+      - 'LGPD compliance validation with legal review'
+      - 'ANVISA/CFM integration testing'
+      - 'Mobile device testing across platforms'
 ```
 
 #### 🔧 **Critical Dependencies & Blockers**
@@ -3799,60 +3867,60 @@ sprint_4_production:
 external_dependencies:
   regulatory:
     anvisa_api_access:
-      timeline: "Week 1"
-      risk: "High - may delay compliance features"
-      mitigation: "Start with mock APIs, implement real integration later"
-    
+      timeline: 'Week 1'
+      risk: 'High - may delay compliance features'
+      mitigation: 'Start with mock APIs, implement real integration later'
+
     cfm_integration:
-      timeline: "Week 2"
-      risk: "Medium - affects user validation"
-      mitigation: "Manual validation initially, automate when API available"
-    
+      timeline: 'Week 2'
+      risk: 'Medium - affects user validation'
+      mitigation: 'Manual validation initially, automate when API available'
+
     lgpd_legal_review:
-      timeline: "Week 4"
-      risk: "High - affects go-live"
-      mitigation: "Engage legal counsel early, implement conservative policies"
-  
+      timeline: 'Week 4'
+      risk: 'High - affects go-live'
+      mitigation: 'Engage legal counsel early, implement conservative policies'
+
   technical:
     supabase_production_limits:
-      timeline: "Week 8"
-      risk: "Medium - may affect performance"
-      mitigation: "Monitor usage, plan for database scaling"
-    
+      timeline: 'Week 8'
+      risk: 'Medium - may affect performance'
+      mitigation: 'Monitor usage, plan for database scaling'
+
     third_party_integrations:
-      timeline: "Week 6"
-      risk: "Low-Medium - affects notifications"
-      mitigation: "Use reliable providers (SendGrid, Twilio)"
-  
+      timeline: 'Week 6'
+      risk: 'Low-Medium - affects notifications'
+      mitigation: 'Use reliable providers (SendGrid, Twilio)'
+
   accessibility:
     assistive_technology_testing:
-      timeline: "Week 10"
-      risk: "Medium - affects compliance"
-      mitigation: "Partner with accessibility consultancy"
-    
+      timeline: 'Week 10'
+      risk: 'Medium - affects compliance'
+      mitigation: 'Partner with accessibility consultancy'
+
     wcag_compliance_audit:
-      timeline: "Week 11"
-      risk: "High - legal requirement"
-      mitigation: "Continuous testing, professional audit"
+      timeline: 'Week 11'
+      risk: 'High - legal requirement'
+      mitigation: 'Continuous testing, professional audit'
 
 risk_mitigation:
   development:
-    - "Daily accessibility testing during development"
-    - "Weekly code reviews with security focus"
-    - "Bi-weekly stakeholder demos for early feedback"
-    - "Continuous integration with accessibility checks"
-  
+    - 'Daily accessibility testing during development'
+    - 'Weekly code reviews with security focus'
+    - 'Bi-weekly stakeholder demos for early feedback'
+    - 'Continuous integration with accessibility checks'
+
   compliance:
-    - "Legal counsel review at each phase"
-    - "Regulatory compliance checklist validation"
-    - "Third-party security audit before production"
-    - "LGPD officer sign-off on data handling procedures"
-  
+    - 'Legal counsel review at each phase'
+    - 'Regulatory compliance checklist validation'
+    - 'Third-party security audit before production'
+    - 'LGPD officer sign-off on data handling procedures'
+
   performance:
-    - "Load testing with simulated clinic workloads"
-    - "Database query optimization and indexing"
-    - "CDN configuration for global performance"
-    - "Progressive Web App optimization for mobile"
+    - 'Load testing with simulated clinic workloads'
+    - 'Database query optimization and indexing'
+    - 'CDN configuration for global performance'
+    - 'Progressive Web App optimization for mobile'
 ```
 
 #### 📋 **Success Metrics & KPIs**
@@ -3860,66 +3928,66 @@ risk_mitigation:
 ```yaml
 technical_metrics:
   performance:
-    page_load_time: "< 2 seconds (95th percentile)"
-    time_to_interactive: "< 3 seconds"
-    largest_contentful_paint: "< 2.5 seconds"
-    cumulative_layout_shift: "< 0.1"
-    lighthouse_score: "> 95 for all categories"
-  
+    page_load_time: '< 2 seconds (95th percentile)'
+    time_to_interactive: '< 3 seconds'
+    largest_contentful_paint: '< 2.5 seconds'
+    cumulative_layout_shift: '< 0.1'
+    lighthouse_score: '> 95 for all categories'
+
   accessibility:
-    wcag_compliance: "100% WCAG 2.1 AA compliance"
-    keyboard_navigation: "100% functionality accessible via keyboard"
-    screen_reader_support: "Full compatibility with NVDA, JAWS, VoiceOver"
-    color_contrast: "Minimum 4.5:1 for normal text, 3:1 for large text"
-    axe_violations: "Zero critical or serious accessibility violations"
-  
+    wcag_compliance: '100% WCAG 2.1 AA compliance'
+    keyboard_navigation: '100% functionality accessible via keyboard'
+    screen_reader_support: 'Full compatibility with NVDA, JAWS, VoiceOver'
+    color_contrast: 'Minimum 4.5:1 for normal text, 3:1 for large text'
+    axe_violations: 'Zero critical or serious accessibility violations'
+
   security:
-    vulnerability_scan: "Zero high or critical vulnerabilities"
-    penetration_test: "Pass independent security assessment"
-    data_encryption: "All data encrypted in transit and at rest"
-    authentication: "Multi-factor authentication for admin users"
-    session_management: "Secure session handling with proper timeout"
+    vulnerability_scan: 'Zero high or critical vulnerabilities'
+    penetration_test: 'Pass independent security assessment'
+    data_encryption: 'All data encrypted in transit and at rest'
+    authentication: 'Multi-factor authentication for admin users'
+    session_management: 'Secure session handling with proper timeout'
 
 business_metrics:
   user_adoption:
-    clinic_onboarding: "< 30 minutes from registration to first appointment"
-    user_training_time: "< 2 hours for basic proficiency"
-    mobile_usage: "> 60% of users access via mobile device"
-    daily_active_users: "Track engagement and retention"
-  
+    clinic_onboarding: '< 30 minutes from registration to first appointment'
+    user_training_time: '< 2 hours for basic proficiency'
+    mobile_usage: '> 60% of users access via mobile device'
+    daily_active_users: 'Track engagement and retention'
+
   compliance:
-    lgpd_consent_rate: "> 95% patient consent collection"
-    data_export_requests: "< 24 hours fulfillment time"
-    audit_trail_completeness: "100% of data changes logged"
-    regulatory_reporting: "Automated ANVISA/CFM report generation"
-  
+    lgpd_consent_rate: '> 95% patient consent collection'
+    data_export_requests: '< 24 hours fulfillment time'
+    audit_trail_completeness: '100% of data changes logged'
+    regulatory_reporting: 'Automated ANVISA/CFM report generation'
+
   operational:
-    system_uptime: "> 99.9% availability"
-    data_backup_success: "100% successful daily backups"
-    support_response_time: "< 4 hours for critical issues"
-    user_satisfaction: "> 4.5/5 user satisfaction score"
+    system_uptime: '> 99.9% availability'
+    data_backup_success: '100% successful daily backups'
+    support_response_time: '< 4 hours for critical issues'
+    user_satisfaction: '> 4.5/5 user satisfaction score'
 
 quality_gates:
   development:
-    - "All unit tests pass (>90% coverage)"
-    - "All accessibility tests pass"
-    - "No ESLint errors or warnings"
-    - "TypeScript strict mode compliance"
-    - "Performance budget within limits"
-  
+    - 'All unit tests pass (>90% coverage)'
+    - 'All accessibility tests pass'
+    - 'No ESLint errors or warnings'
+    - 'TypeScript strict mode compliance'
+    - 'Performance budget within limits'
+
   pre_production:
-    - "End-to-end tests pass"
-    - "Accessibility audit passes"
-    - "Security scan passes"
-    - "LGPD compliance verification"
-    - "Load testing meets performance targets"
-  
+    - 'End-to-end tests pass'
+    - 'Accessibility audit passes'
+    - 'Security scan passes'
+    - 'LGPD compliance verification'
+    - 'Load testing meets performance targets'
+
   production:
-    - "Monitoring and alerting configured"
-    - "Backup and recovery tested"
-    - "User acceptance testing completed"
-    - "Staff training completed"
-    - "Legal and compliance sign-off obtained"
+    - 'Monitoring and alerting configured'
+    - 'Backup and recovery tested'
+    - 'User acceptance testing completed'
+    - 'Staff training completed'
+    - 'Legal and compliance sign-off obtained'
 ```
 
 ---
@@ -3943,6 +4011,7 @@ This architecture document represents a comprehensive blueprint for NeonPro, des
 ### Implementation Readiness
 
 The detailed implementation plan provides a clear roadmap for the next 90 days, with:
+
 - **Phase-based approach** that delivers value incrementally
 - **Risk mitigation strategies** for common development challenges
 - **Comprehensive testing and quality assurance** procedures
@@ -3952,6 +4021,7 @@ The detailed implementation plan provides a clear roadmap for the next 90 days, 
 ### Success Factors
 
 The architecture's success depends on:
+
 1. **Continuous accessibility testing** with real assistive technology users
 2. **Regular legal and compliance reviews** to ensure regulatory adherence
 3. **Performance monitoring and optimization** to maintain excellent user experience
@@ -3962,8 +4032,8 @@ This architecture document serves as the single source of truth for NeonPro deve
 
 ---
 
-*Document Version: 2.0*  
-*Last Updated: January 2025*  
-*BMad Framework Compliance: ✅ Validated*  
-*Accessibility Compliance: ✅ WCAG 2.1 AA Ready*  
-*Regulatory Compliance: ✅ LGPD/ANVISA/CFM Integrated*
+_Document Version: 2.0_  
+_Last Updated: January 2025_  
+_BMad Framework Compliance: ✅ Validated_  
+_Accessibility Compliance: ✅ WCAG 2.1 AA Ready_  
+_Regulatory Compliance: ✅ LGPD/ANVISA/CFM Integrated_

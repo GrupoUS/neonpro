@@ -82,7 +82,8 @@ export class RiskAssessmentEngine {
   private async getPatientData(patientId: string) {
     const { data: patient } = await this.supabase
       .from('patients')
-      .select(`
+      .select(
+        `
         *,
         medical_history (*),
         appointments (*),
@@ -90,7 +91,8 @@ export class RiskAssessmentEngine {
         allergies (*),
         medications (*),
         vital_signs (*)
-      `)
+      `
+      )
       .eq('id', patientId)
       .single();
 

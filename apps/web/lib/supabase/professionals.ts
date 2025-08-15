@@ -49,10 +49,12 @@ export async function createProfessional(
       fhir_practitioner_id: data.fhir_practitioner_id || crypto.randomUUID(),
       status: data.status || 'pending_verification',
     })
-    .select(`
+    .select(
+      `
       *,
       supervisor:professionals!supervisor_id(id, first_name, last_name)
-    `)
+    `
+    )
     .single();
 
   if (error) {
@@ -77,10 +79,12 @@ export async function updateProfessional(
       updated_at: new Date().toISOString(),
     })
     .eq('id', id)
-    .select(`
+    .select(
+      `
       *,
       supervisor:professionals!supervisor_id(id, first_name, last_name)
-    `)
+    `
+    )
     .single();
 
   if (error) {
@@ -98,7 +102,8 @@ export async function getProfessional(
 ): Promise<Professional | null> {
   const { data: professional, error } = await supabase
     .from('professionals')
-    .select(`
+    .select(
+      `
       *,
       supervisor:professionals!supervisor_id(id, first_name, last_name),
       specialties:professional_specialties(
@@ -111,7 +116,8 @@ export async function getProfessional(
       development:professional_development(*),
       workflows:credentialing_workflow(*),
       alerts:credentialing_alerts(*)
-    `)
+    `
+    )
     .eq('id', id)
     .single();
 
@@ -225,7 +231,8 @@ export async function getProfessionalsWithExpiringLicenses(daysAhead = 30) {
 
   const { data: professionals, error } = await supabase
     .from('professionals')
-    .select(`
+    .select(
+      `
       id,
       first_name,
       last_name,
@@ -234,7 +241,8 @@ export async function getProfessionalsWithExpiringLicenses(daysAhead = 30) {
       license_state,
       license_expiration,
       status
-    `)
+    `
+    )
     .lte('license_expiration', futureDate.toISOString())
     .eq('status', 'active')
     .order('license_expiration');
@@ -302,11 +310,13 @@ export async function addProfessionalSpecialty(data: {
   const { data: specialty, error } = await supabase
     .from('professional_specialties')
     .insert(data)
-    .select(`
+    .select(
+      `
       *,
       professional:professionals(*),
       specialty:medical_specialties(*)
-    `)
+    `
+    )
     .single();
 
   if (error) {
@@ -333,10 +343,12 @@ export async function createCredential(
       ...data,
       verification_status: data.verification_status || 'pending',
     })
-    .select(`
+    .select(
+      `
       *,
       professional:professionals(id, first_name, last_name, email)
-    `)
+    `
+    )
     .single();
 
   if (error) {
@@ -360,10 +372,12 @@ export async function updateCredential(
       updated_at: new Date().toISOString(),
     })
     .eq('id', id)
-    .select(`
+    .select(
+      `
       *,
       professional:professionals(id, first_name, last_name, email)
-    `)
+    `
+    )
     .single();
 
   if (error) {
@@ -462,10 +476,12 @@ export async function getExpiringCredentials(daysAhead = 30) {
 
   const { data: credentials, error } = await supabase
     .from('professional_credentials')
-    .select(`
+    .select(
+      `
       *,
       professional:professionals(id, first_name, last_name, email, phone)
-    `)
+    `
+    )
     .lte('expiration_date', futureDate.toISOString())
     .eq('verification_status', 'verified')
     .order('expiration_date');
@@ -490,11 +506,13 @@ export async function createService(
   const { data: service, error } = await supabase
     .from('professional_services')
     .insert(data)
-    .select(`
+    .select(
+      `
       *,
       professional:professionals(id, first_name, last_name),
       specialty:medical_specialties(name, code, category)
-    `)
+    `
+    )
     .single();
 
   if (error) {
@@ -518,11 +536,13 @@ export async function updateService(
       updated_at: new Date().toISOString(),
     })
     .eq('id', id)
-    .select(`
+    .select(
+      `
       *,
       professional:professionals(id, first_name, last_name),
       specialty:medical_specialties(name, code, category)
-    `)
+    `
+    )
     .single();
 
   if (error) {
@@ -540,10 +560,12 @@ export async function getServicesByProfessional(
 ): Promise<ProfessionalService[]> {
   const { data: services, error } = await supabase
     .from('professional_services')
-    .select(`
+    .select(
+      `
       *,
       specialty:medical_specialties(name, code, category)
-    `)
+    `
+    )
     .eq('professional_id', professionalId)
     .eq('is_active', true)
     .order('service_name');
@@ -568,11 +590,13 @@ export async function searchAvailableServices(filters: {
 }) {
   let query = supabase
     .from('professional_services')
-    .select(`
+    .select(
+      `
       *,
       professional:professionals(id, first_name, last_name, status),
       specialty:medical_specialties(name, code, category)
-    `)
+    `
+    )
     .eq('is_active', true);
 
   // Join with professionals to ensure only active professionals
@@ -620,10 +644,12 @@ export async function createMetric(
   const { data: metric, error } = await supabase
     .from('performance_metrics')
     .insert(data)
-    .select(`
+    .select(
+      `
       *,
       professional:professionals(id, first_name, last_name)
-    `)
+    `
+    )
     .single();
 
   if (error) {
@@ -718,10 +744,12 @@ export async function createDevelopmentActivity(
   const { data: activity, error } = await supabase
     .from('professional_development')
     .insert(data)
-    .select(`
+    .select(
+      `
       *,
       professional:professionals(id, first_name, last_name, email)
-    `)
+    `
+    )
     .single();
 
   if (error) {
@@ -807,10 +835,12 @@ export async function createWorkflow(
   const { data: workflow, error } = await supabase
     .from('credentialing_workflow')
     .insert(data)
-    .select(`
+    .select(
+      `
       *,
       professional:professionals(id, first_name, last_name, email)
-    `)
+    `
+    )
     .single();
 
   if (error) {
@@ -836,10 +866,12 @@ export async function updateWorkflowStatus(
       updated_at: new Date().toISOString(),
     })
     .eq('id', id)
-    .select(`
+    .select(
+      `
       *,
       professional:professionals(id, first_name, last_name, email)
-    `)
+    `
+    )
     .single();
 
   if (error) {
@@ -857,10 +889,12 @@ export async function getActiveWorkflows(
 ): Promise<CredentialingWorkflow[]> {
   let query = supabase
     .from('credentialing_workflow')
-    .select(`
+    .select(
+      `
       *,
       professional:professionals(id, first_name, last_name, email, npi_number)
-    `)
+    `
+    )
     .in('status', [
       'pending',
       'in_progress',
@@ -896,12 +930,14 @@ export async function createAlert(
   const { data: alert, error } = await supabase
     .from('credentialing_alerts')
     .insert(data)
-    .select(`
+    .select(
+      `
       *,
       professional:professionals(id, first_name, last_name, email),
       related_credential:professional_credentials(credential_name, expiration_date),
       related_workflow:credentialing_workflow(workflow_name, status)
-    `)
+    `
+    )
     .single();
 
   if (error) {
@@ -920,12 +956,14 @@ export async function getActiveAlerts(
 ): Promise<CredentialingAlert[]> {
   let query = supabase
     .from('credentialing_alerts')
-    .select(`
+    .select(
+      `
       *,
       professional:professionals(id, first_name, last_name, email),
       related_credential:professional_credentials(credential_name, expiration_date),
       related_workflow:credentialing_workflow(workflow_name, status)
-    `)
+    `
+    )
     .eq('is_active', true)
     .eq('resolved', false);
 

@@ -96,7 +96,8 @@ function checkRateLimit(userId: string): boolean {
 async function extractUserProfile(supabase: any, userId: string) {
   const { data, error } = await supabase
     .from('users')
-    .select(`
+    .select(
+      `
       id,
       email,
       full_name,
@@ -116,7 +117,8 @@ async function extractUserProfile(supabase: any, userId: string) {
       communication_preferences,
       created_at,
       updated_at
-    `)
+    `
+    )
     .eq('id', userId)
     .single();
 
@@ -135,7 +137,8 @@ async function extractUserAppointments(
 ) {
   let query = supabase
     .from('appointments')
-    .select(`
+    .select(
+      `
       id,
       appointment_date,
       appointment_time,
@@ -155,7 +158,8 @@ async function extractUserAppointments(
         estimated_sessions,
         cost_per_session
       )
-    `)
+    `
+    )
     .eq('patient_id', userId);
 
   if (!includeDeleted) {
@@ -181,7 +185,8 @@ async function extractUserTreatments(
 ) {
   let query = supabase
     .from('treatments')
-    .select(`
+    .select(
+      `
       id,
       treatment_name,
       treatment_type,
@@ -205,7 +210,8 @@ async function extractUserTreatments(
         after_photos,
         satisfaction_rating
       )
-    `)
+    `
+    )
     .eq('patient_id', userId);
 
   if (!includeDeleted) {
@@ -229,7 +235,8 @@ async function extractUserPayments(
 ) {
   let query = supabase
     .from('payments')
-    .select(`
+    .select(
+      `
       id,
       payment_date,
       amount,
@@ -249,7 +256,8 @@ async function extractUserPayments(
         amount,
         status
       )
-    `)
+    `
+    )
     .eq('patient_id', userId);
 
   if (!includeDeleted) {
@@ -275,7 +283,8 @@ async function extractUserCommunications(
 ) {
   const { data, error } = await supabase
     .from('communications')
-    .select(`
+    .select(
+      `
       id,
       communication_type,
       subject,
@@ -288,7 +297,8 @@ async function extractUserCommunications(
       read_at,
       created_at,
       updated_at
-    `)
+    `
+    )
     .or(`sender_id.eq.${userId},recipient_id.eq.${userId}`)
     .order('sent_at', { ascending: false });
 
@@ -315,7 +325,8 @@ async function extractUserCommunications(
 async function extractUserPreferences(supabase: any, userId: string) {
   const { data, error } = await supabase
     .from('user_preferences')
-    .select(`
+    .select(
+      `
       id,
       notification_preferences,
       communication_preferences,
@@ -326,7 +337,8 @@ async function extractUserPreferences(supabase: any, userId: string) {
       timezone,
       created_at,
       updated_at
-    `)
+    `
+    )
     .eq('user_id', userId)
     .single();
 

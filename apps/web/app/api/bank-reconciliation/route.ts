@@ -101,7 +101,8 @@ export async function GET(request: NextRequest) {
     // Get bank statements with pagination
     const { data: statements, error: statementsError } = await supabase
       .from('bank_statements')
-      .select(`
+      .select(
+        `
         *,
         bank_transactions(
           id,
@@ -112,7 +113,8 @@ export async function GET(request: NextRequest) {
           reconciliation_status,
           matching_confidence
         )
-      `)
+      `
+      )
       .match(filters)
       .order('statement_date', { ascending: false })
       .range(

@@ -31,10 +31,12 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
 
     const { data: alert, error } = await supabase
       .from('kpi_alerts')
-      .select(`
+      .select(
+        `
         *,
         financial_kpis(kpi_name, kpi_category)
-      `)
+      `
+      )
       .eq('id', params.id)
       .single();
 
@@ -132,10 +134,12 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
       .from('kpi_alerts')
       .update(updateData)
       .eq('id', params.id)
-      .select(`
+      .select(
+        `
         *,
         financial_kpis(kpi_name, kpi_category)
-      `)
+      `
+      )
       .single();
 
     if (error) {

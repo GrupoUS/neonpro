@@ -86,7 +86,8 @@ export async function GET(request: NextRequest) {
     // Build query
     let query = supabase
       .from('users')
-      .select(`
+      .select(
+        `
         id,
         email,
         full_name,
@@ -96,7 +97,8 @@ export async function GET(request: NextRequest) {
         updated_at,
         last_login,
         is_active
-      `)
+      `
+      )
       .range(offset, offset + limit - 1)
       .order('created_at', { ascending: false });
 

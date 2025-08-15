@@ -173,10 +173,12 @@ export async function GET(request: NextRequest) {
     // Get cached KPIs from database
     let query = supabase
       .from('financial_kpis')
-      .select(`
+      .select(
+        `
         *,
         kpi_targets(target_value, target_type, validity_period)
-      `)
+      `
+      )
       .order('last_updated', { ascending: false })
       .limit(limit);
 

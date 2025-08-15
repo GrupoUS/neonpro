@@ -136,11 +136,13 @@ export class TreatmentPredictionService {
   async getPredictions(filters?: PredictionFilters) {
     let query = this.supabase
       .from('treatment_predictions')
-      .select(`
+      .select(
+        `
         *,
         prediction_models(name, version, accuracy, algorithm_type),
         patients(name, email)
-      `)
+      `
+      )
       .order('prediction_date', { ascending: false });
 
     if (filters) {

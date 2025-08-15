@@ -52,13 +52,15 @@ export async function GET(request: NextRequest) {
     // Get forecast accuracy history
     let query = supabase
       .from('forecast_accuracy_log')
-      .select(`
+      .select(
+        `
         *,
         inventory_items (
           name,
           category
         )
-      `)
+      `
+      )
       .eq('clinic_id', clinicId)
       .gte('forecast_date', startDate.toISOString())
       .order('forecast_date', { ascending: false });

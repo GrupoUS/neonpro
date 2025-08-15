@@ -101,10 +101,12 @@ export class FIFOManager {
     try {
       let query = this.supabase
         .from('lotes_estoque')
-        .select(`
+        .select(
+          `
           *,
           produto:produtos_estoque(nome, codigo_interno, categoria, preco_custo)
-        `)
+        `
+        )
         .eq('status', 'disponivel')
         .gt('quantidade_disponivel', 0);
 
@@ -166,10 +168,12 @@ export class FIFOManager {
     try {
       const { data: expiringBatches, error } = await this.supabase
         .from('lotes_estoque')
-        .select(`
+        .select(
+          `
           *,
           produto:produtos_estoque(nome, codigo_interno, preco_custo)
-        `)
+        `
+        )
         .eq('status', 'disponivel')
         .gt('quantidade_disponivel', 0)
         .lte('dias_para_vencer', daysAhead)
@@ -417,10 +421,12 @@ export class FIFOManager {
     try {
       const { data: movements, error } = await this.supabase
         .from('movimentacoes_lote')
-        .select(`
+        .select(
+          `
           *,
           responsavel:auth.users(nome)
-        `)
+        `
+        )
         .eq('lote_id', loteId)
         .order('data_movimento', { ascending: false });
 

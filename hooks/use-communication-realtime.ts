@@ -45,11 +45,13 @@ export function useCommunicationRealtime({
 
         const { data: messages, error } = await supabase
           .from('communication_messages')
-          .select(`
+          .select(
+            `
           *,
           sender:auth.users!sender_id(id, email, raw_user_meta_data),
           attachments:communication_attachments(*)
-        `)
+        `
+          )
           .eq('conversation_id', convId)
           .order('created_at', { ascending: true });
 
@@ -94,11 +96,13 @@ export function useCommunicationRealtime({
               // Buscar dados completos da mensagem com relacionamentos
               const { data: fullMessage } = await supabase
                 .from('communication_messages')
-                .select(`
+                .select(
+                  `
                 *,
                 sender:auth.users!sender_id(id, email, raw_user_meta_data),
                 attachments:communication_attachments(*)
-              `)
+              `
+                )
                 .eq('id', payload.new.id)
                 .single();
 
@@ -122,11 +126,13 @@ export function useCommunicationRealtime({
               // Atualizar mensagem existente
               const { data: fullMessage } = await supabase
                 .from('communication_messages')
-                .select(`
+                .select(
+                  `
                 *,
                 sender:auth.users!sender_id(id, email, raw_user_meta_data),
                 attachments:communication_attachments(*)
-              `)
+              `
+                )
                 .eq('id', payload.new.id)
                 .single();
 

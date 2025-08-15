@@ -64,11 +64,13 @@ export async function GET(request: NextRequest) {
     // Build query with filters
     let query = supabase
       .from('regulatory_documents')
-      .select(`
+      .select(
+        `
         *,
         regulation_categories!inner(name, authority_name),
         document_versions(id, version, created_at)
-      `)
+      `
+      )
       .order('created_at', { ascending: false });
 
     // Apply filters
@@ -172,10 +174,12 @@ export async function POST(request: NextRequest) {
         created_by: user.id,
         updated_by: user.id,
       })
-      .select(`
+      .select(
+        `
         *,
         regulation_categories!inner(name, authority_name)
-      `)
+      `
+      )
       .single();
 
     if (error) {

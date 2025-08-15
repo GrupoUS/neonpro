@@ -299,10 +299,12 @@ class AISchedulingCore {
     try {
       const { data: appointments } = await this.supabase
         .from('appointments')
-        .select(`
+        .select(
+          `
           *,
           appointment_feedback(*)
-        `)
+        `
+        )
         .eq('patient_id', patientId)
         .order('created_at', { ascending: false })
         .limit(50);

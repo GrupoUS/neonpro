@@ -353,10 +353,12 @@ async function handleSubscriptionTrialWillEnd(
     // Find the subscription
     const { data: subscriptionData } = await supabase
       .from('subscriptions')
-      .select(`
+      .select(
+        `
         *,
         customer:customers(*)
-      `)
+      `
+      )
       .eq('stripe_subscription_id', subscription.id)
       .single();
 

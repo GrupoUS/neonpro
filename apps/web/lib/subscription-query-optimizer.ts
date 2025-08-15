@@ -368,7 +368,8 @@ export class SubscriptionQueryOptimizer {
         // For other query types, use direct execution
         const { data, error } = await supabase
           .from('user_subscriptions')
-          .select(`
+          .select(
+            `
             *,
             subscription_plans (
               id,
@@ -380,7 +381,8 @@ export class SubscriptionQueryOptimizer {
               max_patients,
               max_clinics
             )
-          `)
+          `
+          )
           .eq('user_id', params[0])
           .single();
 
@@ -421,7 +423,8 @@ export class SubscriptionQueryOptimizer {
       // For batch operations, we'll query all at once
       const { data, error } = await supabase
         .from('user_subscriptions')
-        .select(`
+        .select(
+          `
           *,
           subscription_plans (
             id,
@@ -433,7 +436,8 @@ export class SubscriptionQueryOptimizer {
             max_patients,
             max_clinics
           )
-        `)
+        `
+        )
         .in('user_id', params);
 
       if (error) {

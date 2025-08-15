@@ -34,7 +34,8 @@ export async function GET(request: NextRequest) {
     // Get prediction effectiveness metrics
     let effectivenessQuery = supabase
       .from('no_show_predictions')
-      .select(`
+      .select(
+        `
         id,
         appointment_id,
         patient_id,
@@ -56,7 +57,8 @@ export async function GET(request: NextRequest) {
           outcome,
           effectiveness_score
         )
-      `)
+      `
+      )
       .not('actual_outcome', 'is', null); // Only predictions with known outcomes
 
     // Apply filters

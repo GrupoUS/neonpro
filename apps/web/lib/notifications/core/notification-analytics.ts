@@ -256,7 +256,8 @@ export class NotificationAnalytics {
     try {
       let query = this.supabase
         .from('notification_logs')
-        .select(`
+        .select(
+          `
           template_id,
           template_name,
           status,
@@ -265,7 +266,8 @@ export class NotificationAnalytics {
           opened_at,
           clicked_at,
           cost
-        `)
+        `
+        )
         .not('template_id', 'is', null);
 
       if (filters?.start_date) {
@@ -330,7 +332,8 @@ export class NotificationAnalytics {
     try {
       let query = this.supabase
         .from('notification_logs')
-        .select(`
+        .select(
+          `
           campaign_id,
           campaign_name,
           channel,
@@ -341,7 +344,8 @@ export class NotificationAnalytics {
           clicked_at,
           cost,
           user_metadata
-        `)
+        `
+        )
         .not('campaign_id', 'is', null);
 
       if (campaignId) {

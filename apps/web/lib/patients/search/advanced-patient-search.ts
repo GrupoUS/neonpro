@@ -139,15 +139,19 @@ export class AdvancedPatientSearch {
 
       const { data: patients, error } = await supabase
         .from('patients')
-        .select(`
+        .select(
+          `
           id, name, email, phone, date_of_birth,
           patient_profiles_extended(risk_score)
-        `)
-        .or(`
+        `
+        )
+        .or(
+          `
           name.ilike.%${query}%,
           email.ilike.%${query}%,
           phone.ilike.%${query}%
-        `)
+        `
+        )
         .limit(10)
         .order('updated_at', { ascending: false });
 

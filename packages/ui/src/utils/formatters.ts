@@ -1,4 +1,5 @@
 import { format, formatDistanceToNow } from 'date-fns';
+import { format, formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 export const formatters = {
@@ -220,16 +221,6 @@ export const currency = (value: number): string => {
   }).format(value);
 };
 
-// Utility object export
-export const formatters = {
-  date,
-  time,
-  dateTime,
-  relativeTime,
-  cpf,
-  phone,
-  initials,
-  firstName,
-  age,
-  currency,
-};
+// Individual exports for backward compatibility
+export const formatDate = formatters.date;
+export const formatPhone = formatters.phone;

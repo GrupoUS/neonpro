@@ -38,7 +38,8 @@ export async function GET(
     // Get Facebook account details
     const { data: account, error: accountError } = await supabase
       .from('social_media_accounts')
-      .select(`
+      .select(
+        `
         id,
         platform_user_id,
         platform_username,
@@ -51,7 +52,8 @@ export async function GET(
         is_active,
         last_sync_at,
         created_at
-      `)
+      `
+      )
       .eq('id', accountId)
       .eq('user_id', session.user.id)
       .eq('platform_id', 'facebook')

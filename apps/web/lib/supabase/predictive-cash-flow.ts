@@ -261,11 +261,13 @@ export async function createCashFlowPrediction(
           scenario_id: input.scenario_id,
         },
       ])
-      .select(`
+      .select(
+        `
         *,
         model:prediction_models(*),
         scenario:forecasting_scenarios(*)
-      `)
+      `
+      )
       .single();
 
     if (error) {
@@ -298,11 +300,13 @@ export async function updateCashFlowPrediction(
       .from('cash_flow_predictions')
       .update(updateData)
       .eq('id', id)
-      .select(`
+      .select(
+        `
         *,
         model:prediction_models(*),
         scenario:forecasting_scenarios(*)
-      `)
+      `
+      )
       .single();
 
     if (error) {
@@ -601,11 +605,13 @@ export async function createPredictionAccuracy(
           is_outlier: input.is_outlier,
         },
       ])
-      .select(`
+      .select(
+        `
         *,
         prediction:cash_flow_predictions(*),
         model:prediction_models(*)
-      `)
+      `
+      )
       .single();
 
     if (error) {
@@ -659,10 +665,12 @@ export async function createPredictionAlert(
           notification_channels: input.notification_channels || [],
         },
       ])
-      .select(`
+      .select(
+        `
         *,
         prediction:cash_flow_predictions(*)
-      `)
+      `
+      )
       .single();
 
     if (error) {
@@ -695,10 +703,12 @@ export async function updatePredictionAlert(
       .from('prediction_alerts')
       .update(updateData)
       .eq('id', id)
-      .select(`
+      .select(
+        `
         *,
         prediction:cash_flow_predictions(*)
-      `)
+      `
+      )
       .single();
 
     if (error) {

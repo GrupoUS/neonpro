@@ -116,7 +116,8 @@ export class PaymentsService {
     try {
       const { data, error } = await this.supabase
         .from('ap_payments')
-        .select(`
+        .select(
+          `
           *,
           accounts_payable:accounts_payable_id (
             id,
@@ -124,7 +125,8 @@ export class PaymentsService {
             vendor_name,
             net_amount
           )
-        `)
+        `
+        )
         .order('payment_date', { ascending: false });
 
       if (error) {
@@ -148,7 +150,8 @@ export class PaymentsService {
     try {
       const { data, error } = await this.supabase
         .from('ap_payments')
-        .select(`
+        .select(
+          `
           *,
           accounts_payable:accounts_payable_id (
             id,
@@ -156,7 +159,8 @@ export class PaymentsService {
             vendor_name,
             net_amount
           )
-        `)
+        `
+        )
         .eq('id', id)
         .single();
 
@@ -391,7 +395,8 @@ export class PaymentsService {
     try {
       const { data, error } = await this.supabase
         .from('ap_payments')
-        .select(`
+        .select(
+          `
           *,
           accounts_payable:accounts_payable_id (
             id,
@@ -399,7 +404,8 @@ export class PaymentsService {
             vendor_name,
             net_amount
           )
-        `)
+        `
+        )
         .or(`reference_number.ilike.%${query}%,notes.ilike.%${query}%`)
         .order('payment_date', { ascending: false });
 
@@ -448,7 +454,8 @@ export class PaymentsService {
     try {
       const { data, error } = await this.supabase
         .from('ap_payments')
-        .select(`
+        .select(
+          `
           *,
           accounts_payable:accounts_payable_id (
             id,
@@ -456,7 +463,8 @@ export class PaymentsService {
             vendor_name,
             net_amount
           )
-        `)
+        `
+        )
         .gte('payment_date', startDate)
         .lte('payment_date', endDate)
         .order('payment_date', { ascending: false });

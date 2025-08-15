@@ -49,12 +49,14 @@ export const POST = withErrorMonitoring(async (request: NextRequest) => {
     // Get analysis data
     const { data: analysisData, error: analysisError } = await supabase
       .from('image_analysis')
-      .select(`
+      .select(
+        `
         *,
         analysis_annotations(*),
         analysis_performance(*),
         analysis_quality_control(*)
-      `)
+      `
+      )
       .in('id', validatedData.analysisIds)
       .eq('user_id', user.id); // Ensure user can only export their own analyses
 

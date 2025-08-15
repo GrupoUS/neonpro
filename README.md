@@ -67,18 +67,18 @@ Este projeto contém todos os arquivos necessários para funcionar independentem
 
 \`\`\`
 neonpro/
-├── app/              # Next.js App Router
-├── components/       # Componentes React
-│   └── ui/          # Componentes UI (shadcn/ui)
-├── lib/             # Utilitários e configurações
-├── public/          # Arquivos públicos
-├── styles/          # Estilos globais
-├── .env.example     # Template de variáveis de ambiente
-├── .gitignore       # Arquivos ignorados pelo Git
-├── next.config.mjs  # Configuração Next.js
-├── package.json     # Dependências e scripts
+├── app/ # Next.js App Router
+├── components/ # Componentes React
+│ └── ui/ # Componentes UI (shadcn/ui)
+├── lib/ # Utilitários e configurações
+├── public/ # Arquivos públicos
+├── styles/ # Estilos globais
+├── .env.example # Template de variáveis de ambiente
+├── .gitignore # Arquivos ignorados pelo Git
+├── next.config.mjs # Configuração Next.js
+├── package.json # Dependências e scripts
 ├── tailwind.config.ts # Configuração Tailwind
-└── tsconfig.json    # Configuração TypeScript
+└── tsconfig.json # Configuração TypeScript
 \`\`\`
 
 ## 🚀 Tecnologias Utilizadas
@@ -120,6 +120,7 @@ neonpro/
 **Todas as tabelas do NeonPro estão hospedadas neste projeto Supabase**
 
 ### Tabelas Principais (Sistema Core)
+
 - `profiles` - Perfis de usuários com dados de autenticação
 - `clients` - Gestão completa de pacientes/clientes
 - `services` - Catálogo de serviços oferecidos pela clínica
@@ -129,11 +130,13 @@ neonpro/
 - `clinic_settings` - Configurações gerais do sistema
 
 ### Sistema Educacional
+
 - `courses` - Cursos e programas educacionais
 - `course_enrollments` - Inscrições e matrículas
 - `medical_documents` - Documentos médicos com verificação
 
 ### CRM Avançado
+
 - `customers` - Base de clientes CRM
 - `customer_segments` - Segmentação inteligente
 - `customer_segment_memberships` - Relacionamentos de segmentos
@@ -141,6 +144,7 @@ neonpro/
 - `marketing_campaigns` - Campanhas de marketing
 
 ### Gestão Financeira
+
 - `vendors` - Cadastro de fornecedores
 - `expense_categories` - Categorização de despesas
 - `accounts_payable` - Contas a pagar
@@ -150,12 +154,14 @@ neonpro/
 - `ap_audit_log` - Auditoria financeira
 
 ### Sistema de Performance
+
 - `performance_metrics` - Métricas de performance em tempo real
 - `performance_alerts` - Alertas automáticos de performance
 - `bundle_analysis` - Análise de bundles de JavaScript
 - `cache_performance` - Monitoramento de cache do sistema
 
 ### Sistema de Sessões e Segurança
+
 - `user_sessions` - Gerenciamento de sessões de usuários
 - `device_registrations` - Registro e validação de dispositivos
 - `session_audit_logs` - Logs de auditoria de sessões
@@ -164,6 +170,7 @@ neonpro/
 - `session_policies` - Políticas de sessão personalizáveis
 
 ### Recursos Avançados
+
 - **Row Level Security (RLS)** em todas as tabelas
 - **Triggers automáticos** para criação de perfis
 - **Funções PostgreSQL** para cálculos complexos
@@ -189,7 +196,9 @@ cd neonpro
 
 \`\`\`bash
 npm install
+
 # ou
+
 yarn install
 \`\`\`
 
@@ -228,23 +237,30 @@ Acesse [http://localhost:3000](http://localhost:3000) no seu navegador.
 ### Testes unitários
 
 \`\`\`bash
+
 # Executar todos os testes
+
 npm run test
 
 # Executar em modo watch
+
 npm run test:watch
 
 # Executar com cobertura
+
 npm run test:coverage
 \`\`\`
 
 ### Testes E2E
 
 \`\`\`bash
+
 # Executar testes E2E
+
 npm run test:e2e
 
 # Executar com interface gráfica
+
 npm run test:e2e:ui
 \`\`\`
 

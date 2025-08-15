@@ -173,14 +173,16 @@ export async function GET(request: NextRequest) {
     // Get verification history
     const { data: verifications, error: verificationError } = await supabase
       .from('patient_photo_verifications')
-      .select(`
+      .select(
+        `
         id,
         verified,
         confidence,
         context,
         created_at,
         verified_by
-      `)
+      `
+      )
       .eq('patient_id', patientId)
       .order('created_at', { ascending: false })
       .range(offset, offset + limit - 1);

@@ -46,7 +46,8 @@ export async function POST(request: NextRequest) {
     // Get scheduled appointments for the period
     const { data: appointments, error: appointmentsError } = await supabase
       .from('appointments')
-      .select(`
+      .select(
+        `
         id,
         scheduled_date,
         procedure_type,
@@ -58,7 +59,8 @@ export async function POST(request: NextRequest) {
           estimated_duration,
           required_materials
         )
-      `)
+      `
+      )
       .eq('clinic_id', params.clinicId)
       .gte('scheduled_date', params.startDate)
       .lte('scheduled_date', params.endDate)
@@ -75,7 +77,8 @@ export async function POST(request: NextRequest) {
     // Get material templates for procedures
     const { data: materialTemplates, error: templatesError } = await supabase
       .from('procedure_material_templates')
-      .select(`
+      .select(
+        `
         procedure_type,
         product_id,
         estimated_quantity,
@@ -85,7 +88,8 @@ export async function POST(request: NextRequest) {
           name,
           unit_cost
         )
-      `)
+      `
+      )
       .eq('clinic_id', params.clinicId)
       .eq('is_active', true);
 

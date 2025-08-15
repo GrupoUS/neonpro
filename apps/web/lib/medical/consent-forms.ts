@@ -608,10 +608,12 @@ export class ConsentFormsManager {
     try {
       let query = this.supabase
         .from('consent_responses')
-        .select(`
+        .select(
+          `
           *,
           consent_form:consent_forms(*)
-        `)
+        `
+        )
         .eq('patient_id', patientId);
 
       if (activeOnly) {

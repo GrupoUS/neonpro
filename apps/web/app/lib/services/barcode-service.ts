@@ -210,7 +210,8 @@ export class BarcodeService {
       // Look up barcode in database
       const { data: barcodeData, error: barcodeError } = await this.supabase
         .from('inventory_barcodes')
-        .select(`
+        .select(
+          `
           *,
           inventory_items (
             id,
@@ -223,7 +224,8 @@ export class BarcodeService {
             id,
             location_name
           )
-        `)
+        `
+        )
         .eq('barcode', request.value)
         .single();
 

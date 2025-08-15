@@ -149,10 +149,12 @@ export async function GET(request: NextRequest) {
       // Get specific batch status
       const { data, error } = await supabase
         .from('sms_bulk_batches')
-        .select(`
+        .select(
+          `
           *,
           sms_messages(count)
-        `)
+        `
+        )
         .eq('batch_id', batchId)
         .single();
 
@@ -189,14 +191,16 @@ export async function GET(request: NextRequest) {
 
     const { data, error } = await supabase
       .from('sms_bulk_batches')
-      .select(`
+      .select(
+        `
           *,
           sms_messages(
             status,
             cost,
             created_at
           )
-        `)
+        `
+      )
       .gte('created_at', startDate)
       .order('created_at', { ascending: false });
 

@@ -9,6 +9,7 @@ Este diretório contém scripts automatizados para validar o status real das sto
 Script que verifica automaticamente o status real de implementação de cada story, comparando com o status declarado nos arquivos.
 
 **Funcionalidades:**
+
 - ✅ Verifica existência de arquivos mencionados nas stories
 - ✅ Busca por implementações no código fonte
 - ✅ Verifica presença de testes relacionados
@@ -17,6 +18,7 @@ Script que verifica automaticamente o status real de implementação de cada sto
 - ✅ Gera relatórios detalhados em JSON
 
 **Uso:**
+
 ```bash
 # Executar validação completa
 node scripts/validate-stories.js
@@ -26,6 +28,7 @@ npm run validate:stories
 ```
 
 **Output:**
+
 - Relatório no terminal com cores
 - Arquivo JSON detalhado em `docs/validation-reports/`
 - Identificação de stories que precisam de atenção
@@ -35,6 +38,7 @@ npm run validate:stories
 Script que atualiza automaticamente o roadmap principal com base nos resultados da validação real das stories.
 
 **Funcionalidades:**
+
 - ✅ Cria backup automático do roadmap atual
 - ✅ Atualiza status das stories com dados reais
 - ✅ Inclui métricas de implementação (percentuais)
@@ -43,6 +47,7 @@ Script que atualiza automaticamente o roadmap principal com base nos resultados 
 - ✅ Log detalhado de todas as mudanças
 
 **Uso:**
+
 ```bash
 # Preview das alterações (não salva)
 node scripts/update-roadmap.js --dry-run
@@ -104,10 +109,10 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
-      
+
       - name: Validate Stories
         run: node scripts/validate-stories.js
-      
+
       - name: Check Roadmap Sync
         run: |
           node scripts/update-roadmap.js --dry-run
@@ -120,18 +125,24 @@ jobs:
 ## 📊 Critérios de Validação
 
 ### Status COMPLETED ✅
+
 Uma story é considerada COMPLETED quando:
+
 - **Implementação**: Score ≥ 60% (código encontrado no src/)
 - **Arquivos**: Score ≥ 70% (arquivos mencionados existem)
 - **Testes**: Score ≥ 30% (testes relacionados encontrados)
 
 ### Status IN_PROGRESS 🔄
+
 Uma story é considerada IN_PROGRESS quando:
+
 - **Implementação**: Score ≥ 30% OU **Arquivos**: Score ≥ 40%
 - Não atende critérios para COMPLETED
 
 ### Status PENDING ⏳
+
 Uma story é considerada PENDING quando:
+
 - **Implementação**: Score < 30%
 - **Arquivos**: Score < 40%
 - **Testes**: Score < 20%
@@ -164,6 +175,7 @@ docs/shards/stories/
 ### Dependências
 
 Os scripts usam apenas módulos nativos do Node.js:
+
 - `fs` - Sistema de arquivos
 - `path` - Manipulação de caminhos
 - `child_process` - Execução de comandos (grep, find)
@@ -221,17 +233,20 @@ export NEONPRO_ROADMAP_FILE="docs/NEONPRO_DETAILED_ROADMAP_2025.md"
 ### Erro: "grep command not found"
 
 **Windows:**
+
 ```bash
 # Instalar Git Bash ou WSL
 # Ou usar PowerShell com Select-String
 ```
 
 **macOS:**
+
 ```bash
 # grep já vem instalado
 ```
 
 **Linux:**
+
 ```bash
 sudo apt-get install grep  # Ubuntu/Debian
 sudo yum install grep      # CentOS/RHEL
@@ -258,6 +273,7 @@ Se o script não detectar implementações existentes:
 ### Customizar Critérios
 
 Para ajustar os critérios de validação, edite as funções:
+
 - `calculateFinalStatus()` em `validate-stories.js`
 - `getStatusInfo()` em `update-roadmap.js`
 

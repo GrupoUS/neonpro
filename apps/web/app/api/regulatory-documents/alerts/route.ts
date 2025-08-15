@@ -74,7 +74,8 @@ export async function GET(request: NextRequest) {
     // Build query with filters
     let query = supabase
       .from('compliance_alerts')
-      .select(`
+      .select(
+        `
         *,
         regulatory_documents!inner(
           id,
@@ -86,7 +87,8 @@ export async function GET(request: NextRequest) {
           status,
           clinic_id
         )
-      `)
+      `
+      )
       .eq('regulatory_documents.clinic_id', profile.clinic_id)
       .order('created_at', { ascending: false });
 
@@ -203,10 +205,12 @@ export async function POST(request: NextRequest) {
         acknowledgment_note,
       })
       .eq('id', alert_id)
-      .select(`
+      .select(
+        `
         *,
         regulatory_documents!inner(document_type, document_category)
-      `)
+      `
+      )
       .single();
 
     if (error) {

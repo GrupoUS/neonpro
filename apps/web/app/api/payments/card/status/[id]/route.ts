@@ -48,7 +48,8 @@ export async function GET(
     // Get payment from database
     const { data: cardPayment, error: paymentError } = await supabase
       .from('card_payments')
-      .select(`
+      .select(
+        `
         *,
         profiles!card_payments_created_by_fkey(id, name, email),
         installment_plans(
@@ -67,7 +68,8 @@ export async function GET(
             paid_at
           )
         )
-      `)
+      `
+      )
       .eq('stripe_payment_intent_id', paymentIntentId)
       .single();
 
@@ -162,7 +164,8 @@ export async function GET(
     if (cardPayment.payable_id) {
       const { data: ap } = await supabase
         .from('ap_payments')
-        .select(`
+        .select(
+          `
           *,
           ap_payables(
             id,
@@ -170,7 +173,8 @@ export async function GET(
             due_date,
             status
           )
-        `)
+        `
+        )
         .eq('reference_id', paymentIntentId)
         .single();
 

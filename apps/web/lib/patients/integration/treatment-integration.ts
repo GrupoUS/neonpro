@@ -83,12 +83,14 @@ export class PatientTreatmentIntegration {
     try {
       const { data: treatments, error } = await supabase
         .from('patient_treatments')
-        .select(`
+        .select(
+          `
           *,
           services(name),
           staff(name),
           treatment_sessions(count)
-        `)
+        `
+        )
         .eq('patient_id', patientId)
         .order('start_date', { ascending: false });
 
@@ -466,10 +468,12 @@ export class PatientTreatmentIntegration {
       // Get patient profile for personalized recommendations
       const { data: patient } = await supabase
         .from('patients')
-        .select(`
+        .select(
+          `
           *,
           patient_profiles_extended(*)
-        `)
+        `
+        )
         .eq('id', patientId)
         .single();
 

@@ -114,11 +114,13 @@ export function usePatientData(): PatientDataContextType {
     try {
       const { data, error } = await supabase
         .from('appointments')
-        .select(`
+        .select(
+          `
           *,
           service:services(id, name, category, price),
           professional:users(id, name, role)
-        `)
+        `
+        )
         .eq('patient_id', patient.id)
         .order('scheduled_at', { ascending: true });
 

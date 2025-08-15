@@ -180,7 +180,8 @@ export const GET = withErrorMonitoring(async (request: NextRequest) => {
     // Get share record
     const { data: shareRecord, error: shareError } = await supabase
       .from('analysis_shares')
-      .select(`
+      .select(
+        `
         *,
         image_analysis!inner(
           id,
@@ -198,7 +199,8 @@ export const GET = withErrorMonitoring(async (request: NextRequest) => {
           analysis_annotations(*),
           analysis_performance(*)
         )
-      `)
+      `
+      )
       .eq('id', shareId)
       .eq('is_active', true)
       .single();

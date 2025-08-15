@@ -41,11 +41,13 @@ export class PatientAppointmentIntegration {
     try {
       const { data: appointments, error } = await supabase
         .from('appointments')
-        .select(`
+        .select(
+          `
           *,
           services(*),
           staff(*)
-        `)
+        `
+        )
         .eq('patient_id', patientId)
         .order('appointment_date', { ascending: false });
 

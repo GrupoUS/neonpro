@@ -143,7 +143,10 @@ async function validateMigration() {
       log('✅ Migration validada com sucesso!', COLORS.GREEN);
       return true;
     }
-    log('⚠️  Alguns testes falharam, mas migration foi aplicada', COLORS.YELLOW);
+    log(
+      '⚠️  Alguns testes falharam, mas migration foi aplicada',
+      COLORS.YELLOW
+    );
     log(result.stdout);
     return true;
   } catch (error) {

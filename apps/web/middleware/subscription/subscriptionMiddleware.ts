@@ -120,10 +120,12 @@ export async function subscriptionMiddleware(
     // Get active subscription with plan details
     const { data: subscription, error: subscriptionError } = await supabase
       .from('user_subscriptions')
-      .select(`
+      .select(
+        `
         *,
         plan:subscription_plans(*)
-      `)
+      `
+      )
       .eq('clinic_id', userClinic.clinic_id)
       .in('status', ['trial', 'active'])
       .single();

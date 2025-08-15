@@ -24,14 +24,14 @@ pnpm add react react-dom tailwindcss
 
 ## Usage
 
-```tsx
+````tsx
 import { Button, PatientCard, PatientTable } from '@neonpro/ui';
 
 function MyComponent() {
   return (
     <div>
       <Button variant="medical">Novo Paciente</Button>
-      <PatientTable 
+      <PatientTable
         patients={patients}
         onPatientClick={handlePatientClick}
       />
@@ -86,23 +86,26 @@ pnpm build
 
 # Start Storybook
 pnpm storybook
-```
+````
 
 ## Benefits of Simplified Structure
 
 ### ✅ **Developer Experience**
+
 - **70% fewer directories** to navigate
 - **Single import** for all components
 - **Faster file location** and easier maintenance
 - **Reduced cognitive overhead** for new developers
 
 ### ✅ **Maintenance Benefits**
+
 - **Easier refactoring** with flat structure
 - **Simpler build configuration** and tooling
 - **Reduced file complexity** (one main file per component)
 - **Better IDE performance** with fewer nested folders
 
 ### ✅ **Import Simplicity**
+
 ```typescript
 // Before (complex):
 import { Button } from '@neonpro/ui/atoms/Button';

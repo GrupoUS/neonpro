@@ -41,7 +41,8 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
     // Get appointment details
     const { data: appointment } = await supabase
       .from('appointments')
-      .select(`
+      .select(
+        `
         *,
         patients!inner(
           id,
@@ -60,7 +61,8 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
           full_name,
           professional_title
         )
-      `)
+      `
+      )
       .eq('id', prediction.appointment_id)
       .single();
 

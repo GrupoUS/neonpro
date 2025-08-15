@@ -42,7 +42,8 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
 
     const { data: purchaseOrder, error } = await supabase
       .from('purchase_orders')
-      .select(`
+      .select(
+        `
         *,
         suppliers (
           id,
@@ -66,7 +67,8 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
           phone,
           email
         )
-      `)
+      `
+      )
       .eq('id', params.id)
       .single();
 
@@ -232,13 +234,15 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
       // Fetch full PO data for template generation
       const { data: fullPO, error: fullPOError } = await supabase
         .from('purchase_orders')
-        .select(`
+        .select(
+          `
           *,
           purchase_order_items (
             *,
             inventory_items (name)
           )
-        `)
+        `
+        )
         .eq('id', params.id)
         .single();
 

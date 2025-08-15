@@ -155,11 +155,13 @@ export class ConsumptionAnalyzer {
       const { data: consumptions, error: consumptionError } =
         await this.supabase
           .from('saidas_estoque')
-          .select(`
+          .select(
+            `
           *,
           produto:produtos_estoque(nome, categoria, preco_custo),
           centro_custo:centros_custo(nome)
-        `)
+        `
+          )
           .eq('centro_custo_id', centroCustoId)
           .gte('data_saida', dataInicio.toISOString())
           .lte('data_saida', dataFim.toISOString())
@@ -273,10 +275,12 @@ export class ConsumptionAnalyzer {
 
       let query = this.supabase
         .from('saidas_estoque')
-        .select(`
+        .select(
+          `
           *,
           produto:produtos_estoque(nome, categoria)
-        `)
+        `
+        )
         .eq('centro_custo_id', centroCustoId)
         .gte('data_saida', sixMonthsAgo.toISOString())
         .eq('status', 'confirmada');
@@ -352,10 +356,12 @@ export class ConsumptionAnalyzer {
 
       const { data: consumptions, error } = await this.supabase
         .from('saidas_estoque')
-        .select(`
+        .select(
+          `
           *,
           produto:produtos_estoque(nome, categoria)
-        `)
+        `
+        )
         .eq('centro_custo_id', centroCustoId)
         .gte('data_saida', startDate.toISOString())
         .eq('status', 'confirmada')

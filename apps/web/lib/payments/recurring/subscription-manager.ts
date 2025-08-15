@@ -452,11 +452,13 @@ export class SubscriptionManager {
     try {
       const { data, error } = await this.supabase
         .from('subscriptions')
-        .select(`
+        .select(
+          `
           *,
           plan:subscription_plans(*),
           customer:customers(*)
-        `)
+        `
+        )
         .eq('id', subscriptionId)
         .single();
 
@@ -476,10 +478,12 @@ export class SubscriptionManager {
     try {
       const { data, error } = await this.supabase
         .from('subscriptions')
-        .select(`
+        .select(
+          `
           *,
           plan:subscription_plans(*)
-        `)
+        `
+        )
         .eq('customer_id', customerId)
         .order('created_at', { ascending: false });
 

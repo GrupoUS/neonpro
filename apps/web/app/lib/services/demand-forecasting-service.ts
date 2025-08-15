@@ -73,13 +73,15 @@ export class DemandForecastingService {
 
     const { data: transactions, error } = await supabase
       .from('inventory_transactions')
-      .select(`
+      .select(
+        `
         quantity,
         created_at,
         transaction_type,
         transaction_context,
         appointment_id
-      `)
+      `
+      )
       .eq('item_id', itemId)
       .eq('clinic_id', clinicId)
       .eq('transaction_type', 'consumption')
@@ -126,7 +128,8 @@ export class DemandForecastingService {
     // Obter agendamentos com consumo associado
     const { data: appointments, error } = await supabase
       .from('appointments')
-      .select(`
+      .select(
+        `
         date,
         procedure_type,
         status,
@@ -134,7 +137,8 @@ export class DemandForecastingService {
           item_id,
           quantity_used
         )
-      `)
+      `
+      )
       .eq('clinic_id', clinicId)
       .gte('date', startDate.toISOString())
       .in('status', ['completed', 'in_progress'])

@@ -1,5 +1,12 @@
 {
   "compilerOptions": {
+    // NEONPRO HEALTHCARE - Strict TypeScript for Medical Accuracy
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
     "target": "es2015",
     "lib": ["dom", "dom.iterable", "es6"],
     "allowJs": true,

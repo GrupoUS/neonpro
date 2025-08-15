@@ -37,7 +37,7 @@ const result = await sessionSecurity.initializeSessionSecurity(
     maxConcurrentSessions: 3,
     timeoutMinutes: 30,
     enableCSRF: true,
-    enableHijackingProtection: true
+    enableHijackingProtection: true,
   }
 );
 ```
@@ -52,10 +52,7 @@ const middleware = new SessionSecurityMiddleware();
 const result = await middleware.checkSecurity(request, userId, sessionId);
 
 if (!result.allowed) {
-  return NextResponse.json(
-    { error: result.reason },
-    { status: 403 }
-  );
+  return NextResponse.json({ error: result.reason }, { status: 403 });
 }
 ```
 
@@ -111,6 +108,7 @@ await csrf.invalidateTokensForSession(sessionId);
 ```
 
 **Configurações:**
+
 - `tokenLength`: Tamanho do token (padrão: 32)
 - `expirationHours`: Expiração em horas (padrão: 24)
 - `validateUserAgent`: Validar user-agent (padrão: true)
@@ -127,12 +125,16 @@ const hijackingProtection = new SessionHijackingProtection();
 
 // Criar fingerprint
 const fingerprint = await hijackingProtection.createFingerprint(
-  userId, sessionId, request
+  userId,
+  sessionId,
+  request
 );
 
 // Verificar sessão
 const result = await hijackingProtection.checkSession(
-  userId, sessionId, request
+  userId,
+  sessionId,
+  request
 );
 
 // result.action: 'allow' | 'challenge' | 'block' | 'terminate'
@@ -140,6 +142,7 @@ const result = await hijackingProtection.checkSession(
 ```
 
 **Risk Score:**
+
 - 0-2: Allow (permitir)
 - 3-5: Challenge (desafio adicional)
 - 6-7: Block (bloquear temporariamente)
@@ -157,7 +160,7 @@ const timeoutManager = new SessionTimeoutManager();
 // Configurar timeout
 await timeoutManager.setSessionTimeout(userId, sessionId, {
   timeoutMinutes: 30,
-  warningMinutes: [5, 2, 1]
+  warningMinutes: [5, 2, 1],
 });
 
 // Verificar status
@@ -168,6 +171,7 @@ await timeoutManager.extendSession(userId, sessionId, 15);
 ```
 
 **Configurações:**
+
 - `timeoutMinutes`: Timeout em minutos (padrão: 30)
 - `warningMinutes`: Avisos antes da expiração (padrão: [5, 2, 1])
 - `maxExtensions`: Máximo de extensões (padrão: 3)
@@ -181,13 +185,13 @@ await timeoutManager.extendSession(userId, sessionId, 15);
 
 ```typescript
 const {
-  isSecurityActive,     // boolean: se a segurança está ativa
-  securityStatus,       // string: status atual da segurança
-  lastActivity,         // Date: última atividade registrada
-  updateActivity,       // function: atualizar atividade
-  extendSession,        // function: estender sessão
-  terminateSession,     // function: terminar sessão
-  error                 // string: erro se houver
+  isSecurityActive, // boolean: se a segurança está ativa
+  securityStatus, // string: status atual da segurança
+  lastActivity, // Date: última atividade registrada
+  updateActivity, // function: atualizar atividade
+  extendSession, // function: estender sessão
+  terminateSession, // function: terminar sessão
+  error, // string: erro se houver
 } = useSessionSecurity(sessionId);
 ```
 
@@ -197,10 +201,10 @@ const {
 
 ```typescript
 const {
-  csrfToken,           // string: token CSRF atual
-  isLoading,           // boolean: se está carregando
-  error,               // string: erro se houver
-  refreshToken         // function: renovar token
+  csrfToken, // string: token CSRF atual
+  isLoading, // boolean: se está carregando
+  error, // string: erro se houver
+  refreshToken, // function: renovar token
 } = useCSRFToken(sessionId);
 ```
 
@@ -210,10 +214,10 @@ const {
 
 ```typescript
 const {
-  timeRemaining,       // number: tempo restante em minutos
-  warningLevel,        // 'none' | 'low' | 'medium' | 'high'
-  isExpired,           // boolean: se a sessão expirou
-  extendTimeout        // function: estender timeout
+  timeRemaining, // number: tempo restante em minutos
+  warningLevel, // 'none' | 'low' | 'medium' | 'high'
+  isExpired, // boolean: se a sessão expirou
+  extendTimeout, // function: estender timeout
 } = useSessionTimeout(sessionId);
 ```
 
@@ -225,23 +229,19 @@ O middleware global (`middleware.ts`) aplica proteções automaticamente:
 // Rotas protegidas (aplicação automática)
 const PROTECTED_ROUTES = [
   '/api/patients',
-  '/api/appointments', 
+  '/api/appointments',
   '/api/medical-records',
   '/dashboard',
   '/patients',
-  '/appointments'
+  '/appointments',
 ];
 
 // Rotas isentas
-const EXEMPT_ROUTES = [
-  '/api/auth',
-  '/api/public',
-  '/login',
-  '/register'
-];
+const EXEMPT_ROUTES = ['/api/auth', '/api/public', '/login', '/register'];
 ```
 
 **Headers de Segurança Aplicados:**
+
 - `X-Content-Type-Options: nosniff`
 - `X-Frame-Options: DENY`
 - `X-XSS-Protection: 1; mode=block`
@@ -254,7 +254,7 @@ O sistema registra automaticamente eventos de segurança:
 
 ```typescript
 // Tipos de eventos
-type SecurityEventType = 
+type SecurityEventType =
   | 'csrf_validation_failed'
   | 'session_hijacking_detected'
   | 'session_timeout_warning'
@@ -266,7 +266,7 @@ type SecurityEventType =
 const events = await getSecurityEvents(userId, {
   startDate: new Date('2025-01-01'),
   endDate: new Date(),
-  eventTypes: ['session_hijacking_detected']
+  eventTypes: ['session_hijacking_detected'],
 });
 ```
 
@@ -284,7 +284,7 @@ await setUserSecurityConfig(userId, {
   hijackingRiskThreshold: 6,
   enableRateLimiting: true,
   rateLimitRequests: 100,
-  rateLimitWindowMinutes: 15
+  rateLimitWindowMinutes: 15,
 });
 ```
 
@@ -320,7 +320,11 @@ await removeFromSessionBlacklist(sessionId);
 
 ```typescript
 // Teste de geração de token
-const token = await csrf.generateToken('session123', 'Mozilla/5.0...', '192.168.1.1');
+const token = await csrf.generateToken(
+  'session123',
+  'Mozilla/5.0...',
+  '192.168.1.1'
+);
 expect(token).toBeDefined();
 expect(token.length).toBe(64); // 32 bytes em hex
 
@@ -337,13 +341,21 @@ expect(isInvalid).toBe(false);
 
 ```typescript
 // Teste de fingerprint normal
-const result1 = await hijackingProtection.checkSession(userId, sessionId, request1);
+const result1 = await hijackingProtection.checkSession(
+  userId,
+  sessionId,
+  request1
+);
 expect(result1.action).toBe('allow');
 expect(result1.riskScore).toBeLessThan(3);
 
 // Teste de mudança de IP (risco médio)
 const request2 = { ...request1, ip: '10.0.0.1' };
-const result2 = await hijackingProtection.checkSession(userId, sessionId, request2);
+const result2 = await hijackingProtection.checkSession(
+  userId,
+  sessionId,
+  request2
+);
 expect(result2.action).toBe('challenge');
 expect(result2.riskScore).toBeGreaterThan(3);
 ```
@@ -353,11 +365,11 @@ expect(result2.riskScore).toBeGreaterThan(3);
 ```typescript
 // Teste de configuração de timeout
 await timeoutManager.setSessionTimeout(userId, sessionId, {
-  timeoutMinutes: 1 // 1 minuto para teste
+  timeoutMinutes: 1, // 1 minuto para teste
 });
 
 // Aguardar expiração
-await new Promise(resolve => setTimeout(resolve, 61000));
+await new Promise((resolve) => setTimeout(resolve, 61000));
 
 // Verificar se expirou
 const status = await timeoutManager.checkSessionTimeout(userId, sessionId);
@@ -369,24 +381,28 @@ expect(status.isExpired).toBe(true);
 ### Problemas Comuns
 
 **1. Token CSRF não encontrado**
+
 ```
 Erro: CSRF token not found
 Solução: Verificar se o token está sendo gerado corretamente no login
 ```
 
 **2. Sessão bloqueada por hijacking**
+
 ```
 Erro: Session blocked due to suspicious activity
 Solução: Verificar se o IP/User-Agent mudou, adicionar IP aos confiáveis se necessário
 ```
 
 **3. Timeout muito agressivo**
+
 ```
 Erro: Session timeout too frequent
 Solução: Aumentar timeoutMinutes ou habilitar extendOnActivity
 ```
 
 **4. Rate limiting ativado**
+
 ```
 Erro: Too many requests
 Solução: Aguardar o reset da janela ou aumentar os limites
@@ -443,7 +459,7 @@ console.log({
   activeSessions: summary.active_sessions,
   securityEvents: summary.security_events_count,
   lastActivity: summary.last_activity,
-  riskLevel: summary.risk_level
+  riskLevel: summary.risk_level,
 });
 ```
 

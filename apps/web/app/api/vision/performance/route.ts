@@ -58,7 +58,8 @@ export const GET = withErrorMonitoring(async (request: NextRequest) => {
     // Get performance metrics
     const { data: performanceData, error: perfError } = await supabase
       .from('analysis_performance')
-      .select(`
+      .select(
+        `
         *,
         image_analysis!inner(
           id,
@@ -66,7 +67,8 @@ export const GET = withErrorMonitoring(async (request: NextRequest) => {
           status,
           created_at
         )
-      `)
+      `
+      )
       .gte('created_at', startTime.toISOString())
       .order('created_at', { ascending: false });
 
