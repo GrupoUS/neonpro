@@ -76,7 +76,7 @@ async function validateUserAccess(
     .eq('clinic_id', clinicId)
     .single();
 
-  return !!userClinic;
+  return Boolean(userClinic);
 }
 
 async function validateDataOwnership(
@@ -151,9 +151,15 @@ export async function GET(request: NextRequest) {
 
     // Build query filters
     const filters: any = { clinicId };
-    if (userId) filters.userId = userId;
-    if (requestType) filters.requestType = requestType;
-    if (status) filters.status = status;
+    if (userId) {
+      filters.userId = userId;
+    }
+    if (requestType) {
+      filters.requestType = requestType;
+    }
+    if (status) {
+      filters.status = status;
+    }
 
     // Get requests with pagination
     const offset = (page - 1) * limit;

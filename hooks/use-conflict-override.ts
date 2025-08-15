@@ -62,7 +62,9 @@ export function useConflictOverride() {
         data: { user },
         error: userError,
       } = await supabase.auth.getUser();
-      if (userError || !user) throw userError;
+      if (userError || !user) {
+        throw userError;
+      }
 
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
@@ -70,7 +72,9 @@ export function useConflictOverride() {
         .eq('id', user.id)
         .single();
 
-      if (profileError) throw profileError;
+      if (profileError) {
+        throw profileError;
+      }
 
       // Define permissions based on role (following RBAC patterns from research)
       const permissions: Record<string, OverridePermission> = {
@@ -130,7 +134,9 @@ export function useConflictOverride() {
           data: { user },
           error: userError,
         } = await supabase.auth.getUser();
-        if (userError || !user) throw userError;
+        if (userError || !user) {
+          throw userError;
+        }
 
         const permissions = await checkOverridePermissions();
         if (!permissions?.can_override_conflicts) {
@@ -167,7 +173,9 @@ export function useConflictOverride() {
           .select('*')
           .single();
 
-        if (insertError) throw insertError;
+        if (insertError) {
+          throw insertError;
+        }
 
         // Log the override action for HIPAA compliance
         await supabase.from('audit_logs').insert([
@@ -221,7 +229,7 @@ export function useConflictOverride() {
         setLoading(false);
       }
     },
-    [supabase, toast, checkOverridePermissions]
+    [supabase, toast, checkOverridePermissions, processApprovedOverride]
   );
 
   // Approve or reject override request (manager approval workflow)
@@ -237,7 +245,9 @@ export function useConflictOverride() {
           data: { user },
           error: userError,
         } = await supabase.auth.getUser();
-        if (userError || !user) throw userError;
+        if (userError || !user) {
+          throw userError;
+        }
 
         const permissions = await checkOverridePermissions();
         if (!permissions?.can_approve_overrides) {
@@ -257,7 +267,9 @@ export function useConflictOverride() {
           .select('*')
           .single();
 
-        if (updateError) throw updateError;
+        if (updateError) {
+          throw updateError;
+        }
 
         // Log the approval/rejection action
         await supabase.from('audit_logs').insert([
@@ -314,7 +326,7 @@ export function useConflictOverride() {
         setLoading(false);
       }
     },
-    [supabase, toast, checkOverridePermissions]
+    [supabase, toast, checkOverridePermissions, processApprovedOverride]
   );
 
   // Process approved override (send notifications to affected parties)
@@ -381,7 +393,9 @@ export function useConflictOverride() {
   const loadPendingOverrides = useCallback(async () => {
     try {
       const permissions = await checkOverridePermissions();
-      if (!permissions?.can_approve_overrides) return [];
+      if (!permissions?.can_approve_overrides) {
+        return [];
+      }
 
       const { data: requests, error } = await supabase
         .from('appointment_override_requests')
@@ -393,7 +407,9 @@ export function useConflictOverride() {
         .eq('status', 'pending')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       setOverrideRequests(requests as OverrideRequest[]);
       return requests as OverrideRequest[];

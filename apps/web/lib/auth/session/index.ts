@@ -188,7 +188,7 @@ export const DevUtils = {
    */
   disableDebugMode: () => {
     if (typeof window !== 'undefined') {
-      delete (window as any).__NEONPRO_SESSION_DEBUG__;
+      (window as any).__NEONPRO_SESSION_DEBUG__ = undefined;
     }
   },
 

@@ -79,14 +79,24 @@ export async function GET(request: NextRequest) {
 
     // Build filters
     const filters: any = {};
-    if (validatedQuery.statementId)
+    if (validatedQuery.statementId) {
       filters.statementId = validatedQuery.statementId;
-    if (validatedQuery.bankName) filters.bankName = validatedQuery.bankName;
-    if (validatedQuery.accountNumber)
+    }
+    if (validatedQuery.bankName) {
+      filters.bankName = validatedQuery.bankName;
+    }
+    if (validatedQuery.accountNumber) {
       filters.accountNumber = validatedQuery.accountNumber;
-    if (validatedQuery.dateFrom) filters.dateFrom = validatedQuery.dateFrom;
-    if (validatedQuery.dateTo) filters.dateTo = validatedQuery.dateTo;
-    if (validatedQuery.status) filters.status = validatedQuery.status;
+    }
+    if (validatedQuery.dateFrom) {
+      filters.dateFrom = validatedQuery.dateFrom;
+    }
+    if (validatedQuery.dateTo) {
+      filters.dateTo = validatedQuery.dateTo;
+    }
+    if (validatedQuery.status) {
+      filters.status = validatedQuery.status;
+    }
 
     // Get bank statements with pagination
     const { data: statements, error: statementsError } = await supabase

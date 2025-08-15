@@ -123,7 +123,9 @@ const KPICard: React.FC<KPICardProps> = ({
   };
 
   const getVarianceDisplay = (variance?: number) => {
-    if (variance === undefined || variance === null) return null;
+    if (variance === undefined || variance === null) {
+      return null;
+    }
     const sign = variance >= 0 ? '+' : '';
     return `${sign}${variance.toFixed(1)}%`;
   };
@@ -316,7 +318,9 @@ const DrillDownModal: React.FC<DrillDownModalProps> = ({
   onClose,
   onDrillDeeper,
 }) => {
-  if (!kpi) return null;
+  if (!kpi) {
+    return null;
+  }
 
   const formatValue = (value: number): string => {
     if (
@@ -447,7 +451,9 @@ export const KPIDashboard: React.FC<KPIDashboardProps> = ({
 
   // Auto-refresh
   useEffect(() => {
-    if (refreshInterval <= 0) return;
+    if (refreshInterval <= 0) {
+      return;
+    }
 
     const interval = setInterval(() => {
       loadKPIData();
@@ -508,7 +514,9 @@ export const KPIDashboard: React.FC<KPIDashboardProps> = ({
   };
 
   const loadDashboard = async () => {
-    if (!dashboardId) return;
+    if (!dashboardId) {
+      return;
+    }
 
     try {
       const response = await fetch(`/api/analytics/dashboards/${dashboardId}`);
@@ -524,7 +532,9 @@ export const KPIDashboard: React.FC<KPIDashboardProps> = ({
 
   const handleDrillDown = async (kpiId: string, dimension: string) => {
     const kpi = kpis.find((k) => k.id === kpiId);
-    if (!kpi) return;
+    if (!kpi) {
+      return;
+    }
 
     try {
       const response = await fetch('/api/analytics/drill-down', {

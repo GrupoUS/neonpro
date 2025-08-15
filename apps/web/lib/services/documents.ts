@@ -23,7 +23,7 @@ export interface UploadDocumentData {
 }
 
 class DocumentsService {
-  private supabase = createClient();
+  private readonly supabase = createClient();
 
   async uploadDocument(data: UploadDocumentData): Promise<Document> {
     try {
@@ -31,7 +31,9 @@ class DocumentsService {
       const {
         data: { user },
       } = await this.supabase.auth.getUser();
-      if (!user) throw new Error('User not authenticated');
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
 
       // Generate unique file path
       const fileExtension = data.file.name.split('.').pop();
@@ -44,7 +46,9 @@ class DocumentsService {
         .from('documents')
         .upload(filePath, data.file);
 
-      if (uploadError) throw uploadError;
+      if (uploadError) {
+        throw uploadError;
+      }
 
       // Save document metadata to database
       const documentData = {
@@ -67,7 +71,9 @@ class DocumentsService {
         .select()
         .single();
 
-      if (dbError) throw dbError;
+      if (dbError) {
+        throw dbError;
+      }
 
       return document;
     } catch (error) {
@@ -88,7 +94,9 @@ class DocumentsService {
         .eq('entity_id', entityId)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return data || [];
     } catch (error) {
@@ -106,14 +114,18 @@ class DocumentsService {
         .eq('id', documentId)
         .single();
 
-      if (docError) throw docError;
+      if (docError) {
+        throw docError;
+      }
 
       // Download file from storage
       const { data, error } = await this.supabase.storage
         .from('documents')
         .download(document.file_path);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Create download link
       const url = URL.createObjectURL(data);
@@ -139,14 +151,18 @@ class DocumentsService {
         .eq('id', documentId)
         .single();
 
-      if (docError) throw docError;
+      if (docError) {
+        throw docError;
+      }
 
       // Delete file from storage
       const { error: storageError } = await this.supabase.storage
         .from('documents')
         .remove([document.file_path]);
 
-      if (storageError) throw storageError;
+      if (storageError) {
+        throw storageError;
+      }
 
       // Delete document metadata from database
       const { error: dbError } = await this.supabase
@@ -154,7 +170,9 @@ class DocumentsService {
         .delete()
         .eq('id', documentId);
 
-      if (dbError) throw dbError;
+      if (dbError) {
+        throw dbError;
+      }
     } catch (error) {
       console.error('Error deleting document:', error);
       throw error;
@@ -169,7 +187,9 @@ class DocumentsService {
         .eq('document_type', documentType)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return data || [];
     } catch (error) {
@@ -188,7 +208,9 @@ class DocumentsService {
         })
         .eq('id', documentId);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
     } catch (error) {
       console.error('Error updating document type:', error);
       throw error;

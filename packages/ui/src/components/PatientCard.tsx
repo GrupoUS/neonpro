@@ -1,19 +1,7 @@
-import {
-  AlertCircle,
-  Calendar,
-  Eye,
-  MapPin,
-  Phone,
-  UserPlus,
-} from 'lucide-react';
+import { AlertCircle, Calendar, Eye, MapPin, Phone } from 'lucide-react';
 import * as React from 'react';
 import { cn } from '../utils/cn';
-import {
-  formatCPF,
-  formatDate,
-  formatDateTime,
-  formatPhone,
-} from '../utils/formatters';
+import { formatDate, formatPhone } from '../utils/formatters';
 import { Avatar, AvatarFallback, AvatarImage } from './Avatar';
 import { Badge } from './Badge';
 import { Button } from './Button';
@@ -63,10 +51,18 @@ const formatRelativeTime = (dateString: string): string => {
   const diffMs = now.getTime() - date.getTime();
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-  if (diffDays === 0) return 'Hoje';
-  if (diffDays === 1) return 'Ontem';
-  if (diffDays < 7) return `${diffDays} dias atrás`;
-  if (diffDays < 30) return `${Math.floor(diffDays / 7)} semanas atrás`;
+  if (diffDays === 0) {
+    return 'Hoje';
+  }
+  if (diffDays === 1) {
+    return 'Ontem';
+  }
+  if (diffDays < 7) {
+    return `${diffDays} dias atrás`;
+  }
+  if (diffDays < 30) {
+    return `${Math.floor(diffDays / 7)} semanas atrás`;
+  }
   return formatDate(dateString);
 };
 const PatientCard = React.forwardRef<HTMLDivElement, PatientCardProps>(
@@ -102,7 +98,7 @@ const PatientCard = React.forwardRef<HTMLDivElement, PatientCardProps>(
 
     const age = birthDate
       ? Math.floor(
-          (new Date().getTime() - new Date(birthDate).getTime()) /
+          (Date.now() - new Date(birthDate).getTime()) /
             (365.25 * 24 * 60 * 60 * 1000)
         )
       : null;

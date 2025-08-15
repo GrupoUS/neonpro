@@ -73,15 +73,15 @@ export interface SystemSnapshot {
 }
 
 class EmergencyResponseSystem {
-  private supabase = createClient();
-  private rules: Map<string, EmergencyRule> = new Map();
-  private activeAlerts: Map<string, EmergencyAlert> = new Map();
+  private readonly supabase = createClient();
+  private readonly rules: Map<string, EmergencyRule> = new Map();
+  private readonly activeAlerts: Map<string, EmergencyAlert> = new Map();
   private monitoringInterval: NodeJS.Timeout | null = null;
-  private snapshots: SystemSnapshot[] = [];
-  private maxSnapshots = 50; // Keep last 50 snapshots
+  private readonly snapshots: SystemSnapshot[] = [];
+  private readonly maxSnapshots = 50; // Keep last 50 snapshots
 
   // Default emergency rules
-  private defaultRules: EmergencyRule[] = [
+  private readonly defaultRules: EmergencyRule[] = [
     {
       rule_id: 'critical_error_rate',
       rule_name: 'Critical Error Rate',
@@ -321,7 +321,9 @@ class EmergencyResponseSystem {
    */
   private async checkEmergencyConditions(): Promise<void> {
     for (const [ruleId, rule] of this.rules) {
-      if (!rule.enabled) continue;
+      if (!rule.enabled) {
+        continue;
+      }
 
       try {
         const shouldTrigger = await this.evaluateRule(rule);
@@ -370,7 +372,9 @@ class EmergencyResponseSystem {
    * Evaluate metric threshold rule
    */
   private async evaluateMetricThreshold(rule: EmergencyRule): Promise<boolean> {
-    if (!rule.metric_name || rule.threshold_value === undefined) return false;
+    if (!rule.metric_name || rule.threshold_value === undefined) {
+      return false;
+    }
 
     try {
       // Get recent metrics within time window
@@ -431,7 +435,9 @@ class EmergencyResponseSystem {
   private async evaluateConsecutiveFailures(
     rule: EmergencyRule
   ): Promise<boolean> {
-    if (!(rule.metric_name && rule.consecutive_count)) return false;
+    if (!(rule.metric_name && rule.consecutive_count)) {
+      return false;
+    }
 
     try {
       // Get recent failure events
@@ -583,7 +589,9 @@ class EmergencyResponseSystem {
     flagName?: string,
     _parameters?: Record<string, any>
   ): Promise<void> {
-    if (!flagName) return;
+    if (!flagName) {
+      return;
+    }
 
     console.log(`🚫 Disabling feature flag: ${flagName}`);
 
@@ -860,9 +868,7 @@ class EmergencyResponseSystem {
         .length,
       recent_snapshots: this.snapshots.length,
       last_snapshot:
-        this.snapshots.length > 0
-          ? this.snapshots[this.snapshots.length - 1].snapshot_time
-          : null,
+        this.snapshots.length > 0 ? this.snapshots.at(-1).snapshot_time : null,
     };
   }
 

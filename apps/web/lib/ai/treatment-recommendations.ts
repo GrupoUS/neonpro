@@ -95,10 +95,10 @@ export interface EvidenceSource {
  * Core system for intelligent treatment suggestions and optimization
  */
 export class AITreatmentRecommendationEngine {
-  private treatmentDatabase: Map<string, Treatment> = new Map();
-  private protocolDatabase: Map<string, TreatmentProtocol> = new Map();
-  private evidenceDatabase: Map<string, EvidenceSource[]> = new Map();
-  private successRateModels: Map<string, any> = new Map();
+  private readonly treatmentDatabase: Map<string, Treatment> = new Map();
+  private readonly protocolDatabase: Map<string, TreatmentProtocol> = new Map();
+  private readonly evidenceDatabase: Map<string, EvidenceSource[]> = new Map();
+  private readonly successRateModels: Map<string, any> = new Map();
 
   constructor() {
     this.initializeTreatmentDatabase();
@@ -525,7 +525,9 @@ export class AITreatmentRecommendationEngine {
 
   private calculateEvidenceQuality(treatmentId: string): number {
     const evidence = this.evidenceDatabase.get(treatmentId) || [];
-    if (evidence.length === 0) return 0.3;
+    if (evidence.length === 0) {
+      return 0.3;
+    }
 
     const avgConfidence =
       evidence.reduce((sum, e) => sum + e.confidence_level, 0) /
@@ -627,16 +629,26 @@ export class AITreatmentRecommendationEngine {
 
   private calculateAgeAdjustment(patient: any): number {
     const age = patient.age;
-    if (age < 25) return 1.02;
-    if (age < 40) return 1.0;
-    if (age < 60) return 0.98;
+    if (age < 25) {
+      return 1.02;
+    }
+    if (age < 40) {
+      return 1.0;
+    }
+    if (age < 60) {
+      return 0.98;
+    }
     return 0.95;
   }
 
   private calculateHistoryAdjustment(patient: any): number {
     const previousTreatments = patient.previousTreatments || [];
-    if (previousTreatments.length === 0) return 0.98; // Slight reduction for first-time
-    if (previousTreatments.length > 5) return 1.05; // Bonus for experienced patients
+    if (previousTreatments.length === 0) {
+      return 0.98; // Slight reduction for first-time
+    }
+    if (previousTreatments.length > 5) {
+      return 1.05; // Bonus for experienced patients
+    }
     return 1.0;
   }
 

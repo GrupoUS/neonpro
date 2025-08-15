@@ -198,8 +198,9 @@ export interface ComplianceAuditEntry {
 
 // Main Compliance Manager Class
 export class HealthcareComplianceManager {
-  private supabase = createClient();
-  private complianceCache: Map<string, MedicalDeviceCompliance> = new Map();
+  private readonly supabase = createClient();
+  private readonly complianceCache: Map<string, MedicalDeviceCompliance> =
+    new Map();
 
   constructor() {
     this.initializeComplianceFramework();
@@ -577,7 +578,9 @@ export class HealthcareComplianceManager {
 
       for (const comp of components) {
         const compliance = this.complianceCache.get(comp);
-        if (!compliance) continue;
+        if (!compliance) {
+          continue;
+        }
 
         const filteredStandards = standards
           ? compliance.regulatoryStandards.filter((s) =>
@@ -627,13 +630,19 @@ export class HealthcareComplianceManager {
   private calculateOverallCompliance(
     standards: RegulatoryStandardCompliance[]
   ): ComplianceStatus {
-    if (standards.length === 0) return 'pending_validation';
+    if (standards.length === 0) {
+      return 'pending_validation';
+    }
 
     const nonCompliant = standards.filter((s) => s.status === 'non_compliant');
-    if (nonCompliant.length > 0) return 'non_compliant';
+    if (nonCompliant.length > 0) {
+      return 'non_compliant';
+    }
 
     const pending = standards.filter((s) => s.status === 'pending_validation');
-    if (pending.length > 0) return 'pending_validation';
+    if (pending.length > 0) {
+      return 'pending_validation';
+    }
 
     return 'compliant';
   }
@@ -642,9 +651,15 @@ export class HealthcareComplianceManager {
     standards: RegulatoryStandardCompliance[]
   ): RiskLevel {
     const issues = standards.flatMap((s) => s.nonComplianceIssues);
-    if (issues.some((i) => i.severity === 'critical')) return 'critical';
-    if (issues.some((i) => i.severity === 'high')) return 'high';
-    if (issues.some((i) => i.severity === 'medium')) return 'medium';
+    if (issues.some((i) => i.severity === 'critical')) {
+      return 'critical';
+    }
+    if (issues.some((i) => i.severity === 'high')) {
+      return 'high';
+    }
+    if (issues.some((i) => i.severity === 'medium')) {
+      return 'medium';
+    }
     return 'low';
   }
 

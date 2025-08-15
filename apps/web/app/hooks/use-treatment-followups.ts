@@ -64,7 +64,7 @@ export function useFollowup(id: string) {
   return useQuery({
     queryKey: QUERY_KEYS.followup(id),
     queryFn: () => treatmentFollowupService.getFollowupById(id),
-    enabled: !!id,
+    enabled: Boolean(id),
     staleTime: 1000 * 60 * 5,
     cacheTime: 1000 * 60 * 10,
     retry: 2,
@@ -329,7 +329,7 @@ export function useFollowupAnalytics(
     queryKey: QUERY_KEYS.analytics(clinicId, dateFrom, dateTo),
     queryFn: () =>
       treatmentFollowupService.getAnalytics(clinicId, dateFrom, dateTo),
-    enabled: !!clinicId,
+    enabled: Boolean(clinicId),
     staleTime: 1000 * 60 * 5, // 5 minutes
     cacheTime: 1000 * 60 * 15, // 15 minutes
     retry: 2,
@@ -344,7 +344,7 @@ export function useFollowupDashboardSummary(clinicId: string) {
   return useQuery({
     queryKey: QUERY_KEYS.dashboardSummary(clinicId),
     queryFn: () => treatmentFollowupService.getDashboardSummary(clinicId),
-    enabled: !!clinicId,
+    enabled: Boolean(clinicId),
     staleTime: 1000 * 60 * 2, // 2 minutes (dashboard needs fresher data)
     cacheTime: 1000 * 60 * 5, // 5 minutes
     retry: 2,

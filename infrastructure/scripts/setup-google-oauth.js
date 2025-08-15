@@ -8,8 +8,8 @@ console.log('='.repeat(50));
 
 const currentConfig = {
   supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
-  hasAnonKey: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-  hasServiceKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
+  hasAnonKey: Boolean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY),
+  hasServiceKey: Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY),
   googleClientId: process.env.GOOGLE_CLIENT_ID,
   googleClientSecret: process.env.GOOGLE_CLIENT_SECRET,
   appUrl: process.env.NEXT_PUBLIC_APP_URL,

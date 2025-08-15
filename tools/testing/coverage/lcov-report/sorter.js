@@ -1,6 +1,6 @@
 /* eslint-disable */
-var addSorting = (() => {
-  var cols,
+const addSorting = (() => {
+  let cols,
     currentSort = {
       index: 0,
       desc: false,
@@ -38,15 +38,15 @@ var addSorting = (() => {
 
   // loads the search box
   function addSearchBox() {
-    var template = document.getElementById('filterTemplate');
-    var templateClone = template.content.cloneNode(true);
+    const template = document.getElementById('filterTemplate');
+    const templateClone = template.content.cloneNode(true);
     templateClone.getElementById('fileSearch').oninput = onFilterInput;
     template.parentElement.appendChild(templateClone);
   }
 
   // loads all columns
   function loadColumns() {
-    var colNodes = getTableHeader().querySelectorAll('th'),
+    let colNodes = getTableHeader().querySelectorAll('th'),
       colNode,
       cols = [],
       col,
@@ -70,7 +70,7 @@ var addSorting = (() => {
   // attaches a data attribute to every tr element with an object
   // of data values keyed by column name
   function loadRowData(tableRow) {
-    var tableCols = tableRow.querySelectorAll('td'),
+    let tableCols = tableRow.querySelectorAll('td'),
       colNode,
       col,
       data = {},
@@ -89,7 +89,7 @@ var addSorting = (() => {
   }
   // loads all row data
   function loadData() {
-    var rows = getTableBody().querySelectorAll('tr'),
+    let rows = getTableBody().querySelectorAll('tr'),
       i;
 
     for (i = 0; i < rows.length; i += 1) {
@@ -98,7 +98,7 @@ var addSorting = (() => {
   }
   // sorts the table using the data for the ith column
   function sortByIndex(index, desc) {
-    var key = cols[index].key,
+    let key = cols[index].key,
       sorter = (a, b) => {
         a = a.data[key];
         b = b.data[key];
@@ -127,7 +127,7 @@ var addSorting = (() => {
   }
   // removes sort indicators for current column being sorted
   function removeSortIndicators() {
-    var col = getNthColumn(currentSort.index),
+    let col = getNthColumn(currentSort.index),
       cls = col.className;
 
     cls = cls.replace(/ sorted$/, '').replace(/ sorted-desc$/, '');
@@ -141,13 +141,13 @@ var addSorting = (() => {
   }
   // adds event listeners for all sorter widgets
   function enableUI() {
-    var i,
+    let i,
       el,
       ithSorter = function ithSorter(i) {
-        var col = cols[i];
+        const col = cols[i];
 
         return () => {
-          var desc = col.defaultDescSort;
+          let desc = col.defaultDescSort;
 
           if (currentSort.index === i) {
             desc = !currentSort.desc;

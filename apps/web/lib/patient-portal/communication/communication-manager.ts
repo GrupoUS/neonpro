@@ -147,11 +147,11 @@ export interface MessageActivity {
  * Patient communication manager
  */
 export class CommunicationManager {
-  private supabase: SupabaseClient;
-  private auditLogger: AuditLogger;
-  private sessionManager: SessionManager;
-  private notificationService: NotificationService;
-  private config: CommunicationConfig;
+  private readonly supabase: SupabaseClient;
+  private readonly auditLogger: AuditLogger;
+  private readonly sessionManager: SessionManager;
+  private readonly notificationService: NotificationService;
+  private readonly config: CommunicationConfig;
 
   constructor(
     supabase: SupabaseClient,
@@ -233,7 +233,9 @@ export class CommunicationManager {
         .select()
         .single();
 
-      if (messageError) throw messageError;
+      if (messageError) {
+        throw messageError;
+      }
 
       // Update conversation
       await this.updateConversation(conversationId, {
@@ -355,7 +357,9 @@ export class CommunicationManager {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return conversation.id;
   }
 
@@ -387,7 +391,9 @@ export class CommunicationManager {
       .update(updateData)
       .eq('id', conversationId);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
   }
   /**
    * Process message attachments
@@ -407,7 +413,9 @@ export class CommunicationManager {
         .from('message-attachments')
         .upload(filePath, file);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Get download URL
       const { data: urlData } = await this.supabase.storage
@@ -496,7 +504,9 @@ export class CommunicationManager {
       .eq('sender_id', patientId)
       .eq('sender_type', 'patient');
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     const stats: CommunicationStats = {
       totalMessages: messages.length,

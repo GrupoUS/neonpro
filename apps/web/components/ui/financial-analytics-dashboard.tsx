@@ -103,22 +103,27 @@ export function FinancialAnalyticsDashboard({
       const cashFlowResponse = await fetch(
         `/api/financial/cash-flow?clinic_id=${clinicId}&time_range=${timeRange}`
       );
-      if (!cashFlowResponse.ok)
+      if (!cashFlowResponse.ok) {
         throw new Error('Failed to fetch cash flow data');
+      }
       const cashFlow = await cashFlowResponse.json();
 
       // Fetch financial metrics
       const metricsResponse = await fetch(
         `/api/financial/metrics?clinic_id=${clinicId}&time_range=${timeRange}`
       );
-      if (!metricsResponse.ok) throw new Error('Failed to fetch metrics');
+      if (!metricsResponse.ok) {
+        throw new Error('Failed to fetch metrics');
+      }
       const metricsData = await metricsResponse.json();
 
       // Fetch alerts
       const alertsResponse = await fetch(
         `/api/financial/alerts?clinic_id=${clinicId}`
       );
-      if (!alertsResponse.ok) throw new Error('Failed to fetch alerts');
+      if (!alertsResponse.ok) {
+        throw new Error('Failed to fetch alerts');
+      }
       const alertsData = await alertsResponse.json();
 
       setCashFlowData(cashFlow.data || []);
@@ -188,7 +193,7 @@ export function FinancialAnalyticsDashboard({
     return (
       <div className={`space-y-6 ${className}`}>
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {[...Array(4)].map((_, i) => (
+          {[...new Array(4)].map((_, i) => (
             <Card className="animate-pulse" key={i}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <div className="h-4 w-24 rounded bg-gray-200" />

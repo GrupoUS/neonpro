@@ -94,9 +94,9 @@ export interface RetentionConfig {
 }
 
 export class DataRetentionAutomation {
-  private supabase: SupabaseClient;
-  private complianceManager: LGPDComplianceManager;
-  private config: RetentionConfig;
+  private readonly supabase: SupabaseClient;
+  private readonly complianceManager: LGPDComplianceManager;
+  private readonly config: RetentionConfig;
   private executionInterval: NodeJS.Timeout | null = null;
 
   constructor(
@@ -181,7 +181,9 @@ export class DataRetentionAutomation {
         .select('id')
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Log policy creation
       await this.complianceManager.logAuditEvent({
@@ -227,8 +229,12 @@ export class DataRetentionAutomation {
         .eq('active', true)
         .single();
 
-      if (policyError) throw policyError;
-      if (!policy) throw new Error('Retention policy not found or inactive');
+      if (policyError) {
+        throw policyError;
+      }
+      if (!policy) {
+        throw new Error('Retention policy not found or inactive');
+      }
 
       // Calculate affected records
       const affectedRecords = await this.calculateAffectedRecords(policy);
@@ -252,7 +258,9 @@ export class DataRetentionAutomation {
         .select('id')
         .single();
 
-      if (scheduleError) throw scheduleError;
+      if (scheduleError) {
+        throw scheduleError;
+      }
 
       // Send notifications if enabled
       if (this.config.notification_enabled) {
@@ -312,8 +320,12 @@ export class DataRetentionAutomation {
         .eq('id', scheduleId)
         .single();
 
-      if (scheduleError) throw scheduleError;
-      if (!schedule) throw new Error('Retention schedule not found');
+      if (scheduleError) {
+        throw scheduleError;
+      }
+      if (!schedule) {
+        throw new Error('Retention schedule not found');
+      }
 
       // Validate execution conditions
       if (!forceExecution) {
@@ -341,7 +353,9 @@ export class DataRetentionAutomation {
         .select('id')
         .single();
 
-      if (executionError) throw executionError;
+      if (executionError) {
+        throw executionError;
+      }
 
       // Update schedule status
       await this.supabase
@@ -457,7 +471,9 @@ export class DataRetentionAutomation {
         .lte('scheduled_date', new Date().toISOString())
         .order('scheduled_date', { ascending: true });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       if (!pendingSchedules || pendingSchedules.length === 0) {
         console.log('No pending retention schedules found');
@@ -546,7 +562,9 @@ export class DataRetentionAutomation {
         'get_retention_status_report'
       );
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return report;
     } catch (error) {
@@ -577,7 +595,9 @@ export class DataRetentionAutomation {
         .eq('id', scheduleId)
         .eq('status', 'pending_approval');
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Log approval
       await this.complianceManager.logAuditEvent({
@@ -652,7 +672,9 @@ export class DataRetentionAutomation {
         }
       );
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return result;
     } catch (error) {
@@ -857,7 +879,9 @@ export class DataRetentionAutomation {
       }
     );
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     return archive;
   }
@@ -874,7 +898,9 @@ export class DataRetentionAutomation {
       }
     );
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     return result;
   }
@@ -891,7 +917,9 @@ export class DataRetentionAutomation {
       }
     );
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     return result;
   }
@@ -908,7 +936,9 @@ export class DataRetentionAutomation {
       }
     );
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     return result;
   }

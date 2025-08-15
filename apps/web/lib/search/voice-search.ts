@@ -109,14 +109,14 @@ export interface AudioProcessingOptions {
  */
 export class VoiceSearch {
   private recognition: SpeechRecognition | null = null;
-  private audioContext: AudioContext | null = null;
+  private readonly audioContext: AudioContext | null = null;
   private currentSession: VoiceSearchSession | null = null;
-  private isListening = false;
+  private readonly isListening = false;
   private isProcessing = false;
-  private commands: Map<string, VoiceCommand> = new Map();
-  private eventListeners: Map<string, Function[]> = new Map();
+  private readonly commands: Map<string, VoiceCommand> = new Map();
+  private readonly eventListeners: Map<string, Function[]> = new Map();
   private silenceTimer: NodeJS.Timeout | null = null;
-  private options: VoiceSearchOptions;
+  private readonly options: VoiceSearchOptions;
 
   constructor(options: VoiceSearchOptions = {}) {
     this.options = {
@@ -853,7 +853,7 @@ interface SpeechRecognitionAlternative {
   confidence: number;
 }
 
-declare var SpeechRecognition: {
+declare let SpeechRecognition: {
   prototype: SpeechRecognition;
   new (): SpeechRecognition;
 };

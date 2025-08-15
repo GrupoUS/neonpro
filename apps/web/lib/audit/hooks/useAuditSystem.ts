@@ -281,7 +281,9 @@ export function useSecurityAlerts(): UseSecurityAlertsReturn {
         .order('created_at', { ascending: false })
         .limit(100);
 
-      if (fetchError) throw fetchError;
+      if (fetchError) {
+        throw fetchError;
+      }
 
       const formattedAlerts: SecurityAlert[] =
         data?.map((alert) => ({
@@ -318,7 +320,9 @@ export function useSecurityAlerts(): UseSecurityAlertsReturn {
           .update({ status: 'investigating' })
           .eq('id', alertId);
 
-        if (error) throw error;
+        if (error) {
+          throw error;
+        }
 
         await fetchAlerts();
       } catch (_err) {
@@ -345,7 +349,9 @@ export function useSecurityAlerts(): UseSecurityAlertsReturn {
           .update(updateData)
           .eq('id', alertId);
 
-        if (error) throw error;
+        if (error) {
+          throw error;
+        }
 
         await fetchAlerts();
 
@@ -372,7 +378,9 @@ export function useSecurityAlerts(): UseSecurityAlertsReturn {
           .update({ assigned_to: userId })
           .eq('id', alertId);
 
-        if (error) throw error;
+        if (error) {
+          throw error;
+        }
 
         await fetchAlerts();
 
@@ -452,7 +460,9 @@ export function useAuditReports(): UseAuditReportsReturn {
         .select('*')
         .order('generated_at', { ascending: false });
 
-      if (fetchError) throw fetchError;
+      if (fetchError) {
+        throw fetchError;
+      }
 
       const formattedReports: AuditReport[] =
         data?.map((report) => ({
@@ -531,7 +541,9 @@ export function useAuditReports(): UseAuditReportsReturn {
           .delete()
           .eq('id', reportId);
 
-        if (error) throw error;
+        if (error) {
+          throw error;
+        }
 
         await fetchReports();
 

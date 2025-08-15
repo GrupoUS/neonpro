@@ -80,9 +80,15 @@ export async function GET(request: NextRequest) {
       .select('id', { count: 'exact', head: true })
       .eq('clinic_id', clinicId);
 
-    if (status) countQuery = countQuery.eq('status', status);
-    if (severity) countQuery = countQuery.eq('severity', severity);
-    if (category) countQuery = countQuery.eq('category', category);
+    if (status) {
+      countQuery = countQuery.eq('status', status);
+    }
+    if (severity) {
+      countQuery = countQuery.eq('severity', severity);
+    }
+    if (category) {
+      countQuery = countQuery.eq('category', category);
+    }
 
     const { count } = await countQuery;
 

@@ -441,16 +441,27 @@ export async function PUT(request: NextRequest) {
           updated_at: new Date().toISOString(),
         };
 
-        if (updates.currentStage)
+        if (updates.currentStage) {
           updateData.current_stage = updates.currentStage;
-        if (updates.nextActionType)
+        }
+        if (updates.nextActionType) {
           updateData.next_action_type = updates.nextActionType;
-        if (updates.nextActionDate)
+        }
+        if (updates.nextActionDate) {
           updateData.next_action_date = updates.nextActionDate;
-        if (updates.status) updateData.status = updates.status;
-        if (updates.assignedTo) updateData.assigned_to = updates.assignedTo;
-        if (updates.priority) updateData.priority = updates.priority;
-        if (updates.notes) updateData.notes = updates.notes;
+        }
+        if (updates.status) {
+          updateData.status = updates.status;
+        }
+        if (updates.assignedTo) {
+          updateData.assigned_to = updates.assignedTo;
+        }
+        if (updates.priority) {
+          updateData.priority = updates.priority;
+        }
+        if (updates.notes) {
+          updateData.notes = updates.notes;
+        }
 
         const { data: updatedWorkflow, error } = await supabase
           .from('collection_workflows')
@@ -473,12 +484,15 @@ export async function PUT(request: NextRequest) {
           updated_at: new Date().toISOString(),
         };
 
-        if (validatedData.updates.status)
+        if (validatedData.updates.status) {
           updateData.status = validatedData.updates.status;
-        if (validatedData.updates.assignedTo)
+        }
+        if (validatedData.updates.assignedTo) {
           updateData.assigned_to = validatedData.updates.assignedTo;
-        if (validatedData.updates.priority)
+        }
+        if (validatedData.updates.priority) {
           updateData.priority = validatedData.updates.priority;
+        }
 
         const { data: updatedWorkflows, error } = await supabase
           .from('collection_workflows')

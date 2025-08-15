@@ -125,7 +125,7 @@ export const bulkScanSchema = z.object({
  * Handles all barcode/QR operations with real-time integration
  */
 export class BarcodeService {
-  private supabase = createClient();
+  private readonly supabase = createClient();
 
   /**
    * Generate barcode for inventory item

@@ -95,7 +95,9 @@ export class SimpleTelemetry {
    * 📈 Add custom attribute (no-op if disabled)
    */
   static addAttribute(key: string, value: string | number | boolean): void {
-    if (!SimpleTelemetry.config.enabled) return;
+    if (!SimpleTelemetry.config.enabled) {
+      return;
+    }
 
     // Simple logging fallback
     console.log(`📋 Attribute: ${key} = ${value}`);

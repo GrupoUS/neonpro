@@ -29,9 +29,9 @@ import type {
  * - Data retention policy automation
  */
 export class LGPDComplianceManager {
-  private supabase: ReturnType<typeof createClient>;
-  private config: LGPDConfiguration;
-  private auditChain: string[] = [];
+  private readonly supabase: ReturnType<typeof createClient>;
+  private readonly config: LGPDConfiguration;
+  private readonly auditChain: string[] = [];
 
   constructor(
     supabaseUrl: string,
@@ -94,7 +94,9 @@ export class LGPDComplianceManager {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Log audit trail
       await this.createAuditLog({
@@ -145,7 +147,9 @@ export class LGPDComplianceManager {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Log audit trail
       await this.createAuditLog({
@@ -196,7 +200,9 @@ export class LGPDComplianceManager {
         .limit(1)
         .single();
 
-      if (error && error.code !== 'PGRST116') throw error;
+      if (error && error.code !== 'PGRST116') {
+        throw error;
+      }
       return (data as ConsentRecord) || null;
     } catch (error) {
       console.error('Error getting active consent:', error);
@@ -215,7 +221,9 @@ export class LGPDComplianceManager {
         .eq('user_id', userId)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data as ConsentRecord[];
     } catch (error) {
       console.error('Error getting user consents:', error);
@@ -256,7 +264,9 @@ export class LGPDComplianceManager {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Log audit trail
       await this.createAuditLog({
@@ -300,7 +310,9 @@ export class LGPDComplianceManager {
         .eq('id', requestId)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Update status to in_progress
       await this.supabase
@@ -384,9 +396,7 @@ export class LGPDComplianceManager {
     try {
       const timestamp = new Date();
       const previousHash =
-        this.auditChain.length > 0
-          ? this.auditChain[this.auditChain.length - 1]
-          : null;
+        this.auditChain.length > 0 ? this.auditChain.at(-1) : null;
 
       // Create hash for integrity
       const hashData = {
@@ -413,7 +423,9 @@ export class LGPDComplianceManager {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Add to audit chain
       this.auditChain.push(hash);
@@ -450,7 +462,9 @@ export class LGPDComplianceManager {
       }
 
       const { data: logs, error } = await query;
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       const corruptedEntries: string[] = [];
       let previousHash: string | null = null;
@@ -516,7 +530,9 @@ export class LGPDComplianceManager {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Automatically notify authorities if severity is high or critical
       if (incident.severity === 'high' || incident.severity === 'critical') {
@@ -633,7 +649,9 @@ export class LGPDComplianceManager {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Log audit trail
       await this.createAuditLog({

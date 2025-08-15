@@ -302,8 +302,8 @@ export async function GET(request: Request) {
     const enhancedAppointments = appointments?.map((appointment) => ({
       ...appointment,
       automation_status: {
-        confirmation_sent: !!appointment.confirmation_sent_at,
-        reminder_sent: !!appointment.reminder_sent_at,
+        confirmation_sent: Boolean(appointment.confirmation_sent_at),
+        reminder_sent: Boolean(appointment.reminder_sent_at),
         confirmation_sent_at: appointment.confirmation_sent_at,
         reminder_sent_at: appointment.reminder_sent_at,
       },

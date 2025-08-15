@@ -51,7 +51,9 @@ export function useCNPJValidation() {
   }, []);
 
   const consultCNPJ = useCallback(async (cnpj: string) => {
-    if (!cnpj) return;
+    if (!cnpj) {
+      return;
+    }
 
     setValidationState((prev) => ({
       ...prev,

@@ -145,8 +145,8 @@ export interface PatientLTVPrediction {
 }
 
 export class PredictiveAnalyticsEngine {
-  private supabase = createClient();
-  private models: Map<string, PredictionModel> = new Map();
+  private readonly supabase = createClient();
+  private readonly models: Map<string, PredictionModel> = new Map();
 
   /**
    * Initialize predictive analytics for a clinic
@@ -531,7 +531,7 @@ export class PredictiveAnalyticsEngine {
 
       // Simplified prediction calculation
       const baseValue =
-        data.length > 0 ? data[data.length - 1].total_inflows || 1000 : 1000;
+        data.length > 0 ? data.at(-1).total_inflows || 1000 : 1000;
       const trend = 0.02; // 2% growth
       const seasonal = Math.sin((i / 365) * 2 * Math.PI) * 0.1;
       const noise = (Math.random() - 0.5) * 0.05;

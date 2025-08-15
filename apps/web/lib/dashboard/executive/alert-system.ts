@@ -118,8 +118,8 @@ export type AlertNotification = z.infer<typeof AlertNotificationSchema>;
 
 // Alert System Service
 export class AlertSystem {
-  private supabase = createClient();
-  private evaluationTimers = new Map<string, NodeJS.Timeout>();
+  private readonly supabase = createClient();
+  private readonly evaluationTimers = new Map<string, NodeJS.Timeout>();
   private readonly EVALUATION_INTERVAL = 60_000; // 1 minute
   private isRunning = false;
 

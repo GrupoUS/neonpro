@@ -207,16 +207,16 @@ export interface ComplianceEvents {
  * - Continuous improvement recommendations
  */
 export class ComplianceMonitor extends EventEmitter {
-  private requirements: Map<string, ComplianceRequirement> = new Map();
-  private violations: Map<string, ComplianceViolation> = new Map();
-  private audits: Map<string, ComplianceAudit> = new Map();
+  private readonly requirements: Map<string, ComplianceRequirement> = new Map();
+  private readonly violations: Map<string, ComplianceViolation> = new Map();
+  private readonly audits: Map<string, ComplianceAudit> = new Map();
   private complianceScore: ComplianceScore | null = null;
   private isInitialized = false;
   private monitoringInterval: NodeJS.Timeout | null = null;
   private scoreUpdateInterval: NodeJS.Timeout | null = null;
 
   constructor(
-    private config: {
+    private readonly config: {
       monitoringIntervalMinutes: number;
       scoreUpdateIntervalHours: number;
       alertThreshold: number;
@@ -946,7 +946,9 @@ export class ComplianceMonitor extends EventEmitter {
       const outdatedRequirements = Array.from(
         this.requirements.values()
       ).filter((r) => {
-        if (!r.lastVerified) return true;
+        if (!r.lastVerified) {
+          return true;
+        }
 
         const lastVerified = new Date(r.lastVerified);
         const updateThreshold = new Date();
@@ -968,8 +970,9 @@ export class ComplianceMonitor extends EventEmitter {
       const longStandingViolations = Array.from(
         this.violations.values()
       ).filter((v) => {
-        if (v.status !== 'detected' && v.status !== 'investigating')
+        if (v.status !== 'detected' && v.status !== 'investigating') {
           return false;
+        }
 
         const violationAge = Date.now() - v.timestamp.getTime();
         const ageInDays = violationAge / (1000 * 60 * 60 * 24);
@@ -1134,8 +1137,12 @@ export class ComplianceMonitor extends EventEmitter {
     const now = new Date();
 
     let days = 7;
-    if (period === 'weekly') days = 8;
-    if (period === 'monthly') days = 30;
+    if (period === 'weekly') {
+      days = 8;
+    }
+    if (period === 'monthly') {
+      days = 30;
+    }
 
     for (let i = 0; i < days; i++) {
       const date = new Date(now);

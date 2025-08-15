@@ -39,7 +39,9 @@ export class HealthcareAuth {
         data: { user },
         error,
       } = await supabase.auth.getUser();
-      if (error || !user) return null;
+      if (error || !user) {
+        return null;
+      }
 
       // Get user profile with role and permissions
       const { data: profile, error: profileError } = await supabase
@@ -54,7 +56,9 @@ export class HealthcareAuth {
         .eq('user_id', user.id)
         .single();
 
-      if (profileError || !profile) return null;
+      if (profileError || !profile) {
+        return null;
+      }
 
       return {
         id: user.id,

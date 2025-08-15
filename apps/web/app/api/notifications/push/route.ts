@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
 
     const { subscription } = await request.json();
 
-    if (!(subscription && subscription.endpoint)) {
+    if (!subscription?.endpoint) {
       return NextResponse.json(
         { error: 'Invalid subscription data' },
         { status: 400 }

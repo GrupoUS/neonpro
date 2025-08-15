@@ -1,12 +1,4 @@
-import {
-  ArrowLeft,
-  Calendar,
-  Edit,
-  FileText,
-  Mail,
-  Phone,
-  Settings,
-} from 'lucide-react';
+import { ArrowLeft, Calendar, Edit, Mail, Phone } from 'lucide-react';
 import * as React from 'react';
 import type { PatientData } from '../types';
 import { cn } from '../utils/cn';

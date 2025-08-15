@@ -126,11 +126,13 @@ export interface MinimizationConfig {
 }
 
 export class DataMinimizationAutomation {
-  private supabase: SupabaseClient;
-  private complianceManager: LGPDComplianceManager;
-  private config: MinimizationConfig;
+  private readonly supabase: SupabaseClient;
+  private readonly complianceManager: LGPDComplianceManager;
+  private readonly config: MinimizationConfig;
   private analysisInterval: NodeJS.Timeout | null = null;
-  private minimizationCallbacks: Array<(task: MinimizationTask) => void> = [];
+  private readonly minimizationCallbacks: Array<
+    (task: MinimizationTask) => void
+  > = [];
 
   constructor(
     supabase: SupabaseClient,
@@ -217,7 +219,9 @@ export class DataMinimizationAutomation {
         .select('id')
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Log rule creation
       await this.complianceManager.logAuditEvent({
@@ -260,8 +264,12 @@ export class DataMinimizationAutomation {
         .eq('id', ruleId)
         .single();
 
-      if (ruleError) throw ruleError;
-      if (!rule) throw new Error('Minimization rule not found');
+      if (ruleError) {
+        throw ruleError;
+      }
+      if (!rule) {
+        throw new Error('Minimization rule not found');
+      }
 
       // Analyze affected records
       const affectedRecords = await this.analyzeAffectedRecords(rule);
@@ -302,7 +310,9 @@ export class DataMinimizationAutomation {
         .select('id')
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Auto-execute if configured and approved
       if (rule.auto_execute && !rule.requires_approval) {
@@ -349,8 +359,12 @@ export class DataMinimizationAutomation {
         .eq('id', taskId)
         .single();
 
-      if (taskError) throw taskError;
-      if (!task) throw new Error('Minimization task not found');
+      if (taskError) {
+        throw taskError;
+      }
+      if (!task) {
+        throw new Error('Minimization task not found');
+      }
 
       // Check if task is approved
       if (task.status !== 'approved') {
@@ -483,7 +497,9 @@ export class DataMinimizationAutomation {
         .eq('id', taskId)
         .eq('status', 'pending');
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Log approval
       await this.complianceManager.logAuditEvent({
@@ -516,7 +532,9 @@ export class DataMinimizationAutomation {
         }
       );
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return inventory || [];
     } catch (error) {
@@ -539,7 +557,9 @@ export class DataMinimizationAutomation {
         }
       );
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return analysis || [];
     } catch (error) {
@@ -568,7 +588,9 @@ export class DataMinimizationAutomation {
         'get_minimization_dashboard'
       );
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return dashboard;
     } catch (error) {
@@ -590,7 +612,9 @@ export class DataMinimizationAutomation {
       // Discover tables and columns with personal data
       const { error } = await this.supabase.rpc('perform_data_discovery');
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       console.log('Data discovery completed');
     } catch (error) {
@@ -607,7 +631,9 @@ export class DataMinimizationAutomation {
         .eq('status', 'approved')
         .lte('scheduled_at', new Date().toISOString());
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       if (!tasks || tasks.length === 0) {
         return;
@@ -687,7 +713,9 @@ export class DataMinimizationAutomation {
       }
     );
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     return analysis || { count: 0, sample: [] };
   }
@@ -758,7 +786,9 @@ export class DataMinimizationAutomation {
       columns: task.target_columns,
     });
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
   }
 
   private async executeAnonymization(task: MinimizationTask): Promise<number> {
@@ -774,7 +804,9 @@ export class DataMinimizationAutomation {
       }
     );
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return result?.records_processed || 0;
   }
 
@@ -793,7 +825,9 @@ export class DataMinimizationAutomation {
       }
     );
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return result?.records_processed || 0;
   }
 
@@ -809,7 +843,9 @@ export class DataMinimizationAutomation {
       }
     );
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return result?.records_processed || 0;
   }
 
@@ -825,7 +861,9 @@ export class DataMinimizationAutomation {
       }
     );
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return result?.records_processed || 0;
   }
 
@@ -841,7 +879,9 @@ export class DataMinimizationAutomation {
       }
     );
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return result?.records_processed || 0;
   }
 
@@ -857,7 +897,9 @@ export class DataMinimizationAutomation {
       }
     );
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return result?.records_processed || 0;
   }
 
@@ -1048,7 +1090,9 @@ export class DataMinimizationAutomation {
   }
 
   private formatBytes(bytes: number): string {
-    if (bytes === 0) return '0 Bytes';
+    if (bytes === 0) {
+      return '0 Bytes';
+    }
 
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];

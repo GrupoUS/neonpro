@@ -21,8 +21,12 @@ if (fs.existsSync(envFile)) {
   const urlMatch = envContent.match(/NEXT_PUBLIC_SUPABASE_URL=(.+)/);
   const keyMatch = envContent.match(/NEXT_PUBLIC_SUPABASE_ANON_KEY=(.+)/);
 
-  if (urlMatch) supabaseUrl = urlMatch[1].trim();
-  if (keyMatch) supabaseKey = keyMatch[1].trim();
+  if (urlMatch) {
+    supabaseUrl = urlMatch[1].trim();
+  }
+  if (keyMatch) {
+    supabaseKey = keyMatch[1].trim();
+  }
 }
 
 console.log('\n🔧 1. VERIFICANDO VARIÁVEIS DE AMBIENTE');

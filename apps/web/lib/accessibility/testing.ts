@@ -28,7 +28,7 @@ export interface AccessibilityAuditReport {
 
 export class AccessibilityTester {
   private static instance: AccessibilityTester;
-  private results: AccessibilityTestResult[] = [];
+  private readonly results: AccessibilityTestResult[] = [];
 
   static getInstance(): AccessibilityTester {
     if (!AccessibilityTester.instance) {
@@ -422,13 +422,18 @@ export class AccessibilityTester {
 
     let announcement = `${role}: ${label}`;
 
-    if (expanded)
+    if (expanded) {
       announcement += `, ${expanded === 'true' ? 'expandido' : 'recolhido'}`;
-    if (selected)
+    }
+    if (selected) {
       announcement += `, ${selected === 'true' ? 'selecionado' : 'não selecionado'}`;
-    if (checked)
+    }
+    if (checked) {
       announcement += `, ${checked === 'true' ? 'marcado' : 'desmarcado'}`;
-    if (description) announcement += `, ${description}`;
+    }
+    if (description) {
+      announcement += `, ${description}`;
+    }
 
     return announcement;
   }

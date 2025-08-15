@@ -1151,7 +1151,9 @@ export const HealthcareFormatters = {
     specialty?: string,
     _dictionary?: Dictionary
   ): string => {
-    if (!specialty) return name;
+    if (!specialty) {
+      return name;
+    }
 
     // Add Dr./Dra. prefix for doctors
     const doctorSpecialties = [

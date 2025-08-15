@@ -109,12 +109,20 @@ export function useSession(): UseSessionReturn {
         setIsLoading(false);
       }
     },
-    [toast]
+    [
+      toast,
+      loadSecurityEvents,
+      loadSessionAnalytics,
+      loadUserDevices, // Start session monitoring
+      startSessionMonitoring,
+    ]
   );
 
   const updateSession = useCallback(
     async (updates: UpdateSessionRequest): Promise<void> => {
-      if (!session) return;
+      if (!session) {
+        return;
+      }
 
       try {
         const updatedSession = await sessionManager.updateSession(
@@ -142,7 +150,9 @@ export function useSession(): UseSessionReturn {
 
   const terminateSession = useCallback(
     async (reason = 'user_logout'): Promise<void> => {
-      if (!session) return;
+      if (!session) {
+        return;
+      }
 
       try {
         setIsLoading(true);
@@ -186,11 +196,18 @@ export function useSession(): UseSessionReturn {
         setIsLoading(false);
       }
     },
-    [session, router, toast]
+    [
+      session,
+      router,
+      toast, // Stop monitoring
+      stopSessionMonitoring,
+    ]
   );
 
   const terminateAllSessions = useCallback(async (): Promise<void> => {
-    if (!session) return;
+    if (!session) {
+      return;
+    }
 
     try {
       setIsLoading(true);
@@ -246,10 +263,17 @@ export function useSession(): UseSessionReturn {
     } finally {
       setIsLoading(false);
     }
-  }, [session, router, toast]);
+  }, [
+    session,
+    router,
+    toast, // Stop monitoring
+    stopSessionMonitoring,
+  ]);
 
   const refreshSession = useCallback(async (): Promise<void> => {
-    if (!session) return;
+    if (!session) {
+      return;
+    }
 
     try {
       // Get current session from database
@@ -280,10 +304,18 @@ export function useSession(): UseSessionReturn {
       });
       setError('Failed to refresh session');
     }
-  }, [session, terminateSession]);
+  }, [
+    session,
+    terminateSession,
+    loadSecurityEvents,
+    loadSessionAnalytics,
+    loadUserDevices,
+  ]);
 
   const extendSession = useCallback(async (): Promise<void> => {
-    if (!session) return;
+    if (!session) {
+      return;
+    }
 
     try {
       await updateSession({
@@ -305,7 +337,9 @@ export function useSession(): UseSessionReturn {
 
   const reportSuspiciousActivity = useCallback(
     async (eventType: SecurityEventType, details?: any): Promise<void> => {
-      if (!session) return;
+      if (!session) {
+        return;
+      }
 
       try {
         // Create security event
@@ -353,7 +387,7 @@ export function useSession(): UseSessionReturn {
         });
       }
     },
-    [session, toast]
+    [session, toast, loadSecurityEvents]
   );
 
   // ============================================================================
@@ -392,7 +426,7 @@ export function useSession(): UseSessionReturn {
         });
       }
     },
-    [session, toast]
+    [session, toast, loadUserDevices]
   );
 
   const blockDevice = useCallback(
@@ -445,7 +479,7 @@ export function useSession(): UseSessionReturn {
         });
       }
     },
-    [session, devices, toast]
+    [session, devices, toast, loadUserDevices]
   );
 
   // ============================================================================
@@ -628,7 +662,7 @@ export function useSession(): UseSessionReturn {
   return {
     session,
     isLoading,
-    isAuthenticated: !!session?.is_active,
+    isAuthenticated: Boolean(session?.is_active),
     securityEvents,
     devices,
     analytics,
@@ -667,7 +701,9 @@ export function useSecurityEvents(sessionId?: string): UseSecurityEventsReturn {
   const { toast } = useToast();
 
   const loadEvents = useCallback(async (): Promise<void> => {
-    if (!sessionId) return;
+    if (!sessionId) {
+      return;
+    }
 
     try {
       setIsLoading(true);
@@ -680,7 +716,9 @@ export function useSecurityEvents(sessionId?: string): UseSecurityEventsReturn {
           .eq('session_id', sessionId)
           .order('timestamp', { ascending: false });
 
-      if (loadError) throw loadError;
+      if (loadError) {
+        throw loadError;
+      }
 
       setEvents(securityEvents || []);
     } catch (err) {

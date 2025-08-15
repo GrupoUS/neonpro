@@ -248,10 +248,16 @@ function calculateGrade(
   const thresholds =
     PERFORMANCE_ALERTS[metric as keyof typeof PERFORMANCE_ALERTS];
 
-  if (!thresholds) return 'poor';
+  if (!thresholds) {
+    return 'poor';
+  }
 
-  if (value <= thresholds.warning) return 'good';
-  if (value <= thresholds.critical) return 'needs-improvement';
+  if (value <= thresholds.warning) {
+    return 'good';
+  }
+  if (value <= thresholds.critical) {
+    return 'needs-improvement';
+  }
   return 'poor';
 }
 
@@ -267,7 +273,9 @@ function parseTimeRange(timeRange: string): number {
 }
 
 function calculateAggregatedStats(metrics: any[]) {
-  if (metrics.length === 0) return {};
+  if (metrics.length === 0) {
+    return {};
+  }
 
   const statsByMetric: Record<string, any> = {};
 
@@ -302,7 +310,7 @@ function calculateAggregatedStats(metrics: any[]) {
       p99: values[Math.floor(count * 0.99)],
     };
 
-    delete statsByMetric[metricName].values; // Remove raw values to reduce response size
+    statsByMetric[metricName].values = undefined; // Remove raw values to reduce response size
   }
 
   return statsByMetric;

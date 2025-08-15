@@ -67,7 +67,9 @@ export function AppointmentCancellation({
   const [customReason, setCustomReason] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  if (!appointment) return null;
+  if (!appointment) {
+    return null;
+  }
 
   // Check if cancellation is allowed
   const canCancel = appointment.can_cancel;
@@ -98,7 +100,9 @@ export function AppointmentCancellation({
   };
 
   const handleConfirm = async () => {
-    if (!selectedReason) return;
+    if (!selectedReason) {
+      return;
+    }
 
     const finalReason =
       selectedReason === 'other' && customReason

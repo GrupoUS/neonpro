@@ -33,7 +33,7 @@ type CompressionOptions = {
 };
 
 export class SupabaseStorageManager {
-  private supabase = createClientComponentClient<Database>();
+  private readonly supabase = createClientComponentClient<Database>();
   private readonly BUCKET_NAME = 'patient-photos';
   private readonly MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
   private readonly ALLOWED_TYPES = [
@@ -151,7 +151,9 @@ export class SupabaseStorageManager {
         .eq('id', patientId)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       const consents = data?.lgpd_consents as any;
       return consents?.photo_consent === true;
@@ -339,7 +341,9 @@ export class SupabaseStorageManager {
 
       const { data, error, count } = await query;
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Generate signed URLs for each photo
       const photosWithUrls = await Promise.all(
@@ -389,7 +393,9 @@ export class SupabaseStorageManager {
         .eq('id', photoId)
         .single();
 
-      if (fetchError) throw fetchError;
+      if (fetchError) {
+        throw fetchError;
+      }
 
       // Delete from storage
       const { error: storageError } = await this.supabase.storage
@@ -407,7 +413,9 @@ export class SupabaseStorageManager {
         .delete()
         .eq('id', photoId);
 
-      if (dbError) throw dbError;
+      if (dbError) {
+        throw dbError;
+      }
 
       return { success: true };
     } catch (error) {
@@ -430,7 +438,9 @@ export class SupabaseStorageManager {
         .from(this.BUCKET_NAME)
         .download(filePath);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return { success: true, blob: data };
     } catch (error) {
@@ -454,7 +464,9 @@ export class SupabaseStorageManager {
         .from(this.BUCKET_NAME)
         .createSignedUrl(filePath, expiresIn);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return { success: true, url: data.signedUrl };
     } catch (error) {
@@ -478,7 +490,9 @@ export class SupabaseStorageManager {
         .eq('patient_id', patientId)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return {
         success: true,
@@ -547,7 +561,9 @@ export class SupabaseStorageManager {
 
       const { data: photos, error: fetchError } = await query;
 
-      if (fetchError) throw fetchError;
+      if (fetchError) {
+        throw fetchError;
+      }
 
       if (!photos || photos.length === 0) {
         return { success: true, deletedCount: 0 };
@@ -571,7 +587,9 @@ export class SupabaseStorageManager {
         .delete()
         .in('id', photoIds);
 
-      if (dbError) throw dbError;
+      if (dbError) {
+        throw dbError;
+      }
 
       return { success: true, deletedCount: photos.length };
     } catch (error) {

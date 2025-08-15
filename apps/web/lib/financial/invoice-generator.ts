@@ -253,10 +253,10 @@ interface InvoiceGenerationConfig {
 }
 
 class AutomatedInvoiceGenerator {
-  private supabase = createClient();
-  private config: InvoiceGenerationConfig;
-  private templates: Map<string, InvoiceTemplate> = new Map();
-  private isInitialized = false;
+  private readonly supabase = createClient();
+  private readonly config: InvoiceGenerationConfig;
+  private readonly templates: Map<string, InvoiceTemplate> = new Map();
+  private readonly isInitialized = false;
 
   constructor(config?: Partial<InvoiceGenerationConfig>) {
     this.config = this.initializeConfig(config);
@@ -851,7 +851,7 @@ class AutomatedInvoiceGenerator {
           paidAmount += invoice.total_amount;
 
           // Calculate payment time
-          const lastPayment = payments[payments.length - 1];
+          const lastPayment = payments.at(-1);
           if (lastPayment) {
             const paymentTime =
               new Date(lastPayment.paid_at).getTime() -
@@ -1151,7 +1151,9 @@ class AutomatedInvoiceGenerator {
       .eq('id', invoiceId)
       .single();
 
-    if (!data) return null;
+    if (!data) {
+      return null;
+    }
 
     // Convert database record to InvoiceData
     return {

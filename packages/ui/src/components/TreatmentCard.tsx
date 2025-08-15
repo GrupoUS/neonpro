@@ -5,7 +5,6 @@ import {
   Clock,
   FileText,
   MapPin,
-  User,
   XCircle,
 } from 'lucide-react';
 import * as React from 'react';

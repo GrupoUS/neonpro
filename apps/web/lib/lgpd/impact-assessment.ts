@@ -427,13 +427,13 @@ export interface AssessmentEvents {
  * - Assessment reporting and approval workflow
  */
 export class ImpactAssessmentManager extends EventEmitter {
-  private assessments: Map<string, ImpactAssessment> = new Map();
-  private templates: Map<string, AssessmentTemplate> = new Map();
+  private readonly assessments: Map<string, ImpactAssessment> = new Map();
+  private readonly templates: Map<string, AssessmentTemplate> = new Map();
   private isInitialized = false;
   private reviewCheckInterval: NodeJS.Timeout | null = null;
 
   constructor(
-    private config: {
+    private readonly config: {
       defaultRiskThreshold: RiskSeverity;
       autoRiskCalculation: boolean;
       mandatoryConsultation: boolean;
@@ -647,8 +647,12 @@ export class ImpactAssessmentManager extends EventEmitter {
 
     // Vulnerable subjects assessment
     let vulnerableSubjects = 1;
-    if (context.stakeholders.dataSubjects.vulnerable) vulnerableSubjects += 2;
-    if (context.stakeholders.dataSubjects.children) vulnerableSubjects += 2;
+    if (context.stakeholders.dataSubjects.vulnerable) {
+      vulnerableSubjects += 2;
+    }
+    if (context.stakeholders.dataSubjects.children) {
+      vulnerableSubjects += 2;
+    }
     vulnerableSubjects = Math.min(5, vulnerableSubjects);
 
     // Technical complexity assessment
@@ -725,11 +729,21 @@ export class ImpactAssessmentManager extends EventEmitter {
     }
 
     // Convert score to likelihood
-    if (score <= 1) return RiskLikelihood.VERY_UNLIKELY;
-    if (score <= 2) return RiskLikelihood.UNLIKELY;
-    if (score <= 3) return RiskLikelihood.POSSIBLE;
-    if (score <= 4) return RiskLikelihood.LIKELY;
-    if (score <= 5) return RiskLikelihood.VERY_LIKELY;
+    if (score <= 1) {
+      return RiskLikelihood.VERY_UNLIKELY;
+    }
+    if (score <= 2) {
+      return RiskLikelihood.UNLIKELY;
+    }
+    if (score <= 3) {
+      return RiskLikelihood.POSSIBLE;
+    }
+    if (score <= 4) {
+      return RiskLikelihood.LIKELY;
+    }
+    if (score <= 5) {
+      return RiskLikelihood.VERY_LIKELY;
+    }
     return RiskLikelihood.CERTAIN;
   }
 
@@ -778,11 +792,21 @@ export class ImpactAssessmentManager extends EventEmitter {
     }
 
     // Convert score to severity
-    if (score <= 1) return RiskSeverity.VERY_LOW;
-    if (score <= 2) return RiskSeverity.LOW;
-    if (score <= 3) return RiskSeverity.MEDIUM;
-    if (score <= 4) return RiskSeverity.HIGH;
-    if (score <= 5) return RiskSeverity.VERY_HIGH;
+    if (score <= 1) {
+      return RiskSeverity.VERY_LOW;
+    }
+    if (score <= 2) {
+      return RiskSeverity.LOW;
+    }
+    if (score <= 3) {
+      return RiskSeverity.MEDIUM;
+    }
+    if (score <= 4) {
+      return RiskSeverity.HIGH;
+    }
+    if (score <= 5) {
+      return RiskSeverity.VERY_HIGH;
+    }
     return RiskSeverity.CRITICAL;
   }
 
@@ -813,11 +837,21 @@ export class ImpactAssessmentManager extends EventEmitter {
 
     const riskScore = likelihoodScore * impactScore;
 
-    if (riskScore <= 4) return RiskSeverity.VERY_LOW;
-    if (riskScore <= 8) return RiskSeverity.LOW;
-    if (riskScore <= 15) return RiskSeverity.MEDIUM;
-    if (riskScore <= 20) return RiskSeverity.HIGH;
-    if (riskScore <= 25) return RiskSeverity.VERY_HIGH;
+    if (riskScore <= 4) {
+      return RiskSeverity.VERY_LOW;
+    }
+    if (riskScore <= 8) {
+      return RiskSeverity.LOW;
+    }
+    if (riskScore <= 15) {
+      return RiskSeverity.MEDIUM;
+    }
+    if (riskScore <= 20) {
+      return RiskSeverity.HIGH;
+    }
+    if (riskScore <= 25) {
+      return RiskSeverity.VERY_HIGH;
+    }
     return RiskSeverity.CRITICAL;
   }
 
@@ -825,7 +859,9 @@ export class ImpactAssessmentManager extends EventEmitter {
    * Calculate overall risk from multiple risks
    */
   private calculateOverallRisk(risks: RiskAssessment[]): RiskSeverity {
-    if (risks.length === 0) return RiskSeverity.VERY_LOW;
+    if (risks.length === 0) {
+      return RiskSeverity.VERY_LOW;
+    }
 
     const riskScores = risks.map((risk) => {
       const scores = {
@@ -886,30 +922,44 @@ export class ImpactAssessmentManager extends EventEmitter {
     const organizational: string[] = [];
 
     // Technical controls
-    if (context.technicalMeasures.encryption) technical.push('Data encryption');
-    if (context.technicalMeasures.pseudonymization)
+    if (context.technicalMeasures.encryption) {
+      technical.push('Data encryption');
+    }
+    if (context.technicalMeasures.pseudonymization) {
       technical.push('Data pseudonymization');
-    if (context.technicalMeasures.anonymization)
+    }
+    if (context.technicalMeasures.anonymization) {
       technical.push('Data anonymization');
-    if (context.technicalMeasures.accessControls)
+    }
+    if (context.technicalMeasures.accessControls) {
       technical.push('Access controls');
-    if (context.technicalMeasures.auditLogging) technical.push('Audit logging');
-    if (context.technicalMeasures.backupSecurity)
+    }
+    if (context.technicalMeasures.auditLogging) {
+      technical.push('Audit logging');
+    }
+    if (context.technicalMeasures.backupSecurity) {
       technical.push('Backup security');
-    if (context.technicalMeasures.networkSecurity)
+    }
+    if (context.technicalMeasures.networkSecurity) {
       technical.push('Network security');
+    }
 
     // Organizational controls
-    if (context.organizationalMeasures.training)
+    if (context.organizationalMeasures.training) {
       organizational.push('Staff training');
-    if (context.organizationalMeasures.accessManagement)
+    }
+    if (context.organizationalMeasures.accessManagement) {
       organizational.push('Access management');
-    if (context.organizationalMeasures.incidentResponse)
+    }
+    if (context.organizationalMeasures.incidentResponse) {
       organizational.push('Incident response');
-    if (context.organizationalMeasures.vendorManagement)
+    }
+    if (context.organizationalMeasures.vendorManagement) {
       organizational.push('Vendor management');
-    if (context.organizationalMeasures.dataGovernance)
+    }
+    if (context.organizationalMeasures.dataGovernance) {
       organizational.push('Data governance');
+    }
 
     organizational.push(...context.organizationalMeasures.policies);
 
@@ -918,9 +968,13 @@ export class ImpactAssessmentManager extends EventEmitter {
     const maxControls = 15; // Approximate maximum
 
     let effectiveness: 'low' | 'medium' | 'high';
-    if (totalControls < maxControls * 0.3) effectiveness = 'low';
-    else if (totalControls < maxControls * 0.7) effectiveness = 'medium';
-    else effectiveness = 'high';
+    if (totalControls < maxControls * 0.3) {
+      effectiveness = 'low';
+    } else if (totalControls < maxControls * 0.7) {
+      effectiveness = 'medium';
+    } else {
+      effectiveness = 'high';
+    }
 
     return {
       technical,
@@ -1215,7 +1269,7 @@ export class ImpactAssessmentManager extends EventEmitter {
     switch (requirement.article) {
       case 'Art. 6':
         return {
-          compliant: !!context.legalBasis,
+          compliant: Boolean(context.legalBasis),
           description: context.legalBasis
             ? 'Legal basis documented'
             : 'No legal basis documented',

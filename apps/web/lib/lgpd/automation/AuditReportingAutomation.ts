@@ -179,11 +179,11 @@ export interface AuditConfig {
 }
 
 export class AuditReportingAutomation {
-  private supabase: SupabaseClient;
-  private complianceManager: LGPDComplianceManager;
-  private config: AuditConfig;
+  private readonly supabase: SupabaseClient;
+  private readonly complianceManager: LGPDComplianceManager;
+  private readonly config: AuditConfig;
   private reportingInterval: NodeJS.Timeout | null = null;
-  private auditCallbacks: Array<(report: AuditReport) => void> = [];
+  private readonly auditCallbacks: Array<(report: AuditReport) => void> = [];
 
   constructor(
     supabase: SupabaseClient,
@@ -249,7 +249,7 @@ export class AuditReportingAutomation {
     periodStart: string,
     periodEnd: string,
     scope: string[],
-    format: 'pdf' | 'excel' | 'json' | 'html' = 'pdf',
+    format: 'pdf' | 'excel' | 'json' | 'html',
     generatedBy: string
   ): Promise<{ success: boolean; report_id: string; file_path?: string }> {
     try {
@@ -273,7 +273,9 @@ export class AuditReportingAutomation {
         .select('id')
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       try {
         // Generate report content
@@ -408,7 +410,9 @@ export class AuditReportingAutomation {
         .select('id')
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Log schedule creation
       await this.complianceManager.logAuditEvent({
@@ -461,7 +465,9 @@ export class AuditReportingAutomation {
         .select('id')
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Initialize dashboard data
       await this.initializeDashboardData(dashboard.id, dashboardData);
@@ -552,7 +558,9 @@ export class AuditReportingAutomation {
 
       const { data: auditTrail, error, count } = await query;
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       const totalPages = Math.ceil((count || 0) / pagination.limit);
 
@@ -584,7 +592,9 @@ export class AuditReportingAutomation {
         'get_executive_compliance_dashboard'
       );
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return dashboard;
     } catch (error) {
@@ -664,7 +674,9 @@ export class AuditReportingAutomation {
         .eq('active', true)
         .eq('auto_generate', true);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       if (!schedules || schedules.length === 0) {
         return;
@@ -713,7 +725,9 @@ export class AuditReportingAutomation {
         .select('*')
         .eq('auto_refresh', true);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       if (!dashboards || dashboards.length === 0) {
         return;

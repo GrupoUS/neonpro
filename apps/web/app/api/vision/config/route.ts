@@ -192,7 +192,9 @@ export const PUT = withErrorMonitoring(async (request: NextRequest) => {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       result = data;
     } else {
       // Create new configuration
@@ -207,7 +209,9 @@ export const PUT = withErrorMonitoring(async (request: NextRequest) => {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       result = data;
     }
 
@@ -284,7 +288,9 @@ export const POST = withErrorMonitoring(async (request: NextRequest) => {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Log reset activity
       await supabase.from('analysis_activity_log').insert({

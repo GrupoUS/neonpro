@@ -28,8 +28,8 @@ export class PatientInsightsIntegration {
   private trendMonitor: HealthTrendMonitor;
   private learningSystem: ContinuousLearningSystem;
 
-  private configuration: InsightConfiguration;
-  private isInitialized = false;
+  private readonly configuration: InsightConfiguration;
+  private readonly isInitialized = false;
 
   constructor(config?: Partial<InsightConfiguration>) {
     this.configuration = {
@@ -633,22 +633,30 @@ export class PatientInsightsIntegration {
 
     if (this.configuration.enableRiskAssessment) {
       totalModules++;
-      if (insights.riskAssessment) completedModules++;
+      if (insights.riskAssessment) {
+        completedModules++;
+      }
     }
 
     if (this.configuration.enableTreatmentRecommendations) {
       totalModules++;
-      if (insights.treatmentRecommendations) completedModules++;
+      if (insights.treatmentRecommendations) {
+        completedModules++;
+      }
     }
 
     if (this.configuration.enableBehaviorAnalysis) {
       totalModules++;
-      if (insights.behaviorAnalysis) completedModules++;
+      if (insights.behaviorAnalysis) {
+        completedModules++;
+      }
     }
 
     if (this.configuration.enableHealthTrends) {
       totalModules++;
-      if (insights.healthTrends) completedModules++;
+      if (insights.healthTrends) {
+        completedModules++;
+      }
     }
 
     return totalModules > 0 ? completedModules / totalModules : 0;
@@ -721,9 +729,15 @@ export class PatientInsightsIntegration {
   }
 
   private categorizeAlert(alert: any): string {
-    if (alert.type?.includes('risk')) return 'risk';
-    if (alert.type?.includes('behavior')) return 'behavior';
-    if (alert.type?.includes('trend')) return 'health';
+    if (alert.type?.includes('risk')) {
+      return 'risk';
+    }
+    if (alert.type?.includes('behavior')) {
+      return 'behavior';
+    }
+    if (alert.type?.includes('trend')) {
+      return 'health';
+    }
     return 'general';
   }
 
@@ -782,8 +796,12 @@ export class PatientInsightsIntegration {
     ).length;
     const ratio = unhealthyEngines / engines.length;
 
-    if (ratio === 0) return 'healthy';
-    if (ratio < 0.5) return 'degraded';
+    if (ratio === 0) {
+      return 'healthy';
+    }
+    if (ratio < 0.5) {
+      return 'degraded';
+    }
     return 'critical';
   }
 

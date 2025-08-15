@@ -446,7 +446,7 @@ export class ConfigManager {
       config = config[keys[i]];
     }
 
-    config[keys[keys.length - 1]] = value;
+    config[keys.at(-1)] = value;
   }
 
   public reload(): void {

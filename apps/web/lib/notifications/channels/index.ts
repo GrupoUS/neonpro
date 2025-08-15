@@ -55,7 +55,8 @@ export interface ChannelManager {
  * Gerenciador de canais de notificação
  */
 export class NotificationChannelManager implements ChannelManager {
-  private providers: Map<NotificationChannel, ChannelProvider> = new Map();
+  private readonly providers: Map<NotificationChannel, ChannelProvider> =
+    new Map();
 
   // ============================================================================
   // INICIALIZAÇÃO
@@ -245,7 +246,7 @@ export class NotificationChannelManager implements ChannelManager {
   async isChannelHealthy(channel: NotificationChannel): Promise<boolean> {
     const provider = this.getProvider(channel);
 
-    if (!(provider && provider.isEnabled)) {
+    if (!provider?.isEnabled) {
       return false;
     }
 
@@ -286,7 +287,7 @@ export class NotificationChannelManager implements ChannelManager {
             fromEmail: process.env.RESEND_FROM_EMAIL || 'noreply@neonpro.com',
             fromName: process.env.RESEND_FROM_NAME || 'NeonPro',
           },
-          isEnabled: !!process.env.RESEND_API_KEY,
+          isEnabled: Boolean(process.env.RESEND_API_KEY),
         };
 
       case NotificationChannel.SMS:
@@ -297,7 +298,7 @@ export class NotificationChannelManager implements ChannelManager {
             authToken: process.env.TWILIO_AUTH_TOKEN,
             fromNumber: process.env.TWILIO_FROM_NUMBER,
           },
-          isEnabled: !!process.env.TWILIO_ACCOUNT_SID,
+          isEnabled: Boolean(process.env.TWILIO_ACCOUNT_SID),
         };
 
       case NotificationChannel.PUSH:
@@ -307,7 +308,7 @@ export class NotificationChannelManager implements ChannelManager {
             serverKey: process.env.FIREBASE_SERVER_KEY,
             projectId: process.env.FIREBASE_PROJECT_ID,
           },
-          isEnabled: !!process.env.FIREBASE_SERVER_KEY,
+          isEnabled: Boolean(process.env.FIREBASE_SERVER_KEY),
         };
 
       case NotificationChannel.IN_APP:

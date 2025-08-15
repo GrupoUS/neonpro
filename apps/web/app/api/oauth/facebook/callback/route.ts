@@ -35,8 +35,8 @@ export async function GET(request: NextRequest) {
     // Validate required parameters
     if (!(code && state)) {
       console.error('Missing required OAuth parameters:', {
-        code: !!code,
-        state: !!state,
+        code: Boolean(code),
+        state: Boolean(state),
       });
       return redirect(
         '/dashboard/social-media?error=invalid_request&message=Missing authorization code or state'

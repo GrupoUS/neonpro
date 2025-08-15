@@ -34,8 +34,8 @@ type TemplateFunction = (context: NotificationContext) => string;
  * Engine de templates para notificações
  */
 export class TemplateEngine {
-  private templates: Map<string, NotificationTemplate> = new Map();
-  private functions: Map<string, TemplateFunction> = new Map();
+  private readonly templates: Map<string, NotificationTemplate> = new Map();
+  private readonly functions: Map<string, TemplateFunction> = new Map();
 
   // ============================================================================
   // INICIALIZAÇÃO
@@ -87,8 +87,12 @@ export class TemplateEngine {
     this.functions.set('greeting', (_context) => {
       return () => {
         const hour = new Date().getHours();
-        if (hour < 12) return 'Bom dia';
-        if (hour < 18) return 'Boa tarde';
+        if (hour < 12) {
+          return 'Bom dia';
+        }
+        if (hour < 18) {
+          return 'Boa tarde';
+        }
         return 'Boa noite';
       };
     });
@@ -330,8 +334,12 @@ export class TemplateEngine {
             return Number.parseFloat(trimmed);
           }
           // Boolean
-          if (trimmed === 'true') return true;
-          if (trimmed === 'false') return false;
+          if (trimmed === 'true') {
+            return true;
+          }
+          if (trimmed === 'false') {
+            return false;
+          }
           // Variável
           return this.getVariableValue(
             trimmed,
@@ -390,7 +398,7 @@ export class TemplateEngine {
 
     // Existência da variável
     const value = this.getVariableValue(condition, variables, context);
-    return !!value;
+    return Boolean(value);
   }
 
   /**
@@ -417,8 +425,12 @@ export class TemplateEngine {
     }
 
     // Boolean
-    if (value === 'true') return true;
-    if (value === 'false') return false;
+    if (value === 'true') {
+      return true;
+    }
+    if (value === 'false') {
+      return false;
+    }
 
     // Variável
     return this.getVariableValue(value, variables, context);

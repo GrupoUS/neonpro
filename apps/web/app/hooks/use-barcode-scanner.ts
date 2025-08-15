@@ -193,7 +193,7 @@ export function useBarcodeData(itemId: string) {
   return useQuery({
     queryKey: ['barcode-data', itemId],
     queryFn: () => barcodeService.getBarcodeData(itemId),
-    enabled: !!itemId,
+    enabled: Boolean(itemId),
   });
 }
 

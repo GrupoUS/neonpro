@@ -20,9 +20,12 @@ async function testSupabaseMCP() {
   // Validate environment variables
   if (!(SUPABASE_URL && SUPABASE_ANON_KEY)) {
     console.error('\n❌ Missing required environment variables:');
-    if (!SUPABASE_URL) console.error('- NEXT_PUBLIC_SUPABASE_URL is not set');
-    if (!SUPABASE_ANON_KEY)
+    if (!SUPABASE_URL) {
+      console.error('- NEXT_PUBLIC_SUPABASE_URL is not set');
+    }
+    if (!SUPABASE_ANON_KEY) {
       console.error('- NEXT_PUBLIC_SUPABASE_ANON_KEY is not set');
+    }
     console.error(
       '\n💡 Create a .env.local file with these variables or set them in your environment'
     );

@@ -151,15 +151,15 @@ const DEFAULT_CONFIG: PreservationConfig = {
 };
 
 export class SessionPreservation {
-  private supabase;
-  private auditLogger: SecurityAuditLogger;
+  private readonly supabase;
+  private readonly auditLogger: SecurityAuditLogger;
   private config: PreservationConfig;
-  private activeBackups: Map<string, SessionBackup[]> = new Map();
+  private readonly activeBackups: Map<string, SessionBackup[]> = new Map();
   private backupInterval?: NodeJS.Timeout;
   private cleanupInterval?: NodeJS.Timeout;
-  private currentSessionState?: SessionState;
-  private isBackupInProgress = false;
-  private recoveryCache: Map<string, RecoveryResult> = new Map();
+  private readonly currentSessionState?: SessionState;
+  private readonly isBackupInProgress = false;
+  private readonly recoveryCache: Map<string, RecoveryResult> = new Map();
 
   constructor(
     supabaseUrl: string,
@@ -1025,7 +1025,7 @@ export class SessionPreservation {
     for (let i = 0; i < dataString.length; i++) {
       const char = dataString.charCodeAt(i);
       hash = (hash << 5) - hash + char;
-      hash = hash & hash; // Convert to 32-bit integer
+      hash &= hash; // Convert to 32-bit integer
     }
     return Math.abs(hash).toString(36);
   }

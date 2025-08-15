@@ -140,7 +140,7 @@ export interface ConflictResolution {
 // =====================================================
 
 export class ResourceManager {
-  private supabase: any;
+  private readonly supabase: any;
 
   constructor() {
     this.supabase = createClient(supabaseUrl, supabaseKey);
@@ -160,7 +160,9 @@ export class ResourceManager {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data;
     } catch (error) {
       console.error('Error creating resource:', error);
@@ -195,7 +197,9 @@ export class ResourceManager {
       }
 
       const { data, error } = await query;
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data || [];
     } catch (error) {
       console.error('Error fetching resources:', error);
@@ -211,7 +215,9 @@ export class ResourceManager {
         .eq('id', resourceId)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data;
     } catch (error) {
       console.error('Error fetching resource:', error);
@@ -231,7 +237,9 @@ export class ResourceManager {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data;
     } catch (error) {
       console.error('Error updating resource:', error);
@@ -252,7 +260,9 @@ export class ResourceManager {
         })
         .eq('id', resourceId);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
     } catch (error) {
       console.error('Error updating resource status:', error);
       throw new Error('Failed to update resource status');
@@ -266,7 +276,9 @@ export class ResourceManager {
         .delete()
         .eq('id', resourceId);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
     } catch (error) {
       console.error('Error deleting resource:', error);
       throw new Error('Failed to delete resource');
@@ -309,7 +321,9 @@ export class ResourceManager {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data;
     } catch (error) {
       console.error('Error creating allocation:', error);
@@ -337,7 +351,9 @@ export class ResourceManager {
       }
 
       const { data, error } = await query;
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data || [];
     } catch (error) {
       console.error('Error fetching allocations:', error);
@@ -358,7 +374,9 @@ export class ResourceManager {
         })
         .eq('id', allocationId);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
     } catch (error) {
       console.error('Error updating allocation status:', error);
       throw new Error('Failed to update allocation status');
@@ -399,7 +417,9 @@ export class ResourceManager {
       }
 
       const { data, error } = await query;
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data || [];
     } catch (error) {
       console.error('Error detecting conflicts:', error);
@@ -435,7 +455,9 @@ export class ResourceManager {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data;
     } catch (error) {
       console.error('Error creating conflict:', error);
@@ -464,7 +486,9 @@ export class ResourceManager {
         })
         .eq('id', conflictId);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
     } catch (error) {
       console.error('Error resolving conflict:', error);
       throw new Error('Failed to resolve conflict');
@@ -674,7 +698,9 @@ export class ResourceManager {
         .lte('date', endDate)
         .order('date', { ascending: true });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return (
         data?.map((item) => ({
           date: item.date,
@@ -701,7 +727,9 @@ export class ResourceManager {
         .order('created_at', { ascending: false })
         .limit(limit);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data || [];
     } catch (error) {
       console.error('Error fetching conflict history:', error);

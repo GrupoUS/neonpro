@@ -159,7 +159,7 @@ export type ReportInstance = z.infer<typeof ReportInstanceSchema>;
 
 // Report System Service
 export class ReportSystem {
-  private supabase = createClient();
+  private readonly supabase = createClient();
   private schedulerTimer: NodeJS.Timeout | null = null;
   private readonly SCHEDULER_INTERVAL = 60_000; // 1 minute
   private isRunning = false;
@@ -889,9 +889,10 @@ export class ReportSystem {
   /**
    * Get default report templates
    */
-  getDefaultTemplates(): Array<
-    Omit<ReportTemplate, 'id' | 'clinicId' | 'createdAt' | 'updatedAt'>
-  > {
+  getDefaultTemplates(): Omit<
+    ReportTemplate,
+    'id' | 'clinicId' | 'createdAt' | 'updatedAt'
+  >[] {
     return [
       {
         name: 'Relatório Executivo Mensal',

@@ -35,7 +35,7 @@ export interface ComplianceEvent {
 }
 
 export class AuditLogger {
-  private supabase: any;
+  private readonly supabase: any;
 
   constructor() {
     this.supabase = createClient(
@@ -366,9 +366,15 @@ export class AuditLogger {
     accessType: string,
     userRole: string
   ): 'low' | 'medium' | 'high' | 'critical' {
-    if (accessType === 'delete' || accessType === 'export') return 'critical';
-    if (accessType === 'edit') return 'high';
-    if (userRole === 'admin') return 'medium';
+    if (accessType === 'delete' || accessType === 'export') {
+      return 'critical';
+    }
+    if (accessType === 'edit') {
+      return 'high';
+    }
+    if (userRole === 'admin') {
+      return 'medium';
+    }
     return 'low';
   }
 

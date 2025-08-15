@@ -49,7 +49,9 @@ export class PatientAppointmentIntegration {
         .eq('patient_id', patientId)
         .order('appointment_date', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       const completed =
         appointments?.filter((apt) => apt.status === 'completed') || [];
@@ -188,7 +190,9 @@ export class PatientAppointmentIntegration {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Update patient's last interaction
       await supabase
@@ -262,7 +266,9 @@ export class PatientAppointmentIntegration {
         .eq('patient_id', patientId)
         .limit(20); // Last 20 appointments
 
-      if (error || !checkIns?.length) return 75; // Default score
+      if (error || !checkIns?.length) {
+        return 75; // Default score
+      }
 
       const punctualAppointments = checkIns.filter((checkIn) => {
         const scheduledTime = new Date(checkIn.scheduled_time);
@@ -307,7 +313,9 @@ export class PatientAppointmentIntegration {
   private static calculateConsistency(
     history: PatientAppointmentHistory
   ): number {
-    if (history.appointments.length < 2) return 0;
+    if (history.appointments.length < 2) {
+      return 0;
+    }
 
     // Calculate average time between appointments
     const intervals: number[] = [];
@@ -413,9 +421,15 @@ export class PatientAppointmentIntegration {
    * Get time slot category from hour
    */
   private static getTimeSlot(hour: number): string {
-    if (hour >= 8 && hour < 12) return 'Morning (8-12)';
-    if (hour >= 12 && hour < 17) return 'Afternoon (12-17)';
-    if (hour >= 17 && hour < 20) return 'Evening (17-20)';
+    if (hour >= 8 && hour < 12) {
+      return 'Morning (8-12)';
+    }
+    if (hour >= 12 && hour < 17) {
+      return 'Afternoon (12-17)';
+    }
+    if (hour >= 17 && hour < 20) {
+      return 'Evening (17-20)';
+    }
     return 'Other';
   }
 }

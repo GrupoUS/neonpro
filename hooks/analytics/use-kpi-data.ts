@@ -123,7 +123,9 @@ export function useKPIData(options: UseKPIDataOptions) {
 
   // Auto-refresh
   useEffect(() => {
-    if (!autoRefresh) return;
+    if (!autoRefresh) {
+      return;
+    }
 
     const interval = setInterval(() => {
       fetchKPIData();
@@ -222,7 +224,7 @@ export function useProfessionalMetrics(dateRange: string) {
       );
       setLoading(false);
     }
-  }, [dateRange]);
+  }, [dateRange, calculateDateRange]);
 
   useEffect(() => {
     fetchProfessionalMetrics();

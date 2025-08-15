@@ -128,8 +128,12 @@ export class UnifiedPatientDashboard {
         .eq('id', patientId)
         .single();
 
-      if (patientError) throw patientError;
-      if (!patient) throw new Error('Patient not found');
+      if (patientError) {
+        throw patientError;
+      }
+      if (!patient) {
+        throw new Error('Patient not found');
+      }
 
       // Get appointment insights
       const appointmentInsights =
@@ -567,7 +571,9 @@ export class UnifiedPatientDashboard {
    * Analyze payment patterns
    */
   private static analyzePaymentPatterns(payments: any[]) {
-    if (payments.length === 0) return {};
+    if (payments.length === 0) {
+      return {};
+    }
 
     const avgPaymentAmount =
       payments.reduce((sum, p) => sum + (p.amount || 0), 0) / payments.length;
@@ -612,8 +618,11 @@ export class UnifiedPatientDashboard {
           )
         : 365;
 
-    if (daysSinceLastAppointment > 180) riskScore += 30;
-    else if (daysSinceLastAppointment > 90) riskScore += 15;
+    if (daysSinceLastAppointment > 180) {
+      riskScore += 30;
+    } else if (daysSinceLastAppointment > 90) {
+      riskScore += 15;
+    }
 
     // High cancellation rate
     const cancellationRate =
@@ -623,15 +632,23 @@ export class UnifiedPatientDashboard {
           100
         : 0;
 
-    if (cancellationRate > 30) riskScore += 25;
-    else if (cancellationRate > 15) riskScore += 10;
+    if (cancellationRate > 30) {
+      riskScore += 25;
+    } else if (cancellationRate > 15) {
+      riskScore += 10;
+    }
 
     // Low satisfaction
-    if (data.treatmentInsights.avg_satisfaction < 3) riskScore += 20;
-    else if (data.treatmentInsights.avg_satisfaction < 4) riskScore += 10;
+    if (data.treatmentInsights.avg_satisfaction < 3) {
+      riskScore += 20;
+    } else if (data.treatmentInsights.avg_satisfaction < 4) {
+      riskScore += 10;
+    }
 
     // Outstanding balance
-    if (data.financialSummary.outstanding_balance > 1000) riskScore += 15;
+    if (data.financialSummary.outstanding_balance > 1000) {
+      riskScore += 15;
+    }
 
     return Math.min(riskScore, 100);
   }
@@ -694,12 +711,18 @@ export class UnifiedPatientDashboard {
    * Generate personality profile
    */
   private static generatePersonalityProfile(data: any): string {
-    if (data.appointmentInsights.punctuality_score > 80)
+    if (data.appointmentInsights.punctuality_score > 80) {
       return 'Punctual & Organized';
-    if (data.treatmentInsights.adherence_score > 90) return 'Highly Compliant';
-    if (data.communicationHistory.response_rate > 80)
+    }
+    if (data.treatmentInsights.adherence_score > 90) {
+      return 'Highly Compliant';
+    }
+    if (data.communicationHistory.response_rate > 80) {
       return 'Highly Responsive';
-    if (data.treatmentInsights.avg_satisfaction > 4) return 'Satisfied & Loyal';
+    }
+    if (data.treatmentInsights.avg_satisfaction > 4) {
+      return 'Satisfied & Loyal';
+    }
     return 'Balanced';
   }
 
@@ -728,7 +751,9 @@ export class UnifiedPatientDashboard {
    * Calculate payment frequency
    */
   private static calculatePaymentFrequency(payments: any[]) {
-    if (payments.length < 2) return 'Insufficient data';
+    if (payments.length < 2) {
+      return 'Insufficient data';
+    }
 
     const sortedPayments = payments.sort(
       (a, b) =>
@@ -748,9 +773,15 @@ export class UnifiedPatientDashboard {
     const avgInterval =
       intervals.reduce((sum, interval) => sum + interval, 0) / intervals.length;
 
-    if (avgInterval <= 7) return 'Weekly';
-    if (avgInterval <= 30) return 'Monthly';
-    if (avgInterval <= 90) return 'Quarterly';
+    if (avgInterval <= 7) {
+      return 'Weekly';
+    }
+    if (avgInterval <= 30) {
+      return 'Monthly';
+    }
+    if (avgInterval <= 90) {
+      return 'Quarterly';
+    }
     return 'Irregular';
   }
 

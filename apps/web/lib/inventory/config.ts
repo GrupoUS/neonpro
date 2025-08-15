@@ -17,8 +17,8 @@ import {
  * Inventory Configuration Manager
  */
 export class InventoryConfigManager {
-  private supabase = createClientComponentClient<Database>();
-  private config: InventoryConfig = DEFAULT_INVENTORY_CONFIG;
+  private readonly supabase = createClientComponentClient<Database>();
+  private readonly config: InventoryConfig = DEFAULT_INVENTORY_CONFIG;
 
   /**
    * Load configuration from database
@@ -63,7 +63,9 @@ export class InventoryConfigManager {
           atualizado_em: new Date().toISOString(),
         });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       this.config = updatedConfig;
       return { success: true, error: null };
@@ -100,7 +102,7 @@ export class InventoryConfigManager {
  * Inventory Dashboard Data Provider
  */
 export class InventoryDashboardProvider {
-  private supabase = createClientComponentClient<Database>();
+  private readonly supabase = createClientComponentClient<Database>();
 
   /**
    * Get comprehensive dashboard summary
@@ -337,7 +339,7 @@ export class InventoryDashboardProvider {
  * Inventory System Integration Manager
  */
 export class InventoryIntegrationManager {
-  private supabase = createClientComponentClient<Database>();
+  private readonly supabase = createClientComponentClient<Database>();
 
   /**
    * Get system integration status
@@ -353,7 +355,9 @@ export class InventoryIntegrationManager {
         .eq('modulo', 'inventory')
         .eq('ativo', true);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Convert database results to SystemIntegration format
       const integrations =
@@ -415,7 +419,9 @@ export class InventoryIntegrationManager {
         atualizado_em: new Date().toISOString(),
       });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return { success: true, error: null };
     } catch (error) {
@@ -498,7 +504,9 @@ export class InventoryUtils {
    * Calculate percentage change
    */
   static calculatePercentageChange(current: number, previous: number): number {
-    if (previous === 0) return current > 0 ? 100 : 0;
+    if (previous === 0) {
+      return current > 0 ? 100 : 0;
+    }
     return ((current - previous) / previous) * 100;
   }
 

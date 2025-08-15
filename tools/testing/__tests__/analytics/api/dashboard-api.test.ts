@@ -177,13 +177,11 @@ describe('Analytics Dashboard API Routes', () => {
 
       // Simulate rate limit exceeded
       // This would depend on your actual rate limiting implementation
-      const requests = Array(11)
-        .fill(null)
-        .map(() => GET(request));
+      const requests = new Array(11).fill(null).map(() => GET(request));
 
       // Act
       const responses = await Promise.all(requests);
-      const _lastResponse = responses[responses.length - 1];
+      const _lastResponse = responses.at(-1);
 
       // Assert
       // At least one request should be rate limited (this is implementation-dependent)

@@ -39,12 +39,12 @@ interface RecoveryValidation {
  * Serviço de recuperação
  */
 export class RecoveryService {
-  private supabase;
-  private storageManager: StorageManager;
-  private monitoring?: MonitoringService;
-  private activeRecoveries = new Map<string, RecoveryProgress>();
-  private recoveryQueue: RecoveryRequest[] = [];
-  private maxConcurrentRecoveries = 2;
+  private readonly supabase;
+  private readonly storageManager: StorageManager;
+  private readonly monitoring?: MonitoringService;
+  private readonly activeRecoveries = new Map<string, RecoveryProgress>();
+  private readonly recoveryQueue: RecoveryRequest[] = [];
+  private readonly maxConcurrentRecoveries = 2;
 
   constructor(storageManager: StorageManager, monitoring?: MonitoringService) {
     this.supabase = createClient(
@@ -111,7 +111,9 @@ export class RecoveryService {
         .from('recovery_requests')
         .insert(request);
 
-      if (insertError) throw insertError;
+      if (insertError) {
+        throw insertError;
+      }
 
       // Adicionar à fila
       this.recoveryQueue.push(request);
@@ -324,7 +326,9 @@ export class RecoveryService {
         .eq('id', request.backupId)
         .single();
 
-      if (!backup) throw new Error('Backup não encontrado');
+      if (!backup) {
+        throw new Error('Backup não encontrado');
+      }
 
       // Atualizar progresso
       progress.currentStep = 'Baixando backup';
@@ -738,7 +742,9 @@ export class RecoveryService {
         })
         .eq('id', requestId);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       await auditLogger.log({
         action: 'RECOVERY_CANCELLED',
@@ -804,7 +810,9 @@ export class RecoveryService {
 
       const { data: requests, error, count } = await query;
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return {
         success: true,
@@ -840,7 +848,9 @@ export class RecoveryService {
 
       const { data: backups, error } = await query;
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       const recoveryPoints: RecoveryPoint[] = (backups || []).map((backup) => ({
         id: backup.id,

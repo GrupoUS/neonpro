@@ -123,7 +123,7 @@ export interface ImportResult {
  * Handles bank statement imports, transaction matching, and discrepancy detection
  */
 export class BankReconciliationManager {
-  private supabase = createClient();
+  private readonly supabase = createClient();
 
   /**
    * Import bank statement from file

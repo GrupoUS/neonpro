@@ -145,7 +145,9 @@ export async function GET(request: NextRequest) {
     }
     // Get report instances (default)
     const filters: any = {};
-    if (status) filters.status = status;
+    if (status) {
+      filters.status = status;
+    }
 
     const instances = await reportSystem.getReportInstances(
       filters,

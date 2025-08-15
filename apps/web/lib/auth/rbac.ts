@@ -947,9 +947,10 @@ export const HEALTHCARE_ROLE_DEFINITIONS: Record<
  * Healthcare RBAC Engine with CFM Compliance
  */
 export class HealthcareRBACEngine {
-  private supabase: any;
-  private permissionCache: Map<string, PermissionCheckResult[]> = new Map();
-  private cacheExpiry: number = 5 * 60 * 1000; // 5 minutes
+  private readonly supabase: any;
+  private readonly permissionCache: Map<string, PermissionCheckResult[]> =
+    new Map();
+  private readonly cacheExpiry: number = 5 * 60 * 1000; // 5 minutes
 
   constructor(supabaseClient?: any) {
     this.supabase = supabaseClient;
@@ -1132,10 +1133,14 @@ export class HealthcareRBACEngine {
    */
   async getUserEffectivePermissions(userId: string): Promise<string[]> {
     const userContext = await this.getUserRoleContext(userId);
-    if (!userContext) return [];
+    if (!userContext) {
+      return [];
+    }
 
     const roleDefinition = HEALTHCARE_ROLE_DEFINITIONS[userContext.role];
-    if (!roleDefinition) return [];
+    if (!roleDefinition) {
+      return [];
+    }
 
     // Start with role permissions
     const permissions = new Set(roleDefinition.permissions);
@@ -1164,10 +1169,14 @@ export class HealthcareRBACEngine {
     try {
       // Validate granter has authority
       const granterContext = await this.getUserRoleContext(grantedBy);
-      if (!granterContext) return false;
+      if (!granterContext) {
+        return false;
+      }
 
       const granterRole = HEALTHCARE_ROLE_DEFINITIONS[granterContext.role];
-      if (!granterRole.can_approve_emergency_access) return false;
+      if (!granterRole.can_approve_emergency_access) {
+        return false;
+      }
 
       // Create temporary access record
       if (this.supabase) {
@@ -1202,10 +1211,14 @@ export class HealthcareRBACEngine {
     try {
       // Validate revoker has authority
       const revokerContext = await this.getUserRoleContext(revokedBy);
-      if (!revokerContext) return false;
+      if (!revokerContext) {
+        return false;
+      }
 
       const revokerRole = HEALTHCARE_ROLE_DEFINITIONS[revokerContext.role];
-      if (!revokerRole.can_approve_emergency_access) return false;
+      if (!revokerRole.can_approve_emergency_access) {
+        return false;
+      }
 
       // Revoke active access
       if (this.supabase) {
@@ -1248,7 +1261,9 @@ export class HealthcareRBACEngine {
     userId: string
   ): Promise<UserRoleContext | null> {
     try {
-      if (!this.supabase) return null;
+      if (!this.supabase) {
+        return null;
+      }
 
       const { data, error } = await this.supabase
         .from('user_roles')
@@ -1257,7 +1272,9 @@ export class HealthcareRBACEngine {
         .eq('active', true)
         .single();
 
-      if (error || !data) return null;
+      if (error || !data) {
+        return null;
+      }
 
       return UserRoleContextSchema.parse(data);
     } catch (error) {
@@ -1348,12 +1365,15 @@ export class HealthcareRBACEngine {
     userContext: UserRoleContext,
     permission: Permission
   ): boolean {
-    if (permission.requires_specialty.length === 0) return true;
+    if (permission.requires_specialty.length === 0) {
+      return true;
+    }
     if (
       !userContext.medical_specialty &&
       userContext.additional_specialties.length === 0
-    )
+    ) {
       return false;
+    }
 
     const userSpecialties = [
       ...(userContext.medical_specialty ? [userContext.medical_specialty] : []),
@@ -1404,7 +1424,9 @@ export class HealthcareRBACEngine {
     userId: string,
     patientId: string
   ): Promise<boolean> {
-    if (!this.supabase) return false;
+    if (!this.supabase) {
+      return false;
+    }
 
     const { data, error } = await this.supabase
       .from('patient_relationships')
@@ -1414,7 +1436,7 @@ export class HealthcareRBACEngine {
       .eq('active', true)
       .single();
 
-    return !error && !!data;
+    return !error && Boolean(data);
   }
 
   private createPermissionResult(
@@ -1446,7 +1468,9 @@ export class HealthcareRBACEngine {
     result: PermissionCheckResult,
     context?: any
   ): Promise<void> {
-    if (!this.supabase) return;
+    if (!this.supabase) {
+      return;
+    }
 
     try {
       await this.supabase.from('audit_logs').insert({
@@ -1466,7 +1490,9 @@ export class HealthcareRBACEngine {
 
   private getFromCache(key: string): PermissionCheckResult | null {
     const cached = this.permissionCache.get(key);
-    if (!cached || cached.length === 0) return null;
+    if (!cached || cached.length === 0) {
+      return null;
+    }
 
     const result = cached[0];
     const age = Date.now() - result.checked_at.getTime();
@@ -1552,7 +1578,9 @@ export function canDelegate(
  */
 export function getRoleHierarchyPath(role: HealthcareRole): HealthcareRole[] {
   const roleDef = HEALTHCARE_ROLE_DEFINITIONS[role];
-  if (!roleDef) return [];
+  if (!roleDef) {
+    return [];
+  }
 
   const path = [role];
   for (const inherited of roleDef.inherited_from) {

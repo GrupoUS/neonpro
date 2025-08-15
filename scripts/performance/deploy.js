@@ -58,7 +58,9 @@ async function validateEnvironment() {
         encoding: 'utf8',
         shell: false,
       });
-      if (result.error) throw result.error;
+      if (result.error) {
+        throw result.error;
+      }
       const output = result.stdout.toString().trim();
       success(`${check.name}: ${output}`);
     } catch (err) {

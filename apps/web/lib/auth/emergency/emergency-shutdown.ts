@@ -210,15 +210,15 @@ export interface EscalationRule {
 }
 
 export class EmergencyShutdownManager {
-  private utils: SessionUtils;
+  private readonly utils: SessionUtils;
   private emergencyConfig: EmergencyConfig;
-  private activeEmergencies: Map<string, EmergencyEvent> = new Map();
+  private readonly activeEmergencies: Map<string, EmergencyEvent> = new Map();
   private isShuttingDown = false;
   private shutdownStartTime = 0;
-  private eventListeners: Map<string, Function[]> = new Map();
-  private executionLocks: Set<string> = new Set();
-  private notificationService: NotificationService;
-  private auditLogger: AuditLogger;
+  private readonly eventListeners: Map<string, Function[]> = new Map();
+  private readonly executionLocks: Set<string> = new Set();
+  private readonly notificationService: NotificationService;
+  private readonly auditLogger: AuditLogger;
 
   constructor(config?: Partial<EmergencyConfig>) {
     this.config = SessionConfig.getInstance();

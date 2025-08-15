@@ -39,7 +39,7 @@ interface EmailResult {
 }
 
 export class EmailService {
-  private config = NOTIFICATION_CONFIG.email;
+  private readonly config = NOTIFICATION_CONFIG.email;
 
   /**
    * Send email using React Email templates

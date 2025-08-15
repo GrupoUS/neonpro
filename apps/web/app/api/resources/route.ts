@@ -44,9 +44,15 @@ export async function GET(request: NextRequest) {
     const resourceManager = new ResourceManager();
     const filters: any = {};
 
-    if (type) filters.type = type;
-    if (status) filters.status = status;
-    if (category) filters.category = category;
+    if (type) {
+      filters.type = type;
+    }
+    if (status) {
+      filters.status = status;
+    }
+    if (category) {
+      filters.category = category;
+    }
 
     const resources = await resourceManager.getResources(clinicId, filters);
 

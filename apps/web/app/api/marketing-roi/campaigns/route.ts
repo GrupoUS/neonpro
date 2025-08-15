@@ -86,7 +86,9 @@ function getDateRangeParams(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     const validation = await validateUserAndClinic(request);
-    if (validation.error) return validation.error;
+    if (validation.error) {
+      return validation.error;
+    }
 
     const { clinicId } = validation;
     const { limit, offset } = getPaginationParams(request);
@@ -144,7 +146,9 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const validation = await validateUserAndClinic(request);
-    if (validation.error) return validation.error;
+    if (validation.error) {
+      return validation.error;
+    }
 
     const { clinicId, user } = validation;
     const body = await request.json();

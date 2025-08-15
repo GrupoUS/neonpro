@@ -268,7 +268,9 @@ export class AnalysisUtils {
       (v) => typeof v === 'number' && !Number.isNaN(v)
     );
 
-    if (values.length === 0) return 0;
+    if (values.length === 0) {
+      return 0;
+    }
 
     // Calculate weighted average (can be customized based on treatment type)
     const sum = values.reduce((acc, val) => acc + val, 0);
@@ -279,9 +281,15 @@ export class AnalysisUtils {
    * Determine quality level based on score
    */
   static getQualityLevel(score: number): string {
-    if (score >= QUALITY_THRESHOLDS.EXCELLENT) return 'Excelente';
-    if (score >= QUALITY_THRESHOLDS.GOOD) return 'Bom';
-    if (score >= QUALITY_THRESHOLDS.FAIR) return 'Regular';
+    if (score >= QUALITY_THRESHOLDS.EXCELLENT) {
+      return 'Excelente';
+    }
+    if (score >= QUALITY_THRESHOLDS.GOOD) {
+      return 'Bom';
+    }
+    if (score >= QUALITY_THRESHOLDS.FAIR) {
+      return 'Regular';
+    }
     return 'Insatisfatório';
   }
 
@@ -318,9 +326,15 @@ export class AnalysisUtils {
    * Calculate confidence color for UI display
    */
   static getConfidenceColor(confidence: number): string {
-    if (confidence >= 0.9) return '#10B981'; // Green
-    if (confidence >= 0.7) return '#F59E0B'; // Yellow
-    if (confidence >= 0.5) return '#EF4444'; // Red
+    if (confidence >= 0.9) {
+      return '#10B981'; // Green
+    }
+    if (confidence >= 0.7) {
+      return '#F59E0B'; // Yellow
+    }
+    if (confidence >= 0.5) {
+      return '#EF4444'; // Red
+    }
     return '#6B7280'; // Gray
   }
 
@@ -328,9 +342,12 @@ export class AnalysisUtils {
    * Calculate accuracy color for UI display
    */
   static getAccuracyColor(accuracy: number): string {
-    if (accuracy >= VISION_CONFIG.PERFORMANCE.TARGET_ACCURACY) return '#10B981'; // Green
-    if (accuracy >= VISION_CONFIG.PERFORMANCE.MIN_ACCURACY_THRESHOLD)
+    if (accuracy >= VISION_CONFIG.PERFORMANCE.TARGET_ACCURACY) {
+      return '#10B981'; // Green
+    }
+    if (accuracy >= VISION_CONFIG.PERFORMANCE.MIN_ACCURACY_THRESHOLD) {
       return '#F59E0B'; // Yellow
+    }
     return '#EF4444'; // Red
   }
 
@@ -424,7 +441,9 @@ export class MeasurementUtils {
    * Calculate area of a polygon
    */
   static calculatePolygonArea(points: Coordinates[]): number {
-    if (points.length < 3) return 0;
+    if (points.length < 3) {
+      return 0;
+    }
 
     let area = 0;
     for (let i = 0; i < points.length; i++) {
@@ -439,7 +458,9 @@ export class MeasurementUtils {
    * Calculate perimeter of a polygon
    */
   static calculatePolygonPerimeter(points: Coordinates[]): number {
-    if (points.length < 2) return 0;
+    if (points.length < 2) {
+      return 0;
+    }
 
     let perimeter = 0;
     for (let i = 0; i < points.length; i++) {
@@ -491,7 +512,9 @@ export class MeasurementUtils {
     beforeValue: number,
     afterValue: number
   ): number {
-    if (beforeValue === 0) return afterValue > 0 ? 100 : 0;
+    if (beforeValue === 0) {
+      return afterValue > 0 ? 100 : 0;
+    }
     return ((afterValue - beforeValue) / beforeValue) * 100;
   }
 
@@ -518,9 +541,15 @@ export class MeasurementUtils {
 
     const threshold = thresholds[measurementType] || thresholds.default;
 
-    if (absChange >= threshold.significant) return 'highly_significant';
-    if (absChange >= threshold.moderate) return 'significant';
-    if (absChange >= threshold.minimal) return 'moderate';
+    if (absChange >= threshold.significant) {
+      return 'highly_significant';
+    }
+    if (absChange >= threshold.moderate) {
+      return 'significant';
+    }
+    if (absChange >= threshold.minimal) {
+      return 'moderate';
+    }
     return 'minimal';
   }
 }
@@ -693,7 +722,9 @@ export class PerformanceUtils {
         func(...args);
         lastExecTime = currentTime;
       } else {
-        if (timeoutId) clearTimeout(timeoutId);
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+        }
         timeoutId = setTimeout(
           () => {
             func(...args);
@@ -715,7 +746,9 @@ export class PerformanceUtils {
     let timeoutId: NodeJS.Timeout | null = null;
 
     return (...args: Parameters<T>) => {
-      if (timeoutId) clearTimeout(timeoutId);
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
       timeoutId = setTimeout(() => func(...args), delay);
     };
   }
@@ -817,12 +850,18 @@ export class DateUtils {
     const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-    if (diffMinutes < 1) return 'agora mesmo';
-    if (diffMinutes < 60)
+    if (diffMinutes < 1) {
+      return 'agora mesmo';
+    }
+    if (diffMinutes < 60) {
       return `${diffMinutes} minuto${diffMinutes > 1 ? 's' : ''} atrás`;
-    if (diffHours < 24)
+    }
+    if (diffHours < 24) {
       return `${diffHours} hora${diffHours > 1 ? 's' : ''} atrás`;
-    if (diffDays < 30) return `${diffDays} dia${diffDays > 1 ? 's' : ''} atrás`;
+    }
+    if (diffDays < 30) {
+      return `${diffDays} dia${diffDays > 1 ? 's' : ''} atrás`;
+    }
 
     return DateUtils.formatDate(d);
   }

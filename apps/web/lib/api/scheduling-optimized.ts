@@ -62,9 +62,9 @@ interface ApiResponse<T> {
 
 // Optimized Cache Manager with TTL and invalidation
 class OptimizedCacheManager {
-  private cache = new Map<string, CacheEntry<any>>();
-  private maxSize = 1000; // Maximum cache entries
-  private defaultTTL = 300_000; // 5 minutes
+  private readonly cache = new Map<string, CacheEntry<any>>();
+  private readonly maxSize = 1000; // Maximum cache entries
+  private readonly defaultTTL = 300_000; // 5 minutes
 
   set<T>(key: string, data: T, ttl: number = this.defaultTTL): void {
     // Implement LRU eviction if cache is full
@@ -120,10 +120,10 @@ class OptimizedCacheManager {
 
 // Request Batch Manager
 class BatchRequestManager {
-  private batchQueue: BatchRequest[] = [];
-  private batchTimer: NodeJS.Timeout | null = null;
-  private batchSize = 10;
-  private batchDelay = 100; // 100ms batch window
+  private readonly batchQueue: BatchRequest[] = [];
+  private readonly batchTimer: NodeJS.Timeout | null = null;
+  private readonly batchSize = 10;
+  private readonly batchDelay = 100; // 100ms batch window
 
   addToBatch(request: BatchRequest): Promise<any> {
     return new Promise((resolve, reject) => {
@@ -144,7 +144,9 @@ class BatchRequestManager {
   }
 
   private async processBatch(): Promise<void> {
-    if (this.batchQueue.length === 0) return;
+    if (this.batchQueue.length === 0) {
+      return;
+    }
 
     const batch = this.batchQueue.splice(0, this.batchSize);
 
@@ -174,7 +176,9 @@ class BatchRequestManager {
     // Group requests by type for optimal batching
     const groupedRequests = batch.reduce(
       (acc, req) => {
-        if (!acc[req.type]) acc[req.type] = [];
+        if (!acc[req.type]) {
+          acc[req.type] = [];
+        }
         acc[req.type].push(req);
         return acc;
       },
@@ -228,7 +232,9 @@ class BatchRequestManager {
       .in('appointment_id', appointmentIds)
       .eq('status', 'active');
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     return requests.map((req) => {
       return (
@@ -252,7 +258,9 @@ class BatchRequestManager {
       .in('conflict_id', conflictIds)
       .eq('status', 'pending');
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     return requests.map((req) => {
       return (
@@ -266,7 +274,7 @@ class BatchRequestManager {
 
 // Request Deduplication Manager
 class RequestDeduplicationManager {
-  private activeRequests = new Map<string, Promise<any>>();
+  private readonly activeRequests = new Map<string, Promise<any>>();
 
   async deduplicate<T>(key: string, requestFn: () => Promise<T>): Promise<T> {
     if (this.activeRequests.has(key)) {
@@ -286,11 +294,11 @@ class RequestDeduplicationManager {
   }
 } // Main Optimized Scheduling API Class
 export class OptimizedSchedulingAPI {
-  private cache = new OptimizedCacheManager();
-  private batchManager = new BatchRequestManager();
-  private deduplicationManager = new RequestDeduplicationManager();
-  private supabase: any;
-  private performanceMetrics = {
+  private readonly cache = new OptimizedCacheManager();
+  private readonly batchManager = new BatchRequestManager();
+  private readonly deduplicationManager = new RequestDeduplicationManager();
+  private readonly supabase: any;
+  private readonly performanceMetrics = {
     totalRequests: 0,
     cachedResponses: 0,
     batchedRequests: 0,
@@ -574,7 +582,7 @@ export class OptimizedSchedulingAPI {
 
   // Real-time conflict monitoring with optimized updates
   createConflictStream(
-    _filters: any = {},
+    _filters: any,
     onConflict: (conflict: ConflictData) => void,
     onError: (error: Error) => void
   ): () => void {
@@ -723,7 +731,7 @@ export const useOptimizedConflicts = (filters: any = {}) => {
 };
 
 export const useConflictStream = (
-  filters: any = {},
+  filters: any,
   onConflict: (conflict: ConflictData) => void,
   onError: (error: Error) => void = console.error
 ) => {

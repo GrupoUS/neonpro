@@ -137,7 +137,7 @@ export interface ProductCorrelation {
  * Advanced analytics for consumption patterns and cost optimization
  */
 export class ConsumptionAnalyzer {
-  private supabase = createClientComponentClient<Database>();
+  private readonly supabase = createClientComponentClient<Database>();
 
   /**
    * Get comprehensive consumption analytics for cost center
@@ -165,7 +165,9 @@ export class ConsumptionAnalyzer {
           .lte('data_saida', dataFim.toISOString())
           .eq('status', 'confirmada');
 
-      if (consumptionError) throw consumptionError;
+      if (consumptionError) {
+        throw consumptionError;
+      }
 
       if (!consumptions || consumptions.length === 0) {
         return {
@@ -285,7 +287,9 @@ export class ConsumptionAnalyzer {
 
       const { data: historicalData, error } = await query;
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       if (!historicalData || historicalData.length === 0) {
         return {
@@ -357,7 +361,9 @@ export class ConsumptionAnalyzer {
         .eq('status', 'confirmada')
         .order('data_saida', { ascending: true });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       if (!consumptions || consumptions.length === 0) {
         return {
@@ -779,8 +785,11 @@ export class ConsumptionAnalyzer {
       | 'irregular'
       | 'crescente'
       | 'decrescente' = 'regular';
-    if (monthlyConsumption < 1) patternType = 'irregular';
-    else if (monthlyConsumption > 4) patternType = 'regular';
+    if (monthlyConsumption < 1) {
+      patternType = 'irregular';
+    } else if (monthlyConsumption > 4) {
+      patternType = 'regular';
+    }
 
     return {
       centro_custo_id: centroCustoId,

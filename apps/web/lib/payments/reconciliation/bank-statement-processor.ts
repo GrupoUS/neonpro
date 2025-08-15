@@ -74,8 +74,8 @@ interface BankParser {
 }
 
 class BankStatementProcessor {
-  private supabase = createClient();
-  private parsers: Map<string, BankParser> = new Map();
+  private readonly supabase = createClient();
+  private readonly parsers: Map<string, BankParser> = new Map();
 
   constructor() {
     this.initializeParsers();
@@ -224,7 +224,9 @@ class BankStatementProcessor {
     const lowerContent = content.toLowerCase();
 
     for (const [key, parser] of this.parsers) {
-      if (key === 'generic') continue; // Skip generic parser in detection
+      if (key === 'generic') {
+        continue; // Skip generic parser in detection
+      }
 
       const matches = parser.patterns.some(
         (pattern) =>
@@ -560,8 +562,12 @@ class BankStatementProcessor {
 
           transactionInserts.push(transactionData);
 
-          if (debitAmount) totalDebits += debitAmount;
-          if (creditAmount) totalCredits += creditAmount;
+          if (debitAmount) {
+            totalDebits += debitAmount;
+          }
+          if (creditAmount) {
+            totalCredits += creditAmount;
+          }
 
           processedTransactions++;
         } catch (error) {
@@ -651,7 +657,9 @@ class BankStatementProcessor {
       const lowerLine = line.toLowerCase();
       if (lowerLine.includes('conta') || lowerLine.includes('account')) {
         const match = line.match(/\d{4,}/); // Find sequence of 4+ digits
-        if (match) return match[0];
+        if (match) {
+          return match[0];
+        }
       }
     }
     return 'Unknown';
@@ -673,7 +681,9 @@ class BankStatementProcessor {
       for (const term of searchTerms) {
         if (lowerLine.includes(term)) {
           const amount = this.parseAmount(line);
-          if (amount !== null) return amount;
+          if (amount !== null) {
+            return amount;
+          }
         }
       }
     }
@@ -709,7 +719,9 @@ class BankStatementProcessor {
     const transactions: BankTransactionFile[] = [];
 
     for (const line of lines) {
-      if (line.trim() === '') continue;
+      if (line.trim() === '') {
+        continue;
+      }
 
       // Bank-specific transaction parsing
       const transaction = this.parseTransactionLine(line, bank, options);
@@ -729,7 +741,9 @@ class BankStatementProcessor {
     // Basic transaction line parsing - would be customized per bank
     const parts = line.split(/\s{2,}|\t/); // Split on multiple spaces or tabs
 
-    if (parts.length < 4) return null;
+    if (parts.length < 4) {
+      return null;
+    }
 
     return {
       date: parts[0] || '',
@@ -742,9 +756,13 @@ class BankStatementProcessor {
   }
 
   private parseAmount(value: string | number | undefined): number | null {
-    if (value === undefined || value === null || value === '') return null;
+    if (value === undefined || value === null || value === '') {
+      return null;
+    }
 
-    if (typeof value === 'number') return value;
+    if (typeof value === 'number') {
+      return value;
+    }
 
     // Clean up string value
     const cleaned = value
@@ -758,7 +776,9 @@ class BankStatementProcessor {
   }
 
   private parseDate(dateStr: string, _format: string): Date | null {
-    if (!dateStr) return null;
+    if (!dateStr) {
+      return null;
+    }
 
     // Try different date formats
     const formats = [
@@ -781,7 +801,9 @@ class BankStatementProcessor {
             Number.parseInt(part2, 10) - 1,
             Number.parseInt(part3, 10)
           );
-          if (!Number.isNaN(date.getTime())) return date;
+          if (!Number.isNaN(date.getTime())) {
+            return date;
+          }
         } else {
           // DD/MM/YYYY
           const date = new Date(
@@ -789,7 +811,9 @@ class BankStatementProcessor {
             Number.parseInt(part2, 10) - 1,
             Number.parseInt(part1, 10)
           );
-          if (!Number.isNaN(date.getTime())) return date;
+          if (!Number.isNaN(date.getTime())) {
+            return date;
+          }
         }
       }
     }

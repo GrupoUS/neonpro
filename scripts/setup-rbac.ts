@@ -26,7 +26,7 @@ interface SetupResult {
 }
 
 class RBACSetup {
-  private supabase;
+  private readonly supabase;
 
   constructor() {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;

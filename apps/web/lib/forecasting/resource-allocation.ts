@@ -312,7 +312,9 @@ export class ResourceAllocationOptimizer {
         .eq('clinic_id', clinicId)
         .eq('status', 'active');
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       const allocations: StaffAllocation[] = [];
 
@@ -412,7 +414,9 @@ export class ResourceAllocationOptimizer {
         .eq('clinic_id', clinicId)
         .eq('status', 'active');
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       const allocations: EquipmentAllocation[] = [];
 
@@ -507,7 +511,9 @@ export class ResourceAllocationOptimizer {
         .eq('clinic_id', clinicId)
         .eq('status', 'active');
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       const allocations: RoomAllocation[] = [];
 
@@ -600,7 +606,9 @@ export class ResourceAllocationOptimizer {
         .eq('clinic_id', clinicId)
         .eq('status', 'active');
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       const allocations: InventoryAllocation[] = [];
 
@@ -923,13 +931,19 @@ export class ResourceAllocationOptimizer {
     const daysOfStock = item.current_stock / (consumption / 30);
     const leadTime = item.supplier_lead_time_days;
 
-    if (daysOfStock < leadTime) return 0.8;
-    if (daysOfStock < leadTime + 7) return 0.4;
+    if (daysOfStock < leadTime) {
+      return 0.8;
+    }
+    if (daysOfStock < leadTime + 7) {
+      return 0.4;
+    }
     return 0.1;
   }
 
   private calculateExpirationRisk(item: any, consumption: number): number {
-    if (!item.expiration_days) return 0;
+    if (!item.expiration_days) {
+      return 0;
+    }
 
     const daysToConsume = item.current_stock / (consumption / 30);
     const daysToExpiry = item.expiration_days;

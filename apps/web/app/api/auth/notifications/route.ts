@@ -104,7 +104,9 @@ async function getCurrentUser() {
 }
 
 function parseDate(dateString?: string): Date | undefined {
-  if (!dateString) return;
+  if (!dateString) {
+    return;
+  }
   const date = new Date(dateString);
   return Number.isNaN(date.getTime()) ? undefined : date;
 }
@@ -173,9 +175,15 @@ export async function GET(request: NextRequest) {
       userId: user.id,
     };
 
-    if (type) filters.type = type;
-    if (priority) filters.priority = priority;
-    if (status) filters.status = status;
+    if (type) {
+      filters.type = type;
+    }
+    if (priority) {
+      filters.priority = priority;
+    }
+    if (status) {
+      filters.status = status;
+    }
 
     // Get notifications
     const notifications =

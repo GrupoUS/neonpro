@@ -200,7 +200,9 @@ export async function GET(request: NextRequest) {
       .gte('created_at', startDate)
       .order('created_at', { ascending: false });
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     const stats = {
       total_batches: data?.length || 0,

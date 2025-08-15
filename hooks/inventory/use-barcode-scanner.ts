@@ -91,11 +91,13 @@ export function useBarcodeScanner(
   useEffect(() => {
     initializeScanner();
     return () => cleanup();
-  }, []);
+  }, [cleanup, initializeScanner]);
 
   // Keyboard input handler
   useEffect(() => {
-    if (!defaultConfig.enableKeyboard) return;
+    if (!defaultConfig.enableKeyboard) {
+      return;
+    }
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (
@@ -110,7 +112,7 @@ export function useBarcodeScanner(
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [state.isScanning, defaultConfig.enableKeyboard]);
+  }, [state.isScanning, defaultConfig.enableKeyboard, handleKeyboardInput]);
 
   /**
    * Initialize the barcode scanner
@@ -147,7 +149,7 @@ export function useBarcodeScanner(
         isInitialized: false,
       }));
     }
-  }, [defaultConfig.enableCamera]);
+  }, [defaultConfig.enableCamera, checkCameraPermission, handleWorkerMessage]);
 
   /**
    * Check camera permission status
@@ -172,7 +174,9 @@ export function useBarcodeScanner(
    * Start camera scanning
    */
   const startCameraScanning = useCallback(async () => {
-    if (!(defaultConfig.enableCamera && videoRef.current)) return;
+    if (!(defaultConfig.enableCamera && videoRef.current)) {
+      return;
+    }
 
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -235,36 +239,42 @@ export function useBarcodeScanner(
   /**
    * Handle keyboard input for barcode scanning
    */
-  const handleKeyboardInput = useCallback((event: KeyboardEvent) => {
-    const { key } = event;
+  const handleKeyboardInput = useCallback(
+    (event: KeyboardEvent) => {
+      const { key } = event;
 
-    // Clear timeout on new input
-    if (keyboardTimeoutRef.current) {
-      clearTimeout(keyboardTimeoutRef.current);
-    }
-
-    if (key === 'Enter') {
-      // Process the accumulated barcode
-      const barcode = keyboardBufferRef.current.trim();
-      if (barcode.length > 0) {
-        processBarcodeInput(barcode, 'keyboard');
-        keyboardBufferRef.current = '';
+      // Clear timeout on new input
+      if (keyboardTimeoutRef.current) {
+        clearTimeout(keyboardTimeoutRef.current);
       }
-    } else if (key.length === 1 && /[0-9A-Za-z]/.test(key)) {
-      // Accumulate barcode characters
-      keyboardBufferRef.current += key;
 
-      // Set timeout to auto-process if no Enter key
-      keyboardTimeoutRef.current = setTimeout(() => {
+      if (key === 'Enter') {
+        // Process the accumulated barcode
         const barcode = keyboardBufferRef.current.trim();
-        if (barcode.length >= 8) {
-          // Minimum barcode length
+        if (barcode.length > 0) {
           processBarcodeInput(barcode, 'keyboard');
           keyboardBufferRef.current = '';
         }
-      }, 100); // 100ms timeout for barcode scanners
-    }
-  }, []);
+      } else if (key.length === 1 && /[0-9A-Za-z]/.test(key)) {
+        // Accumulate barcode characters
+        keyboardBufferRef.current += key;
+
+        // Set timeout to auto-process if no Enter key
+        keyboardTimeoutRef.current = setTimeout(() => {
+          const barcode = keyboardBufferRef.current.trim();
+          if (barcode.length >= 8) {
+            // Minimum barcode length
+            processBarcodeInput(barcode, 'keyboard');
+            keyboardBufferRef.current = '';
+          }
+        }, 100); // 100ms timeout for barcode scanners
+      }
+    },
+    [
+      // Minimum barcode length
+      processBarcodeInput,
+    ]
+  );
 
   /**
    * Process barcode input from any source
@@ -332,6 +342,14 @@ export function useBarcodeScanner(
       defaultConfig.validationEndpoint,
       defaultConfig.continuousScanning,
       callbacks,
+      detectBarcodeFormat,
+      getCurrentUserId,
+      getDeviceId,
+      parseBarcodeData,
+      playSuccessSound,
+      stopCameraScanning,
+      triggerHapticFeedback,
+      validateBarcodeData,
     ]
   );
 
@@ -371,9 +389,15 @@ export function useBarcodeScanner(
    * Detect barcode format from raw data
    */
   const detectBarcodeFormat = (rawData: string): BarcodeFormat => {
-    if (/^\d{13}$/.test(rawData)) return 'EAN13';
-    if (/^[\w\s\-.$/+%]+$/.test(rawData)) return 'CODE128';
-    if (rawData.includes('{') || rawData.includes('http')) return 'QR_CODE';
+    if (/^\d{13}$/.test(rawData)) {
+      return 'EAN13';
+    }
+    if (/^[\w\s\-.$/+%]+$/.test(rawData)) {
+      return 'CODE128';
+    }
+    if (rawData.includes('{') || rawData.includes('http')) {
+      return 'QR_CODE';
+    }
     return 'CODE128'; // Default
   };
 
@@ -381,7 +405,9 @@ export function useBarcodeScanner(
    * Validate barcode data against inventory database
    */
   const validateBarcodeData = async (scanResult: BarcodeScanResult) => {
-    if (!(defaultConfig.validationEndpoint && scanResult.parsedData)) return;
+    if (!(defaultConfig.validationEndpoint && scanResult.parsedData)) {
+      return;
+    }
 
     try {
       const response = await fetch(defaultConfig.validationEndpoint, {
@@ -437,7 +463,9 @@ export function useBarcodeScanner(
    * Play success sound
    */
   const playSuccessSound = () => {
-    if (!defaultConfig.soundEnabled) return;
+    if (!defaultConfig.soundEnabled) {
+      return;
+    }
 
     try {
       const audio = new Audio('/sounds/barcode-scan-success.mp3');
@@ -454,7 +482,9 @@ export function useBarcodeScanner(
    * Trigger haptic feedback on mobile devices
    */
   const triggerHapticFeedback = () => {
-    if (!defaultConfig.vibrationEnabled) return;
+    if (!defaultConfig.vibrationEnabled) {
+      return;
+    }
 
     try {
       if ('vibrate' in navigator) {

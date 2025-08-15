@@ -51,7 +51,7 @@ export async function POST(_request: NextRequest) {
       avatar_url: googleData.avatar_url || googleData.picture,
       google_provider_id: googleData.provider_id || googleData.sub,
       google_picture: googleData.picture,
-      google_verified_email: !!user.email_confirmed_at,
+      google_verified_email: Boolean(user.email_confirmed_at),
       profile_sync_status: 'synced',
       google_sync_enabled: true,
       last_google_sync: new Date().toISOString(),

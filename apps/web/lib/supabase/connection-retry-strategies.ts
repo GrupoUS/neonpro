@@ -64,7 +64,7 @@ interface HealthcareErrorClassification {
 
 class HealthcareConnectionRetryManager {
   private static instance: HealthcareConnectionRetryManager;
-  private circuitBreakers: Map<
+  private readonly circuitBreakers: Map<
     string,
     {
       state: CircuitBreakerState;
@@ -613,7 +613,9 @@ class HealthcareConnectionRetryManager {
    */
   private isCircuitBreakerOpen(key: string): boolean {
     const breaker = this.circuitBreakers.get(key);
-    if (!breaker) return false;
+    if (!breaker) {
+      return false;
+    }
 
     if (breaker.state === 'open') {
       // Check if we should move to half-open

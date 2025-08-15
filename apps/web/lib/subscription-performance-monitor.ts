@@ -61,12 +61,12 @@ export interface OptimizationRecommendation {
 }
 
 export class SubscriptionPerformanceMonitor {
-  private metrics: PerformanceMetrics;
+  private readonly metrics: PerformanceMetrics;
   private alerts: PerformanceAlert[] = [];
-  private recommendations: OptimizationRecommendation[] = [];
-  private timers: Map<string, number> = new Map();
-  private responseTimeHistory: number[] = [];
-  private maxHistorySize = 1000;
+  private readonly recommendations: OptimizationRecommendation[] = [];
+  private readonly timers: Map<string, number> = new Map();
+  private readonly responseTimeHistory: number[] = [];
+  private readonly maxHistorySize = 1000;
 
   // Performance thresholds
   private readonly thresholds = {
@@ -234,7 +234,9 @@ export class SubscriptionPerformanceMonitor {
    * Update response time percentiles
    */
   private updateResponseTimeMetrics(): void {
-    if (this.responseTimeHistory.length === 0) return;
+    if (this.responseTimeHistory.length === 0) {
+      return;
+    }
 
     const sorted = [...this.responseTimeHistory].sort((a, b) => a - b);
     const p95Index = Math.floor(sorted.length * 0.95);
@@ -272,7 +274,9 @@ export class SubscriptionPerformanceMonitor {
    */
   private checkPerformanceAlerts(metric: string, value: number): void {
     const thresholdConfig = this.getThresholdConfig(metric);
-    if (!thresholdConfig) return;
+    if (!thresholdConfig) {
+      return;
+    }
 
     if (value >= thresholdConfig.critical) {
       this.createAlert('critical', metric, value, thresholdConfig.critical);
@@ -338,10 +342,15 @@ export class SubscriptionPerformanceMonitor {
    * Get component name for metric
    */
   private getComponentForMetric(metric: string): PerformanceAlert['component'] {
-    if (metric.includes('cache')) return 'cache';
-    if (metric.includes('db') || metric.includes('Query')) return 'database';
-    if (metric.includes('realtime') || metric.includes('Latency'))
+    if (metric.includes('cache')) {
+      return 'cache';
+    }
+    if (metric.includes('db') || metric.includes('Query')) {
+      return 'database';
+    }
+    if (metric.includes('realtime') || metric.includes('Latency')) {
       return 'realtime';
+    }
     return 'subscription';
   }
 

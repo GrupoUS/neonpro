@@ -331,7 +331,7 @@ export function useBilling() {
         setLoading(false);
       }
     },
-    [supabase, fetchInvoices]
+    [supabase, fetchInvoices, calculateInvoiceTotals]
   );
 
   const updateInvoice = useCallback(

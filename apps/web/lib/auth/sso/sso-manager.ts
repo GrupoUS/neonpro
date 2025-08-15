@@ -21,9 +21,9 @@ import {
 } from '@/types/sso';
 
 export class SSOManager {
-  private supabase;
+  private readonly supabase;
   private config: SSOConfiguration;
-  private providers: Map<string, SSOProvider> = new Map();
+  private readonly providers: Map<string, SSOProvider> = new Map();
 
   constructor(
     supabaseUrl: string,
@@ -620,13 +620,17 @@ export class SSOManager {
    */
   getDomainProvider(email: string): SSOProvider | null {
     const domain = email.split('@')[1];
-    if (!domain) return null;
+    if (!domain) {
+      return null;
+    }
 
     const domainMapping = this.config.domainMappings.find(
       (mapping) => mapping.domain === domain && mapping.autoRedirect
     );
 
-    if (!domainMapping) return null;
+    if (!domainMapping) {
+      return null;
+    }
 
     return this.providers.get(domainMapping.providerId) || null;
   }

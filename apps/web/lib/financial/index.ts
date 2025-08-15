@@ -159,12 +159,12 @@ interface FinancialReport {
 }
 
 class FinancialManagementSystem {
-  private invoiceGenerator: AutomatedInvoiceGenerator;
-  private paymentTracker: PaymentTracker;
-  private supabase = createClient();
-  private config: FinancialSystemConfig;
-  private isInitialized = false;
-  private alerts: FinancialAlert[] = [];
+  private readonly invoiceGenerator: AutomatedInvoiceGenerator;
+  private readonly paymentTracker: PaymentTracker;
+  private readonly supabase = createClient();
+  private readonly config: FinancialSystemConfig;
+  private readonly isInitialized = false;
+  private readonly alerts: FinancialAlert[] = [];
 
   constructor(config?: Partial<FinancialSystemConfig>) {
     this.config = this.initializeConfig(config);

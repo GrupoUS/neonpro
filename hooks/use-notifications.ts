@@ -166,7 +166,9 @@ export function useNotifications({
 
   // Setup real-time subscription
   const setupRealtimeSubscription = useCallback(() => {
-    if (!realtime || subscription) return;
+    if (!realtime || subscription) {
+      return;
+    }
 
     const channel = supabase
       .channel(`notifications:${userId}`)
@@ -217,7 +219,15 @@ export function useNotifications({
       .subscribe();
 
     setSubscription(channel);
-  }, [userId, realtime, subscription, supabase, autoMarkAsRead, limit]);
+  }, [
+    userId,
+    realtime,
+    subscription,
+    supabase,
+    autoMarkAsRead,
+    limit,
+    markAsRead,
+  ]);
 
   // Mark notification as read
   const markAsRead = useCallback(
@@ -258,7 +268,9 @@ export function useNotifications({
         .filter((notif) => !notif.read_at)
         .map((notif) => notif.id);
 
-      if (unreadIds.length === 0) return;
+      if (unreadIds.length === 0) {
+        return;
+      }
 
       const { error } = await supabase
         .from('notifications')

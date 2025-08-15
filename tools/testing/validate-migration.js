@@ -5,9 +5,9 @@
  * and the new testing structure is properly configured
  */
 
-const fs = require('fs');
-const path = require('path');
-const { execSync } = require('child_process');
+const fs = require('node:fs');
+const path = require('node:path');
+const { execSync } = require('node:child_process');
 
 const colors = {
   green: '\x1b[32m',
@@ -134,7 +134,7 @@ class MigrationValidator {
       ];
 
       expectedScripts.forEach((script) => {
-        if (packageJson.scripts && packageJson.scripts[script]) {
+        if (packageJson.scripts?.[script]) {
           log.success(`Test script: ${script}`);
         } else {
           this.errors.push(`Missing test script: ${script}`);

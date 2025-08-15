@@ -70,7 +70,9 @@ export function useProfileSync(): UseProfileSyncReturn {
 
   // Fetch user profile from database
   const fetchProfile = useCallback(async (): Promise<Profile | null> => {
-    if (!user?.id) return null;
+    if (!user?.id) {
+      return null;
+    }
 
     try {
       const { data, error } = await supabase
@@ -98,7 +100,9 @@ export function useProfileSync(): UseProfileSyncReturn {
   // Fetch profile sync status
   const fetchSyncStatus =
     useCallback(async (): Promise<ProfileSyncStatus | null> => {
-      if (!user?.id) return null;
+      if (!user?.id) {
+        return null;
+      }
 
       try {
         const { data, error } = await supabase.rpc('get_profile_sync_status', {
@@ -294,7 +298,9 @@ export function useProfileSync(): UseProfileSyncReturn {
 
   // Setup real-time subscription for profile changes
   useEffect(() => {
-    if (!user?.id) return;
+    if (!user?.id) {
+      return;
+    }
 
     console.log('📡 Setting up real-time profile subscription');
 

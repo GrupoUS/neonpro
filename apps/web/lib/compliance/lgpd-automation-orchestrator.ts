@@ -61,12 +61,12 @@ export interface LGPDDashboardMetrics {
  * Coordena todos os serviços de automação e fornece interface unificada
  */
 export class LGPDAutomationOrchestrator {
-  private supabase: any;
-  private consentService: LGPDAutoConsentService;
-  private dataSubjectService: LGPDAutoDataSubjectRightsService;
-  private auditService: LGPDAutoAuditService;
-  private reportingService: LGPDAutoReportingService;
-  private anonymizationService: LGPDAutoAnonymizationService;
+  private readonly supabase: any;
+  private readonly consentService: LGPDAutoConsentService;
+  private readonly dataSubjectService: LGPDAutoDataSubjectRightsService;
+  private readonly auditService: LGPDAutoAuditService;
+  private readonly reportingService: LGPDAutoReportingService;
+  private readonly anonymizationService: LGPDAutoAnonymizationService;
 
   constructor() {
     this.supabase = createClient(

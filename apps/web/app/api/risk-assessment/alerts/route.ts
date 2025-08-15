@@ -35,10 +35,18 @@ export async function GET(request: NextRequest) {
       : 0;
 
     const filters: any = {};
-    if (assessmentId) filters.assessment_id = assessmentId;
-    if (riskLevel) filters.risk_level = riskLevel;
-    if (status) filters.alert_status = status;
-    if (active) filters.alert_status = 'active';
+    if (assessmentId) {
+      filters.assessment_id = assessmentId;
+    }
+    if (riskLevel) {
+      filters.risk_level = riskLevel;
+    }
+    if (status) {
+      filters.alert_status = status;
+    }
+    if (active) {
+      filters.alert_status = 'active';
+    }
 
     const alerts = await riskAssessmentService.getAllAlerts(
       filters,

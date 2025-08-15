@@ -191,18 +191,21 @@ export async function POST(request: NextRequest) {
         if (
           request.appointmentId &&
           conflict.appointment_id === request.appointmentId
-        )
+        ) {
           return true;
+        }
         if (
           request.patientId &&
           conflict.appointments.patient_id === request.patientId
-        )
+        ) {
           return true;
+        }
         if (
           request.professionalId &&
           conflict.appointments.professional_id === request.professionalId
-        )
+        ) {
           return true;
+        }
         return false;
       });
 

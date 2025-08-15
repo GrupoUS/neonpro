@@ -27,8 +27,8 @@ export interface DrillDownPath {
 }
 
 export class DrillDownSystem {
-  private supabase;
-  private cache: Map<string, { data: any; timestamp: number }>;
+  private readonly supabase;
+  private readonly cache: Map<string, { data: any; timestamp: number }>;
 
   constructor() {
     this.supabase = createClient(
@@ -63,7 +63,9 @@ export class DrillDownSystem {
     try {
       // Get KPI details
       const kpi = await this.getKPIDetails(kpiId);
-      if (!kpi) throw new Error('KPI not found');
+      if (!kpi) {
+        throw new Error('KPI not found');
+      }
 
       // Determine drill-down strategy based on KPI category and dimension
       const _strategy = this.getDrillDownStrategy(kpi, dimension);
@@ -119,7 +121,9 @@ export class DrillDownSystem {
   ): Promise<DrillDownResult[]> {
     const cacheKey = `time_drill_${kpi.id}_${aggregationLevel}_${JSON.stringify(filters)}`;
     const cached = this.getFromCache(cacheKey);
-    if (cached) return cached;
+    if (cached) {
+      return cached;
+    }
 
     let dateFormat: string;
     let groupBy: string;
@@ -169,7 +173,9 @@ export class DrillDownSystem {
       `;
 
       const { data, error } = await this.supabase.rpc('execute_sql', { query });
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       const totalValue = data.reduce(
         (sum: number, row: any) => sum + Number.parseFloat(row.value),
@@ -203,7 +209,9 @@ export class DrillDownSystem {
   ): Promise<DrillDownResult[]> {
     const cacheKey = `service_drill_${kpi.id}_${JSON.stringify(filters)}`;
     const cached = this.getFromCache(cacheKey);
-    if (cached) return cached;
+    if (cached) {
+      return cached;
+    }
 
     const results: DrillDownResult[] = [];
 
@@ -216,14 +224,20 @@ export class DrillDownSystem {
         .select('service_type, amount, direct_costs')
         .eq('status', 'paid');
 
-      if (filters.start_date)
+      if (filters.start_date) {
         query = query.gte('created_at', filters.start_date);
-      if (filters.end_date) query = query.lte('created_at', filters.end_date);
-      if (filters.providers?.length)
+      }
+      if (filters.end_date) {
+        query = query.lte('created_at', filters.end_date);
+      }
+      if (filters.providers?.length) {
         query = query.in('provider_id', filters.providers);
+      }
 
       const { data, error } = await query;
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Group by service type
       const serviceGroups = data.reduce(
@@ -286,7 +300,9 @@ export class DrillDownSystem {
   ): Promise<DrillDownResult[]> {
     const cacheKey = `provider_drill_${kpi.id}_${JSON.stringify(filters)}`;
     const cached = this.getFromCache(cacheKey);
-    if (cached) return cached;
+    if (cached) {
+      return cached;
+    }
 
     const results: DrillDownResult[] = [];
 
@@ -298,13 +314,20 @@ export class DrillDownSystem {
         status
       `);
 
-    if (filters.start_date) query = query.gte('created_at', filters.start_date);
-    if (filters.end_date) query = query.lte('created_at', filters.end_date);
-    if (filters.service_types?.length)
+    if (filters.start_date) {
+      query = query.gte('created_at', filters.start_date);
+    }
+    if (filters.end_date) {
+      query = query.lte('created_at', filters.end_date);
+    }
+    if (filters.service_types?.length) {
       query = query.in('service_type', filters.service_types);
+    }
 
     const { data, error } = await query;
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Group by provider
     const providerGroups = data.reduce(
@@ -381,7 +404,9 @@ export class DrillDownSystem {
   ): Promise<DrillDownResult[]> {
     const cacheKey = `patient_drill_${kpi.id}_${JSON.stringify(filters)}`;
     const cached = this.getFromCache(cacheKey);
-    if (cached) return cached;
+    if (cached) {
+      return cached;
+    }
 
     const results: DrillDownResult[] = [];
 
@@ -396,11 +421,17 @@ export class DrillDownSystem {
         invoices(amount)
       `);
 
-    if (filters.start_date) query = query.gte('created_at', filters.start_date);
-    if (filters.end_date) query = query.lte('created_at', filters.end_date);
+    if (filters.start_date) {
+      query = query.gte('created_at', filters.start_date);
+    }
+    if (filters.end_date) {
+      query = query.lte('created_at', filters.end_date);
+    }
 
     const { data, error } = await query;
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Segment patients by age groups
     const ageSegments = data.reduce(
@@ -408,11 +439,17 @@ export class DrillDownSystem {
         let ageGroup: string;
         const age = patient.age || 0;
 
-        if (age < 18) ageGroup = 'Under 18';
-        else if (age < 30) ageGroup = '18-29';
-        else if (age < 45) ageGroup = '30-44';
-        else if (age < 60) ageGroup = '45-59';
-        else ageGroup = '60+';
+        if (age < 18) {
+          ageGroup = 'Under 18';
+        } else if (age < 30) {
+          ageGroup = '18-29';
+        } else if (age < 45) {
+          ageGroup = '30-44';
+        } else if (age < 60) {
+          ageGroup = '45-59';
+        } else {
+          ageGroup = '60+';
+        }
 
         if (!acc[ageGroup]) {
           acc[ageGroup] = {
@@ -558,7 +595,9 @@ export class DrillDownSystem {
 
     // Determine next dimension based on current one
     const nextDimension = this.getNextDimension(parentDimension);
-    if (!nextDimension) return [];
+    if (!nextDimension) {
+      return [];
+    }
 
     return this.performDrillDown(kpi, nextDimension, subFilters, { limit: 5 });
   }
@@ -624,7 +663,9 @@ export class DrillDownSystem {
   // Cache and database helpers
   private getFromCache(key: string): any | null {
     const cached = this.cache.get(key);
-    if (!cached) return null;
+    if (!cached) {
+      return null;
+    }
 
     if (Date.now() - cached.timestamp > 300_000) {
       // 5 minutes
@@ -649,7 +690,9 @@ export class DrillDownSystem {
       .eq('id', id)
       .single();
 
-    if (error) return null;
+    if (error) {
+      return null;
+    }
     return data;
   }
 }

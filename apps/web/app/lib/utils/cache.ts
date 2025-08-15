@@ -67,8 +67,8 @@ interface CacheEntry<T> {
 }
 
 class InMemoryCache {
-  private cache = new Map<string, CacheEntry<any>>();
-  private maxSize = 1000; // Prevent memory leaks
+  private readonly cache = new Map<string, CacheEntry<any>>();
+  private readonly maxSize = 1000; // Prevent memory leaks
 
   set<T>(key: string, value: T, ttlSeconds: number): void {
     // Clean up expired entries if cache is getting large
@@ -120,7 +120,7 @@ const inMemoryCache = new InMemoryCache();
 // =====================================================
 
 export class CacheManager {
-  private redis: Redis | null;
+  private readonly redis: Redis | null;
 
   constructor() {
     this.redis = getRedisClient();
@@ -288,7 +288,7 @@ export class CacheManager {
 // =====================================================
 
 export class StockAlertCache {
-  private cache: CacheManager;
+  private readonly cache: CacheManager;
 
   constructor() {
     this.cache = new CacheManager();
@@ -431,7 +431,7 @@ export class StockAlertCache {
 // =====================================================
 
 export class CacheMetrics {
-  private cache: CacheManager;
+  private readonly cache: CacheManager;
 
   constructor() {
     this.cache = new CacheManager();

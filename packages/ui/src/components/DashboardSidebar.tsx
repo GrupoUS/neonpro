@@ -1,18 +1,11 @@
 import {
-  BarChart3,
   Bell,
-  Calendar,
   ChevronDown,
   ChevronRight,
-  Clock,
-  CreditCard,
-  FileText,
   Heart,
-  Home,
   LogOut,
   Menu,
   Settings,
-  UserPlus,
   Users,
   X,
 } from 'lucide-react';

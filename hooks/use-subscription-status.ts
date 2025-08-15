@@ -353,7 +353,9 @@ export function useSubscriptionStatusSimple() {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (!user?.id) return;
+    if (!user?.id) {
+      return;
+    }
 
     const fetchStatus = async () => {
       setIsLoading(true);

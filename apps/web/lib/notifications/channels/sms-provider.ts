@@ -113,11 +113,11 @@ class TwilioSMSProvider implements SMSProvider {
   public readonly channel: NotificationChannel = 'sms';
   public readonly priority = 1;
 
-  private accountSid: string;
-  private authToken: string;
-  private fromNumber: string;
-  private messagingServiceSid?: string;
-  private brazilConfig: SMSProviderConfig['brazil'];
+  private readonly accountSid: string;
+  private readonly authToken: string;
+  private readonly fromNumber: string;
+  private readonly messagingServiceSid?: string;
+  private readonly brazilConfig: SMSProviderConfig['brazil'];
 
   constructor(
     config: SMSProviderConfig['primary'],
@@ -461,7 +461,7 @@ class TwilioSMSProvider implements SMSProvider {
  * Manages SMS providers and fallback logic
  */
 class SMSProviderFactory {
-  private primaryProvider: SMSProvider;
+  private readonly primaryProvider: SMSProvider;
 
   constructor(config: SMSProviderConfig) {
     this.config = config;

@@ -122,8 +122,8 @@ export interface ComplianceHealthCheck {
 // ============================================================================
 
 export class LGPDAutoConsentService {
-  private supabase: any;
-  private complianceService: LGPDComplianceService;
+  private readonly supabase: any;
+  private readonly complianceService: LGPDComplianceService;
 
   constructor() {
     this.supabase = createClient(
@@ -310,8 +310,8 @@ export class LGPDAutoConsentService {
 // ============================================================================
 
 export class LGPDAutoDataSubjectRightsService {
-  private supabase: any;
-  private complianceService: LGPDComplianceService;
+  private readonly supabase: any;
+  private readonly complianceService: LGPDComplianceService;
 
   constructor() {
     this.supabase = createClient(
@@ -615,7 +615,7 @@ export class LGPDAutoDataSubjectRightsService {
 // ============================================================================
 
 export class LGPDAutoAuditService {
-  private supabase: any;
+  private readonly supabase: any;
 
   constructor() {
     this.supabase = createClient(
@@ -1063,7 +1063,9 @@ export class LGPDAutoAuditService {
    * Verifica se um campo está criptografado
    */
   private isFieldEncrypted(value: any): boolean {
-    if (typeof value !== 'string') return false;
+    if (typeof value !== 'string') {
+      return false;
+    }
 
     // Verificação simples - em produção seria mais robusta
     return value.includes(':') && value.length > 50;
@@ -1081,7 +1083,7 @@ export class LGPDAutoAuditService {
 // ============================================================================
 
 export class LGPDAutoReportingService {
-  private supabase: any;
+  private readonly supabase: any;
 
   constructor() {
     this.supabase = createClient(
@@ -1439,8 +1441,12 @@ export class LGPDAutoReportingService {
     const deletions = eventStats[AuditEventType.DATA_DELETION] || 0;
     const modifications = eventStats[AuditEventType.DATA_MODIFICATION] || 0;
 
-    if (deletions > 50 || modifications > 200) return 'high';
-    if (deletions > 20 || modifications > 100) return 'medium';
+    if (deletions > 50 || modifications > 200) {
+      return 'high';
+    }
+    if (deletions > 20 || modifications > 100) {
+      return 'medium';
+    }
     return 'low';
   }
 
@@ -1485,9 +1491,15 @@ export class LGPDAutoReportingService {
   }
 
   private getRiskLevel(score: number): string {
-    if (score >= 80) return 'critical';
-    if (score >= 60) return 'high';
-    if (score >= 40) return 'medium';
+    if (score >= 80) {
+      return 'critical';
+    }
+    if (score >= 60) {
+      return 'high';
+    }
+    if (score >= 40) {
+      return 'medium';
+    }
     return 'low';
   }
 
@@ -1544,8 +1556,8 @@ export interface AnonymizationJob {
 }
 
 export class LGPDAutoAnonymizationService {
-  private supabase: any;
-  private encryptionService: LGPDEncryptionService;
+  private readonly supabase: any;
+  private readonly encryptionService: LGPDEncryptionService;
 
   constructor() {
     this.supabase = createClient(
@@ -1614,7 +1626,9 @@ export class LGPDAutoAnonymizationService {
         job.recordsAnonymized++;
       }
     } catch (error) {
-      if (!job.errors) job.errors = [];
+      if (!job.errors) {
+        job.errors = [];
+      }
       job.errors.push(
         `Rule ${rule.id}: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
@@ -1666,7 +1680,9 @@ export class LGPDAutoAnonymizationService {
     }
 
     const { data, error } = await query;
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     return data || [];
   }
@@ -1679,7 +1695,9 @@ export class LGPDAutoAnonymizationService {
     rule: AnonymizationRule
   ): Promise<void> {
     const originalValue = record[rule.fieldName];
-    if (!originalValue) return;
+    if (!originalValue) {
+      return;
+    }
 
     let anonymizedValue: any;
 
@@ -1723,7 +1741,9 @@ export class LGPDAutoAnonymizationService {
       })
       .eq('id', record.id);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Registrar auditoria da anonimização
     await this.logFieldAnonymization(
@@ -1808,10 +1828,18 @@ export class LGPDAutoAnonymizationService {
     // Idade -> faixa etária
     if (fieldName.includes('age') || fieldName.includes('idade')) {
       const age = Number.parseInt(value, 10);
-      if (age < 18) return '0-17';
-      if (age < 30) return '18-29';
-      if (age < 50) return '30-49';
-      if (age < 65) return '50-64';
+      if (age < 18) {
+        return '0-17';
+      }
+      if (age < 30) {
+        return '18-29';
+      }
+      if (age < 50) {
+        return '30-49';
+      }
+      if (age < 65) {
+        return '50-64';
+      }
       return '65+';
     }
 
@@ -1846,7 +1874,9 @@ export class LGPDAutoAnonymizationService {
       .eq('clinic_id', clinicId)
       .eq('is_active', true);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data || [];
   }
 

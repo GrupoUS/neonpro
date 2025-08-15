@@ -133,10 +133,10 @@ export async function GET(request: NextRequest) {
     // Remove sensitive credential data from response
     const sanitizedConnections = connections?.map((connection) => ({
       ...connection,
-      has_api_key: !!connection.api_key,
-      has_access_token: !!connection.access_token,
-      has_refresh_token: !!connection.refresh_token,
-      has_webhook_secret: !!connection.webhook_secret,
+      has_api_key: Boolean(connection.api_key),
+      has_access_token: Boolean(connection.access_token),
+      has_refresh_token: Boolean(connection.refresh_token),
+      has_webhook_secret: Boolean(connection.webhook_secret),
       token_valid: connection.token_expires_at
         ? new Date(connection.token_expires_at) > new Date()
         : null,

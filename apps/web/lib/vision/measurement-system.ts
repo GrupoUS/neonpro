@@ -148,16 +148,17 @@ export enum MeasurementCategory {
  * Provides clinically accurate measurements with standardized protocols
  */
 export class ObjectiveMeasurementSystem {
-  private supabase = createClient(
+  private readonly supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
 
-  private calibrationData: Map<string, CalibrationData> = new Map();
-  private measurementProtocols: Map<string, MeasurementProtocol> = new Map();
-  private qualityController: QualityController;
-  private statisticalAnalyzer: StatisticalAnalyzer;
-  private clinicalValidator: ClinicalValidator;
+  private readonly calibrationData: Map<string, CalibrationData> = new Map();
+  private readonly measurementProtocols: Map<string, MeasurementProtocol> =
+    new Map();
+  private readonly qualityController: QualityController;
+  private readonly statisticalAnalyzer: StatisticalAnalyzer;
+  private readonly clinicalValidator: ClinicalValidator;
 
   constructor() {
     this.qualityController = new QualityController();
@@ -634,7 +635,9 @@ export class ObjectiveMeasurementSystem {
     const variance = tf.moments(tensor).variance.dataSync()[0];
     const mean = tf.mean(tensor).dataSync()[0];
 
-    if (mean === 0) return 0.5;
+    if (mean === 0) {
+      return 0.5;
+    }
 
     const cv = Math.sqrt(variance) / mean; // Coefficient of variation
     return Math.max(0.1, 1.0 - cv); // Lower CV = higher confidence
@@ -836,7 +839,9 @@ export class ObjectiveMeasurementSystem {
     const symmetryMeasurements = measurements.filter(
       (m) => m.type === MeasurementType.SYMMETRY
     );
-    if (symmetryMeasurements.length === 0) return 0;
+    if (symmetryMeasurements.length === 0) {
+      return 0;
+    }
 
     const avgImprovement =
       symmetryMeasurements.reduce((sum, m) => sum + m.changePercentage, 0) /
@@ -850,7 +855,9 @@ export class ObjectiveMeasurementSystem {
     const volumeMeasurements = measurements.filter(
       (m) => m.type === MeasurementType.VOLUME
     );
-    if (volumeMeasurements.length === 0) return 0;
+    if (volumeMeasurements.length === 0) {
+      return 0;
+    }
 
     return (
       volumeMeasurements.reduce((sum, m) => sum + m.changePercentage, 0) /
@@ -864,7 +871,9 @@ export class ObjectiveMeasurementSystem {
     const perimeterMeasurements = measurements.filter(
       (m) => m.type === MeasurementType.PERIMETER
     );
-    if (perimeterMeasurements.length === 0) return 0;
+    if (perimeterMeasurements.length === 0) {
+      return 0;
+    }
 
     const avgChange =
       perimeterMeasurements.reduce(
@@ -880,7 +889,9 @@ export class ObjectiveMeasurementSystem {
     const angleMeasurements = measurements.filter(
       (m) => m.type === MeasurementType.ANGLE
     );
-    if (angleMeasurements.length === 0) return 0;
+    if (angleMeasurements.length === 0) {
+      return 0;
+    }
 
     const avgImprovement =
       angleMeasurements.reduce(
@@ -913,7 +924,9 @@ export class ObjectiveMeasurementSystem {
     const textureMeasurements = measurements.filter(
       (m) => m.type === MeasurementType.TEXTURE
     );
-    if (textureMeasurements.length === 0) return 0;
+    if (textureMeasurements.length === 0) {
+      return 0;
+    }
 
     const avgImprovement =
       textureMeasurements.reduce((sum, m) => sum + m.changePercentage, 0) /
@@ -927,7 +940,9 @@ export class ObjectiveMeasurementSystem {
     const colorMeasurements = measurements.filter(
       (m) => m.type === MeasurementType.COLOR
     );
-    if (colorMeasurements.length === 0) return 0;
+    if (colorMeasurements.length === 0) {
+      return 0;
+    }
 
     const avgImprovement =
       colorMeasurements.reduce((sum, m) => sum + m.changePercentage, 0) /
@@ -952,7 +967,9 @@ export class ObjectiveMeasurementSystem {
     const areaMeasurements = measurements.filter(
       (m) => m.type === MeasurementType.AREA
     );
-    if (areaMeasurements.length === 0) return 0;
+    if (areaMeasurements.length === 0) {
+      return 0;
+    }
 
     // Healing typically involves area reduction
     const avgAreaReduction =
@@ -969,7 +986,9 @@ export class ObjectiveMeasurementSystem {
     const intensityMeasurements = measurements.filter(
       (m) => m.type === MeasurementType.INTENSITY
     );
-    if (intensityMeasurements.length === 0) return 0;
+    if (intensityMeasurements.length === 0) {
+      return 0;
+    }
 
     // Inflammation reduction typically shows as intensity decrease
     const avgIntensityReduction =
@@ -984,7 +1003,9 @@ export class ObjectiveMeasurementSystem {
     const areaMeasurements = measurements.filter(
       (m) => m.type === MeasurementType.AREA
     );
-    if (areaMeasurements.length === 0) return 0;
+    if (areaMeasurements.length === 0) {
+      return 0;
+    }
 
     return (
       areaMeasurements.reduce((sum, m) => sum + m.afterValue, 0) /
@@ -1024,7 +1045,9 @@ export class ObjectiveMeasurementSystem {
   private calculateOverallImprovement(
     measurements: ObjectiveMeasurement[]
   ): number {
-    if (measurements.length === 0) return 0;
+    if (measurements.length === 0) {
+      return 0;
+    }
 
     const weightedSum = measurements.reduce((sum, m) => {
       const weight = m.clinicalRelevance;
@@ -1044,7 +1067,9 @@ export class ObjectiveMeasurementSystem {
     measurements: ObjectiveMeasurement[]
   ): number {
     // Treatment response based on confidence-weighted improvements
-    if (measurements.length === 0) return 0;
+    if (measurements.length === 0) {
+      return 0;
+    }
 
     const weightedSum = measurements.reduce((sum, m) => {
       const weight = m.confidence;
@@ -1069,7 +1094,9 @@ export class ObjectiveMeasurementSystem {
         m.type === MeasurementType.SYMMETRY
     );
 
-    if (visibleImprovements.length === 0) return 50; // Neutral prediction
+    if (visibleImprovements.length === 0) {
+      return 50; // Neutral prediction
+    }
 
     const avgImprovement =
       visibleImprovements.reduce(
@@ -1401,7 +1428,9 @@ class StatisticalAnalyzer {
   async calculateComparisonScore(
     measurements: ObjectiveMeasurement[]
   ): Promise<number> {
-    if (measurements.length === 0) return 0;
+    if (measurements.length === 0) {
+      return 0;
+    }
 
     // Calculate weighted comparison score
     const weightedSum = measurements.reduce((sum, m) => {

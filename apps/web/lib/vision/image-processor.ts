@@ -47,12 +47,12 @@ export interface CacheEntry {
  * Implements advanced optimization techniques for medical image processing
  */
 export class HighPerformanceImageProcessor {
-  private cache: Map<string, CacheEntry> = new Map();
+  private readonly cache: Map<string, CacheEntry> = new Map();
   private workerPool: Worker[] = [];
-  private config: OptimizationConfig;
-  private performanceMonitor: PerformanceMonitor;
-  private gpuAccelerator: GPUAccelerator;
-  private memoryManager: MemoryManager;
+  private readonly config: OptimizationConfig;
+  private readonly performanceMonitor: PerformanceMonitor;
+  private readonly gpuAccelerator: GPUAccelerator;
+  private readonly memoryManager: MemoryManager;
 
   constructor(config: Partial<OptimizationConfig> = {}) {
     this.config = {
@@ -189,7 +189,7 @@ export class HighPerformanceImageProcessor {
     // Resize optimization (if needed)
     if (options.targetSize) {
       tasks.push(this.optimizedResize(currentImage, options.targetSize));
-      currentImage = await tasks[tasks.length - 1];
+      currentImage = await tasks.at(-1);
     }
 
     // Parallel enhancement tasks
@@ -258,19 +258,25 @@ export class HighPerformanceImageProcessor {
     // Apply final optimizations
     if (options.finalSmoothing) {
       const smoothed = this.efficientSmoothing(result);
-      if (result !== image) result.dispose();
+      if (result !== image) {
+        result.dispose();
+      }
       result = smoothed;
     }
 
     if (options.sharpenEdges) {
       const sharpened = this.fastEdgeSharpening(result);
-      if (result !== image) result.dispose();
+      if (result !== image) {
+        result.dispose();
+      }
       result = sharpened;
     }
 
     // Ensure output is in correct format
     const normalized = tf.clipByValue(result, 0, 1);
-    if (result !== image) result.dispose();
+    if (result !== image) {
+      result.dispose();
+    }
 
     return normalized as tf.Tensor3D;
   }
@@ -320,7 +326,9 @@ export class HighPerformanceImageProcessor {
   }
 
   private combineEnhancements(enhancements: tf.Tensor3D[]): tf.Tensor3D {
-    if (enhancements.length === 1) return enhancements[0];
+    if (enhancements.length === 1) {
+      return enhancements[0];
+    }
 
     // Weighted average of enhancements
     const weights = enhancements.map(() => 1 / enhancements.length);
@@ -346,7 +354,9 @@ export class HighPerformanceImageProcessor {
 
     if (options.detectEdges) {
       const edges = this.cpuEdgeDetection(result);
-      if (result !== image) result.dispose();
+      if (result !== image) {
+        result.dispose();
+      }
       result = edges;
     }
 
@@ -432,7 +442,9 @@ export class HighPerformanceImageProcessor {
 
   private getFromCache(key: string): CacheEntry | null {
     const entry = this.cache.get(key);
-    if (!entry) return null;
+    if (!entry) {
+      return null;
+    }
 
     // Check if cache entry is still valid (24 hours)
     const maxAge = 24 * 60 * 60 * 1000;
@@ -536,9 +548,15 @@ export class HighPerformanceImageProcessor {
   private getAppliedOptimizations(): string[] {
     const optimizations = [];
 
-    if (this.config.enableGPU) optimizations.push('gpu-acceleration');
-    if (this.config.useWebWorkers) optimizations.push('web-workers');
-    if (this.config.enableCaching) optimizations.push('intelligent-caching');
+    if (this.config.enableGPU) {
+      optimizations.push('gpu-acceleration');
+    }
+    if (this.config.useWebWorkers) {
+      optimizations.push('web-workers');
+    }
+    if (this.config.enableCaching) {
+      optimizations.push('intelligent-caching');
+    }
 
     optimizations.push('parallel-processing');
     optimizations.push('memory-optimization');
@@ -564,7 +582,9 @@ export class HighPerformanceImageProcessor {
 
   // Worker pool management
   private initializeWorkerPool(): void {
-    if (!this.config.useWebWorkers) return;
+    if (!this.config.useWebWorkers) {
+      return;
+    }
 
     for (let i = 0; i < this.config.maxParallelTasks; i++) {
       try {
@@ -643,7 +663,7 @@ export class HighPerformanceImageProcessor {
 
 // Supporting classes
 class PerformanceMonitor {
-  private metrics: Map<string, number[]> = new Map();
+  private readonly metrics: Map<string, number[]> = new Map();
   private cacheHits = 0;
   private totalRequests = 0;
 
@@ -684,13 +704,15 @@ class PerformanceMonitor {
 }
 
 class GPUAccelerator {
-  private isGPUAvailable = false;
+  private readonly isGPUAvailable = false;
   private utilization = 0;
 
-  constructor(private enabled: boolean) {}
+  constructor(private readonly enabled: boolean) {}
 
   async initialize(): Promise<void> {
-    if (!this.enabled) return;
+    if (!this.enabled) {
+      return;
+    }
 
     try {
       // Check for WebGL support
@@ -775,7 +797,7 @@ class GPUAccelerator {
 }
 
 class MemoryManager {
-  constructor(private memoryLimit: number) {}
+  constructor(private readonly memoryLimit: number) {}
 
   cleanup(tensors: tf.Tensor[]): void {
     tensors.forEach((tensor) => {

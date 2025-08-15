@@ -171,14 +171,14 @@ export type AlertType =
 export type AlertChannel = 'email' | 'sms' | 'slack' | 'webhook' | 'dashboard';
 
 export class SecurityMonitor {
-  private utils: SessionUtils;
-  private activeThreats: Map<string, SecurityThreat> = new Map();
-  private monitoringRules: Map<string, MonitoringRule> = new Map();
+  private readonly utils: SessionUtils;
+  private readonly activeThreats: Map<string, SecurityThreat> = new Map();
+  private readonly monitoringRules: Map<string, MonitoringRule> = new Map();
   private securityMetrics: SecurityMetrics;
-  private alertQueue: SecurityAlert[] = [];
+  private readonly alertQueue: SecurityAlert[] = [];
   private monitoringInterval: NodeJS.Timeout | null = null;
   private isMonitoring = false;
-  private eventListeners: Map<string, Function[]> = new Map();
+  private readonly eventListeners: Map<string, Function[]> = new Map();
 
   constructor() {
     this.config = SessionConfig.getInstance();
@@ -395,7 +395,9 @@ export class SecurityMonitor {
    * Start security monitoring
    */
   public startMonitoring(): void {
-    if (this.isMonitoring) return;
+    if (this.isMonitoring) {
+      return;
+    }
 
     this.isMonitoring = true;
     this.monitoringInterval = setInterval(() => {
@@ -410,7 +412,9 @@ export class SecurityMonitor {
    * Stop security monitoring
    */
   public stopMonitoring(): void {
-    if (!this.isMonitoring) return;
+    if (!this.isMonitoring) {
+      return;
+    }
 
     this.isMonitoring = false;
     if (this.monitoringInterval) {
@@ -815,10 +819,18 @@ export class SecurityMonitor {
   }
 
   private determineThreatSource(anomaly: AnomalyAlert): ThreatSource {
-    if (anomaly.alertType.includes('location')) return 'suspicious_location';
-    if (anomaly.alertType.includes('device')) return 'unknown_device';
-    if (anomaly.alertType.includes('bot')) return 'automated_bot';
-    if (anomaly.alertType.includes('credential')) return 'compromised_account';
+    if (anomaly.alertType.includes('location')) {
+      return 'suspicious_location';
+    }
+    if (anomaly.alertType.includes('device')) {
+      return 'unknown_device';
+    }
+    if (anomaly.alertType.includes('bot')) {
+      return 'automated_bot';
+    }
+    if (anomaly.alertType.includes('credential')) {
+      return 'compromised_account';
+    }
     return 'internal_user';
   }
 
@@ -865,7 +877,9 @@ export class SecurityMonitor {
   }
 
   private canTriggerRule(rule: MonitoringRule): boolean {
-    if (!rule.lastTriggered) return true;
+    if (!rule.lastTriggered) {
+      return true;
+    }
     return Date.now() - rule.lastTriggered >= rule.cooldown;
   }
 
@@ -911,7 +925,9 @@ export class SecurityMonitor {
 
   private calculateAverageResponseTime(threats: SecurityThreat[]): number {
     const resolvedThreats = threats.filter((t) => t.resolvedAt);
-    if (resolvedThreats.length === 0) return 0;
+    if (resolvedThreats.length === 0) {
+      return 0;
+    }
 
     const totalTime = resolvedThreats.reduce((sum, t) => {
       return sum + (t.resolvedAt! - t.detectedAt);
@@ -947,7 +963,9 @@ export class SecurityMonitor {
     const threatsWithActions = threats.filter(
       (t) => t.mitigationActions.length > 0
     );
-    if (threatsWithActions.length === 0) return 0;
+    if (threatsWithActions.length === 0) {
+      return 0;
+    }
 
     const successfulActions = threatsWithActions.reduce((sum, t) => {
       return (

@@ -286,14 +286,20 @@ class StockAnalyticsService {
       // Filter notifications based on alert type and severity
       const filteredNotifications = notifications?.filter((notif: any) => {
         const alert = notif.stock_alerts_history;
-        if (alertType && alertType !== 'all' && alert.alert_type !== alertType)
+        if (
+          alertType &&
+          alertType !== 'all' &&
+          alert.alert_type !== alertType
+        ) {
           return false;
+        }
         if (
           severityLevel &&
           severityLevel !== 'all' &&
           alert.severity_level !== severityLevel
-        )
+        ) {
           return false;
+        }
         return true;
       });
 
@@ -613,7 +619,7 @@ class StockAnalyticsService {
             alert_type: pattern.alert_type,
             frequency_count: pattern.dates.length,
             avg_days_between: Math.round(avgDaysBetween * 100) / 100,
-            last_occurrence: sortedDates[sortedDates.length - 1],
+            last_occurrence: sortedDates.at(-1),
             trend,
           };
         })

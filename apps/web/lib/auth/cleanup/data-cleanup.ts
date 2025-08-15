@@ -403,17 +403,18 @@ export interface ApprovalResult {
 }
 
 export class DataCleanupManager {
-  private utils: SessionUtils;
-  private tasks: Map<string, CleanupTask> = new Map();
-  private scheduledTasks: Map<string, NodeJS.Timeout> = new Map();
-  private runningTasks: Map<string, Promise<CleanupResult>> = new Map();
-  private eventListeners: Map<string, Function[]> = new Map();
-  private isInitialized = false;
+  private readonly utils: SessionUtils;
+  private readonly tasks: Map<string, CleanupTask> = new Map();
+  private readonly scheduledTasks: Map<string, NodeJS.Timeout> = new Map();
+  private readonly runningTasks: Map<string, Promise<CleanupResult>> =
+    new Map();
+  private readonly eventListeners: Map<string, Function[]> = new Map();
+  private readonly isInitialized = false;
   private cleanupHistory: CleanupResult[] = [];
-  private maxHistorySize = 1000;
-  private auditLogger: AuditLogger;
-  private complianceEngine: ComplianceEngine;
-  private notificationService: NotificationService;
+  private readonly maxHistorySize = 1000;
+  private readonly auditLogger: AuditLogger;
+  private readonly complianceEngine: ComplianceEngine;
+  private readonly notificationService: NotificationService;
 
   constructor() {
     this.config = SessionConfig.getInstance();
@@ -936,9 +937,15 @@ export class DataCleanupManager {
     const errors: string[] = [];
 
     // Validate basic fields
-    if (!task.name) errors.push('Task name is required');
-    if (!task.targets.length) errors.push('At least one target is required');
-    if (!task.actions.length) errors.push('At least one action is required');
+    if (!task.name) {
+      errors.push('Task name is required');
+    }
+    if (!task.targets.length) {
+      errors.push('At least one target is required');
+    }
+    if (!task.actions.length) {
+      errors.push('At least one action is required');
+    }
 
     // Validate schedule
     if (task.schedule.enabled) {

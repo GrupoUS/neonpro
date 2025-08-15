@@ -76,7 +76,9 @@ export async function GET(request: NextRequest) {
  * Setup WebSocket event handlers
  */
 function setupWebSocketHandlers() {
-  if (!wss) return;
+  if (!wss) {
+    return;
+  }
 
   wss.on('connection', async (ws: any, request: IncomingMessage) => {
     console.log('New WebSocket connection established');
@@ -162,7 +164,9 @@ function setupWebSocketHandlers() {
  */
 async function handleWebSocketMessage(clientId: string, message: WSMessage) {
   const client = clients.get(clientId);
-  if (!client) return;
+  if (!client) {
+    return;
+  }
 
   const { ws, userId, subscriptions } = client;
 

@@ -95,12 +95,12 @@ export type CompletionType =
  * Provides intelligent autocomplete and query suggestions
  */
 export class SearchSuggestions {
-  private supabase = createClient();
-  private suggestionCache = new Map<string, SearchSuggestion[]>();
-  private completionCache = new Map<string, QueryCompletion[]>();
-  private popularQueries = new Map<string, number>();
-  private cacheExpiry = 5 * 60 * 1000; // 5 minutes
-  private lastCacheUpdate = 0;
+  private readonly supabase = createClient();
+  private readonly suggestionCache = new Map<string, SearchSuggestion[]>();
+  private readonly completionCache = new Map<string, QueryCompletion[]>();
+  private readonly popularQueries = new Map<string, number>();
+  private readonly cacheExpiry = 5 * 60 * 1000; // 5 minutes
+  private readonly lastCacheUpdate = 0;
 
   constructor() {
     this.initializeCache();
@@ -247,7 +247,9 @@ export class SearchSuggestions {
     query: string,
     context: SuggestionContext
   ): Promise<QueryCompletion[]> {
-    if (query.length < 2) return [];
+    if (query.length < 2) {
+      return [];
+    }
 
     const completions: QueryCompletion[] = [];
 
@@ -889,7 +891,9 @@ export class SearchSuggestions {
     const longer = str1.length > str2.length ? str1 : str2;
     const shorter = str1.length > str2.length ? str2 : str1;
 
-    if (longer.length === 0) return 1.0;
+    if (longer.length === 0) {
+      return 1.0;
+    }
 
     const editDistance = this.levenshteinDistance(longer, shorter);
     return (longer.length - editDistance) / longer.length;

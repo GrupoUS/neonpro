@@ -59,9 +59,9 @@ export interface ConsentRenewalTask {
 }
 
 export class ConsentAutomationManager {
-  private supabase: SupabaseClient;
-  private complianceManager: LGPDComplianceManager;
-  private config: ConsentAutomationConfig;
+  private readonly supabase: SupabaseClient;
+  private readonly complianceManager: LGPDComplianceManager;
+  private readonly config: ConsentAutomationConfig;
 
   constructor(
     supabase: SupabaseClient,
@@ -120,7 +120,9 @@ export class ConsentAutomationManager {
         .select('id')
         .single();
 
-      if (consentError) throw consentError;
+      if (consentError) {
+        throw consentError;
+      }
 
       // Create granular tracking record
       const { data: tracking, error: trackingError } = await this.supabase
@@ -145,7 +147,9 @@ export class ConsentAutomationManager {
         .select('id')
         .single();
 
-      if (trackingError) throw trackingError;
+      if (trackingError) {
+        throw trackingError;
+      }
 
       // Schedule renewal if auto-renewal is enabled
       if (
@@ -235,7 +239,9 @@ export class ConsentAutomationManager {
         .select('id')
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return renewalTask.id;
     } catch (error) {
@@ -267,7 +273,9 @@ export class ConsentAutomationManager {
         .eq('renewal_completed', false)
         .lte('renewal_due', new Date().toISOString());
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       let processed = 0;
       let notificationsSent = 0;
@@ -362,7 +370,9 @@ export class ConsentAutomationManager {
         .eq('user_id', userId)
         .eq('purpose_id', purposeId);
 
-      if (consentError) throw consentError;
+      if (consentError) {
+        throw consentError;
+      }
 
       // Create tracking record
       await this.supabase.from('lgpd_consent_tracking').insert({
@@ -434,7 +444,9 @@ export class ConsentAutomationManager {
         }
       );
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return analytics;
     } catch (error) {
@@ -471,7 +483,9 @@ export class ConsentAutomationManager {
         .eq('user_id', parentUserId)
         .eq('granted', true);
 
-      if (parentError) throw parentError;
+      if (parentError) {
+        throw parentError;
+      }
 
       for (const childUserId of childUserIds) {
         for (const parentConsent of parentConsents || []) {
@@ -523,7 +537,9 @@ export class ConsentAutomationManager {
   private parseRetentionPeriod(period: string): number {
     // Parse retention period string (e.g., "1 year", "6 months", "30 days")
     const match = period.match(/(\d+)\s*(year|month|day)s?/i);
-    if (!match) return 365 * 24 * 60 * 60 * 1000; // Default 1 year
+    if (!match) {
+      return 365 * 24 * 60 * 60 * 1000; // Default 1 year
+    }
 
     const [, amount, unit] = match;
     const multipliers = {

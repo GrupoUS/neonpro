@@ -30,8 +30,8 @@ interface NoShowPredictionConfig {
 }
 
 export class NoShowPredictionEngine {
-  private supabase;
-  private config: NoShowPredictionConfig;
+  private readonly supabase;
+  private readonly config: NoShowPredictionConfig;
 
   constructor() {
     this.supabase = createClient();
@@ -119,7 +119,9 @@ export class NoShowPredictionEngine {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -135,7 +137,9 @@ export class NoShowPredictionEngine {
       .lte('prediction_date', endDate)
       .not('actual_outcome', 'is', null);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     const totalPredictions = predictions?.length || 0;
     if (totalPredictions === 0) {
@@ -190,7 +194,9 @@ export class NoShowPredictionEngine {
       .is('actual_outcome', null)
       .order('risk_score', { ascending: false });
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data || [];
   }
 
@@ -203,7 +209,9 @@ export class NoShowPredictionEngine {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -218,7 +226,9 @@ export class NoShowPredictionEngine {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -229,7 +239,9 @@ export class NoShowPredictionEngine {
       .eq('id', id)
       .single();
 
-    if (error) return null;
+    if (error) {
+      return null;
+    }
     return data;
   }
 
@@ -242,7 +254,9 @@ export class NoShowPredictionEngine {
       .eq('appointment_id', appointmentId)
       .order('prediction_date', { ascending: false });
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data || [];
   }
 
@@ -254,7 +268,9 @@ export class NoShowPredictionEngine {
       .is('actual_outcome', null)
       .order('risk_score', { ascending: false });
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data || [];
   }
 
@@ -266,7 +282,9 @@ export class NoShowPredictionEngine {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -277,7 +295,9 @@ export class NoShowPredictionEngine {
       .eq('patient_id', patientId)
       .order('last_updated', { ascending: false });
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data || [];
   }
 
@@ -313,7 +333,9 @@ export class NoShowPredictionEngine {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -331,7 +353,9 @@ export class NoShowPredictionEngine {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -339,7 +363,7 @@ export class NoShowPredictionEngine {
     predictionId: string
   ): Promise<InterventionStrategy[]> {
     const prediction = await this.getPrediction(predictionId);
-    if (!(prediction && prediction.intervention_recommended)) {
+    if (!prediction?.intervention_recommended) {
       return [];
     }
 
@@ -370,7 +394,9 @@ export class NoShowPredictionEngine {
       .eq('model_version', version)
       .not('actual_outcome', 'is', null);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     const totalPredictions = predictions?.length || 0;
     if (totalPredictions === 0) {
@@ -387,12 +413,19 @@ export class NoShowPredictionEngine {
       const predictedNoShow = pred.risk_score >= 0.5;
       const actualNoShow = pred.actual_outcome === 'no_show';
 
-      if (predictedNoShow === actualNoShow) correctPredictions++;
+      if (predictedNoShow === actualNoShow) {
+        correctPredictions++;
+      }
 
-      if (predictedNoShow && actualNoShow) truePositives++;
-      else if (predictedNoShow && !actualNoShow) falsePositives++;
-      else if (!predictedNoShow && actualNoShow) falseNegatives++;
-      else _trueNegatives++;
+      if (predictedNoShow && actualNoShow) {
+        truePositives++;
+      } else if (predictedNoShow && !actualNoShow) {
+        falsePositives++;
+      } else if (!predictedNoShow && actualNoShow) {
+        falseNegatives++;
+      } else {
+        _trueNegatives++;
+      }
     });
 
     const accuracy = correctPredictions / totalPredictions;
@@ -472,7 +505,9 @@ export class NoShowPredictionEngine {
       .lte('date', endDate)
       .order('date');
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     const totalAppointments =
       analytics?.reduce(
@@ -575,7 +610,9 @@ export class NoShowPredictionEngine {
       .eq('patient_id', patientId)
       .order('start_time', { ascending: false });
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     const total = appointments?.length || 0;
     const noShows =
@@ -696,8 +733,12 @@ export class NoShowPredictionEngine {
 
   private calculateTimingRisk(hour: number): number {
     // Higher risk for very early or very late appointments
-    if (hour < 8 || hour > 18) return 0.8;
-    if (hour < 9 || hour > 17) return 0.6;
+    if (hour < 8 || hour > 18) {
+      return 0.8;
+    }
+    if (hour < 9 || hour > 17) {
+      return 0.6;
+    }
     return 0.3;
   }
 
@@ -715,12 +756,20 @@ export class NoShowPredictionEngine {
     let confidence = 0.7; // Base confidence
 
     // Increase confidence with more data points
-    if (historicalPattern.total_appointments > 5) confidence += 0.1;
-    if (historicalPattern.total_appointments > 10) confidence += 0.1;
+    if (historicalPattern.total_appointments > 5) {
+      confidence += 0.1;
+    }
+    if (historicalPattern.total_appointments > 10) {
+      confidence += 0.1;
+    }
 
     // Increase confidence with more risk factors
-    if (riskFactors.length >= 5) confidence += 0.05;
-    if (riskFactors.length >= 8) confidence += 0.05;
+    if (riskFactors.length >= 5) {
+      confidence += 0.05;
+    }
+    if (riskFactors.length >= 8) {
+      confidence += 0.05;
+    }
 
     return Math.min(1, confidence);
   }
@@ -843,8 +892,7 @@ export class NoShowPredictionEngine {
       ),
       trendDirection:
         analytics.length > 1
-          ? analytics[analytics.length - 1].accuracy_rate >
-            analytics[0].accuracy_rate
+          ? analytics.at(-1).accuracy_rate > analytics[0].accuracy_rate
             ? 'improving'
             : 'declining'
           : 'stable',

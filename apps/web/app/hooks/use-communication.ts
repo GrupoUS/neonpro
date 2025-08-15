@@ -317,7 +317,7 @@ export function useMessage(id: string, enabled = true) {
   return useQuery({
     queryKey: communicationKeys.message(id),
     queryFn: () => api.getMessage(id),
-    enabled: enabled && !!id,
+    enabled: enabled && Boolean(id),
     staleTime: 60_000, // 1 minute
   });
 }
@@ -387,7 +387,7 @@ export function useThread(id: string, enabled = true) {
   return useQuery({
     queryKey: communicationKeys.thread(id),
     queryFn: () => api.getThread(id),
-    enabled: enabled && !!id,
+    enabled: enabled && Boolean(id),
     staleTime: 60_000, // 1 minute
   });
 }
@@ -468,7 +468,7 @@ export function useTemplate(id: string, enabled = true) {
   return useQuery({
     queryKey: communicationKeys.template(id),
     queryFn: () => api.getTemplate(id),
-    enabled: enabled && !!id,
+    enabled: enabled && Boolean(id),
     staleTime: 300_000, // 5 minutes - templates are fairly static
   });
 }

@@ -82,7 +82,7 @@ export interface StaffWorkload {
 // =====================================================
 
 export class AllocationEngine {
-  private resourceManager: ResourceManager;
+  private readonly resourceManager: ResourceManager;
 
   constructor() {
     this.resourceManager = new ResourceManager();
@@ -287,13 +287,19 @@ export class AllocationEngine {
     let confidence = 100;
 
     // Reduce confidence based on missing information
-    if (!resource.specifications) confidence -= 5;
-    if (!resource.usage_instructions) confidence -= 5;
+    if (!resource.specifications) {
+      confidence -= 5;
+    }
+    if (!resource.usage_instructions) {
+      confidence -= 5;
+    }
 
     // Reduce confidence for complex requirements
     if (criteria.requirements) {
       const reqCount = Object.keys(criteria.requirements).length;
-      if (reqCount > 3) confidence -= reqCount * 3;
+      if (reqCount > 3) {
+        confidence -= reqCount * 3;
+      }
     }
 
     // Reduce confidence for strict business rules

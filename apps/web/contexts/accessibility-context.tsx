@@ -118,9 +118,7 @@ export function AccessibilityProvider({
     );
 
     const firstFocusable = focusableElements[0] as HTMLElement;
-    const lastFocusable = focusableElements[
-      focusableElements.length - 1
-    ] as HTMLElement;
+    const lastFocusable = focusableElements.at(-1) as HTMLElement;
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Tab') {

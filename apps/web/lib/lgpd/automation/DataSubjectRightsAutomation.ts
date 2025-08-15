@@ -87,9 +87,9 @@ export interface DataPortabilityPackage {
 }
 
 export class DataSubjectRightsAutomation {
-  private supabase: SupabaseClient;
-  private complianceManager: LGPDComplianceManager;
-  private config: AutomationConfig;
+  private readonly supabase: SupabaseClient;
+  private readonly complianceManager: LGPDComplianceManager;
+  private readonly config: AutomationConfig;
 
   constructor(
     supabase: SupabaseClient,
@@ -131,7 +131,9 @@ export class DataSubjectRightsAutomation {
         .eq('id', requestId)
         .single();
 
-      if (requestError) throw requestError;
+      if (requestError) {
+        throw requestError;
+      }
 
       const legalDeadline = new Date(request.created_at);
       legalDeadline.setDate(legalDeadline.getDate() + 30);
@@ -168,7 +170,9 @@ export class DataSubjectRightsAutomation {
         .select('id')
         .single();
 
-      if (reportError) throw reportError;
+      if (reportError) {
+        throw reportError;
+      }
 
       // Update request as completed
       await this.supabase
@@ -239,7 +243,7 @@ export class DataSubjectRightsAutomation {
   }> {
     try {
       let changesApplied = 0;
-      const changeLog: Array<any> = [];
+      const changeLog: any[] = [];
 
       // Verify user identity
       if (this.config.identity_verification_required) {
@@ -612,7 +616,9 @@ export class DataSubjectRightsAutomation {
         'monitor_legal_timeline_compliance'
       );
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return timelineStats;
     } catch (error) {
@@ -646,7 +652,9 @@ export class DataSubjectRightsAutomation {
       }
     );
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     return reportData;
   }
@@ -686,7 +694,9 @@ export class DataSubjectRightsAutomation {
       .select('id')
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     return { success: true, change_id: change.id };
   }
@@ -704,7 +714,9 @@ export class DataSubjectRightsAutomation {
       }
     );
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     return analysis;
   }
@@ -728,7 +740,9 @@ export class DataSubjectRightsAutomation {
       }
     );
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     return result;
   }
@@ -748,7 +762,9 @@ export class DataSubjectRightsAutomation {
       }
     );
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     return packageData;
   }
@@ -766,7 +782,9 @@ export class DataSubjectRightsAutomation {
       }
     );
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     return link;
   }

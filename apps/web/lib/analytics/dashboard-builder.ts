@@ -41,9 +41,9 @@ export interface DashboardBuilderState {
 }
 
 export class DashboardBuilder {
-  private supabase;
-  private widgetLibrary: WidgetLibraryItem[];
-  private templates: DashboardTemplate[];
+  private readonly supabase;
+  private readonly widgetLibrary: WidgetLibraryItem[];
+  private readonly templates: DashboardTemplate[];
 
   constructor() {
     this.supabase = createClient(
@@ -69,7 +69,9 @@ export class DashboardBuilder {
 
       if (templateId) {
         const template = await this.getTemplate(templateId);
-        if (!template) throw new Error('Template not found');
+        if (!template) {
+          throw new Error('Template not found');
+        }
 
         initialLayout = {
           layout_name: name,
@@ -97,7 +99,9 @@ export class DashboardBuilder {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data;
     } catch (error) {
       console.error('Error creating dashboard:', error);
@@ -120,7 +124,9 @@ export class DashboardBuilder {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data;
     } catch (error) {
       console.error('Error updating dashboard:', error);
@@ -135,7 +141,9 @@ export class DashboardBuilder {
         .delete()
         .eq('id', dashboardId);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
     } catch (error) {
       console.error('Error deleting dashboard:', error);
       throw error;
@@ -150,7 +158,9 @@ export class DashboardBuilder {
         .eq('id', dashboardId)
         .single();
 
-      if (error) return null;
+      if (error) {
+        return null;
+      }
       return data;
     } catch (error) {
       console.error('Error fetching dashboard:', error);
@@ -188,7 +198,9 @@ export class DashboardBuilder {
         ascending: false,
       });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data || [];
     } catch (error) {
       console.error('Error fetching user dashboards:', error);
@@ -207,7 +219,9 @@ export class DashboardBuilder {
     const widgetTemplate = this.widgetLibrary.find(
       (w) => w.type === widgetType
     );
-    if (!widgetTemplate) throw new Error('Widget type not found');
+    if (!widgetTemplate) {
+      throw new Error('Widget type not found');
+    }
 
     const newWidget: DashboardWidget = {
       id: `widget_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -252,7 +266,9 @@ export class DashboardBuilder {
 
   duplicateWidget(layout: DashboardLayout, widgetId: string): DashboardLayout {
     const widget = layout.widget_configuration.find((w) => w.id === widgetId);
-    if (!widget) throw new Error('Widget not found');
+    if (!widget) {
+      throw new Error('Widget not found');
+    }
 
     const duplicatedWidget: DashboardWidget = {
       ...widget,
@@ -307,7 +323,7 @@ export class DashboardBuilder {
         rowWidgets.push([]);
         currentY = widget.position.y;
       }
-      rowWidgets[rowWidgets.length - 1].push(widget);
+      rowWidgets.at(-1).push(widget);
     });
 
     // Reposition widgets to eliminate gaps
@@ -454,7 +470,9 @@ export class DashboardBuilder {
         .in('id', kpiIds);
 
       const template = this.getWidgetTemplate(widgetType);
-      if (!template) return false;
+      if (!template) {
+        return false;
+      }
 
       // Check if KPI categories are compatible with widget type
       const categories = kpis?.map((k) => k.kpi_category) || [];
@@ -487,8 +505,11 @@ export class DashboardBuilder {
     estimatedLoadTime += tableWidgets * 100;
 
     let complexity: 'low' | 'medium' | 'high' = 'low';
-    if (widgetCount > 15 || chartWidgets > 5) complexity = 'high';
-    else if (widgetCount > 8 || chartWidgets > 3) complexity = 'medium';
+    if (widgetCount > 15 || chartWidgets > 5) {
+      complexity = 'high';
+    } else if (widgetCount > 8 || chartWidgets > 3) {
+      complexity = 'medium';
+    }
 
     const recommendations: string[] = [];
     if (widgetCount > 20) {

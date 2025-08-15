@@ -12,15 +12,7 @@ import {
   subMonths,
 } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import {
-  Calendar,
-  ChevronLeft,
-  ChevronRight,
-  Clock,
-  Filter,
-  Plus,
-  Users,
-} from 'lucide-react';
+import { Calendar, ChevronLeft, ChevronRight, Clock, Plus } from 'lucide-react';
 import * as React from 'react';
 import { cn } from '../utils/cn';
 import { Badge } from './Badge';
@@ -257,7 +249,9 @@ export const AppointmentCalendar = React.forwardRef<
           {/* Days of week header */}
           {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map(
             (day, index) => {
-              if (!showWeekends && (index === 0 || index === 6)) return null;
+              if (!showWeekends && (index === 0 || index === 6)) {
+                return null;
+              }
               return (
                 <div
                   className="bg-background p-2 text-center font-medium text-muted-foreground text-sm"
@@ -271,8 +265,9 @@ export const AppointmentCalendar = React.forwardRef<
 
           {/* Calendar days */}
           {days.map((day) => {
-            if (!showWeekends && (getDay(day) === 0 || getDay(day) === 6))
+            if (!showWeekends && (getDay(day) === 0 || getDay(day) === 6)) {
               return null;
+            }
 
             const dayAppointments = appointments.filter((apt) =>
               isSameDay(apt.startTime, day)
@@ -296,7 +291,7 @@ export const AppointmentCalendar = React.forwardRef<
                   {format(day, 'd')}
                 </div>
                 <div className="space-y-1">
-                  {dayAppointments.slice(0, 2).map((appointment, index) => (
+                  {dayAppointments.slice(0, 2).map((appointment, _index) => (
                     <div
                       className={cn(
                         'cursor-pointer truncate rounded p-1 text-xs',

@@ -35,9 +35,15 @@ export async function GET(request: NextRequest) {
       : 0;
 
     const filters: any = {};
-    if (patientId) filters.patientId = patientId;
-    if (status) filters.status = status;
-    if (riskLevel) filters.riskLevel = riskLevel;
+    if (patientId) {
+      filters.patientId = patientId;
+    }
+    if (status) {
+      filters.status = status;
+    }
+    if (riskLevel) {
+      filters.riskLevel = riskLevel;
+    }
 
     const assessments = await riskAssessmentService.getAllRiskAssessments(
       filters,

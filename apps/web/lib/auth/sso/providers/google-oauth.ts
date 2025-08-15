@@ -150,7 +150,7 @@ export class GoogleOAuthProvider {
       const tokenData: GoogleTokenInfo = await response.json();
 
       logger.info('Google OAuth: Token exchange successful', {
-        hasRefreshToken: !!tokenData.refresh_token,
+        hasRefreshToken: Boolean(tokenData.refresh_token),
         expiresIn: tokenData.expires_in,
         scope: tokenData.scope,
       });

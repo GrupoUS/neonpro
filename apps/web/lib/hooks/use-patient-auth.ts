@@ -54,7 +54,9 @@ export function PatientAuthProvider({
           data: { user },
           error,
         } = await supabase.auth.getUser();
-        if (error) throw error;
+        if (error) {
+          throw error;
+        }
 
         setUser(user);
         if (user) {
@@ -113,7 +115,9 @@ export function PatientAuthProvider({
         password,
       });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       toast.success('Login realizado com sucesso!');
     } catch (error: any) {
@@ -130,7 +134,9 @@ export function PatientAuthProvider({
       setIsLoading(true);
       const { error } = await supabase.auth.signOut();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       setUser(null);
       setPatient(null);
@@ -145,7 +151,9 @@ export function PatientAuthProvider({
   };
 
   const updatePatient = async (updates: Partial<Patient>) => {
-    if (!(user && patient)) return;
+    if (!(user && patient)) {
+      return;
+    }
 
     try {
       const { data, error } = await supabase
@@ -155,7 +163,9 @@ export function PatientAuthProvider({
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       setPatient(data);
       toast.success('Perfil atualizado com sucesso!');

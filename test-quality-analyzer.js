@@ -63,16 +63,26 @@ class TestQualityAnalyzer {
   }
 
   getTestType(filePath) {
-    if (filePath.includes('integration')) return 'INTEGRATION';
-    if (filePath.includes('security')) return 'SECURITY';
-    if (filePath.includes('performance')) return 'PERFORMANCE';
-    if (filePath.includes('playwright')) return 'E2E';
+    if (filePath.includes('integration')) {
+      return 'INTEGRATION';
+    }
+    if (filePath.includes('security')) {
+      return 'SECURITY';
+    }
+    if (filePath.includes('performance')) {
+      return 'PERFORMANCE';
+    }
+    if (filePath.includes('playwright')) {
+      return 'E2E';
+    }
     return 'UNIT';
   }
 
   // Analyze test file content for structure and quality
   analyzeTestContent(testFile) {
-    if (!testFile.exists) return null;
+    if (!testFile.exists) {
+      return null;
+    }
 
     const content = fs.readFileSync(testFile.fullPath, 'utf8');
     const lines = content.split('\n');
@@ -160,7 +170,9 @@ class TestQualityAnalyzer {
 
         if (quality < 80) {
           Object.entries(syntaxChecks).forEach(([check, passed]) => {
-            if (!passed) console.log(`   ❌ ${check}`);
+            if (!passed) {
+              console.log(`   ❌ ${check}`);
+            }
           });
         }
 
@@ -190,10 +202,14 @@ class TestQualityAnalyzer {
     let totalExpectations = 0;
 
     this.testFiles.forEach((testFile) => {
-      if (!testFile.exists) return;
+      if (!testFile.exists) {
+        return;
+      }
 
       const analysis = this.analyzeTestContent(testFile);
-      if (!analysis) return;
+      if (!analysis) {
+        return;
+      }
 
       coverageByType[testFile.type] = analysis;
       totalTests += analysis.testCases;
@@ -268,10 +284,14 @@ class TestQualityAnalyzer {
     const complianceResults = {};
 
     this.testFiles.forEach((testFile) => {
-      if (!testFile.exists) return;
+      if (!testFile.exists) {
+        return;
+      }
 
       const analysis = this.analyzeTestContent(testFile);
-      if (!analysis) return;
+      if (!analysis) {
+        return;
+      }
 
       const complianceScore = [
         analysis.lgpdCompliance,
@@ -292,17 +312,33 @@ class TestQualityAnalyzer {
         `${percentage >= 70 ? '✅' : percentage >= 50 ? '⚠️' : '❌'} ${testFile.type} Compliance: ${percentage.toFixed(1)}%`
       );
 
-      if (analysis.lgpdCompliance) console.log('   ✅ LGPD Data Protection');
-      if (analysis.anvisaCompliance) console.log('   ✅ ANVISA Regulatory');
-      if (analysis.cfmCompliance) console.log('   ✅ CFM Medical Standards');
-      if (analysis.auditTrail) console.log('   ✅ Audit Trail Validation');
-      if (analysis.authenticationTests)
+      if (analysis.lgpdCompliance) {
+        console.log('   ✅ LGPD Data Protection');
+      }
+      if (analysis.anvisaCompliance) {
+        console.log('   ✅ ANVISA Regulatory');
+      }
+      if (analysis.cfmCompliance) {
+        console.log('   ✅ CFM Medical Standards');
+      }
+      if (analysis.auditTrail) {
+        console.log('   ✅ Audit Trail Validation');
+      }
+      if (analysis.authenticationTests) {
         console.log('   ✅ Authentication Security');
-      if (analysis.authorizationTests)
+      }
+      if (analysis.authorizationTests) {
         console.log('   ✅ Authorization Controls');
-      if (analysis.encryptionTests) console.log('   ✅ Data Encryption');
-      if (analysis.patientDataProtection) console.log('   ✅ Patient Privacy');
-      if (analysis.clinicIsolation) console.log('   ✅ Clinic Data Isolation');
+      }
+      if (analysis.encryptionTests) {
+        console.log('   ✅ Data Encryption');
+      }
+      if (analysis.patientDataProtection) {
+        console.log('   ✅ Patient Privacy');
+      }
+      if (analysis.clinicIsolation) {
+        console.log('   ✅ Clinic Data Isolation');
+      }
 
       complianceResults[testFile.type] = {
         score: complianceScore,

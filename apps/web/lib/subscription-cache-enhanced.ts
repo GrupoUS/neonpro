@@ -110,7 +110,7 @@ export interface PrefetchStrategy {
  * Enhanced subscription cache with advanced features
  */
 export class EnhancedSubscriptionCache {
-  private cache = new Map<string, EnhancedCacheEntry>();
+  private readonly cache = new Map<string, EnhancedCacheEntry>();
   private hitCount = 0;
   private missCount = 0;
   private prefetchHits = 0;
@@ -123,11 +123,11 @@ export class EnhancedSubscriptionCache {
   private failureCount = 0;
 
   // Access pattern tracking
-  private accessPatterns = new Map<string, number[]>();
-  private popularKeys = new Set<string>();
+  private readonly accessPatterns = new Map<string, number[]>();
+  private readonly popularKeys = new Set<string>();
 
   // Prefetch strategies
-  private prefetchStrategies: PrefetchStrategy[] = [
+  private readonly prefetchStrategies: PrefetchStrategy[] = [
     {
       strategy: 'recent',
       priority: 10,
@@ -206,7 +206,7 @@ export class EnhancedSubscriptionCache {
 
       // Record operation
       if (this.config.monitoring.trackOperations) {
-        this.recordOperation('get', key, !!entry, duration, 'memory');
+        this.recordOperation('get', key, Boolean(entry), duration, 'memory');
       }
 
       if (!entry) {
@@ -478,7 +478,9 @@ export class EnhancedSubscriptionCache {
    * Prefetch entries that are likely to be accessed soon
    */
   async prefetch(): Promise<void> {
-    if (!this.config.prefetch.enabled) return;
+    if (!this.config.prefetch.enabled) {
+      return;
+    }
 
     const strategies = this.prefetchStrategies.filter((s) => s.enabled);
     const candidateKeys = new Set<string>();
@@ -521,15 +523,23 @@ export class EnhancedSubscriptionCache {
     let priority = 5; // Base priority
 
     // Higher priority for users with access
-    if (value.hasAccess) priority += 3;
+    if (value.hasAccess) {
+      priority += 3;
+    }
 
     // Higher priority based on subscription status
-    if (value.subscription?.status === 'active') priority += 3;
-    else if (value.subscription?.status === 'trialing') priority += 2;
-    else if (value.subscription?.status === 'past_due') priority += 1;
+    if (value.subscription?.status === 'active') {
+      priority += 3;
+    } else if (value.subscription?.status === 'trialing') {
+      priority += 2;
+    } else if (value.subscription?.status === 'past_due') {
+      priority += 1;
+    }
 
     // Higher priority for users in grace period
-    if (value.gracePeriod) priority += 2;
+    if (value.gracePeriod) {
+      priority += 2;
+    }
 
     return priority;
   }
@@ -594,7 +604,9 @@ export class EnhancedSubscriptionCache {
    * Check if entry should be prefetched
    */
   private shouldPrefetch(entry: EnhancedCacheEntry): boolean {
-    if (!this.config.prefetch.enabled) return false;
+    if (!this.config.prefetch.enabled) {
+      return false;
+    }
 
     const now = Date.now();
     const timeRemaining = entry.expires - now;
@@ -688,12 +700,16 @@ export class EnhancedSubscriptionCache {
    * Ensure memory usage stays within limits
    */
   private async ensureMemoryLimit(newEntrySize: number): Promise<void> {
-    if (!this.config.memoryOptimization.enabled) return;
+    if (!this.config.memoryOptimization.enabled) {
+      return;
+    }
 
     const maxMemory = this.config.memoryOptimization.maxMemoryMB * 1024 * 1024;
     const projectedUsage = this.memoryUsage + newEntrySize;
 
-    if (projectedUsage <= maxMemory) return;
+    if (projectedUsage <= maxMemory) {
+      return;
+    }
 
     // Need to evict entries
     const targetUsage = maxMemory * 0.8; // Target 80% of max
@@ -747,7 +763,9 @@ export class EnhancedSubscriptionCache {
 
     // Evict entries until we've freed enough memory
     for (const { key, entry } of candidates) {
-      if (freedMemory >= memoryToFree) break;
+      if (freedMemory >= memoryToFree) {
+        break;
+      }
 
       this.cache.delete(key);
       this.accessPatterns.delete(key);
@@ -813,7 +831,9 @@ export class EnhancedSubscriptionCache {
     cacheLayer: CacheOperation['cacheLayer'] = 'memory',
     memorySize?: number
   ): void {
-    if (!this.config.monitoring.trackOperations) return;
+    if (!this.config.monitoring.trackOperations) {
+      return;
+    }
 
     this.operations.push({
       type,
@@ -866,7 +886,9 @@ export class EnhancedSubscriptionCache {
    * Start prefetch timer
    */
   private startPrefetchTimer(): void {
-    if (!this.config.prefetch.enabled) return;
+    if (!this.config.prefetch.enabled) {
+      return;
+    }
 
     this.prefetchTimer = setInterval(
       () => {

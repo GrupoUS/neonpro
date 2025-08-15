@@ -330,8 +330,12 @@ export const CreateCashFlowPredictionSchema = z
       if (predicted_amount > 0) {
         const relative_width = interval_width / predicted_amount;
         // High confidence should have narrow intervals, low confidence should have wide intervals
-        if (data.confidence_score > 90 && relative_width > 0.2) return false;
-        if (data.confidence_score < 50 && relative_width < 0.1) return false;
+        if (data.confidence_score > 90 && relative_width > 0.2) {
+          return false;
+        }
+        if (data.confidence_score < 50 && relative_width < 0.1) {
+          return false;
+        }
       }
 
       return true;

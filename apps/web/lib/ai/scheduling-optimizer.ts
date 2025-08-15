@@ -50,7 +50,7 @@ interface PatientPreferences {
 }
 
 export class AISchedulingOptimizer {
-  private supabase: any;
+  private readonly supabase: any;
 
   constructor() {
     this.supabase = createClient(supabaseUrl, supabaseKey);
@@ -442,7 +442,9 @@ export class AISchedulingOptimizer {
         .lte('date', dateRange.end)
         .order('date', { ascending: true });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return {
         performance_metrics: this.aggregateAnalytics(data),
@@ -499,7 +501,9 @@ export class AISchedulingOptimizer {
         .eq('patient_id', patientId)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data || {};
     } catch (error) {
       console.error('Error fetching patient preference data:', error);
@@ -521,7 +525,9 @@ export class AISchedulingOptimizer {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return { success: true, data };
     } catch (error) {
       console.error('Error processing feedback:', error);
@@ -541,7 +547,9 @@ export class AISchedulingOptimizer {
       }
 
       const { data, error } = await query.limit(100);
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data || [];
     } catch (error) {
       console.error('Error fetching feedback history:', error);

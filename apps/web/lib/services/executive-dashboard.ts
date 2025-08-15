@@ -87,7 +87,7 @@ export interface ExecutiveDashboardFilters {
 }
 
 export class ExecutiveDashboardService {
-  private supabase;
+  private readonly supabase;
 
   constructor() {
     this.supabase = createClient();
@@ -139,7 +139,9 @@ export class ExecutiveDashboardService {
         .lte('date', filters.dateRange.end)
         .order('date', { ascending: true });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Calculate KPIs from raw data
       const kpis: DashboardKPI[] = [
@@ -170,7 +172,9 @@ export class ExecutiveDashboardService {
         .lte('date', filters.dateRange.end)
         .order('date', { ascending: true });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return {
         revenue: this.processRevenueChart(chartData),
@@ -199,7 +203,9 @@ export class ExecutiveDashboardService {
         .order('created_at', { ascending: false })
         .limit(50);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return alerts.map((alert) => ({
         id: alert.id,
@@ -551,7 +557,9 @@ export class ExecutiveDashboardService {
       .gte('date', previousStartDate.toISOString().split('T')[0])
       .lte('date', previousEndDate.toISOString().split('T')[0]);
 
-    if (error || !data) return 0;
+    if (error || !data) {
+      return 0;
+    }
 
     switch (metric) {
       case 'revenue':
@@ -651,7 +659,9 @@ export class ExecutiveDashboardService {
       .gte('date', period.start)
       .lte('date', period.end);
 
-    if (error || !data) return {};
+    if (error || !data) {
+      return {};
+    }
 
     return {
       revenue: data.reduce((sum, item) => sum + (item.revenue || 0), 0),

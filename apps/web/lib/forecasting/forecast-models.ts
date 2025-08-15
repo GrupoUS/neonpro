@@ -109,7 +109,7 @@ export interface HyperparameterSpace {
  * Model Training and Management Class
  */
 export class ForecastModelManager {
-  private trainingJobs: Map<string, ModelTrainingJob> = new Map();
+  private readonly trainingJobs: Map<string, ModelTrainingJob> = new Map();
   private readonly ACCURACY_THRESHOLD = 0.8;
 
   /**
@@ -183,7 +183,9 @@ export class ForecastModelManager {
         .eq('id', jobId)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return job;
     } catch (error) {
@@ -357,7 +359,9 @@ export class ForecastModelManager {
         .gte('evaluation_date', startDate.toISOString())
         .order('evaluation_date', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return metrics || [];
     } catch (error) {
@@ -436,7 +440,9 @@ export class ForecastModelManager {
         .eq('clinic_id', clinicId)
         .eq('status', 'active');
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       for (const model of models || []) {
         try {
@@ -622,7 +628,9 @@ export class ForecastModelManager {
         .eq('clinic_id', clinicId)
         .in('status', ['pending', 'running']);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       this.trainingJobs.clear();
       jobs?.forEach((job) => {
@@ -689,7 +697,9 @@ export class ForecastModelManager {
         .eq('id', modelId)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return model;
     } catch (error) {
       console.error('Failed to load model:', error);
@@ -837,7 +847,9 @@ export class ForecastModelManager {
         .eq('clinic_id', clinicId)
         .eq('status', 'active');
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return models || [];
     } catch (error) {
       console.error('Failed to get active models:', error);

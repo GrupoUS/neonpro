@@ -85,7 +85,7 @@ export function useSessionManagement(): SessionManagementState &
     }, SessionConfig.security.sessionValidationInterval);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [initializeSession, validateSession]);
 
   const initializeSession = useCallback(async () => {
     setState((prev) => ({ ...prev, isLoading: true, error: null }));
@@ -116,7 +116,13 @@ export function useSessionManagement(): SessionManagementState &
     } finally {
       setState((prev) => ({ ...prev, isLoading: false }));
     }
-  }, [supabase]);
+  }, [
+    supabase,
+    loadAnalytics,
+    loadCurrentSession,
+    loadDevices,
+    loadSecurityEvents,
+  ]);
 
   const loadCurrentSession = async (_userId: string) => {
     try {
@@ -156,12 +162,24 @@ export function useSessionManagement(): SessionManagementState &
   ) => {
     try {
       const params = new URLSearchParams();
-      if (filters?.eventType) params.append('eventType', filters.eventType);
-      if (filters?.severity) params.append('severity', filters.severity);
-      if (filters?.limit) params.append('limit', filters.limit.toString());
-      if (filters?.offset) params.append('offset', filters.offset.toString());
-      if (filters?.startDate) params.append('startDate', filters.startDate);
-      if (filters?.endDate) params.append('endDate', filters.endDate);
+      if (filters?.eventType) {
+        params.append('eventType', filters.eventType);
+      }
+      if (filters?.severity) {
+        params.append('severity', filters.severity);
+      }
+      if (filters?.limit) {
+        params.append('limit', filters.limit.toString());
+      }
+      if (filters?.offset) {
+        params.append('offset', filters.offset.toString());
+      }
+      if (filters?.startDate) {
+        params.append('startDate', filters.startDate);
+      }
+      if (filters?.endDate) {
+        params.append('endDate', filters.endDate);
+      }
 
       const response = await fetch(`/api/auth/session/security?${params}`, {
         method: 'GET',
@@ -419,7 +437,7 @@ export function useSessionManagement(): SessionManagementState &
         await loadSecurityEvents(user.id, filters);
       }
     },
-    [supabase]
+    [supabase, loadSecurityEvents]
   );
 
   const createSecurityEvent = useCallback(
@@ -474,7 +492,7 @@ export function useSessionManagement(): SessionManagementState &
         await loadAnalytics(user.id, timeframe);
       }
     },
-    [supabase]
+    [supabase, loadAnalytics]
   );
 
   const getSessionStatus = useCallback(async () => {
@@ -482,7 +500,9 @@ export function useSessionManagement(): SessionManagementState &
       const {
         data: { user },
       } = await supabase.auth.getUser();
-      if (!user) return;
+      if (!user) {
+        return;
+      }
 
       const response = await fetch('/api/auth/session/analytics', {
         method: 'POST',

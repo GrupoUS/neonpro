@@ -93,7 +93,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           data: { session },
         } = await supabase.auth.getSession();
 
-        console.log('📊 Initial session check:', !!session);
+        console.log('📊 Initial session check:', Boolean(session));
         if (session) {
           console.log('✅ Initial session found, setting user');
           setSession(session as Session);
@@ -115,7 +115,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(
       async (event: string, session: Session | null) => {
-        console.log('🔄 Auth state change:', event, !!session);
+        console.log('🔄 Auth state change:', event, Boolean(session));
 
         if (session) {
           console.log(
@@ -168,8 +168,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       console.log('=== Sign Up Results ===');
       console.log('Success:', !error);
-      console.log('User created:', !!data.user);
-      console.log('Session created:', !!data.session);
+      console.log('User created:', Boolean(data.user));
+      console.log('Session created:', Boolean(data.session));
       if (error) {
         console.error('Sign up error:', error);
       }
@@ -471,7 +471,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     resource: string,
     action: string
   ): Promise<boolean> => {
-    if (!user) return false;
+    if (!user) {
+      return false;
+    }
 
     try {
       const result = await permissionValidator.checkPermission(
@@ -487,7 +489,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const getUserPermissions = async () => {
-    if (!user) return null;
+    if (!user) {
+      return null;
+    }
 
     try {
       return await permissionValidator.getUserPermissions(user.id);
@@ -498,7 +502,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const hasRole = async (role: string): Promise<boolean> => {
-    if (!user) return false;
+    if (!user) {
+      return false;
+    }
 
     try {
       const permissions = await permissionValidator.getUserPermissions(user.id);

@@ -242,7 +242,9 @@ export class AccountsPayableService {
       if (status === 'approved') {
         updateData.approved_at = new Date().toISOString();
         updateData.approved_by = (await supabase.auth.getUser()).data.user?.id;
-        if (notes) updateData.approval_notes = notes;
+        if (notes) {
+          updateData.approval_notes = notes;
+        }
       }
 
       const { data: ap, error } = await supabase

@@ -35,7 +35,7 @@ import type {
 } from '@/app/types/automated-before-after-analysis';
 
 export class AutomatedBeforeAfterAnalysisService {
-  private supabase;
+  private readonly supabase;
 
   constructor() {
     this.supabase = createClientComponentClient();
@@ -49,7 +49,9 @@ export class AutomatedBeforeAfterAnalysisService {
       .eq('is_active', true)
       .order('created_at', { ascending: false });
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data || [];
   }
 
@@ -62,7 +64,9 @@ export class AutomatedBeforeAfterAnalysisService {
       .eq('id', id)
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -75,7 +79,9 @@ export class AutomatedBeforeAfterAnalysisService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -90,7 +96,9 @@ export class AutomatedBeforeAfterAnalysisService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -130,7 +138,9 @@ export class AutomatedBeforeAfterAnalysisService {
       ascending: false,
     });
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data || [];
   }
 
@@ -141,7 +151,9 @@ export class AutomatedBeforeAfterAnalysisService {
       .eq('id', id)
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -163,7 +175,9 @@ export class AutomatedBeforeAfterAnalysisService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -178,7 +192,9 @@ export class AutomatedBeforeAfterAnalysisService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -188,7 +204,9 @@ export class AutomatedBeforeAfterAnalysisService {
       .delete()
       .eq('id', id);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
   }
 
   // Before/After Photo Pair Methods
@@ -224,7 +242,9 @@ export class AutomatedBeforeAfterAnalysisService {
       ascending: false,
     });
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data || [];
   }
 
@@ -235,7 +255,9 @@ export class AutomatedBeforeAfterAnalysisService {
       .eq('id', id)
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -248,7 +270,9 @@ export class AutomatedBeforeAfterAnalysisService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -263,7 +287,9 @@ export class AutomatedBeforeAfterAnalysisService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -273,7 +299,9 @@ export class AutomatedBeforeAfterAnalysisService {
       .delete()
       .eq('id', id);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
   }
 
   // Image Analysis Result Methods
@@ -303,7 +331,9 @@ export class AutomatedBeforeAfterAnalysisService {
       ascending: false,
     });
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data || [];
   }
 
@@ -314,7 +344,9 @@ export class AutomatedBeforeAfterAnalysisService {
       .eq('id', id)
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -327,7 +359,9 @@ export class AutomatedBeforeAfterAnalysisService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -339,7 +373,9 @@ export class AutomatedBeforeAfterAnalysisService {
       .eq('is_active', true)
       .order('metric_name');
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data || [];
   }
 
@@ -350,7 +386,9 @@ export class AutomatedBeforeAfterAnalysisService {
       .eq('id', id)
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -363,7 +401,9 @@ export class AutomatedBeforeAfterAnalysisService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -378,7 +418,9 @@ export class AutomatedBeforeAfterAnalysisService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -390,7 +432,9 @@ export class AutomatedBeforeAfterAnalysisService {
       .eq('is_active', true)
       .order('area_name');
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data || [];
   }
 
@@ -401,7 +445,9 @@ export class AutomatedBeforeAfterAnalysisService {
       .eq('id', id)
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -414,7 +460,9 @@ export class AutomatedBeforeAfterAnalysisService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -429,7 +477,9 @@ export class AutomatedBeforeAfterAnalysisService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -444,7 +494,9 @@ export class AutomatedBeforeAfterAnalysisService {
       .eq('is_visible', true)
       .order('created_at');
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data || [];
   }
 
@@ -457,7 +509,9 @@ export class AutomatedBeforeAfterAnalysisService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -472,7 +526,9 @@ export class AutomatedBeforeAfterAnalysisService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -482,7 +538,9 @@ export class AutomatedBeforeAfterAnalysisService {
       .delete()
       .eq('id', id);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
   }
 
   // Analysis Reports Methods
@@ -515,7 +573,9 @@ export class AutomatedBeforeAfterAnalysisService {
       ascending: false,
     });
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data || [];
   }
 
@@ -528,7 +588,9 @@ export class AutomatedBeforeAfterAnalysisService {
 
     // Get session data for report generation
     const session = await this.getAnalysisSession(request.session_id);
-    if (!session) throw new Error('Analysis session not found');
+    if (!session) {
+      throw new Error('Analysis session not found');
+    }
 
     // Get photo pairs for the session
     const photoPairs = await this.getPhotoPairs({
@@ -571,7 +633,9 @@ export class AutomatedBeforeAfterAnalysisService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -585,7 +649,9 @@ export class AutomatedBeforeAfterAnalysisService {
       .eq('analysis_result_id', analysisResultId)
       .order('created_at', { ascending: false });
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data || [];
   }
 
@@ -607,7 +673,9 @@ export class AutomatedBeforeAfterAnalysisService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -622,7 +690,9 @@ export class AutomatedBeforeAfterAnalysisService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -633,7 +703,9 @@ export class AutomatedBeforeAfterAnalysisService {
       .select('*')
       .order('created_at', { ascending: false });
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data || [];
   }
 
@@ -651,7 +723,9 @@ export class AutomatedBeforeAfterAnalysisService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -666,7 +740,9 @@ export class AutomatedBeforeAfterAnalysisService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -703,7 +779,9 @@ export class AutomatedBeforeAfterAnalysisService {
     sessionId: string
   ): Promise<AnalysisProgressResponse> {
     const session = await this.getAnalysisSession(sessionId);
-    if (!session) throw new Error('Analysis session not found');
+    if (!session) {
+      throw new Error('Analysis session not found');
+    }
 
     const photoPairs = await this.getPhotoPairs({ session_id: sessionId });
     const processedPairs = photoPairs.filter(
@@ -735,7 +813,9 @@ export class AutomatedBeforeAfterAnalysisService {
 
     // Get photo pair
     const photoPair = await this.getPhotoPair(request.photo_pair_id);
-    if (!photoPair) throw new Error('Photo pair not found');
+    if (!photoPair) {
+      throw new Error('Photo pair not found');
+    }
 
     // Simulate computer vision analysis (in real implementation, this would call actual CV algorithms)
     const improvementPercentage = Math.random() * 100; // Mock improvement calculation

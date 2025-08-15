@@ -101,7 +101,9 @@ export function RescheduleRequest({
   const [availableSlots, setAvailableSlots] = useState<string[]>([]);
   const [loadingSlots, setLoadingSlots] = useState(false);
 
-  if (!appointment) return null;
+  if (!appointment) {
+    return null;
+  }
 
   const canReschedule = appointment.can_reschedule;
   const hoursUntil = appointment.hours_until_appointment;
@@ -142,8 +144,9 @@ export function RescheduleRequest({
   };
 
   const handleConfirm = async () => {
-    if (!(selectedDate && selectedTime && (selectedReason || customReason)))
+    if (!(selectedDate && selectedTime && (selectedReason || customReason))) {
       return;
+    }
 
     const formattedDate = format(selectedDate, 'yyyy-MM-dd');
     const finalReason = customReason.trim() || selectedReason;

@@ -243,7 +243,9 @@ async function generateSlotSuggestions(
     const dayOfWeek = searchDate.getDay(); // 0 = Sunday, 1 = Monday, etc.
 
     const daySchedule = scheduleMap.get(dayOfWeek);
-    if (!daySchedule) continue; // No schedule for this day
+    if (!daySchedule) {
+      continue; // No schedule for this day
+    }
 
     // Generate time slots for this day
     const daySlots = generateDaySuggestions(

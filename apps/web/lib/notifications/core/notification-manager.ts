@@ -101,14 +101,14 @@ export enum NotificationPriorityEnum {
 }
 
 export class NotificationManager {
-  private supabase;
-  private auditLogger: AuditLogger;
-  private lgpdManager: LGPDManager;
-  private encryptionService: EncryptionService;
-  private templateEngine: TemplateEngine;
-  private channelProvider: ChannelProvider;
-  private scheduler: NotificationScheduler;
-  private analytics: NotificationAnalytics;
+  private readonly supabase;
+  private readonly auditLogger: AuditLogger;
+  private readonly lgpdManager: LGPDManager;
+  private readonly encryptionService: EncryptionService;
+  private readonly templateEngine: TemplateEngine;
+  private readonly channelProvider: ChannelProvider;
+  private readonly scheduler: NotificationScheduler;
+  private readonly analytics: NotificationAnalytics;
 
   constructor() {
     this.supabase = createClient(
@@ -231,7 +231,9 @@ export class NotificationManager {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Agendar no scheduler
       await this.scheduler.schedule(data.id, scheduledAt);
@@ -336,7 +338,9 @@ export class NotificationManager {
           updated_at: new Date().toISOString(),
         });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       await this.auditLogger.log({
         action: 'notification_preferences_updated',
@@ -365,7 +369,9 @@ export class NotificationManager {
         .eq('id', notificationId)
         .eq('status', 'scheduled');
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Cancelar no scheduler
       await this.scheduler.cancel(notificationId);
@@ -436,7 +442,9 @@ export class NotificationManager {
 
       const { data, error } = await query;
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return data;
     } catch (error) {
@@ -458,7 +466,9 @@ export class NotificationManager {
         .eq('id', notificationId)
         .eq('recipient_id', userId);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Atualizar analytics
       await this.analytics.recordNotificationEngagement(
@@ -577,7 +587,9 @@ export class NotificationManager {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 

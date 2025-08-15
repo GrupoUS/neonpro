@@ -317,14 +317,14 @@ export interface DataMinimizationEvents {
  * - Compliance monitoring and reporting
  */
 export class DataMinimizationManager extends EventEmitter {
-  private schemas: Map<string, DataCollectionSchema> = new Map();
-  private rules: Map<string, MinimizationRule> = new Map();
-  private requests: Map<string, DataCollectionRequest> = new Map();
+  private readonly schemas: Map<string, DataCollectionSchema> = new Map();
+  private readonly rules: Map<string, MinimizationRule> = new Map();
+  private readonly requests: Map<string, DataCollectionRequest> = new Map();
   private isInitialized = false;
   private monitoringInterval: NodeJS.Timeout | null = null;
 
   constructor(
-    private config: {
+    private readonly config: {
       strictMode: boolean;
       autoMinimization: boolean;
       consentValidation: boolean;
@@ -793,12 +793,24 @@ export class DataMinimizationManager extends EventEmitter {
         if (typeof value === 'number') {
           // Age ranges instead of exact age
           const age = value;
-          if (age < 18) return '0-17';
-          if (age < 25) return '18-24';
-          if (age < 35) return '25-34';
-          if (age < 45) return '35-44';
-          if (age < 55) return '45-54';
-          if (age < 65) return '55-64';
+          if (age < 18) {
+            return '0-17';
+          }
+          if (age < 25) {
+            return '18-24';
+          }
+          if (age < 35) {
+            return '25-34';
+          }
+          if (age < 45) {
+            return '35-44';
+          }
+          if (age < 55) {
+            return '45-54';
+          }
+          if (age < 65) {
+            return '55-64';
+          }
           return '65+';
         }
         break;
@@ -1073,7 +1085,9 @@ export class DataMinimizationManager extends EventEmitter {
       return schema?.consentRequired;
     });
 
-    if (consentRequiredRequests.length === 0) return 100;
+    if (consentRequiredRequests.length === 0) {
+      return 100;
+    }
 
     const validConsentRequests = consentRequiredRequests.filter(
       (r) => r.userConsent
@@ -1113,7 +1127,9 @@ export class DataMinimizationManager extends EventEmitter {
       (r) => r.processing.status === 'error'
     );
 
-    if (requests.length === 0) return 100;
+    if (requests.length === 0) {
+      return 100;
+    }
     return ((requests.length - errorRequests.length) / requests.length) * 100;
   }
 
@@ -1283,7 +1299,7 @@ export class DataMinimizationManager extends EventEmitter {
     for (let i = 0; i < input.length; i++) {
       const char = input.charCodeAt(i);
       hash = (hash << 5) - hash + char;
-      hash = hash & hash; // Convert to 32-bit integer
+      hash &= hash; // Convert to 32-bit integer
     }
     return Math.abs(hash).toString(16);
   }

@@ -1,12 +1,4 @@
-import {
-  Clock,
-  Download,
-  Eye,
-  EyeOff,
-  FileText,
-  Shield,
-  User,
-} from 'lucide-react';
+import { Clock, Download, Eye, EyeOff, FileText, Shield } from 'lucide-react';
 import * as React from 'react';
 import type { HealthRecordData, PractitionerData } from '../types';
 import { cn } from '../utils/cn';

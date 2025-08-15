@@ -124,7 +124,7 @@ interface StatisticalInsightsProps {
   statisticalTests: StatisticalTest[];
   dataQuality: DataQualityMetrics;
   predictiveModels: PredictiveModel[];
-  rawData: Array<Record<string, number>>;
+  rawData: Record<string, number>[];
   loading?: boolean;
   className?: string;
   onModelRetrain?: (modelType: string) => void;
@@ -135,34 +135,46 @@ interface StatisticalInsightsProps {
 // Utility functions
 const getCorrelationStrength = (correlation: number) => {
   const abs = Math.abs(correlation);
-  if (abs >= 0.8) return { strength: 'Very Strong', color: 'text-red-600' };
-  if (abs >= 0.6) return { strength: 'Strong', color: 'text-orange-600' };
-  if (abs >= 0.4) return { strength: 'Moderate', color: 'text-yellow-600' };
-  if (abs >= 0.2) return { strength: 'Weak', color: 'text-blue-600' };
+  if (abs >= 0.8) {
+    return { strength: 'Very Strong', color: 'text-red-600' };
+  }
+  if (abs >= 0.6) {
+    return { strength: 'Strong', color: 'text-orange-600' };
+  }
+  if (abs >= 0.4) {
+    return { strength: 'Moderate', color: 'text-yellow-600' };
+  }
+  if (abs >= 0.2) {
+    return { strength: 'Weak', color: 'text-blue-600' };
+  }
   return { strength: 'Very Weak', color: 'text-gray-600' };
 };
 
 const getSignificanceLevel = (pValue: number) => {
-  if (pValue < 0.001)
+  if (pValue < 0.001) {
     return {
       level: '***',
       color: 'text-green-600',
       description: 'Highly Significant',
     };
-  if (pValue < 0.01)
+  }
+  if (pValue < 0.01) {
     return {
       level: '**',
       color: 'text-green-500',
       description: 'Very Significant',
     };
-  if (pValue < 0.05)
+  }
+  if (pValue < 0.05) {
     return { level: '*', color: 'text-green-400', description: 'Significant' };
-  if (pValue < 0.1)
+  }
+  if (pValue < 0.1) {
     return {
       level: '†',
       color: 'text-yellow-500',
       description: 'Marginally Significant',
     };
+  }
   return {
     level: 'ns',
     color: 'text-gray-500',
@@ -171,14 +183,22 @@ const getSignificanceLevel = (pValue: number) => {
 };
 
 const getQualityColor = (score: number) => {
-  if (score >= 90) return 'text-green-600';
-  if (score >= 75) return 'text-blue-600';
-  if (score >= 60) return 'text-yellow-600';
+  if (score >= 90) {
+    return 'text-green-600';
+  }
+  if (score >= 75) {
+    return 'text-blue-600';
+  }
+  if (score >= 60) {
+    return 'text-yellow-600';
+  }
   return 'text-red-600';
 };
 
-const calculateCorrelationMatrix = (data: Array<Record<string, number>>) => {
-  if (data.length === 0) return [];
+const calculateCorrelationMatrix = (data: Record<string, number>[]) => {
+  if (data.length === 0) {
+    return [];
+  }
 
   const keys = Object.keys(data[0]).filter(
     (key) => typeof data[0][key] === 'number'
@@ -202,7 +222,9 @@ const calculateCorrelationMatrix = (data: Array<Record<string, number>>) => {
 
 const calculatePearsonCorrelation = (x: number[], y: number[]) => {
   const n = Math.min(x.length, y.length);
-  if (n < 2) return 0;
+  if (n < 2) {
+    return 0;
+  }
 
   const sumX = x.slice(0, n).reduce((sum, val) => sum + val, 0);
   const sumY = y.slice(0, n).reduce((sum, val) => sum + val, 0);
@@ -284,7 +306,9 @@ export function StatisticalInsights({
 
   // Custom tooltip for correlation heatmap
   const CorrelationTooltip = ({ active, payload }: any) => {
-    if (!(active && payload && payload.length)) return null;
+    if (!(active && payload && payload.length)) {
+      return null;
+    }
 
     const data = payload[0].payload;
     const strength = getCorrelationStrength(data.value);

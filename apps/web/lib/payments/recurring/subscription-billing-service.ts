@@ -75,9 +75,9 @@ export interface SubscriptionMetrics {
 
 // Main Subscription Billing Service
 export class SubscriptionBillingService {
-  private supabase;
-  private stripe: Stripe;
-  private retryConfig: PaymentRetryConfig;
+  private readonly supabase;
+  private readonly stripe: Stripe;
+  private readonly retryConfig: PaymentRetryConfig;
 
   constructor() {
     this.supabase = createClient(
@@ -134,7 +134,9 @@ export class SubscriptionBillingService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data;
     } catch (error) {
       console.error('Error creating subscription plan:', error);
@@ -162,7 +164,9 @@ export class SubscriptionBillingService {
         .eq('id', planId)
         .single();
 
-      if (planError || !plan) throw new Error('Plan not found');
+      if (planError || !plan) {
+        throw new Error('Plan not found');
+      }
 
       // Get customer Stripe ID
       const { data: customer, error: customerError } = await this.supabase
@@ -171,7 +175,9 @@ export class SubscriptionBillingService {
         .eq('id', customerId)
         .single();
 
-      if (customerError || !customer) throw new Error('Customer not found');
+      if (customerError || !customer) {
+        throw new Error('Customer not found');
+      }
 
       // Calculate trial end date
       const trialEnd = options.trial_days
@@ -220,7 +226,9 @@ export class SubscriptionBillingService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data;
     } catch (error) {
       console.error('Error creating subscription:', error);
@@ -243,7 +251,9 @@ export class SubscriptionBillingService {
         .eq('id', subscriptionId)
         .single();
 
-      if (error || !subscription) throw new Error('Subscription not found');
+      if (error || !subscription) {
+        throw new Error('Subscription not found');
+      }
 
       // Check if billing is due
       const now = new Date();
@@ -349,7 +359,9 @@ export class SubscriptionBillingService {
         .eq('id', subscriptionId)
         .single();
 
-      if (error || !subscription) throw new Error('Subscription not found');
+      if (error || !subscription) {
+        throw new Error('Subscription not found');
+      }
 
       const { data: newPlan, error: planError } = await this.supabase
         .from('subscription_plans')
@@ -357,7 +369,9 @@ export class SubscriptionBillingService {
         .eq('id', newPlanId)
         .single();
 
-      if (planError || !newPlan) throw new Error('New plan not found');
+      if (planError || !newPlan) {
+        throw new Error('New plan not found');
+      }
 
       const periodStart = new Date(subscription.current_period_start);
       const periodEnd = new Date(subscription.current_period_end);
@@ -418,7 +432,9 @@ export class SubscriptionBillingService {
         .eq('id', subscriptionId)
         .single();
 
-      if (error || !subscription) throw new Error('Subscription not found');
+      if (error || !subscription) {
+        throw new Error('Subscription not found');
+      }
 
       const { data: newPlan, error: planError } = await this.supabase
         .from('subscription_plans')
@@ -426,7 +442,9 @@ export class SubscriptionBillingService {
         .eq('id', newPlanId)
         .single();
 
-      if (planError || !newPlan) throw new Error('New plan not found');
+      if (planError || !newPlan) {
+        throw new Error('New plan not found');
+      }
 
       // Update Stripe subscription
       if (subscription.stripe_subscription_id) {
@@ -461,7 +479,9 @@ export class SubscriptionBillingService {
           .select()
           .single();
 
-      if (updateError) throw updateError;
+      if (updateError) {
+        throw updateError;
+      }
 
       // Log plan change
       await this.logBillingEvent(subscriptionId, 'plan_changed', {
@@ -495,7 +515,9 @@ export class SubscriptionBillingService {
         .eq('id', subscriptionId)
         .single();
 
-      if (error || !subscription) throw new Error('Subscription not found');
+      if (error || !subscription) {
+        throw new Error('Subscription not found');
+      }
 
       // Cancel in Stripe
       if (subscription.stripe_subscription_id) {
@@ -530,7 +552,9 @@ export class SubscriptionBillingService {
           .select()
           .single();
 
-      if (updateError) throw updateError;
+      if (updateError) {
+        throw updateError;
+      }
 
       // Log cancellation
       await this.logBillingEvent(subscriptionId, 'subscription_canceled', {

@@ -31,7 +31,7 @@ import type {
 import { createClient } from '../../utils/supabase/client';
 
 export class AutomatedProtocolOptimizationService {
-  private supabase = createClient();
+  private readonly supabase = createClient();
 
   // Protocol Version Management
   async createProtocolVersion(
@@ -48,8 +48,9 @@ export class AutomatedProtocolOptimizationService {
       .select()
       .single();
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to create protocol version: ${error.message}`);
+    }
     return result;
   }
 
@@ -84,8 +85,9 @@ export class AutomatedProtocolOptimizationService {
       .range(from, to)
       .order('created_at', { ascending: false });
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to fetch protocol versions: ${error.message}`);
+    }
 
     // Add outcome and feedback counts for each protocol
     const protocolsWithCounts = await Promise.all(
@@ -113,8 +115,9 @@ export class AutomatedProtocolOptimizationService {
       .eq('id', id)
       .single();
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to fetch protocol version: ${error.message}`);
+    }
     return data;
   }
 
@@ -132,8 +135,9 @@ export class AutomatedProtocolOptimizationService {
       .select()
       .single();
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to update protocol version: ${error.message}`);
+    }
     return result;
   }
 
@@ -143,8 +147,9 @@ export class AutomatedProtocolOptimizationService {
       .delete()
       .eq('id', id);
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to delete protocol version: ${error.message}`);
+    }
   }
 
   // Protocol Outcome Tracking
@@ -162,8 +167,9 @@ export class AutomatedProtocolOptimizationService {
       .select()
       .single();
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to create protocol outcome: ${error.message}`);
+    }
 
     // Trigger optimization analysis after recording outcome
     await this.triggerOptimizationAnalysis(data.protocol_version_id);
@@ -203,8 +209,9 @@ export class AutomatedProtocolOptimizationService {
       .range(from, to)
       .order('outcome_date', { ascending: false });
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to fetch protocol outcomes: ${error.message}`);
+    }
     return { data: data || [], total: count || 0 };
   }
 
@@ -216,7 +223,9 @@ export class AutomatedProtocolOptimizationService {
       .select('*', { count: 'exact', head: true })
       .eq('protocol_version_id', protocol_version_id);
 
-    if (error) throw new Error(`Failed to get outcome count: ${error.message}`);
+    if (error) {
+      throw new Error(`Failed to get outcome count: ${error.message}`);
+    }
     return count || 0;
   }
 
@@ -235,8 +244,9 @@ export class AutomatedProtocolOptimizationService {
       .select()
       .single();
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to create protocol feedback: ${error.message}`);
+    }
 
     // Process high-priority feedback immediately
     if (data.priority_level === 'high' || data.priority_level === 'critical') {
@@ -282,8 +292,9 @@ export class AutomatedProtocolOptimizationService {
       .range(from, to)
       .order('created_at', { ascending: false });
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to fetch protocol feedback: ${error.message}`);
+    }
     return { data: data || [], total: count || 0 };
   }
 
@@ -303,8 +314,9 @@ export class AutomatedProtocolOptimizationService {
       .select()
       .single();
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to update protocol feedback: ${error.message}`);
+    }
     return result;
   }
 
@@ -314,8 +326,9 @@ export class AutomatedProtocolOptimizationService {
       .select('*', { count: 'exact', head: true })
       .eq('protocol_id', protocol_id);
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to get feedback count: ${error.message}`);
+    }
     return count || 0;
   }
 
@@ -360,8 +373,9 @@ export class AutomatedProtocolOptimizationService {
       .select()
       .single();
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to store optimization results: ${error.message}`);
+    }
     return result;
   }
 
@@ -514,8 +528,9 @@ export class AutomatedProtocolOptimizationService {
       ascending: false,
     });
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to fetch optimization results: ${error.message}`);
+    }
 
     const results = data || [];
 
@@ -554,8 +569,9 @@ export class AutomatedProtocolOptimizationService {
       .select()
       .single();
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to create protocol experiment: ${error.message}`);
+    }
     return result;
   }
 
@@ -573,8 +589,9 @@ export class AutomatedProtocolOptimizationService {
       .select()
       .single();
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to update protocol experiment: ${error.message}`);
+    }
     return result;
   }
 
@@ -602,8 +619,9 @@ export class AutomatedProtocolOptimizationService {
       .range(from, to)
       .order('created_at', { ascending: false });
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to fetch protocol experiments: ${error.message}`);
+    }
     return { data: data || [], total: count || 0 };
   }
 
@@ -616,7 +634,9 @@ export class AutomatedProtocolOptimizationService {
       .eq('id', experiment_id)
       .single();
 
-    if (error) throw new Error(`Failed to fetch experiment: ${error.message}`);
+    if (error) {
+      throw new Error(`Failed to fetch experiment: ${error.message}`);
+    }
 
     // Get outcomes for both control and test protocols
     const [controlOutcomes, testOutcomes] = await Promise.all([
@@ -711,8 +731,9 @@ export class AutomatedProtocolOptimizationService {
       .select()
       .single();
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to create protocol evidence: ${error.message}`);
+    }
     return result;
   }
 
@@ -723,8 +744,9 @@ export class AutomatedProtocolOptimizationService {
       .eq('protocol_id', protocol_id)
       .order('relevance_score', { ascending: false });
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to fetch protocol evidence: ${error.message}`);
+    }
     return data || [];
   }
 
@@ -743,10 +765,11 @@ export class AutomatedProtocolOptimizationService {
       .select()
       .single();
 
-    if (error)
+    if (error) {
       throw new Error(
         `Failed to create protocol implementation: ${error.message}`
       );
+    }
     return result;
   }
 
@@ -764,10 +787,11 @@ export class AutomatedProtocolOptimizationService {
       .select()
       .single();
 
-    if (error)
+    if (error) {
       throw new Error(
         `Failed to update protocol implementation: ${error.message}`
       );
+    }
     return result;
   }
 
@@ -784,10 +808,11 @@ export class AutomatedProtocolOptimizationService {
       ascending: false,
     });
 
-    if (error)
+    if (error) {
       throw new Error(
         `Failed to fetch protocol implementations: ${error.message}`
       );
+    }
     return data || [];
   }
 
@@ -814,10 +839,11 @@ export class AutomatedProtocolOptimizationService {
 
     const { data: outcomes, error: outcomeError } = await outcomeQuery;
 
-    if (outcomeError)
+    if (outcomeError) {
       throw new Error(
         `Failed to fetch outcomes for analytics: ${outcomeError.message}`
       );
+    }
 
     // Calculate analytics metrics
     const usageCount = outcomes?.length || 0;
@@ -876,8 +902,9 @@ export class AutomatedProtocolOptimizationService {
       .select()
       .single();
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to create protocol analytics: ${error.message}`);
+    }
     return result;
   }
 

@@ -25,7 +25,7 @@ import type {
 } from '@/app/types/progress-tracking';
 
 class ProgressTrackingService {
-  private supabase = createClientComponentClient();
+  private readonly supabase = createClientComponentClient();
 
   // Progress Tracking Management
   async createProgressTracking(
@@ -45,7 +45,9 @@ class ProgressTrackingService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return tracking;
   }
 
@@ -99,7 +101,9 @@ class ProgressTrackingService {
       .range(offset, offset + limit - 1);
 
     const { data, error, count } = await query;
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     return {
       data: data || [],
@@ -114,7 +118,9 @@ class ProgressTrackingService {
       .eq('id', id)
       .single();
 
-    if (error && error.code !== 'PGRST116') throw error;
+    if (error && error.code !== 'PGRST116') {
+      throw error;
+    }
     return data;
   }
 
@@ -134,7 +140,9 @@ class ProgressTrackingService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return tracking;
   }
 
@@ -144,7 +152,9 @@ class ProgressTrackingService {
       .delete()
       .eq('id', id);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
   }
 
   // Progress Milestones Management
@@ -165,7 +175,9 @@ class ProgressTrackingService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return milestone;
   }
 
@@ -210,7 +222,9 @@ class ProgressTrackingService {
       .range(offset, offset + limit - 1);
 
     const { data, error, count } = await query;
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     return {
       data: data || [],
@@ -237,7 +251,9 @@ class ProgressTrackingService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return milestone;
   }
 
@@ -259,7 +275,9 @@ class ProgressTrackingService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return prediction;
   }
 
@@ -276,7 +294,9 @@ class ProgressTrackingService {
     }
 
     const { data, error } = await query;
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data || [];
   }
 
@@ -300,7 +320,9 @@ class ProgressTrackingService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return prediction;
   }
 
@@ -332,7 +354,9 @@ class ProgressTrackingService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return result;
   }
 
@@ -349,7 +373,9 @@ class ProgressTrackingService {
     }
 
     const { data, error } = await query;
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data || [];
   }
 
@@ -371,7 +397,9 @@ class ProgressTrackingService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return alert;
   }
 
@@ -422,7 +450,9 @@ class ProgressTrackingService {
       .range(offset, offset + limit - 1);
 
     const { data, error, count } = await query;
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     return {
       data: data || [],
@@ -445,7 +475,9 @@ class ProgressTrackingService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return alert;
   }
 
@@ -466,7 +498,9 @@ class ProgressTrackingService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return alert;
   }
 
@@ -488,7 +522,9 @@ class ProgressTrackingService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return metric;
   }
 
@@ -504,7 +540,9 @@ class ProgressTrackingService {
     }
 
     const { data, error } = await query;
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data || [];
   }
 
@@ -599,7 +637,9 @@ class ProgressTrackingService {
     }
 
     const { data, error } = await query;
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Group data by treatment type and area
     const groupedData = (data || []).reduce(
@@ -635,7 +675,7 @@ class ProgressTrackingService {
       }
 
       const firstScore = points[0].score;
-      const lastScore = points[points.length - 1].score;
+      const lastScore = points.at(-1).score;
       const difference = lastScore - firstScore;
 
       if (difference > 10) {
@@ -710,7 +750,9 @@ class ProgressTrackingService {
       data: { user },
       error,
     } = await this.supabase.auth.getUser();
-    if (error || !user) throw new Error('User not authenticated');
+    if (error || !user) {
+      throw new Error('User not authenticated');
+    }
     return user;
   }
 
@@ -723,7 +765,9 @@ class ProgressTrackingService {
       .in('session_id', sessionIds)
       .order('tracking_date', { ascending: true });
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data || [];
   }
 
@@ -739,7 +783,7 @@ class ProgressTrackingService {
 
     const scores = trackingData.map((t) => t.progress_score);
     const firstScore = scores[0];
-    const lastScore = scores[scores.length - 1];
+    const lastScore = scores.at(-1);
     const progressionScore = lastScore - firstScore;
 
     let trendDirection: 'improving' | 'stable' | 'declining' | 'mixed';

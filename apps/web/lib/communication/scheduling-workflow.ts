@@ -84,7 +84,7 @@ export interface WorkflowResults {
 }
 
 export class SchedulingCommunicationWorkflow {
-  private supabase = createClient();
+  private readonly supabase = createClient();
   public communicationService = new CommunicationService();
   public noShowPredictor = new NoShowPredictor();
 
@@ -477,7 +477,7 @@ export class SchedulingCommunicationWorkflow {
       }
     }
 
-    step.output = { responseReceived: !!response, response };
+    step.output = { responseReceived: Boolean(response), response };
     step.status = 'completed';
   }
 

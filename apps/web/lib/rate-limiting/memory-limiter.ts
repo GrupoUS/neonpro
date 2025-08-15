@@ -31,7 +31,7 @@ const rateLimitStore: RateLimitStore = {};
  * Memory-based rate limiter class
  */
 export class MemoryRateLimiter {
-  private cleanupInterval: NodeJS.Timeout;
+  private readonly cleanupInterval: NodeJS.Timeout;
 
   constructor() {
     // Clean up expired entries every 5 minutes

@@ -11,7 +11,7 @@ export interface AuditLogEntry {
 }
 
 export class AuditLogger {
-  private supabase: SupabaseClient<Database>;
+  private readonly supabase: SupabaseClient<Database>;
 
   constructor(supabase: SupabaseClient<Database>) {
     this.supabase = supabase;

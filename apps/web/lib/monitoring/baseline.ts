@@ -42,12 +42,12 @@ export interface BaselineReport {
 }
 
 class BaselineManager {
-  private supabase = createClient();
-  private baselineMetrics: Map<string, BaselineMetric> = new Map();
+  private readonly supabase = createClient();
+  private readonly baselineMetrics: Map<string, BaselineMetric> = new Map();
   private measurementInterval: NodeJS.Timeout | null = null;
 
   // Core metrics to establish baselines for
-  private coreMetrics = [
+  private readonly coreMetrics = [
     // Performance metrics
     { name: 'page_load_time', unit: 'ms', threshold: 2000 },
     { name: 'first_contentful_paint', unit: 'ms', threshold: 1500 },

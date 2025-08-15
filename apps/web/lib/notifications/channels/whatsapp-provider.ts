@@ -157,10 +157,10 @@ class TwilioWhatsAppProvider implements WhatsAppProvider {
   public readonly channel: NotificationChannel = 'whatsapp';
   public readonly priority = 1;
 
-  private accountSid: string;
-  private authToken: string;
-  private fromNumber: string;
-  private config: WhatsAppProviderConfig;
+  private readonly accountSid: string;
+  private readonly authToken: string;
+  private readonly fromNumber: string;
+  private readonly config: WhatsAppProviderConfig;
 
   constructor(config: WhatsAppProviderConfig) {
     this.accountSid = config.twilio.accountSid;
@@ -643,7 +643,7 @@ class TwilioWhatsAppProvider implements WhatsAppProvider {
  * Manages WhatsApp providers and compliance
  */
 class WhatsAppProviderFactory {
-  private provider: WhatsAppProvider;
+  private readonly provider: WhatsAppProvider;
 
   constructor(config: WhatsAppProviderConfig) {
     this.config = config;

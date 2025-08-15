@@ -38,7 +38,9 @@ export class StockReportsService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return { success: true, data: report };
     } catch (error) {
       console.error('Error creating custom report:', error);
@@ -81,7 +83,9 @@ export class StockReportsService {
       }
 
       const { data, error } = await query;
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return { success: true, data };
     } catch (error) {
@@ -109,7 +113,9 @@ export class StockReportsService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return { success: true, data };
     } catch (error) {
       console.error('Error updating report config:', error);
@@ -131,7 +137,9 @@ export class StockReportsService {
         .delete()
         .eq('id', id);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return { success: true };
     } catch (error) {
       console.error('Error deleting report config:', error);
@@ -175,7 +183,9 @@ export class StockReportsService {
       }
 
       const { data: usageData, error } = await query;
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Processar dados para relatório
       const reportData = {
@@ -267,7 +277,9 @@ export class StockReportsService {
       }
 
       const { data: movements, error } = await query;
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       const reportData = {
         title: 'Relatório de Movimentação de Estoque',
@@ -411,7 +423,9 @@ export class StockReportsService {
         .gte('created_at', startDate.toISOString())
         .lte('created_at', date.toISOString());
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Buscar alertas ativos
       const { data: alertsData } = await supabase
@@ -482,7 +496,9 @@ export class StockReportsService {
         .gte('metric_date', since.toISOString())
         .order('metric_date', { ascending: true });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return { success: true, data };
     } catch (error) {
       console.error('Error fetching metrics history:', error);

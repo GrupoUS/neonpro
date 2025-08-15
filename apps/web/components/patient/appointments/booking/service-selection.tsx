@@ -49,7 +49,9 @@ export function ServiceSelection({
         .order('category', { ascending: true })
         .order('name', { ascending: true });
 
-      if (fetchError) throw fetchError;
+      if (fetchError) {
+        throw fetchError;
+      }
       setServices(data || []);
     } catch (err) {
       console.error('Error fetching services:', err);

@@ -160,7 +160,7 @@ export function usePermissions(
     } else {
       resetPermissions();
     }
-  }, [user?.id]);
+  }, [user?.id, loadUserPermissions, resetPermissions]);
 
   // Setup real-time subscriptions
   useEffect(() => {
@@ -168,7 +168,7 @@ export function usePermissions(
       const unsubscribe = subscribeToUpdates();
       return unsubscribe;
     }
-  }, [realtime, user?.id]);
+  }, [realtime, user?.id, subscribeToUpdates]);
 
   // Setup auto-refresh
   useEffect(() => {
@@ -183,7 +183,7 @@ export function usePermissions(
         }
       };
     }
-  }, [refreshInterval]);
+  }, [refreshInterval, refreshPermissions]);
 
   // ============================================================================
   // CORE PERMISSION FUNCTIONS
@@ -193,7 +193,9 @@ export function usePermissions(
    * Load user permissions and context
    */
   const loadUserPermissions = useCallback(async () => {
-    if (!(user?.id && rbacEngine.current)) return;
+    if (!(user?.id && rbacEngine.current)) {
+      return;
+    }
 
     try {
       setIsLoading(true);
@@ -457,7 +459,15 @@ export function usePermissions(
         return false;
       }
     },
-    [user?.id, allowEmergencyOverride, userContext, supabase, toast]
+    [
+      user?.id,
+      allowEmergencyOverride,
+      userContext,
+      supabase,
+      toast, // Clear cache to force permission recheck
+      clearCache,
+      refreshPermissions,
+    ]
   );
 
   // ============================================================================
@@ -470,7 +480,7 @@ export function usePermissions(
   const refreshPermissions = useCallback(async () => {
     clearCache();
     await loadUserPermissions();
-  }, [loadUserPermissions]);
+  }, [loadUserPermissions, clearCache]);
 
   /**
    * Clear permission cache
@@ -493,7 +503,9 @@ export function usePermissions(
    * Subscribe to real-time permission updates
    */
   const subscribeToUpdates = useCallback(() => {
-    if (!user?.id || subscriptionRef.current) return () => {};
+    if (!user?.id || subscriptionRef.current) {
+      return () => {};
+    }
 
     const subscription = supabase
       .channel(`permissions-${user.id}`)

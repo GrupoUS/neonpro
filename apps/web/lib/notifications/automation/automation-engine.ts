@@ -63,13 +63,13 @@ interface AutomationStats {
  * Motor de automação de notificações
  */
 export class AutomationEngine {
-  private rules: Map<string, AutomationRule> = new Map();
+  private readonly rules: Map<string, AutomationRule> = new Map();
   private executionHistory: RuleExecution[] = [];
   private isRunning = false;
 
   constructor(
-    private notificationManager: NotificationManager,
-    private templateEngine: TemplateEngine
+    private readonly notificationManager: NotificationManager,
+    private readonly templateEngine: TemplateEngine
   ) {}
 
   // ============================================================================
@@ -101,7 +101,9 @@ export class AutomationEngine {
    */
   updateRule(ruleId: string, updates: Partial<AutomationRule>): boolean {
     const rule = this.rules.get(ruleId);
-    if (!rule) return false;
+    if (!rule) {
+      return false;
+    }
 
     const updatedRule = { ...rule, ...updates, id: ruleId };
     this.validateRule(updatedRule);

@@ -81,9 +81,12 @@ async function fetchReportDefinitions(filters?: {
 }): Promise<ReportDefinition[]> {
   const searchParams = new URLSearchParams();
 
-  if (filters?.created_by) searchParams.set('created_by', filters.created_by);
-  if (filters?.is_active !== undefined)
+  if (filters?.created_by) {
+    searchParams.set('created_by', filters.created_by);
+  }
+  if (filters?.is_active !== undefined) {
     searchParams.set('is_active', filters.is_active.toString());
+  }
 
   const response = await fetch(
     `/api/inventory/reports/definitions?${searchParams.toString()}`

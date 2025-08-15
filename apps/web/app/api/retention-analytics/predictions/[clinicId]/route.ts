@@ -146,8 +146,12 @@ export async function GET(
     if (startDate || endDate) {
       filteredPredictions = predictions.filter((prediction) => {
         const predictionDate = new Date(prediction.prediction_date);
-        if (startDate && predictionDate < new Date(startDate)) return false;
-        if (endDate && predictionDate > new Date(endDate)) return false;
+        if (startDate && predictionDate < new Date(startDate)) {
+          return false;
+        }
+        if (endDate && predictionDate > new Date(endDate)) {
+          return false;
+        }
         return true;
       });
     }

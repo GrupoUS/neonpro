@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
 
     // Check if WhatsApp is configured
     const config = await whatsAppService.getConfig();
-    if (!(config && config.isActive)) {
+    if (!config?.isActive) {
       return NextResponse.json(
         { error: 'WhatsApp is not configured or inactive' },
         { status: 400 }

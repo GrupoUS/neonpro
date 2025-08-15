@@ -383,18 +383,18 @@ export interface ComplianceGap {
 }
 
 export class AuditTrailManager {
-  private utils: SessionUtils;
-  private eventStore: AuditEventStore;
-  private encryptionService: EncryptionService;
-  private integrityService: IntegrityService;
-  private complianceEngine: ComplianceEngine;
-  private analyticsEngine: AnalyticsEngine;
-  private eventListeners: Map<string, Function[]> = new Map();
-  private bufferSize = 1000;
-  private eventBuffer: AuditEvent[] = [];
-  private flushInterval = 30_000; // 30 seconds
+  private readonly utils: SessionUtils;
+  private readonly eventStore: AuditEventStore;
+  private readonly encryptionService: EncryptionService;
+  private readonly integrityService: IntegrityService;
+  private readonly complianceEngine: ComplianceEngine;
+  private readonly analyticsEngine: AnalyticsEngine;
+  private readonly eventListeners: Map<string, Function[]> = new Map();
+  private readonly bufferSize = 1000;
+  private readonly eventBuffer: AuditEvent[] = [];
+  private readonly flushInterval = 30_000; // 30 seconds
   private flushTimer?: NodeJS.Timeout;
-  private isInitialized = false;
+  private readonly isInitialized = false;
 
   constructor() {
     this.config = SessionConfig.getInstance();
@@ -1097,7 +1097,7 @@ export class AuditTrailManager {
         compliance: await this.complianceEngine.healthCheck(),
         analytics: await this.analyticsEngine.healthCheck(),
         bufferSize: this.eventBuffer.length,
-        flushTimer: !!this.flushTimer,
+        flushTimer: Boolean(this.flushTimer),
       };
 
       const allHealthy = Object.values(checks).every((check) =>

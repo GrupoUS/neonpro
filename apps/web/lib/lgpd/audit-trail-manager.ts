@@ -115,8 +115,8 @@ export interface AuditTrailAnalytics {
  * LGPD Audit Trail Manager
  */
 export class AuditTrailManager {
-  private supabase;
-  private auditLogger: SecurityAuditLogger;
+  private readonly supabase;
+  private readonly auditLogger: SecurityAuditLogger;
 
   constructor() {
     this.supabase = createClient();
@@ -460,18 +460,30 @@ export class AuditTrailManager {
         .eq('clinicId', clinicId);
 
       if (filters) {
-        if (filters.eventType) query = query.eq('eventType', filters.eventType);
-        if (filters.dataType) query = query.eq('dataType', filters.dataType);
-        if (filters.severity) query = query.eq('severity', filters.severity);
-        if (filters.userId) query = query.eq('userId', filters.userId);
-        if (filters.dataSubjectId)
+        if (filters.eventType) {
+          query = query.eq('eventType', filters.eventType);
+        }
+        if (filters.dataType) {
+          query = query.eq('dataType', filters.dataType);
+        }
+        if (filters.severity) {
+          query = query.eq('severity', filters.severity);
+        }
+        if (filters.userId) {
+          query = query.eq('userId', filters.userId);
+        }
+        if (filters.dataSubjectId) {
           query = query.eq('dataSubjectId', filters.dataSubjectId);
-        if (filters.complianceStatus)
+        }
+        if (filters.complianceStatus) {
           query = query.eq('complianceStatus', filters.complianceStatus);
-        if (filters.startDate)
+        }
+        if (filters.startDate) {
           query = query.gte('timestamp', filters.startDate.toISOString());
-        if (filters.endDate)
+        }
+        if (filters.endDate) {
           query = query.lte('timestamp', filters.endDate.toISOString());
+        }
       }
 
       const { data, error } = await query
@@ -716,7 +728,9 @@ export class AuditTrailManager {
 
     // Risk from overdue data subject requests
     const overdueRequests = dataSubjectRequests.filter((r) => {
-      if (r.status === 'completed') return false;
+      if (r.status === 'completed') {
+        return false;
+      }
       const daysSinceSubmission =
         (Date.now() - new Date(r.submittedAt).getTime()) /
         (1000 * 60 * 60 * 24);

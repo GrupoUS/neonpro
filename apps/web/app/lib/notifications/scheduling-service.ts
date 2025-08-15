@@ -36,8 +36,12 @@ interface ScheduledNotification {
 }
 
 export class SchedulingService {
-  private maxRetries = 3;
-  private retryIntervals = [5 * 60 * 1000, 15 * 60 * 1000, 60 * 60 * 1000]; // 5min, 15min, 1hour
+  private readonly maxRetries = 3;
+  private readonly retryIntervals = [
+    5 * 60 * 1000,
+    15 * 60 * 1000,
+    60 * 60 * 1000,
+  ]; // 5min, 15min, 1hour
 
   /**
    * Schedule a notification for future delivery

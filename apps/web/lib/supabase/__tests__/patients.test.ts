@@ -11,7 +11,11 @@ import {
 } from '../patients';
 
 // Mock the Supabase client
-jest.mock('@/app/utils/supabase/client');
+jest.mock('@/app/utils/supabase/client', () => ({
+  createClient: jest.fn(),
+}));
+
+import { createClient } from '@/app/utils/supabase/client';
 
 const mockSupabase = {
   from: jest.fn(),
@@ -107,8 +111,9 @@ describe('Patient Supabase Functions', () => {
         error: null,
       };
 
+      const insertMock = jest.fn().mockResolvedValue(mockInsertResult);
       mockSupabase.from.mockReturnValue({
-        insert: jest.fn().mockResolvedValue(mockInsertResult),
+        insert: insertMock,
         select: jest.fn().mockReturnThis(),
       });
 
@@ -124,11 +129,13 @@ describe('Patient Supabase Functions', () => {
     it('handles database errors gracefully', async () => {
       const mockError = { message: 'Duplicate CPF', code: '23505' };
 
+      const insertMock = jest.fn().mockResolvedValue({
+        data: null,
+        error: mockError,
+      });
+
       mockSupabase.from.mockReturnValue({
-        insert: jest.fn().mockResolvedValue({
-          data: null,
-          error: mockError,
-        }),
+        insert: insertMock,
         select: jest.fn().mockReturnThis(),
       });
 
@@ -148,6 +155,19 @@ describe('Patient Supabase Functions', () => {
 
       const insertMock = jest.fn().mockResolvedValue(mockInsertResult);
       mockSupabase.from.mockReturnValue({
+        insert: insertMock,
+        select: jest.fn().mockReturnThis(),
+      });
+
+      await createPatient(mockPatientData);
+
+      const insertedData = insertMock.mock.calls[0][0];
+
+      // Check FHIR structure
+      expect(insertedData.fhir_data.resourceType).toBe('Patient');
+      expect(insertedData.fhir_data.identifier).toBeDefined();
+      expect(insertedData.fhir_data.name).toBeDefined();
+    });
         insert: insertMock,
         select: jest.fn().mockReturnThis(),
       });

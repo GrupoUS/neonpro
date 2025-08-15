@@ -467,7 +467,9 @@ export class FinancialReportsService {
   }
 
   calculateGrowthRate(current: number, previous: number): number {
-    if (previous === 0) return 0;
+    if (previous === 0) {
+      return 0;
+    }
     return ((current - previous) / previous) * 100;
   }
 
@@ -485,16 +487,24 @@ export class FinancialReportsService {
   }
 
   getRiskColor(riskScore: number): 'secondary' | 'default' | 'destructive' {
-    if (riskScore <= 3) return 'secondary';
-    if (riskScore <= 6) return 'default';
+    if (riskScore <= 3) {
+      return 'secondary';
+    }
+    if (riskScore <= 6) {
+      return 'default';
+    }
     return 'destructive';
   }
 
   getBudgetHealthColor(
     utilizationPercentage: number
   ): 'secondary' | 'default' | 'destructive' {
-    if (utilizationPercentage <= 80) return 'secondary';
-    if (utilizationPercentage <= 95) return 'default';
+    if (utilizationPercentage <= 80) {
+      return 'secondary';
+    }
+    if (utilizationPercentage <= 95) {
+      return 'default';
+    }
     return 'destructive';
   }
 }

@@ -16,7 +16,7 @@ import type {
 } from './types';
 
 export class TrialManagementEngine {
-  private supabase: ReturnType<typeof createClient>;
+  private readonly supabase: ReturnType<typeof createClient>;
 
   constructor() {
     this.supabase = createClient();
@@ -53,7 +53,9 @@ export class TrialManagementEngine {
       .select()
       .single();
 
-    if (error) throw new Error(`Failed to create trial: ${error.message}`);
+    if (error) {
+      throw new Error(`Failed to create trial: ${error.message}`);
+    }
 
     // Initialize user journey tracking
     await this.initializeUserJourney(trialData.id, userId);
@@ -71,7 +73,9 @@ export class TrialManagementEngine {
       .eq('id', trialId)
       .single();
 
-    if (fetchError) throw new Error(`Trial not found: ${fetchError.message}`);
+    if (fetchError) {
+      throw new Error(`Trial not found: ${fetchError.message}`);
+    }
 
     // Calculate conversion probability for new stage
     const journey = await this.getUserJourney(trialId);
@@ -92,8 +96,9 @@ export class TrialManagementEngine {
       .select()
       .single();
 
-    if (updateError)
+    if (updateError) {
       throw new Error(`Failed to update trial: ${updateError.message}`);
+    }
 
     // Log stage transition
     await this.logStageTransition(
@@ -116,7 +121,9 @@ export class TrialManagementEngine {
       .eq('id', trialId)
       .single();
 
-    if (error) return null;
+    if (error) {
+      return null;
+    }
     return this.mapDatabaseToTrial(data);
   }
 
@@ -136,7 +143,9 @@ export class TrialManagementEngine {
       .limit(1)
       .maybeSingle();
 
-    if (error || !data) return null;
+    if (error || !data) {
+      return null;
+    }
     return this.mapDatabaseToTrial(data);
   } // ========================================================================
   // AI CONVERSION PREDICTION & OPTIMIZATION
@@ -144,7 +153,9 @@ export class TrialManagementEngine {
 
   async predictConversion(trialId: string): Promise<ConversionPrediction> {
     const trial = await this.getTrial(trialId);
-    if (!trial) throw new Error('Trial not found');
+    if (!trial) {
+      throw new Error('Trial not found');
+    }
 
     const journey = await this.getUserJourney(trialId);
     const factors = await this.calculateConversionFactors(trial, journey);
@@ -452,8 +463,12 @@ export class TrialManagementEngine {
     ).length;
 
     // Higher consistency when factors point in same direction
-    if (positiveFactors >= negativeFactors * 2) return 1.0;
-    if (negativeFactors >= positiveFactors * 2) return 0.8;
+    if (positiveFactors >= negativeFactors * 2) {
+      return 1.0;
+    }
+    if (negativeFactors >= positiveFactors * 2) {
+      return 0.8;
+    }
     return 0.6; // mixed signals = lower consistency
   }
 
@@ -461,9 +476,15 @@ export class TrialManagementEngine {
     probability: number,
     daysRemaining: number
   ): number {
-    if (probability > 0.8) return Math.min(2, daysRemaining);
-    if (probability > 0.6) return Math.min(5, daysRemaining);
-    if (probability > 0.4) return Math.min(8, daysRemaining);
+    if (probability > 0.8) {
+      return Math.min(2, daysRemaining);
+    }
+    if (probability > 0.6) {
+      return Math.min(5, daysRemaining);
+    }
+    if (probability > 0.4) {
+      return Math.min(8, daysRemaining);
+    }
     return daysRemaining;
   }
 
@@ -471,8 +492,12 @@ export class TrialManagementEngine {
     probability: number,
     daysRemaining: number
   ): 'low' | 'medium' | 'high' {
-    if (probability > 0.7) return 'low';
-    if (probability > 0.4 && daysRemaining > 3) return 'medium';
+    if (probability > 0.7) {
+      return 'low';
+    }
+    if (probability > 0.4 && daysRemaining > 3) {
+      return 'medium';
+    }
     return 'high';
   }
 
@@ -485,7 +510,9 @@ export class TrialManagementEngine {
       { target_user_id: userId }
     );
 
-    if (!similarUsers || similarUsers.length === 0) return 0;
+    if (!similarUsers || similarUsers.length === 0) {
+      return 0;
+    }
 
     const avgConversionRate =
       similarUsers.reduce(
@@ -551,7 +578,9 @@ export class TrialManagementEngine {
         'integrations',
         'automation',
       ];
-      if (keyFeatures.includes(data.featureId)) baseScore *= 1.5;
+      if (keyFeatures.includes(data.featureId)) {
+        baseScore *= 1.5;
+      }
     }
 
     // Boost score for long session duration
@@ -572,7 +601,9 @@ export class TrialManagementEngine {
       .order('created_at', { ascending: false })
       .limit(50); // last 50 events
 
-    if (!events || events.length === 0) return;
+    if (!events || events.length === 0) {
+      return;
+    }
 
     // Weight recent events more heavily (decay factor)
     const now = Date.now();
@@ -603,7 +634,9 @@ export class TrialManagementEngine {
   }
   private async checkStageTransitions(trialId: string): Promise<void> {
     const trial = await this.getTrial(trialId);
-    if (!trial) return;
+    if (!trial) {
+      return;
+    }
 
     const journey = await this.getUserJourney(trialId);
     const newStage = this.determineTrialStage(trial, journey);
@@ -659,10 +692,14 @@ export class TrialManagementEngine {
       .eq('trial_id', trialId)
       .order('created_at', { ascending: true });
 
-    if (error) throw new Error(`Failed to get journey: ${error.message}`);
+    if (error) {
+      throw new Error(`Failed to get journey: ${error.message}`);
+    }
 
     const trial = await this.getTrial(trialId);
-    if (!trial) throw new Error('Trial not found');
+    if (!trial) {
+      throw new Error('Trial not found');
+    }
 
     const mappedEvents: JourneyEvent[] =
       events?.map((event) => ({

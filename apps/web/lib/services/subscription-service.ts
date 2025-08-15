@@ -197,7 +197,9 @@ export class SubscriptionService {
     try {
       const subscription = await this.getUserSubscription(userId);
 
-      if (!subscription) return false;
+      if (!subscription) {
+        return false;
+      }
 
       return (
         subscription.status === 'active' &&
@@ -230,7 +232,7 @@ export class SubscriptionService {
 
 // Webhook handler for Stripe events
 export class StripeWebhookHandler {
-  private subscriptionService: SubscriptionService;
+  private readonly subscriptionService: SubscriptionService;
 
   constructor() {
     this.subscriptionService = new SubscriptionService();

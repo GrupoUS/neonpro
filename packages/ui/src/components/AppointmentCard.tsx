@@ -4,13 +4,12 @@ import {
   CheckCircle,
   Clock,
   MapPin,
-  Phone,
   User,
   X,
 } from 'lucide-react';
 import * as React from 'react';
 import { cn } from '../utils/cn';
-import { formatDate, formatDateTime } from '../utils/formatters';
+import { formatDate } from '../utils/formatters';
 import { Avatar, AvatarFallback, AvatarImage } from './Avatar';
 import { Badge } from './Badge';
 import { Button } from './Button';

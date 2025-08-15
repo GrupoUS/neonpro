@@ -31,12 +31,12 @@ import {
  * Gerenciador principal do sistema de backup
  */
 export class BackupManager {
-  private supabase;
-  private storageProvider: StorageProvider;
-  private scheduler: SchedulerService;
-  private monitoring: MonitoringService;
+  private readonly supabase;
+  private readonly storageProvider: StorageProvider;
+  private readonly scheduler: SchedulerService;
+  private readonly monitoring: MonitoringService;
   // private security: SecurityService;
-  private activeBackups = new Map<string, BackupProgress>();
+  private readonly activeBackups = new Map<string, BackupProgress>();
 
   constructor() {
     this.supabase = createClient(
@@ -78,7 +78,9 @@ export class BackupManager {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Agendar backup se habilitado
       if (newConfig.enabled) {
@@ -127,7 +129,9 @@ export class BackupManager {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Reagendar se necessário
       if (updates.schedule || updates.enabled !== undefined) {
@@ -175,7 +179,9 @@ export class BackupManager {
         .order(sortBy, { ascending: sortOrder === 'ASC' })
         .range(offset, offset + limit - 1);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       const totalPages = Math.ceil((count || 0) / limit);
 
@@ -257,7 +263,9 @@ export class BackupManager {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Iniciar backup em background
       this.performBackup(record as BackupRecord, config as BackupConfig);
@@ -536,7 +544,9 @@ export class BackupManager {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       await auditLogger.log({
         action: 'RECOVERY_REQUESTED',
@@ -607,21 +617,35 @@ export class BackupManager {
         .select('*', { count: 'exact' });
 
       // Aplicar filtros
-      if (filter?.configId) query = query.eq('configId', filter.configId);
-      if (filter?.type) query = query.eq('type', filter.type);
-      if (filter?.status) query = query.eq('status', filter.status);
-      if (filter?.startDate)
+      if (filter?.configId) {
+        query = query.eq('configId', filter.configId);
+      }
+      if (filter?.type) {
+        query = query.eq('type', filter.type);
+      }
+      if (filter?.status) {
+        query = query.eq('status', filter.status);
+      }
+      if (filter?.startDate) {
         query = query.gte('startTime', filter.startDate.toISOString());
-      if (filter?.endDate)
+      }
+      if (filter?.endDate) {
         query = query.lte('startTime', filter.endDate.toISOString());
-      if (filter?.minSize) query = query.gte('size', filter.minSize);
-      if (filter?.maxSize) query = query.lte('size', filter.maxSize);
+      }
+      if (filter?.minSize) {
+        query = query.gte('size', filter.minSize);
+      }
+      if (filter?.maxSize) {
+        query = query.lte('size', filter.maxSize);
+      }
 
       const { data, error, count } = await query
         .order(sortBy, { ascending: sortOrder === 'ASC' })
         .range(offset, offset + limit - 1);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       const totalPages = Math.ceil((count || 0) / limit);
 
@@ -714,7 +738,9 @@ export class BackupManager {
       .eq('status', BackupStatus.COMPLETED)
       .order('startTime', { ascending: true });
 
-    if (!oldBackups) return;
+    if (!oldBackups) {
+      return;
+    }
 
     const retention = config.retention;
     const now = new Date();

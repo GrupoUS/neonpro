@@ -283,10 +283,11 @@ export interface WearableIntegration {
  * Core system for monitoring and analyzing patient health trends
  */
 export class AIHealthMonitoringEngine {
-  private trendModels: Map<string, any> = new Map();
-  private alertThresholds: Map<string, any> = new Map();
-  private predictionModels: Map<string, any> = new Map();
-  private wearableConnections: Map<string, WearableIntegration> = new Map();
+  private readonly trendModels: Map<string, any> = new Map();
+  private readonly alertThresholds: Map<string, any> = new Map();
+  private readonly predictionModels: Map<string, any> = new Map();
+  private readonly wearableConnections: Map<string, WearableIntegration> =
+    new Map();
 
   constructor() {
     this.initializeMonitoringModels();
@@ -390,15 +391,21 @@ export class AIHealthMonitoringEngine {
     for (const dataPoint of realtimeData) {
       // Check for out-of-range values
       const rangeAlert = this.checkValueRange(patient, dataPoint);
-      if (rangeAlert) alerts.push(rangeAlert);
+      if (rangeAlert) {
+        alerts.push(rangeAlert);
+      }
 
       // Check for rapid changes
       const changeAlert = await this.checkRapidChanges(patient, dataPoint);
-      if (changeAlert) alerts.push(changeAlert);
+      if (changeAlert) {
+        alerts.push(changeAlert);
+      }
 
       // Check for trend concerns
       const trendAlert = await this.checkTrendConcerns(patient, dataPoint);
-      if (trendAlert) alerts.push(trendAlert);
+      if (trendAlert) {
+        alerts.push(trendAlert);
+      }
     }
 
     // Check for missing data
@@ -499,7 +506,9 @@ export class AIHealthMonitoringEngine {
     const metricGroups = this.groupHealthDataByMetric(healthData);
 
     for (const [metricName, dataPoints] of metricGroups.entries()) {
-      if (dataPoints.length < 3) continue; // Need minimum data points for trend analysis
+      if (dataPoints.length < 3) {
+        continue; // Need minimum data points for trend analysis
+      }
 
       const trend = await this.calculateHealthTrend(
         patient,
@@ -724,7 +733,9 @@ export class AIHealthMonitoringEngine {
     dataPoints: HealthDataPoint[],
     _period: MonitoringPeriod
   ): Promise<HealthTrend | null> {
-    if (dataPoints.length < 3) return null;
+    if (dataPoints.length < 3) {
+      return null;
+    }
 
     // Sort data points by timestamp
     const sortedData = dataPoints.sort(
@@ -739,7 +750,7 @@ export class AIHealthMonitoringEngine {
 
     // Calculate baseline and current values
     const baselineValue = sortedData[0].value;
-    const currentValue = sortedData[sortedData.length - 1].value;
+    const currentValue = sortedData.at(-1).value;
     const changePercentage =
       ((currentValue - baselineValue) / baselineValue) * 100;
 
@@ -764,7 +775,9 @@ export class AIHealthMonitoringEngine {
     measurements: VitalMeasurement[],
     _period: MonitoringPeriod
   ): Promise<VitalTrend | null> {
-    if (measurements.length < 3) return null;
+    if (measurements.length < 3) {
+      return null;
+    }
 
     // Sort measurements by timestamp
     const sortedMeasurements = measurements.sort(
@@ -857,9 +870,15 @@ export class AIHealthMonitoringEngine {
   private determineTrendDirection(
     slope: number
   ): 'improving' | 'stable' | 'declining' | 'fluctuating' {
-    if (Math.abs(slope) < 0.1) return 'stable';
-    if (slope > 0.1) return 'improving';
-    if (slope < -0.1) return 'declining';
+    if (Math.abs(slope) < 0.1) {
+      return 'stable';
+    }
+    if (slope > 0.1) {
+      return 'improving';
+    }
+    if (slope < -0.1) {
+      return 'declining';
+    }
     return 'fluctuating';
   }
 
@@ -878,12 +897,21 @@ export class AIHealthMonitoringEngine {
     const functional = ['mobility', 'strength', 'endurance', 'flexibility'];
     const psychological = ['mood', 'anxiety', 'depression', 'stress'];
 
-    if (vitalSigns.some((vs) => metricName.includes(vs))) return 'vital_sign';
-    if (symptoms.some((s) => metricName.includes(s))) return 'symptom';
-    if (biomarkers.some((b) => metricName.includes(b))) return 'biomarker';
-    if (functional.some((f) => metricName.includes(f))) return 'functional';
-    if (psychological.some((p) => metricName.includes(p)))
+    if (vitalSigns.some((vs) => metricName.includes(vs))) {
+      return 'vital_sign';
+    }
+    if (symptoms.some((s) => metricName.includes(s))) {
+      return 'symptom';
+    }
+    if (biomarkers.some((b) => metricName.includes(b))) {
+      return 'biomarker';
+    }
+    if (functional.some((f) => metricName.includes(f))) {
+      return 'functional';
+    }
+    if (psychological.some((p) => metricName.includes(p))) {
       return 'psychological';
+    }
 
     return 'biomarker'; // default
   }
@@ -956,7 +984,7 @@ export class AIHealthMonitoringEngine {
     const alerts: VitalAlert[] = [];
 
     // Check latest measurement against normal range
-    const latestMeasurement = measurements[measurements.length - 1];
+    const latestMeasurement = measurements.at(-1);
     if (
       latestMeasurement.value < normalRange.min_value ||
       latestMeasurement.value > normalRange.max_value
@@ -1032,8 +1060,12 @@ export class AIHealthMonitoringEngine {
 
   private getTimeOfDay(date: Date): string {
     const hour = date.getHours();
-    if (hour < 12) return 'morning';
-    if (hour < 18) return 'afternoon';
+    if (hour < 12) {
+      return 'morning';
+    }
+    if (hour < 18) {
+      return 'afternoon';
+    }
     return 'evening';
   }
 
@@ -1098,10 +1130,10 @@ export class AIHealthMonitoringEngine {
   }
 
   private async calculateTreatmentEffectiveness(
-    patient: Patient,
+    _patient: Patient,
     treatment: TreatmentHistory,
     healthData: HealthMetric[],
-    vitalSigns: VitalSigns[]
+    _vitalSigns: VitalSigns[]
   ): Promise<TreatmentEffectiveness> {
     // Calculate treatment effectiveness based on health improvements
     const treatmentStart = new Date(treatment.start_date);
@@ -1170,9 +1202,11 @@ export class AIHealthMonitoringEngine {
   private calculateEffectivenessScore(
     preData: HealthMetric[],
     postData: HealthMetric[],
-    treatment: TreatmentHistory
+    _treatment: TreatmentHistory
   ): number {
-    if (preData.length === 0 || postData.length === 0) return 0.5;
+    if (preData.length === 0 || postData.length === 0) {
+      return 0.5;
+    }
 
     // Calculate average improvement across metrics
     const improvements: number[] = [];
@@ -1482,7 +1516,9 @@ checkValueRange(patient: Patient, dataPoint: HealthDataPoint)
 : VitalAlert | null
 {
   const thresholds = this.alertThresholds.get(dataPoint.source);
-  if (!thresholds) return null;
+  if (!thresholds) {
+    return null;
+  }
 
   if (dataPoint.value > thresholds.critical) {
     return {
@@ -1576,9 +1612,15 @@ private
 parseTimeHorizon(timeHorizon: string)
 : number
 // Parse time horizon string to days
-if (timeHorizon.includes('week')) return 7;
-if (timeHorizon.includes('month')) return 30;
-if (timeHorizon.includes('day')) return 1;
+if (timeHorizon.includes('week')) {
+  return 7;
+}
+if (timeHorizon.includes('month')) {
+  return 30;
+}
+if (timeHorizon.includes('day')) {
+  return 1;
+}
 return 30; // default to 30 days
 
 private
@@ -1624,11 +1666,17 @@ assessDataQuality(data: any, deviceInfo: WearableIntegration)
   let quality = 0.8; // Base quality for device data
 
   // Adjust based on device type
-  if (deviceInfo.device_type === 'medical_grade') quality += 0.15;
-  if (deviceInfo.device_type === 'consumer') quality -= 0.1;
+  if (deviceInfo.device_type === 'medical_grade') {
+    quality += 0.15;
+  }
+  if (deviceInfo.device_type === 'consumer') {
+    quality -= 0.1;
+  }
 
   // Adjust based on data completeness
-  if (data.confidence) quality += (data.confidence - 0.5) * 0.2;
+  if (data.confidence) {
+    quality += (data.confidence - 0.5) * 0.2;
+  }
 
   return Math.max(0, Math.min(1, quality));
 }
@@ -1639,9 +1687,15 @@ calculateOverallHealthScore(analysis: HealthTrendAnalysis)
 : number
 {
   const trendScores = analysis.health_trends.map((t) => {
-    if (t.trend_direction === 'improving') return 0.8 + t.trend_strength * 0.2;
-    if (t.trend_direction === 'stable') return 0.7;
-    if (t.trend_direction === 'declining') return 0.3 - t.trend_strength * 0.2;
+    if (t.trend_direction === 'improving') {
+      return 0.8 + t.trend_strength * 0.2;
+    }
+    if (t.trend_direction === 'stable') {
+      return 0.7;
+    }
+    if (t.trend_direction === 'declining') {
+      return 0.3 - t.trend_strength * 0.2;
+    }
     return 0.5; // fluctuating
   });
 

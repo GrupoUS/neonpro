@@ -38,7 +38,7 @@ class EnhancedSessionManager {
   private static instance: EnhancedSessionManager;
   private activityTimer: NodeJS.Timeout | null = null;
   private warningTimer: NodeJS.Timeout | null = null;
-  private sessionTimeouts: Map<string, SessionTimeout> = new Map();
+  private readonly sessionTimeouts: Map<string, SessionTimeout> = new Map();
 
   private constructor() {}
 
@@ -158,7 +158,9 @@ class EnhancedSessionManager {
     activity: Omit<SessionActivity, 'sessionId' | 'timestamp'>
   ): Promise<void> {
     const timeout = this.sessionTimeouts.get(sessionId);
-    if (!timeout) return;
+    if (!timeout) {
+      return;
+    }
 
     // Update last activity timestamp
     timeout.lastActivity = Date.now();
@@ -188,7 +190,9 @@ class EnhancedSessionManager {
    */
   shouldShowTimeoutWarning(sessionId: string): boolean {
     const timeout = this.sessionTimeouts.get(sessionId);
-    if (!timeout) return false;
+    if (!timeout) {
+      return false;
+    }
 
     const timeSinceActivity = Date.now() - timeout.lastActivity;
     const warningThresholdMs = timeout.warningThreshold * 60 * 1000;
@@ -280,7 +284,9 @@ class EnhancedSessionManager {
         .eq('user_id', userId)
         .eq('is_active', true);
 
-      if (!sessions) return;
+      if (!sessions) {
+        return;
+      }
 
       // Check for suspicious concurrent sessions
       const suspiciousSessions = sessions.filter((session) => {
@@ -326,7 +332,9 @@ class EnhancedSessionManager {
 
   private startTimeoutMonitoring(sessionId: string, _userId: string): void {
     const timeout = this.sessionTimeouts.get(sessionId);
-    if (!timeout) return;
+    if (!timeout) {
+      return;
+    }
 
     // Set warning timer
     const warningMs =
@@ -382,7 +390,9 @@ class EnhancedSessionManager {
   private async revokeOAuthTokens(sessionId: string): Promise<void> {
     try {
       const tokens = await this.retrieveTokensSecurely(sessionId);
-      if (!tokens || tokens.provider !== 'google') return;
+      if (!tokens || tokens.provider !== 'google') {
+        return;
+      }
 
       // Revoke Google OAuth tokens
       const response = await fetch('https://oauth2.googleapis.com/revoke', {

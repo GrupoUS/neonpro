@@ -32,10 +32,12 @@ export class FocusManager {
     FocusManager.trapStack.push(element);
     const focusableElements = FocusManager.getFocusableElements(element);
 
-    if (focusableElements.length === 0) return;
+    if (focusableElements.length === 0) {
+      return;
+    }
 
     const firstElement = focusableElements[0];
-    const lastElement = focusableElements[focusableElements.length - 1];
+    const lastElement = focusableElements.at(-1);
 
     element.addEventListener('keydown', (e) => {
       if (e.key === 'Tab') {
@@ -101,7 +103,7 @@ export class FocusManager {
 export class ContrastChecker {
   static calculateLuminance(r: number, g: number, b: number): number {
     const [rs, gs, bs] = [r, g, b].map((c) => {
-      c = c / 255;
+      c /= 255;
       return c <= 0.039_28 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
     });
     return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
@@ -111,7 +113,9 @@ export class ContrastChecker {
     const rgb1 = ContrastChecker.hexToRgb(color1);
     const rgb2 = ContrastChecker.hexToRgb(color2);
 
-    if (!(rgb1 && rgb2)) return 0;
+    if (!(rgb1 && rgb2)) {
+      return 0;
+    }
 
     const lum1 = ContrastChecker.calculateLuminance(rgb1.r, rgb1.g, rgb1.b);
     const lum2 = ContrastChecker.calculateLuminance(rgb2.r, rgb2.g, rgb2.b);
@@ -274,7 +278,9 @@ export class HealthcareA11y {
   }
 
   static announceFormErrors(errors: string[]) {
-    if (errors.length === 0) return;
+    if (errors.length === 0) {
+      return;
+    }
 
     const message =
       errors.length === 1

@@ -148,7 +148,9 @@ export class CommunicationAnalytics {
       }
 
       const { data: logs, error } = await query;
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return this.calculateMetrics(logs || []);
     } catch (error) {
@@ -235,7 +237,9 @@ export class CommunicationAnalytics {
         .eq('id', campaignId)
         .single();
 
-      if (campaignError) throw campaignError;
+      if (campaignError) {
+        throw campaignError;
+      }
 
       // Get campaign communications
       const { data: logs, error: logsError } = await supabase
@@ -246,7 +250,9 @@ export class CommunicationAnalytics {
         `)
         .eq('campaign_id', campaignId);
 
-      if (logsError) throw logsError;
+      if (logsError) {
+        throw logsError;
+      }
 
       const overallMetrics = this.calculateMetrics(logs || []);
 
@@ -631,7 +637,9 @@ export class CommunicationAnalytics {
   }
 
   private calculateChangePercentage(current: number, previous: number): number {
-    if (previous === 0) return current > 0 ? 100 : 0;
+    if (previous === 0) {
+      return current > 0 ? 100 : 0;
+    }
     return ((current - previous) / previous) * 100;
   }
 
@@ -670,7 +678,9 @@ export class CommunicationAnalytics {
   }
 
   private calculateResponseRate(communications: any[]): number {
-    if (communications.length === 0) return 0;
+    if (communications.length === 0) {
+      return 0;
+    }
 
     const responses = communications.filter((comm) =>
       comm.communication_events?.some((e: any) => e.event_type === 'replied')
@@ -680,7 +690,9 @@ export class CommunicationAnalytics {
   }
 
   private calculateAppointmentAdherence(appointments: any[]): number {
-    if (appointments.length === 0) return 100; // No data = perfect score
+    if (appointments.length === 0) {
+      return 100; // No data = perfect score
+    }
 
     const completed = appointments.filter(
       (apt) => apt.status === 'completed' && !apt.actual_no_show
@@ -693,7 +705,9 @@ export class CommunicationAnalytics {
     communications: any[],
     preferences: any
   ): number {
-    if (!preferences || communications.length === 0) return 50; // Neutral score
+    if (!preferences || communications.length === 0) {
+      return 50; // Neutral score
+    }
 
     const alignedCommunications = communications.filter((comm) => {
       if (
@@ -715,7 +729,9 @@ export class CommunicationAnalytics {
   }
 
   private calculateRecencyScore(communications: any[]): number {
-    if (communications.length === 0) return 0;
+    if (communications.length === 0) {
+      return 0;
+    }
 
     const now = new Date();
     const mostRecent = new Date(

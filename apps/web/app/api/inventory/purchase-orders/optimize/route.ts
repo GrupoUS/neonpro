@@ -167,7 +167,9 @@ async function analyzeBulkOpportunities(
       .in('item_id', itemIds)
       .not('bulk_discount_threshold', 'is', null);
 
-    if (error) return [];
+    if (error) {
+      return [];
+    }
 
     const bulkOpportunities =
       supplierItems?.map((item: any) => {
@@ -230,7 +232,9 @@ async function generateSeasonalRecommendations(
         new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString()
       ); // Last year
 
-    if (error || !consumptionData) return [];
+    if (error || !consumptionData) {
+      return [];
+    }
 
     // Group by month and analyze patterns
     const monthlyConsumption = consumptionData.reduce(
@@ -238,8 +242,12 @@ async function generateSeasonalRecommendations(
         const month = new Date(transaction.created_at).getMonth();
         const itemId = transaction.item_id;
 
-        if (!acc[itemId]) acc[itemId] = {};
-        if (!acc[itemId][month]) acc[itemId][month] = 0;
+        if (!acc[itemId]) {
+          acc[itemId] = {};
+        }
+        if (!acc[itemId][month]) {
+          acc[itemId][month] = 0;
+        }
 
         acc[itemId][month] += Math.abs(transaction.quantity);
 

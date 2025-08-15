@@ -80,7 +80,9 @@ export function RealTimeAvailability({
    */
   const handleSlotSelect = useCallback(
     async (slot: TimeSlot) => {
-      if (reservingSlot) return;
+      if (reservingSlot) {
+        return;
+      }
 
       setSelectedSlot(slot.id);
       setReservingSlot(slot.id);

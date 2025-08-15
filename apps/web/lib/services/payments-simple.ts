@@ -110,12 +110,14 @@ export interface PaymentSummary {
 }
 
 export class PaymentsService {
-  private supabase = createClient();
+  private readonly supabase = createClient();
 
   async createPayment(paymentData: PaymentFormData): Promise<Payment> {
     try {
       const { data: currentUser } = await this.supabase.auth.getUser();
-      if (!currentUser.user) throw new Error('Usuário não autenticado');
+      if (!currentUser.user) {
+        throw new Error('Usuário não autenticado');
+      }
 
       const insertData: PaymentInsert = {
         ...paymentData,
@@ -130,7 +132,9 @@ export class PaymentsService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Update accounts payable paid amount if payment is completed
       if (paymentData.status === 'completed') {
@@ -147,7 +151,9 @@ export class PaymentsService {
   async processBulkPayments(bulkData: BulkPaymentData): Promise<Payment[]> {
     try {
       const { data: currentUser } = await this.supabase.auth.getUser();
-      if (!currentUser.user) throw new Error('Usuário não autenticado');
+      if (!currentUser.user) {
+        throw new Error('Usuário não autenticado');
+      }
 
       const payments: PaymentInsert[] = bulkData.payments.map((payment) => ({
         accounts_payable_id: payment.accounts_payable_id,
@@ -167,7 +173,9 @@ export class PaymentsService {
         .insert(payments)
         .select();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Update all related accounts payable
       for (const payment of bulkData.payments) {

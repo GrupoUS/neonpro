@@ -76,8 +76,8 @@ export interface NotificationStats {
 
 // Notification Service
 export class NotificationService {
-  private supabase: SupabaseClient;
-  private templates: Map<string, NotificationTemplate> = new Map();
+  private readonly supabase: SupabaseClient;
+  private readonly templates: Map<string, NotificationTemplate> = new Map();
 
   constructor(supabase: SupabaseClient) {
     this.supabase = supabase;
@@ -747,7 +747,9 @@ export class NotificationService {
   private isInQuietHours(
     quietHours?: NotificationPreference['quietHours']
   ): boolean {
-    if (!quietHours) return false;
+    if (!quietHours) {
+      return false;
+    }
 
     const now = new Date();
     const userTime = new Intl.DateTimeFormat('en-US', {
@@ -780,7 +782,9 @@ export class NotificationService {
   private getNextAvailableTime(
     quietHours?: NotificationPreference['quietHours']
   ): Date {
-    if (!quietHours) return new Date();
+    if (!quietHours) {
+      return new Date();
+    }
 
     const now = new Date();
     const [endHour, endMinute] = quietHours.end.split(':').map(Number);

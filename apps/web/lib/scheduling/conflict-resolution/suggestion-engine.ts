@@ -98,7 +98,7 @@ export interface SuggestionConfig {
  * Gera sugestões inteligentes para resolução de conflitos
  */
 export class SuggestionEngine {
-  private supabase = createClient();
+  private readonly supabase = createClient();
   private config: SuggestionConfig;
 
   constructor(config: Partial<SuggestionConfig> = {}) {
@@ -162,7 +162,9 @@ export class SuggestionEngine {
           const priorityOrder = { critical: 4, high: 3, medium: 2, low: 1 };
           const priorityDiff =
             priorityOrder[b.priority] - priorityOrder[a.priority];
-          if (priorityDiff !== 0) return priorityDiff;
+          if (priorityDiff !== 0) {
+            return priorityDiff;
+          }
           return b.confidence - a.confidence;
         })
         .slice(
@@ -949,7 +951,9 @@ export class SuggestionEngine {
             staffSpecialties.includes(specialty)
           );
 
-          if (!hasRequiredSkills) continue;
+          if (!hasRequiredSkills) {
+            continue;
+          }
         }
 
         // Verificar disponibilidade
@@ -1039,7 +1043,9 @@ export class SuggestionEngine {
         .eq('id', equipmentId)
         .single();
 
-      if (!originalEquipment) return [];
+      if (!originalEquipment) {
+        return [];
+      }
 
       // Buscar equipamentos similares
       const { data: similarEquipment, error } = await this.supabase
@@ -1146,7 +1152,9 @@ export class SuggestionEngine {
           `and(start_time.lte.${endTime.toISOString()},end_time.gte.${startTime.toISOString()})`
         );
 
-      if (maintenance && maintenance.length > 0) return false;
+      if (maintenance && maintenance.length > 0) {
+        return false;
+      }
 
       // Verificar uso em outros agendamentos
       const { data: conflicts } = await this.supabase
@@ -1288,7 +1296,9 @@ export class SuggestionEngine {
               .update({ staff_id: staffChange.to })
               .eq('id', appointmentId);
 
-            if (error) throw error;
+            if (error) {
+              throw error;
+            }
             changes.push({
               type: 'staff_reassignment',
               from: staffChange.from,
@@ -1308,7 +1318,9 @@ export class SuggestionEngine {
               .update({ room_id: roomChange.to })
               .eq('id', appointmentId);
 
-            if (error) throw error;
+            if (error) {
+              throw error;
+            }
             changes.push({
               type: 'room_change',
               from: roomChange.from,
@@ -1342,7 +1354,9 @@ export class SuggestionEngine {
                 .update({ required_equipment: updatedEquipment })
                 .eq('id', appointmentId);
 
-              if (error) throw error;
+              if (error) {
+                throw error;
+              }
               changes.push({
                 type: 'equipment_substitution',
                 from: equipmentChange.from,

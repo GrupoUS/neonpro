@@ -57,12 +57,12 @@ export interface SessionTransfer {
 }
 
 export class ConcurrentSessionManager {
-  private config: SessionConfig;
-  private utils: SessionUtils;
-  private activeConflicts: Map<string, SessionConflict> = new Map();
-  private sessionTransfers: Map<string, SessionTransfer> = new Map();
-  private deviceSessions: Map<string, Set<string>> = new Map(); // deviceId -> sessionIds
-  private userSessions: Map<string, Set<string>> = new Map(); // userId -> sessionIds
+  private readonly config: SessionConfig;
+  private readonly utils: SessionUtils;
+  private readonly activeConflicts: Map<string, SessionConflict> = new Map();
+  private readonly sessionTransfers: Map<string, SessionTransfer> = new Map();
+  private readonly deviceSessions: Map<string, Set<string>> = new Map(); // deviceId -> sessionIds
+  private readonly userSessions: Map<string, Set<string>> = new Map(); // userId -> sessionIds
 
   constructor() {
     this.config = SessionConfig.getInstance();
@@ -540,7 +540,9 @@ export class ConcurrentSessionManager {
    * Utility functions
    */
   private findOldestSession(sessions: UserSession[]): UserSession | null {
-    if (sessions.length === 0) return null;
+    if (sessions.length === 0) {
+      return null;
+    }
     return sessions.reduce((oldest, current) =>
       new Date(current.createdAt) < new Date(oldest.createdAt)
         ? current
@@ -552,7 +554,9 @@ export class ConcurrentSessionManager {
     sessions: UserSession[],
     priorityOrder: string[]
   ): UserSession | null {
-    if (sessions.length === 0) return null;
+    if (sessions.length === 0) {
+      return null;
+    }
 
     return sessions.reduce((lowest, current) => {
       const currentPriority = priorityOrder.indexOf(current.deviceType) || 999;

@@ -60,10 +60,14 @@ export function useMFA(options: UseMFAOptions): UseMFAReturn {
    */
   const fetchMFASettings = useCallback(
     async (showLoading = true) => {
-      if (!opts.userId) return;
+      if (!opts.userId) {
+        return;
+      }
 
       try {
-        if (showLoading) setIsLoading(true);
+        if (showLoading) {
+          setIsLoading(true);
+        }
         setError(null);
 
         // Cancel any ongoing requests
@@ -98,7 +102,9 @@ export function useMFA(options: UseMFAOptions): UseMFAReturn {
 
         console.error('Failed to fetch MFA settings:', error);
       } finally {
-        if (showLoading) setIsLoading(false);
+        if (showLoading) {
+          setIsLoading(false);
+        }
       }
     },
     [opts.userId]

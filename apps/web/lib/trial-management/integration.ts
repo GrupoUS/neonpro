@@ -7,8 +7,8 @@ import { TrialManager } from './index';
 import type { Trial, UserJourney } from './types';
 
 export class TrialAnalyticsIntegration {
-  private analytics: AnalyticsService;
-  private trialManager = TrialManager;
+  private readonly analytics: AnalyticsService;
+  private readonly trialManager = TrialManager;
 
   constructor() {
     this.analytics = new AnalyticsService();
@@ -224,7 +224,9 @@ export class TrialAnalyticsIntegration {
       (e) => e.type === 'feature_used' || e.type === 'milestone_reached'
     );
 
-    if (!firstValueEvent) return -1;
+    if (!firstValueEvent) {
+      return -1;
+    }
 
     return firstValueEvent.timestamp.getTime() - journey.startDate.getTime();
   }
@@ -248,7 +250,9 @@ export class TrialAnalyticsIntegration {
   }
 
   private calculateTrend(current: number, previous: number): number {
-    if (previous === 0) return 0;
+    if (previous === 0) {
+      return 0;
+    }
     return (current - previous) / previous;
   }
 

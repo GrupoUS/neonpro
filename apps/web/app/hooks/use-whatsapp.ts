@@ -48,7 +48,7 @@ export function useWhatsAppTemplate(name: string) {
   return useQuery({
     queryKey: ['whatsapp-template', name],
     queryFn: () => whatsAppService.getTemplate(name),
-    enabled: !!name,
+    enabled: Boolean(name),
     staleTime: 10 * 60 * 1000,
   });
 }
@@ -151,7 +151,7 @@ export function useCheckWhatsAppOptIn(phoneNumber: string) {
   return useQuery({
     queryKey: ['whatsapp-opt-in', phoneNumber],
     queryFn: () => whatsAppService.checkOptIn(phoneNumber),
-    enabled: !!phoneNumber,
+    enabled: Boolean(phoneNumber),
     staleTime: 5 * 60 * 1000,
   });
 }
@@ -201,7 +201,7 @@ export function useWhatsAppAnalytics(startDate: Date, endDate: Date) {
       endDate.toISOString(),
     ],
     queryFn: () => whatsAppService.getAnalytics(startDate, endDate),
-    enabled: !!startDate && !!endDate,
+    enabled: Boolean(startDate) && Boolean(endDate),
     staleTime: 60 * 1000, // 1 minute for analytics
   });
 }
@@ -212,14 +212,14 @@ export function useWhatsAppStatus() {
   const { data: templates, isLoading: templatesLoading } =
     useWhatsAppTemplates();
 
-  const isConfigured = !!(
+  const isConfigured = Boolean(
     config?.phoneNumberId &&
-    config?.accessToken &&
-    config?.webhookVerifyToken &&
-    config?.isActive
+      config?.accessToken &&
+      config?.webhookVerifyToken &&
+      config?.isActive
   );
 
-  const hasTemplates = !!(templates && templates.length > 0);
+  const hasTemplates = Boolean(templates && templates.length > 0);
 
   const isReady = isConfigured && hasTemplates;
 

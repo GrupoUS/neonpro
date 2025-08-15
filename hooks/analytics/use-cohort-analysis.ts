@@ -144,12 +144,14 @@ export function useCohortAnalysis(
     cacheTime: 30 * 60 * 1000, // 30 minutes
     retry: 2,
     refetchOnWindowFocus: false,
-    enabled: !!config.startDate && !!config.endDate,
+    enabled: Boolean(config.startDate) && Boolean(config.endDate),
   });
 
   // Auto-refresh effect
   useEffect(() => {
-    if (!(config.autoRefresh && config.refreshInterval)) return;
+    if (!(config.autoRefresh && config.refreshInterval)) {
+      return;
+    }
 
     const interval = setInterval(() => {
       refreshData();
@@ -184,7 +186,9 @@ export function useCohortAnalysis(
   // Export data mutation
   const exportDataMutation = useMutation({
     mutationFn: async (format: 'csv' | 'excel' | 'pdf') => {
-      if (!analysisData) throw new Error('No data to export');
+      if (!analysisData) {
+        throw new Error('No data to export');
+      }
 
       const response = await fetch('/api/analytics/export', {
         method: 'POST',
@@ -200,7 +204,9 @@ export function useCohortAnalysis(
         }),
       });
 
-      if (!response.ok) throw new Error('Export failed');
+      if (!response.ok) {
+        throw new Error('Export failed');
+      }
 
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
@@ -282,7 +288,9 @@ export function useCohortComparison(cohortIds: string[]) {
         }
       );
 
-      if (!response.ok) throw new Error('Cohort comparison failed');
+      if (!response.ok) {
+        throw new Error('Cohort comparison failed');
+      }
       return response.json();
     },
     enabled: cohortIds.length > 1,
@@ -298,7 +306,9 @@ export function useRealTimeCohortMetrics(cohortId: string, enabled = true) {
   const supabase = createClient();
 
   useEffect(() => {
-    if (!(enabled && cohortId)) return;
+    if (!(enabled && cohortId)) {
+      return;
+    }
 
     // Subscribe to real-time updates
     const subscription = supabase
@@ -356,11 +366,13 @@ export function useCohortInsights(config: CohortAnalysisHookConfig) {
         }),
       });
 
-      if (!response.ok) throw new Error('Failed to generate insights');
+      if (!response.ok) {
+        throw new Error('Failed to generate insights');
+      }
       return response.json();
     },
     staleTime: 15 * 60 * 1000, // 15 minutes
-    enabled: !!config.startDate && !!config.endDate,
+    enabled: Boolean(config.startDate) && Boolean(config.endDate),
   });
 }
 
@@ -399,7 +411,9 @@ export function useCohortDataFormatters() {
       },
 
       formatPeriodLabel: (period: number, granularity: string): string => {
-        if (period === 0) return 'Initial';
+        if (period === 0) {
+          return 'Initial';
+        }
         const unit =
           granularity === 'daily'
             ? 'day'
@@ -410,16 +424,24 @@ export function useCohortDataFormatters() {
       },
 
       getRetentionColor: (rate: number): string => {
-        if (rate >= 80) return 'text-green-600';
-        if (rate >= 60) return 'text-yellow-600';
+        if (rate >= 80) {
+          return 'text-green-600';
+        }
+        if (rate >= 60) {
+          return 'text-yellow-600';
+        }
         return 'text-red-600';
       },
 
       getRetentionBadgeVariant: (
         rate: number
       ): 'default' | 'secondary' | 'destructive' => {
-        if (rate >= 80) return 'default';
-        if (rate >= 60) return 'secondary';
+        if (rate >= 80) {
+          return 'default';
+        }
+        if (rate >= 60) {
+          return 'secondary';
+        }
         return 'destructive';
       },
     }),

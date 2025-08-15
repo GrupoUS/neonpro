@@ -288,9 +288,15 @@ export class CSRFProtection {
     const realIP = request.headers.get('x-real-ip');
     const cfConnectingIP = request.headers.get('cf-connecting-ip');
 
-    if (cfConnectingIP) return cfConnectingIP;
-    if (realIP) return realIP;
-    if (forwarded) return forwarded.split(',')[0].trim();
+    if (cfConnectingIP) {
+      return cfConnectingIP;
+    }
+    if (realIP) {
+      return realIP;
+    }
+    if (forwarded) {
+      return forwarded.split(',')[0].trim();
+    }
 
     return request.ip || 'unknown';
   }

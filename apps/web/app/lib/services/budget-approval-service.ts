@@ -51,7 +51,9 @@ export class BudgetApprovalService {
       .select()
       .single();
 
-    if (error) throw new Error(`Failed to create budget: ${error.message}`);
+    if (error) {
+      throw new Error(`Failed to create budget: ${error.message}`);
+    }
 
     // Create initial allocations if provided
     if (request.allocations && request.allocations.length > 0) {
@@ -90,7 +92,9 @@ export class BudgetApprovalService {
       .select()
       .single();
 
-    if (error) throw new Error(`Failed to update budget: ${error.message}`);
+    if (error) {
+      throw new Error(`Failed to update budget: ${error.message}`);
+    }
     return data;
   }
 
@@ -125,7 +129,9 @@ export class BudgetApprovalService {
     }
 
     const { data, error } = await query;
-    if (error) throw new Error(`Failed to list budgets: ${error.message}`);
+    if (error) {
+      throw new Error(`Failed to list budgets: ${error.message}`);
+    }
     return data || [];
   }
 
@@ -146,7 +152,9 @@ export class BudgetApprovalService {
       .select()
       .single();
 
-    if (error) throw new Error(`Failed to approve budget: ${error.message}`);
+    if (error) {
+      throw new Error(`Failed to approve budget: ${error.message}`);
+    }
     return data;
   }
 
@@ -233,8 +241,9 @@ export class BudgetApprovalService {
       .insert(allocationsData)
       .select();
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to create budget allocations: ${error.message}`);
+    }
 
     // Update budget allocated amount
     const totalAllocated = allocations.reduce(
@@ -255,8 +264,9 @@ export class BudgetApprovalService {
       .eq('budget_id', budgetId)
       .order('allocated_amount', { ascending: false });
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to get budget allocations: ${error.message}`);
+    }
     return data || [];
   }
 
@@ -273,8 +283,9 @@ export class BudgetApprovalService {
       .select()
       .single();
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to update budget allocation: ${error.message}`);
+    }
     return data;
   }
 
@@ -289,10 +300,11 @@ export class BudgetApprovalService {
       additional_amount: additionalAmount,
     });
 
-    if (error)
+    if (error) {
       throw new Error(
         `Failed to update budget allocated amount: ${error.message}`
       );
+    }
   }
 
   // =====================================================================================
@@ -311,8 +323,9 @@ export class BudgetApprovalService {
       .select()
       .single();
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to create cost center: ${error.message}`);
+    }
     return data;
   }
 
@@ -326,7 +339,9 @@ export class BudgetApprovalService {
       .eq('is_active', true)
       .order('name');
 
-    if (error) throw new Error(`Failed to list cost centers: ${error.message}`);
+    if (error) {
+      throw new Error(`Failed to list cost centers: ${error.message}`);
+    }
     return data || [];
   }
 
@@ -354,8 +369,9 @@ export class BudgetApprovalService {
       .insert(approvals)
       .select();
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to create approval request: ${error.message}`);
+    }
     return data || [];
   }
 
@@ -377,7 +393,9 @@ export class BudgetApprovalService {
       .select()
       .single();
 
-    if (error) throw new Error(`Failed to process approval: ${error.message}`);
+    if (error) {
+      throw new Error(`Failed to process approval: ${error.message}`);
+    }
     return data;
   }
 
@@ -391,8 +409,9 @@ export class BudgetApprovalService {
       .select('*')
       .eq('purchase_order_id', purchaseOrderId);
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to check approval eligibility: ${error.message}`);
+    }
 
     const totalApprovals = approvals?.length || 0;
     const approvedCount =
@@ -441,8 +460,9 @@ export class BudgetApprovalService {
       .select()
       .single();
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to create workflow rule: ${error.message}`);
+    }
     return data;
   }
 
@@ -456,7 +476,9 @@ export class BudgetApprovalService {
     const _supabase = await this.getSupabaseClient();
 
     const budget = await this.getBudget(budgetId);
-    if (!budget) throw new Error('Budget not found');
+    if (!budget) {
+      throw new Error('Budget not found');
+    }
 
     const allocations = await this.getBudgetAllocations(budgetId);
 
@@ -519,7 +541,9 @@ export class BudgetApprovalService {
     budgetId: string
   ): Promise<BudgetOptimizationRecommendation[]> {
     const budget = await this.getBudget(budgetId);
-    if (!budget) return [];
+    if (!budget) {
+      return [];
+    }
 
     const allocations = await this.getBudgetAllocations(budgetId);
     const recommendations: BudgetOptimizationRecommendation[] = [];
@@ -573,7 +597,9 @@ export class BudgetApprovalService {
     forecastMonths = 3
   ): Promise<BudgetForecast[]> {
     const budget = await this.getBudget(budgetId);
-    if (!budget) return [];
+    if (!budget) {
+      return [];
+    }
 
     const forecasts: BudgetForecast[] = [];
     const currentDate = new Date();
@@ -625,8 +651,9 @@ export class BudgetApprovalService {
       .select()
       .single();
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to create budget notification: ${error.message}`);
+    }
     return data;
   }
 
@@ -641,8 +668,9 @@ export class BudgetApprovalService {
       .eq('budget_id', budgetId)
       .order('created_at', { ascending: false });
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to get budget notifications: ${error.message}`);
+    }
     return data || [];
   }
 
@@ -662,8 +690,9 @@ export class BudgetApprovalService {
       .select()
       .single();
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to acknowledge notification: ${error.message}`);
+    }
     return data;
   }
 }

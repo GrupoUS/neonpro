@@ -232,7 +232,7 @@ class WebAuthnService {
 
     await logAnalyticsEvent('webauthn_authentication_started', {
       userId: options.userId,
-      hasAllowCredentials: !!allowCredentials?.length,
+      hasAllowCredentials: Boolean(allowCredentials?.length),
       timestamp: new Date().toISOString(),
     });
 

@@ -150,7 +150,9 @@ function isValidCPF(cpf: string): boolean {
   }
 
   let digit1 = 11 - (sum % 11);
-  if (digit1 > 9) digit1 = 0;
+  if (digit1 > 9) {
+    digit1 = 0;
+  }
 
   if (Number.parseInt(cpf[9], 10) !== digit1) {
     return false;
@@ -162,7 +164,9 @@ function isValidCPF(cpf: string): boolean {
   }
 
   let digit2 = 11 - (sum % 11);
-  if (digit2 > 9) digit2 = 0;
+  if (digit2 > 9) {
+    digit2 = 0;
+  }
 
   return Number.parseInt(cpf[10], 10) === digit2;
 }

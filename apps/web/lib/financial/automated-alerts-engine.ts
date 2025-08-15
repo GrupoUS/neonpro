@@ -128,9 +128,9 @@ export interface AlertAnalytics {
 }
 
 export class AutomatedAlertsEngine {
-  private supabase = createClient();
-  private communicationService = new CommunicationService();
-  private cashFlowEngine = new CashFlowEngine();
+  private readonly supabase = createClient();
+  private readonly communicationService = new CommunicationService();
+  private readonly cashFlowEngine = new CashFlowEngine();
 
   /**
    * Initialize alert monitoring for a clinic

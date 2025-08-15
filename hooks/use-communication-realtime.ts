@@ -53,7 +53,9 @@ export function useCommunicationRealtime({
           .eq('conversation_id', convId)
           .order('created_at', { ascending: true });
 
-        if (error) throw error;
+        if (error) {
+          throw error;
+        }
 
         setState((prev) => ({
           ...prev,
@@ -218,7 +220,9 @@ export function useCommunicationRealtime({
           .select()
           .single();
 
-        if (error) throw error;
+        if (error) {
+          throw error;
+        }
 
         return message;
       } catch (error) {
@@ -244,7 +248,9 @@ export function useCommunicationRealtime({
           .eq('id', messageId)
           .eq('conversation_id', conversationId);
 
-        if (error) throw error;
+        if (error) {
+          throw error;
+        }
       } catch (error) {
         console.error('Erro ao marcar mensagem como lida:', error);
       }
@@ -255,7 +261,9 @@ export function useCommunicationRealtime({
   // Broadcast de digitação
   const broadcastTyping = useCallback(
     async (isTyping: boolean) => {
-      if (!conversationId) return;
+      if (!conversationId) {
+        return;
+      }
 
       try {
         const channel = supabase.channel(`conversation:${conversationId}`);
@@ -273,7 +281,9 @@ export function useCommunicationRealtime({
 
   // Efeito principal
   useEffect(() => {
-    if (!(conversationId && autoConnect)) return;
+    if (!(conversationId && autoConnect)) {
+      return;
+    }
 
     let channel: any = null;
 

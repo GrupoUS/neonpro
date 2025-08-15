@@ -83,10 +83,18 @@ export async function GET(request: NextRequest) {
 
     // Build filter options
     const filters: any = {};
-    if (layoutId) filters.layoutId = layoutId;
-    if (category) filters.category = category;
-    if (type) filters.type = type;
-    if (active !== null) filters.isActive = active === 'true';
+    if (layoutId) {
+      filters.layoutId = layoutId;
+    }
+    if (category) {
+      filters.category = category;
+    }
+    if (type) {
+      filters.type = type;
+    }
+    if (active !== null) {
+      filters.isActive = active === 'true';
+    }
 
     const widgets = await widgetService.getWidgets(filters);
 

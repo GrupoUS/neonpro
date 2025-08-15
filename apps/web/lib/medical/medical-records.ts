@@ -240,9 +240,9 @@ const MedicalRecordSchema = z.object({
 // ============================================================================
 
 export class MedicalRecordsManager {
-  private supabase;
-  private lgpdManager: LGPDManager;
-  private auditLogger: AuditLogger;
+  private readonly supabase;
+  private readonly lgpdManager: LGPDManager;
+  private readonly auditLogger: AuditLogger;
 
   constructor() {
     this.supabase = createClient(
@@ -300,7 +300,9 @@ export class MedicalRecordsManager {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Log audit event
       await this.auditLogger.log({
@@ -341,7 +343,9 @@ export class MedicalRecordsManager {
         .eq('status', RecordStatus.ACTIVE)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       if (!data) {
         return { success: false, error: 'Medical record not found' };
       }
@@ -393,7 +397,9 @@ export class MedicalRecordsManager {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Create version history
       await this.createRecordVersion(currentRecord.data, userId);
@@ -465,7 +471,9 @@ export class MedicalRecordsManager {
 
       const { data, error, count } = await query;
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Log audit event
       await this.auditLogger.log({
@@ -527,7 +535,9 @@ export class MedicalRecordsManager {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Log audit event
       await this.auditLogger.log({
@@ -561,7 +571,9 @@ export class MedicalRecordsManager {
         .eq('patient_id', patientId)
         .single();
 
-      if (error && error.code !== 'PGRST116') throw error;
+      if (error && error.code !== 'PGRST116') {
+        throw error;
+      }
 
       // Log audit event
       await this.auditLogger.log({
@@ -605,7 +617,9 @@ export class MedicalRecordsManager {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Log audit event
       await this.auditLogger.log({
@@ -655,7 +669,9 @@ export class MedicalRecordsManager {
           .from('medical-files')
           .upload(filePath, file);
 
-      if (uploadError) throw uploadError;
+      if (uploadError) {
+        throw uploadError;
+      }
 
       // Get public URL
       const { data: urlData } = this.supabase.storage
@@ -691,7 +707,9 @@ export class MedicalRecordsManager {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Log audit event
       await this.auditLogger.log({
@@ -728,7 +746,9 @@ export class MedicalRecordsManager {
         .eq('record_id', recordId)
         .order('upload_date', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return { success: true, data: data || [] };
     } catch (error) {
@@ -752,7 +772,9 @@ export class MedicalRecordsManager {
         .eq('id', attachmentId)
         .single();
 
-      if (getError) throw getError;
+      if (getError) {
+        throw getError;
+      }
 
       // Delete from storage
       const filePath = attachment.file_url.split('/').slice(-3).join('/');
@@ -764,7 +786,9 @@ export class MedicalRecordsManager {
         .delete()
         .eq('id', attachmentId);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Log audit event
       await this.auditLogger.log({
@@ -829,7 +853,9 @@ export class MedicalRecordsManager {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Update record with signature
       await this.supabase
@@ -870,7 +896,9 @@ export class MedicalRecordsManager {
         .eq('id', signatureId)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Get current record data
       const recordResult = await this.getMedicalRecord(
@@ -985,7 +1013,9 @@ export class MedicalRecordsManager {
         .order('created_at', { ascending: false })
         .limit(50);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Log audit event
       await this.auditLogger.log({
@@ -1030,7 +1060,9 @@ export class MedicalRecordsManager {
 
       const { data, error } = await query;
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Process statistics
       const stats = {

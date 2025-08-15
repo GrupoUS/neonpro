@@ -39,7 +39,9 @@ export class PatientSegmentationService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Generate initial segment memberships
     await this.generateSegmentMemberships(segment.id, aiCriteria);
@@ -73,7 +75,9 @@ export class PatientSegmentationService {
     }
 
     const { data, error } = await query;
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     return data || [];
   }
@@ -104,7 +108,9 @@ export class PatientSegmentationService {
         treatment_history:treatment_records(*)
       `);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Apply AI analysis for each patient
     const analyses = await Promise.all(
@@ -134,7 +140,9 @@ export class PatientSegmentationService {
       }))
     );
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
   }
 
   // Automated Segment Management
@@ -159,7 +167,9 @@ export class PatientSegmentationService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Execute rule immediately if auto_execute is true
     if (rule.auto_execute) {
@@ -179,7 +189,9 @@ export class PatientSegmentationService {
       .eq('id', ruleId)
       .single();
 
-    if (ruleError) throw ruleError;
+    if (ruleError) {
+      throw ruleError;
+    }
 
     // Create segment based on rule
     const segment = await this.createAISegment({
@@ -208,7 +220,9 @@ export class PatientSegmentationService {
       .limit(1)
       .single();
 
-    if (error && error.code !== 'PGRST116') throw error;
+    if (error && error.code !== 'PGRST116') {
+      throw error;
+    }
 
     if (!performance) {
       // Generate performance metrics if not exists
@@ -272,7 +286,9 @@ export class PatientSegmentationService {
       .eq('patient_id', patientId)
       .single();
 
-    if (error && error.code !== 'PGRST116') throw error;
+    if (error && error.code !== 'PGRST116') {
+      throw error;
+    }
 
     return (
       consent || {
@@ -300,7 +316,9 @@ export class PatientSegmentationService {
       last_updated: new Date().toISOString(),
     });
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Remove from segments if consent withdrawn
     if (consents.segmentation_consent === false) {
@@ -416,7 +434,9 @@ export class PatientSegmentationService {
         .from('segment_memberships')
         .insert(memberships);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
     }
   }
 
@@ -448,18 +468,30 @@ export class PatientSegmentationService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
   // Utility Methods
   private calculateAgeGroup(birthDate: string): string {
     const age = new Date().getFullYear() - new Date(birthDate).getFullYear();
-    if (age < 25) return '18-24';
-    if (age < 35) return '25-34';
-    if (age < 45) return '35-44';
-    if (age < 55) return '45-54';
-    if (age < 65) return '55-64';
+    if (age < 25) {
+      return '18-24';
+    }
+    if (age < 35) {
+      return '25-34';
+    }
+    if (age < 45) {
+      return '35-44';
+    }
+    if (age < 55) {
+      return '45-54';
+    }
+    if (age < 65) {
+      return '55-64';
+    }
     return '65+';
   }
 
@@ -470,8 +502,12 @@ export class PatientSegmentationService {
 
   private calculateVisitFrequency(appointments: any[]): string {
     const monthlyVisits = appointments.length / 12; // Assuming 12-month period
-    if (monthlyVisits >= 4) return 'high';
-    if (monthlyVisits >= 2) return 'medium';
+    if (monthlyVisits >= 4) {
+      return 'high';
+    }
+    if (monthlyVisits >= 2) {
+      return 'medium';
+    }
     return 'low';
   }
 
@@ -486,8 +522,12 @@ export class PatientSegmentationService {
         new Date(Date.now() - 90 * 24 * 60 * 60 * 1000)
     );
 
-    if (recentAppointments.length >= 3) return 'high';
-    if (recentAppointments.length >= 1) return 'medium';
+    if (recentAppointments.length >= 3) {
+      return 'high';
+    }
+    if (recentAppointments.length >= 1) {
+      return 'medium';
+    }
     return 'low';
   }
 
@@ -516,8 +556,12 @@ export class PatientSegmentationService {
     const avgSpend =
       treatmentHistory.reduce((sum, t) => sum + (t.amount || 0), 0) /
       treatmentHistory.length;
-    if (avgSpend > 1000) return 'premium';
-    if (avgSpend > 500) return 'value';
+    if (avgSpend > 1000) {
+      return 'premium';
+    }
+    if (avgSpend > 500) {
+      return 'value';
+    }
     return 'budget';
   }
 
@@ -537,8 +581,10 @@ export class PatientSegmentationService {
   }
 
   private calculateChurnProbability(appointments: any[]): number {
-    const lastAppointment = appointments[appointments.length - 1];
-    if (!lastAppointment) return 0.9;
+    const lastAppointment = appointments.at(-1);
+    if (!lastAppointment) {
+      return 0.9;
+    }
 
     const daysSinceLastVisit =
       (Date.now() - new Date(lastAppointment.appointment_date).getTime()) /
@@ -587,7 +633,9 @@ export class PatientSegmentationService {
       .select('*')
       .eq('segment_id', segmentId);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data || [];
   }
 
@@ -648,9 +696,11 @@ export class PatientSegmentationService {
   }
 
   private calculateRecencyScore(appointments: any[]): number {
-    if (!appointments.length) return 0;
+    if (!appointments.length) {
+      return 0;
+    }
 
-    const lastAppointment = appointments[appointments.length - 1];
+    const lastAppointment = appointments.at(-1);
     const daysSince =
       (Date.now() - new Date(lastAppointment.appointment_date).getTime()) /
       (24 * 60 * 60 * 1000);
@@ -682,7 +732,9 @@ export class PatientSegmentationService {
       })
       .eq('id', ruleId);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
   }
 
   private async removePatientFromAllSegments(patientId: string): Promise<void> {
@@ -693,7 +745,9 @@ export class PatientSegmentationService {
       .delete()
       .eq('patient_id', patientId);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
   }
 }
 

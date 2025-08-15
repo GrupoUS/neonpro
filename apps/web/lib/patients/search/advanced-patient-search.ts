@@ -100,7 +100,9 @@ export class AdvancedPatientSearch {
 
       const { data: patients, error, count } = await searchQuery;
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Generate AI suggestions
       const suggestions = await AdvancedPatientSearch.generateSearchSuggestions(
@@ -131,7 +133,9 @@ export class AdvancedPatientSearch {
    */
   static async quickPatientLookup(query: string): Promise<Patient[]> {
     try {
-      if (!query || query.length < 2) return [];
+      if (!query || query.length < 2) {
+        return [];
+      }
 
       const { data: patients, error } = await supabase
         .from('patients')
@@ -147,7 +151,9 @@ export class AdvancedPatientSearch {
         .limit(10)
         .order('updated_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return patients || [];
     } catch (error) {
@@ -190,7 +196,9 @@ export class AdvancedPatientSearch {
       // Save segment to database
       const { error } = await supabase.from('patient_segments').insert(segment);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       logger.info(
         `Created patient segment: ${name} with ${segment.patient_count} patients`
@@ -307,7 +315,9 @@ export class AdvancedPatientSearch {
    * Apply text search to query
    */
   private static applyTextSearch(query: any, searchTerms: string[]) {
-    if (searchTerms.length === 0) return query;
+    if (searchTerms.length === 0) {
+      return query;
+    }
 
     const searchConditions = searchTerms
       .map(

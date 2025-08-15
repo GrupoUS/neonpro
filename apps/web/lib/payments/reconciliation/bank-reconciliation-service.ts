@@ -561,7 +561,9 @@ export class BankReconciliationService {
     const longer = str1.length > str2.length ? str1 : str2;
     const shorter = str1.length > str2.length ? str2 : str1;
 
-    if (longer.length === 0) return 1.0;
+    if (longer.length === 0) {
+      return 1.0;
+    }
 
     const editDistance = BankReconciliationService.levenshteinDistance(
       longer,

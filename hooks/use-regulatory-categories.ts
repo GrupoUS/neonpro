@@ -31,8 +31,12 @@ export function useRegulatoryCategories(
   const buildQuery = useCallback(() => {
     const params = new URLSearchParams();
 
-    if (options.authority) params.set('authority', options.authority);
-    if (options.search) params.set('search', options.search);
+    if (options.authority) {
+      params.set('authority', options.authority);
+    }
+    if (options.search) {
+      params.set('search', options.search);
+    }
 
     return params.toString();
   }, [options]);

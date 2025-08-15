@@ -154,9 +154,15 @@ export class RiskAssessmentService {
 
   // Determine risk level from score
   determineRiskLevel(score: number): RiskLevel {
-    if (score >= 80) return 'critical';
-    if (score >= 60) return 'high';
-    if (score >= 30) return 'moderate';
+    if (score >= 80) {
+      return 'critical';
+    }
+    if (score >= 60) {
+      return 'high';
+    }
+    if (score >= 30) {
+      return 'moderate';
+    }
     return 'low';
   }
 
@@ -255,8 +261,9 @@ export class RiskAssessmentService {
       .select()
       .single();
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to create risk assessment: ${error.message}`);
+    }
 
     // Generate automatic alerts if high risk
     if (riskLevel === 'critical' || riskLevel === 'high') {
@@ -292,7 +299,9 @@ export class RiskAssessmentService {
       .eq('id', id)
       .single();
 
-    if (error) return null;
+    if (error) {
+      return null;
+    }
     return data;
   }
 
@@ -317,8 +326,9 @@ export class RiskAssessmentService {
 
     const { data, error } = await query;
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to fetch risk assessments: ${error.message}`);
+    }
     return data || [];
   }
 
@@ -340,7 +350,9 @@ export class RiskAssessmentService {
       .select()
       .single();
 
-    if (error) throw new Error(`Failed to create alert: ${error.message}`);
+    if (error) {
+      throw new Error(`Failed to create alert: ${error.message}`);
+    }
     return alert;
   }
 
@@ -365,7 +377,9 @@ export class RiskAssessmentService {
 
     const { data, error } = await query;
 
-    if (error) throw new Error(`Failed to fetch validations: ${error.message}`);
+    if (error) {
+      throw new Error(`Failed to fetch validations: ${error.message}`);
+    }
     return data || [];
   }
 
@@ -390,7 +404,9 @@ export class RiskAssessmentService {
 
     const { data, error } = await query;
 
-    if (error) throw new Error(`Failed to fetch alerts: ${error.message}`);
+    if (error) {
+      throw new Error(`Failed to fetch alerts: ${error.message}`);
+    }
     return data || [];
   }
 
@@ -432,8 +448,9 @@ export class RiskAssessmentService {
       .select()
       .single();
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to update risk assessment: ${error.message}`);
+    }
     return data;
   }
 
@@ -444,8 +461,9 @@ export class RiskAssessmentService {
       .delete()
       .eq('id', id);
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to delete risk assessment: ${error.message}`);
+    }
   }
 
   async getPatientRiskAssessments(
@@ -460,10 +478,11 @@ export class RiskAssessmentService {
       .order('assessment_date', { ascending: false })
       .limit(limit);
 
-    if (error)
+    if (error) {
       throw new Error(
         `Failed to get patient risk assessments: ${error.message}`
       );
+    }
     return data || [];
   }
 
@@ -488,7 +507,9 @@ export class RiskAssessmentService {
       .select()
       .single();
 
-    if (error) throw new Error(`Failed to create validation: ${error.message}`);
+    if (error) {
+      throw new Error(`Failed to create validation: ${error.message}`);
+    }
 
     // Update assessment validation status
     await this.updateRiskAssessment(data.assessment_id, {
@@ -513,7 +534,9 @@ export class RiskAssessmentService {
       .eq('assessment_id', assessmentId)
       .order('validation_date', { ascending: false });
 
-    if (error) throw new Error(`Failed to get validations: ${error.message}`);
+    if (error) {
+      throw new Error(`Failed to get validations: ${error.message}`);
+    }
     return data || [];
   }
 
@@ -537,7 +560,9 @@ export class RiskAssessmentService {
       .select()
       .single();
 
-    if (error) throw new Error(`Failed to create mitigation: ${error.message}`);
+    if (error) {
+      throw new Error(`Failed to create mitigation: ${error.message}`);
+    }
     return mitigation;
   }
 
@@ -555,8 +580,9 @@ export class RiskAssessmentService {
       })
       .eq('id', id);
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to update mitigation status: ${error.message}`);
+    }
   }
 
   /**
@@ -574,7 +600,9 @@ export class RiskAssessmentService {
       })
       .eq('id', id);
 
-    if (error) throw new Error(`Failed to acknowledge alert: ${error.message}`);
+    if (error) {
+      throw new Error(`Failed to acknowledge alert: ${error.message}`);
+    }
   }
 
   async resolveAlert(
@@ -593,7 +621,9 @@ export class RiskAssessmentService {
       })
       .eq('id', id);
 
-    if (error) throw new Error(`Failed to resolve alert: ${error.message}`);
+    if (error) {
+      throw new Error(`Failed to resolve alert: ${error.message}`);
+    }
   }
 
   async escalateAlert(id: string): Promise<void> {
@@ -604,8 +634,9 @@ export class RiskAssessmentService {
       .eq('id', id)
       .single();
 
-    if (fetchError)
+    if (fetchError) {
       throw new Error(`Failed to fetch alert: ${fetchError.message}`);
+    }
 
     const newEscalationLevel = Math.min((alert.escalation_level || 0) + 1, 5);
 
@@ -617,7 +648,9 @@ export class RiskAssessmentService {
       })
       .eq('id', id);
 
-    if (error) throw new Error(`Failed to escalate alert: ${error.message}`);
+    if (error) {
+      throw new Error(`Failed to escalate alert: ${error.message}`);
+    }
   }
 
   async getActiveAlerts(limit = 50): Promise<RiskAlert[]> {
@@ -629,7 +662,9 @@ export class RiskAssessmentService {
       .order('created_at', { ascending: false })
       .limit(limit);
 
-    if (error) throw new Error(`Failed to get active alerts: ${error.message}`);
+    if (error) {
+      throw new Error(`Failed to get active alerts: ${error.message}`);
+    }
     return data || [];
   }
 
@@ -710,8 +745,9 @@ export class RiskAssessmentService {
 
     const { data, error } = await query.order('risk_category');
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to get risk thresholds: ${error.message}`);
+    }
     return data || [];
   }
 
@@ -727,8 +763,9 @@ export class RiskAssessmentService {
       .select()
       .single();
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to update risk threshold: ${error.message}`);
+    }
     return data;
   }
 }

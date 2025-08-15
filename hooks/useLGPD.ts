@@ -743,7 +743,9 @@ export function useConsentBanner() {
         .eq('active', true)
         .order('display_order');
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       setPurposes(data || []);
     } catch (err) {
       setError(err as Error);
@@ -754,7 +756,9 @@ export function useConsentBanner() {
   }, [supabase]);
 
   const fetchUserConsents = useCallback(async () => {
-    if (!user?.id) return;
+    if (!user?.id) {
+      return;
+    }
 
     try {
       const response = await fetch(`/api/lgpd/consent?user_id=${user.id}`);
@@ -807,7 +811,7 @@ export function useConsentBanner() {
 
   useEffect(() => {
     fetchConsentPurposes();
-  }, []);
+  }, [fetchConsentPurposes]);
 
   useEffect(() => {
     if (user?.id) {

@@ -57,10 +57,10 @@ export interface RenderedTemplate {
 }
 
 export class TemplateEngine {
-  private supabase;
-  private auditLogger: AuditLogger;
-  private templateCache: Map<string, NotificationTemplate>;
-  private variableCache: Map<string, TemplateVariable[]>;
+  private readonly supabase;
+  private readonly auditLogger: AuditLogger;
+  private readonly templateCache: Map<string, NotificationTemplate>;
+  private readonly variableCache: Map<string, TemplateVariable[]>;
 
   constructor() {
     this.supabase = createClient(
@@ -204,7 +204,9 @@ export class TemplateEngine {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Adicionar ao cache
       this.templateCache.set(data.id, data);
@@ -254,7 +256,9 @@ export class TemplateEngine {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Atualizar cache
       this.templateCache.set(templateId, data);
@@ -324,7 +328,9 @@ export class TemplateEngine {
 
       const { data, error } = await query;
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return data;
     } catch (error) {
@@ -342,7 +348,9 @@ export class TemplateEngine {
         .delete()
         .eq('id', templateId);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Remover do cache
       this.templateCache.delete(templateId);

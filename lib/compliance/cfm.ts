@@ -66,7 +66,7 @@ export interface ContinuingEducation {
 }
 
 export class CFMCompliance {
-  private supabase: any;
+  private readonly supabase: any;
 
   constructor() {
     this.supabase = createClient(
@@ -91,7 +91,9 @@ export class CFMCompliance {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Log compliance action
       await this.logComplianceAction(
@@ -115,7 +117,9 @@ export class CFMCompliance {
         .eq('cfm_license', cfmLicense)
         .single();
 
-      if (error || !professional) return false;
+      if (error || !professional) {
+        return false;
+      }
 
       // Check license status and expiry
       const isActive = professional.license_status === 'active';
@@ -169,7 +173,7 @@ export class CFMCompliance {
         .eq('id', professionalId)
         .single();
 
-      if (!(professional.data && professional.data.digital_signature_cert)) {
+      if (!professional.data?.digital_signature_cert) {
         throw new Error('Professional not certified for digital signatures');
       }
 
@@ -197,7 +201,9 @@ export class CFMCompliance {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Log compliance action
       await this.logComplianceAction(
@@ -221,7 +227,9 @@ export class CFMCompliance {
         .eq('id', signatureId)
         .single();
 
-      if (error || !signature) return false;
+      if (error || !signature) {
+        return false;
+      }
 
       // Validate signature integrity (simplified validation)
       const expectedSignatureData = `${signature.document_hash}:${signature.professional_id}:${signature.timestamp}`;
@@ -285,7 +293,9 @@ export class CFMCompliance {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Log compliance action
       await this.logComplianceAction(
@@ -352,7 +362,9 @@ export class CFMCompliance {
         })
         .eq('id', sessionId);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Log compliance action
       await this.logComplianceAction(
@@ -379,7 +391,9 @@ export class CFMCompliance {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Update professional's total hours
       await this.updateProfessionalEducationHours(
@@ -412,7 +426,9 @@ export class CFMCompliance {
         .eq('id', professionalId)
         .single();
 
-      if (fetchError) throw fetchError;
+      if (fetchError) {
+        throw fetchError;
+      }
 
       const updatedHours =
         professional.continuing_education_hours + additionalHours;
@@ -422,7 +438,9 @@ export class CFMCompliance {
         .update({ continuing_education_hours: updatedHours })
         .eq('id', professionalId);
 
-      if (updateError) throw updateError;
+      if (updateError) {
+        throw updateError;
+      }
     } catch (error) {
       console.error('Error updating education hours:', error);
     }
@@ -438,7 +456,9 @@ export class CFMCompliance {
         .eq('id', professionalId)
         .single();
 
-      if (error || !professional) return false;
+      if (error || !professional) {
+        return false;
+      }
 
       // CFM requires minimum continuing education hours per period
       const minimumHoursPerYear = 100;

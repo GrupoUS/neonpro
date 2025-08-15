@@ -48,8 +48,8 @@ export interface BatchQuery {
 }
 
 export class SubscriptionQueryOptimizer {
-  private pendingBatches = new Map<string, BatchQuery[]>();
-  private queryStats = new Map<string, QueryStats[]>();
+  private readonly pendingBatches = new Map<string, BatchQuery[]>();
+  private readonly queryStats = new Map<string, QueryStats[]>();
   private batchTimeout: NodeJS.Timeout | null = null;
   private readonly BATCH_DELAY = 50; // ms
   private readonly MAX_BATCH_SIZE = 50;
@@ -360,7 +360,9 @@ export class SubscriptionQueryOptimizer {
           parameters: params,
         });
 
-        if (error) throw error;
+        if (error) {
+          throw error;
+        }
         result = data;
       } else {
         // For other query types, use direct execution
@@ -434,7 +436,9 @@ export class SubscriptionQueryOptimizer {
         `)
         .in('user_id', params);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Organize results by user_id to maintain order
       const resultMap = new Map<string, any>();
@@ -644,10 +648,14 @@ export class SubscriptionQueryOptimizer {
    * Determine if user has access
    */
   private determineAccess(subscription: UserSubscription, now: Date): boolean {
-    if (!subscription) return false;
+    if (!subscription) {
+      return false;
+    }
 
     const activeStatuses = ['active', 'trialing'];
-    if (!activeStatuses.includes(subscription.status)) return false;
+    if (!activeStatuses.includes(subscription.status)) {
+      return false;
+    }
 
     // Check if trial hasn't expired
     if (subscription.status === 'trialing' && subscription.trial_end) {
@@ -666,7 +674,9 @@ export class SubscriptionQueryOptimizer {
    * Check if subscription is in grace period
    */
   private isInGracePeriod(subscription: UserSubscription, now: Date): boolean {
-    if (!subscription || subscription.status !== 'past_due') return false;
+    if (!subscription || subscription.status !== 'past_due') {
+      return false;
+    }
 
     if (subscription.current_period_end) {
       const gracePeriodEnd = new Date(subscription.current_period_end);
@@ -685,10 +695,16 @@ export class SubscriptionQueryOptimizer {
     hasAccess: boolean,
     gracePeriod: boolean
   ): string {
-    if (!subscription) return 'No subscription found';
+    if (!subscription) {
+      return 'No subscription found';
+    }
 
-    if (gracePeriod) return 'Subscription past due - grace period active';
-    if (hasAccess) return 'Subscription active';
+    if (gracePeriod) {
+      return 'Subscription past due - grace period active';
+    }
+    if (hasAccess) {
+      return 'Subscription active';
+    }
 
     switch (subscription.status) {
       case 'canceled':

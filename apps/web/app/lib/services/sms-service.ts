@@ -26,7 +26,7 @@ import type {
 import { createClient } from '@/app/utils/supabase/client';
 
 export class SMSService {
-  private supabase = createClient();
+  private readonly supabase = createClient();
 
   // ==================== PROVIDER MANAGEMENT ====================
 
@@ -40,7 +40,9 @@ export class SMSService {
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data || [];
     } catch (error) {
       console.error('Error fetching SMS providers:', error);
@@ -63,7 +65,9 @@ export class SMSService {
         .eq('enabled', true)
         .single();
 
-      if (error && error.code !== 'PGRST116') throw error;
+      if (error && error.code !== 'PGRST116') {
+        throw error;
+      }
       return data || null;
     } catch (error) {
       console.error('Error fetching active SMS provider:', error);
@@ -102,7 +106,9 @@ export class SMSService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data;
     } catch (error) {
       console.error('Error upserting SMS provider:', error);
@@ -156,7 +162,7 @@ export class SMSService {
 
       // Get provider configuration
       const provider = await this.getProviderById(params.provider_id);
-      if (!(provider && provider.enabled)) {
+      if (!provider?.enabled) {
         throw this.createSMSError(
           'PROVIDER_ERROR',
           'SMS provider not found or disabled'
@@ -555,7 +561,9 @@ export class SMSService {
 
       const { data, error, count } = await query;
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return {
         data: data || [],
@@ -589,7 +597,9 @@ export class SMSService {
         .eq('id', id)
         .single();
 
-      if (error && error.code !== 'PGRST116') throw error;
+      if (error && error.code !== 'PGRST116') {
+        throw error;
+      }
       return data || null;
     } catch (error) {
       console.error('Error fetching SMS message:', error);
@@ -613,7 +623,9 @@ export class SMSService {
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data || [];
     } catch (error) {
       console.error('Error fetching SMS templates:', error);
@@ -641,7 +653,9 @@ export class SMSService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data;
     } catch (error) {
       console.error('Error upserting SMS template:', error);
@@ -668,7 +682,9 @@ export class SMSService {
         .eq('phone_number', phoneNumber)
         .single();
 
-      if (error && error.code !== 'PGRST116') throw error;
+      if (error && error.code !== 'PGRST116') {
+        throw error;
+      }
       return data?.status || 'pending';
     } catch (error) {
       console.error('Error checking opt-in status:', error);
@@ -700,7 +716,9 @@ export class SMSService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data;
     } catch (error) {
       console.error('Error updating opt-in status:', error);
@@ -758,7 +776,9 @@ export class SMSService {
         period_type: period,
       });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data;
     } catch (error) {
       console.error('Error fetching SMS analytics:', error);
@@ -866,7 +886,9 @@ export class SMSService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -880,7 +902,9 @@ export class SMSService {
       .eq('id', id)
       .single();
 
-    if (error && error.code !== 'PGRST116') throw error;
+    if (error && error.code !== 'PGRST116') {
+      throw error;
+    }
     return data || null;
   }
 
@@ -894,7 +918,9 @@ export class SMSService {
       .eq('id', id)
       .single();
 
-    if (error && error.code !== 'PGRST116') throw error;
+    if (error && error.code !== 'PGRST116') {
+      throw error;
+    }
     return data || null;
   }
 
@@ -956,8 +982,12 @@ export class SMSService {
       updateData.delivered_at = new Date().toISOString();
     } else if (status === 'failed') {
       updateData.failed_at = new Date().toISOString();
-      if (errorCode) updateData.error_code = errorCode;
-      if (errorMessage) updateData.error_message = errorMessage;
+      if (errorCode) {
+        updateData.error_code = errorCode;
+      }
+      if (errorMessage) {
+        updateData.error_message = errorMessage;
+      }
     } else if (status === 'sent') {
       updateData.sent_at = new Date().toISOString();
     }

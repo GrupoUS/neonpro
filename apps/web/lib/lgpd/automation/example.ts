@@ -24,10 +24,10 @@ const ENVIRONMENT =
  * Classe principal para gerenciar a automação LGPD na aplicação
  */
 export class LGPDAutomationService {
-  private supabase: ReturnType<typeof createClient<Database>>;
-  private complianceManager: LGPDComplianceManager;
-  private orchestrator: LGPDAutomationOrchestrator;
-  private isInitialized = false;
+  private readonly supabase: ReturnType<typeof createClient<Database>>;
+  private readonly complianceManager: LGPDComplianceManager;
+  private readonly orchestrator: LGPDAutomationOrchestrator;
+  private readonly isInitialized = false;
 
   constructor() {
     // Inicializar cliente Supabase
@@ -80,7 +80,9 @@ export class LGPDAutomationService {
    * Parar o sistema de automação
    */
   async shutdown(): Promise<void> {
-    if (!this.isInitialized) return;
+    if (!this.isInitialized) {
+      return;
+    }
 
     try {
       console.log('🛑 Parando sistema de automação LGPD...');
@@ -211,7 +213,7 @@ export function getLGPDService(): LGPDAutomationService {
  * Exemplos de uso dos módulos de automação
  */
 export class LGPDUsageExamples {
-  private service: LGPDAutomationService;
+  private readonly service: LGPDAutomationService;
 
   constructor() {
     this.service = getLGPDService();

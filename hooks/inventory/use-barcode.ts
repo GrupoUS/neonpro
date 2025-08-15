@@ -106,7 +106,9 @@ export function useBarcode(options: UseBarcodeOptions = {}): UseBarcodeReturn {
 
   // Audio feedback
   const playBeep = useCallback(() => {
-    if (!configuration.beepOnScan) return;
+    if (!configuration.beepOnScan) {
+      return;
+    }
 
     try {
       const audioContext = new (
@@ -130,7 +132,9 @@ export function useBarcode(options: UseBarcodeOptions = {}): UseBarcodeReturn {
 
   // Vibration feedback
   const triggerVibration = useCallback(() => {
-    if (!(configuration.vibrationOnScan && navigator.vibrate)) return;
+    if (!(configuration.vibrationOnScan && navigator.vibrate)) {
+      return;
+    }
 
     try {
       navigator.vibrate(200); // 200ms vibration
@@ -207,7 +211,9 @@ export function useBarcode(options: UseBarcodeOptions = {}): UseBarcodeReturn {
   // Process scan result
   const processScanResult = useCallback(
     (data: string, format: BarcodeFormat = 'unknown') => {
-      if (isProcessingScan.current) return;
+      if (isProcessingScan.current) {
+        return;
+      }
       isProcessingScan.current = true;
 
       const scanResult: BarcodeResult = {
@@ -283,7 +289,9 @@ export function useBarcode(options: UseBarcodeOptions = {}): UseBarcodeReturn {
       try {
         if (!state.isInitialized) {
           const initialized = await initializeScanner();
-          if (!initialized) return false;
+          if (!initialized) {
+            return false;
+          }
         }
 
         const video = videoElement || videoElementRef.current;
@@ -416,7 +424,9 @@ export function useBarcode(options: UseBarcodeOptions = {}): UseBarcodeReturn {
 
   // Switch camera
   const switchCamera = useCallback(async () => {
-    if (state.availableCameras.length <= 1) return;
+    if (state.availableCameras.length <= 1) {
+      return;
+    }
 
     const currentIndex = state.availableCameras.findIndex(
       (camera: MediaDeviceInfo) =>

@@ -184,7 +184,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       invoiceId: invoice.id,
       emailSentAt: invoice.email_sent_at,
-      hasBeenSent: !!invoice.email_sent_at,
+      hasBeenSent: Boolean(invoice.email_sent_at),
     });
   } catch (error) {
     console.error('Erro ao buscar histórico de email:', error);

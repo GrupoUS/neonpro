@@ -99,18 +99,18 @@ export type SyncMessageType =
   | 'nack';
 
 export class SessionSyncManager {
-  private config: SessionConfig;
-  private utils: SessionUtils;
-  private syncStates: Map<string, SyncState> = new Map();
+  private readonly config: SessionConfig;
+  private readonly utils: SessionUtils;
+  private readonly syncStates: Map<string, SyncState> = new Map();
   private webSocket: WebSocket | null = null;
   private reconnectAttempts = 0;
-  private maxReconnectAttempts = 5;
+  private readonly maxReconnectAttempts = 5;
   private heartbeatInterval: NodeJS.Timeout | null = null;
   private syncInterval: NodeJS.Timeout | null = null;
-  private eventListeners: Map<string, Function[]> = new Map();
+  private readonly eventListeners: Map<string, Function[]> = new Map();
   private isConnected = false;
-  private deviceId: string;
-  private userId: string | null = null;
+  private readonly deviceId: string;
+  private readonly userId: string | null = null;
 
   constructor(deviceId: string) {
     this.config = SessionConfig.getInstance();
@@ -299,10 +299,14 @@ export class SessionSyncManager {
    * Handle sync event
    */
   private async handleSyncEvent(event: SyncEvent): Promise<void> {
-    if (!this.userId) return;
+    if (!this.userId) {
+      return;
+    }
 
     const syncState = this.syncStates.get(this.userId);
-    if (!syncState) return;
+    if (!syncState) {
+      return;
+    }
 
     // Check for conflicts
     const conflict = await this.detectConflict(event, syncState);
@@ -377,10 +381,14 @@ export class SessionSyncManager {
    * Handle sync conflict
    */
   private async handleConflict(conflict: SyncConflict): Promise<void> {
-    if (!this.userId) return;
+    if (!this.userId) {
+      return;
+    }
 
     const syncState = this.syncStates.get(this.userId);
-    if (!syncState) return;
+    if (!syncState) {
+      return;
+    }
 
     // Add to conflict queue
     syncState.conflictQueue.push(conflict);
@@ -644,10 +652,14 @@ export class SessionSyncManager {
     sessionId: string,
     data: any
   ): Promise<void> {
-    if (!(this.userId && this.isConnected)) return;
+    if (!(this.userId && this.isConnected)) {
+      return;
+    }
 
     const syncState = this.syncStates.get(this.userId);
-    if (!syncState) return;
+    if (!syncState) {
+      return;
+    }
 
     const event: SyncEvent = {
       id: this.utils.generateSessionToken(),
@@ -685,7 +697,9 @@ export class SessionSyncManager {
    * Request full sync from server
    */
   public async requestFullSync(): Promise<void> {
-    if (!(this.userId && this.isConnected && this.webSocket)) return;
+    if (!(this.userId && this.isConnected && this.webSocket)) {
+      return;
+    }
 
     const message: SyncMessage = {
       type: 'sync_request',
@@ -725,7 +739,7 @@ export class SessionSyncManager {
     for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i);
       hash = (hash << 5) - hash + char;
-      hash = hash & hash; // Convert to 32-bit integer
+      hash &= hash; // Convert to 32-bit integer
     }
     return hash.toString(16);
   }
@@ -944,13 +958,19 @@ export class SessionSyncManager {
     conflictId: string,
     resolution: SyncEvent
   ): Promise<boolean> {
-    if (!this.userId) return false;
+    if (!this.userId) {
+      return false;
+    }
 
     const syncState = this.syncStates.get(this.userId);
-    if (!syncState) return false;
+    if (!syncState) {
+      return false;
+    }
 
     const conflict = syncState.conflictQueue.find((c) => c.id === conflictId);
-    if (!conflict) return false;
+    if (!conflict) {
+      return false;
+    }
 
     await this.applyConflictResolution(conflict, resolution);
     return true;

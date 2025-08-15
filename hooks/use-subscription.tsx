@@ -51,22 +51,30 @@ export function useSubscription() {
   }, []);
 
   const hasFeature = (feature: string): boolean => {
-    if (!(subscription && subscription.features)) return false;
+    if (!subscription?.features) {
+      return false;
+    }
     return subscription.features.includes(feature);
   };
 
   const canAddPatients = (currentPatientCount: number): boolean => {
-    if (!(subscription && subscription.max_patients)) return true; // Unlimited
+    if (!subscription?.max_patients) {
+      return true; // Unlimited
+    }
     return currentPatientCount < subscription.max_patients;
   };
 
   const canAddClinics = (currentClinicsCount: number): boolean => {
-    if (!(subscription && subscription.max_clinics)) return true; // Unlimited
+    if (!subscription?.max_clinics) {
+      return true; // Unlimited
+    }
     return currentClinicsCount < subscription.max_clinics;
   };
 
   const isActive = (): boolean => {
-    if (!subscription) return false;
+    if (!subscription) {
+      return false;
+    }
 
     const now = new Date();
     const periodEnd = new Date(subscription.current_period_end);
@@ -75,7 +83,9 @@ export function useSubscription() {
   };
 
   const daysUntilRenewal = (): number => {
-    if (!subscription) return 0;
+    if (!subscription) {
+      return 0;
+    }
 
     const renewalDate = new Date(subscription.current_period_end);
     const today = new Date();
@@ -155,7 +165,7 @@ export function SubscriptionProvider({
 
   useEffect(() => {
     refreshSubscription();
-  }, [user?.id]);
+  }, [refreshSubscription]);
 
   return (
     <SubscriptionContext.Provider

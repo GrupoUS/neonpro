@@ -19,7 +19,7 @@ import { createClient } from '@/app/utils/supabase/server';
 // =====================================================================================
 
 export class InventoryTrackingEngine {
-  private clinicId: string;
+  private readonly clinicId: string;
 
   constructor(clinicId: string) {
     this.clinicId = clinicId;
@@ -127,7 +127,9 @@ export class InventoryTrackingEngine {
           .select()
           .single();
 
-        if (error) throw error;
+        if (error) {
+          throw error;
+        }
         updatedStock = data;
       } else {
         const { data, error } = await supabase
@@ -136,7 +138,9 @@ export class InventoryTrackingEngine {
           .select()
           .single();
 
-        if (error) throw error;
+        if (error) {
+          throw error;
+        }
         updatedStock = data;
       }
 
@@ -356,7 +360,9 @@ export class InventoryTrackingEngine {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Create reservation transaction record
       const { data: transaction } = await supabase
@@ -447,7 +453,9 @@ export class InventoryTrackingEngine {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Create transaction record
       const transactionType = isConsumption ? 'issue' : 'adjustment';
@@ -511,7 +519,9 @@ export class InventoryTrackingEngine {
         .eq('id', itemId)
         .single();
 
-      if (!item) return [];
+      if (!item) {
+        return [];
+      }
 
       const alerts: StockAlert[] = [];
       const currentQuantity = stockLevel.available_quantity;
@@ -540,7 +550,9 @@ export class InventoryTrackingEngine {
           currentQuantity,
           thresholdQuantity: 0,
         });
-        if (alert) alerts.push(alert);
+        if (alert) {
+          alerts.push(alert);
+        }
       }
 
       // Low stock alert
@@ -561,7 +573,9 @@ export class InventoryTrackingEngine {
           currentQuantity,
           thresholdQuantity: item.reorder_level,
         });
-        if (alert) alerts.push(alert);
+        if (alert) {
+          alerts.push(alert);
+        }
       }
 
       // Expiration alerts
@@ -583,7 +597,9 @@ export class InventoryTrackingEngine {
             currentQuantity,
             thresholdQuantity: 0,
           });
-          if (alert) alerts.push(alert);
+          if (alert) {
+            alerts.push(alert);
+          }
         } else if (
           daysToExpiry <= 7 &&
           daysToExpiry > 0 &&
@@ -599,7 +615,9 @@ export class InventoryTrackingEngine {
             currentQuantity,
             thresholdQuantity: daysToExpiry,
           });
-          if (alert) alerts.push(alert);
+          if (alert) {
+            alerts.push(alert);
+          }
         }
       }
 
@@ -834,8 +852,12 @@ export function calculateStockAccuracy(
   systemQuantity: number,
   physicalQuantity: number
 ): number {
-  if (systemQuantity === 0 && physicalQuantity === 0) return 100;
-  if (systemQuantity === 0) return 0;
+  if (systemQuantity === 0 && physicalQuantity === 0) {
+    return 100;
+  }
+  if (systemQuantity === 0) {
+    return 0;
+  }
 
   const variance = Math.abs(systemQuantity - physicalQuantity);
   const accuracy = Math.max(0, 100 - (variance / systemQuantity) * 100);

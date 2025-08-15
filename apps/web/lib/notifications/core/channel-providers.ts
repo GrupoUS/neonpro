@@ -39,13 +39,13 @@ export interface ChannelMetrics {
 }
 
 export class ChannelProvider {
-  private emailProvider: EmailProvider;
-  private smsProvider: SMSProvider;
-  private pushProvider: PushProvider;
-  private whatsappProvider: WhatsAppProvider;
-  private auditLogger: AuditLogger;
-  private channelConfigs: Map<NotificationChannelEnum, ChannelConfig>;
-  private metrics: Map<NotificationChannelEnum, ChannelMetrics>;
+  private readonly emailProvider: EmailProvider;
+  private readonly smsProvider: SMSProvider;
+  private readonly pushProvider: PushProvider;
+  private readonly whatsappProvider: WhatsAppProvider;
+  private readonly auditLogger: AuditLogger;
+  private readonly channelConfigs: Map<NotificationChannelEnum, ChannelConfig>;
+  private readonly metrics: Map<NotificationChannelEnum, ChannelMetrics>;
 
   constructor() {
     this.emailProvider = new EmailProvider();
@@ -439,14 +439,18 @@ export class ChannelProvider {
     channel: NotificationChannelEnum
   ): Promise<void> {
     const config = this.channelConfigs.get(channel);
-    if (!config?.rate_limit) return;
+    if (!config?.rate_limit) {
+      return;
+    }
 
     // Implementar verificação de rate limiting
     // Esta é uma implementação simplificada
     // Na prática, você usaria Redis ou similar para controle distribuído
 
     const metrics = this.metrics.get(channel);
-    if (!metrics) return;
+    if (!metrics) {
+      return;
+    }
 
     // Verificação básica baseada em métricas atuais
     // Em produção, implementar controle mais sofisticado
@@ -458,7 +462,9 @@ export class ChannelProvider {
     deliveryTimeMs: number
   ): Promise<void> {
     const metrics = this.metrics.get(channel);
-    if (!metrics) return;
+    if (!metrics) {
+      return;
+    }
 
     metrics.total_sent++;
 
@@ -491,7 +497,9 @@ export class ChannelProvider {
     _error: Error
   ): Promise<void> {
     const metrics = this.metrics.get(channel);
-    if (!metrics) return;
+    if (!metrics) {
+      return;
+    }
 
     metrics.total_failed++;
     metrics.delivery_rate =

@@ -247,11 +247,11 @@ export interface CustomMetric {
 }
 
 export class FinancialDashboardEngine {
-  private supabase = createClient();
-  private cashFlowEngine = new CashFlowEngine();
-  private alertsEngine = new AutomatedAlertsEngine();
-  private predictiveEngine = new PredictiveAnalyticsEngine();
-  private cache = new Map<
+  private readonly supabase = createClient();
+  private readonly cashFlowEngine = new CashFlowEngine();
+  private readonly alertsEngine = new AutomatedAlertsEngine();
+  private readonly predictiveEngine = new PredictiveAnalyticsEngine();
+  private readonly cache = new Map<
     string,
     { data: any; timestamp: number; ttl: number }
   >();
@@ -827,10 +827,18 @@ export class FinancialDashboardEngine {
     let score = 50; // Base score
 
     // Positive factors
-    if (metrics.current_ratio > 1.5) score += 15;
-    if (metrics.net_margin > 0.1) score += 15;
-    if (metrics.revenue_growth.monthly > 0.05) score += 10;
-    if (metrics.collection_efficiency > 0.9) score += 10;
+    if (metrics.current_ratio > 1.5) {
+      score += 15;
+    }
+    if (metrics.net_margin > 0.1) {
+      score += 15;
+    }
+    if (metrics.revenue_growth.monthly > 0.05) {
+      score += 10;
+    }
+    if (metrics.collection_efficiency > 0.9) {
+      score += 10;
+    }
 
     return Math.min(100, Math.max(0, score));
   }
@@ -839,8 +847,12 @@ export class FinancialDashboardEngine {
     // Simplified growth scoring
     let score = 50;
 
-    if (metrics.revenue_growth.monthly > 0.1) score += 25;
-    if (metrics.revenue_growth.yearly > 0.15) score += 25;
+    if (metrics.revenue_growth.monthly > 0.1) {
+      score += 25;
+    }
+    if (metrics.revenue_growth.yearly > 0.15) {
+      score += 25;
+    }
 
     return Math.min(100, Math.max(0, score));
   }
@@ -849,9 +861,15 @@ export class FinancialDashboardEngine {
     // Simplified efficiency scoring
     let score = 50;
 
-    if (metrics.collection_efficiency > 0.95) score += 20;
-    if (metrics.expense_ratio < 0.8) score += 15;
-    if (metrics.days_sales_outstanding < 30) score += 15;
+    if (metrics.collection_efficiency > 0.95) {
+      score += 20;
+    }
+    if (metrics.expense_ratio < 0.8) {
+      score += 15;
+    }
+    if (metrics.days_sales_outstanding < 30) {
+      score += 15;
+    }
 
     return Math.min(100, Math.max(0, score));
   }
@@ -880,14 +898,17 @@ export class FinancialDashboardEngine {
     const strengths = [];
     const improvements = [];
 
-    if (scores.financialHealthScore > 80)
+    if (scores.financialHealthScore > 80) {
       strengths.push('Strong financial health');
-    else if (scores.financialHealthScore < 60)
+    } else if (scores.financialHealthScore < 60) {
       improvements.push('Improve financial stability');
+    }
 
-    if (scores.growthScore > 80) strengths.push('Excellent growth trajectory');
-    else if (scores.growthScore < 60)
+    if (scores.growthScore > 80) {
+      strengths.push('Excellent growth trajectory');
+    } else if (scores.growthScore < 60) {
       improvements.push('Focus on growth strategies');
+    }
 
     return { strengths, improvements };
   }

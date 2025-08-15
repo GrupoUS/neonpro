@@ -266,14 +266,14 @@ export interface RightsRequestEvents {
  * - Compliance monitoring and reporting
  */
 export class DataSubjectRightsManager extends EventEmitter {
-  private requests: Map<string, DataSubjectRightsRequest> = new Map();
-  private processingQueue: string[] = [];
+  private readonly requests: Map<string, DataSubjectRightsRequest> = new Map();
+  private readonly processingQueue: string[] = [];
   private isInitialized = false;
   private processingInterval: NodeJS.Timeout | null = null;
   private cleanupInterval: NodeJS.Timeout | null = null;
 
   constructor(
-    private config: {
+    private readonly config: {
       autoProcessing: boolean;
       verificationRequired: boolean;
       processingTimeoutDays: number;
@@ -843,7 +843,7 @@ export class DataSubjectRightsManager extends EventEmitter {
     for (const requestId of requestsToProcess) {
       try {
         const request = this.requests.get(requestId);
-        if (!(request && request.verification.verified)) {
+        if (!request?.verification.verified) {
           continue;
         }
 
@@ -911,9 +911,12 @@ export class DataSubjectRightsManager extends EventEmitter {
     requestType: DataSubjectRight,
     _requestData: any
   ): RequestPriority {
-    if (requestType === DataSubjectRight.ERASURE) return RequestPriority.HIGH;
-    if (requestType === DataSubjectRight.OBJECTION)
+    if (requestType === DataSubjectRight.ERASURE) {
+      return RequestPriority.HIGH;
+    }
+    if (requestType === DataSubjectRight.OBJECTION) {
       return RequestPriority.MEDIUM;
+    }
     return RequestPriority.LOW;
   }
 

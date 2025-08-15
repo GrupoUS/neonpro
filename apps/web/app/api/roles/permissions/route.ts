@@ -253,7 +253,9 @@ export function checkPermission(
   permission: string
 ): boolean {
   const roleInfo = ROLE_HIERARCHY[userRole];
-  if (!roleInfo) return false;
+  if (!roleInfo) {
+    return false;
+  }
 
   return roleInfo.permissions.includes(permission);
 }
@@ -264,7 +266,9 @@ export function canManageTargetRole(
   targetRole: keyof typeof ROLE_HIERARCHY
 ): boolean {
   const userRoleInfo = ROLE_HIERARCHY[userRole];
-  if (!userRoleInfo) return false;
+  if (!userRoleInfo) {
+    return false;
+  }
 
   return userRoleInfo.can_manage.includes(targetRole);
 }
@@ -277,7 +281,9 @@ function _hasHigherLevel(
   const userRoleInfo = ROLE_HIERARCHY[userRole];
   const targetRoleInfo = ROLE_HIERARCHY[targetRole];
 
-  if (!(userRoleInfo && targetRoleInfo)) return false;
+  if (!(userRoleInfo && targetRoleInfo)) {
+    return false;
+  }
 
   return userRoleInfo.level > targetRoleInfo.level;
 }

@@ -66,7 +66,7 @@ type BackgroundJob =
  * Job Queue Manager - Serverless-compatible queue implementation
  */
 export class JobQueueManager {
-  private supabase;
+  private readonly supabase;
 
   constructor() {
     this.supabase = createClient();
@@ -470,7 +470,7 @@ export class JobQueueManager {
  * Job Scheduler - Handles recurring job scheduling
  */
 export class JobScheduler {
-  private jobQueue: JobQueueManager;
+  private readonly jobQueue: JobQueueManager;
 
   constructor() {
     this.jobQueue = new JobQueueManager();

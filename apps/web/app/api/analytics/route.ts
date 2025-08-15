@@ -252,7 +252,9 @@ async function getRevenueAnalytics(
     user_id: userId,
   });
 
-  if (error) throw error;
+  if (error) {
+    throw error;
+  }
   return data;
 }
 
@@ -269,7 +271,9 @@ async function getSubscriptionAnalytics(
     user_id: userId,
   });
 
-  if (error) throw error;
+  if (error) {
+    throw error;
+  }
   return data;
 }
 
@@ -286,7 +290,9 @@ async function getTrialAnalytics(
     user_id: userId,
   });
 
-  if (error) throw error;
+  if (error) {
+    throw error;
+  }
   return data;
 }
 
@@ -303,7 +309,9 @@ async function getConversionAnalytics(
     user_id: userId,
   });
 
-  if (error) throw error;
+  if (error) {
+    throw error;
+  }
   return data;
 }
 
@@ -320,7 +328,9 @@ async function getChurnAnalytics(
     user_id: userId,
   });
 
-  if (error) throw error;
+  if (error) {
+    throw error;
+  }
   return data;
 }
 

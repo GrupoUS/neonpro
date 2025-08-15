@@ -1,9 +1,8 @@
-import { ChevronDown, Filter, Search, X } from 'lucide-react';
+import { Filter, Search, X } from 'lucide-react';
 import * as React from 'react';
 import { cn } from '../utils/cn';
 import { Badge } from './Badge';
 import { Button } from './Button';
-import { Input } from './Input';
 
 export interface FilterOption {
   id: string;
@@ -192,7 +191,9 @@ const SearchBox = React.forwardRef<HTMLDivElement, SearchBoxProps>(
             </span>
             {activeFilters.map((filterId) => {
               const filter = filters.find((f) => f.id === filterId);
-              if (!filter) return null;
+              if (!filter) {
+                return null;
+              }
 
               return (
                 <Badge

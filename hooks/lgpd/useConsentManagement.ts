@@ -147,7 +147,7 @@ export function useConsentManagement(): UseConsentManagementReturn {
         variant: 'destructive',
       });
     }
-  }, [complianceManager, toast]);
+  }, [toast]);
 
   const createPurpose = useCallback(
     async (

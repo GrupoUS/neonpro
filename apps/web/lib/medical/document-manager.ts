@@ -150,9 +150,9 @@ export interface SearchFilters {
 // ============================================================================
 
 export class MedicalDocumentManager {
-  private supabase;
-  private auditLogger: AuditLogger;
-  private lgpdManager: LGPDManager;
+  private readonly supabase;
+  private readonly auditLogger: AuditLogger;
+  private readonly lgpdManager: LGPDManager;
   private readonly STORAGE_BUCKET = 'medical-documents';
   private readonly MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
   private readonly ALLOWED_MIME_TYPES = [
@@ -237,7 +237,9 @@ export class MedicalDocumentManager {
             upsert: false,
           });
 
-      if (uploadError) throw uploadError;
+      if (uploadError) {
+        throw uploadError;
+      }
 
       // Get public URL
       const { data: urlData } = this.supabase.storage
@@ -291,7 +293,9 @@ export class MedicalDocumentManager {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Process image if needed
       if (options.processImage && file.type.startsWith('image/')) {
@@ -348,7 +352,9 @@ export class MedicalDocumentManager {
         .eq('is_active', true)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       if (!data) {
         return { success: false, error: 'Document not found' };
       }
@@ -439,7 +445,9 @@ export class MedicalDocumentManager {
 
       const { data, error, count } = await query;
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Filter by access permissions
       const accessibleDocuments = [];
@@ -506,7 +514,9 @@ export class MedicalDocumentManager {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Log audit event
       await this.auditLogger.log({
@@ -567,7 +577,9 @@ export class MedicalDocumentManager {
           .delete()
           .eq('id', documentId);
 
-        if (error) throw error;
+        if (error) {
+          throw error;
+        }
       } else {
         // Soft delete
         const { error } = await this.supabase
@@ -578,7 +590,9 @@ export class MedicalDocumentManager {
           })
           .eq('id', documentId);
 
-        if (error) throw error;
+        if (error) {
+          throw error;
+        }
       }
 
       // Log audit event
@@ -644,7 +658,9 @@ export class MedicalDocumentManager {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Update documents to reference the pair
       await this.supabase
@@ -691,7 +707,9 @@ export class MedicalDocumentManager {
         .eq('patient_id', patientId)
         .order('procedure_date', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return { success: true, data: data || [] };
     } catch (error) {
@@ -732,7 +750,9 @@ export class MedicalDocumentManager {
           .from(this.STORAGE_BUCKET)
           .upload(filePath, newFile);
 
-      if (uploadError) throw uploadError;
+      if (uploadError) {
+        throw uploadError;
+      }
 
       // Get public URL
       const { data: urlData } = this.supabase.storage
@@ -762,7 +782,9 @@ export class MedicalDocumentManager {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Update main document
       await this.supabase
@@ -811,7 +833,9 @@ export class MedicalDocumentManager {
         .eq('document_id', documentId)
         .order('version_number', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return { success: true, data: data || [] };
     } catch (error) {
@@ -869,10 +893,12 @@ export class MedicalDocumentManager {
         .eq('is_active', true)
         .single();
 
-      if (error && error.code !== 'PGRST116') throw error;
+      if (error && error.code !== 'PGRST116') {
+        throw error;
+      }
 
       return {
-        isDuplicate: !!data,
+        isDuplicate: Boolean(data),
         originalDate: data?.uploaded_at,
       };
     } catch (error) {
@@ -882,13 +908,24 @@ export class MedicalDocumentManager {
   }
 
   private getDocumentType(mimeType: string): DocumentType {
-    if (mimeType.startsWith('image/')) return DocumentType.IMAGE;
-    if (mimeType === 'application/pdf') return DocumentType.PDF;
-    if (mimeType.startsWith('video/')) return DocumentType.VIDEO;
-    if (mimeType.startsWith('audio/')) return DocumentType.AUDIO;
-    if (mimeType === 'application/dicom') return DocumentType.DICOM;
-    if (mimeType.includes('document') || mimeType.includes('word'))
+    if (mimeType.startsWith('image/')) {
+      return DocumentType.IMAGE;
+    }
+    if (mimeType === 'application/pdf') {
+      return DocumentType.PDF;
+    }
+    if (mimeType.startsWith('video/')) {
+      return DocumentType.VIDEO;
+    }
+    if (mimeType.startsWith('audio/')) {
+      return DocumentType.AUDIO;
+    }
+    if (mimeType === 'application/dicom') {
+      return DocumentType.DICOM;
+    }
+    if (mimeType.includes('document') || mimeType.includes('word')) {
       return DocumentType.DOCUMENT;
+    }
     return DocumentType.OTHER;
   }
 
@@ -1039,7 +1076,9 @@ export class MedicalDocumentManager {
         .order('uploaded_at', { ascending: false })
         .limit(50);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Filter by access permissions
       const accessibleDocuments = [];
@@ -1093,7 +1132,9 @@ export class MedicalDocumentManager {
 
       const { data, error } = await query;
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Process statistics
       const stats = {

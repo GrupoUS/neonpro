@@ -235,10 +235,10 @@ interface PaymentTrackerConfig {
 }
 
 class PaymentTracker {
-  private supabase = createClient();
-  private config: PaymentTrackerConfig;
-  private webhookHandlers: Map<PaymentGateway, Function> = new Map();
-  private isInitialized = false;
+  private readonly supabase = createClient();
+  private readonly config: PaymentTrackerConfig;
+  private readonly webhookHandlers: Map<PaymentGateway, Function> = new Map();
+  private readonly isInitialized = false;
 
   constructor(config?: Partial<PaymentTrackerConfig>) {
     this.config = this.initializeConfig(config);
@@ -372,15 +372,24 @@ class PaymentTracker {
       payment.metadata.updatedAt = new Date();
 
       if (metadata) {
-        if (metadata.transactionId)
+        if (metadata.transactionId) {
           payment.transactionId = metadata.transactionId;
-        if (metadata.authorizationCode)
+        }
+        if (metadata.authorizationCode) {
           payment.authorizationCode = metadata.authorizationCode;
-        if (metadata.nsu) payment.nsu = metadata.nsu;
-        if (metadata.tid) payment.tid = metadata.tid;
-        if (metadata.processedAt)
+        }
+        if (metadata.nsu) {
+          payment.nsu = metadata.nsu;
+        }
+        if (metadata.tid) {
+          payment.tid = metadata.tid;
+        }
+        if (metadata.processedAt) {
           payment.metadata.processedAt = metadata.processedAt;
-        if (metadata.notes) payment.metadata.notes = metadata.notes;
+        }
+        if (metadata.notes) {
+          payment.metadata.notes = metadata.notes;
+        }
       }
 
       if (status === 'confirmed') {
@@ -840,7 +849,9 @@ class PaymentTracker {
       .eq('id', paymentId)
       .single();
 
-    if (!data) return null;
+    if (!data) {
+      return null;
+    }
 
     // Convert database record to PaymentRecord
     return {
@@ -1209,7 +1220,9 @@ class PaymentTracker {
     // Group by method
     const methodGroups = payments.reduce((groups, payment) => {
       const method = payment.method;
-      if (!groups[method]) groups[method] = [];
+      if (!groups[method]) {
+        groups[method] = [];
+      }
       groups[method].push(payment);
       return groups;
     }, {});
@@ -1230,7 +1243,9 @@ class PaymentTracker {
     // Group by gateway
     const gatewayGroups = payments.reduce((groups, payment) => {
       const gateway = payment.gateway;
-      if (!groups[gateway]) groups[gateway] = [];
+      if (!groups[gateway]) {
+        groups[gateway] = [];
+      }
       groups[gateway].push(payment);
       return groups;
     }, {});

@@ -71,7 +71,7 @@ export interface OptimizationSuggestion {
  * Provides AI-powered analysis and recommendations for patient care
  */
 export class PatientInsightsEngine {
-  private supabase;
+  private readonly supabase;
 
   constructor() {
     this.supabase = createClientComponentClient<Database>();
@@ -88,7 +88,9 @@ export class PatientInsightsEngine {
       const profile = await this.getPatientProfile(patientId);
       const timeline = await this.getMedicalTimeline(patientId);
 
-      if (!profile) return null;
+      if (!profile) {
+        return null;
+      }
 
       // Generate different types of insights
       const [
@@ -474,8 +476,7 @@ export class PatientInsightsEngine {
     const direction: 'improving' | 'stable' | 'declining' =
       slope > 0.001 ? 'improving' : slope < -0.001 ? 'declining' : 'stable';
 
-    const periodMonths =
-      (dates[dates.length - 1] - dates[0]) / (1000 * 60 * 60 * 24 * 30);
+    const periodMonths = (dates.at(-1) - dates[0]) / (1000 * 60 * 60 * 24 * 30);
 
     return {
       direction,

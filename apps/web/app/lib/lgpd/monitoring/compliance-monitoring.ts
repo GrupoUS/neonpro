@@ -165,13 +165,17 @@ class RealTimeComplianceMonitor {
   private monitoringInterval?: NodeJS.Timeout;
   private alertCheckInterval?: NodeJS.Timeout;
   private isRunning = false;
-  private listeners: Array<(status: RealTimeComplianceStatus) => void> = [];
+  private readonly listeners: Array<
+    (status: RealTimeComplianceStatus) => void
+  > = [];
 
   /**
    * Start real-time compliance monitoring
    */
   async startMonitoring(): Promise<void> {
-    if (this.isRunning) return;
+    if (this.isRunning) {
+      return;
+    }
 
     try {
       this.isRunning = true;
@@ -509,7 +513,7 @@ class RealTimeComplianceMonitor {
         consentMetrics.total > 0
           ? consentMetrics.granted / consentMetrics.total
           : 1;
-      baseScore = baseScore * consentRate;
+      baseScore *= consentRate;
 
       return Math.max(0, Math.min(100, baseScore));
     } catch (error) {
@@ -540,7 +544,7 @@ class RealTimeComplianceMonitor {
       // Bonus for prompt request handling
       if (requestMetrics.total > 0) {
         const completionRate = requestMetrics.completed / requestMetrics.total;
-        baseScore = baseScore * completionRate;
+        baseScore *= completionRate;
       }
 
       return Math.max(0, Math.min(100, baseScore));
@@ -642,10 +646,18 @@ class RealTimeComplianceMonitor {
   }
 
   private determineComplianceLevel(score: number): ComplianceLevel {
-    if (score >= 91) return ComplianceLevel.EXCELLENT;
-    if (score >= 76) return ComplianceLevel.GOOD;
-    if (score >= 51) return ComplianceLevel.FAIR;
-    if (score >= 26) return ComplianceLevel.POOR;
+    if (score >= 91) {
+      return ComplianceLevel.EXCELLENT;
+    }
+    if (score >= 76) {
+      return ComplianceLevel.GOOD;
+    }
+    if (score >= 51) {
+      return ComplianceLevel.FAIR;
+    }
+    if (score >= 26) {
+      return ComplianceLevel.POOR;
+    }
     return ComplianceLevel.CRITICAL;
   }
 

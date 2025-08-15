@@ -9,8 +9,9 @@ import type {
 } from './types';
 
 export class BehaviorAnalysisEngine {
-  private supabase = createClient();
-  private behaviorPatterns: Map<string, PatientBehaviorPattern[]> = new Map();
+  private readonly supabase = createClient();
+  private readonly behaviorPatterns: Map<string, PatientBehaviorPattern[]> =
+    new Map();
 
   async analyzeBehaviorPatterns(patientId: string): Promise<BehaviorAnalysis> {
     try {
@@ -609,7 +610,9 @@ export class BehaviorAnalysisEngine {
 
   // Utility calculation methods
   private calculateCancellationRate(appointments: any[]): number {
-    if (appointments.length === 0) return 0;
+    if (appointments.length === 0) {
+      return 0;
+    }
     const cancelled = appointments.filter(
       (apt) => apt.status === 'cancelled'
     ).length;
@@ -617,7 +620,9 @@ export class BehaviorAnalysisEngine {
   }
 
   private calculateRescheduleRate(appointments: any[]): number {
-    if (appointments.length === 0) return 0;
+    if (appointments.length === 0) {
+      return 0;
+    }
     const rescheduled = appointments.filter(
       (apt) => apt.rescheduled_count > 0
     ).length;
@@ -625,7 +630,9 @@ export class BehaviorAnalysisEngine {
   }
 
   private calculateNoShowRate(appointments: any[]): number {
-    if (appointments.length === 0) return 0;
+    if (appointments.length === 0) {
+      return 0;
+    }
     const noShows = appointments.filter(
       (apt) => apt.status === 'no_show'
     ).length;
@@ -691,7 +698,9 @@ export class BehaviorAnalysisEngine {
   }
 
   private calculateResponseRate(communications: any[]): number {
-    if (communications.length === 0) return 0;
+    if (communications.length === 0) {
+      return 0;
+    }
     const responded = communications.filter(
       (comm) => comm.response_received
     ).length;
@@ -749,7 +758,9 @@ export class BehaviorAnalysisEngine {
   }
 
   private calculateAverageSatisfaction(satisfactionScores: any[]): number {
-    if (satisfactionScores.length === 0) return 7.5;
+    if (satisfactionScores.length === 0) {
+      return 7.5;
+    }
     return (
       satisfactionScores.reduce((sum, score) => sum + score.score, 0) /
       satisfactionScores.length

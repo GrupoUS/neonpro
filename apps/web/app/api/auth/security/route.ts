@@ -106,7 +106,9 @@ async function getCurrentUser() {
 }
 
 function parseDate(dateString?: string): Date | undefined {
-  if (!dateString) return;
+  if (!dateString) {
+    return;
+  }
   const date = new Date(dateString);
   return Number.isNaN(date.getTime()) ? undefined : date;
 }
@@ -150,9 +152,15 @@ export async function GET(request: NextRequest) {
       userId: user.id,
     };
 
-    if (severity) filters.severity = severity;
-    if (type) filters.type = type;
-    if (resolved !== undefined) filters.resolved = resolved;
+    if (severity) {
+      filters.severity = severity;
+    }
+    if (type) {
+      filters.type = type;
+    }
+    if (resolved !== undefined) {
+      filters.resolved = resolved;
+    }
 
     // Get events
     const events = await sessionSystem.securityEventLogger.getEvents(filters, {

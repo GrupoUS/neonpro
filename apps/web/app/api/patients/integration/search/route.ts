@@ -42,21 +42,36 @@ export async function GET(request: NextRequest) {
     // Parse filters
     const filters: any = {};
 
-    if (searchParams.get('name')) filters.name = searchParams.get('name');
-    if (searchParams.get('email')) filters.email = searchParams.get('email');
-    if (searchParams.get('phone')) filters.phone = searchParams.get('phone');
-    if (searchParams.get('cpf')) filters.cpf = searchParams.get('cpf');
-    if (searchParams.get('gender')) filters.gender = searchParams.get('gender');
-    if (searchParams.get('riskLevel'))
+    if (searchParams.get('name')) {
+      filters.name = searchParams.get('name');
+    }
+    if (searchParams.get('email')) {
+      filters.email = searchParams.get('email');
+    }
+    if (searchParams.get('phone')) {
+      filters.phone = searchParams.get('phone');
+    }
+    if (searchParams.get('cpf')) {
+      filters.cpf = searchParams.get('cpf');
+    }
+    if (searchParams.get('gender')) {
+      filters.gender = searchParams.get('gender');
+    }
+    if (searchParams.get('riskLevel')) {
       filters.riskLevel = searchParams.get('riskLevel');
-    if (searchParams.get('treatmentType'))
+    }
+    if (searchParams.get('treatmentType')) {
       filters.treatmentType = searchParams.get('treatmentType');
-    if (searchParams.get('appointmentStatus'))
+    }
+    if (searchParams.get('appointmentStatus')) {
       filters.appointmentStatus = searchParams.get('appointmentStatus');
-    if (searchParams.get('hasPhotos'))
+    }
+    if (searchParams.get('hasPhotos')) {
       filters.hasPhotos = searchParams.get('hasPhotos') === 'true';
-    if (searchParams.get('consentStatus'))
+    }
+    if (searchParams.get('consentStatus')) {
       filters.consentStatus = searchParams.get('consentStatus') === 'true';
+    }
 
     // Age range
     const minAge = searchParams.get('minAge');

@@ -9,8 +9,8 @@ import type {
 } from './types';
 
 export class TreatmentRecommendationEngine {
-  private supabase = createClient();
-  private evidenceDatabase: Map<string, TreatmentEvidence> = new Map();
+  private readonly supabase = createClient();
+  private readonly evidenceDatabase: Map<string, TreatmentEvidence> = new Map();
 
   constructor() {
     this.initializeEvidenceDatabase();
@@ -165,8 +165,12 @@ export class TreatmentRecommendationEngine {
   private isPatientEligible(treatment: any, patientData: any): boolean {
     // Age restrictions
     const age = this.calculateAge(patientData.date_of_birth);
-    if (treatment.min_age && age < treatment.min_age) return false;
-    if (treatment.max_age && age > treatment.max_age) return false;
+    if (treatment.min_age && age < treatment.min_age) {
+      return false;
+    }
+    if (treatment.max_age && age > treatment.max_age) {
+      return false;
+    }
 
     // Gender restrictions
     if (
@@ -194,8 +198,12 @@ export class TreatmentRecommendationEngine {
 
     // Adjust for patient age
     const age = this.calculateAge(patientData.date_of_birth);
-    if (age > 65) baseRate *= 0.9;
-    if (age > 75) baseRate *= 0.85;
+    if (age > 65) {
+      baseRate *= 0.9;
+    }
+    if (age > 75) {
+      baseRate *= 0.85;
+    }
 
     // Adjust for overall risk score
     const riskFactor = 1 - riskAssessment.overallRiskScore / 200; // Max 50% reduction
@@ -237,12 +245,22 @@ export class TreatmentRecommendationEngine {
     riskScore += highRiskFactors.length * 0.5;
 
     // Treatment-specific risk adjustments
-    if (treatment.invasiveness === 'high') riskScore += 1;
-    if (treatment.anesthesia_required) riskScore += 0.5;
-    if (treatment.recovery_time > 30) riskScore += 0.5;
+    if (treatment.invasiveness === 'high') {
+      riskScore += 1;
+    }
+    if (treatment.anesthesia_required) {
+      riskScore += 0.5;
+    }
+    if (treatment.recovery_time > 30) {
+      riskScore += 0.5;
+    }
 
-    if (riskScore <= 1.5) return 'low';
-    if (riskScore <= 2.5) return 'medium';
+    if (riskScore <= 1.5) {
+      return 'low';
+    }
+    if (riskScore <= 2.5) {
+      return 'medium';
+    }
     return 'high';
   }
 
@@ -311,7 +329,9 @@ export class TreatmentRecommendationEngine {
       this.evidenceDatabase.get(treatment.id) ||
       this.evidenceDatabase.get(treatment.category);
 
-    if (!evidence) return 'weak';
+    if (!evidence) {
+      return 'weak';
+    }
 
     // Check for goal-specific evidence
     if (treatmentGoal && evidence.goalSpecificStudies[treatmentGoal]) {
@@ -326,7 +346,9 @@ export class TreatmentRecommendationEngine {
 
     // Adjust for complexity factors
     const age = this.calculateAge(patientData.date_of_birth);
-    if (age > 65) baseCost *= 1.2; // 20% increase for elderly patients
+    if (age > 65) {
+      baseCost *= 1.2; // 20% increase for elderly patients
+    }
 
     // Adjust for medical conditions that may complicate treatment
     const complicatingConditions =
@@ -346,7 +368,9 @@ export class TreatmentRecommendationEngine {
 
     // Adjust for patient factors
     const age = this.calculateAge(patientData.date_of_birth);
-    if (age > 65) baseDuration *= 1.3;
+    if (age > 65) {
+      baseDuration *= 1.3;
+    }
 
     // Adjust for complexity
     const medicalConditions = patientData.medical_history?.length || 0;
@@ -470,16 +494,22 @@ export class TreatmentRecommendationEngine {
       const categoryWeight = { primary: 3, alternative: 2, contraindicated: 1 };
       const categoryDiff =
         categoryWeight[b.category] - categoryWeight[a.category];
-      if (categoryDiff !== 0) return categoryDiff;
+      if (categoryDiff !== 0) {
+        return categoryDiff;
+      }
 
       // Secondary sort by success probability
       const successDiff = b.successProbability - a.successProbability;
-      if (Math.abs(successDiff) > 0.1) return successDiff;
+      if (Math.abs(successDiff) > 0.1) {
+        return successDiff;
+      }
 
       // Tertiary sort by risk level (lower risk first)
       const riskWeight = { low: 3, medium: 2, high: 1 };
       const riskDiff = riskWeight[b.riskLevel] - riskWeight[a.riskLevel];
-      if (riskDiff !== 0) return riskDiff;
+      if (riskDiff !== 0) {
+        return riskDiff;
+      }
 
       // Final sort by evidence level
       const evidenceWeight = {

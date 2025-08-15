@@ -20,8 +20,8 @@ import { createClient } from '@/app/utils/supabase/server';
 // ============================================================================
 
 export class StockAlertService {
-  private supabase: SupabaseClient;
-  private clinicId: string;
+  private readonly supabase: SupabaseClient;
+  private readonly clinicId: string;
 
   constructor(supabase: SupabaseClient, clinicId: string) {
     this.supabase = supabase;
@@ -506,7 +506,9 @@ export class StockAlertService {
         return product.current_stock || 0;
       case 'expiring':
       case 'expired': {
-        if (!product.expiration_date) return 0;
+        if (!product.expiration_date) {
+          return 0;
+        }
         const expirationDate = new Date(product.expiration_date);
         const now = new Date();
         return Math.ceil(

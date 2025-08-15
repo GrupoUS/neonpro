@@ -93,8 +93,12 @@ export async function analyzeBundleStats(
 
 // Determine chunk status based on size
 function getChunkStatus(size: number): 'good' | 'warning' | 'error' {
-  if (size > BUNDLE_THRESHOLDS.ERROR) return 'error';
-  if (size > BUNDLE_THRESHOLDS.WARNING) return 'warning';
+  if (size > BUNDLE_THRESHOLDS.ERROR) {
+    return 'error';
+  }
+  if (size > BUNDLE_THRESHOLDS.WARNING) {
+    return 'warning';
+  }
   return 'good';
 }
 
@@ -151,7 +155,9 @@ function analyzeModules(modules: any[], analysis: BundleAnalysis) {
 
 // Clean module names for better readability
 function cleanModuleName(name: string): string {
-  if (!name) return 'unknown';
+  if (!name) {
+    return 'unknown';
+  }
 
   // Remove webpack loader syntax
   name = name.replace(/^.*!/, '');
@@ -230,7 +236,9 @@ function generateRecommendations(analysis: BundleAnalysis): string[] {
 
 // Format bytes for human readability
 export function formatBytes(bytes: number): string {
-  if (bytes === 0) return '0 B';
+  if (bytes === 0) {
+    return '0 B';
+  }
 
   const k = 1024;
   const sizes = ['B', 'KB', 'MB', 'GB'];

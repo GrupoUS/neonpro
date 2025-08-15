@@ -80,8 +80,8 @@ interface RecoveryStrategyImplementation {
 export class SubscriptionErrorHandler {
   private config: ErrorHandlerConfig;
   private errorHistory: SubscriptionError[] = [];
-  private maxHistorySize = 100;
-  private recoveryStrategies: Map<
+  private readonly maxHistorySize = 100;
+  private readonly recoveryStrategies: Map<
     RecoveryStrategy,
     RecoveryStrategyImplementation
   >;
@@ -313,7 +313,7 @@ export class SubscriptionErrorHandler {
   ): Promise<ErrorHandlingResult<T>> {
     const strategy = this.recoveryStrategies.get(error.recoveryStrategy);
 
-    if (!(strategy && strategy.canHandle(error))) {
+    if (!strategy?.canHandle(error)) {
       return {
         success: false,
         error,

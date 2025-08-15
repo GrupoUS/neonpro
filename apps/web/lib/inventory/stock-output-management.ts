@@ -372,7 +372,7 @@ export type TransferStatus =
  * Core logic for managing all stock outputs with FIFO and consumption tracking
  */
 export class StockOutputManager {
-  private supabase = createClientComponentClient<Database>();
+  private readonly supabase = createClientComponentClient<Database>();
 
   /**
    * Create stock output with automatic FIFO batch selection
@@ -444,7 +444,9 @@ export class StockOutputManager {
         .select()
         .single();
 
-      if (outputError) throw outputError;
+      if (outputError) {
+        throw outputError;
+      }
 
       // 7. Create output items
       const itemsData = itemsWithFIFO.map((item) => ({
@@ -464,7 +466,9 @@ export class StockOutputManager {
         .insert(itemsData)
         .select();
 
-      if (itemsError) throw itemsError;
+      if (itemsError) {
+        throw itemsError;
+      }
 
       // 8. Update batch quantities if approved
       if (!requiresApproval) {
@@ -594,7 +598,9 @@ export class StockOutputManager {
       let fifoOrder = 1;
 
       for (const batch of availableBatches) {
-        if (remainingQuantity <= 0) break;
+        if (remainingQuantity <= 0) {
+          break;
+        }
 
         const quantityToTake = Math.min(
           remainingQuantity,
@@ -743,7 +749,9 @@ export class StockOutputManager {
       .eq('id', centroCustoId)
       .single();
 
-    if (!costCenter) return false;
+    if (!costCenter) {
+      return false;
+    }
 
     // Always require approval for losses and adjustments
     if (['perda', 'ajuste', 'vencimento'].includes(tipoSaida)) {

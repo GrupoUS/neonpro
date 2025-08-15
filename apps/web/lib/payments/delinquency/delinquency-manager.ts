@@ -123,8 +123,8 @@ interface CollectionWorkflow {
  * Handles overdue payment detection, escalating notifications, and collection workflows
  */
 export class DelinquencyManager {
-  private supabase: ReturnType<typeof createClient>;
-  private emailTransporter?: nodemailer.Transporter;
+  private readonly supabase: ReturnType<typeof createClient>;
+  private readonly emailTransporter?: nodemailer.Transporter;
 
   constructor(
     supabaseUrl: string,
@@ -165,7 +165,9 @@ export class DelinquencyManager {
         .in('status', ['sent', 'overdue'])
         .lt('data->>dueDate', new Date().toISOString());
 
-      if (invoiceError) throw invoiceError;
+      if (invoiceError) {
+        throw invoiceError;
+      }
 
       // Get overdue installments
       const { data: overdueInstallments, error: installmentError } =
@@ -184,7 +186,9 @@ export class DelinquencyManager {
           .eq('status', 'pending')
           .lt('due_date', new Date().toISOString());
 
-      if (installmentError) throw installmentError;
+      if (installmentError) {
+        throw installmentError;
+      }
 
       const overduePayments: OverduePayment[] = [];
 
@@ -276,7 +280,9 @@ export class DelinquencyManager {
         { customer_id: customerId }
       );
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       const totalPayments = paymentHistory?.total_payments || 0;
       const onTimePayments = paymentHistory?.on_time_payments || 0;
@@ -314,10 +320,15 @@ export class DelinquencyManager {
 
       // Determine risk level
       let riskLevel: 'low' | 'medium' | 'high' | 'critical';
-      if (riskScore <= 250) riskLevel = 'low';
-      else if (riskScore <= 500) riskLevel = 'medium';
-      else if (riskScore <= 750) riskLevel = 'high';
-      else riskLevel = 'critical';
+      if (riskScore <= 250) {
+        riskLevel = 'low';
+      } else if (riskScore <= 500) {
+        riskLevel = 'medium';
+      } else if (riskScore <= 750) {
+        riskLevel = 'high';
+      } else {
+        riskLevel = 'critical';
+      }
 
       const riskProfile: CustomerRiskProfile = {
         customerId,
@@ -383,7 +394,9 @@ export class DelinquencyManager {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return paymentPlan;
     } catch (error) {
@@ -471,7 +484,9 @@ export class DelinquencyManager {
         }
       );
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return {
         totalOverdue: data?.total_overdue || 0,
@@ -501,9 +516,13 @@ export class DelinquencyManager {
         .eq('status', 'active')
         .single();
 
-      if (error && error.code !== 'PGRST116') throw error;
+      if (error && error.code !== 'PGRST116') {
+        throw error;
+      }
 
-      if (!data) return null;
+      if (!data) {
+        return null;
+      }
 
       return {
         customerId: data.customer_id,
@@ -526,9 +545,15 @@ export class DelinquencyManager {
     riskProfile: any,
     daysOverdue: number
   ): 'low' | 'medium' | 'high' | 'critical' {
-    if (daysOverdue > 90) return 'critical';
-    if (daysOverdue > 60) return 'high';
-    if (daysOverdue > 30) return 'medium';
+    if (daysOverdue > 90) {
+      return 'critical';
+    }
+    if (daysOverdue > 60) {
+      return 'high';
+    }
+    if (daysOverdue > 30) {
+      return 'medium';
+    }
     return riskProfile?.risk_level || 'low';
   }
 
@@ -556,7 +581,9 @@ export class DelinquencyManager {
       .select('*')
       .eq('is_active', true);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     return (
       data?.map((rule) => ({
@@ -648,7 +675,9 @@ export class DelinquencyManager {
     template: any,
     metadata?: Record<string, any>
   ): Promise<boolean> {
-    if (!this.emailTransporter) return false;
+    if (!this.emailTransporter) {
+      return false;
+    }
 
     try {
       const subject = this.processTemplate(

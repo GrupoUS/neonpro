@@ -80,7 +80,7 @@ export interface ComplianceAlert {
 // =====================================================
 
 export class ComplianceMetricsEngine {
-  private supabase: SupabaseClient;
+  private readonly supabase: SupabaseClient;
 
   constructor() {
     this.supabase = createClient();
@@ -140,14 +140,18 @@ export class ComplianceMetricsEngine {
           'id, consent_marketing, consent_data_processing, privacy_policy_accepted'
         );
 
-      if (consentError) throw consentError;
+      if (consentError) {
+        throw consentError;
+      }
 
       // Query LGPD rights requests
       const { data: requestsData, error: requestsError } = await this.supabase
         .from('lgpd_requests')
         .select('id, request_type, status, created_at');
 
-      if (requestsError) throw requestsError;
+      if (requestsError) {
+        throw requestsError;
+      }
 
       // Query data breach incidents
       const { data: breachData, error: breachError } = await this.supabase
@@ -155,7 +159,9 @@ export class ComplianceMetricsEngine {
         .select('id, incident_type, severity, created_at')
         .eq('incident_type', 'data_breach');
 
-      if (breachError) throw breachError;
+      if (breachError) {
+        throw breachError;
+      }
 
       // Calculate metrics
       const totalPatients = consentData?.length || 0;
@@ -253,11 +259,18 @@ export class ComplianceMetricsEngine {
         .select('id, audit_type, result, conducted_at')
         .eq('result', 'passed');
 
-      if (productError) console.warn('Product data unavailable:', productError);
-      if (eventError) console.warn('Event data unavailable:', eventError);
-      if (procedureError)
+      if (productError) {
+        console.warn('Product data unavailable:', productError);
+      }
+      if (eventError) {
+        console.warn('Event data unavailable:', eventError);
+      }
+      if (procedureError) {
         console.warn('Procedure data unavailable:', procedureError);
-      if (auditError) console.warn('Audit data unavailable:', auditError);
+      }
+      if (auditError) {
+        console.warn('Audit data unavailable:', auditError);
+      }
 
       // Calculate ANVISA metrics with fallbacks
       const registeredProducts =
@@ -327,8 +340,9 @@ export class ComplianceMetricsEngine {
           'id, table_name, records_processed, records_deleted, job_status, created_at'
         );
 
-      if (retentionError)
+      if (retentionError) {
         console.warn('Retention data unavailable:', retentionError);
+      }
 
       // Query cleanup job status
       const { data: cleanupJobs, error: cleanupError } = await this.supabase
@@ -339,8 +353,9 @@ export class ComplianceMetricsEngine {
           new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
         ); // Last 30 days
 
-      if (cleanupError)
+      if (cleanupError) {
         console.warn('Cleanup job data unavailable:', cleanupError);
+      }
 
       // Calculate retention metrics
       const totalRecords =
@@ -417,7 +432,9 @@ export class ComplianceMetricsEngine {
         .select('id, action_type, severity, user_id, created_at')
         .gte('created_at', thirtyDaysAgo);
 
-      if (auditError) console.warn('Audit data unavailable:', auditError);
+      if (auditError) {
+        console.warn('Audit data unavailable:', auditError);
+      }
 
       // Calculate audit metrics
       const totalEntries = auditData?.length || 150; // Reasonable default
@@ -497,7 +514,9 @@ export class ComplianceMetricsEngine {
         .order('severity_score', { ascending: false })
         .limit(10);
 
-      if (alertError) console.warn('Alert data unavailable:', alertError);
+      if (alertError) {
+        console.warn('Alert data unavailable:', alertError);
+      }
 
       // Return alerts or generate sample alerts for demo
       if (alertData && alertData.length > 0) {
@@ -605,9 +624,15 @@ export function isComplianceScoreAcceptable(score: number): boolean {
  * Get compliance score color for UI
  */
 export function getComplianceScoreColor(score: number): string {
-  if (score >= 90) return 'green';
-  if (score >= 80) return 'yellow';
-  if (score >= 70) return 'orange';
+  if (score >= 90) {
+    return 'green';
+  }
+  if (score >= 80) {
+    return 'yellow';
+  }
+  if (score >= 70) {
+    return 'orange';
+  }
   return 'red';
 }
 

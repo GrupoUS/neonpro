@@ -5,8 +5,6 @@ export interface PaymentProcessorConfig {
 }
 
 export class PaymentProcessor {
-  constructor(_config: PaymentProcessorConfig) {}
-
   async processPayment(
     _amount: number,
     _paymentMethodId: string

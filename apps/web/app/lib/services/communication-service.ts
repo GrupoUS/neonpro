@@ -26,7 +26,7 @@ import type {
 import { createClient } from '@/utils/supabase/client';
 
 export class CommunicationService {
-  private supabase = createClient();
+  private readonly supabase = createClient();
 
   // ============================================================================
   // MESSAGE OPERATIONS
@@ -105,7 +105,9 @@ export class CommunicationService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // If not scheduled, attempt to send immediately
       if (!request.scheduled_at) {
@@ -190,7 +192,9 @@ export class CommunicationService {
 
       const { data: messages, error, count } = await query;
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return {
         messages: messages || [],
@@ -236,7 +240,9 @@ export class CommunicationService {
 
       const { data: threads, error } = await query;
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Calculate unread count for each thread
       const threadsWithUnread = await Promise.all(
@@ -284,7 +290,9 @@ export class CommunicationService {
 
       const { data: templates, error } = await query;
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return templates || [];
     } catch (error) {
@@ -312,7 +320,9 @@ export class CommunicationService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return data;
     } catch (error) {
@@ -336,7 +346,9 @@ export class CommunicationService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return data;
     } catch (error) {
@@ -370,7 +382,9 @@ export class CommunicationService {
 
       const { data: campaigns, error } = await query;
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return campaigns || [];
     } catch (error) {
@@ -419,7 +433,9 @@ export class CommunicationService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return data;
     } catch (error) {
@@ -502,9 +518,13 @@ export class CommunicationService {
         .eq('consent_given', true)
         .single();
 
-      if (error && error.code !== 'PGRST116') throw error; // PGRST116 = no rows returned
+      if (error && error.code !== 'PGRST116') {
+        throw error; // PGRST116 = no rows returned
+      }
 
-      if (!consent) return false;
+      if (!consent) {
+        return false;
+      }
 
       // Check if consent has expired
       if (consent.expiry_date && new Date(consent.expiry_date) < new Date()) {
@@ -534,7 +554,9 @@ export class CommunicationService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return data;
     } catch (error) {
@@ -556,7 +578,9 @@ export class CommunicationService {
         .eq('patient_id', patientId)
         .single();
 
-      if (error && error.code !== 'PGRST116') throw error;
+      if (error && error.code !== 'PGRST116') {
+        throw error;
+      }
 
       return preferences;
     } catch (error) {
@@ -585,7 +609,9 @@ export class CommunicationService {
         .gte('created_at', dateRange.from)
         .lte('created_at', dateRange.to);
 
-      if (statsError) throw statsError;
+      if (statsError) {
+        throw statsError;
+      }
 
       // Process statistics
       const stats: CommunicationStats = {
@@ -653,11 +679,14 @@ export class CommunicationService {
     type: MessageType
   ): boolean {
     // Marketing messages always require consent
-    if (type === 'alert' && channel !== 'portal') return true;
+    if (type === 'alert' && channel !== 'portal') {
+      return true;
+    }
 
     // SMS and WhatsApp require consent for non-emergency communications
-    if ((channel === 'sms' || channel === 'whatsapp') && type !== 'alert')
+    if ((channel === 'sms' || channel === 'whatsapp') && type !== 'alert') {
       return true;
+    }
 
     return false;
   }
@@ -678,7 +707,9 @@ export class CommunicationService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data.id;
   }
 
@@ -691,7 +722,9 @@ export class CommunicationService {
       .eq('id', templateId)
       .single();
 
-    if (error && error.code !== 'PGRST116') throw error;
+    if (error && error.code !== 'PGRST116') {
+      throw error;
+    }
     return data;
   }
 
@@ -778,7 +811,9 @@ export class CommunicationService {
       .eq('thread_id', threadId)
       .is('read_at', null);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return count || 0;
   }
 
@@ -796,7 +831,9 @@ export class CommunicationService {
       .eq('id', campaignId)
       .single();
 
-    if (error && error.code !== 'PGRST116') throw error;
+    if (error && error.code !== 'PGRST116') {
+      throw error;
+    }
     return data;
   }
 
@@ -931,7 +968,9 @@ export class CommunicationService {
       .order('created_at', { ascending: false })
       .limit(limit);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data || [];
   }
 
@@ -942,7 +981,9 @@ export class CommunicationService {
       .eq('status', 'draft')
       .order('created_at', { ascending: false });
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data || [];
   }
 
@@ -954,7 +995,9 @@ export class CommunicationService {
       .order('created_at', { ascending: false })
       .limit(10);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data || [];
   }
 

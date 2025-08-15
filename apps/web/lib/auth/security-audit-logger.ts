@@ -89,9 +89,9 @@ export interface AuditLogQuery {
 
 class SecurityAuditLogger {
   private static instance: SecurityAuditLogger;
-  private eventQueue: SecurityEvent[] = [];
-  private batchSize = 50;
-  private flushInterval = 30_000; // 30 seconds
+  private readonly eventQueue: SecurityEvent[] = [];
+  private readonly batchSize = 50;
+  private readonly flushInterval = 30_000; // 30 seconds
   private flushTimer: NodeJS.Timeout | null = null;
 
   private constructor() {
@@ -450,8 +450,12 @@ class SecurityAuditLogger {
       'session_expired',
     ];
 
-    if (criticalEvents.includes(eventType)) return 'critical';
-    if (warningEvents.includes(eventType)) return 'warning';
+    if (criticalEvents.includes(eventType)) {
+      return 'critical';
+    }
+    if (warningEvents.includes(eventType)) {
+      return 'warning';
+    }
     return 'info';
   }
 
@@ -498,7 +502,9 @@ class SecurityAuditLogger {
   }
 
   private async flushEvents(): Promise<void> {
-    if (this.eventQueue.length === 0) return;
+    if (this.eventQueue.length === 0) {
+      return;
+    }
 
     const eventsToFlush = this.eventQueue.splice(0, this.batchSize);
 

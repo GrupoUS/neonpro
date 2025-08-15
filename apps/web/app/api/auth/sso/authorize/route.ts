@@ -82,9 +82,9 @@ export async function GET(request: NextRequest) {
 
     logger.info('SSO authorize: Generated auth URL', {
       providerId,
-      hasRedirectTo: !!redirect_to,
-      hasLoginHint: !!login_hint,
-      hasDomainHint: !!domain_hint,
+      hasRedirectTo: Boolean(redirect_to),
+      hasLoginHint: Boolean(login_hint),
+      hasDomainHint: Boolean(domain_hint),
       prompt,
     });
 

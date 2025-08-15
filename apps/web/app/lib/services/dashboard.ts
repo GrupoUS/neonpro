@@ -18,7 +18,9 @@ export class DashboardService {
       .gte('timestamp', startDate.toISOString())
       .order('timestamp', { ascending: false });
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     return performanceLogs || [];
   }
@@ -35,7 +37,9 @@ export class DashboardService {
       .gte('timestamp', startDate.toISOString())
       .order('timestamp', { ascending: false });
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     return logs || [];
   }
@@ -62,7 +66,9 @@ export class DashboardService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -96,7 +102,9 @@ export class DashboardService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return config;
   }
 
@@ -119,7 +127,9 @@ export class DashboardService {
     }
 
     const { data, error } = await query.single();
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -135,7 +145,9 @@ export class DashboardService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return config;
   }
 
@@ -146,7 +158,9 @@ export class DashboardService {
       .delete()
       .eq('id', configId);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return { success: true };
   }
 
@@ -174,7 +188,9 @@ export class DashboardService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return widget;
   }
 
@@ -187,7 +203,9 @@ export class DashboardService {
       .order('position_y')
       .order('position_x');
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -203,7 +221,9 @@ export class DashboardService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return widget;
   }
 
@@ -214,7 +234,9 @@ export class DashboardService {
       .delete()
       .eq('id', widgetId);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return { success: true };
   }
 
@@ -282,13 +304,20 @@ export class DashboardService {
       `)
       .eq('status', 'completed');
 
-    if (clinicId) query = query.eq('clinic_id', clinicId);
-    if (startDate)
+    if (clinicId) {
+      query = query.eq('clinic_id', clinicId);
+    }
+    if (startDate) {
       query = query.gte('appointment_date', startDate.toISOString());
-    if (endDate) query = query.lte('appointment_date', endDate.toISOString());
+    }
+    if (endDate) {
+      query = query.lte('appointment_date', endDate.toISOString());
+    }
 
     const { data: appointments, error } = await query;
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     const totalRevenue =
       appointments?.reduce(
@@ -342,11 +371,17 @@ export class DashboardService {
     const supabase = await this.getSupabase();
     let query = supabase.from('profiles').select('*');
 
-    if (clinicId) query = query.eq('clinic_id', clinicId);
-    if (startDate) query = query.gte('created_at', startDate.toISOString());
+    if (clinicId) {
+      query = query.eq('clinic_id', clinicId);
+    }
+    if (startDate) {
+      query = query.gte('created_at', startDate.toISOString());
+    }
 
     const { data: patients, error } = await query;
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     const totalPatients = patients?.length || 0;
     const newPatients =
@@ -374,13 +409,20 @@ export class DashboardService {
     const supabase = await this.getSupabase();
     let query = supabase.from('appointments').select('*');
 
-    if (clinicId) query = query.eq('clinic_id', clinicId);
-    if (startDate)
+    if (clinicId) {
+      query = query.eq('clinic_id', clinicId);
+    }
+    if (startDate) {
       query = query.gte('appointment_date', startDate.toISOString());
-    if (endDate) query = query.lte('appointment_date', endDate.toISOString());
+    }
+    if (endDate) {
+      query = query.lte('appointment_date', endDate.toISOString());
+    }
 
     const { data: appointments, error } = await query;
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     const totalAppointments = appointments?.length || 0;
     const completedAppointments =
@@ -458,7 +500,9 @@ export class DashboardService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return alert;
   }
 
@@ -469,10 +513,14 @@ export class DashboardService {
       .select('*')
       .eq('user_id', userId);
 
-    if (clinicId) query = query.eq('clinic_id', clinicId);
+    if (clinicId) {
+      query = query.eq('clinic_id', clinicId);
+    }
 
     const { data, error } = await query;
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -488,7 +536,9 @@ export class DashboardService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return alert;
   }
 
@@ -499,7 +549,9 @@ export class DashboardService {
       .delete()
       .eq('id', alertId);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return { success: true };
   }
 
@@ -524,7 +576,9 @@ export class DashboardService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return log;
   }
 
@@ -537,7 +591,9 @@ export class DashboardService {
       .order('timestamp', { ascending: false })
       .limit(limit);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -550,10 +606,14 @@ export class DashboardService {
       .eq('cache_key', cacheKey)
       .gt('expires_at', new Date().toISOString());
 
-    if (clinicId) query = query.eq('clinic_id', clinicId);
+    if (clinicId) {
+      query = query.eq('clinic_id', clinicId);
+    }
 
     const { data, error } = await query.single();
-    if (error) return null;
+    if (error) {
+      return null;
+    }
     return data?.cache_data;
   }
 
@@ -575,7 +635,9 @@ export class DashboardService {
       created_at: new Date().toISOString(),
     });
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return { success: true };
   }
 
@@ -653,7 +715,9 @@ export class DashboardService {
       .eq('id', widgetId)
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Generate data based on widget configuration and data source
     const data = await this.generateWidgetData(widget, query);

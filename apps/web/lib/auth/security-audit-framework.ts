@@ -58,7 +58,7 @@ export interface AuditConfig {
 
 class SecurityAuditFramework {
   private static instance: SecurityAuditFramework;
-  private config: AuditConfig;
+  private readonly config: AuditConfig;
 
   private constructor() {
     this.config = {
@@ -140,7 +140,9 @@ class SecurityAuditFramework {
    * Detect threats and trigger alerts
    */
   private async detectThreats(event: SecurityEvent): Promise<void> {
-    if (!this.config.enableRealTimeAlerts) return;
+    if (!this.config.enableRealTimeAlerts) {
+      return;
+    }
 
     try {
       // Failed login attempt detection
@@ -188,7 +190,9 @@ class SecurityAuditFramework {
         .eq('ip_address', ipAddress)
         .gte('timestamp', oneHourAgo.toISOString());
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       const failedAttempts = data?.length || 0;
 
@@ -222,7 +226,9 @@ class SecurityAuditFramework {
         .in('severity', ['high', 'critical'])
         .gte('timestamp', twentyFourHoursAgo.toISOString());
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       const suspiciousEvents = data?.length || 0;
 
@@ -248,7 +254,9 @@ class SecurityAuditFramework {
     userId?: string,
     ipAddress?: string
   ): Promise<void> {
-    if (!userId) return;
+    if (!userId) {
+      return;
+    }
 
     try {
       const supabase = await createServerClient();
@@ -263,7 +271,9 @@ class SecurityAuditFramework {
         .eq('user_id', userId)
         .gte('timestamp', oneHourAgo.toISOString());
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       const dataAccessCount = data?.length || 0;
 
@@ -436,7 +446,9 @@ class SecurityAuditFramework {
         .lte('timestamp', period.end.toISOString())
         .order('timestamp', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Calculate overall risk score
       const overallRiskScore = this.calculateRiskScore(
@@ -481,7 +493,9 @@ class SecurityAuditFramework {
         .gte('timestamp', period.start.toISOString())
         .lte('timestamp', period.end.toISOString());
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       const events = data || [];
 
@@ -524,7 +538,9 @@ class SecurityAuditFramework {
         .gte('timestamp', period.start.toISOString())
         .lte('timestamp', period.end.toISOString());
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       const events = data || [];
 

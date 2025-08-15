@@ -119,7 +119,7 @@ export class HubSpotOAuthHandler extends BaseOAuthHandler {
 
       Logger.info('HubSpot token exchange successful', {
         provider: 'hubspot',
-        hasRefreshToken: !!tokenData.refresh_token,
+        hasRefreshToken: Boolean(tokenData.refresh_token),
         expiresAt,
       });
 

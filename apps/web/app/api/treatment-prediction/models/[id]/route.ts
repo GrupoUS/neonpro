@@ -101,7 +101,9 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
       .delete()
       .eq('id', params.id);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     return NextResponse.json({
       message: 'Prediction model deleted successfully',

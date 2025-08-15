@@ -13,7 +13,7 @@ import type {
 import { createClient } from '@/app/utils/supabase/server';
 
 export class PredictiveAnalyticsService {
-  private supabase;
+  private readonly supabase;
 
   constructor() {
     this.supabase = createClient();
@@ -26,7 +26,9 @@ export class PredictiveAnalyticsService {
       .select('*')
       .order('created_at', { ascending: false });
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data || [];
   }
 
@@ -37,7 +39,9 @@ export class PredictiveAnalyticsService {
       .eq('id', id)
       .single();
 
-    if (error && error.code !== 'PGRST116') throw error;
+    if (error && error.code !== 'PGRST116') {
+      throw error;
+    }
     return data;
   }
 
@@ -50,7 +54,9 @@ export class PredictiveAnalyticsService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -65,7 +71,9 @@ export class PredictiveAnalyticsService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -75,7 +83,9 @@ export class PredictiveAnalyticsService {
       .delete()
       .eq('id', id);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
   }
 
   // Demand Predictions Management
@@ -90,7 +100,9 @@ export class PredictiveAnalyticsService {
     }
 
     const { data, error } = await query;
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data || [];
   }
 
@@ -103,7 +115,9 @@ export class PredictiveAnalyticsService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -124,7 +138,9 @@ export class PredictiveAnalyticsService {
     }
 
     const { data, error } = await query;
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data || [];
   }
 
@@ -140,7 +156,9 @@ export class PredictiveAnalyticsService {
     }
 
     const { data, error } = await query;
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data || [];
   }
 
@@ -153,7 +171,9 @@ export class PredictiveAnalyticsService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -169,7 +189,9 @@ export class PredictiveAnalyticsService {
     }
 
     const { data, error } = await query;
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data || [];
   }
 
@@ -180,7 +202,9 @@ export class PredictiveAnalyticsService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -200,7 +224,9 @@ export class PredictiveAnalyticsService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -217,7 +243,9 @@ export class PredictiveAnalyticsService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -228,7 +256,9 @@ export class PredictiveAnalyticsService {
       .select('*')
       .order('created_at', { ascending: false });
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data || [];
   }
 
@@ -255,7 +285,9 @@ export class PredictiveAnalyticsService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data;
     }
     const { data, error } = await this.supabase
@@ -269,7 +301,9 @@ export class PredictiveAnalyticsService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -285,7 +319,9 @@ export class PredictiveAnalyticsService {
     }
 
     const { data, error } = await query;
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data || [];
   }
 
@@ -298,7 +334,9 @@ export class PredictiveAnalyticsService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 

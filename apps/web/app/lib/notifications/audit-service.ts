@@ -394,12 +394,16 @@ export class AuditService {
         const date = new Date(log.timestamp).toISOString().split('T')[0];
 
         // Daily stats
-        if (!dailyGroups[date]) dailyGroups[date] = [];
+        if (!dailyGroups[date]) {
+          dailyGroups[date] = [];
+        }
         dailyGroups[date].push(log);
 
         // Channel stats
         if (log.channel) {
-          if (!channelGroups[log.channel]) channelGroups[log.channel] = [];
+          if (!channelGroups[log.channel]) {
+            channelGroups[log.channel] = [];
+          }
           channelGroups[log.channel].push(log);
         }
       });

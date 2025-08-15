@@ -44,10 +44,10 @@ export interface ErrorThreshold {
 }
 
 class ErrorTracker {
-  private supabase = createClient();
+  private readonly supabase = createClient();
   private errorQueue: ErrorEvent[] = [];
   private flushInterval: NodeJS.Timeout | null = null;
-  private thresholds: ErrorThreshold[] = [
+  private readonly thresholds: ErrorThreshold[] = [
     {
       error_type: 'javascript',
       max_count_per_hour: 50,
@@ -261,7 +261,9 @@ class ErrorTracker {
     const threshold = this.thresholds.find(
       (t) => t.error_type === errorEvent.error_type
     );
-    if (!(threshold && threshold.alert_enabled)) return;
+    if (!threshold?.alert_enabled) {
+      return;
+    }
 
     try {
       // Get error count for the last hour
@@ -457,7 +459,9 @@ class ErrorTracker {
    * Flush errors to database
    */
   private async flushErrors(): Promise<void> {
-    if (this.errorQueue.length === 0) return;
+    if (this.errorQueue.length === 0) {
+      return;
+    }
 
     const errorsToFlush = [...this.errorQueue];
     this.errorQueue = [];

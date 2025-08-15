@@ -34,8 +34,9 @@ export interface BulkEmailData {
 
 class EmailService {
   private supabase: any = null;
-  private defaultFrom = process.env.DEFAULT_FROM_EMAIL || 'neonpro@example.com';
-  private defaultReplyTo = process.env.DEFAULT_REPLY_TO_EMAIL;
+  private readonly defaultFrom =
+    process.env.DEFAULT_FROM_EMAIL || 'neonpro@example.com';
+  private readonly defaultReplyTo = process.env.DEFAULT_REPLY_TO_EMAIL;
 
   // Initialize Supabase client with dynamic cookies import
   private async getSupabaseClient() {

@@ -14,8 +14,11 @@ import type {
 } from '@/lib/types/kpi-types';
 
 export class KPIEngine {
-  private supabase;
-  private cache: Map<string, { data: any; timestamp: number; ttl: number }>;
+  private readonly supabase;
+  private readonly cache: Map<
+    string,
+    { data: any; timestamp: number; ttl: number }
+  >;
 
   constructor() {
     this.supabase = createClient(
@@ -184,7 +187,9 @@ export class KPIEngine {
   ) {
     const cacheKey = `revenue_${kpi.kpi_name}_${startDate}_${endDate}`;
     const cached = this.getFromCache(cacheKey);
-    if (cached) return cached;
+    if (cached) {
+      return cached;
+    }
 
     let query = this.supabase
       .from('invoices')
@@ -198,7 +203,9 @@ export class KPIEngine {
     }
 
     const { data: invoices, error } = await query;
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     let value = 0;
     const breakdown: Array<{
@@ -251,7 +258,9 @@ export class KPIEngine {
   ) {
     const cacheKey = `profitability_${kpi.kpi_name}_${startDate}_${endDate}`;
     const cached = this.getFromCache(cacheKey);
-    if (cached) return cached;
+    if (cached) {
+      return cached;
+    }
 
     // Get revenue data
     const { data: invoices } = await this.supabase
@@ -329,7 +338,9 @@ export class KPIEngine {
   ) {
     const cacheKey = `operational_${kpi.kpi_name}_${startDate}_${endDate}`;
     const cached = this.getFromCache(cacheKey);
-    if (cached) return cached;
+    if (cached) {
+      return cached;
+    }
 
     let value = 0;
     let dataPoints = 0;
@@ -408,7 +419,9 @@ export class KPIEngine {
   ) {
     const cacheKey = `financial_health_${kpi.kpi_name}_${startDate}_${endDate}`;
     const cached = this.getFromCache(cacheKey);
-    if (cached) return cached;
+    if (cached) {
+      return cached;
+    }
 
     let value = 0;
     let dataPoints = 0;
@@ -475,7 +488,9 @@ export class KPIEngine {
 
     try {
       const kpi = await this.getKPIById(request.kpi_id);
-      if (!kpi) throw new Error('KPI not found');
+      if (!kpi) {
+        throw new Error('KPI not found');
+      }
 
       let results: DrillDownResult[] = [];
 
@@ -513,11 +528,15 @@ export class KPIEngine {
     current: number,
     previous?: number
   ): 'increasing' | 'decreasing' | 'stable' {
-    if (!previous) return 'stable';
+    if (!previous) {
+      return 'stable';
+    }
     const threshold = 0.05; // 5% threshold for stability
     const change = Math.abs((current - previous) / previous);
 
-    if (change < threshold) return 'stable';
+    if (change < threshold) {
+      return 'stable';
+    }
     return current > previous ? 'increasing' : 'decreasing';
   }
 
@@ -535,7 +554,9 @@ export class KPIEngine {
   // Cache Management
   private getFromCache(key: string): any | null {
     const cached = this.cache.get(key);
-    if (!cached) return null;
+    if (!cached) {
+      return null;
+    }
 
     if (Date.now() - cached.timestamp > cached.ttl) {
       this.cache.delete(key);
@@ -560,7 +581,9 @@ export class KPIEngine {
       .select('*')
       .in('id', ids);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data || [];
   }
 
@@ -570,7 +593,9 @@ export class KPIEngine {
       .select('*')
       .order('kpi_category', { ascending: true });
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data || [];
   }
 
@@ -581,7 +606,9 @@ export class KPIEngine {
       .eq('id', id)
       .single();
 
-    if (error) return null;
+    if (error) {
+      return null;
+    }
     return data;
   }
 
@@ -632,7 +659,9 @@ export class KPIEngine {
         .eq('kpi_id', result.kpi_id)
         .eq('notification_enabled', true);
 
-      if (!thresholds?.length) continue;
+      if (!thresholds?.length) {
+        continue;
+      }
 
       for (const threshold of thresholds) {
         const breached = this.checkThresholdBreach(

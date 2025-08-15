@@ -255,7 +255,7 @@ export async function GET(_request: NextRequest) {
         recent_uploads: bucketInfo || [],
       },
       sync_options: {
-        can_sync_from_google: !!profile.google_picture,
+        can_sync_from_google: Boolean(profile.google_picture),
         can_upload_custom: true,
         can_sync_to_local_storage: true,
       },

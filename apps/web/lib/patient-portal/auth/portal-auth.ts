@@ -87,12 +87,12 @@ export interface SecurityEvent {
  * Implementa autenticação segura, gestão de sessões e compliance LGPD
  */
 export class PortalAuthManager {
-  private supabase: any;
-  private auditLogger: AuditLogger;
-  private config: PortalAuthConfig;
-  private activeSessions: Map<string, PortalSession> = new Map();
-  private loginAttempts: Map<string, LoginAttempt[]> = new Map();
-  private blockedIps: Set<string> = new Set();
+  private readonly supabase: any;
+  private readonly auditLogger: AuditLogger;
+  private readonly config: PortalAuthConfig;
+  private readonly activeSessions: Map<string, PortalSession> = new Map();
+  private readonly loginAttempts: Map<string, LoginAttempt[]> = new Map();
+  private readonly blockedIps: Set<string> = new Set();
 
   constructor(
     supabaseUrl: string,
@@ -650,7 +650,9 @@ export class PortalAuthManager {
     sessionToken: string
   ): Promise<PortalSession | null> {
     const cached = this.activeSessions.get(sessionToken);
-    if (cached) return cached;
+    if (cached) {
+      return cached;
+    }
 
     const { data } = await this.supabase
       .from('patient_portal_sessions')
@@ -658,7 +660,9 @@ export class PortalAuthManager {
       .eq('session_token', sessionToken)
       .single();
 
-    if (!data) return null;
+    if (!data) {
+      return null;
+    }
 
     return {
       id: data.id,

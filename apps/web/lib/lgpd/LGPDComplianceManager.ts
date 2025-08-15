@@ -57,7 +57,7 @@ export interface AuditEventData {
 }
 
 export class LGPDComplianceManager {
-  private supabase: SupabaseClient;
+  private readonly supabase: SupabaseClient;
 
   constructor(supabase: SupabaseClient) {
     this.supabase = supabase;
@@ -70,7 +70,9 @@ export class LGPDComplianceManager {
         'get_lgpd_dashboard_metrics'
       );
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return (
         data || {
@@ -134,7 +136,9 @@ export class LGPDComplianceManager {
 
       const { data, error, count } = await query;
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return {
         consents: data || [],
@@ -177,7 +181,9 @@ export class LGPDComplianceManager {
           .select()
           .single();
 
-        if (error) throw error;
+        if (error) {
+          throw error;
+        }
         result = data;
       } else {
         // Create new consent
@@ -196,7 +202,9 @@ export class LGPDComplianceManager {
           .select()
           .single();
 
-        if (error) throw error;
+        if (error) {
+          throw error;
+        }
         result = data;
       }
 
@@ -236,7 +244,9 @@ export class LGPDComplianceManager {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Log audit event
       await this.logAuditEvent({
@@ -292,7 +302,9 @@ export class LGPDComplianceManager {
 
       const { data, error, count } = await query;
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return {
         requests: data || [],
@@ -320,7 +332,9 @@ export class LGPDComplianceManager {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Log audit event
       await this.logAuditEvent({
@@ -371,7 +385,9 @@ export class LGPDComplianceManager {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Log audit event
       await this.logAuditEvent({
@@ -423,7 +439,9 @@ export class LGPDComplianceManager {
 
       const { data, error, count } = await query;
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return {
         breaches: data || [],
@@ -457,7 +475,9 @@ export class LGPDComplianceManager {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Log audit event
       await this.logAuditEvent({
@@ -508,7 +528,9 @@ export class LGPDComplianceManager {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Log audit event
       await this.logAuditEvent({
@@ -581,7 +603,9 @@ export class LGPDComplianceManager {
 
       const { data, error, count } = await query;
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return {
         events: data || [],
@@ -609,7 +633,9 @@ export class LGPDComplianceManager {
         timestamp: new Date().toISOString(),
       });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
     } catch (error) {
       console.error('Error logging audit event:', error);
       // Don't throw here to avoid breaking the main operation
@@ -646,7 +672,9 @@ export class LGPDComplianceManager {
 
       const { data, error, count } = await query;
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return {
         assessments: data || [],
@@ -677,7 +705,9 @@ export class LGPDComplianceManager {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Log audit event
       await this.logAuditEvent({
@@ -705,7 +735,9 @@ export class LGPDComplianceManager {
         'run_compliance_assessment'
       );
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Log audit event
       await this.logAuditEvent({
@@ -743,7 +775,9 @@ export class LGPDComplianceManager {
 
       const { data, error } = await query;
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Process statistics
       const stats = {
@@ -772,7 +806,9 @@ export class LGPDComplianceManager {
         .from('lgpd_breach_incidents')
         .select('severity, status');
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       const stats = {
         total_breaches: data?.length || 0,

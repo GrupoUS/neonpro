@@ -65,8 +65,8 @@ interface PixConfig {
  * Handles Brazilian instant payment processing
  */
 export class PixIntegration {
-  private config: PixConfig;
-  private supabase = createClient();
+  private readonly config: PixConfig;
+  private readonly supabase = createClient();
 
   constructor(config: PixConfig) {
     this.config = config;

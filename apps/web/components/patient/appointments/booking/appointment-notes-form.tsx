@@ -284,7 +284,9 @@ export function AppointmentNotesForm({
                     const suggestion = SUGGESTED_NOTES.find(
                       (note) => note.id === suggestionId
                     );
-                    if (!suggestion) return null;
+                    if (!suggestion) {
+                      return null;
+                    }
 
                     const IconComponent = suggestion.icon;
                     return (

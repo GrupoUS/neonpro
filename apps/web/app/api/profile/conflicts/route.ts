@@ -167,7 +167,7 @@ export async function GET(_request: NextRequest) {
       name: user.user_metadata?.full_name || user.user_metadata?.name,
       email: user.email,
       picture: user.user_metadata?.avatar_url || user.user_metadata?.picture,
-      verified_email: !!user.email_confirmed_at,
+      verified_email: Boolean(user.email_confirmed_at),
     };
 
     // Detectar conflitos potenciais

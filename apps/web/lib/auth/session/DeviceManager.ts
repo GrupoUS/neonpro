@@ -35,8 +35,8 @@ import {
  * - Cross-device synchronization support
  */
 export class DeviceManager {
-  private supabase: SupabaseClient;
-  private config: DeviceConfig;
+  private readonly supabase: SupabaseClient;
+  private readonly config: DeviceConfig;
 
   constructor(config: DeviceConfig) {
     this.config = config;

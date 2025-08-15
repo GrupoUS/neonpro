@@ -75,12 +75,12 @@ export interface DeviceInfo {
 
 // Session Authentication Service
 export class SessionAuthService {
-  private supabase;
-  private sessionManager: SessionManager;
-  private deviceManager: DeviceManager;
-  private securityLogger: SecurityEventLogger;
-  private notificationService: SessionNotificationService;
-  private config: SessionAuthConfig;
+  private readonly supabase;
+  private readonly sessionManager: SessionManager;
+  private readonly deviceManager: DeviceManager;
+  private readonly securityLogger: SecurityEventLogger;
+  private readonly notificationService: SessionNotificationService;
+  private readonly config: SessionAuthConfig;
 
   constructor(config: SessionAuthConfig) {
     this.config = config;
@@ -477,7 +477,7 @@ export class SessionAuthService {
   ): Promise<AuthenticationResult> {
     try {
       const session = await this.sessionManager.getSession(sessionId);
-      if (!(session && session.isActive)) {
+      if (!session?.isActive) {
         return {
           success: false,
           error: 'Invalid or expired session',

@@ -132,10 +132,10 @@ interface TemplateOptions {
  * Handles PDF generation, NFSe integration, and email delivery
  */
 export class ReceiptInvoiceManager {
-  private supabase: ReturnType<typeof createClient>;
-  private companyInfo: CompanyInfo;
-  private nfseConfig: NFSeConfig;
-  private emailConfig: EmailConfig;
+  private readonly supabase: ReturnType<typeof createClient>;
+  private readonly companyInfo: CompanyInfo;
+  private readonly nfseConfig: NFSeConfig;
+  private readonly emailConfig: EmailConfig;
   private emailTransporter?: nodemailer.Transporter;
 
   constructor(
@@ -202,7 +202,9 @@ export class ReceiptInvoiceManager {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Upload PDF to storage
       const { error: uploadError } = await this.supabase.storage
@@ -212,7 +214,9 @@ export class ReceiptInvoiceManager {
           upsert: true,
         });
 
-      if (uploadError) throw uploadError;
+      if (uploadError) {
+        throw uploadError;
+      }
 
       return {
         success: true,
@@ -253,7 +257,9 @@ export class ReceiptInvoiceManager {
         })
         .eq('id', validatedData.id);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return {
         success: true,
@@ -300,7 +306,9 @@ export class ReceiptInvoiceManager {
           .from('documents')
           .download(document.pdf_path);
 
-      if (downloadError) throw downloadError;
+      if (downloadError) {
+        throw downloadError;
+      }
 
       const pdfBuffer = Buffer.from(await pdfData.arrayBuffer());
 
@@ -362,7 +370,9 @@ export class ReceiptInvoiceManager {
       .eq('id', id)
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -417,7 +427,9 @@ export class ReceiptInvoiceManager {
 
     const { data, error, count } = await query;
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     return {
       documents: data,
@@ -439,7 +451,9 @@ export class ReceiptInvoiceManager {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 

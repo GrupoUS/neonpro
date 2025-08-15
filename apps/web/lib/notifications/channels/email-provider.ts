@@ -96,10 +96,10 @@ class ResendEmailProvider implements EmailProvider {
   public readonly channel: NotificationChannel = 'email';
   public readonly priority = 1;
 
-  private apiKey: string;
-  private fromAddress: string;
-  private fromName: string;
-  private replyTo?: string;
+  private readonly apiKey: string;
+  private readonly fromAddress: string;
+  private readonly fromName: string;
+  private readonly replyTo?: string;
 
   constructor(config: EmailProviderConfig['primary']) {
     this.apiKey = config.apiKey;
@@ -295,10 +295,10 @@ class SendGridEmailProvider implements EmailProvider {
   public readonly channel: NotificationChannel = 'email';
   public readonly priority = 2;
 
-  private apiKey: string;
-  private fromAddress: string;
-  private fromName: string;
-  private replyTo?: string;
+  private readonly apiKey: string;
+  private readonly fromAddress: string;
+  private readonly fromName: string;
+  private readonly replyTo?: string;
 
   constructor(config: EmailProviderConfig['fallback']) {
     this.apiKey = config.apiKey;
@@ -485,8 +485,8 @@ class SendGridEmailProvider implements EmailProvider {
  * Manages provider selection and fallback logic
  */
 class EmailProviderFactory {
-  private primaryProvider: EmailProvider;
-  private fallbackProvider: EmailProvider;
+  private readonly primaryProvider: EmailProvider;
+  private readonly fallbackProvider: EmailProvider;
 
   constructor(config: EmailProviderConfig) {
     this.config = config;

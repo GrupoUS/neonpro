@@ -115,11 +115,11 @@ export interface UploadActivity {
  * Patient upload manager
  */
 export class UploadManager {
-  private supabase: SupabaseClient;
-  private auditLogger: AuditLogger;
-  private sessionManager: SessionManager;
-  private encryptionService: EncryptionService;
-  private config: UploadConfig;
+  private readonly supabase: SupabaseClient;
+  private readonly auditLogger: AuditLogger;
+  private readonly sessionManager: SessionManager;
+  private readonly encryptionService: EncryptionService;
+  private readonly config: UploadConfig;
 
   constructor(
     supabase: SupabaseClient,
@@ -182,7 +182,9 @@ export class UploadManager {
         .select()
         .single();
 
-      if (uploadError) throw uploadError;
+      if (uploadError) {
+        throw uploadError;
+      }
 
       const uploadedFiles: UploadedFile[] = [];
       const errors: UploadError[] = [];
@@ -294,7 +296,9 @@ export class UploadManager {
         },
       });
 
-    if (uploadError) throw uploadError;
+    if (uploadError) {
+      throw uploadError;
+    }
 
     // Create file record
     const { data: fileRecord, error: fileError } = await this.supabase
@@ -315,7 +319,9 @@ export class UploadManager {
       .select()
       .single();
 
-    if (fileError) throw fileError;
+    if (fileError) {
+      throw fileError;
+    }
 
     // Start background processing
     if (this.config.autoProcessingEnabled) {
@@ -473,7 +479,9 @@ export class UploadManager {
    */
   private formatFileSize(bytes: number): string {
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    if (bytes === 0) return '0 Bytes';
+    if (bytes === 0) {
+      return '0 Bytes';
+    }
     const i = Math.floor(Math.log(bytes) / Math.log(1024));
     return `${Math.round((bytes / 1024 ** i) * 100) / 100} ${sizes[i]}`;
   }
@@ -503,7 +511,9 @@ export class UploadManager {
       `)
       .eq('patient_id', patientId);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     const stats: UploadStats = {
       totalUploads: uploads.length,

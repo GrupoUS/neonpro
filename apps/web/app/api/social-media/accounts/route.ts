@@ -132,8 +132,8 @@ export async function GET(request: NextRequest) {
     // Remove sensitive token data from response
     const sanitizedAccounts = accounts?.map((account) => ({
       ...account,
-      has_access_token: !!account.access_token,
-      has_refresh_token: !!account.refresh_token,
+      has_access_token: Boolean(account.access_token),
+      has_refresh_token: Boolean(account.refresh_token),
       access_token: undefined,
       refresh_token: undefined,
     }));

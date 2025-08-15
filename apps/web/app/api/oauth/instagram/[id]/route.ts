@@ -159,10 +159,15 @@ export async function PATCH(
 
     // Update account settings
     const updateData: any = {};
-    if (typeof isActive === 'boolean') updateData.is_active = isActive;
-    if (typeof autoPost === 'boolean') updateData.auto_post = autoPost;
-    if (typeof notificationsEnabled === 'boolean')
+    if (typeof isActive === 'boolean') {
+      updateData.is_active = isActive;
+    }
+    if (typeof autoPost === 'boolean') {
+      updateData.auto_post = autoPost;
+    }
+    if (typeof notificationsEnabled === 'boolean') {
       updateData.notifications_enabled = notificationsEnabled;
+    }
 
     if (Object.keys(updateData).length === 0) {
       return NextResponse.json(

@@ -59,7 +59,7 @@ export interface DeviceTrustUpdate {
 
 // Device Manager Service
 export class DeviceManager {
-  private supabase: SupabaseClient;
+  private readonly supabase: SupabaseClient;
 
   constructor(supabase: SupabaseClient) {
     this.supabase = supabase;
@@ -197,7 +197,7 @@ export class DeviceManager {
         userId,
         deviceInfo.fingerprint
       );
-      const isKnown = !!registration;
+      const isKnown = Boolean(registration);
       const isTrusted = registration?.trusted;
 
       // Calculate risk score

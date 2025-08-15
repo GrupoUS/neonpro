@@ -48,10 +48,10 @@ export interface NotificationResult {
   deliveredAt?: Date;
 }
 export class NotificationService {
-  private emailService: EmailService;
-  private smsService: SMSService;
-  private schedulingService: SchedulingService;
-  private auditService: AuditService;
+  private readonly emailService: EmailService;
+  private readonly smsService: SMSService;
+  private readonly schedulingService: SchedulingService;
+  private readonly auditService: AuditService;
 
   constructor() {
     this.emailService = new EmailService();
@@ -329,7 +329,9 @@ export class NotificationService {
     preferences: NotificationPreferences
   ): boolean {
     const channelPrefs = preferences.channels[channel];
-    if (!channelPrefs?.enabled) return false;
+    if (!channelPrefs?.enabled) {
+      return false;
+    }
 
     // Check if this notification type is enabled for this channel
     return channelPrefs.enabledTypes.includes(type);
@@ -454,15 +456,21 @@ export class NotificationService {
       // Check scheduled notifications
       const scheduledStatus =
         await this.schedulingService.getNotificationStatus(notificationId);
-      if (scheduledStatus) return scheduledStatus;
+      if (scheduledStatus) {
+        return scheduledStatus;
+      }
 
       // Check delivery status from services
       const emailStatus =
         await this.emailService.getDeliveryStatus(notificationId);
-      if (emailStatus) return emailStatus;
+      if (emailStatus) {
+        return emailStatus;
+      }
 
       const smsStatus = await this.smsService.getDeliveryStatus(notificationId);
-      if (smsStatus) return smsStatus;
+      if (smsStatus) {
+        return smsStatus;
+      }
 
       return null;
     } catch (error) {

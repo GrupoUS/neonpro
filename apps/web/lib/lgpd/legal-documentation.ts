@@ -340,14 +340,14 @@ export interface DocumentationEvents {
  * - Automated updates and notifications
  */
 export class LegalDocumentationManager extends EventEmitter {
-  private documents: Map<string, LegalDocument> = new Map();
-  private templates: Map<string, DocumentTemplate> = new Map();
-  private reports: Map<string, ComplianceReport> = new Map();
+  private readonly documents: Map<string, LegalDocument> = new Map();
+  private readonly templates: Map<string, DocumentTemplate> = new Map();
+  private readonly reports: Map<string, ComplianceReport> = new Map();
   private isInitialized = false;
   private reviewCheckInterval: NodeJS.Timeout | null = null;
 
   constructor(
-    private config: {
+    private readonly config: {
       defaultLanguage: DocumentLanguage;
       autoGeneration: boolean;
       pdfGeneration: boolean;
@@ -553,7 +553,9 @@ export class LegalDocumentationManager extends EventEmitter {
       const sectionContent = template.content.sections.find(
         (s) => s.sectionId === section.id
       );
-      if (!sectionContent) continue;
+      if (!sectionContent) {
+        continue;
+      }
 
       // Process main section content
       let sectionHtml = `<section id="${section.id}">\n<h2>${section.title}</h2>\n`;
@@ -760,7 +762,7 @@ export class LegalDocumentationManager extends EventEmitter {
         processingActivities: context.processingActivities || [],
         hasProcessingActivities:
           (context.processingActivities?.length || 0) > 0,
-        hasDPO: !!context.organizationInfo.dpo,
+        hasDPO: Boolean(context.organizationInfo.dpo),
       };
 
       // Simple condition evaluation (in production, use a safer expression evaluator)

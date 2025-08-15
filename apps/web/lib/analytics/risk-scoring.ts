@@ -102,7 +102,7 @@ export interface DemographicRiskFactors {
 
 // Main risk scoring engine class
 export class RiskScoringEngine {
-  private supabase = createClientComponentClient<Database>();
+  private readonly supabase = createClientComponentClient<Database>();
   private config: RiskScoringConfig;
 
   constructor() {
@@ -281,7 +281,9 @@ export class RiskScoringEngine {
   private async calculateBehavioralRisk(
     appointmentHistory: any[]
   ): Promise<number> {
-    if (appointmentHistory.length === 0) return 50;
+    if (appointmentHistory.length === 0) {
+      return 50;
+    }
 
     let riskScore = 0;
 
@@ -369,7 +371,9 @@ export class RiskScoringEngine {
   private async calculateCommunicationRisk(
     communicationHistory: any[]
   ): Promise<number> {
-    if (communicationHistory.length === 0) return 30; // Default low-medium risk
+    if (communicationHistory.length === 0) {
+      return 30; // Default low-medium risk
+    }
 
     const responses = communicationHistory.filter(
       (comm) => comm.response_received
@@ -460,7 +464,9 @@ export class RiskScoringEngine {
         const month = new Date(apt.scheduled_date)
           .toISOString()
           .substring(0, 7);
-        if (!groups[month]) groups[month] = [];
+        if (!groups[month]) {
+          groups[month] = [];
+        }
         groups[month].push(apt);
         return groups;
       },
@@ -615,7 +621,9 @@ export class RiskScoringEngine {
 
   // Helper methods
   private applyTimeDecay(events: any[], allEvents: any[]): number {
-    if (events.length === 0) return 0;
+    if (events.length === 0) {
+      return 0;
+    }
 
     const now = new Date();
     let weightedSum = 0;
@@ -711,7 +719,9 @@ export class RiskScoringEngine {
       .map((apt) => new Date(apt.scheduled_date))
       .sort((a, b) => a.getTime() - b.getTime());
 
-    if (dates.length < 2) return 0;
+    if (dates.length < 2) {
+      return 0;
+    }
 
     const gaps = [];
     for (let i = 1; i < dates.length; i++) {
@@ -741,7 +751,9 @@ export class RiskScoringEngine {
   }
 
   private analyzeChannelEffectiveness(communicationHistory: any[]): number {
-    if (communicationHistory.length === 0) return 0.5;
+    if (communicationHistory.length === 0) {
+      return 0.5;
+    }
 
     const channels = communicationHistory.reduce(
       (acc, comm) => {
@@ -786,7 +798,7 @@ export class RiskScoringEngine {
     // Average the effectiveness scores
     Object.keys(effectiveness).forEach((type) => {
       const count = interventionHistory.filter((i) => i.type === type).length;
-      effectiveness[type] = effectiveness[type] / count;
+      effectiveness[type] /= count;
     });
 
     return effectiveness;
@@ -836,7 +848,9 @@ export class RiskScoringEngine {
         );
       });
 
-    if (advanceTimes.length === 0) return 7; // Default to 1 week
+    if (advanceTimes.length === 0) {
+      return 7; // Default to 1 week
+    }
 
     // Find the most common advance time for attended appointments
     const timeFrequency = advanceTimes.reduce(
@@ -879,9 +893,15 @@ export class RiskScoringEngine {
   private getRiskLevel(
     riskScore: number
   ): 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' {
-    if (riskScore >= this.config.thresholds.critical) return 'CRITICAL';
-    if (riskScore >= this.config.thresholds.high) return 'HIGH';
-    if (riskScore >= this.config.thresholds.medium) return 'MEDIUM';
+    if (riskScore >= this.config.thresholds.critical) {
+      return 'CRITICAL';
+    }
+    if (riskScore >= this.config.thresholds.high) {
+      return 'HIGH';
+    }
+    if (riskScore >= this.config.thresholds.medium) {
+      return 'MEDIUM';
+    }
     return 'LOW';
   }
 

@@ -432,10 +432,18 @@ export async function PUT(request: NextRequest) {
           updated_at: new Date().toISOString(),
         };
 
-        if (currentStage) updateData.current_stage = currentStage;
-        if (nextActionType) updateData.next_action_type = nextActionType;
-        if (nextActionDate) updateData.next_action_date = nextActionDate;
-        if (notes) updateData.notes = notes;
+        if (currentStage) {
+          updateData.current_stage = currentStage;
+        }
+        if (nextActionType) {
+          updateData.next_action_type = nextActionType;
+        }
+        if (nextActionDate) {
+          updateData.next_action_date = nextActionDate;
+        }
+        if (notes) {
+          updateData.notes = notes;
+        }
 
         const { data: updatedWorkflow, error } = await supabase
           .from('collection_workflows')

@@ -280,9 +280,15 @@ function convertMetricsToCSV(metrics: any): string {
  * Get status based on score
  */
 function getScoreStatus(score: number): string {
-  if (score >= 90) return 'Excellent';
-  if (score >= 80) return 'Good';
-  if (score >= 70) return 'Acceptable';
+  if (score >= 90) {
+    return 'Excellent';
+  }
+  if (score >= 80) {
+    return 'Good';
+  }
+  if (score >= 70) {
+    return 'Acceptable';
+  }
   return 'Needs Improvement';
 }
 

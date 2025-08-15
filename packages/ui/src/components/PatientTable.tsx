@@ -1,13 +1,9 @@
 import {
   ChevronLeft,
   ChevronRight,
-  ChevronsLeft,
-  ChevronsRight,
-  Download,
   Grid3X3,
   List,
   MoreHorizontal,
-  Plus,
 } from 'lucide-react';
 import * as React from 'react';
 import { cn } from '../utils/cn';
@@ -16,7 +12,7 @@ import { Avatar, AvatarFallback, AvatarImage } from './Avatar';
 import { Badge } from './Badge';
 import { Button } from './Button';
 import { PatientCard, type PatientData } from './PatientCard';
-import { type FilterOption, SearchBox } from './SearchBox';
+import type { FilterOption } from './SearchBox';
 
 export interface PaginationProps {
   currentPage: number;
@@ -68,17 +64,27 @@ const getInitials = (name: string): string => {
 
 // Helper function to format relative time
 const formatRelativeTime = (dateString?: string): string => {
-  if (!dateString) return '-';
+  if (!dateString) {
+    return '-';
+  }
 
   const date = new Date(dateString);
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-  if (diffDays === 0) return 'Hoje';
-  if (diffDays === 1) return 'Ontem';
-  if (diffDays < 7) return `${diffDays} dias atrás`;
-  if (diffDays < 30) return `${Math.floor(diffDays / 7)} semanas atrás`;
+  if (diffDays === 0) {
+    return 'Hoje';
+  }
+  if (diffDays === 1) {
+    return 'Ontem';
+  }
+  if (diffDays < 7) {
+    return `${diffDays} dias atrás`;
+  }
+  if (diffDays < 30) {
+    return `${Math.floor(diffDays / 7)} semanas atrás`;
+  }
   return formatDate(dateString);
 };
 const defaultColumns: PatientTableColumn[] = [
@@ -114,10 +120,12 @@ const PatientTable = React.forwardRef<HTMLDivElement, PatientTableProps>(
       className,
       ...props
     },
-    ref
+    _ref
   ) => {
     const handleSort = (column: string) => {
-      if (!onSort) return;
+      if (!onSort) {
+        return;
+      }
 
       const newDirection =
         sortBy === column && sortDirection === 'asc' ? 'desc' : 'asc';
@@ -125,7 +133,9 @@ const PatientTable = React.forwardRef<HTMLDivElement, PatientTableProps>(
     };
 
     const handleSelectAll = () => {
-      if (!onSelectionChange) return;
+      if (!onSelectionChange) {
+        return;
+      }
 
       if (selectedPatients.length === patients.length) {
         onSelectionChange([]);
@@ -135,7 +145,9 @@ const PatientTable = React.forwardRef<HTMLDivElement, PatientTableProps>(
     };
 
     const handleSelectPatient = (patientId: string) => {
-      if (!onSelectionChange) return;
+      if (!onSelectionChange) {
+        return;
+      }
 
       if (selectedPatients.includes(patientId)) {
         onSelectionChange(selectedPatients.filter((id) => id !== patientId));
@@ -240,15 +252,23 @@ const PatientTable = React.forwardRef<HTMLDivElement, PatientTableProps>(
       }
     }; // Sort data
     const sortedData = React.useMemo(() => {
-      if (!sort) return filteredData;
+      if (!sort) {
+        return filteredData;
+      }
 
       return [...filteredData].sort((a, b) => {
         const aValue = a[sort.key as keyof PatientData];
         const bValue = b[sort.key as keyof PatientData];
 
-        if (!(aValue || bValue)) return 0;
-        if (!aValue) return 1;
-        if (!bValue) return -1;
+        if (!(aValue || bValue)) {
+          return 0;
+        }
+        if (!aValue) {
+          return 1;
+        }
+        if (!bValue) {
+          return -1;
+        }
 
         let comparison = 0;
         if (typeof aValue === 'string' && typeof bValue === 'string') {
@@ -261,7 +281,7 @@ const PatientTable = React.forwardRef<HTMLDivElement, PatientTableProps>(
 
         return sort.direction === 'desc' ? -comparison : comparison;
       });
-    }, [filteredData, sort]);
+    }, []);
 
     // Pagination
     const totalPages = Math.ceil(sortedData.length / pagination.pageSize);

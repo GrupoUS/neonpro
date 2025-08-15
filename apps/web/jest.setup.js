@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 
 // Polyfills for Next.js Web APIs in Node.js test environment
-import { TextDecoder, TextEncoder } from 'util';
+import { TextDecoder, TextEncoder } from 'node:util';
 
 // Set globals first
 global.TextEncoder = TextEncoder;
@@ -67,6 +67,6 @@ global.fetch = jest.fn(() =>
 
 // Polyfill ReadableStream
 if (!global.ReadableStream) {
-  const { ReadableStream } = require('stream/web');
+  const { ReadableStream } = require('node:stream/web');
   global.ReadableStream = ReadableStream;
 }

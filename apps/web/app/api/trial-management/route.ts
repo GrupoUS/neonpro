@@ -341,7 +341,9 @@ async function getTrials(
 
   const { data, error } = await query;
 
-  if (error) throw error;
+  if (error) {
+    throw error;
+  }
 
   return NextResponse.json({
     success: true,
@@ -359,7 +361,9 @@ async function getCampaigns() {
     `)
     .order('created_at', { ascending: false });
 
-  if (error) throw error;
+  if (error) {
+    throw error;
+  }
 
   return NextResponse.json({
     success: true,
@@ -373,7 +377,9 @@ async function getTrialAnalytics(userId: string, userRole: string | null) {
     user_id: userRole === 'admin' ? null : userId,
   });
 
-  if (error) throw error;
+  if (error) {
+    throw error;
+  }
 
   return NextResponse.json({
     success: true,
@@ -385,7 +391,9 @@ async function getAIInsights() {
   // Get AI-powered insights for trial optimization
   const { data, error } = await supabase.rpc('get_ai_trial_insights');
 
-  if (error) throw error;
+  if (error) {
+    throw error;
+  }
 
   return NextResponse.json({
     success: true,

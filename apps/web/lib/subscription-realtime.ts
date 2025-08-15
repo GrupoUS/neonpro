@@ -59,16 +59,16 @@ export interface RealtimeMetrics {
 }
 
 export class SubscriptionRealtimeManager {
-  private supabase = createClient();
+  private readonly supabase = createClient();
   private channel: RealtimeChannel | null = null;
-  private listeners: Map<
+  private readonly listeners: Map<
     string,
     ((update: SubscriptionRealtimeUpdate) => void)[]
   > = new Map();
-  private config: Required<RealtimeConfig>;
+  private readonly config: Required<RealtimeConfig>;
   private isConnected = false;
   private reconnectAttempts = 0;
-  private metrics: RealtimeMetrics = {
+  private readonly metrics: RealtimeMetrics = {
     connectionsActive: 0,
     messagesReceived: 0,
     messagesSent: 0,
@@ -77,7 +77,7 @@ export class SubscriptionRealtimeManager {
     uptime: 0,
     latency: 0,
   };
-  private connectionStartTime = 0;
+  private readonly connectionStartTime = 0;
   private lastHeartbeat = 0;
 
   constructor(config: RealtimeConfig = {}) {

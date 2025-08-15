@@ -19,7 +19,7 @@ import type {
 import { createClient } from '@/app/utils/supabase/client';
 
 class InventoryReportsService {
-  private supabase = createClient();
+  private readonly supabase = createClient();
 
   // =============================================================================
   // STOCK MOVEMENT REPORTS
@@ -476,7 +476,9 @@ class InventoryReportsService {
       const urgencyOrder = { immediate: 0, urgent: 1, warning: 2, watch: 3 };
       const urgencyDiff =
         urgencyOrder[a.urgency_level] - urgencyOrder[b.urgency_level];
-      if (urgencyDiff !== 0) return urgencyDiff;
+      if (urgencyDiff !== 0) {
+        return urgencyDiff;
+      }
       return a.days_to_expiry - b.days_to_expiry;
     });
 
@@ -513,9 +515,15 @@ class InventoryReportsService {
       summary.total_expiring_value += item.total_value;
 
       // Count by time periods
-      if (item.days_to_expiry <= 30) summary.upcoming_expirations_30_days++;
-      if (item.days_to_expiry <= 60) summary.upcoming_expirations_60_days++;
-      if (item.days_to_expiry <= 90) summary.upcoming_expirations_90_days++;
+      if (item.days_to_expiry <= 30) {
+        summary.upcoming_expirations_30_days++;
+      }
+      if (item.days_to_expiry <= 60) {
+        summary.upcoming_expirations_60_days++;
+      }
+      if (item.days_to_expiry <= 90) {
+        summary.upcoming_expirations_90_days++;
+      }
 
       // By urgency
       if (!summary.by_urgency[item.urgency_level]) {

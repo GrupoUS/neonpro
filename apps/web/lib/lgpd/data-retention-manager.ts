@@ -97,8 +97,8 @@ export interface AnonymizationConfig {
  * LGPD Data Retention Manager
  */
 export class DataRetentionManager {
-  private supabase;
-  private defaultRetentionPeriods: Record<LGPDDataType, number> = {
+  private readonly supabase;
+  private readonly defaultRetentionPeriods: Record<LGPDDataType, number> = {
     [LGPDDataType.AUTHENTICATION]: 1095, // 3 years
     [LGPDDataType.PROFILE]: 2555, // 7 years
     [LGPDDataType.MEDICAL_RECORDS]: 7300, // 20 years
@@ -401,7 +401,9 @@ export class DataRetentionManager {
         throw new Error(`Failed to fetch retention records: ${error.message}`);
       }
 
-      if (!records) return 0;
+      if (!records) {
+        return 0;
+      }
 
       for (const record of records) {
         const policy = record.lgpd_retention_policies;

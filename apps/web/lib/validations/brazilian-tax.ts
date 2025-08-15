@@ -30,7 +30,9 @@ export const cnpjSchema = z
     }
 
     const firstCheck = sum % 11 < 2 ? 0 : 11 - (sum % 11);
-    if (Number.parseInt(digits[12], 10) !== firstCheck) return false;
+    if (Number.parseInt(digits[12], 10) !== firstCheck) {
+      return false;
+    }
 
     // Second check digit
     sum = 0;
@@ -66,7 +68,9 @@ export const cpfSchema = z
     let remainder = sum % 11;
     const firstCheck = remainder < 2 ? 0 : 11 - remainder;
 
-    if (Number.parseInt(digits[9], 10) !== firstCheck) return false;
+    if (Number.parseInt(digits[9], 10) !== firstCheck) {
+      return false;
+    }
 
     sum = 0;
     for (let i = 0; i < 10; i++) {

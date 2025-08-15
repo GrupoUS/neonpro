@@ -192,10 +192,15 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     // Prepare update data
     const updateData: any = {};
 
-    if (validatedData.status) updateData.status = validatedData.status;
-    if (validatedData.notes) updateData.notes = validatedData.notes;
-    if (validatedData.supplier_id)
+    if (validatedData.status) {
+      updateData.status = validatedData.status;
+    }
+    if (validatedData.notes) {
+      updateData.notes = validatedData.notes;
+    }
+    if (validatedData.supplier_id) {
       updateData.supplier_id = validatedData.supplier_id;
+    }
     if (validatedData.expected_delivery_date) {
       updateData.expected_delivery_date = validatedData.expected_delivery_date;
     }

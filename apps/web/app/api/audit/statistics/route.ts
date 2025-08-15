@@ -70,7 +70,9 @@ async function validateStatisticsAccess(
       .eq('user_id', userId)
       .single();
 
-    if (!profile) return false;
+    if (!profile) {
+      return false;
+    }
 
     const hasStatsAccess =
       profile.role === 'admin' ||

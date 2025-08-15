@@ -57,10 +57,10 @@ export interface PaymentAttemptResult {
 
 // Main Recurring Payment Processor Class
 export class RecurringPaymentProcessor {
-  private supabase: any;
-  private stripe: Stripe;
-  private paymentProcessor: PaymentProcessor;
-  private config: RecurringPaymentConfig;
+  private readonly supabase: any;
+  private readonly stripe: Stripe;
+  private readonly paymentProcessor: PaymentProcessor;
+  private readonly config: RecurringPaymentConfig;
 
   constructor(config?: Partial<RecurringPaymentConfig>) {
     this.supabase = createClient(
@@ -300,7 +300,7 @@ export class RecurringPaymentProcessor {
         .eq('id', subscription.customer_id)
         .single();
 
-      if (!(customer && customer.payment_methods?.length)) {
+      if (!customer?.payment_methods?.length) {
         return {
           success: false,
           error_message: 'No payment method available',
@@ -375,9 +375,7 @@ export class RecurringPaymentProcessor {
       // Calculate next retry date
       const retryHours =
         this.config.retry_intervals_hours[nextAttempt - 1] ||
-        this.config.retry_intervals_hours[
-          this.config.retry_intervals_hours.length - 1
-        ];
+        this.config.retry_intervals_hours.at(-1);
       const nextRetryDate = addHours(new Date(), retryHours);
 
       // Schedule retry
@@ -506,12 +504,16 @@ export class RecurringPaymentProcessor {
     try {
       const subscription =
         await subscriptionManager.getSubscription(subscriptionId);
-      if (!subscription) return;
+      if (!subscription) {
+        return;
+      }
 
       const plan = await subscriptionManager.getSubscriptionPlan(
         subscription.plan_id
       );
-      if (!plan) return;
+      if (!plan) {
+        return;
+      }
 
       // Update subscription for next billing cycle
       const nextPeriodStart = new Date(subscription.current_period_end);
@@ -716,7 +718,9 @@ export class RecurringPaymentProcessor {
   private shouldRetryPayment(
     error: Stripe.PaymentIntent.LastPaymentError | null
   ): boolean {
-    if (!error) return true;
+    if (!error) {
+      return true;
+    }
 
     const nonRetryableCodes = [
       'card_declined',
@@ -730,7 +734,9 @@ export class RecurringPaymentProcessor {
   }
 
   private shouldRetryPaymentError(errorCode?: string): boolean {
-    if (!errorCode) return true;
+    if (!errorCode) {
+      return true;
+    }
 
     const nonRetryableCodes = [
       'insufficient_funds',
@@ -754,7 +760,9 @@ export class RecurringPaymentProcessor {
         subscription?.plan_id
       );
 
-      if (!(subscription && plan)) return;
+      if (!(subscription && plan)) {
+        return;
+      }
 
       await this.supabase.from('payments').insert({
         customer_id: subscription.customer_id,
@@ -811,7 +819,9 @@ export class RecurringPaymentProcessor {
     try {
       const subscription =
         await subscriptionManager.getSubscription(subscriptionId);
-      if (!subscription) return;
+      if (!subscription) {
+        return;
+      }
 
       await sendNotification({
         type: 'payment_retry_scheduled',
@@ -835,7 +845,9 @@ export class RecurringPaymentProcessor {
     try {
       const subscription =
         await subscriptionManager.getSubscription(subscriptionId);
-      if (!subscription) return;
+      if (!subscription) {
+        return;
+      }
 
       await sendNotification({
         type: 'payment_success',
@@ -862,7 +874,9 @@ export class RecurringPaymentProcessor {
     try {
       const subscription =
         await subscriptionManager.getSubscription(subscriptionId);
-      if (!subscription) return;
+      if (!subscription) {
+        return;
+      }
 
       await sendNotification({
         type: 'payment_failed',
@@ -884,7 +898,9 @@ export class RecurringPaymentProcessor {
     try {
       const subscription =
         await subscriptionManager.getSubscription(subscriptionId);
-      if (!subscription) return;
+      if (!subscription) {
+        return;
+      }
 
       await sendNotification({
         type: 'subscription_suspended',
@@ -905,7 +921,9 @@ export class RecurringPaymentProcessor {
     try {
       const subscription =
         await subscriptionManager.getSubscription(subscriptionId);
-      if (!subscription) return;
+      if (!subscription) {
+        return;
+      }
 
       await sendNotification({
         type: 'subscription_canceled',

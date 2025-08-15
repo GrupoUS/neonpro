@@ -94,7 +94,7 @@ export interface TemplateAnalytics {
 }
 
 export class SchedulingTemplateEngine {
-  private templates: Map<string, SchedulingTemplate> = new Map();
+  private readonly templates: Map<string, SchedulingTemplate> = new Map();
 
   constructor() {
     this.initializeDefaultTemplates();

@@ -579,7 +579,9 @@ export default function PatientsPage() {
     </motion.div>
   );
   const PatientDetailsDialog = () => {
-    if (!selectedPatient) return null;
+    if (!selectedPatient) {
+      return null;
+    }
 
     const patientAppointments = sampleAppointments.filter(
       (apt) => apt.patientId === selectedPatient.id
@@ -588,7 +590,7 @@ export default function PatientsPage() {
     return (
       <Dialog
         onOpenChange={() => setSelectedPatient(null)}
-        open={!!selectedPatient}
+        open={Boolean(selectedPatient)}
       >
         <DialogContent className="max-h-[90vh] max-w-4xl overflow-y-auto">
           <DialogHeader>

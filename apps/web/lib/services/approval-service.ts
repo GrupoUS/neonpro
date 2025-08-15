@@ -76,7 +76,7 @@ export interface ApprovalAction {
 }
 
 class ApprovalService {
-  private supabase = createClientComponentClient();
+  private readonly supabase = createClientComponentClient();
 
   // Approval Levels Management
   async getApprovalLevels(): Promise<ApprovalLevel[]> {
@@ -87,7 +87,9 @@ class ApprovalService {
         .eq('is_active', true)
         .order('level_order');
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data || [];
     } catch (error) {
       console.error('Error fetching approval levels:', error);
@@ -112,7 +114,9 @@ class ApprovalService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data;
     } catch (error) {
       console.error('Error creating approval level:', error);
@@ -135,7 +139,9 @@ class ApprovalService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data;
     } catch (error) {
       console.error('Error updating approval level:', error);
@@ -150,7 +156,9 @@ class ApprovalService {
         .update({ is_active: false, updated_at: new Date().toISOString() })
         .eq('id', id);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
     } catch (error) {
       console.error('Error deleting approval level:', error);
       throw new Error('Falha ao excluir nível de aprovação');
@@ -173,7 +181,9 @@ class ApprovalService {
         .eq('is_active', true)
         .order('user_name');
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data || [];
     } catch (error) {
       console.error('Error fetching approval users:', error);
@@ -197,7 +207,9 @@ class ApprovalService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data;
     } catch (error) {
       console.error('Error creating approval user:', error);
@@ -217,7 +229,9 @@ class ApprovalService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data;
     } catch (error) {
       console.error('Error updating approval user:', error);
@@ -232,7 +246,9 @@ class ApprovalService {
         .update({ is_active: false })
         .eq('id', id);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
     } catch (error) {
       console.error('Error deleting approval user:', error);
       throw new Error('Falha ao excluir usuário aprovador');
@@ -253,7 +269,9 @@ class ApprovalService {
       const {
         data: { user },
       } = await this.supabase.auth.getUser();
-      if (!user) throw new Error('Usuário não autenticado');
+      if (!user) {
+        throw new Error('Usuário não autenticado');
+      }
 
       // Determine approval levels based on amount
       const levels = await this.getApprovalLevels();
@@ -298,7 +316,9 @@ class ApprovalService {
         .select()
         .single();
 
-      if (requestError) throw requestError;
+      if (requestError) {
+        throw requestError;
+      }
 
       // Create approval steps
       const steps = applicableLevels.map((level, index) => ({
@@ -321,7 +341,9 @@ class ApprovalService {
         .from('approval_steps')
         .insert(steps);
 
-      if (stepsError) throw stepsError;
+      if (stepsError) {
+        throw stepsError;
+      }
 
       return request;
     } catch (error) {
@@ -351,7 +373,9 @@ class ApprovalService {
         .eq('id', id)
         .single();
 
-      if (requestError) throw requestError;
+      if (requestError) {
+        throw requestError;
+      }
 
       // Get approval steps
       const { data: steps, error: stepsError } = await this.supabase
@@ -360,7 +384,9 @@ class ApprovalService {
         .eq('approval_request_id', id)
         .order('level_order');
 
-      if (stepsError) throw stepsError;
+      if (stepsError) {
+        throw stepsError;
+      }
 
       // Get approval actions for each step
       const stepsWithActions = await Promise.all(
@@ -371,7 +397,9 @@ class ApprovalService {
             .eq('approval_step_id', step.id)
             .order('action_date');
 
-          if (actionsError) throw actionsError;
+          if (actionsError) {
+            throw actionsError;
+          }
 
           return {
             ...step,
@@ -395,7 +423,9 @@ class ApprovalService {
       const {
         data: { user },
       } = await this.supabase.auth.getUser();
-      if (!user) throw new Error('Usuário não autenticado');
+      if (!user) {
+        throw new Error('Usuário não autenticado');
+      }
 
       const { data, error } = await this.supabase
         .from('approval_requests')
@@ -410,7 +440,9 @@ class ApprovalService {
         .eq('requester_id', user.id)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data || [];
     } catch (error) {
       console.error('Error fetching my approval requests:', error);
@@ -423,7 +455,9 @@ class ApprovalService {
       const {
         data: { user },
       } = await this.supabase.auth.getUser();
-      if (!user) throw new Error('Usuário não autenticado');
+      if (!user) {
+        throw new Error('Usuário não autenticado');
+      }
 
       // Get user's approval permissions
       const { data: userPermissions } = await this.supabase
@@ -460,7 +494,9 @@ class ApprovalService {
         .in('approval_steps.level_order', levelIds) // This would need proper join logic
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data || [];
     } catch (error) {
       console.error('Error fetching pending approvals:', error);
@@ -478,7 +514,9 @@ class ApprovalService {
       const {
         data: { user },
       } = await this.supabase.auth.getUser();
-      if (!user) throw new Error('Usuário não autenticado');
+      if (!user) {
+        throw new Error('Usuário não autenticado');
+      }
 
       // Get step details
       const { data: step, error: stepError } = await this.supabase
@@ -490,7 +528,9 @@ class ApprovalService {
         .eq('id', stepId)
         .single();
 
-      if (stepError) throw stepError;
+      if (stepError) {
+        throw stepError;
+      }
 
       // Verify user can approve this step
       const { data: userPermission } = await this.supabase
@@ -520,7 +560,9 @@ class ApprovalService {
           },
         ]);
 
-      if (actionError) throw actionError;
+      if (actionError) {
+        throw actionError;
+      }
 
       // Update step status
       const newApprovedCount =
@@ -545,7 +587,9 @@ class ApprovalService {
         })
         .eq('id', stepId);
 
-      if (updateStepError) throw updateStepError;
+      if (updateStepError) {
+        throw updateStepError;
+      }
 
       // Update request status if necessary
       if (stepStatus === 'approved' || stepStatus === 'rejected') {
@@ -567,7 +611,9 @@ class ApprovalService {
           })
           .eq('id', step.approval_request_id);
 
-        if (updateRequestError) throw updateRequestError;
+        if (updateRequestError) {
+          throw updateRequestError;
+        }
       }
 
       // Send notifications (would be implemented with notification service)
@@ -587,7 +633,9 @@ class ApprovalService {
       const {
         data: { user },
       } = await this.supabase.auth.getUser();
-      if (!user) throw new Error('Usuário não autenticado');
+      if (!user) {
+        throw new Error('Usuário não autenticado');
+      }
 
       // Verify user can cancel (must be requester or admin)
       const { data: request } = await this.supabase
@@ -622,7 +670,9 @@ class ApprovalService {
         })
         .eq('id', requestId);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
     } catch (error) {
       console.error('Error cancelling approval request:', error);
       throw new Error('Falha ao cancelar solicitação de aprovação');
@@ -665,7 +715,9 @@ class ApprovalService {
     try {
       const { data, error } = await this.supabase.rpc('get_approval_stats');
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return (
         data || {

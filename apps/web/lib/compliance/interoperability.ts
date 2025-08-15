@@ -618,11 +618,11 @@ export interface DeliveryResult {
 
 // Main Interoperability Manager Class
 export class InteroperabilityManager {
-  private supabase = createClient();
-  private profiles: Map<string, InteroperabilityProfile> = new Map();
-  private endpoints: Map<string, InteroperabilityEndpoint> = new Map();
-  private mappings: Map<string, DataMapping> = new Map();
-  private exchangeQueue: DataExchangeRequest[] = [];
+  private readonly supabase = createClient();
+  private readonly profiles: Map<string, InteroperabilityProfile> = new Map();
+  private readonly endpoints: Map<string, InteroperabilityEndpoint> = new Map();
+  private readonly mappings: Map<string, DataMapping> = new Map();
+  private readonly exchangeQueue: DataExchangeRequest[] = [];
 
   constructor() {
     this.initializeInteroperabilityFramework();
@@ -846,9 +846,7 @@ export class InteroperabilityManager {
     try {
       const profile = this.getDefaultFHIRProfile();
 
-      if (
-        !(profile && profile.compliance.hl7FhirCompliance.capabilityStatement)
-      ) {
+      if (!profile?.compliance.hl7FhirCompliance.capabilityStatement) {
         throw new Error(
           'Default FHIR profile or capability statement not found'
         );
@@ -1372,7 +1370,9 @@ export class InteroperabilityManager {
   }
 
   private async processExchangeQueue(): Promise<void> {
-    if (this.exchangeQueue.length === 0) return;
+    if (this.exchangeQueue.length === 0) {
+      return;
+    }
 
     const pendingExchanges = this.exchangeQueue.filter(
       (e) => e.status.status === 'pending'
@@ -1478,7 +1478,9 @@ export class InteroperabilityManager {
 
   private calculateAverageProcessingTime(exchanges: any[]): number {
     const completedExchanges = exchanges.filter((e) => e.processing?.duration);
-    if (completedExchanges.length === 0) return 0;
+    if (completedExchanges.length === 0) {
+      return 0;
+    }
 
     const totalTime = completedExchanges.reduce(
       (sum, e) => sum + e.processing.duration,

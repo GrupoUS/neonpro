@@ -333,8 +333,12 @@ export async function GET(request: NextRequest) {
             acc[attempt] = { total: 0, successful: 0, failed: 0 };
           }
           acc[attempt].total++;
-          if (log.status === 'success') acc[attempt].successful++;
-          if (log.status === 'failed') acc[attempt].failed++;
+          if (log.status === 'success') {
+            acc[attempt].successful++;
+          }
+          if (log.status === 'failed') {
+            acc[attempt].failed++;
+          }
           return acc;
         },
         {} as Record<

@@ -174,8 +174,12 @@ const KPICard: React.FC<{ kpi: FinancialKPI }> = ({ kpi }) => {
 
   const getProgressColor = (value: number, target: number): string => {
     const percentage = target > 0 ? (value / target) * 100 : 0;
-    if (percentage >= 100) return 'bg-green-500';
-    if (percentage >= 80) return 'bg-yellow-500';
+    if (percentage >= 100) {
+      return 'bg-green-500';
+    }
+    if (percentage >= 80) {
+      return 'bg-yellow-500';
+    }
     return 'bg-red-500';
   };
 

@@ -29,11 +29,11 @@ import type {
  * - Performance optimization
  */
 export class DataCleanupService {
-  private supabase: SupabaseClient;
-  private config: CleanupConfig;
-  private scheduledTasks: Map<string, NodeJS.Timeout> = new Map();
+  private readonly supabase: SupabaseClient;
+  private readonly config: CleanupConfig;
+  private readonly scheduledTasks: Map<string, NodeJS.Timeout> = new Map();
   private isRunning = false;
-  private lastCleanupResults: Map<string, CleanupResult> = new Map();
+  private readonly lastCleanupResults: Map<string, CleanupResult> = new Map();
 
   constructor(config: CleanupConfig) {
     this.config = config;

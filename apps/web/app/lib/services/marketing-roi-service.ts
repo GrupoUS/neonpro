@@ -37,7 +37,7 @@ import {
 import { createClient } from '@/app/utils/supabase/server';
 
 export class MarketingROIService {
-  private supabase;
+  private readonly supabase;
 
   constructor() {
     this.supabase = createClient();
@@ -85,7 +85,9 @@ export class MarketingROIService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Create initial monitoring rules for the campaign
       await this.createCampaignMonitoringRules(data.id, clinicId, userId);
@@ -112,7 +114,9 @@ export class MarketingROIService {
         .eq('id', campaignId)
         .single();
 
-      if (fetchError) throw fetchError;
+      if (fetchError) {
+        throw fetchError;
+      }
 
       // Calculate updated ROI metrics
       const updatedMetrics = await this.calculateCampaignROI(campaign, metrics);
@@ -128,7 +132,9 @@ export class MarketingROIService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Check for ROI alerts after updating metrics
       await this.checkROIAlerts(data);
@@ -233,7 +239,9 @@ export class MarketingROIService {
 
       const { data, error, count } = await query;
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return {
         campaigns: data || [],
@@ -333,7 +341,9 @@ export class MarketingROIService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return data;
     } catch (error) {
@@ -378,7 +388,9 @@ export class MarketingROIService {
 
       const { data, error } = await query;
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return data || [];
     } catch (error) {
@@ -408,7 +420,9 @@ export class MarketingROIService {
         .gte('start_date', periodStart.toISOString())
         .lte('start_date', periodEnd.toISOString());
 
-      if (campaignError) throw campaignError;
+      if (campaignError) {
+        throw campaignError;
+      }
 
       const totalSpend =
         campaigns?.reduce((sum, c) => sum + c.actual_spend, 0) || 0;
@@ -482,7 +496,9 @@ export class MarketingROIService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return data;
     } catch (error) {
@@ -554,7 +570,9 @@ export class MarketingROIService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return data;
     } catch (error) {
@@ -603,9 +621,13 @@ export class MarketingROIService {
         const ltv = ltvAnalysis[index];
         const ratio = ltv.ltv_cac_ratio;
         let status = 'poor';
-        if (ratio >= 5) status = 'excellent';
-        else if (ratio >= 3) status = 'good';
-        else if (ratio >= 1.5) status = 'acceptable';
+        if (ratio >= 5) {
+          status = 'excellent';
+        } else if (ratio >= 3) {
+          status = 'good';
+        } else if (ratio >= 1.5) {
+          status = 'acceptable';
+        }
 
         return {
           channel: cac.channel,
@@ -647,7 +669,9 @@ export class MarketingROIService {
         .eq('clinic_id', campaign.clinic_id)
         .eq('is_active', true);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Check each rule against campaign metrics
       for (const rule of rules || []) {
@@ -685,7 +709,9 @@ export class MarketingROIService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Send notifications based on alert severity
       await this.sendAlertNotifications(data);
@@ -709,7 +735,9 @@ export class MarketingROIService {
         .eq('status', 'active')
         .order('priority_score', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return data || [];
     } catch (error) {
@@ -797,7 +825,9 @@ export class MarketingROIService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return data;
     } catch (error) {
@@ -825,7 +855,9 @@ export class MarketingROIService {
         .gte('start_date', periodStart.toISOString())
         .lte('start_date', periodEnd.toISOString());
 
-      if (campaignError) throw campaignError;
+      if (campaignError) {
+        throw campaignError;
+      }
 
       // Calculate overall metrics
       const totalSpend =
@@ -852,7 +884,7 @@ export class MarketingROIService {
       const sortedCampaigns =
         campaigns?.sort((a, b) => b.roi_percentage - a.roi_percentage) || [];
       const bestCampaign = sortedCampaigns[0];
-      const worstCampaign = sortedCampaigns[sortedCampaigns.length - 1];
+      const worstCampaign = sortedCampaigns.at(-1);
 
       // Channel performance
       const channelPerformance = await this.getChannelPerformance(
@@ -955,7 +987,9 @@ export class MarketingROIService {
         .lte('date', periodEnd.toISOString())
         .order('date', { ascending: true });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return data || [];
     } catch (error) {
@@ -1025,7 +1059,9 @@ export class MarketingROIService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return data;
     } catch (error) {

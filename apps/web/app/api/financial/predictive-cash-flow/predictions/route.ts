@@ -147,10 +147,18 @@ export async function GET(request: NextRequest) {
       .select('id', { count: 'exact', head: true })
       .eq('clinic_id', clinicId);
 
-    if (periodType) countQuery = countQuery.eq('period_type', periodType);
-    if (startDate) countQuery = countQuery.gte('start_date', startDate);
-    if (endDate) countQuery = countQuery.lte('end_date', endDate);
-    if (scenarioId) countQuery = countQuery.eq('scenario_id', scenarioId);
+    if (periodType) {
+      countQuery = countQuery.eq('period_type', periodType);
+    }
+    if (startDate) {
+      countQuery = countQuery.gte('start_date', startDate);
+    }
+    if (endDate) {
+      countQuery = countQuery.lte('end_date', endDate);
+    }
+    if (scenarioId) {
+      countQuery = countQuery.eq('scenario_id', scenarioId);
+    }
 
     const { count } = await countQuery;
 

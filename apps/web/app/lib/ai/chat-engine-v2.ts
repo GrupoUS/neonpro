@@ -23,7 +23,7 @@ const openai = new OpenAI({
  * Integrates OpenAI GPT-4 with NeonPro clinic data for intelligent assistance
  */
 export class NeonProAIChatEngine {
-  private supabase: SupabaseClient;
+  private readonly supabase: SupabaseClient;
 
   constructor(supabaseClient: SupabaseClient) {
     this.supabase = supabaseClient;
@@ -384,7 +384,7 @@ Available Data: ${JSON.stringify(context.relevantData, null, 2)}`;
   ): Promise<boolean> {
     try {
       const { data: session } = await this.supabase.auth.getSession();
-      return !!session.session?.user?.id;
+      return Boolean(session.session?.user?.id);
     } catch {
       return false;
     }
@@ -404,12 +404,18 @@ Available Data: ${JSON.stringify(context.relevantData, null, 2)}`;
   private extractSources(context: EnrichedContext): string[] {
     const sources = ['neonpro_database'];
 
-    if (context.relevantData?.recentAppointments)
+    if (context.relevantData?.recentAppointments) {
       sources.push('appointments_system');
-    if (context.relevantData?.financialSummary)
+    }
+    if (context.relevantData?.financialSummary) {
       sources.push('financial_system');
-    if (context.relevantData?.patientStats) sources.push('patient_management');
-    if (context.relevantData?.analytics) sources.push('business_intelligence');
+    }
+    if (context.relevantData?.patientStats) {
+      sources.push('patient_management');
+    }
+    if (context.relevantData?.analytics) {
+      sources.push('business_intelligence');
+    }
 
     return sources;
   }

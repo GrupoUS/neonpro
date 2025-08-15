@@ -275,15 +275,15 @@ export interface RetentionEvents {
  * - Compliance monitoring and reporting
  */
 export class DataRetentionManager extends EventEmitter {
-  private policies: Map<string, DataRetentionPolicy> = new Map();
-  private schedules: Map<string, DataRetentionSchedule> = new Map();
-  private legalHolds: Map<string, LegalHold> = new Map();
+  private readonly policies: Map<string, DataRetentionPolicy> = new Map();
+  private readonly schedules: Map<string, DataRetentionSchedule> = new Map();
+  private readonly legalHolds: Map<string, LegalHold> = new Map();
   private isInitialized = false;
   private processingInterval: NodeJS.Timeout | null = null;
   private reviewInterval: NodeJS.Timeout | null = null;
 
   constructor(
-    private config: {
+    private readonly config: {
       processingIntervalHours: number;
       reviewIntervalDays: number;
       batchSize: number;
@@ -884,7 +884,7 @@ export class DataRetentionManager extends EventEmitter {
           .filter((s) => s.status === 'failed')
           .map(
             (s) =>
-              `${s.dataIdentifier}: ${s.executionLog[s.executionLog.length - 1]?.details || 'Unknown error'}`
+              `${s.dataIdentifier}: ${s.executionLog.at(-1)?.details || 'Unknown error'}`
           ),
       },
       {

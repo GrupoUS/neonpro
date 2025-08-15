@@ -116,10 +116,10 @@ export const DEFAULT_SESSION_CONFIGS: Record<string, SessionConfig> = {
  * Handles session timeout, activity tracking, and security monitoring
  */
 export class SessionManager {
-  private supabase = createClient();
-  private activityTimers = new Map<string, NodeJS.Timeout>();
-  private warningTimers = new Map<string, NodeJS.Timeout[]>();
-  private sessionConfigs = new Map<string, SessionConfig>();
+  private readonly supabase = createClient();
+  private readonly activityTimers = new Map<string, NodeJS.Timeout>();
+  private readonly warningTimers = new Map<string, NodeJS.Timeout[]>();
+  private readonly sessionConfigs = new Map<string, SessionConfig>();
 
   constructor() {
     this.loadSessionConfigs();
@@ -179,7 +179,9 @@ export class SessionManager {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       const fullSession = { ...sessionData, id: session.id };
 
@@ -418,7 +420,9 @@ export class SessionManager {
         .eq('id', userId)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return profile?.role || 'patient';
     } catch (error) {
       console.error('Error getting user role:', error);
@@ -442,7 +446,9 @@ export class SessionManager {
         .eq('is_active', true)
         .order('created_at', { ascending: true });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // If at limit, terminate oldest sessions
       if (activeSessions.length >= config.maxConcurrentSessions) {
@@ -603,7 +609,9 @@ export class SessionManager {
         .from('session_policies')
         .select('*');
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Load default configs
       Object.entries(DEFAULT_SESSION_CONFIGS).forEach(([role, config]) => {
@@ -678,7 +686,9 @@ export class SessionManager {
         .eq('is_active', true)
         .order('last_activity', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return sessions.map((session) => ({
         id: session.id,

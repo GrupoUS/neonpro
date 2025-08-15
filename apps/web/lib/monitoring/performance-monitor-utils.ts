@@ -25,7 +25,7 @@ export interface PerformanceAlert {
 }
 
 export class PerformanceMonitorUtils {
-  private thresholds: Map<string, PerformanceThreshold> = new Map();
+  private readonly thresholds: Map<string, PerformanceThreshold> = new Map();
   private alerts: PerformanceAlert[] = [];
 
   constructor() {
@@ -73,7 +73,9 @@ export class PerformanceMonitorUtils {
 
     for (const metric of metrics) {
       const threshold = this.thresholds.get(metric.name);
-      if (!threshold) continue;
+      if (!threshold) {
+        continue;
+      }
 
       if (metric.value >= threshold.critical) {
         newAlerts.push({
@@ -102,7 +104,9 @@ export class PerformanceMonitorUtils {
    * 📈 Generate performance trends
    */
   generateTrends(metrics: PerformanceMetric[], buckets = 10): any[] {
-    if (metrics.length === 0) return [];
+    if (metrics.length === 0) {
+      return [];
+    }
 
     const sorted = metrics.sort((a, b) => a.timestamp - b.timestamp);
     const bucketSize = Math.ceil(sorted.length / buckets);
@@ -159,7 +163,7 @@ export class PerformanceMonitorUtils {
       p95: this.percentile(values, 95),
       p99: this.percentile(values, 99),
       min: values[0],
-      max: values[values.length - 1],
+      max: values.at(-1),
     };
   }
 
@@ -167,7 +171,9 @@ export class PerformanceMonitorUtils {
    * Calculate percentile
    */
   private percentile(values: number[], p: number): number {
-    if (values.length === 0) return 0;
+    if (values.length === 0) {
+      return 0;
+    }
 
     const index = (p / 100) * (values.length - 1);
     const lower = Math.floor(index);
@@ -201,7 +207,9 @@ export class PerformanceMonitorUtils {
    * Get performance score
    */
   calculatePerformanceScore(metrics: PerformanceMetric[]): number {
-    if (metrics.length === 0) return 100;
+    if (metrics.length === 0) {
+      return 100;
+    }
 
     let score = 100;
     const recentAlerts = this.alerts.filter(

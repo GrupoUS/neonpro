@@ -37,8 +37,8 @@ export interface OAuthErrorDetails {
 
 class OAuthErrorHandler {
   private static instance: OAuthErrorHandler;
-  private retryAttempts: Map<string, number> = new Map();
-  private errorCounts: Map<string, number> = new Map();
+  private readonly retryAttempts: Map<string, number> = new Map();
+  private readonly errorCounts: Map<string, number> = new Map();
 
   private constructor() {}
 

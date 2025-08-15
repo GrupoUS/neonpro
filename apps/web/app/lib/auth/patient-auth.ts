@@ -67,7 +67,9 @@ export class PatientAuthServer {
         data: { user },
         error: userError,
       } = await supabase.auth.getUser();
-      if (userError || !user) return null;
+      if (userError || !user) {
+        return null;
+      }
 
       // Get patient profile
       const { data: profile, error: profileError } = await supabase
@@ -76,7 +78,9 @@ export class PatientAuthServer {
         .eq('user_id', user.id)
         .single();
 
-      if (profileError || !profile) return null;
+      if (profileError || !profile) {
+        return null;
+      }
 
       // Record access for LGPD compliance
       await PatientAuthServer.recordDataAccess(profile.id, 'profile_access', {

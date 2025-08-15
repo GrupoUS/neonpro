@@ -16,9 +16,9 @@ import type {
 } from './types';
 
 export class AnalyticsService {
-  private repository: AnalyticsRepository;
-  private cachePrefix = 'analytics';
-  private defaultCacheTTL = 300; // 5 minutes
+  private readonly repository: AnalyticsRepository;
+  private readonly cachePrefix = 'analytics';
+  private readonly defaultCacheTTL = 300; // 5 minutes
 
   constructor() {
     this.repository = new AnalyticsRepository();
@@ -270,7 +270,9 @@ export class AnalyticsService {
   }
 
   private calculateEngagementScore(metrics: any[]): number {
-    if (!metrics.length) return 0.1;
+    if (!metrics.length) {
+      return 0.1;
+    }
 
     const totalActions = metrics.reduce(
       (sum, m) => sum + (m.actionsCount || 0),
@@ -291,9 +293,15 @@ export class AnalyticsService {
     const avgDaysActive =
       metrics.reduce((sum, m) => sum + (m.daysActive || 0), 0) / metrics.length;
 
-    if (avgActions < 10) factors.push('Low engagement activity');
-    if (avgDaysActive < 3) factors.push('Infrequent usage');
-    if (metrics.length < 5) factors.push('Limited trial period usage');
+    if (avgActions < 10) {
+      factors.push('Low engagement activity');
+    }
+    if (avgDaysActive < 3) {
+      factors.push('Infrequent usage');
+    }
+    if (metrics.length < 5) {
+      factors.push('Limited trial period usage');
+    }
 
     return factors;
   }
@@ -318,7 +326,9 @@ export class AnalyticsService {
   // ========================================================================
 
   private calculateTrend(values: number[]): number {
-    if (values.length < 2) return 0;
+    if (values.length < 2) {
+      return 0;
+    }
 
     const n = values.length;
     const sumX = (n * (n - 1)) / 2;
@@ -330,7 +340,7 @@ export class AnalyticsService {
   }
 
   private projectForecast(values: number[], trend: number, periods: number) {
-    const lastValue = values[values.length - 1] || 0;
+    const lastValue = values.at(-1) || 0;
     const realistic = Array.from({ length: periods }, (_, i) =>
       Math.max(0, lastValue + trend * (i + 1))
     );

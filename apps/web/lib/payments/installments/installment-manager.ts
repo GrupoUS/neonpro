@@ -253,7 +253,7 @@ class InstallmentManager {
         customer: customer.stripe_customer_id,
         payment_method: paymentMethodId,
         confirmation_method: paymentMethodId ? 'automatic' : 'manual',
-        confirm: !!paymentMethodId,
+        confirm: Boolean(paymentMethodId),
         metadata: {
           installment_id: installmentId,
           payment_plan_id: installment.payment_plan_id,

@@ -124,10 +124,15 @@ function validateMigration() {
       console.log('✅ .env.local - Todas as variáveis essenciais configuradas');
     } else {
       console.log('⚠️ .env.local - Algumas variáveis podem estar ausentes');
-      if (!hasSupabaseUrl) console.log('   - NEXT_PUBLIC_SUPABASE_URL ausente');
-      if (!hasSupabaseKey)
+      if (!hasSupabaseUrl) {
+        console.log('   - NEXT_PUBLIC_SUPABASE_URL ausente');
+      }
+      if (!hasSupabaseKey) {
         console.log('   - NEXT_PUBLIC_SUPABASE_ANON_KEY ausente');
-      if (!hasDatabaseUrl) console.log('   - DATABASE_URL ausente');
+      }
+      if (!hasDatabaseUrl) {
+        console.log('   - DATABASE_URL ausente');
+      }
     }
   } catch (_error) {
     console.log('❌ .env.local - Erro ao ler arquivo');

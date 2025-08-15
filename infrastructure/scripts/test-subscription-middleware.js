@@ -44,7 +44,9 @@ async function runTest(name, testFn) {
     console.log(`\n🔄 Testando: ${name}`);
     const result = await testFn();
     console.log(`✅ PASSOU: ${name}`);
-    if (result) console.log(`   ${result}`);
+    if (result) {
+      console.log(`   ${result}`);
+    }
     passedTests++;
     results.push({ name, status: 'PASSOU', details: result });
   } catch (error) {

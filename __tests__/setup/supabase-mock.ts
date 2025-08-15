@@ -3,6 +3,20 @@
  * This file must be loaded before any other setup files to ensure singleton pattern
  */
 
+// Suppress Supabase warnings immediately
+const originalConsoleWarn = console.warn;
+console.warn = (...args) => {
+  const message = args.join(' ');
+  if (
+    message.includes('Multiple GoTrueClient instances detected') ||
+    message.includes('GoTrueClient') ||
+    message.includes('Multiple instances of auth client')
+  ) {
+    return; // Suppress these warnings
+  }
+  originalConsoleWarn.apply(console, args);
+};
+
 // Create a singleton mock Supabase client to prevent "Multiple GoTrueClient instances" warning
 let singletonMockSupabaseClient: any = null;
 
@@ -78,13 +92,23 @@ jest.mock('@supabase/auth-js', () => {
 
       singletonGoTrueClient = {
         onAuthStateChange: jest.fn().mockReturnValue({
-          data: { subscription: { unsubscribe: jest.fn() } }
+          data: { subscription: { unsubscribe: jest.fn() } },
         }),
-        getUser: jest.fn().mockResolvedValue({ data: { user: null }, error: null }),
-        getSession: jest.fn().mockResolvedValue({ data: { session: null }, error: null }),
-        signInWithPassword: jest.fn().mockResolvedValue({ data: { user: null, session: null }, error: null }),
+        getUser: jest
+          .fn()
+          .mockResolvedValue({ data: { user: null }, error: null }),
+        getSession: jest
+          .fn()
+          .mockResolvedValue({ data: { session: null }, error: null }),
+        signInWithPassword: jest.fn().mockResolvedValue({
+          data: { user: null, session: null },
+          error: null,
+        }),
         signOut: jest.fn().mockResolvedValue({ error: null }),
-        signUp: jest.fn().mockResolvedValue({ data: { user: null, session: null }, error: null }),
+        signUp: jest.fn().mockResolvedValue({
+          data: { user: null, session: null },
+          error: null,
+        }),
         _handleAuthResponse: jest.fn(),
         _handleGoTrueSignIn: jest.fn(),
         _handleGoTrueSignUp: jest.fn(),

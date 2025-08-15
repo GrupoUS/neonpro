@@ -379,10 +379,18 @@ export function getModelByType(
 }
 
 export function getAlertLevelForRiskScore(riskScore: number): AlertLevel {
-  if (riskScore >= ALERT_THRESHOLDS.critical) return 'critical';
-  if (riskScore >= ALERT_THRESHOLDS.high) return 'high';
-  if (riskScore >= ALERT_THRESHOLDS.medium) return 'medium';
-  if (riskScore >= ALERT_THRESHOLDS.low) return 'low';
+  if (riskScore >= ALERT_THRESHOLDS.critical) {
+    return 'critical';
+  }
+  if (riskScore >= ALERT_THRESHOLDS.high) {
+    return 'high';
+  }
+  if (riskScore >= ALERT_THRESHOLDS.medium) {
+    return 'medium';
+  }
+  if (riskScore >= ALERT_THRESHOLDS.low) {
+    return 'low';
+  }
   return 'none';
 }
 
@@ -395,7 +403,9 @@ export function getNotificationTargetsForAlert(
 export function calculateComplicationRiskScore(
   complications: Array<{ type: ComplicationCategory; confidence: number }>
 ): number {
-  if (complications.length === 0) return 0;
+  if (complications.length === 0) {
+    return 0;
+  }
 
   const weightedScores = complications.map((comp) => {
     const weight = COMPLICATION_RISK_WEIGHTS[comp.type] || 0.5;

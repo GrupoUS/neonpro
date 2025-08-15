@@ -74,10 +74,18 @@ interface CohortHeatmapProps {
 
 // Color scales for heatmap
 const _getRetentionColor = (rate: number) => {
-  if (rate >= 80) return '#10b981'; // Green
-  if (rate >= 60) return '#f59e0b'; // Yellow
-  if (rate >= 40) return '#f97316'; // Orange
-  if (rate >= 20) return '#ef4444'; // Red
+  if (rate >= 80) {
+    return '#10b981'; // Green
+  }
+  if (rate >= 60) {
+    return '#f59e0b'; // Yellow
+  }
+  if (rate >= 40) {
+    return '#f97316'; // Orange
+  }
+  if (rate >= 20) {
+    return '#ef4444'; // Red
+  }
   return '#6b7280'; // Gray
 };
 
@@ -105,7 +113,9 @@ export function CohortHeatmap({
 
   // Transform data for heatmap visualization
   const heatmapData = useMemo(() => {
-    if (!cohorts.length) return [];
+    if (!cohorts.length) {
+      return [];
+    }
 
     const maxPeriods = Math.max(...cohorts.map((c) => c.periods.length));
     const data = [];
@@ -154,7 +164,7 @@ export function CohortHeatmap({
         avgRetention:
           periods.reduce((sum, p) => sum + p.retention, 0) / periods.length,
         totalRevenue: periods.reduce((sum, p) => sum + p.revenue, 0),
-        finalRetention: periods[periods.length - 1]?.retention || 0,
+        finalRetention: periods.at(-1)?.retention || 0,
       };
     });
   }, [cohorts]);
@@ -165,7 +175,7 @@ export function CohortHeatmap({
       .map((cohort) => {
         const periods = cohort.periods;
         const initialUsers = cohort.userCount;
-        const finalPeriod = periods[periods.length - 1];
+        const finalPeriod = periods.at(-1);
 
         return {
           cohortName: cohort.cohortName,
@@ -187,7 +197,9 @@ export function CohortHeatmap({
 
   // Custom tooltip for heatmap
   const HeatmapTooltip = ({ active, payload, label }: any) => {
-    if (!(active && payload && payload.length)) return null;
+    if (!(active && payload && payload.length)) {
+      return null;
+    }
 
     return (
       <div className="rounded-lg border bg-white p-4 shadow-lg">
@@ -212,7 +224,9 @@ export function CohortHeatmap({
 
   // Trend tooltip
   const TrendTooltip = ({ active, payload, label }: any) => {
-    if (!(active && payload && payload.length)) return null;
+    if (!(active && payload && payload.length)) {
+      return null;
+    }
 
     return (
       <div className="rounded-lg border bg-white p-4 shadow-lg">

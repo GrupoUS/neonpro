@@ -31,7 +31,7 @@ import {
 import { createClient } from '@/app/utils/supabase/client';
 
 export class RetentionAnalyticsService {
-  private supabase;
+  private readonly supabase;
 
   constructor() {
     this.supabase = createClient();
@@ -58,7 +58,9 @@ export class RetentionAnalyticsService {
           .eq('clinic_id', clinicId)
           .order('date', { ascending: true });
 
-      if (appointmentsError) throw appointmentsError;
+      if (appointmentsError) {
+        throw appointmentsError;
+      }
 
       // Get patient follow-up responses
       const { data: responses, error: responsesError } = await this.supabase
@@ -66,7 +68,9 @@ export class RetentionAnalyticsService {
         .select('*')
         .eq('patient_id', patientId);
 
-      if (responsesError) throw responsesError;
+      if (responsesError) {
+        throw responsesError;
+      }
 
       // Get patient financial data
       const { data: payments, error: paymentsError } = await this.supabase
@@ -74,7 +78,9 @@ export class RetentionAnalyticsService {
         .select('*')
         .eq('patient_id', patientId);
 
-      if (paymentsError) throw paymentsError;
+      if (paymentsError) {
+        throw paymentsError;
+      }
 
       // Calculate core metrics
       const now = new Date();
@@ -208,7 +214,9 @@ export class RetentionAnalyticsService {
         .select()
         .single();
 
-      if (saveError) throw saveError;
+      if (saveError) {
+        throw saveError;
+      }
 
       return savedMetrics;
     } catch (error) {
@@ -232,7 +240,9 @@ export class RetentionAnalyticsService {
         .eq('clinic_id', clinicId)
         .single();
 
-      if (error && error.code !== 'PGRST116') throw error;
+      if (error && error.code !== 'PGRST116') {
+        throw error;
+      }
       return data || null;
     } catch (error) {
       console.error('Error getting patient retention metrics:', error);
@@ -256,7 +266,9 @@ export class RetentionAnalyticsService {
         .order('churn_risk_score', { ascending: false })
         .range(offset, offset + limit - 1);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data || [];
     } catch (error) {
       console.error('Error getting clinic retention metrics:', error);
@@ -330,7 +342,9 @@ export class RetentionAnalyticsService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return savedPrediction;
     } catch (error) {
       console.error('Error generating churn prediction:', error);
@@ -361,7 +375,9 @@ export class RetentionAnalyticsService {
         .order('churn_probability', { ascending: false })
         .range(offset, offset + limit - 1);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data || [];
     } catch (error) {
       console.error('Error getting churn predictions:', error);
@@ -395,7 +411,9 @@ export class RetentionAnalyticsService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data;
     } catch (error) {
       console.error('Error creating retention strategy:', error);
@@ -424,7 +442,9 @@ export class RetentionAnalyticsService {
         ascending: false,
       });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data || [];
     } catch (error) {
       console.error('Error getting retention strategies:', error);
@@ -447,7 +467,9 @@ export class RetentionAnalyticsService {
         .eq('id', strategyId)
         .single();
 
-      if (strategyError) throw strategyError;
+      if (strategyError) {
+        throw strategyError;
+      }
       if (!strategy?.is_active) {
         throw new Error('Strategy is not active');
       }
@@ -585,9 +607,15 @@ export class RetentionAnalyticsService {
    * Get churn risk level from score
    */
   private getChurnRiskLevel(score: number): ChurnRiskLevel {
-    if (score >= 0.8) return ChurnRiskLevel.CRITICAL;
-    if (score >= 0.6) return ChurnRiskLevel.HIGH;
-    if (score >= 0.3) return ChurnRiskLevel.MEDIUM;
+    if (score >= 0.8) {
+      return ChurnRiskLevel.CRITICAL;
+    }
+    if (score >= 0.6) {
+      return ChurnRiskLevel.HIGH;
+    }
+    if (score >= 0.3) {
+      return ChurnRiskLevel.MEDIUM;
+    }
     return ChurnRiskLevel.LOW;
   }
 
@@ -598,7 +626,9 @@ export class RetentionAnalyticsService {
     churnRiskScore: number,
     appointmentFrequency: number
   ): number | null {
-    if (churnRiskScore < 0.3) return null; // Low risk, no prediction
+    if (churnRiskScore < 0.3) {
+      return null; // Low risk, no prediction
+    }
 
     // Use inverse relationship: higher risk = sooner churn
     const baseChurnDays = 180; // 6 months base
@@ -792,9 +822,15 @@ export class RetentionAnalyticsService {
   private getInterventionPriority(
     churnProbability: number
   ): InterventionPriority {
-    if (churnProbability >= 0.8) return InterventionPriority.URGENT;
-    if (churnProbability >= 0.6) return InterventionPriority.HIGH;
-    if (churnProbability >= 0.3) return InterventionPriority.MEDIUM;
+    if (churnProbability >= 0.8) {
+      return InterventionPriority.URGENT;
+    }
+    if (churnProbability >= 0.6) {
+      return InterventionPriority.HIGH;
+    }
+    if (churnProbability >= 0.3) {
+      return InterventionPriority.MEDIUM;
+    }
     return InterventionPriority.LOW;
   }
 
@@ -842,7 +878,9 @@ export class RetentionAnalyticsService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 

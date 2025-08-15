@@ -71,7 +71,7 @@ export interface ReportArchive {
 }
 
 export class ReportAutomationEngine {
-  private supabase = createClient();
+  private readonly supabase = createClient();
 
   // =====================================================================================
   // AUTOMATED REPORT SCHEDULING
@@ -101,8 +101,9 @@ export class ReportAutomationEngine {
       .select('id')
       .single();
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to create report schedule: ${error.message}`);
+    }
 
     return scheduleData.id;
   }
@@ -117,8 +118,9 @@ export class ReportAutomationEngine {
       .eq('clinic_id', clinicId)
       .order('next_run_date', { ascending: true });
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to fetch report schedules: ${error.message}`);
+    }
 
     return schedules.map((schedule: any) => ({
       scheduleId: schedule.id,
@@ -150,7 +152,9 @@ export class ReportAutomationEngine {
       .eq('is_active', true)
       .lte('next_run_date', new Date().toISOString());
 
-    if (error) throw new Error(`Failed to fetch due reports: ${error.message}`);
+    if (error) {
+      throw new Error(`Failed to fetch due reports: ${error.message}`);
+    }
 
     let processed = 0;
     let failed = 0;
@@ -234,8 +238,9 @@ export class ReportAutomationEngine {
       .select('id')
       .single();
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to create report template: ${error.message}`);
+    }
 
     return templateData.id;
   }
@@ -260,8 +265,9 @@ export class ReportAutomationEngine {
       ascending: false,
     });
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to fetch report templates: ${error.message}`);
+    }
 
     return templates.map((template: any) => ({
       templateId: template.id,
@@ -345,7 +351,9 @@ export class ReportAutomationEngine {
       }
     );
 
-    if (error) throw new Error(`PDF generation failed: ${error.message}`);
+    if (error) {
+      throw new Error(`PDF generation failed: ${error.message}`);
+    }
 
     return {
       filePath: pdfResult.file_path,
@@ -371,7 +379,9 @@ export class ReportAutomationEngine {
       }
     );
 
-    if (error) throw new Error(`Excel generation failed: ${error.message}`);
+    if (error) {
+      throw new Error(`Excel generation failed: ${error.message}`);
+    }
 
     return {
       filePath: excelResult.file_path,
@@ -395,7 +405,9 @@ export class ReportAutomationEngine {
       }
     );
 
-    if (error) throw new Error(`CSV generation failed: ${error.message}`);
+    if (error) {
+      throw new Error(`CSV generation failed: ${error.message}`);
+    }
 
     return {
       filePath: csvResult.file_path,
@@ -418,7 +430,9 @@ export class ReportAutomationEngine {
       }
     );
 
-    if (error) throw new Error(`JSON generation failed: ${error.message}`);
+    if (error) {
+      throw new Error(`JSON generation failed: ${error.message}`);
+    }
 
     return {
       filePath: jsonResult.file_path,
@@ -451,8 +465,9 @@ export class ReportAutomationEngine {
       .select('id')
       .single();
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to create report delivery: ${error.message}`);
+    }
 
     // Send email with report attachment
     if (delivery.deliveryMethod === 'email') {
@@ -481,7 +496,9 @@ export class ReportAutomationEngine {
         file_path: filePath,
       });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Update delivery status
       await this.supabase
@@ -536,7 +553,9 @@ export class ReportAutomationEngine {
       .select('id')
       .single();
 
-    if (error) throw new Error(`Failed to archive report: ${error.message}`);
+    if (error) {
+      throw new Error(`Failed to archive report: ${error.message}`);
+    }
 
     return archiveData.id;
   }
@@ -568,8 +587,9 @@ export class ReportAutomationEngine {
       ascending: false,
     });
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to fetch archived reports: ${error.message}`);
+    }
 
     return archives.map((archive: any) => ({
       archiveId: archive.id,
@@ -607,7 +627,9 @@ export class ReportAutomationEngine {
       }
     );
 
-    if (error) throw new Error(`Report generation failed: ${error.message}`);
+    if (error) {
+      throw new Error(`Report generation failed: ${error.message}`);
+    }
 
     return reportData;
   }
@@ -669,7 +691,9 @@ export class ReportAutomationEngine {
       }
     );
 
-    if (error) throw new Error(`File compression failed: ${error.message}`);
+    if (error) {
+      throw new Error(`File compression failed: ${error.message}`);
+    }
 
     return compressedResult;
   }
@@ -689,7 +713,9 @@ export class ReportAutomationEngine {
       }
     );
 
-    if (error) throw new Error(`Password protection failed: ${error.message}`);
+    if (error) {
+      throw new Error(`Password protection failed: ${error.message}`);
+    }
 
     return protectedResult;
   }

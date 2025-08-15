@@ -453,7 +453,9 @@ export async function PUT(request: NextRequest) {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     return NextResponse.json({
       success: true,
@@ -555,7 +557,9 @@ export async function DELETE(request: NextRequest) {
       .delete()
       .eq('id', documentId);
 
-    if (deleteError) throw deleteError;
+    if (deleteError) {
+      throw deleteError;
+    }
 
     return NextResponse.json({
       success: true,

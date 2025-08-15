@@ -180,7 +180,9 @@ export function useVisionConfig(): UseVisionConfigReturn {
   const updateConfig = useCallback(
     async (updates: Partial<VisionAnalysisConfig>) => {
       setState((prev) => {
-        if (!prev.config) return prev;
+        if (!prev.config) {
+          return prev;
+        }
 
         const newConfig = { ...prev.config, ...updates };
         const hasChanges =

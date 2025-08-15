@@ -73,7 +73,9 @@ describe('Bank Reconciliation API Integration Tests', () => {
 
     it('should update transaction status during reconciliation', async () => {
       const testId = testTransactionIds[0];
-      if (!testId) return;
+      if (!testId) {
+        return;
+      }
 
       const { data, error } = await supabase
         .from('financial_transactions')
@@ -151,7 +153,9 @@ describe('Bank Reconciliation API Integration Tests', () => {
 
     it('should maintain audit trail for all operations', async () => {
       const testId = testTransactionIds[0];
-      if (!testId) return;
+      if (!testId) {
+        return;
+      }
 
       // Check if audit trail exists
       const { data, error } = await supabase
@@ -166,7 +170,9 @@ describe('Bank Reconciliation API Integration Tests', () => {
 
     it('should validate LGPD compliance fields', async () => {
       const testId = testTransactionIds[0];
-      if (!testId) return;
+      if (!testId) {
+        return;
+      }
 
       const { data, error } = await supabase
         .from('financial_transactions')
@@ -269,7 +275,9 @@ describe('Bank Reconciliation API Integration Tests', () => {
     it('should enforce healthcare compliance validation', async () => {
       // Test healthcare-specific validation rules
       const testId = testTransactionIds[0];
-      if (!testId) return;
+      if (!testId) {
+        return;
+      }
 
       const { data, error } = await supabase
         .from('financial_transactions')

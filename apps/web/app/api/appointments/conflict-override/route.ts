@@ -276,7 +276,9 @@ async function sendOverrideNotifications(
       .eq('id', appointmentId)
       .single();
 
-    if (!appointment) return;
+    if (!appointment) {
+      return;
+    }
 
     const notifications = [
       {

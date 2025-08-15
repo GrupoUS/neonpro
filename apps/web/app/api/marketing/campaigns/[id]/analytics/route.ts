@@ -46,8 +46,12 @@ export async function GET(
       if (analyticsData.timeline) {
         analyticsData.timeline = analyticsData.timeline.filter((point: any) => {
           const pointDate = new Date(point.date);
-          if (startDate && pointDate < new Date(startDate)) return false;
-          if (endDate && pointDate > new Date(endDate)) return false;
+          if (startDate && pointDate < new Date(startDate)) {
+            return false;
+          }
+          if (endDate && pointDate > new Date(endDate)) {
+            return false;
+          }
           return true;
         });
       }
@@ -56,10 +60,10 @@ export async function GET(
     // Remove optional data if not requested
     const analyticsData = analytics as any;
     if (!includeSegments && analyticsData.segmentPerformance) {
-      delete analyticsData.segmentPerformance;
+      analyticsData.segmentPerformance = undefined;
     }
     if (!includeDevices && analyticsData.deviceBreakdown) {
-      delete analyticsData.deviceBreakdown;
+      analyticsData.deviceBreakdown = undefined;
     }
 
     return NextResponse.json({

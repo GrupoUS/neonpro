@@ -382,7 +382,7 @@ export default function PacientesPage() {
                       </div>
 
                       <div className="flex items-center space-x-1">
-                        {[...Array(5)].map((_, i) => (
+                        {[...new Array(5)].map((_, i) => (
                           <Star
                             className={`h-4 w-4 ${
                               i < patient.rating

@@ -161,10 +161,10 @@ interface HistoricalRiskData {
 }
 
 class MLRiskAssessmentEngine {
-  private supabase = createClient();
-  private models: Map<RiskCategory, MLModelConfig> = new Map();
-  private riskFactors: Map<string, RiskFactor> = new Map();
-  private historicalData: HistoricalRiskData[] = [];
+  private readonly supabase = createClient();
+  private readonly models: Map<RiskCategory, MLModelConfig> = new Map();
+  private readonly riskFactors: Map<string, RiskFactor> = new Map();
+  private readonly historicalData: HistoricalRiskData[] = [];
   private modelAccuracy = 0.85; // Target: 80%+
 
   constructor() {
@@ -987,10 +987,18 @@ class MLRiskAssessmentEngine {
    * Convert risk score to severity level
    */
   private scoresToSeverity(score: number): RiskSeverity {
-    if (score >= 70) return 'critical';
-    if (score >= 50) return 'high';
-    if (score >= 30) return 'moderate';
-    if (score >= 10) return 'low';
+    if (score >= 70) {
+      return 'critical';
+    }
+    if (score >= 50) {
+      return 'high';
+    }
+    if (score >= 30) {
+      return 'moderate';
+    }
+    if (score >= 10) {
+      return 'low';
+    }
     return 'minimal';
   }
 
@@ -1200,7 +1208,9 @@ class MLRiskAssessmentEngine {
    * Update model accuracy based on outcomes
    */
   async updateModelAccuracy(): Promise<void> {
-    if (this.historicalData.length === 0) return;
+    if (this.historicalData.length === 0) {
+      return;
+    }
 
     const accuracies = this.historicalData
       .filter((data) => data.accuracy > 0)

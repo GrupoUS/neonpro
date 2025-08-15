@@ -72,7 +72,7 @@ async function checkEnvironment() {
   const missingVars = requiredVars.filter((varName) => {
     const regex = new RegExp(`^${varName}=(.+)$`, 'm');
     const match = envContent.match(regex);
-    return !(match && match[1]) || match[1].trim() === '';
+    return !match?.[1] || match[1].trim() === '';
   });
 
   if (missingVars.length > 0) {

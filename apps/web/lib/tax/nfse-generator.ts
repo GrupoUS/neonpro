@@ -118,7 +118,7 @@ export interface NFSeBatchResponse {
 // =================== NFSe GENERATOR CLASS ===================
 
 export class NFSeGenerator {
-  private config: NFSeConfig;
+  private readonly config: NFSeConfig;
 
   constructor(config: NFSeConfig) {
     this.config = NFSeConfigSchema.parse(config);
@@ -687,7 +687,9 @@ export default createNFSeGenerator;
 export const NFSeUtils = {
   validateCNPJ: (cnpj: string): boolean => {
     const cleanCNPJ = cnpj.replace(/[^\d]/g, '');
-    if (cleanCNPJ.length !== 14) return false;
+    if (cleanCNPJ.length !== 14) {
+      return false;
+    }
 
     // CNPJ validation algorithm
     const weights = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
@@ -707,7 +709,9 @@ export const NFSeUtils = {
 
   validateCPF: (cpf: string): boolean => {
     const cleanCPF = cpf.replace(/[^\d]/g, '');
-    if (cleanCPF.length !== 11 || /^(\d)\1{10}$/.test(cleanCPF)) return false;
+    if (cleanCPF.length !== 11 || /^(\d)\1{10}$/.test(cleanCPF)) {
+      return false;
+    }
 
     const digits = cleanCPF.split('').map(Number);
     const checkDigit1 = NFSeUtils.calculateCPFCheckDigit(

@@ -40,7 +40,9 @@ export async function createTreatmentPlan(
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) throw new Error('Usuário não autenticado');
+  if (!user) {
+    throw new Error('Usuário não autenticado');
+  }
 
   // Generate FHIR ID
   const fhir_id = `careplan-${crypto.randomUUID()}`;
@@ -95,8 +97,9 @@ export async function createTreatmentPlan(
     .select()
     .single();
 
-  if (error)
+  if (error) {
     throw new Error(`Erro ao criar plano de tratamento: ${error.message}`);
+  }
   return result;
 }
 
@@ -110,7 +113,9 @@ export async function updateTreatmentPlan(
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) throw new Error('Usuário não autenticado');
+  if (!user) {
+    throw new Error('Usuário não autenticado');
+  }
 
   const updateData = {
     ...data,
@@ -127,8 +132,9 @@ export async function updateTreatmentPlan(
     .select()
     .single();
 
-  if (error)
+  if (error) {
     throw new Error(`Erro ao atualizar plano de tratamento: ${error.message}`);
+  }
   return result;
 }
 
@@ -149,7 +155,9 @@ export async function getTreatmentPlan(
     .single();
 
   if (error) {
-    if (error.code === 'PGRST116') return null;
+    if (error.code === 'PGRST116') {
+      return null;
+    }
     throw new Error(`Erro ao buscar plano de tratamento: ${error.message}`);
   }
 
@@ -212,8 +220,9 @@ export async function searchTreatmentPlans(
     .range(from, to)
     .order('created_at', { ascending: false });
 
-  if (error)
+  if (error) {
     throw new Error(`Erro ao buscar planos de tratamento: ${error.message}`);
+  }
 
   return {
     treatment_plans: data || [],
@@ -236,7 +245,9 @@ export async function createProcedure(
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) throw new Error('Usuário não autenticado');
+  if (!user) {
+    throw new Error('Usuário não autenticado');
+  }
 
   // Generate FHIR ID
   const fhir_id = `procedure-${crypto.randomUUID()}`;
@@ -313,7 +324,9 @@ export async function createProcedure(
     .select()
     .single();
 
-  if (error) throw new Error(`Erro ao criar procedimento: ${error.message}`);
+  if (error) {
+    throw new Error(`Erro ao criar procedimento: ${error.message}`);
+  }
   return result;
 } /**
  * Update an existing procedure
@@ -325,7 +338,9 @@ export async function updateProcedure(
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) throw new Error('Usuário não autenticado');
+  if (!user) {
+    throw new Error('Usuário não autenticado');
+  }
 
   const updateData = {
     ...data,
@@ -342,8 +357,9 @@ export async function updateProcedure(
     .select()
     .single();
 
-  if (error)
+  if (error) {
     throw new Error(`Erro ao atualizar procedimento: ${error.message}`);
+  }
   return result;
 }
 
@@ -363,7 +379,9 @@ export async function getProcedure(id: string): Promise<Procedure | null> {
     .single();
 
   if (error) {
-    if (error.code === 'PGRST116') return null;
+    if (error.code === 'PGRST116') {
+      return null;
+    }
     throw new Error(`Erro ao buscar procedimento: ${error.message}`);
   }
 
@@ -431,7 +449,9 @@ export async function searchProcedures(
     .range(from, to)
     .order('performed_datetime', { ascending: false });
 
-  if (error) throw new Error(`Erro ao buscar procedimentos: ${error.message}`);
+  if (error) {
+    throw new Error(`Erro ao buscar procedimentos: ${error.message}`);
+  }
 
   return {
     procedures: data || [],
@@ -454,7 +474,9 @@ export async function createClinicalNote(
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) throw new Error('Usuário não autenticado');
+  if (!user) {
+    throw new Error('Usuário não autenticado');
+  }
 
   // Generate FHIR ID
   const fhir_id = `note-${crypto.randomUUID()}`;
@@ -513,7 +535,9 @@ export async function createClinicalNote(
     .select()
     .single();
 
-  if (error) throw new Error(`Erro ao criar nota clínica: ${error.message}`);
+  if (error) {
+    throw new Error(`Erro ao criar nota clínica: ${error.message}`);
+  }
   return result;
 }
 
@@ -527,7 +551,9 @@ export async function updateClinicalNote(
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) throw new Error('Usuário não autenticado');
+  if (!user) {
+    throw new Error('Usuário não autenticado');
+  }
 
   const updateData = {
     ...data,
@@ -544,8 +570,9 @@ export async function updateClinicalNote(
     .select()
     .single();
 
-  if (error)
+  if (error) {
     throw new Error(`Erro ao atualizar nota clínica: ${error.message}`);
+  }
   return result;
 }
 
@@ -568,7 +595,9 @@ export async function getClinicalNote(
     .single();
 
   if (error) {
-    if (error.code === 'PGRST116') return null;
+    if (error.code === 'PGRST116') {
+      return null;
+    }
     throw new Error(`Erro ao buscar nota clínica: ${error.message}`);
   }
 
@@ -645,7 +674,9 @@ export async function searchClinicalNotes(
     .range(from, to)
     .order('authored_time', { ascending: false });
 
-  if (error) throw new Error(`Erro ao buscar notas clínicas: ${error.message}`);
+  if (error) {
+    throw new Error(`Erro ao buscar notas clínicas: ${error.message}`);
+  }
 
   return {
     clinical_notes: data || [],
@@ -666,7 +697,9 @@ export async function getTreatmentStatistics(): Promise<TreatmentStatistics> {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) throw new Error('Usuário não autenticado');
+  if (!user) {
+    throw new Error('Usuário não autenticado');
+  }
 
   // Get treatment plans statistics
   const { data: treatmentPlansStats } = await supabase
@@ -759,7 +792,9 @@ export async function deleteTreatmentPlan(id: string): Promise<boolean> {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) throw new Error('Usuário não autenticado');
+  if (!user) {
+    throw new Error('Usuário não autenticado');
+  }
 
   const { error } = await supabase
     .from('treatment_plans')
@@ -769,8 +804,9 @@ export async function deleteTreatmentPlan(id: string): Promise<boolean> {
     })
     .eq('id', id);
 
-  if (error)
+  if (error) {
     throw new Error(`Erro ao excluir plano de tratamento: ${error.message}`);
+  }
   return true;
 }
 
@@ -781,7 +817,9 @@ export async function deleteProcedure(id: string): Promise<boolean> {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) throw new Error('Usuário não autenticado');
+  if (!user) {
+    throw new Error('Usuário não autenticado');
+  }
 
   const { error } = await supabase
     .from('procedures')
@@ -791,7 +829,9 @@ export async function deleteProcedure(id: string): Promise<boolean> {
     })
     .eq('id', id);
 
-  if (error) throw new Error(`Erro ao excluir procedimento: ${error.message}`);
+  if (error) {
+    throw new Error(`Erro ao excluir procedimento: ${error.message}`);
+  }
   return true;
 }
 
@@ -802,7 +842,9 @@ export async function deleteClinicalNote(id: string): Promise<boolean> {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) throw new Error('Usuário não autenticado');
+  if (!user) {
+    throw new Error('Usuário não autenticado');
+  }
 
   const { error } = await supabase
     .from('clinical_notes')
@@ -812,6 +854,8 @@ export async function deleteClinicalNote(id: string): Promise<boolean> {
     })
     .eq('id', id);
 
-  if (error) throw new Error(`Erro ao excluir nota clínica: ${error.message}`);
+  if (error) {
+    throw new Error(`Erro ao excluir nota clínica: ${error.message}`);
+  }
   return true;
 }

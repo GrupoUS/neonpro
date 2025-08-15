@@ -73,7 +73,7 @@ async function validateUserAccess(
     .eq('clinic_id', clinicId)
     .single();
 
-  return !!userClinic;
+  return Boolean(userClinic);
 }
 
 // ============================================================================
@@ -129,9 +129,15 @@ export async function GET(request: NextRequest) {
 
     // Build query filters
     const filters: any = { clinicId };
-    if (userId) filters.userId = userId;
-    if (consentType) filters.consentType = consentType;
-    if (status) filters.status = status;
+    if (userId) {
+      filters.userId = userId;
+    }
+    if (consentType) {
+      filters.consentType = consentType;
+    }
+    if (status) {
+      filters.status = status;
+    }
 
     // Get consents with pagination
     const offset = (page - 1) * limit;

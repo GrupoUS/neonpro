@@ -155,19 +155,32 @@ export function useRealtimeAvailability({
         channelRef.current = null;
       }
     };
-  }, [professionalId, serviceId, date]);
+  }, [
+    // Buscar dados iniciais
+    fetchInitialSlots,
+    handleSlotDelete,
+    handleSlotInsert,
+    handleSlotUpdate,
+    supabase.channel,
+    supabase.removeChannel,
+    toast,
+  ]);
 
   // Handlers para eventos realtime
   const handleSlotInsert = (newSlot: TimeSlot) => {
     setTimeSlots((prev) => {
       // Verificar se já existe
       const exists = prev.find((slot) => slot.id === newSlot.id);
-      if (exists) return prev;
+      if (exists) {
+        return prev;
+      }
 
       // Adicionar e reordenar
       const updated = [...prev, newSlot].sort((a, b) => {
         const dateComparison = a.date.localeCompare(b.date);
-        if (dateComparison !== 0) return dateComparison;
+        if (dateComparison !== 0) {
+          return dateComparison;
+        }
         return a.start_time.localeCompare(b.start_time);
       });
 

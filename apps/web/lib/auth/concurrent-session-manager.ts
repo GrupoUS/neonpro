@@ -91,9 +91,9 @@ const DEFAULT_SESSION_LIMITS: Record<UserRole, ConcurrentSessionLimits> = {
 };
 
 export class ConcurrentSessionManager {
-  private supabase;
-  private auditLogger: SecurityAuditLogger;
-  private sessionLimits: Record<UserRole, ConcurrentSessionLimits>;
+  private readonly supabase;
+  private readonly auditLogger: SecurityAuditLogger;
+  private readonly sessionLimits: Record<UserRole, ConcurrentSessionLimits>;
   private cleanupInterval?: NodeJS.Timeout;
 
   constructor(

@@ -16,8 +16,8 @@ import {
 import { FinancialReportingEngine } from './reporting-engine';
 
 export class FinancialAnalyticsCore {
-  private supabase = createClient();
-  private reportingEngine = new FinancialReportingEngine();
+  private readonly supabase = createClient();
+  private readonly reportingEngine = new FinancialReportingEngine();
 
   // =====================================================================================
   // CORE KPI CALCULATION METHODS
@@ -408,8 +408,9 @@ export class FinancialAnalyticsCore {
       .gte('scheduled_date', period_start)
       .lte('scheduled_date', period_end);
 
-    if (error)
+    if (error) {
       throw new Error(`Appointment metrics fetch failed: ${error.message}`);
+    }
 
     const totalAppointments = appointmentData?.length || 0;
     const completedAppointments =

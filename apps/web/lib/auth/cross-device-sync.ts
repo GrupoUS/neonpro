@@ -133,17 +133,17 @@ const DEFAULT_CONFIG: CrossDeviceSyncConfig = {
 };
 
 export class CrossDeviceSync {
-  private supabase;
-  private auditLogger: SecurityAuditLogger;
+  private readonly supabase;
+  private readonly auditLogger: SecurityAuditLogger;
   private config: CrossDeviceSyncConfig;
-  private activeSessions: Map<string, DeviceSession> = new Map();
-  private syncQueue: Map<string, SyncEvent[]> = new Map();
-  private conflictQueue: Map<string, SyncConflict[]> = new Map();
+  private readonly activeSessions: Map<string, DeviceSession> = new Map();
+  private readonly syncQueue: Map<string, SyncEvent[]> = new Map();
+  private readonly conflictQueue: Map<string, SyncConflict[]> = new Map();
   private syncInterval?: NodeJS.Timeout;
   private heartbeatInterval?: NodeJS.Timeout;
   private websocketConnection?: any;
-  private isOnline = true;
-  private syncStatistics: SyncStatistics;
+  private readonly isOnline = true;
+  private readonly syncStatistics: SyncStatistics;
 
   constructor(
     supabaseUrl: string,
@@ -1030,7 +1030,7 @@ export class CrossDeviceSync {
     for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i);
       hash = (hash << 5) - hash + char;
-      hash = hash & hash; // Convert to 32-bit integer
+      hash &= hash; // Convert to 32-bit integer
     }
     return Math.abs(hash).toString(36);
   }

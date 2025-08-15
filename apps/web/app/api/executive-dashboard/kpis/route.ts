@@ -72,7 +72,7 @@ export async function GET(request: NextRequest) {
         clinic_id: clinicId,
         period_type: periodType,
         kpi_names: kpiNames,
-        custom_period: !!customStart && !!customEnd,
+        custom_period: Boolean(customStart) && Boolean(customEnd),
         count: kpis.length,
       },
     });

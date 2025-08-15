@@ -101,8 +101,12 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 
     // Preparar dados para atualização
     const updateData: any = {};
-    if (title !== undefined) updateData.title = title;
-    if (is_active !== undefined) updateData.is_active = is_active;
+    if (title !== undefined) {
+      updateData.title = title;
+    }
+    if (is_active !== undefined) {
+      updateData.is_active = is_active;
+    }
 
     if (Object.keys(updateData).length === 0) {
       return NextResponse.json(

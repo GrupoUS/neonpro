@@ -30,11 +30,11 @@ export * from './strategies/backup-strategies';
  * - Auditoria completa
  */
 export class BackupRecoverySystem {
-  private backupManager: BackupManager;
-  private recoveryManager: RecoveryManager;
-  private storageManager: StorageManager;
-  private auditLogger: AuditLogger;
-  private isInitialized = false;
+  private readonly backupManager: BackupManager;
+  private readonly recoveryManager: RecoveryManager;
+  private readonly storageManager: StorageManager;
+  private readonly auditLogger: AuditLogger;
+  private readonly isInitialized = false;
 
   constructor() {
     this.backupManager = new BackupManager();

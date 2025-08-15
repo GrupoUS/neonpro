@@ -313,13 +313,13 @@ export interface PerformanceBenchmark {
 
 // Main Analytics Engine Class
 export class VisionAnalyticsEngine {
-  private supabase = createClient();
+  private readonly supabase = createClient();
   private metricsBuffer: VisionMetric[] = [];
-  private insights: Map<string, AnalyticsInsight> = new Map();
-  private benchmarks: Map<string, PerformanceBenchmark> = new Map();
-  private alertRules: Map<string, AlertRule> = new Map();
-  private isRealTimeEnabled = true;
-  private refreshInterval = 30_000; // 30 seconds
+  private readonly insights: Map<string, AnalyticsInsight> = new Map();
+  private readonly benchmarks: Map<string, PerformanceBenchmark> = new Map();
+  private readonly alertRules: Map<string, AlertRule> = new Map();
+  private readonly isRealTimeEnabled = true;
+  private readonly refreshInterval = 30_000; // 30 seconds
 
   constructor() {
     this.initializeAnalyticsEngine();
@@ -704,7 +704,9 @@ export class VisionAnalyticsEngine {
   }
 
   private async processMetricsBuffer(): Promise<void> {
-    if (this.metricsBuffer.length === 0) return;
+    if (this.metricsBuffer.length === 0) {
+      return;
+    }
 
     const metricsToProcess = [...this.metricsBuffer];
     this.metricsBuffer = [];
@@ -837,7 +839,9 @@ export class VisionAnalyticsEngine {
 
   // Additional helper methods would be implemented here...
   private calculateSuccessRate(outcomes: PatientOutcome[]): number {
-    if (outcomes.length === 0) return 0;
+    if (outcomes.length === 0) {
+      return 0;
+    }
     const successful = outcomes.filter((o) => o.treatmentSuccess).length;
     return (successful / outcomes.length) * 100;
   }
@@ -856,7 +860,9 @@ export class VisionAnalyticsEngine {
   }
 
   private calculateComplicationRate(outcomes: PatientOutcome[]): number {
-    if (outcomes.length === 0) return 0;
+    if (outcomes.length === 0) {
+      return 0;
+    }
     const complications = outcomes.filter((o) => o.complicationDetected).length;
     return (complications / outcomes.length) * 100;
   }

@@ -115,7 +115,9 @@ export function useRealTimeAvailability({
 
       const { data: slots, error } = await query;
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Filter out expired reservations
       const now = new Date().toISOString();
@@ -200,7 +202,9 @@ export function useRealTimeAvailability({
 
         // Sort by date and time
         updatedSlots.sort((a, b) => {
-          if (a.date !== b.date) return a.date.localeCompare(b.date);
+          if (a.date !== b.date) {
+            return a.date.localeCompare(b.date);
+          }
           return a.time.localeCompare(b.time);
         });
 
@@ -281,10 +285,14 @@ export function useRealTimeAvailability({
    */
   const reserveSlotOptimistic = useCallback(
     async (slotId: string, patientId: string) => {
-      if (!enableOptimistic) return false;
+      if (!enableOptimistic) {
+        return false;
+      }
 
       const slot = state.slots.find((s) => s.id === slotId);
-      if (!slot) return false;
+      if (!slot) {
+        return false;
+      }
 
       // Create optimistic update
       const optimisticSlot: TimeSlot = {
@@ -384,7 +392,7 @@ export function useRealTimeAvailability({
         .sort((a, b) => b.score - a.score)
         .slice(0, maxAlternatives);
     },
-    [state.slots]
+    [state.slots, calculateSlotScore]
   );
 
   // Helper function for scoring alternative slots

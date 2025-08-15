@@ -41,9 +41,9 @@ const DEFAULT_CONFIG: MiddlewareConfig = {
 };
 
 export class SessionSecurityMiddleware {
-  private security: IntegratedSessionSecurity;
-  private config: MiddlewareConfig;
-  private supabase: any;
+  private readonly security: IntegratedSessionSecurity;
+  private readonly config: MiddlewareConfig;
+  private readonly supabase: any;
 
   constructor(config: Partial<MiddlewareConfig> = {}) {
     this.config = { ...DEFAULT_CONFIG, ...config };

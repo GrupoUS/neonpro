@@ -38,7 +38,7 @@ export async function GET(
     const paymentIntentId = params.id;
 
     // Validate payment intent ID format
-    if (!(paymentIntentId && paymentIntentId.startsWith('pi_'))) {
+    if (!paymentIntentId?.startsWith('pi_')) {
       return NextResponse.json(
         { error: 'Invalid Request', message: 'Invalid payment intent ID' },
         { status: 400 }

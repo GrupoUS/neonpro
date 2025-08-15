@@ -25,7 +25,7 @@ import {
 } from '@/lib/validations/financial-reporting';
 
 export class FinancialReportingEngine {
-  private supabase = createClient();
+  private readonly supabase = createClient();
 
   // =====================================================================================
   // CORE REPORT GENERATION METHODS
@@ -58,8 +58,9 @@ export class FinancialReportingEngine {
       .lte('issue_date', period_end)
       .eq('status', 'paid');
 
-    if (revenueError)
+    if (revenueError) {
       throw new Error(`Revenue data fetch failed: ${revenueError.message}`);
+    }
 
     // Fetch expense data from cash flow entries
     const { data: expenseData, error: expenseError } = await this.supabase
@@ -70,8 +71,9 @@ export class FinancialReportingEngine {
       .lte('transaction_date', period_end)
       .eq('transaction_type', 'expense');
 
-    if (expenseError)
+    if (expenseError) {
       throw new Error(`Expense data fetch failed: ${expenseError.message}`);
+    }
 
     // Calculate revenue components
     const consultationRevenue =
@@ -270,8 +272,9 @@ export class FinancialReportingEngine {
       .eq('clinic_id', clinicId)
       .single();
 
-    if (cashError)
+    if (cashError) {
       throw new Error(`Cash data fetch failed: ${cashError.message}`);
+    }
 
     // Fetch accounts receivable from unpaid invoices
     const { data: receivableData, error: receivableError } = await this.supabase
@@ -281,10 +284,11 @@ export class FinancialReportingEngine {
       .in('status', ['issued', 'sent', 'overdue'])
       .lte('issue_date', asOfDate);
 
-    if (receivableError)
+    if (receivableError) {
       throw new Error(
         `Receivable data fetch failed: ${receivableError.message}`
       );
+    }
 
     // Fetch accounts payable from unpaid bills
     const { data: payableData, error: payableError } = await this.supabase
@@ -295,8 +299,9 @@ export class FinancialReportingEngine {
       .eq('payment_status', 'pending')
       .lte('transaction_date', asOfDate);
 
-    if (payableError)
+    if (payableError) {
       throw new Error(`Payable data fetch failed: ${payableError.message}`);
+    }
 
     // Calculate balance sheet components
     const cashAndEquivalents = cashData?.current_balance || 0;
@@ -419,8 +424,9 @@ export class FinancialReportingEngine {
       .gte('transaction_date', period_start)
       .lte('transaction_date', period_end);
 
-    if (cashFlowError)
+    if (cashFlowError) {
       throw new Error(`Cash flow data fetch failed: ${cashFlowError.message}`);
+    }
 
     // Fetch beginning and ending cash balances
     const { data: beginningCashData } = await this.supabase
@@ -595,8 +601,9 @@ export class FinancialReportingEngine {
       .lte('issue_date', period_end)
       .eq('status', 'paid');
 
-    if (error)
+    if (error) {
       throw new Error(`Revenue analytics fetch failed: ${error.message}`);
+    }
 
     const totalRevenue =
       revenueData?.reduce((sum, inv) => sum + inv.total_amount, 0) || 0;
@@ -684,8 +691,9 @@ export class FinancialReportingEngine {
       .lte('transaction_date', period_end)
       .eq('transaction_type', 'expense');
 
-    if (error)
+    if (error) {
       throw new Error(`Expense analytics fetch failed: ${error.message}`);
+    }
 
     const totalExpenses =
       expenseData?.reduce((sum, exp) => sum + exp.amount, 0) || 0;
@@ -755,7 +763,9 @@ export class FinancialReportingEngine {
       .select()
       .single();
 
-    if (error) throw new Error(`Failed to save report: ${error.message}`);
+    if (error) {
+      throw new Error(`Failed to save report: ${error.message}`);
+    }
 
     // TODO: Save report content to file system and update file_path
 
@@ -807,7 +817,9 @@ export class FinancialReportingEngine {
 
     const { data, error, count } = await query;
 
-    if (error) throw new Error(`Failed to fetch reports: ${error.message}`);
+    if (error) {
+      throw new Error(`Failed to fetch reports: ${error.message}`);
+    }
 
     return {
       reports: data || [],

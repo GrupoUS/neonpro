@@ -17,7 +17,7 @@ export interface SecurityConfig {
 }
 
 export class SecurityMiddleware {
-  private config: SecurityConfig;
+  private readonly config: SecurityConfig;
 
   constructor(config: SecurityConfig) {
     this.config = config;
@@ -155,7 +155,9 @@ export class SecurityMiddleware {
     description: string,
     request: NextRequest
   ): Promise<void> {
-    if (!this.config.auditLogging) return;
+    if (!this.config.auditLogging) {
+      return;
+    }
 
     const logEntry = {
       timestamp: new Date().toISOString(),
@@ -187,7 +189,9 @@ export class SecurityMiddleware {
     try {
       // Validate input
       const inputValidationResult = await this.validateInput(request);
-      if (inputValidationResult) return inputValidationResult;
+      if (inputValidationResult) {
+        return inputValidationResult;
+      }
 
       // Apply security headers
       const response = await this.applySecurityHeaders(request);

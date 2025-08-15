@@ -102,7 +102,7 @@ const ENCRYPTION_VERSION = '1.0';
 // ============================================================================
 
 export class LGPDEncryption {
-  private config: EncryptionConfig;
+  private readonly config: EncryptionConfig;
   private masterKey: Buffer | null = null;
 
   constructor(config: Partial<EncryptionConfig> = {}) {

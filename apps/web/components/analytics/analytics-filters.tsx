@@ -95,7 +95,9 @@ export function AnalyticsFilters({
    * Load filter options from analytics engine
    */
   const loadFilterOptions = useCallback(async () => {
-    if (!clinicId) return;
+    if (!clinicId) {
+      return;
+    }
 
     try {
       const options = await AnalyticsUtils.getFilterOptions(clinicId);

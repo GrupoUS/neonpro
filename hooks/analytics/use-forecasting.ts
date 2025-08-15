@@ -123,10 +123,7 @@ export function useForecasting(
         const forecast =
           await forecastingEngine.generateForecast(forecastConfig);
 
-        if (
-          !(forecast && forecast.predictions) ||
-          forecast.predictions.length === 0
-        ) {
+        if (!forecast?.predictions || forecast.predictions.length === 0) {
           throw new Error('No forecast data generated');
         }
 
@@ -177,12 +174,14 @@ export function useForecasting(
     cacheTime: 60 * 60 * 1000, // 1 hour
     retry: 2,
     refetchOnWindowFocus: false,
-    enabled: !!config.metric && config.timeHorizon > 0,
+    enabled: Boolean(config.metric) && config.timeHorizon > 0,
   });
 
   // Auto-refresh effect
   useEffect(() => {
-    if (!(config.autoRefresh && config.refreshInterval)) return;
+    if (!(config.autoRefresh && config.refreshInterval)) {
+      return;
+    }
 
     const interval = setInterval(() => {
       refreshData();
@@ -245,7 +244,9 @@ export function useForecasting(
   // Export forecast mutation
   const exportForecastMutation = useMutation({
     mutationFn: async (format: 'csv' | 'excel' | 'pdf') => {
-      if (!forecastData) throw new Error('No forecast data to export');
+      if (!forecastData) {
+        throw new Error('No forecast data to export');
+      }
 
       const response = await fetch('/api/analytics/export', {
         method: 'POST',
@@ -262,7 +263,9 @@ export function useForecasting(
         }),
       });
 
-      if (!response.ok) throw new Error('Export failed');
+      if (!response.ok) {
+        throw new Error('Export failed');
+      }
 
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
@@ -372,7 +375,9 @@ export function useForecastComparison(forecasts: ForecastResult[]) {
         }),
       });
 
-      if (!response.ok) throw new Error('Forecast comparison failed');
+      if (!response.ok) {
+        throw new Error('Forecast comparison failed');
+      }
       return response.json();
     },
     enabled: forecasts.length > 1,
@@ -388,7 +393,9 @@ export function useRealTimeForecastUpdates(metric: string, enabled = true) {
   const supabase = createClient();
 
   useEffect(() => {
-    if (!(enabled && metric)) return;
+    if (!(enabled && metric)) {
+      return;
+    }
 
     // Subscribe to real-time data changes that might affect forecasts
     const subscription = supabase
@@ -441,11 +448,13 @@ export function useForecastAccuracy(metric: string, timeWindow = 30) {
         }),
       });
 
-      if (!response.ok) throw new Error('Failed to fetch accuracy data');
+      if (!response.ok) {
+        throw new Error('Failed to fetch accuracy data');
+      }
       return response.json();
     },
     staleTime: 60 * 60 * 1000, // 1 hour
-    enabled: !!metric,
+    enabled: Boolean(metric),
   });
 }
 
@@ -495,25 +504,37 @@ export function useForecastFormatters() {
       },
 
       getAccuracyColor: (accuracy: number): string => {
-        if (accuracy >= 90) return 'text-green-600';
-        if (accuracy >= 75) return 'text-yellow-600';
+        if (accuracy >= 90) {
+          return 'text-green-600';
+        }
+        if (accuracy >= 75) {
+          return 'text-yellow-600';
+        }
         return 'text-red-600';
       },
 
       getAccuracyBadgeVariant: (
         accuracy: number
       ): 'default' | 'secondary' | 'destructive' => {
-        if (accuracy >= 90) return 'default';
-        if (accuracy >= 75) return 'secondary';
+        if (accuracy >= 90) {
+          return 'default';
+        }
+        if (accuracy >= 75) {
+          return 'secondary';
+        }
         return 'destructive';
       },
 
       formatTimeHorizon: (days: number): string => {
-        if (days < 7) return `${days} day${days > 1 ? 's' : ''}`;
-        if (days < 30)
+        if (days < 7) {
+          return `${days} day${days > 1 ? 's' : ''}`;
+        }
+        if (days < 30) {
           return `${Math.round(days / 7)} week${Math.round(days / 7) > 1 ? 's' : ''}`;
-        if (days < 365)
+        }
+        if (days < 365) {
           return `${Math.round(days / 30)} month${Math.round(days / 30) > 1 ? 's' : ''}`;
+        }
         return `${Math.round(days / 365)} year${Math.round(days / 365) > 1 ? 's' : ''}`;
       },
     }),

@@ -14,10 +14,12 @@ import type {
 } from '@/types/rbac';
 
 export class RBACPermissionManager {
-  private supabase: any;
-  private permissionCache: Map<string, { data: any; timestamp: number }> =
-    new Map();
-  private cacheTimeout = 5 * 60 * 1000; // 5 minutes
+  private readonly supabase: any;
+  private readonly permissionCache: Map<
+    string,
+    { data: any; timestamp: number }
+  > = new Map();
+  private readonly cacheTimeout = 5 * 60 * 1000; // 5 minutes
 
   constructor(supabaseClient?: any) {
     this.supabase = supabaseClient || createClient();
@@ -87,7 +89,7 @@ export class RBACPermissionManager {
 
       const roleAssignment = await this.getUserRole(userId, clinicId);
 
-      if (!(roleAssignment && roleAssignment.role)) {
+      if (!roleAssignment?.role) {
         const result = { granted: false };
         this.permissionCache.set(cacheKey, {
           data: result,

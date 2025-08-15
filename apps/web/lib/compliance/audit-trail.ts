@@ -327,12 +327,12 @@ export interface ReportAttachment {
 
 // Main Audit Trail Manager Class
 export class AuditTrailManager extends EventEmitter {
-  private supabase = createClient();
-  private auditBuffer: AuditTrailEntry[] = [];
-  private bufferSize = 1000;
-  private flushInterval = 30_000; // 30 seconds
-  private complianceRules: Map<string, ComplianceRule> = new Map();
-  private riskThresholds: Map<string, number> = new Map();
+  private readonly supabase = createClient();
+  private readonly auditBuffer: AuditTrailEntry[] = [];
+  private readonly bufferSize = 1000;
+  private readonly flushInterval = 30_000; // 30 seconds
+  private readonly complianceRules: Map<string, ComplianceRule> = new Map();
+  private readonly riskThresholds: Map<string, number> = new Map();
 
   constructor() {
     super();
@@ -731,7 +731,9 @@ export class AuditTrailManager extends EventEmitter {
   }
 
   private async flushBuffer(): Promise<void> {
-    if (this.auditBuffer.length === 0) return;
+    if (this.auditBuffer.length === 0) {
+      return;
+    }
 
     try {
       const entries = [...this.auditBuffer];
@@ -905,9 +907,15 @@ export class AuditTrailManager extends EventEmitter {
   private getRiskLevel(
     riskScore: number
   ): 'low' | 'medium' | 'high' | 'critical' {
-    if (riskScore >= 80) return 'critical';
-    if (riskScore >= 60) return 'high';
-    if (riskScore >= 30) return 'medium';
+    if (riskScore >= 80) {
+      return 'critical';
+    }
+    if (riskScore >= 60) {
+      return 'high';
+    }
+    if (riskScore >= 30) {
+      return 'medium';
+    }
     return 'low';
   }
 
@@ -1294,7 +1302,9 @@ export class AuditTrailManager extends EventEmitter {
   }
 
   private calculateComplianceRate(entries: AuditTrailEntry[]): number {
-    if (entries.length === 0) return 100;
+    if (entries.length === 0) {
+      return 100;
+    }
 
     const compliantEntries = entries.filter(
       (e) => e.complianceContext.complianceStatus === 'compliant'
@@ -1355,7 +1365,9 @@ export class AuditTrailManager extends EventEmitter {
     >();
 
     entries.forEach((entry) => {
-      if (!entry.resourceId) return;
+      if (!entry.resourceId) {
+        return;
+      }
 
       const existing = resourceActivity.get(entry.resourceId) || {
         accessCount: 0,
@@ -1436,7 +1448,9 @@ export class AuditTrailManager extends EventEmitter {
   }
 
   private calculateOverallRiskScore(entries: AuditTrailEntry[]): number {
-    if (entries.length === 0) return 0;
+    if (entries.length === 0) {
+      return 0;
+    }
 
     const totalRisk = entries.reduce(
       (sum, entry) => sum + entry.riskAssessment.riskScore,

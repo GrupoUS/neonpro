@@ -117,13 +117,18 @@ export function useAnalyticsDashboard(
   // Aggregate error states
   const errors = useMemo(() => {
     const errorList = [];
-    if (cohortAnalysis.error)
+    if (cohortAnalysis.error) {
       errorList.push(`Cohort Analysis: ${cohortAnalysis.error}`);
-    if (forecasting.error) errorList.push(`Forecasting: ${forecasting.error}`);
-    if (realTimeAnalytics.error)
+    }
+    if (forecasting.error) {
+      errorList.push(`Forecasting: ${forecasting.error}`);
+    }
+    if (realTimeAnalytics.error) {
       errorList.push(`Real-time: ${realTimeAnalytics.error}`);
-    if (statisticalInsights.error)
+    }
+    if (statisticalInsights.error) {
       errorList.push(`Statistical: ${statisticalInsights.error}`);
+    }
     return errorList;
   }, [
     cohortAnalysis.error,
@@ -170,10 +175,7 @@ export function useAnalyticsDashboard(
       // Calculate growth rate from forecasting data
       if (forecasting.forecast && forecasting.forecast.predictions.length > 1) {
         const current = forecasting.forecast.predictions[0]?.value || 0;
-        const future =
-          forecasting.forecast.predictions[
-            forecasting.forecast.predictions.length - 1
-          ]?.value || 0;
+        const future = forecasting.forecast.predictions.at(-1)?.value || 0;
         newKpis.growthRate =
           current > 0 ? ((future - current) / current) * 100 : 0;
       }
@@ -329,7 +331,9 @@ export function useAnalyticsDashboard(
           }),
         });
 
-        if (!response.ok) throw new Error('Export failed');
+        if (!response.ok) {
+          throw new Error('Export failed');
+        }
 
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);

@@ -32,17 +32,17 @@ import {
  * - Performance optimization with sub-50ms detection
  */
 export class ConflictDetectionEngine {
-  private supabase: any;
+  private readonly supabase: any;
   private realtimeChannel: RealtimeChannel | null = null;
-  private config: ConflictDetectionConfig;
+  private readonly config: ConflictDetectionConfig;
   private isInitialized = false;
-  private eventListeners: Map<
+  private readonly eventListeners: Map<
     string,
     ((event: ConflictDetectionEvent) => void)[]
   > = new Map();
 
   // Performance monitoring
-  private detectionMetrics = {
+  private readonly detectionMetrics = {
     totalDetections: 0,
     averageLatency: 0,
     successRate: 1.0,

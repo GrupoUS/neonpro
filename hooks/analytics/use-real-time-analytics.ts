@@ -100,7 +100,9 @@ export function useRealTimeAnalytics(
           }),
         });
 
-        if (!response.ok) throw new Error('Failed to fetch metrics');
+        if (!response.ok) {
+          throw new Error('Failed to fetch metrics');
+        }
         const data = await response.json();
 
         setMetrics(data.metrics);
@@ -121,7 +123,9 @@ export function useRealTimeAnalytics(
   // Check for alerts based on thresholds
   const checkAlerts = useCallback(
     (newMetrics: RealTimeMetrics) => {
-      if (!config.enableAlerts) return;
+      if (!config.enableAlerts) {
+        return;
+      }
 
       const newAlerts: any[] = [];
 
@@ -169,7 +173,9 @@ export function useRealTimeAnalytics(
 
   // Start real-time monitoring
   const startMonitoring = useCallback(() => {
-    if (isConnected) return;
+    if (isConnected) {
+      return;
+    }
 
     try {
       // Subscribe to subscription changes
@@ -330,11 +336,13 @@ export function useRealTimeAnalytics(
     return () => {
       stopMonitoring();
     };
-  }, []); // Empty dependency array for mount/unmount only
+  }, [startMonitoring, stopMonitoring]); // Empty dependency array for mount/unmount only
 
   // Update trends periodically
   useEffect(() => {
-    if (!isConnected) return;
+    if (!isConnected) {
+      return;
+    }
 
     intervalRef.current = setInterval(() => {
       setTrends((prev) => {
@@ -342,7 +350,9 @@ export function useRealTimeAnalytics(
 
         // Add current metrics to trends
         config.metrics.forEach((metric) => {
-          if (!updated[metric]) updated[metric] = [];
+          if (!updated[metric]) {
+            updated[metric] = [];
+          }
 
           let value = 0;
           switch (metric) {

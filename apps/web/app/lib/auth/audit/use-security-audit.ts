@@ -135,7 +135,9 @@ export function useSecurityAudit(options: UseSecurityAuditOptions = {}) {
 async function getRecentAuditEvents(limit = 50): Promise<AuditEvent[]> {
   try {
     const stored = localStorage.getItem('security_audit_events');
-    if (!stored) return [];
+    if (!stored) {
+      return [];
+    }
 
     const events: AuditEvent[] = JSON.parse(stored);
     return events.sort((a, b) => b.timestamp - a.timestamp).slice(0, limit);

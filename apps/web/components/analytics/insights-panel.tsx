@@ -129,7 +129,7 @@ export function InsightsPanel({
       }
 
       // Determine if actionable
-      const actionable = !!(
+      const actionable = Boolean(
         insight.recommendations && insight.recommendations.length > 0
       );
 
@@ -415,7 +415,7 @@ export function InsightsPanel({
         </CardHeader>
         <CardContent>
           <div className="animate-pulse space-y-4">
-            {[...Array(3)].map((_, i) => (
+            {[...new Array(3)].map((_, i) => (
               <div className="h-32 rounded bg-gray-200" key={i} />
             ))}
           </div>
@@ -505,7 +505,9 @@ export function InsightsPanel({
                   const category = insightCategories.find(
                     (cat) => cat.id === selectedCategory
                   );
-                  if (!category) return null;
+                  if (!category) {
+                    return null;
+                  }
 
                   return (
                     <>

@@ -262,8 +262,12 @@ async function checkApprovalPermissions(
 
 // Helper function to determine required approval level based on amount
 function getRequiredApprovalLevel(amount: number): number {
-  if (amount <= 1000) return 1;
-  if (amount <= 5000) return 2;
+  if (amount <= 1000) {
+    return 1;
+  }
+  if (amount <= 5000) {
+    return 2;
+  }
   return 3;
 }
 
@@ -281,7 +285,9 @@ async function sendApprovalNotification(
       .eq('id', purchaseOrder.created_by)
       .single();
 
-    if (error || !creator) return;
+    if (error || !creator) {
+      return;
+    }
 
     // Create notification
     const notification = {

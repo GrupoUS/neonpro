@@ -87,7 +87,9 @@ export function useSuppliers(
       }
 
       const { data, error } = await query;
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data as Supplier[];
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
@@ -110,7 +112,9 @@ export function useSuppliers(
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data as Supplier;
     },
     onSuccess: (newSupplier) => {
@@ -139,7 +143,9 @@ export function useSuppliers(
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data as Supplier;
     },
     onSuccess: (updatedSupplier) => {
@@ -165,7 +171,9 @@ export function useSuppliers(
         .delete()
         .eq('id', supplierId);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return supplierId;
     },
     onSuccess: () => {
@@ -197,7 +205,9 @@ export function useSuppliers(
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data as Supplier;
     },
     onSuccess: (updatedSupplier) => {
@@ -259,10 +269,12 @@ export function useSupplier(supplierId: string) {
         .eq('id', supplierId)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data as Supplier;
     },
-    enabled: !!supplierId,
+    enabled: Boolean(supplierId),
     staleTime: 2 * 60 * 1000, // 2 minutes
   });
 
@@ -307,10 +319,12 @@ export function useSupplierPerformance(supplierId: string, period?: string) {
       }
 
       const { data, error } = await query;
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data as SupplierPerformance[];
     },
-    enabled: !!supplierId,
+    enabled: Boolean(supplierId),
     staleTime: 10 * 60 * 1000, // 10 minutes
   });
 
@@ -328,7 +342,9 @@ export function useSupplierPerformance(supplierId: string, period?: string) {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data as SupplierPerformance;
     },
     onSuccess: () => {
@@ -343,7 +359,9 @@ export function useSupplierPerformance(supplierId: string, period?: string) {
 
   // Calculate performance metrics
   const performanceMetrics = useMemo(() => {
-    if (!performance?.length) return null;
+    if (!performance?.length) {
+      return null;
+    }
 
     const latest = performance[0];
     const previous = performance[1];
@@ -412,7 +430,9 @@ export function useSupplierAnalytics(
         .limit(1)
         .single();
 
-      if (error && error.code !== 'PGRST116') throw error;
+      if (error && error.code !== 'PGRST116') {
+        throw error;
+      }
       return data as SupplierAnalytics | null;
     },
     staleTime: 30 * 60 * 1000, // 30 minutes
@@ -475,7 +495,9 @@ export function useProcurementRequests(
       }
 
       const { data, error } = await query;
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data as ProcurementRequest[];
     },
     staleTime: 5 * 60 * 1000,
@@ -496,7 +518,9 @@ export function useProcurementRequests(
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data as ProcurementRequest;
     },
     onSuccess: (newRequest) => {
@@ -543,10 +567,12 @@ export function useSupplierBids(procurementRequestId: string) {
         .eq('procurement_request_id', procurementRequestId)
         .order('submitted_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data as SupplierBid[];
     },
-    enabled: !!procurementRequestId,
+    enabled: Boolean(procurementRequestId),
     staleTime: 2 * 60 * 1000,
   });
 
@@ -578,7 +604,9 @@ export function useSupplierBids(procurementRequestId: string) {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data as SupplierBid;
     },
     onSuccess: () => {
@@ -653,7 +681,9 @@ export function useQualityIssues(
       }
 
       const { data, error } = await query;
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data as QualityIssue[];
     },
     staleTime: 3 * 60 * 1000,
@@ -679,7 +709,9 @@ export function useQualityIssues(
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data as QualityIssue;
     },
     onSuccess: (newIssue) => {
@@ -727,7 +759,9 @@ export function useQualityIssues(
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data as QualityIssue;
     },
     onSuccess: (updatedIssue) => {
@@ -807,7 +841,9 @@ export function useSupplierContracts(
       }
 
       const { data, error } = await query;
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data as SupplierContract[];
     },
     staleTime: 10 * 60 * 1000,
@@ -861,10 +897,12 @@ export function useSupplierCommunications(supplierId: string) {
         .eq('supplier_id', supplierId)
         .order('timestamp', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data as SupplierCommunication[];
     },
-    enabled: !!supplierId,
+    enabled: Boolean(supplierId),
     staleTime: 2 * 60 * 1000,
   });
 
@@ -882,7 +920,9 @@ export function useSupplierCommunications(supplierId: string) {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data as SupplierCommunication;
     },
     onSuccess: () => {
@@ -1012,7 +1052,7 @@ export function useSupplierProcurement(supplierId: string, clinicId?: string) {
         onTimeDeliveryRate: 0.85, // placeholder
       };
     },
-    enabled: !!supplierId,
+    enabled: Boolean(supplierId),
   });
 
   return {
@@ -1049,7 +1089,7 @@ export function useSupplierQuality(supplierId: string, clinicId?: string) {
         certificationStatus: 'valid', // placeholder
       };
     },
-    enabled: !!supplierId,
+    enabled: Boolean(supplierId),
   });
 
   return {

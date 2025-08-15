@@ -136,9 +136,9 @@ interface ErrorAnalytics {
 }
 
 export class SubscriptionErrorLogger {
-  private config: LoggerConfig;
-  private logBuffer: LogEntry[] = [];
-  private analytics: ErrorAnalytics;
+  private readonly config: LoggerConfig;
+  private readonly logBuffer: LogEntry[] = [];
+  private readonly analytics: ErrorAnalytics;
 
   constructor(config?: Partial<LoggerConfig>) {
     this.config = { ...defaultConfig, ...config };

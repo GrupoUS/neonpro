@@ -220,9 +220,15 @@ export function formatAlternativeSlot(slot: AlternativeSlot): string {
 export function getSuggestionQuality(
   slot: AlternativeSlot
 ): 'excellent' | 'good' | 'fair' | 'poor' {
-  if (slot.score >= 90) return 'excellent';
-  if (slot.score >= 75) return 'good';
-  if (slot.score >= 60) return 'fair';
+  if (slot.score >= 90) {
+    return 'excellent';
+  }
+  if (slot.score >= 75) {
+    return 'good';
+  }
+  if (slot.score >= 60) {
+    return 'fair';
+  }
   return 'poor';
 }
 
@@ -284,7 +290,9 @@ function _calculatePreferenceMatch(
           )
         ) <= 30
     );
-    if (timeMatch) score += 0.3;
+    if (timeMatch) {
+      score += 0.3;
+    }
   }
 
   // Same day preference (higher score)
@@ -297,7 +305,9 @@ function _calculatePreferenceMatch(
 
 // KPI calculation for user satisfaction (industry metric)
 function _calculateAvgSatisfaction(suggestions: AlternativeSlot[]): number {
-  if (suggestions.length === 0) return 0;
+  if (suggestions.length === 0) {
+    return 0;
+  }
 
   const totalScore = suggestions.reduce((sum, s) => sum + s.score, 0);
   const avgScore = totalScore / suggestions.length;
@@ -326,7 +336,9 @@ export function filterSuggestionsWithDayjs(
       const suggestionTime = dayjs(
         `1970-01-01 ${suggestionDayjs.format('HH:mm')}`
       );
-      if (suggestionTime.isBefore(minTime)) return false;
+      if (suggestionTime.isBefore(minTime)) {
+        return false;
+      }
     }
 
     if (filters.maxTime) {
@@ -334,7 +346,9 @@ export function filterSuggestionsWithDayjs(
       const suggestionTime = dayjs(
         `1970-01-01 ${suggestionDayjs.format('HH:mm')}`
       );
-      if (suggestionTime.isAfter(maxTime)) return false;
+      if (suggestionTime.isAfter(maxTime)) {
+        return false;
+      }
     }
 
     // Day exclusion
@@ -345,7 +359,9 @@ export function filterSuggestionsWithDayjs(
     // Working hours only (8:00 - 18:00)
     if (filters.onlyWorkingHours) {
       const hour = suggestionDayjs.hour();
-      if (hour < 8 || hour >= 18) return false;
+      if (hour < 8 || hour >= 18) {
+        return false;
+      }
     }
 
     return true;

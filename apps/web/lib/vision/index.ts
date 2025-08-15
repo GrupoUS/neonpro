@@ -126,7 +126,7 @@ export {
  */
 export class VisionSystem {
   private static instance: VisionSystem;
-  private config: typeof VISION_CONFIG;
+  private readonly config: typeof VISION_CONFIG;
 
   private constructor() {
     this.config = VISION_CONFIG;

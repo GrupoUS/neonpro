@@ -396,13 +396,13 @@ export interface ResourceOptimization {
 
 // Main Performance Monitoring Engine
 export class PerformanceMonitoringEngine {
-  private supabase = createClient();
-  private metrics: Map<string, SystemMetrics> = new Map();
-  private alerts: Map<string, PerformanceAlert> = new Map();
-  private thresholds: Map<string, PerformanceThreshold> = new Map();
-  private isMonitoring = true;
-  private monitoringInterval = 30_000; // 30 seconds
-  private alertCooldowns: Map<string, number> = new Map();
+  private readonly supabase = createClient();
+  private readonly metrics: Map<string, SystemMetrics> = new Map();
+  private readonly alerts: Map<string, PerformanceAlert> = new Map();
+  private readonly thresholds: Map<string, PerformanceThreshold> = new Map();
+  private readonly isMonitoring = true;
+  private readonly monitoringInterval = 30_000; // 30 seconds
+  private readonly alertCooldowns: Map<string, number> = new Map();
 
   constructor() {
     this.initializeEngine();
@@ -984,7 +984,7 @@ export class PerformanceMonitoringEngine {
         },
         compliance: {
           usage: Math.floor(200 + Math.random() * 300),
-          accuracy: 99 + Math.random() * 1,
+          accuracy: 99 + Number(Math.random()),
           avgProcessingTime: 100 + Math.random() * 100,
           successRate: 99.5 + Math.random() * 0.5,
           errorRate: Math.random() * 0.5,
@@ -1026,28 +1026,52 @@ export class PerformanceMonitoringEngine {
   }
 
   private calculateCPUScore(cpu: CPUMetrics): number {
-    if (cpu.usage > 90) return 20;
-    if (cpu.usage > 80) return 40;
-    if (cpu.usage > 70) return 60;
-    if (cpu.usage > 50) return 80;
+    if (cpu.usage > 90) {
+      return 20;
+    }
+    if (cpu.usage > 80) {
+      return 40;
+    }
+    if (cpu.usage > 70) {
+      return 60;
+    }
+    if (cpu.usage > 50) {
+      return 80;
+    }
     return 100;
   }
 
   private calculateMemoryScore(memory: MemoryMetrics): number {
     const usage = (memory.used / memory.total) * 100;
-    if (usage > 95) return 20;
-    if (usage > 85) return 40;
-    if (usage > 75) return 60;
-    if (usage > 60) return 80;
+    if (usage > 95) {
+      return 20;
+    }
+    if (usage > 85) {
+      return 40;
+    }
+    if (usage > 75) {
+      return 60;
+    }
+    if (usage > 60) {
+      return 80;
+    }
     return 100;
   }
 
   private calculateStorageScore(storage: StorageMetrics): number {
     const usage = (storage.usedSpace / storage.totalSpace) * 100;
-    if (usage > 95) return 20;
-    if (usage > 85) return 40;
-    if (usage > 75) return 60;
-    if (usage > 60) return 80;
+    if (usage > 95) {
+      return 20;
+    }
+    if (usage > 85) {
+      return 40;
+    }
+    if (usage > 75) {
+      return 60;
+    }
+    if (usage > 60) {
+      return 80;
+    }
     return 100;
   }
 
@@ -1055,10 +1079,18 @@ export class PerformanceMonitoringEngine {
     const usage = (network.usedBandwidth / network.totalBandwidth) * 100;
     let score = 100;
 
-    if (usage > 80) score -= 20;
-    if (network.latency > 100) score -= 20;
-    if (network.packetLoss > 1) score -= 30;
-    if (network.requests.failed / network.requests.total > 0.05) score -= 30;
+    if (usage > 80) {
+      score -= 20;
+    }
+    if (network.latency > 100) {
+      score -= 20;
+    }
+    if (network.packetLoss > 1) {
+      score -= 30;
+    }
+    if (network.requests.failed / network.requests.total > 0.05) {
+      score -= 30;
+    }
 
     return Math.max(0, score);
   }
@@ -1066,13 +1098,24 @@ export class PerformanceMonitoringEngine {
   private calculateDatabaseScore(database: DatabaseMetrics): number {
     let score = 100;
 
-    if (database.connections.active / database.connections.max > 0.8)
+    if (database.connections.active / database.connections.max > 0.8) {
       score -= 20;
-    if (database.queries.avgDuration > 1000) score -= 20;
-    if (database.cache.hitRate < 80) score -= 15;
-    if (database.locks.waiting > 0) score -= 15;
-    if (database.replication.lag > 1000) score -= 15;
-    if (database.queries.failed / database.queries.total > 0.01) score -= 15;
+    }
+    if (database.queries.avgDuration > 1000) {
+      score -= 20;
+    }
+    if (database.cache.hitRate < 80) {
+      score -= 15;
+    }
+    if (database.locks.waiting > 0) {
+      score -= 15;
+    }
+    if (database.replication.lag > 1000) {
+      score -= 15;
+    }
+    if (database.queries.failed / database.queries.total > 0.01) {
+      score -= 15;
+    }
 
     return Math.max(0, score);
   }
@@ -1080,19 +1123,34 @@ export class PerformanceMonitoringEngine {
   private calculateApplicationScore(application: ApplicationMetrics): number {
     let score = 100;
 
-    if (application.requests.avgResponseTime > 2000) score -= 20;
-    if (application.requests.failed / application.requests.total > 0.05)
+    if (application.requests.avgResponseTime > 2000) {
       score -= 20;
-    if (application.errors.rate > 5) score -= 20;
-    if (application.caching.hitRate < 70) score -= 15;
+    }
+    if (application.requests.failed / application.requests.total > 0.05) {
+      score -= 20;
+    }
+    if (application.errors.rate > 5) {
+      score -= 20;
+    }
+    if (application.caching.hitRate < 70) {
+      score -= 15;
+    }
 
     // Check feature performance
     const featureScores = Object.values(application.features).map((feature) => {
       let featureScore = 100;
-      if (feature.accuracy < 90) featureScore -= 30;
-      if (feature.avgProcessingTime > 1000) featureScore -= 20;
-      if (feature.errorRate > 5) featureScore -= 25;
-      if (feature.confidence < 0.8) featureScore -= 25;
+      if (feature.accuracy < 90) {
+        featureScore -= 30;
+      }
+      if (feature.avgProcessingTime > 1000) {
+        featureScore -= 20;
+      }
+      if (feature.errorRate > 5) {
+        featureScore -= 25;
+      }
+      if (feature.confidence < 0.8) {
+        featureScore -= 25;
+      }
       return Math.max(0, featureScore);
     });
 
@@ -1104,10 +1162,18 @@ export class PerformanceMonitoringEngine {
   }
 
   private determineStatus(healthScore: number): PerformanceStatus {
-    if (healthScore >= 90) return 'optimal';
-    if (healthScore >= 75) return 'good';
-    if (healthScore >= 50) return 'degraded';
-    if (healthScore >= 25) return 'critical';
+    if (healthScore >= 90) {
+      return 'optimal';
+    }
+    if (healthScore >= 75) {
+      return 'good';
+    }
+    if (healthScore >= 50) {
+      return 'degraded';
+    }
+    if (healthScore >= 25) {
+      return 'critical';
+    }
     return 'failed';
   }
 
@@ -1149,7 +1215,9 @@ export class PerformanceMonitoringEngine {
   }
 
   private shouldAlert(threshold: PerformanceThreshold, value: number): boolean {
-    if (!threshold.enabled) return false;
+    if (!threshold.enabled) {
+      return false;
+    }
 
     const key = `${threshold.category}_${threshold.component}_${threshold.metric}`;
     const lastAlert = this.alertCooldowns.get(key);
@@ -1183,9 +1251,13 @@ export class PerformanceMonitoringEngine {
   ): PerformanceAlert {
     let severity: MetricSeverity = 'normal';
 
-    if (value >= threshold.emergency) severity = 'emergency';
-    else if (value >= threshold.critical) severity = 'critical';
-    else if (value >= threshold.warning) severity = 'warning';
+    if (value >= threshold.emergency) {
+      severity = 'emergency';
+    } else if (value >= threshold.critical) {
+      severity = 'critical';
+    } else if (value >= threshold.warning) {
+      severity = 'warning';
+    }
 
     return {
       id: `alert_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,

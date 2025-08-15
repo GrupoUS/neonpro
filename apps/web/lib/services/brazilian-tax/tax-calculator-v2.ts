@@ -376,7 +376,7 @@ export class BrazilianTaxCalculatorService {
     }
 
     // If above maximum bracket, use highest rate
-    return brackets[brackets.length - 1].rate;
+    return brackets.at(-1).rate;
   }
 
   /**

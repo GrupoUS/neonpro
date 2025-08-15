@@ -160,9 +160,9 @@ interface ABTestResult {
 // ================================================================================
 
 export class NotificationMLEngine {
-  private supabase: ReturnType<typeof createClient>;
-  private config: OptimizationConfig;
-  private models = new Map<string, any>();
+  private readonly supabase: ReturnType<typeof createClient>;
+  private readonly config: OptimizationConfig;
+  private readonly models = new Map<string, any>();
 
   constructor(config: Partial<OptimizationConfig> = {}) {
     this.supabase = createClient();
@@ -226,8 +226,9 @@ export class NotificationMLEngine {
         .eq('id', userId)
         .single();
 
-      if (userError)
+      if (userError) {
         throw new Error(`Erro ao buscar usuário: ${userError.message}`);
+      }
 
       // Buscar histórico de notificações
       const { data: notifications, error: notificationError } =
@@ -262,7 +263,9 @@ export class NotificationMLEngine {
       notificationHistory.forEach((n) => {
         const current = channelStats.get(n.channel) || { sent: 0, opened: 0 };
         current.sent++;
-        if (n.opened_at) current.opened++;
+        if (n.opened_at) {
+          current.opened++;
+        }
         channelStats.set(n.channel, current);
       });
 
@@ -282,7 +285,9 @@ export class NotificationMLEngine {
       notificationHistory.forEach((n) => {
         const hour = new Date(n.sent_at).getHours();
         hourlyEngagement[hour].sent++;
-        if (n.opened_at) hourlyEngagement[hour].opened++;
+        if (n.opened_at) {
+          hourlyEngagement[hour].opened++;
+        }
       });
 
       const bestHours = hourlyEngagement
@@ -312,7 +317,9 @@ export class NotificationMLEngine {
 
       let responsePattern: 'immediate' | 'delayed' | 'weekend' | 'weekday' =
         'immediate';
-      if (avgResponseTime > 60) responsePattern = 'delayed';
+      if (avgResponseTime > 60) {
+        responsePattern = 'delayed';
+      }
 
       // Análise de fim de semana vs dias úteis
       const weekendEngagement = notificationHistory.filter((n) => {
@@ -332,8 +339,11 @@ export class NotificationMLEngine {
           : 0;
       const weekendRate = weekendSent > 0 ? weekendEngagement / weekendSent : 0;
 
-      if (weekendRate > weekdayRate * 1.2) responsePattern = 'weekend';
-      else if (weekdayRate > weekendRate * 1.2) responsePattern = 'weekday';
+      if (weekendRate > weekdayRate * 1.2) {
+        responsePattern = 'weekend';
+      } else if (weekdayRate > weekendRate * 1.2) {
+        responsePattern = 'weekday';
+      }
 
       // Risco de churn
       const lastEngagement = notificationHistory.find(
@@ -785,7 +795,9 @@ export class NotificationMLEngine {
     const segments = [];
     for (let i = 0; i < k; i++) {
       const segmentUsers = profiles.filter((_, idx) => assignments[idx] === i);
-      if (segmentUsers.length === 0) continue;
+      if (segmentUsers.length === 0) {
+        continue;
+      }
 
       const avgEngagement =
         segmentUsers.reduce(
@@ -870,7 +882,9 @@ export class NotificationMLEngine {
    * Treina modelos com dados históricos
    */
   async trainModels(clinicId: string): Promise<void> {
-    if (!this.config.enabled) return;
+    if (!this.config.enabled) {
+      return;
+    }
 
     try {
       console.log('🤖 Iniciando treinamento de modelos...');
@@ -913,7 +927,9 @@ export class NotificationMLEngine {
    */
   private async trainEngagementModel(data: any[]): Promise<void> {
     const model = this.models.get('engagement');
-    if (!model) return;
+    if (!model) {
+      return;
+    }
 
     // Reset weights
     model.weights.hour.fill(0);
@@ -956,7 +972,9 @@ export class NotificationMLEngine {
    */
   private async trainTimingModel(data: any[]): Promise<void> {
     const model = this.models.get('timing');
-    if (!model) return;
+    if (!model) {
+      return;
+    }
 
     // Agrupar por usuário e encontrar melhores horários
     const userHours = new Map<string, number[]>();

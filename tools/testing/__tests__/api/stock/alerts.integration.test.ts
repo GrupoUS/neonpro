@@ -695,7 +695,7 @@ describe('Edge Cases and Error Handling', () => {
 describe('Performance Tests', () => {
   it('should handle large result sets efficiently', async () => {
     // Mock large dataset
-    const largeDataset = Array(1000)
+    const largeDataset = new Array(1000)
       .fill(mockAlert)
       .map((alert, index) => ({
         ...alert,

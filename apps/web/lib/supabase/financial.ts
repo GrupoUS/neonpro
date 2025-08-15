@@ -111,7 +111,9 @@ export async function createInvoice(
       .select()
       .single();
 
-    if (invoiceError) throw invoiceError;
+    if (invoiceError) {
+      throw invoiceError;
+    }
 
     // Create invoice items
     const itemsWithInvoiceId = items.map((item) => ({
@@ -128,7 +130,9 @@ export async function createInvoice(
       .from('invoice_items')
       .insert(itemsWithInvoiceId);
 
-    if (itemsError) throw itemsError;
+    if (itemsError) {
+      throw itemsError;
+    }
 
     // Perform shadow validation
     await performShadowValidation('invoice_calculation', invoice.id, {
@@ -164,8 +168,12 @@ export async function getInvoiceById(id: string): Promise<Invoice> {
       .eq('id', id)
       .single();
 
-    if (error) throw error;
-    if (!data) throw new Error('Invoice not found');
+    if (error) {
+      throw error;
+    }
+    if (!data) {
+      throw new Error('Invoice not found');
+    }
 
     return data as Invoice;
   } catch (error) {
@@ -234,7 +242,9 @@ export async function listInvoices(
 
     const { data: invoices, error, count } = await query;
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Get summary
     const summary = await getFinancialSummary(filters);
@@ -276,8 +286,12 @@ export async function updateInvoice(
       .select()
       .single();
 
-    if (error) throw error;
-    if (!data) throw new Error('Invoice not found');
+    if (error) {
+      throw error;
+    }
+    if (!data) {
+      throw new Error('Invoice not found');
+    }
 
     return await getInvoiceById(id);
   } catch (error) {
@@ -300,7 +314,9 @@ export async function issueInvoice(id: string): Promise<Invoice> {
       })
       .eq('id', id);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Generate NFSe (mock implementation)
     const invoice = await getInvoiceById(id);
@@ -326,7 +342,9 @@ export async function cancelInvoice(id: string): Promise<Invoice> {
       })
       .eq('id', id);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Cancel NFSe if exists
     const invoice = await getInvoiceById(id);
@@ -375,7 +393,9 @@ export async function createPayment(
       .select()
       .single();
 
-    if (paymentError) throw paymentError;
+    if (paymentError) {
+      throw paymentError;
+    }
 
     // Create installments if provided
     if (validatedInput.installments && validatedInput.installments.length > 0) {
@@ -393,7 +413,9 @@ export async function createPayment(
         .from('payment_installments')
         .insert(installments);
 
-      if (installmentsError) throw installmentsError;
+      if (installmentsError) {
+        throw installmentsError;
+      }
     }
 
     // Process payment (mock implementation)
@@ -420,8 +442,12 @@ export async function getPaymentById(id: string): Promise<Payment> {
       .eq('id', id)
       .single();
 
-    if (error) throw error;
-    if (!data) throw new Error('Payment not found');
+    if (error) {
+      throw error;
+    }
+    if (!data) {
+      throw new Error('Payment not found');
+    }
 
     return data as Payment;
   } catch (error) {
@@ -466,8 +492,12 @@ export async function updatePayment(
       .select()
       .single();
 
-    if (error) throw error;
-    if (!data) throw new Error('Payment not found');
+    if (error) {
+      throw error;
+    }
+    if (!data) {
+      throw new Error('Payment not found');
+    }
 
     return await getPaymentById(id);
   } catch (error) {
@@ -492,7 +522,9 @@ export async function listPaymentsByInvoice(
       .eq('invoice_id', invoiceId)
       .order('created_at', { ascending: false });
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     return data as Payment[];
   } catch (error) {
@@ -539,7 +571,9 @@ export async function performShadowValidation(
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Update invoice shadow validation status
     if (operationType === 'invoice_calculation') {
@@ -647,13 +681,21 @@ export async function getFinancialSummary(
     let query = supabase.from('invoices').select('*');
 
     // Apply filters
-    if (filters.clinic_id) query = query.eq('clinic_id', filters.clinic_id);
-    if (filters.date_from) query = query.gte('issue_date', filters.date_from);
-    if (filters.date_to) query = query.lte('issue_date', filters.date_to);
+    if (filters.clinic_id) {
+      query = query.eq('clinic_id', filters.clinic_id);
+    }
+    if (filters.date_from) {
+      query = query.gte('issue_date', filters.date_from);
+    }
+    if (filters.date_to) {
+      query = query.lte('issue_date', filters.date_to);
+    }
 
     const { data: invoices, error } = await query;
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Calculate summary
     const summary: FinancialSummary = {

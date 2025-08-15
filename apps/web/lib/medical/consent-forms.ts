@@ -272,10 +272,10 @@ export interface ConsentFormOptions {
 // ============================================================================
 
 export class ConsentFormsManager {
-  private supabase;
-  private auditLogger: AuditLogger;
-  private lgpdManager: LGPDManager;
-  private signatureManager: DigitalSignatureManager;
+  private readonly supabase;
+  private readonly auditLogger: AuditLogger;
+  private readonly lgpdManager: LGPDManager;
+  private readonly signatureManager: DigitalSignatureManager;
 
   constructor() {
     this.supabase = createClient(
@@ -321,7 +321,9 @@ export class ConsentFormsManager {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Log audit event
       await this.auditLogger.log({
@@ -358,7 +360,9 @@ export class ConsentFormsManager {
         .eq('is_active', true)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       if (!data) {
         return { success: false, error: 'Consent form not found' };
       }
@@ -396,7 +400,9 @@ export class ConsentFormsManager {
         ascending: false,
       });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return { success: true, data: data || [] };
     } catch (error) {
@@ -437,7 +443,9 @@ export class ConsentFormsManager {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Log audit event
       await this.auditLogger.log({
@@ -534,7 +542,9 @@ export class ConsentFormsManager {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Create digital signature if required
       if (options?.requireSignature && consentGiven) {
@@ -547,7 +557,7 @@ export class ConsentFormsManager {
           {
             signatureType: SignatureType.ELECTRONIC_SIGNATURE,
             includeTimestamp: true,
-            includeGeolocation: !!options?.geolocation,
+            includeGeolocation: Boolean(options?.geolocation),
           }
         );
 
@@ -576,7 +586,7 @@ export class ConsentFormsManager {
           form_type: form.form_type,
           consent_given: consentGiven,
           consent_method: consentMethod,
-          has_signature: !!consentResponse.signature_id,
+          has_signature: Boolean(consentResponse.signature_id),
         },
       });
 
@@ -616,7 +626,9 @@ export class ConsentFormsManager {
         ascending: false,
       });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return { success: true, data: data || [] };
     } catch (error) {
@@ -647,7 +659,9 @@ export class ConsentFormsManager {
         .eq('id', responseId)
         .eq('patient_id', patientId);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Update LGPD records
       await this.lgpdManager.withdrawConsent(patientId, 'medical_data', reason);
@@ -1112,7 +1126,7 @@ export class ConsentFormsManager {
       const requiredFields = form.fields.filter((f) => f.is_required);
       for (const field of requiredFields) {
         const response = responses.find((r) => r.field_id === field.id);
-        if (!(response && response.value)) {
+        if (!response?.value) {
           return {
             isValid: false,
             error: `Required field missing: ${field.label}`,
@@ -1244,7 +1258,7 @@ export class ConsentFormsManager {
 
       for (const field of consentFields) {
         const response = responses.find((r) => r.field_id === field.id);
-        if (!(response && response.value) || response.value !== true) {
+        if (!response?.value || response.value !== true) {
           return false;
         }
       }
@@ -1336,7 +1350,9 @@ export class ConsentFormsManager {
 
       const { data, error } = await query;
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Process statistics
       const stats = {

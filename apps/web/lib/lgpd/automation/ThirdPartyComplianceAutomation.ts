@@ -156,11 +156,11 @@ export interface ThirdPartyConfig {
 }
 
 export class ThirdPartyComplianceAutomation {
-  private supabase: SupabaseClient;
-  private complianceManager: LGPDComplianceManager;
-  private config: ThirdPartyConfig;
+  private readonly supabase: SupabaseClient;
+  private readonly complianceManager: LGPDComplianceManager;
+  private readonly config: ThirdPartyConfig;
   private monitoringInterval: NodeJS.Timeout | null = null;
-  private complianceCallbacks: Array<
+  private readonly complianceCallbacks: Array<
     (assessment: ComplianceAssessment) => void
   > = [];
 
@@ -263,7 +263,9 @@ export class ThirdPartyComplianceAutomation {
         .select('id')
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Schedule initial assessment if required
       let assessmentRequired = false;
@@ -351,7 +353,9 @@ export class ThirdPartyComplianceAutomation {
         .select('id')
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Log agreement creation
       await this.complianceManager.logAuditEvent({
@@ -402,8 +406,12 @@ export class ThirdPartyComplianceAutomation {
         .eq('id', transferData.agreement_id)
         .single();
 
-      if (agreementError) throw agreementError;
-      if (!agreement) throw new Error('Data sharing agreement not found');
+      if (agreementError) {
+        throw agreementError;
+      }
+      if (!agreement) {
+        throw new Error('Data sharing agreement not found');
+      }
 
       // Validate transfer against agreement
       const transferValidation = await this.validateDataTransfer(
@@ -452,7 +460,9 @@ export class ThirdPartyComplianceAutomation {
         .select('id')
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Send notifications if configured
       if (this.config.notification_on_transfer) {
@@ -541,7 +551,9 @@ export class ThirdPartyComplianceAutomation {
         .update(updateData)
         .eq('id', transferId);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Log transfer completion
       await this.complianceManager.logAuditEvent({
@@ -586,8 +598,12 @@ export class ThirdPartyComplianceAutomation {
         .eq('id', providerId)
         .single();
 
-      if (providerError) throw providerError;
-      if (!provider) throw new Error('Provider not found');
+      if (providerError) {
+        throw providerError;
+      }
+      if (!provider) {
+        throw new Error('Provider not found');
+      }
 
       // Perform automated assessment
       const assessmentResults = await this.performAutomatedAssessment(
@@ -630,7 +646,9 @@ export class ThirdPartyComplianceAutomation {
         .select('id')
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Update provider compliance score and risk level
       await this.supabase
@@ -701,7 +719,9 @@ export class ThirdPartyComplianceAutomation {
         'get_third_party_compliance_dashboard'
       );
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return dashboard;
     } catch (error) {
@@ -746,7 +766,9 @@ export class ThirdPartyComplianceAutomation {
         .lte('next_assessment_date', new Date().toISOString())
         .eq('active', true);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       if (!providers || providers.length === 0) {
         return;
@@ -778,7 +800,9 @@ export class ThirdPartyComplianceAutomation {
         )
         .in('status', ['pending', 'in_progress']);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       if (!transfers || transfers.length === 0) {
         return;

@@ -31,7 +31,7 @@ interface PreferenceLearningResult {
 }
 
 export class PatientPreferenceLearner {
-  private supabase: any;
+  private readonly supabase: any;
 
   constructor() {
     this.supabase = createClient(supabaseUrl, supabaseKey);
@@ -115,7 +115,9 @@ export class PatientPreferenceLearner {
       .order('appointment_time', { ascending: false })
       .limit(50); // Last 50 appointments
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data || [];
   }
 
@@ -568,7 +570,9 @@ export class PatientPreferenceLearner {
   }
 
   private formatHourRanges(hours: number[]): string {
-    if (hours.length === 0) return '';
+    if (hours.length === 0) {
+      return '';
+    }
 
     const sortedHours = [...hours].sort((a, b) => a - b);
     const ranges: string[] = [];
@@ -606,7 +610,9 @@ export class PatientPreferenceLearner {
         .group('patient_id')
         .having('count(*) >= 3');
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       const results = {
         total_patients_analyzed: 0,
@@ -644,7 +650,9 @@ export class PatientPreferenceLearner {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return { success: true, data };
     } catch (error) {
       console.error('Error updating preferences:', error);
@@ -660,7 +668,9 @@ export class PatientPreferenceLearner {
         .eq('patient_id', patientId)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data || {};
     } catch (error) {
       console.error('Error fetching patient preferences:', error);
@@ -680,7 +690,9 @@ export class PatientPreferenceLearner {
       }
 
       const { data, error } = await query.limit(100);
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Analyze patterns from the data
       const patterns = {

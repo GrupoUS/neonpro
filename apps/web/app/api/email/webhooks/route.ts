@@ -80,7 +80,9 @@ async function verifyWebhookSignature(
       case 'postmark': {
         // Postmark uses HMAC-SHA256
         const postmarkSecret = process.env.POSTMARK_WEBHOOK_SECRET;
-        if (!postmarkSecret) return false;
+        if (!postmarkSecret) {
+          return false;
+        }
 
         const postmarkExpected = crypto
           .createHmac('sha256', postmarkSecret)
@@ -93,7 +95,9 @@ async function verifyWebhookSignature(
       case 'sendgrid': {
         // SendGrid uses ECDSA verification
         const sendgridPublicKey = process.env.SENDGRID_WEBHOOK_PUBLIC_KEY;
-        if (!sendgridPublicKey) return false;
+        if (!sendgridPublicKey) {
+          return false;
+        }
 
         // Implementar verificação ECDSA do SendGrid
         // Por simplicidade, retornando true por enquanto
@@ -103,12 +107,16 @@ async function verifyWebhookSignature(
       case 'mailgun': {
         // Mailgun uses HMAC-SHA256
         const mailgunSecret = process.env.MAILGUN_WEBHOOK_SECRET;
-        if (!mailgunSecret) return false;
+        if (!mailgunSecret) {
+          return false;
+        }
 
         const timestamp = headers.get('x-mailgun-timestamp');
         const token = headers.get('x-mailgun-token');
 
-        if (!(timestamp && token)) return false;
+        if (!(timestamp && token)) {
+          return false;
+        }
 
         const mailgunData = timestamp + token;
         const mailgunExpected = crypto

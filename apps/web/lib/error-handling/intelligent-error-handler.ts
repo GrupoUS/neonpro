@@ -268,7 +268,7 @@ export class IntelligentErrorHandler {
     for (let i = 0; i < baseString.length; i++) {
       const char = baseString.charCodeAt(i);
       hash = (hash << 5) - hash + char;
-      hash = hash & hash; // Convert to 32-bit integer
+      hash &= hash; // Convert to 32-bit integer
     }
     return `err_${Math.abs(hash).toString(36)}_${Date.now()}`;
   }

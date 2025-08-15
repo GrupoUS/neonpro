@@ -62,10 +62,10 @@ export interface SessionActivity {
 }
 
 export class SessionManager {
-  private supabase: SupabaseClient;
-  private auditLogger: AuditLogger;
-  private encryption: EncryptionService;
-  private config: SessionConfig;
+  private readonly supabase: SupabaseClient;
+  private readonly auditLogger: AuditLogger;
+  private readonly encryption: EncryptionService;
+  private readonly config: SessionConfig;
   private cleanupInterval?: NodeJS.Timeout;
 
   constructor(

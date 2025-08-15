@@ -133,11 +133,13 @@ export interface DetectionConfig {
 }
 
 export class BreachDetectionAutomation {
-  private supabase: SupabaseClient;
-  private complianceManager: LGPDComplianceManager;
-  private config: DetectionConfig;
+  private readonly supabase: SupabaseClient;
+  private readonly complianceManager: LGPDComplianceManager;
+  private readonly config: DetectionConfig;
   private monitoringInterval: NodeJS.Timeout | null = null;
-  private detectionCallbacks: Array<(incident: BreachIncident) => void> = [];
+  private readonly detectionCallbacks: Array<
+    (incident: BreachIncident) => void
+  > = [];
 
   constructor(
     supabase: SupabaseClient,
@@ -224,7 +226,9 @@ export class BreachDetectionAutomation {
         .select('id')
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Log rule creation
       await this.complianceManager.logAuditEvent({
@@ -280,7 +284,9 @@ export class BreachDetectionAutomation {
         .select('id')
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Initialize breach response
       const response = await this.initializeBreachResponse(
@@ -385,7 +391,9 @@ export class BreachDetectionAutomation {
         .update(updateData)
         .eq('id', incidentId);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Update breach response timeline
       await this.updateBreachResponseTimeline(incidentId, {
@@ -430,8 +438,12 @@ export class BreachDetectionAutomation {
         .eq('id', incidentId)
         .single();
 
-      if (incidentError) throw incidentError;
-      if (!incident) throw new Error('Incident not found');
+      if (incidentError) {
+        throw incidentError;
+      }
+      if (!incident) {
+        throw new Error('Incident not found');
+      }
 
       // Check if notification is required and not already sent
       if (!incident.requires_anpd_notification) {
@@ -463,7 +475,9 @@ export class BreachDetectionAutomation {
           .select('id')
           .single();
 
-      if (notificationError) throw notificationError;
+      if (notificationError) {
+        throw notificationError;
+      }
 
       // Update incident to mark ANPD notification as sent
       await this.supabase
@@ -530,8 +544,12 @@ export class BreachDetectionAutomation {
         .eq('id', incidentId)
         .single();
 
-      if (incidentError) throw incidentError;
-      if (!incident) throw new Error('Incident not found');
+      if (incidentError) {
+        throw incidentError;
+      }
+      if (!incident) {
+        throw new Error('Incident not found');
+      }
 
       // Check if user notification is required
       if (!incident.requires_user_notification) {
@@ -649,7 +667,9 @@ export class BreachDetectionAutomation {
         'get_breach_dashboard'
       );
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return dashboard;
     } catch (error) {
@@ -675,7 +695,9 @@ export class BreachDetectionAutomation {
         .eq('active', true)
         .eq('auto_trigger', true);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       if (!rules || rules.length === 0) {
         return;
@@ -710,7 +732,9 @@ export class BreachDetectionAutomation {
         }
       );
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Check if breach detected
       if (detectionResult?.breach_detected) {
@@ -876,7 +900,9 @@ export class BreachDetectionAutomation {
       .eq('incident_id', incidentId)
       .single();
 
-    if (responseError) throw responseError;
+    if (responseError) {
+      throw responseError;
+    }
 
     const updatedResponse = response.response_data;
     updatedResponse.response_timeline.push({
@@ -1036,7 +1062,9 @@ Equipe de Segurança
       }
     );
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return users || [];
   }
 

@@ -181,10 +181,15 @@ export function useSupplierManagement({
     try {
       setError(null);
 
-      if (loadingState === 'loading') setIsLoading(true);
-      else if (loadingState === 'creating') setIsCreating(true);
-      else if (loadingState === 'updating') setIsUpdating(true);
-      else if (loadingState === 'deleting') setIsDeleting(true);
+      if (loadingState === 'loading') {
+        setIsLoading(true);
+      } else if (loadingState === 'creating') {
+        setIsCreating(true);
+      } else if (loadingState === 'updating') {
+        setIsUpdating(true);
+      } else if (loadingState === 'deleting') {
+        setIsDeleting(true);
+      }
 
       const result = await apiCall();
 

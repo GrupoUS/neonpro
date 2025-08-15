@@ -97,11 +97,21 @@ export async function GET(request: NextRequest) {
 
     // Build filters
     const filters: any = {};
-    if (status) filters.status = status;
-    if (paymentPlanId) filters.paymentPlanId = paymentPlanId;
-    if (customerId) filters.customerId = customerId;
-    if (dueDateFrom) filters.dueDateFrom = new Date(dueDateFrom);
-    if (dueDateTo) filters.dueDateTo = new Date(dueDateTo);
+    if (status) {
+      filters.status = status;
+    }
+    if (paymentPlanId) {
+      filters.paymentPlanId = paymentPlanId;
+    }
+    if (customerId) {
+      filters.customerId = customerId;
+    }
+    if (dueDateFrom) {
+      filters.dueDateFrom = new Date(dueDateFrom);
+    }
+    if (dueDateTo) {
+      filters.dueDateTo = new Date(dueDateTo);
+    }
 
     // Get installments
     const result = await installmentManager.getInstallmentsList({

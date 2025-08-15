@@ -58,7 +58,9 @@ export function useAppointmentFilters() {
 
   // Initialize filters from URL
   const [filters, setFilters] = useState<AppointmentFilters>(() => {
-    if (typeof window === 'undefined') return defaultFilters;
+    if (typeof window === 'undefined') {
+      return defaultFilters;
+    }
     return parseFiltersFromURL();
   });
 
@@ -70,7 +72,7 @@ export function useAppointmentFilters() {
     } else {
       setIsInitialized(true);
     }
-  }, [searchParams, parseFiltersFromURL, isInitialized]); // Update URL with new filter parameters
+  }, [parseFiltersFromURL, isInitialized]); // Update URL with new filter parameters
   const updateURL = useCallback(
     (newFilters: AppointmentFilters) => {
       const params = new URLSearchParams(searchParams);
@@ -169,16 +171,27 @@ export function useAppointmentFilters() {
   // Get active filter count
   const activeFilterCount = useMemo(() => {
     let count = 0;
-    if (filters.professional_id) count++;
-    if (filters.service_type_id) count++;
+    if (filters.professional_id) {
+      count++;
+    }
+    if (filters.service_type_id) {
+      count++;
+    }
     if (
       filters.status &&
       (Array.isArray(filters.status) ? filters.status.length > 0 : true)
-    )
+    ) {
       count++;
-    if (filters.date_from) count++;
-    if (filters.date_to) count++;
-    if (filters.search_query?.trim()) count++;
+    }
+    if (filters.date_from) {
+      count++;
+    }
+    if (filters.date_to) {
+      count++;
+    }
+    if (filters.search_query?.trim()) {
+      count++;
+    }
     return count;
   }, [filters]);
 
@@ -186,21 +199,26 @@ export function useAppointmentFilters() {
   const getAPIQueryParams = useMemo(() => {
     const params: Record<string, string> = {};
 
-    if (filters.professional_id)
+    if (filters.professional_id) {
       params.professional_id = filters.professional_id;
-    if (filters.service_type_id)
+    }
+    if (filters.service_type_id) {
       params.service_type_id = filters.service_type_id;
+    }
     if (filters.status) {
       params.status = Array.isArray(filters.status)
         ? filters.status.join(',')
         : filters.status;
     }
-    if (filters.date_from)
+    if (filters.date_from) {
       params.date_from = filters.date_from.toISOString().split('T')[0];
-    if (filters.date_to)
+    }
+    if (filters.date_to) {
       params.date_to = filters.date_to.toISOString().split('T')[0];
-    if (filters.search_query?.trim())
+    }
+    if (filters.search_query?.trim()) {
       params.search = filters.search_query.trim();
+    }
 
     return params;
   }, [filters]);

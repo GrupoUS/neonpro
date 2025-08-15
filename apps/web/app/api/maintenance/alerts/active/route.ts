@@ -18,13 +18,19 @@ export async function GET(request: NextRequest) {
     const filters: any = {};
 
     const equipmentId = searchParams.get('equipment_id');
-    if (equipmentId) filters.equipment_id = equipmentId;
+    if (equipmentId) {
+      filters.equipment_id = equipmentId;
+    }
 
     const alertTypes = searchParams.getAll('alert_type');
-    if (alertTypes.length) filters.alert_type = alertTypes;
+    if (alertTypes.length) {
+      filters.alert_type = alertTypes;
+    }
 
     const severities = searchParams.getAll('severity');
-    if (severities.length) filters.severity = severities;
+    if (severities.length) {
+      filters.severity = severities;
+    }
 
     if (searchParams.get('is_acknowledged') !== null) {
       filters.is_acknowledged = searchParams.get('is_acknowledged') === 'true';

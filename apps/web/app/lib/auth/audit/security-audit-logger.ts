@@ -444,7 +444,9 @@ class SecurityAuditLogger {
   // Private methods
 
   private async processEventQueue(): Promise<void> {
-    if (this.isProcessing || this.eventQueue.length === 0) return;
+    if (this.isProcessing || this.eventQueue.length === 0) {
+      return;
+    }
 
     this.isProcessing = true;
     const eventsToProcess = [...this.eventQueue];
@@ -596,10 +598,18 @@ class SecurityAuditLogger {
   }
 
   private categorizeFailure(reason: string): string {
-    if (reason.includes('password')) return 'invalid_credentials';
-    if (reason.includes('oauth')) return 'oauth_failure';
-    if (reason.includes('blocked')) return 'account_blocked';
-    if (reason.includes('rate')) return 'rate_limited';
+    if (reason.includes('password')) {
+      return 'invalid_credentials';
+    }
+    if (reason.includes('oauth')) {
+      return 'oauth_failure';
+    }
+    if (reason.includes('blocked')) {
+      return 'account_blocked';
+    }
+    if (reason.includes('rate')) {
+      return 'rate_limited';
+    }
     return 'unknown';
   }
 

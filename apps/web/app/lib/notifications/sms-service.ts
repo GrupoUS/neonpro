@@ -31,7 +31,7 @@ interface SMSResult {
 }
 
 export class SMSService {
-  private config = NOTIFICATION_CONFIG.sms;
+  private readonly config = NOTIFICATION_CONFIG.sms;
 
   /**
    * Send SMS using Twilio with HIPAA compliance

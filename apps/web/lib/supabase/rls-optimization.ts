@@ -29,7 +29,7 @@ interface CacheStats {
 }
 
 export class RLSOptimizationManager {
-  private supabase: ReturnType<typeof createClient<Database>>;
+  private readonly supabase: ReturnType<typeof createClient<Database>>;
 
   constructor(supabaseClient: ReturnType<typeof createClient<Database>>) {
     this.supabase = supabaseClient;

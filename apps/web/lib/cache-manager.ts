@@ -28,9 +28,9 @@ interface CacheStats {
 }
 
 class CacheManager<T = any> {
-  private cache = new Map<string, CacheItem<T>>();
+  private readonly cache = new Map<string, CacheItem<T>>();
   private stats = { hits: 0, misses: 0 };
-  private options: Required<CacheOptions>;
+  private readonly options: Required<CacheOptions>;
   private cleanupInterval: NodeJS.Timeout | null = null;
 
   constructor(options: CacheOptions = {}) {
@@ -106,7 +106,9 @@ class CacheManager<T = any> {
 
   has(key: string): boolean {
     const item = this.cache.get(key);
-    if (!item) return false;
+    if (!item) {
+      return false;
+    }
 
     // Check if expired
     const now = Date.now();
@@ -171,7 +173,9 @@ class CacheManager<T = any> {
   deleteMany(keys: string[]): number {
     let deleted = 0;
     keys.forEach((key) => {
-      if (this.delete(key)) deleted++;
+      if (this.delete(key)) {
+        deleted++;
+      }
     });
     return deleted;
   }
@@ -246,7 +250,9 @@ class CacheManager<T = any> {
   // =====================================================================================
 
   private persistItem(key: string, item: CacheItem<T>): void {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined') {
+      return;
+    }
 
     try {
       const storageKey = `${this.options.prefix}_${key}`;
@@ -257,7 +263,9 @@ class CacheManager<T = any> {
   }
 
   private loadFromStorage(): void {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined') {
+      return;
+    }
 
     try {
       const prefix = `${this.options.prefix}_`;
@@ -284,7 +292,9 @@ class CacheManager<T = any> {
   }
 
   private removeFromStorage(key: string): void {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined') {
+      return;
+    }
 
     try {
       const storageKey = `${this.options.prefix}_${key}`;
@@ -295,7 +305,9 @@ class CacheManager<T = any> {
   }
 
   private clearStorage(): void {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined') {
+      return;
+    }
 
     try {
       const prefix = `${this.options.prefix}_`;

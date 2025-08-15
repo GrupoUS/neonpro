@@ -873,15 +873,18 @@ export async function generateCashFlowForecast(
 
     let trendDirection: 'up' | 'down' | 'stable' = 'stable';
     const trendDiff = (secondAvg - firstAvg) / Math.abs(firstAvg);
-    if (trendDiff > 0.05) trendDirection = 'up';
-    else if (trendDiff < -0.05) trendDirection = 'down';
+    if (trendDiff > 0.05) {
+      trendDirection = 'up';
+    } else if (trendDiff < -0.05) {
+      trendDirection = 'down';
+    }
 
     // Find peak and lowest periods
     const sortedByNet = [...predictions].sort(
       (a, b) => b.predicted_net_amount - a.predicted_net_amount
     );
     const peakPeriod = sortedByNet[0]?.start_date || '';
-    const lowestPeriod = sortedByNet[sortedByNet.length - 1]?.start_date || '';
+    const lowestPeriod = sortedByNet.at(-1)?.start_date || '';
 
     // Identify potential shortfalls
     const potentialShortfalls = predictions

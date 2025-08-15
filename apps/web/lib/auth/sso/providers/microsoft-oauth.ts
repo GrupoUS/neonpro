@@ -177,7 +177,7 @@ export class MicrosoftOAuthProvider {
       const tokenData: MicrosoftTokenInfo = await response.json();
 
       logger.info('Microsoft OAuth: Token exchange successful', {
-        hasRefreshToken: !!tokenData.refresh_token,
+        hasRefreshToken: Boolean(tokenData.refresh_token),
         expiresIn: tokenData.expires_in,
         scope: tokenData.scope,
         tenant: this.config.tenant,
@@ -445,7 +445,7 @@ export class MicrosoftOAuthProvider {
 
     logger.info('Microsoft OAuth: Generated logout URL', {
       tenant: this.config.tenant,
-      hasRedirect: !!postLogoutRedirectUri,
+      hasRedirect: Boolean(postLogoutRedirectUri),
     });
 
     return fullLogoutUrl;

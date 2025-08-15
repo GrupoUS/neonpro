@@ -142,10 +142,18 @@ export const AnalyticsUtils = {
   getStatusFromScore: (
     score: number
   ): 'optimal' | 'good' | 'degraded' | 'critical' | 'failed' => {
-    if (score >= 90) return 'optimal';
-    if (score >= 75) return 'good';
-    if (score >= 50) return 'degraded';
-    if (score >= 25) return 'critical';
+    if (score >= 90) {
+      return 'optimal';
+    }
+    if (score >= 75) {
+      return 'good';
+    }
+    if (score >= 50) {
+      return 'degraded';
+    }
+    if (score >= 25) {
+      return 'critical';
+    }
     return 'failed';
   },
 
@@ -167,11 +175,15 @@ export const AnalyticsUtils = {
       case 'TB':
         return `${(value / (1024 * 1024)).toFixed(decimals)}TB`;
       case 'bytes':
-        if (value > 1024 * 1024 * 1024)
+        if (value > 1024 * 1024 * 1024) {
           return `${(value / (1024 * 1024 * 1024)).toFixed(decimals)}GB`;
-        if (value > 1024 * 1024)
+        }
+        if (value > 1024 * 1024) {
           return `${(value / (1024 * 1024)).toFixed(decimals)}MB`;
-        if (value > 1024) return `${(value / 1024).toFixed(decimals)}KB`;
+        }
+        if (value > 1024) {
+          return `${(value / 1024).toFixed(decimals)}KB`;
+        }
         return `${formatted} bytes`;
       default:
         return `${formatted} ${unit}`;
@@ -182,7 +194,9 @@ export const AnalyticsUtils = {
    * Calculate percentage change between two values
    */
   calculatePercentageChange: (oldValue: number, newValue: number): number => {
-    if (oldValue === 0) return newValue > 0 ? 100 : 0;
+    if (oldValue === 0) {
+      return newValue > 0 ? 100 : 0;
+    }
     return ((newValue - oldValue) / oldValue) * 100;
   },
 
@@ -192,7 +206,9 @@ export const AnalyticsUtils = {
   calculateTrendDirection: (
     values: number[]
   ): 'up' | 'down' | 'stable' | 'volatile' => {
-    if (values.length < 2) return 'stable';
+    if (values.length < 2) {
+      return 'stable';
+    }
 
     const changes = [];
     for (let i = 1; i < values.length; i++) {
@@ -207,11 +223,17 @@ export const AnalyticsUtils = {
     const stdDev = Math.sqrt(variance);
 
     // High variance indicates volatility
-    if (stdDev > Math.abs(avgChange) * 2) return 'volatile';
+    if (stdDev > Math.abs(avgChange) * 2) {
+      return 'volatile';
+    }
 
     // Determine trend based on average change
-    if (avgChange > 0.1) return 'up';
-    if (avgChange < -0.1) return 'down';
+    if (avgChange > 0.1) {
+      return 'up';
+    }
+    if (avgChange < -0.1) {
+      return 'down';
+    }
     return 'stable';
   },
 
@@ -256,9 +278,15 @@ export const AnalyticsUtils = {
       }
     };
 
-    if (checkValue(thresholds.emergency)) return 'emergency';
-    if (checkValue(thresholds.critical)) return 'critical';
-    if (checkValue(thresholds.warning)) return 'warning';
+    if (checkValue(thresholds.emergency)) {
+      return 'emergency';
+    }
+    if (checkValue(thresholds.critical)) {
+      return 'critical';
+    }
+    if (checkValue(thresholds.warning)) {
+      return 'warning';
+    }
     return 'info';
   },
 
@@ -269,7 +297,9 @@ export const AnalyticsUtils = {
     values: number[],
     confidence = 0.95
   ): { lower: number; upper: number } => {
-    if (values.length === 0) return { lower: 0, upper: 0 };
+    if (values.length === 0) {
+      return { lower: 0, upper: 0 };
+    }
 
     const sorted = [...values].sort((a, b) => a - b);
     const alpha = 1 - confidence;
@@ -278,7 +308,7 @@ export const AnalyticsUtils = {
 
     return {
       lower: sorted[lowerIndex] || sorted[0],
-      upper: sorted[upperIndex] || sorted[sorted.length - 1],
+      upper: sorted[upperIndex] || sorted.at(-1),
     };
   },
 
@@ -286,7 +316,9 @@ export const AnalyticsUtils = {
    * Calculate moving average
    */
   calculateMovingAverage: (values: number[], window: number): number[] => {
-    if (values.length < window) return values;
+    if (values.length < window) {
+      return values;
+    }
 
     const result: number[] = [];
     for (let i = window - 1; i < values.length; i++) {
@@ -305,7 +337,9 @@ export const AnalyticsUtils = {
     values: number[],
     threshold = 2
   ): { indices: number[]; values: number[] } => {
-    if (values.length < 3) return { indices: [], values: [] };
+    if (values.length < 3) {
+      return { indices: [], values: [] };
+    }
 
     const mean = values.reduce((sum, val) => sum + val, 0) / values.length;
     const variance =
@@ -329,7 +363,9 @@ export const AnalyticsUtils = {
    * Calculate correlation coefficient between two arrays
    */
   calculateCorrelation: (x: number[], y: number[]): number => {
-    if (x.length !== y.length || x.length === 0) return 0;
+    if (x.length !== y.length || x.length === 0) {
+      return 0;
+    }
 
     const n = x.length;
     const meanX = x.reduce((sum, val) => sum + val, 0) / n;
@@ -395,7 +431,9 @@ export const AnalyticsUtils = {
     optimalValue: number,
     maxValue: number
   ): number => {
-    if (maxValue === 0) return 0;
+    if (maxValue === 0) {
+      return 0;
+    }
 
     // For metrics where lower is better (like response time)
     if (optimalValue < maxValue) {
@@ -434,7 +472,9 @@ export const AnalyticsUtils = {
 
     Object.entries(metrics).forEach(([metric, value]) => {
       const threshold = thresholds[metric];
-      if (!threshold) return;
+      if (!threshold) {
+        return;
+      }
 
       if (value >= threshold.critical) {
         recommendations.push({

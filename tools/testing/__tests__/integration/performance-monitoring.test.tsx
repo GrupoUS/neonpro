@@ -125,7 +125,7 @@ describe('Performance Monitoring Integration', () => {
 
   afterEach(() => {
     // Clean up environment variable
-    delete process.env.NEXT_PUBLIC_ENABLE_PERFORMANCE_TRACKING;
+    process.env.NEXT_PUBLIC_ENABLE_PERFORMANCE_TRACKING = undefined;
     cleanup();
   });
 
@@ -373,17 +373,29 @@ describe('Performance Monitoring Integration', () => {
       testCases.forEach(({ lcp, fid, cls, fcp, expected }) => {
         // Calculate score based on thresholds (fixed calculation)
         let score = 100;
-        if (lcp > 4.0) score -= 30;
-        else if (lcp > 2.5) score -= 15;
+        if (lcp > 4.0) {
+          score -= 30;
+        } else if (lcp > 2.5) {
+          score -= 15;
+        }
 
-        if (fid > 300) score -= 30;
-        else if (fid > 100) score -= 15;
+        if (fid > 300) {
+          score -= 30;
+        } else if (fid > 100) {
+          score -= 15;
+        }
 
-        if (cls > 0.25) score -= 30;
-        else if (cls > 0.1) score -= 15;
+        if (cls > 0.25) {
+          score -= 30;
+        } else if (cls > 0.1) {
+          score -= 15;
+        }
 
-        if (fcp > 3.0) score -= 10;
-        else if (fcp > 1.8) score -= 5;
+        if (fcp > 3.0) {
+          score -= 10;
+        } else if (fcp > 1.8) {
+          score -= 5;
+        }
 
         const category =
           score >= 90 ? 'good' : score >= 70 ? 'needs-improvement' : 'poor';

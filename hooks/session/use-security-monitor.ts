@@ -67,7 +67,9 @@ export function useSecurityMonitor() {
 
   // Start security monitoring
   const startMonitoring = useCallback(async () => {
-    if (state.isMonitoring) return;
+    if (state.isMonitoring) {
+      return;
+    }
 
     setState((prev) => ({ ...prev, isMonitoring: true }));
 
@@ -80,7 +82,7 @@ export function useSecurityMonitor() {
     }, SessionConfig.security.monitoringInterval);
 
     console.log('Security monitoring started');
-  }, [state.isMonitoring]);
+  }, [state.isMonitoring, performSecurityCheck]);
 
   // Stop security monitoring
   const stopMonitoring = useCallback(() => {
@@ -99,7 +101,9 @@ export function useSecurityMonitor() {
       const {
         data: { user },
       } = await supabase.auth.getUser();
-      if (!user) return;
+      if (!user) {
+        return;
+      }
 
       // Check for security events
       await checkSecurityEvents(user.id);
@@ -118,55 +122,64 @@ export function useSecurityMonitor() {
     } catch (error) {
       console.error('Security check failed:', error);
     }
-  }, [supabase]);
+  }, [
+    supabase,
+    analyzeDevicePatterns,
+    calculateRiskScore,
+    checkSecurityEvents,
+    checkSuspiciousActivities,
+  ]);
 
   // Check for new security events
-  const checkSecurityEvents = useCallback(async (_userId: string) => {
-    try {
-      const response = await fetch(
-        '/api/auth/session/security?limit=50&severity=medium,high,critical',
-        {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' },
-        }
-      );
+  const checkSecurityEvents = useCallback(
+    async (_userId: string) => {
+      try {
+        const response = await fetch(
+          '/api/auth/session/security?limit=50&severity=medium,high,critical',
+          {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+          }
+        );
 
-      if (response.ok) {
-        const data = await response.json();
-        const newEvents = data.events || [];
+        if (response.ok) {
+          const data = await response.json();
+          const newEvents = data.events || [];
 
-        setState((prev) => {
-          const existingIds = new Set(prev.alerts.map((alert) => alert.id));
-          const freshEvents = newEvents.filter(
-            (event: SecurityEvent) => !existingIds.has(event.id)
-          );
+          setState((prev) => {
+            const existingIds = new Set(prev.alerts.map((alert) => alert.id));
+            const freshEvents = newEvents.filter(
+              (event: SecurityEvent) => !existingIds.has(event.id)
+            );
 
-          // Trigger alerts for new high-severity events
-          freshEvents.forEach((event: SecurityEvent) => {
-            if (event.severity === 'high' || event.severity === 'critical') {
-              triggerThreatAlert({
-                id: event.id,
-                type: event.eventType as any,
-                severity: event.severity,
-                description:
-                  event.description || `Security event: ${event.eventType}`,
-                timestamp: new Date(event.createdAt),
-                metadata: event.metadata || {},
-                resolved: false,
-              });
-            }
+            // Trigger alerts for new high-severity events
+            freshEvents.forEach((event: SecurityEvent) => {
+              if (event.severity === 'high' || event.severity === 'critical') {
+                triggerThreatAlert({
+                  id: event.id,
+                  type: event.eventType as any,
+                  severity: event.severity,
+                  description:
+                    event.description || `Security event: ${event.eventType}`,
+                  timestamp: new Date(event.createdAt),
+                  metadata: event.metadata || {},
+                  resolved: false,
+                });
+              }
+            });
+
+            return {
+              ...prev,
+              alerts: [...freshEvents, ...prev.alerts].slice(0, 100), // Keep last 100 alerts
+            };
           });
-
-          return {
-            ...prev,
-            alerts: [...freshEvents, ...prev.alerts].slice(0, 100), // Keep last 100 alerts
-          };
-        });
+        }
+      } catch (error) {
+        console.error('Failed to check security events:', error);
       }
-    } catch (error) {
-      console.error('Failed to check security events:', error);
-    }
-  }, []);
+    },
+    [triggerThreatAlert]
+  );
 
   // Check for suspicious activities
   const checkSuspiciousActivities = useCallback(
@@ -180,7 +193,9 @@ export function useSecurityMonitor() {
           .order('createdAt', { ascending: false })
           .limit(20);
 
-        if (error) throw error;
+        if (error) {
+          throw error;
+        }
 
         setState((prev) => ({
           ...prev,
@@ -205,7 +220,7 @@ export function useSecurityMonitor() {
         console.error('Failed to check suspicious activities:', error);
       }
     },
-    [supabase]
+    [supabase, triggerThreatAlert]
   );
 
   // Analyze device usage patterns
@@ -218,7 +233,9 @@ export function useSecurityMonitor() {
           .eq('userId', userId)
           .order('lastUsed', { ascending: false });
 
-        if (error) throw error;
+        if (error) {
+          throw error;
+        }
 
         const currentFingerprint = SessionUtils.generateDeviceFingerprint();
         const currentDevice = devices?.find(
@@ -245,7 +262,7 @@ export function useSecurityMonitor() {
         console.error('Failed to analyze device patterns:', error);
       }
     },
-    [supabase]
+    [supabase, detectDeviceAnomalies, triggerThreatAlert]
   );
 
   // Detect device anomalies
@@ -345,10 +362,15 @@ export function useSecurityMonitor() {
     riskScore += unresolvedThreats.length * 15;
 
     // Determine threat level
-    if (riskScore >= 200) threatLevel = 'critical';
-    else if (riskScore >= 100) threatLevel = 'high';
-    else if (riskScore >= 50) threatLevel = 'medium';
-    else threatLevel = 'low';
+    if (riskScore >= 200) {
+      threatLevel = 'critical';
+    } else if (riskScore >= 100) {
+      threatLevel = 'high';
+    } else if (riskScore >= 50) {
+      threatLevel = 'medium';
+    } else {
+      threatLevel = 'low';
+    }
 
     setState((prev) => ({ ...prev, riskScore, threatLevel }));
 
@@ -381,7 +403,9 @@ export function useSecurityMonitor() {
   const triggerThreatAlert = useCallback((threat: SecurityThreat) => {
     setThreats((prev) => {
       const exists = prev.some((t) => t.id === threat.id);
-      if (exists) return prev;
+      if (exists) {
+        return prev;
+      }
 
       const newThreats = [threat, ...prev].slice(0, 50); // Keep last 50 threats
 

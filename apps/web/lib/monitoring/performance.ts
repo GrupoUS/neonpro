@@ -33,8 +33,8 @@ export const PERFORMANCE_BUDGETS: PerformanceBudget = {
 };
 
 class PerformanceMonitor {
-  private supabase = createClient();
-  private measurements = new Map<string, number>();
+  private readonly supabase = createClient();
+  private readonly measurements = new Map<string, number>();
 
   /**
    * Start measuring performance for a specific operation
@@ -261,7 +261,7 @@ class PerformanceMonitor {
           max: durations[count - 1],
         };
 
-        delete report[key].durations; // Remove raw data to keep response clean
+        report[key].durations = undefined; // Remove raw data to keep response clean
       });
 
       return report;

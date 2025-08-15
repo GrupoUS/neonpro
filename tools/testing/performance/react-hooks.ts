@@ -254,7 +254,9 @@ export function useIntersectionObserver(
 
   useEffect(() => {
     const element = ref.current;
-    if (!element) return;
+    if (!element) {
+      return;
+    }
 
     const observer = new IntersectionObserver(([entry]) => {
       const intersecting = entry.isIntersecting;
@@ -308,7 +310,9 @@ export function useOptimizedChartData<T>(
 ) {
   return useOptimizedMemo(
     () => {
-      if (!rawData || rawData.length === 0) return [];
+      if (!rawData || rawData.length === 0) {
+        return [];
+      }
 
       // Batch process large datasets
       if (rawData.length > 1000) {
@@ -376,7 +380,9 @@ export function usePerformanceProfiler(
 
   const mark = useCallback(
     (markName: string) => {
-      if (!enabled) return;
+      if (!enabled) {
+        return;
+      }
 
       const fullName = `${name}-${markName}`;
       performance.mark(fullName);
@@ -387,7 +393,9 @@ export function usePerformanceProfiler(
 
   const measure = useCallback(
     (startMark: string, endMark: string) => {
-      if (!enabled) return;
+      if (!enabled) {
+        return;
+      }
 
       const startName = `${name}-${startMark}`;
       const endName = `${name}-${endMark}`;

@@ -114,7 +114,7 @@ export class SubscriptionCircuitBreaker {
   protected config: CircuitBreakerConfig;
 
   // Service name for monitoring and logging
-  private serviceName: string;
+  private readonly serviceName: string;
 
   constructor(serviceName: string, config?: Partial<CircuitBreakerConfig>) {
     this.serviceName = serviceName;
@@ -324,7 +324,9 @@ export class SubscriptionCircuitBreaker {
    * Check if we should attempt to reset from open to half-open
    */
   private shouldAttemptReset(): boolean {
-    if (this.state !== CircuitBreakerState.OPEN) return false;
+    if (this.state !== CircuitBreakerState.OPEN) {
+      return false;
+    }
 
     const timeSinceOpened = Date.now() - this.stateChangedAt.getTime();
     return timeSinceOpened >= this.config.timeout;
@@ -540,7 +542,7 @@ export class SubscriptionExternalAPICircuitBreaker extends SubscriptionCircuitBr
 
 // Global circuit breaker registry
 class CircuitBreakerRegistry {
-  private breakers = new Map<string, SubscriptionCircuitBreaker>();
+  private readonly breakers = new Map<string, SubscriptionCircuitBreaker>();
 
   register(name: string, breaker: SubscriptionCircuitBreaker): void {
     this.breakers.set(name, breaker);

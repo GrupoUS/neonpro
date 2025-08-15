@@ -51,9 +51,9 @@ export type KPICalculationResult = z.infer<typeof KPICalculationResultSchema>;
 
 // KPI Calculation Service
 export class KPICalculationService {
-  private supabase = createClient();
-  private cache = new Map<string, KPICalculationResult>();
-  private cacheExpiry = new Map<string, number>();
+  private readonly supabase = createClient();
+  private readonly cache = new Map<string, KPICalculationResult>();
+  private readonly cacheExpiry = new Map<string, number>();
   private readonly CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
   /**
@@ -592,9 +592,15 @@ export class KPICalculationService {
     current: number,
     previous: number | null
   ): 'up' | 'down' | 'stable' {
-    if (previous === null) return 'stable';
-    if (current > previous) return 'up';
-    if (current < previous) return 'down';
+    if (previous === null) {
+      return 'stable';
+    }
+    if (current > previous) {
+      return 'up';
+    }
+    if (current < previous) {
+      return 'down';
+    }
     return 'stable';
   }
 
@@ -605,13 +611,15 @@ export class KPICalculationService {
     if (
       kpiDefinition.critical_threshold !== null &&
       value <= kpiDefinition.critical_threshold
-    )
+    ) {
       return 'critical';
+    }
     if (
       kpiDefinition.warning_threshold !== null &&
       value <= kpiDefinition.warning_threshold
-    )
+    ) {
       return 'warning';
+    }
     return 'normal';
   }
 

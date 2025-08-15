@@ -97,7 +97,9 @@ export class FocusManager {
    * Critical for modal dialogs and form wizards
    */
   static trapFocus(containerRef: RefObject<HTMLElement>) {
-    if (!containerRef.current) return;
+    if (!containerRef.current) {
+      return;
+    }
 
     const container = containerRef.current;
     const focusableElements = container.querySelectorAll(
@@ -105,9 +107,7 @@ export class FocusManager {
     );
 
     const firstElement = focusableElements[0] as HTMLElement;
-    const lastElement = focusableElements[
-      focusableElements.length - 1
-    ] as HTMLElement;
+    const lastElement = focusableElements.at(-1) as HTMLElement;
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === KEYBOARD_KEYS.TAB) {
@@ -187,8 +187,12 @@ export const AriaAttributes = {
     }
 
     const describedBy: string[] = [];
-    if (descriptionId) describedBy.push(descriptionId);
-    if (errorId) describedBy.push(errorId);
+    if (descriptionId) {
+      describedBy.push(descriptionId);
+    }
+    if (errorId) {
+      describedBy.push(errorId);
+    }
 
     if (describedBy.length > 0) {
       attributes['aria-describedby'] = describedBy.join(' ');
@@ -319,7 +323,7 @@ export const ColorContrast = {
     const b = (rgb >> 0) & 0xff;
 
     const [rs, gs, bs] = [r, g, b].map((c) => {
-      c = c / 255;
+      c /= 255;
       return c <= 0.039_28 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
     });
 

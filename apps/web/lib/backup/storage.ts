@@ -42,7 +42,7 @@ interface IStorageProvider {
  * Provider para armazenamento local
  */
 class LocalStorageProvider implements IStorageProvider {
-  private basePath: string;
+  private readonly basePath: string;
 
   constructor(config: StorageConfig) {
     this.basePath = config.path || './backups';
@@ -388,9 +388,9 @@ class AzureStorageProvider implements IStorageProvider {
  * Gerenciador principal de storage
  */
 export class StorageProvider {
-  private providers = new Map<string, IStorageProvider>();
-  private activeUploads = new Map<string, UploadProgress>();
-  private activeDownloads = new Map<string, DownloadProgress>();
+  private readonly providers = new Map<string, IStorageProvider>();
+  private readonly activeUploads = new Map<string, UploadProgress>();
+  private readonly activeDownloads = new Map<string, DownloadProgress>();
 
   /**
    * Registrar provider de storage

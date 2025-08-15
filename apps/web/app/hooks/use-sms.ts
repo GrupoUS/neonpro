@@ -134,7 +134,7 @@ export function useSMSMessage(id: string, enabled = true) {
   return useQuery({
     queryKey: SMS_QUERY_KEYS.message(id),
     queryFn: () => smsService.getMessage(id),
-    enabled: enabled && !!id,
+    enabled: enabled && Boolean(id),
     staleTime: 30 * 1000, // 30 seconds
     gcTime: 2 * 60 * 1000, // 2 minutes
   });
@@ -249,7 +249,9 @@ export function useDeleteSMSTemplate() {
         .delete()
         .eq('id', id);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return id;
     },
     onSuccess: (_deletedId) => {
@@ -274,7 +276,7 @@ export function useSMSOptInStatus(phoneNumber: string, enabled = true) {
   return useQuery({
     queryKey: SMS_QUERY_KEYS.optIn(phoneNumber),
     queryFn: () => smsService.checkOptInStatus(phoneNumber),
-    enabled: enabled && !!phoneNumber,
+    enabled: enabled && Boolean(phoneNumber),
     staleTime: 60 * 1000, // 1 minute
     gcTime: 5 * 60 * 1000, // 5 minutes
   });
@@ -333,7 +335,7 @@ export function useSMSAnalytics(
   return useQuery({
     queryKey: SMS_QUERY_KEYS.analytics(startDate, endDate, period),
     queryFn: () => smsService.getAnalytics(startDate, endDate, period),
-    enabled: enabled && !!startDate && !!endDate,
+    enabled: enabled && Boolean(startDate) && Boolean(endDate),
     staleTime: 2 * 60 * 1000, // 2 minutes
     gcTime: 5 * 60 * 1000, // 5 minutes
   });

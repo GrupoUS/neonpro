@@ -1077,7 +1077,9 @@ ipAddress: string;
     .eq('id', userId)
     .single();
 
-  if (!user) return;
+  if (!user) {
+    return;
+  }
 
   // Send notification to user and security team
   const notification = {

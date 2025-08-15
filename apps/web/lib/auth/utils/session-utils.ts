@@ -61,11 +61,13 @@ export class SessionUtils {
    */
   static hashString(str: string): string {
     let hash = 0;
-    if (str.length === 0) return hash.toString();
+    if (str.length === 0) {
+      return hash.toString();
+    }
     for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i);
       hash = (hash << 5) - hash + char;
-      hash = hash & hash; // Convert to 32-bit integer
+      hash &= hash; // Convert to 32-bit integer
     }
     return Math.abs(hash).toString(16);
   }
@@ -94,24 +96,43 @@ export class SessionUtils {
     const ua = userAgent.toLowerCase();
 
     // Mobile devices
-    if (ua.includes('iphone')) return 'iPhone';
-    if (ua.includes('ipad')) return 'iPad';
+    if (ua.includes('iphone')) {
+      return 'iPhone';
+    }
+    if (ua.includes('ipad')) {
+      return 'iPad';
+    }
     if (ua.includes('android')) {
-      if (ua.includes('mobile')) return 'Android Phone';
+      if (ua.includes('mobile')) {
+        return 'Android Phone';
+      }
       return 'Android Tablet';
     }
 
     // Desktop browsers
-    if (ua.includes('chrome')) return 'Chrome Browser';
-    if (ua.includes('firefox')) return 'Firefox Browser';
-    if (ua.includes('safari') && !ua.includes('chrome'))
+    if (ua.includes('chrome')) {
+      return 'Chrome Browser';
+    }
+    if (ua.includes('firefox')) {
+      return 'Firefox Browser';
+    }
+    if (ua.includes('safari') && !ua.includes('chrome')) {
       return 'Safari Browser';
-    if (ua.includes('edge')) return 'Edge Browser';
+    }
+    if (ua.includes('edge')) {
+      return 'Edge Browser';
+    }
 
     // Operating systems
-    if (ua.includes('windows')) return 'Windows Computer';
-    if (ua.includes('mac')) return 'Mac Computer';
-    if (ua.includes('linux')) return 'Linux Computer';
+    if (ua.includes('windows')) {
+      return 'Windows Computer';
+    }
+    if (ua.includes('mac')) {
+      return 'Mac Computer';
+    }
+    if (ua.includes('linux')) {
+      return 'Linux Computer';
+    }
 
     return 'Unknown Device';
   }

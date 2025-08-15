@@ -72,7 +72,9 @@ export async function GET(request: NextRequest) {
     }
 
     const { data: accuracyData, error } = await query;
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Calculate aggregate statistics
     const stats = calculateAccuracyStatistics(accuracyData || []);
@@ -136,7 +138,9 @@ export async function POST(request: NextRequest) {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     return NextResponse.json({
       success: true,
@@ -306,7 +310,7 @@ function generateAccuracyRecommendations(
 
   if (modelPerformance.length > 1) {
     const bestModel = modelPerformance[0];
-    const worstModel = modelPerformance[modelPerformance.length - 1];
+    const worstModel = modelPerformance.at(-1);
 
     if (bestModel.accuracy - worstModel.accuracy > 0.1) {
       recommendations.push(

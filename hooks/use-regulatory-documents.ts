@@ -39,11 +39,21 @@ export function useRegulatoryDocuments(
   const buildQuery = useCallback(() => {
     const params = new URLSearchParams();
 
-    if (options.page) params.set('page', options.page.toString());
-    if (options.limit) params.set('limit', options.limit.toString());
-    if (options.category) params.set('category', options.category);
-    if (options.status) params.set('status', options.status);
-    if (options.search) params.set('search', options.search);
+    if (options.page) {
+      params.set('page', options.page.toString());
+    }
+    if (options.limit) {
+      params.set('limit', options.limit.toString());
+    }
+    if (options.category) {
+      params.set('category', options.category);
+    }
+    if (options.status) {
+      params.set('status', options.status);
+    }
+    if (options.search) {
+      params.set('search', options.search);
+    }
 
     return params.toString();
   }, [options]);

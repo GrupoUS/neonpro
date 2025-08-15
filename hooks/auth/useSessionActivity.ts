@@ -79,7 +79,9 @@ export function useSessionActivity(
 
   const trackActivity = useCallback(
     async (activityType: string, metadata?: any) => {
-      if (!isAuthenticated) return;
+      if (!isAuthenticated) {
+        return;
+      }
 
       try {
         const now = new Date();
@@ -123,7 +125,12 @@ export function useSessionActivity(
         console.error('Activity tracking error:', error);
       }
     },
-    [isAuthenticated, updateActivity, pathname]
+    [
+      isAuthenticated,
+      updateActivity,
+      pathname, // Reset idle timer
+      resetIdleTimer,
+    ]
   );
 
   const debouncedTrackActivity = useCallback(
@@ -144,7 +151,9 @@ export function useSessionActivity(
   // =====================================================
 
   const resetIdleTimer = useCallback(() => {
-    if (!config.trackIdleTime) return;
+    if (!config.trackIdleTime) {
+      return;
+    }
 
     if (idleTimerRef.current) {
       clearTimeout(idleTimerRef.current);
@@ -165,8 +174,12 @@ export function useSessionActivity(
   // =====================================================
 
   const handlePageView = useCallback(() => {
-    if (!config.trackPageViews) return;
-    if (config.excludePaths.some((path) => pathname.startsWith(path))) return;
+    if (!config.trackPageViews) {
+      return;
+    }
+    if (config.excludePaths.some((path) => pathname.startsWith(path))) {
+      return;
+    }
 
     trackActivity('page_view', {
       path: pathname,
@@ -177,7 +190,9 @@ export function useSessionActivity(
 
   const handleClick = useCallback(
     (event: MouseEvent) => {
-      if (!config.trackClicks) return;
+      if (!config.trackClicks) {
+        return;
+      }
 
       const target = event.target as HTMLElement;
       const tagName = target.tagName.toLowerCase();
@@ -199,7 +214,9 @@ export function useSessionActivity(
 
   const handleFormSubmit = useCallback(
     (event: Event) => {
-      if (!config.trackFormSubmissions) return;
+      if (!config.trackFormSubmissions) {
+        return;
+      }
 
       const form = event.target as HTMLFormElement;
       const formData = new FormData(form);
@@ -219,7 +236,9 @@ export function useSessionActivity(
   );
 
   const handleScroll = useCallback(() => {
-    if (!config.trackScrolling) return;
+    if (!config.trackScrolling) {
+      return;
+    }
 
     if (scrollDebounceRef.current) {
       clearTimeout(scrollDebounceRef.current);
@@ -289,11 +308,13 @@ export function useSessionActivity(
     if (isAuthenticated) {
       handlePageView();
     }
-  }, [pathname, isAuthenticated, handlePageView]);
+  }, [isAuthenticated, handlePageView]);
 
   // Set up event listeners
   useEffect(() => {
-    if (!isAuthenticated) return;
+    if (!isAuthenticated) {
+      return;
+    }
 
     // Add event listeners
     if (config.trackClicks) {
@@ -369,7 +390,9 @@ export function useSessionActivity(
 
   // Track custom activities defined in options
   useEffect(() => {
-    if (!isAuthenticated || config.customActivities.length === 0) return;
+    if (!isAuthenticated || config.customActivities.length === 0) {
+      return;
+    }
 
     const handleCustomActivity = (event: CustomEvent) => {
       if (config.customActivities.includes(event.type)) {
@@ -442,7 +465,7 @@ export function withActivityTracking<T extends Record<string, any>>(
           componentName: Component.displayName || Component.name,
         });
       };
-    }, [trackActivity]);
+    }, [trackActivity, Component.displayName, Component.name, activityType]);
 
     return <Component {...props} />
   };

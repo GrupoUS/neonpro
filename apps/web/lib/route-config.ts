@@ -104,7 +104,7 @@ export const FEATURE_GROUPS = {
 
 // Route builder utility
 export class RouteBuilder {
-  private route: Partial<RoutePermission> = {};
+  private readonly route: Partial<RoutePermission> = {};
 
   constructor(pattern: string, name: string) {
     this.route.pattern = pattern;
@@ -372,7 +372,7 @@ export { PREDEFINED_ROUTES as DEFAULT_ROUTE_CONFIG };
 
 // Configuration management
 export class RouteConfigManager {
-  private routes: RoutePermission[] = [];
+  private readonly routes: RoutePermission[] = [];
 
   constructor(initialRoutes: RoutePermission[] = PREDEFINED_ROUTES) {
     this.routes = [...initialRoutes];

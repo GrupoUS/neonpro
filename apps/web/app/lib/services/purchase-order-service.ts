@@ -95,7 +95,9 @@ export class PurchaseOrderService {
       .eq('item_id', itemId)
       .order('cost_rating', { ascending: false });
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     return (
       data?.map((item: any) => ({
@@ -126,7 +128,9 @@ export class PurchaseOrderService {
   ): Promise<SupplierInfo | null> {
     const suppliers = await this.getPreferredSuppliers(itemId);
 
-    if (suppliers.length === 0) return null;
+    if (suppliers.length === 0) {
+      return null;
+    }
 
     // Calcular score ponderado para cada supplier
     const scoredSuppliers = suppliers.map((supplier) => {
@@ -258,7 +262,9 @@ export class PurchaseOrderService {
         item.itemId,
         item.requiredQuantity
       );
-      if (!supplier) continue;
+      if (!supplier) {
+        continue;
+      }
 
       // Obter dados do item
       const { data: itemData } = await supabase
@@ -267,7 +273,9 @@ export class PurchaseOrderService {
         .eq('id', item.itemId)
         .single();
 
-      if (!itemData) continue;
+      if (!itemData) {
+        continue;
+      }
 
       // Aplicar EOQ para otimizar quantidade
       const eoqParams = await this.getEOQParameters(item.itemId, clinicId);

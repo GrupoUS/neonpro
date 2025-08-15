@@ -137,7 +137,9 @@ export default function AppointmentBookingFlow({
   };
 
   const handleNext = () => {
-    if (!canProceedToNext()) return;
+    if (!canProceedToNext()) {
+      return;
+    }
 
     const nextIndex = currentStepIndex + 1;
     if (nextIndex < steps.length) {
@@ -147,7 +149,9 @@ export default function AppointmentBookingFlow({
   };
 
   const handleBack = () => {
-    if (!canGoBack()) return;
+    if (!canGoBack()) {
+      return;
+    }
 
     const prevIndex = currentStepIndex - 1;
     if (prevIndex >= 0) {
@@ -176,7 +180,9 @@ export default function AppointmentBookingFlow({
           p_professional_id: selectedProfessional?.id || null,
         });
 
-      if (availabilityError) throw availabilityError;
+      if (availabilityError) {
+        throw availabilityError;
+      }
 
       if (!availabilityCheck?.is_available) {
         setError(
@@ -204,7 +210,9 @@ export default function AppointmentBookingFlow({
         .select()
         .single();
 
-      if (bookingError) throw bookingError;
+      if (bookingError) {
+        throw bookingError;
+      }
 
       // Track booking completion time
       const bookingDuration = bookingStartTime
@@ -225,7 +233,9 @@ export default function AppointmentBookingFlow({
   };
 
   const getElapsedTime = () => {
-    if (!bookingStartTime) return '0s';
+    if (!bookingStartTime) {
+      return '0s';
+    }
 
     const elapsed = (Date.now() - bookingStartTime) / 1000;
     const minutes = Math.floor(elapsed / 60);

@@ -703,13 +703,11 @@ describe('Edge Cases and Security', () => {
 
 describe('Performance and Scalability', () => {
   it('should handle large arrays efficiently', () => {
-    const largeArray = Array(1000)
-      .fill(0)
-      .map((_, i) => ({
-        date: new Date().toISOString(),
-        value: i,
-        trend: 'stable' as const,
-      }));
+    const largeArray = new Array(1000).fill(0).map((_, i) => ({
+      date: new Date().toISOString(),
+      value: i,
+      trend: 'stable' as const,
+    }));
 
     const dashboardWithLargeData = {
       kpis: {

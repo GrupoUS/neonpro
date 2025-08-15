@@ -13,7 +13,7 @@ import type {
 } from './types';
 
 export class AnalyticsRepository {
-  private supabase: ReturnType<typeof createClient>;
+  private readonly supabase: ReturnType<typeof createClient>;
 
   constructor() {
     this.supabase = createClient();
@@ -30,8 +30,9 @@ export class AnalyticsRepository {
       p_filters: query.filters || {},
     });
 
-    if (error)
+    if (error) {
       throw new Error(`Revenue metrics query failed: ${error.message}`);
+    }
     return data || [];
   }
 
@@ -44,8 +45,9 @@ export class AnalyticsRepository {
       p_filters: query.filters || {},
     });
 
-    if (error)
+    if (error) {
       throw new Error(`Conversion metrics query failed: ${error.message}`);
+    }
     return data || [];
   }
   async getTrialMetrics(query: AnalyticsQuery): Promise<TrialMetric[]> {
@@ -55,7 +57,9 @@ export class AnalyticsRepository {
       p_filters: query.filters || {},
     });
 
-    if (error) throw new Error(`Trial metrics query failed: ${error.message}`);
+    if (error) {
+      throw new Error(`Trial metrics query failed: ${error.message}`);
+    }
     return data || [];
   }
 
@@ -76,7 +80,9 @@ export class AnalyticsRepository {
       }
     );
 
-    if (error) throw new Error(`Revenue aggregation failed: ${error.message}`);
+    if (error) {
+      throw new Error(`Revenue aggregation failed: ${error.message}`);
+    }
     return data?.[0] || this.createEmptyAggregation(query);
   }
 
@@ -93,8 +99,9 @@ export class AnalyticsRepository {
       }
     );
 
-    if (error)
+    if (error) {
       throw new Error(`Conversion aggregation failed: ${error.message}`);
+    }
     return data?.[0] || this.createEmptyAggregation(query);
   } // ========================================================================
   // REAL-TIME METRICS & STREAMING
@@ -103,8 +110,9 @@ export class AnalyticsRepository {
   async getRealTimeMetrics(): Promise<RealTimeMetric[]> {
     const { data, error } = await this.supabase.rpc('get_realtime_metrics');
 
-    if (error)
+    if (error) {
       throw new Error(`Real-time metrics query failed: ${error.message}`);
+    }
     return data || [];
   }
 

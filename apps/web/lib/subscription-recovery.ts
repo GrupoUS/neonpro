@@ -59,7 +59,7 @@ const defaultRecoveryConfig: RecoveryConfig = {
 
 // Recovery strategy implementations
 export class SubscriptionRecoveryManager {
-  private config: RecoveryConfig;
+  private readonly config: RecoveryConfig;
 
   constructor(config?: Partial<RecoveryConfig>) {
     this.config = { ...defaultRecoveryConfig, ...config };

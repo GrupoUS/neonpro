@@ -138,7 +138,9 @@ export function useDataSubjectRights(): UseDataSubjectRightsReturn {
         // Update statistics
         setStatistics((prev) => {
           const request = requests.find((r) => r.id === requestId);
-          if (!request) return prev;
+          if (!request) {
+            return prev;
+          }
 
           const newStats = { ...prev };
           newStats[request.status as keyof typeof newStats]--;
@@ -197,7 +199,9 @@ export function useDataSubjectRights(): UseDataSubjectRightsReturn {
         // Update statistics
         setStatistics((prev) => {
           const request = requests.find((r) => r.id === requestId);
-          if (!request) return prev;
+          if (!request) {
+            return prev;
+          }
 
           const newStats = { ...prev };
           newStats[request.status as keyof typeof newStats]--;

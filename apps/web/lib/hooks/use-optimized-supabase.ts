@@ -82,7 +82,9 @@ export function useOptimizedSupabase(
 
   // Connection health check
   const checkConnection = useCallback(async () => {
-    if (!client) return;
+    if (!client) {
+      return;
+    }
 
     try {
       setIsLoading(true);
@@ -132,7 +134,9 @@ export function useOptimizedSupabase(
 
   // Update health monitoring
   const updateHealthMetrics = useCallback(() => {
-    if (!healthMonitoring) return;
+    if (!healthMonitoring) {
+      return;
+    }
 
     const analytics = poolManager.getPoolAnalytics();
     const poolKey = `healthcare_${clinicId}_${operationType}`;
@@ -237,7 +241,9 @@ export function useHealthcareCompliantSupabase(
 
   // Enhanced compliance monitoring
   const complianceStatus = useMemo(() => {
-    if (!baseHook.healthStatus) return null;
+    if (!baseHook.healthStatus) {
+      return null;
+    }
 
     return {
       lgpdCompliant: baseHook.healthStatus.compliance.lgpdCompliant,

@@ -349,7 +349,9 @@ export function useAnalysisMonitoring(analysisId?: string) {
   } | null>(null);
 
   useEffect(() => {
-    if (!analysisId) return;
+    if (!analysisId) {
+      return;
+    }
 
     // Simulate real-time monitoring
     const interval = setInterval(() => {

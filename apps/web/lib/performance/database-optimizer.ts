@@ -30,7 +30,7 @@ export interface DatabasePerformanceReport {
 
 export class DatabaseOptimizer {
   private queryMetrics: QueryMetrics[] = [];
-  private slowQueryThreshold = 100; // ms
+  private readonly slowQueryThreshold = 100; // ms
 
   constructor(slowQueryThreshold = 100) {
     this.slowQueryThreshold = slowQueryThreshold;

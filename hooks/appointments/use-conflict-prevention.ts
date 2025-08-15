@@ -176,7 +176,13 @@ export function useConflictPrevention({
         );
       });
     },
-    [debounceMs, enableRealTime, isValidating, lastValidation]
+    [
+      debounceMs,
+      enableRealTime,
+      isValidating,
+      lastValidation,
+      generateRequestKey,
+    ]
   );
 
   // Clear validation state

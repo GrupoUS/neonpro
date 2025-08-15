@@ -238,7 +238,9 @@ export const useConsentManagement = (
   const compliance = new LGPDComplianceManager();
 
   const refreshConsents = useCallback(async () => {
-    if (!(patientId && clinicId)) return;
+    if (!(patientId && clinicId)) {
+      return;
+    }
 
     try {
       setIsLoading(true);
@@ -424,7 +426,9 @@ export const useDataSubjectRights = (
   const _router = useRouter();
 
   const refreshRequests = useCallback(async () => {
-    if (!(patientId && clinicId)) return;
+    if (!(patientId && clinicId)) {
+      return;
+    }
 
     try {
       setIsLoading(true);
@@ -435,7 +439,9 @@ export const useDataSubjectRights = (
         .eq('clinic_id', clinicId)
         .order('submitted_at', { ascending: false });
 
-      if (fetchError) throw new Error(fetchError.message);
+      if (fetchError) {
+        throw new Error(fetchError.message);
+      }
       setRequests(data || []);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch requests');
@@ -605,7 +611,7 @@ export const withLGPDProtection = <P extends object>(
         });
         setAccessLogged(true);
       }
-    }, [logEvent, accessLogged]);
+    }, [logEvent, accessLogged, config.logAccess]);
 
     return React.createElement(Component, props);
   };
@@ -626,7 +632,9 @@ export const useLGPDComplianceStatus = (
   const supabase = createClient();
 
   useEffect(() => {
-    if (!(patientId && clinicId)) return;
+    if (!(patientId && clinicId)) {
+      return;
+    }
 
     const fetchComplianceStatus = async () => {
       try {
@@ -662,16 +670,24 @@ const calculateComplianceScore = (data: any): number => {
   let score = 0;
 
   // Has active consents
-  if (data.active_consents > 0) score += 30;
+  if (data.active_consents > 0) {
+    score += 30;
+  }
 
   // No pending requests
-  if (data.total_requests === data.completed_requests) score += 25;
+  if (data.total_requests === data.completed_requests) {
+    score += 25;
+  }
 
   // Recent audit activity indicates proper monitoring
-  if (data.recent_audit_entries > 0) score += 25;
+  if (data.recent_audit_entries > 0) {
+    score += 25;
+  }
 
   // Recent access indicates active use
-  if (data.last_record_access) score += 20;
+  if (data.last_record_access) {
+    score += 20;
+  }
 
   return score;
 };

@@ -12,9 +12,9 @@ import type {
 } from './types';
 
 export class RiskAssessmentEngine {
-  private supabase = createClient();
-  private modelVersion = '1.0.0';
-  private accuracy = 0.87; // 87% accuracy target achieved
+  private readonly supabase = createClient();
+  private readonly modelVersion = '1.0.0';
+  private readonly accuracy = 0.87; // 87% accuracy target achieved
 
   async assessPatientRisk(patientId: string): Promise<RiskAssessmentResponse> {
     const startTime = Date.now();
@@ -309,7 +309,7 @@ export class RiskAssessmentEngine {
 
   private assessVitalSignsRisks(vitalSigns: any[]): RiskFactor[] {
     const risks: RiskFactor[] = [];
-    const latest = vitalSigns[vitalSigns.length - 1];
+    const latest = vitalSigns.at(-1);
 
     if (latest.systolic_bp > 140 || latest.diastolic_bp > 90) {
       risks.push({
@@ -341,7 +341,9 @@ export class RiskAssessmentEngine {
   }
 
   private calculateOverallRiskScore(riskFactors: RiskFactor[]): number {
-    if (riskFactors.length === 0) return 10; // Low risk baseline
+    if (riskFactors.length === 0) {
+      return 10; // Low risk baseline
+    }
 
     const weightedScore = riskFactors.reduce((total, factor) => {
       const severityMultiplier = {

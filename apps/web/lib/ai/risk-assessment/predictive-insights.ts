@@ -373,13 +373,14 @@ interface InsightsConfig {
 }
 
 class PredictiveInsightsEngine {
-  private supabase = createClient();
-  private config: InsightsConfig;
-  private insights: Map<string, PredictiveInsight> = new Map();
-  private trends: Map<string, TrendAnalysis> = new Map();
-  private patterns: Map<string, PatternRecognition> = new Map();
-  private anomalies: Map<string, AnomalyDetection> = new Map();
-  private populationInsights: Map<string, PopulationHealthInsight> = new Map();
+  private readonly supabase = createClient();
+  private readonly config: InsightsConfig;
+  private readonly insights: Map<string, PredictiveInsight> = new Map();
+  private readonly trends: Map<string, TrendAnalysis> = new Map();
+  private readonly patterns: Map<string, PatternRecognition> = new Map();
+  private readonly anomalies: Map<string, AnomalyDetection> = new Map();
+  private readonly populationInsights: Map<string, PopulationHealthInsight> =
+    new Map();
   private isProcessing = false;
   private processingInterval?: NodeJS.Timeout;
 
@@ -419,7 +420,9 @@ class PredictiveInsightsEngine {
           patientId,
           patientData
         );
-        if (riskTrendInsight) insights.push(riskTrendInsight);
+        if (riskTrendInsight) {
+          insights.push(riskTrendInsight);
+        }
       }
 
       // Outcome prediction
@@ -431,7 +434,9 @@ class PredictiveInsightsEngine {
           patientId,
           patientData
         );
-        if (outcomeInsight) insights.push(outcomeInsight);
+        if (outcomeInsight) {
+          insights.push(outcomeInsight);
+        }
       }
 
       // Treatment recommendations
@@ -444,7 +449,9 @@ class PredictiveInsightsEngine {
             patientId,
             patientData
           );
-        if (treatmentInsight) insights.push(treatmentInsight);
+        if (treatmentInsight) {
+          insights.push(treatmentInsight);
+        }
       }
 
       // Preventive care insights
@@ -456,7 +463,9 @@ class PredictiveInsightsEngine {
           patientId,
           patientData
         );
-        if (preventiveInsight) insights.push(preventiveInsight);
+        if (preventiveInsight) {
+          insights.push(preventiveInsight);
+        }
       }
 
       // Population comparison (if requested)
@@ -466,7 +475,9 @@ class PredictiveInsightsEngine {
             patientId,
             patientData
           );
-        if (populationInsight) insights.push(populationInsight);
+        if (populationInsight) {
+          insights.push(populationInsight);
+        }
       }
 
       // Store insights
@@ -789,9 +800,9 @@ class PredictiveInsightsEngine {
           metrics: [
             {
               name: 'Current Risk Score',
-              current: riskScores[riskScores.length - 1],
+              current: riskScores.at(-1),
               predicted: forecast.value,
-              change: forecast.value - riskScores[riskScores.length - 1],
+              change: forecast.value - riskScores.at(-1),
               unit: 'score',
             },
           ],
@@ -808,7 +819,7 @@ class PredictiveInsightsEngine {
           dataPoints: riskHistory.length,
           timeRange: {
             start: new Date(riskHistory[0].created_at),
-            end: new Date(riskHistory[riskHistory.length - 1].created_at),
+            end: new Date(riskHistory.at(-1).created_at),
           },
           sources: ['risk_assessments'],
           methodology: 'Linear regression with confidence intervals',
@@ -1188,20 +1199,25 @@ class PredictiveInsightsEngine {
     let insights = Array.from(this.insights.values());
 
     if (filters) {
-      if (filters.type)
+      if (filters.type) {
         insights = insights.filter((i) => i.type === filters.type);
-      if (filters.priority)
+      }
+      if (filters.priority) {
         insights = insights.filter((i) => i.priority === filters.priority);
-      if (filters.confidence)
+      }
+      if (filters.confidence) {
         insights = insights.filter((i) => i.confidence === filters.confidence);
-      if (filters.timeHorizon)
+      }
+      if (filters.timeHorizon) {
         insights = insights.filter(
           (i) => i.timeHorizon === filters.timeHorizon
         );
-      if (filters.patientId)
+      }
+      if (filters.patientId) {
         insights = insights.filter(
           (i) => i.details.patientId === filters.patientId
         );
+      }
       if (filters.validOnly) {
         const now = new Date();
         insights = insights.filter((i) => i.metadata.validUntil > now);
@@ -1214,7 +1230,9 @@ class PredictiveInsightsEngine {
       const aPriority = priorityOrder[a.priority];
       const bPriority = priorityOrder[b.priority];
 
-      if (aPriority !== bPriority) return bPriority - aPriority;
+      if (aPriority !== bPriority) {
+        return bPriority - aPriority;
+      }
       return (
         b.metadata.generatedAt.getTime() - a.metadata.generatedAt.getTime()
       );
@@ -1273,7 +1291,9 @@ class PredictiveInsightsEngine {
    * Start insights processing
    */
   private startInsightsProcessing(): void {
-    if (this.isProcessing) return;
+    if (this.isProcessing) {
+      return;
+    }
 
     this.isProcessing = true;
     console.log('Starting predictive insights processing');
@@ -1411,7 +1431,7 @@ class PredictiveInsightsEngine {
 
   private forecastRisk(values: number[], days: number): any {
     const trend = this.calculateTrend(values);
-    const _lastValue = values[values.length - 1];
+    const _lastValue = values.at(-1);
     const forecastValue =
       trend.slope * (values.length + days) + trend.intercept;
 

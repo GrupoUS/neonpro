@@ -8,7 +8,7 @@ import { AnalyticsService } from './service';
 import { AnalyticsQuerySchema, MetricPeriodSchema } from './types';
 
 export class AnalyticsController {
-  private service: AnalyticsService;
+  private readonly service: AnalyticsService;
 
   constructor() {
     this.service = new AnalyticsService();
@@ -42,7 +42,9 @@ export class AnalyticsController {
 
       // Build filters
       const filters: Record<string, any> = { currency: queryParams.currency };
-      if (queryParams.tier) filters.tier = queryParams.tier;
+      if (queryParams.tier) {
+        filters.tier = queryParams.tier;
+      }
 
       // Execute analytics query
       const analytics = await this.service.getRevenueAnalytics(
@@ -87,8 +89,12 @@ export class AnalyticsController {
         : new Date();
 
       const filters: Record<string, any> = {};
-      if (queryParams.source) filters.source = queryParams.source;
-      if (queryParams.stage) filters.stage = queryParams.stage;
+      if (queryParams.source) {
+        filters.source = queryParams.source;
+      }
+      if (queryParams.stage) {
+        filters.stage = queryParams.stage;
+      }
 
       const analytics = await this.service.getConversionAnalytics(
         period,

@@ -152,9 +152,15 @@ export function useSecurityMonitoring() {
       const score = securityScore?.score || 0;
       const deviceTrusted = deviceValidation?.isTrusted;
 
-      if (score >= 80 && deviceTrusted) return 'secure';
-      if (score >= 60 && deviceTrusted) return 'moderate';
-      if (score >= 40) return 'warning';
+      if (score >= 80 && deviceTrusted) {
+        return 'secure';
+      }
+      if (score >= 60 && deviceTrusted) {
+        return 'moderate';
+      }
+      if (score >= 40) {
+        return 'warning';
+      }
       return 'critical';
     })(),
   };

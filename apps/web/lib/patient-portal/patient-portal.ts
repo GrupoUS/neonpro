@@ -80,12 +80,12 @@ export interface PortalHealthCheck {
  * Main Patient Portal class that orchestrates all portal functionality
  */
 export class PatientPortal {
-  private supabase: SupabaseClient;
-  private auditLogger: AuditLogger;
-  private lgpdManager: LGPDManager;
-  private encryptionService: EncryptionService;
-  private notificationService: NotificationService;
-  private config: PatientPortalConfig;
+  private readonly supabase: SupabaseClient;
+  private readonly auditLogger: AuditLogger;
+  private readonly lgpdManager: LGPDManager;
+  private readonly encryptionService: EncryptionService;
+  private readonly notificationService: NotificationService;
+  private readonly config: PatientPortalConfig;
 
   // Portal components
   public sessionManager: SessionManager;
@@ -94,8 +94,8 @@ export class PatientPortal {
   public uploads: UploadManager;
   public communication: CommunicationManager;
 
-  private isInitialized = false;
-  private portalId: string;
+  private readonly isInitialized = false;
+  private readonly portalId: string;
 
   constructor(
     supabase: SupabaseClient,
@@ -386,14 +386,24 @@ export class PatientPortal {
   private getAvailableFeatures(): string[] {
     const features: string[] = [];
 
-    if (this.config.features.appointmentBooking)
+    if (this.config.features.appointmentBooking) {
       features.push('appointment_booking');
-    if (this.config.features.documentUpload) features.push('document_upload');
-    if (this.config.features.messaging) features.push('messaging');
-    if (this.config.features.treatmentTracking)
+    }
+    if (this.config.features.documentUpload) {
+      features.push('document_upload');
+    }
+    if (this.config.features.messaging) {
+      features.push('messaging');
+    }
+    if (this.config.features.treatmentTracking) {
       features.push('treatment_tracking');
-    if (this.config.features.billingAccess) features.push('billing_access');
-    if (this.config.features.telehealth) features.push('telehealth');
+    }
+    if (this.config.features.billingAccess) {
+      features.push('billing_access');
+    }
+    if (this.config.features.telehealth) {
+      features.push('telehealth');
+    }
 
     return features;
   }

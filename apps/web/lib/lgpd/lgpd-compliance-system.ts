@@ -135,8 +135,8 @@ export interface LGPDComplianceReport {
  * Main LGPD Compliance System Class
  */
 export class LGPDComplianceSystem {
-  private config: LGPDComplianceConfig;
-  private alerts: LGPDAlert[] = [];
+  private readonly config: LGPDComplianceConfig;
+  private readonly alerts: LGPDAlert[] = [];
 
   constructor(config: LGPDComplianceConfig) {
     this.config = config;
@@ -588,9 +588,15 @@ export class LGPDComplianceSystem {
   ): 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' {
     const combinedRisk = 100 - overallScore + auditRiskScore;
 
-    if (combinedRisk <= 20) return 'LOW';
-    if (combinedRisk <= 50) return 'MEDIUM';
-    if (combinedRisk <= 80) return 'HIGH';
+    if (combinedRisk <= 20) {
+      return 'LOW';
+    }
+    if (combinedRisk <= 50) {
+      return 'MEDIUM';
+    }
+    if (combinedRisk <= 80) {
+      return 'HIGH';
+    }
     return 'CRITICAL';
   }
 

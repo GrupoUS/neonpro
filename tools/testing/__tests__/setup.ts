@@ -101,7 +101,7 @@ global.testUtils = {
   },
 
   // Accessibility testing utilities
-  checkAccessibility: async (element: HTMLElement) => {
+  checkAccessibility: async (_element: HTMLElement) => {
     // Mock axe-core for accessibility testing
     return {
       violations: [],

@@ -91,8 +91,8 @@ export interface ConsentAnalytics {
  * LGPD Consent Automation Manager
  */
 export class ConsentAutomationManager {
-  private supabase;
-  private auditLogger: SecurityAuditLogger;
+  private readonly supabase;
+  private readonly auditLogger: SecurityAuditLogger;
 
   constructor() {
     this.supabase = createClient();

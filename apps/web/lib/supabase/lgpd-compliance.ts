@@ -70,7 +70,7 @@ export type LGPDDataSubjectRights =
 
 // LGPD Compliance Manager Class
 export class LGPDComplianceManager {
-  private supabase: ReturnType<typeof createClient>;
+  private readonly supabase: ReturnType<typeof createClient>;
 
   constructor(serverSide = false) {
     this.isServerSide = serverSide;
@@ -446,7 +446,7 @@ export class LGPDComplianceManager {
 
 // Healthcare-specific LGPD compliance hooks
 export class HealthcareLGPDHooks {
-  private compliance: LGPDComplianceManager;
+  private readonly compliance: LGPDComplianceManager;
 
   constructor(serverSide = false) {
     this.compliance = new LGPDComplianceManager(serverSide);

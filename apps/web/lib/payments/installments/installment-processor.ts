@@ -64,9 +64,9 @@ interface PaymentMethodInfo {
 }
 
 export class InstallmentProcessor {
-  private supabase;
-  private stripe: Stripe;
-  private config: InstallmentProcessorConfig;
+  private readonly supabase;
+  private readonly stripe: Stripe;
+  private readonly config: InstallmentProcessorConfig;
 
   constructor(config: InstallmentProcessorConfig) {
     this.config = {
@@ -253,11 +253,17 @@ export class InstallmentProcessor {
 
         if (result.success) {
           successful++;
-          if (result.amount) totalAmount += result.amount;
-          if (result.lateFee) totalLateFees += result.lateFee;
+          if (result.amount) {
+            totalAmount += result.amount;
+          }
+          if (result.lateFee) {
+            totalLateFees += result.lateFee;
+          }
         } else {
           failed++;
-          if (result.error) errors.push(`${installmentId}: ${result.error}`);
+          if (result.error) {
+            errors.push(`${installmentId}: ${result.error}`);
+          }
         }
 
         return result;

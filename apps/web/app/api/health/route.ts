@@ -127,9 +127,15 @@ function formatUptime(seconds: number): string {
   const secs = Math.floor(seconds % 60);
 
   const parts = [];
-  if (days > 0) parts.push(`${days}d`);
-  if (hours > 0) parts.push(`${hours}h`);
-  if (minutes > 0) parts.push(`${minutes}m`);
+  if (days > 0) {
+    parts.push(`${days}d`);
+  }
+  if (hours > 0) {
+    parts.push(`${hours}h`);
+  }
+  if (minutes > 0) {
+    parts.push(`${minutes}m`);
+  }
   parts.push(`${secs}s`);
 
   return parts.join(' ');
@@ -176,8 +182,12 @@ function getOverallStatus(
   const hasUnhealthy = checks.some((check) => check.status === 'unhealthy');
   const hasDegraded = checks.some((check) => check.status === 'degraded');
 
-  if (hasUnhealthy) return 'unhealthy';
-  if (hasDegraded) return 'degraded';
+  if (hasUnhealthy) {
+    return 'unhealthy';
+  }
+  if (hasDegraded) {
+    return 'degraded';
+  }
   return 'healthy';
 }
 
@@ -201,8 +211,12 @@ export async function GET(_request: NextRequest) {
 
     // Determine HTTP status code
     let statusCode = 200;
-    if (overallStatus === 'degraded') statusCode = 200; // Still operational
-    if (overallStatus === 'unhealthy') statusCode = 503; // Service unavailable
+    if (overallStatus === 'degraded') {
+      statusCode = 200; // Still operational
+    }
+    if (overallStatus === 'unhealthy') {
+      statusCode = 503; // Service unavailable
+    }
 
     const response = {
       status: overallStatus,

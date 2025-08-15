@@ -268,14 +268,14 @@ export type StorageType =
 export type ConflictResolution = 'local' | 'server' | 'merge' | 'prompt';
 
 export class SessionPreservationManager {
-  private utils: SessionUtils;
+  private readonly utils: SessionUtils;
   private preservationConfig: PreservationConfig;
-  private snapshots: Map<string, SessionSnapshot[]> = new Map();
-  private currentState: Map<string, SessionState> = new Map();
+  private readonly snapshots: Map<string, SessionSnapshot[]> = new Map();
+  private readonly currentState: Map<string, SessionState> = new Map();
   private snapshotInterval: NodeJS.Timeout | null = null;
-  private storageQuota: number = 50 * 1024 * 1024; // 50MB
-  private compressionRatio = 0.3;
-  private eventListeners: Map<string, Function[]> = new Map();
+  private readonly storageQuota: number = 50 * 1024 * 1024; // 50MB
+  private readonly compressionRatio = 0.3;
+  private readonly eventListeners: Map<string, Function[]> = new Map();
 
   constructor(config?: Partial<PreservationConfig>) {
     this.config = SessionConfig.getInstance();
@@ -735,7 +735,7 @@ export class SessionPreservationManager {
       return null;
     }
 
-    return sessionSnapshots[sessionSnapshots.length - 1];
+    return sessionSnapshots.at(-1);
   }
 
   /**
@@ -770,7 +770,7 @@ export class SessionPreservationManager {
     for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i);
       hash = (hash << 5) - hash + char;
-      hash = hash & hash;
+      hash &= hash;
     }
     return hash.toString(16);
   }
@@ -912,20 +912,38 @@ export class SessionPreservationManager {
 
   private getOperatingSystem(): string {
     const userAgent = navigator.userAgent;
-    if (userAgent.indexOf('Win') !== -1) return 'Windows';
-    if (userAgent.indexOf('Mac') !== -1) return 'macOS';
-    if (userAgent.indexOf('Linux') !== -1) return 'Linux';
-    if (userAgent.indexOf('Android') !== -1) return 'Android';
-    if (userAgent.indexOf('iOS') !== -1) return 'iOS';
+    if (userAgent.indexOf('Win') !== -1) {
+      return 'Windows';
+    }
+    if (userAgent.indexOf('Mac') !== -1) {
+      return 'macOS';
+    }
+    if (userAgent.indexOf('Linux') !== -1) {
+      return 'Linux';
+    }
+    if (userAgent.indexOf('Android') !== -1) {
+      return 'Android';
+    }
+    if (userAgent.indexOf('iOS') !== -1) {
+      return 'iOS';
+    }
     return 'Unknown';
   }
 
   private getBrowserName(): string {
     const userAgent = navigator.userAgent;
-    if (userAgent.indexOf('Chrome') !== -1) return 'Chrome';
-    if (userAgent.indexOf('Firefox') !== -1) return 'Firefox';
-    if (userAgent.indexOf('Safari') !== -1) return 'Safari';
-    if (userAgent.indexOf('Edge') !== -1) return 'Edge';
+    if (userAgent.indexOf('Chrome') !== -1) {
+      return 'Chrome';
+    }
+    if (userAgent.indexOf('Firefox') !== -1) {
+      return 'Firefox';
+    }
+    if (userAgent.indexOf('Safari') !== -1) {
+      return 'Safari';
+    }
+    if (userAgent.indexOf('Edge') !== -1) {
+      return 'Edge';
+    }
     return 'Unknown';
   }
 

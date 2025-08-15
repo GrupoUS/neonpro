@@ -12,8 +12,8 @@ import {
 import { brazilianTaxEngine } from './tax-engine';
 
 export class NFEIntegrationService {
-  private supabase = createClientComponentClient();
-  private taxEngine = brazilianTaxEngine;
+  private readonly supabase = createClientComponentClient();
+  private readonly taxEngine = brazilianTaxEngine;
 
   // Generate NFe document
   async generateNFE(request: NFEGenerationRequest): Promise<NFEDocument> {

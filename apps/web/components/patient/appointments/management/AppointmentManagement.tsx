@@ -140,7 +140,7 @@ export function AppointmentManagement({
     return (
       <div className="space-y-4">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          {[...Array(3)].map((_, i) => (
+          {[...new Array(3)].map((_, i) => (
             <Card className="animate-pulse" key={i}>
               <CardHeader className="pb-2">
                 <div className="h-4 w-3/4 rounded bg-muted" />
@@ -154,7 +154,7 @@ export function AppointmentManagement({
         <Card className="animate-pulse">
           <CardContent className="pt-6">
             <div className="space-y-3">
-              {[...Array(3)].map((_, i) => (
+              {[...new Array(3)].map((_, i) => (
                 <div className="h-16 rounded bg-muted" key={i} />
               ))}
             </div>

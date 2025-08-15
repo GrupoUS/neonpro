@@ -166,9 +166,9 @@ interface RetentionPolicy {
 // ================================================================================
 
 export class NotificationComplianceEngine {
-  private supabase: ReturnType<typeof createClient>;
-  private encryptionKey: Buffer;
-  private auditBuffer: AuditLog[] = [];
+  private readonly supabase: ReturnType<typeof createClient>;
+  private readonly encryptionKey: Buffer;
+  private readonly auditBuffer: AuditLog[] = [];
 
   constructor() {
     this.supabase = createClient();
@@ -281,7 +281,7 @@ export class NotificationComplianceEngine {
           violations: violations.length,
           channel,
           notificationType,
-          hasConsent: !!consent,
+          hasConsent: Boolean(consent),
         },
         severity: violations.some((v) => v.severity === 'critical')
           ? 'critical'
@@ -728,7 +728,9 @@ export class NotificationComplianceEngine {
    * Persiste logs de auditoria no banco
    */
   private async flushAuditLogs(): Promise<void> {
-    if (this.auditBuffer.length === 0) return;
+    if (this.auditBuffer.length === 0) {
+      return;
+    }
 
     try {
       const logs = [...this.auditBuffer];

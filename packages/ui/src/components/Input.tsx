@@ -64,7 +64,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     }, [value]);
 
     const applyMask = (inputValue: string, maskType?: string) => {
-      if (!maskType) return inputValue;
+      if (!maskType) {
+        return inputValue;
+      }
 
       const cleaned = inputValue.replace(/\D/g, '');
 
@@ -87,7 +89,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             .replace(/(\d{2})(\d)/, '($1) $2')
             .replace(/(\d{5})(\d)/, '$1-$2');
         case 'currency': {
-          const numberValue = cleaned.slice(0, -2) + '.' + cleaned.slice(-2);
+          const numberValue = `${cleaned.slice(0, -2)}.${cleaned.slice(-2)}`;
           return new Intl.NumberFormat('pt-BR', {
             style: 'currency',
             currency: 'BRL',

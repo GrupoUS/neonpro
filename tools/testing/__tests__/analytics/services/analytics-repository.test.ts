@@ -373,7 +373,7 @@ describe('AnalyticsRepository', () => {
       mockSupabase.from.mockReturnValue(mockFrom as any);
 
       // Act - Make multiple concurrent requests
-      const promises = Array(5)
+      const promises = new Array(5)
         .fill(null)
         .map(() => repository.getSubscriptionMetrics('monthly'));
 
@@ -400,7 +400,7 @@ describe('AnalyticsRepository', () => {
 
       // Act
       const startTime = Date.now();
-      const promises = Array(10)
+      const promises = new Array(10)
         .fill(null)
         .map(() => repository.getSubscriptionMetrics('monthly'));
 

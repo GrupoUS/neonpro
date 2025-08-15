@@ -29,12 +29,12 @@ import {
 import type { Database } from '@/types/supabase';
 
 export class SessionManager extends EventEmitter {
-  private supabase: ReturnType<typeof createClient<Database>>;
-  private redis: Redis;
-  private config: SessionManagerConfig;
+  private readonly supabase: ReturnType<typeof createClient<Database>>;
+  private readonly redis: Redis;
+  private readonly config: SessionManagerConfig;
   private cleanupInterval: NodeJS.Timeout | null = null;
-  private deviceTracker: DeviceTracker;
-  private suspiciousActivityDetector: SuspiciousActivityDetector;
+  private readonly deviceTracker: DeviceTracker;
+  private readonly suspiciousActivityDetector: SuspiciousActivityDetector;
   private emergencyControls: EmergencySessionControls | null = null;
 
   constructor(config: SessionManagerConfig) {
@@ -193,7 +193,7 @@ export class SessionManager extends EventEmitter {
         }
       }
 
-      if (!(session && session.is_active)) {
+      if (!session?.is_active) {
         return {
           valid: false,
           errors: ['Session not found or inactive'],
@@ -342,7 +342,9 @@ export class SessionManager extends EventEmitter {
       .eq('is_active', true)
       .order('last_activity', { ascending: false });
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     return data.map(this.mapDatabaseRowToSession);
   }
@@ -431,7 +433,9 @@ export class SessionManager extends EventEmitter {
       .eq('user_id', userId)
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data.roles;
   }
 
@@ -472,7 +476,7 @@ export class SessionManager extends EventEmitter {
 
     if (activeSessions.length >= policy.max_concurrent_sessions) {
       // Terminate oldest session
-      const oldestSession = activeSessions[activeSessions.length - 1];
+      const oldestSession = activeSessions.at(-1);
       await this.terminateSession(
         oldestSession.id,
         'Concurrent session limit exceeded'
@@ -503,7 +507,9 @@ export class SessionManager extends EventEmitter {
       .from('user_sessions')
       .insert(this.mapSessionToDatabaseRow(session));
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
   }
 
   private async cacheSession(session: UserSession): Promise<void> {
@@ -534,7 +540,9 @@ export class SessionManager extends EventEmitter {
       .eq('is_active', true)
       .single();
 
-    if (error) return null;
+    if (error) {
+      return null;
+    }
     return this.mapDatabaseRowToSession(data);
   }
 
@@ -555,7 +563,9 @@ export class SessionManager extends EventEmitter {
       .update(this.mapSessionToDatabaseRow(session))
       .eq('id', session.id);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
   }
 
   private async updateSessionActivity(sessionId: string): Promise<void> {
@@ -828,8 +838,6 @@ export class SessionManager extends EventEmitter {
 
 // Helper classes (to be implemented in separate files)
 class SecurityMonitor {
-  constructor(_supabase: any, _redis: Redis) {}
-
   async monitorSession(_sessionId: string): Promise<void> {
     // TODO: Implement real-time security monitoring
   }
@@ -837,7 +845,7 @@ class SecurityMonitor {
 
 class DeviceTracker {
   constructor(
-    private supabase: any,
+    private readonly supabase: any,
     _redis: Redis
   ) {}
 
@@ -867,15 +875,17 @@ class DeviceTracker {
   }
 
   private getDeviceType(result: any): DeviceType {
-    if (result.device.type === 'mobile') return DeviceType.MOBILE;
-    if (result.device.type === 'tablet') return DeviceType.TABLET;
+    if (result.device.type === 'mobile') {
+      return DeviceType.MOBILE;
+    }
+    if (result.device.type === 'tablet') {
+      return DeviceType.TABLET;
+    }
     return DeviceType.DESKTOP;
   }
 }
 
 class SuspiciousActivityDetector {
-  constructor(_supabase: any, _redis: Redis) {}
-
   async analyzeLoginAttempt(
     userId: string,
     ipAddress: string,

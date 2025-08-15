@@ -22,26 +22,38 @@ export async function GET(request: NextRequest) {
     const filters: any = {};
 
     const equipmentTypes = searchParams.getAll('equipment_type');
-    if (equipmentTypes.length) filters.equipment_type = equipmentTypes;
+    if (equipmentTypes.length) {
+      filters.equipment_type = equipmentTypes;
+    }
 
     const statuses = searchParams.getAll('status');
-    if (statuses.length) filters.status = statuses;
+    if (statuses.length) {
+      filters.status = statuses;
+    }
 
     const criticalityLevels = searchParams.getAll('criticality_level');
-    if (criticalityLevels.length) filters.criticality_level = criticalityLevels;
+    if (criticalityLevels.length) {
+      filters.criticality_level = criticalityLevels;
+    }
 
     const departments = searchParams.getAll('department');
-    if (departments.length) filters.department = departments;
+    if (departments.length) {
+      filters.department = departments;
+    }
 
     const locations = searchParams.getAll('location');
-    if (locations.length) filters.location = locations;
+    if (locations.length) {
+      filters.location = locations;
+    }
 
     if (searchParams.get('warranty_expiring') === 'true') {
       filters.warranty_expiring = true;
     }
 
     const search = searchParams.get('search');
-    if (search) filters.search = search;
+    if (search) {
+      filters.search = search;
+    }
 
     const result = await equipmentMaintenanceService.getClinicEquipment(
       clinicId,

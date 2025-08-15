@@ -371,7 +371,7 @@ export class EnhancedBankReconciliationService {
             .replace(',', '.') || '0'
         );
         if (mapping.amount_format === 'cents') {
-          amount = amount / 100;
+          amount /= 100;
         }
 
         // Determine transaction type
@@ -493,7 +493,9 @@ export class EnhancedBankReconciliationService {
 
       const { data, error } = await query;
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return (data || []).map((payment) => ({
         ...payment,
@@ -614,7 +616,9 @@ export class EnhancedBankReconciliationService {
     const matches: ReconciliationMatch[] = [];
 
     for (const bankTx of bankTransactions) {
-      if (!bankTx.id) continue;
+      if (!bankTx.id) {
+        continue;
+      }
 
       const potentialMatches = payments.filter((payment) => {
         // Exact amount match
@@ -655,10 +659,12 @@ export class EnhancedBankReconciliationService {
           | 'pix_key'
         > = ['amount', 'date'];
 
-        if (bankTx.pixKey && payment.reference_id === bankTx.pixKey)
+        if (bankTx.pixKey && payment.reference_id === bankTx.pixKey) {
           criteria.push('pix_key');
-        if (bankTx.reference && payment.reference_id === bankTx.reference)
+        }
+        if (bankTx.reference && payment.reference_id === bankTx.reference) {
           criteria.push('reference');
+        }
 
         matches.push({
           id: EnhancedBankReconciliationService.generateMatchId(),
@@ -687,7 +693,9 @@ export class EnhancedBankReconciliationService {
     const matches: ReconciliationMatch[] = [];
 
     for (const bankTx of bankTransactions) {
-      if (!bankTx.id) continue;
+      if (!bankTx.id) {
+        continue;
+      }
 
       let bestMatch: {
         payment: EnhancedPaymentRecord;
@@ -769,7 +777,9 @@ export class EnhancedBankReconciliationService {
       1 - amountDiff / Math.max(bankTx.amount, Math.abs(payment.amount))
     );
 
-    if (amountSimilarity < 0.9) return { score: 0, criteria: [] }; // Skip if amount too different
+    if (amountSimilarity < 0.9) {
+      return { score: 0, criteria: [] }; // Skip if amount too different
+    }
 
     score += weights.amount * amountSimilarity;
     criteria.push('amount');
@@ -840,7 +850,9 @@ export class EnhancedBankReconciliationService {
       );
 
     for (const bankTx of bankTransactions) {
-      if (!bankTx.id) continue;
+      if (!bankTx.id) {
+        continue;
+      }
 
       // Find matching payment groups
       const matchingGroups =
@@ -933,7 +945,9 @@ export class EnhancedBankReconciliationService {
           { onConflict: 'external_id,bank_account_id' }
         );
 
-      if (txError) throw txError;
+      if (txError) {
+        throw txError;
+      }
 
       // Save reconciliation matches
       if (matches.length > 0) {
@@ -948,7 +962,9 @@ export class EnhancedBankReconciliationService {
             { onConflict: 'bank_transaction_id,payment_id' }
           );
 
-        if (matchError) throw matchError;
+        if (matchError) {
+          throw matchError;
+        }
       }
 
       // Update payment reconciliation status
@@ -1004,13 +1020,17 @@ export class EnhancedBankReconciliationService {
    * Enhanced string similarity with healthcare terms recognition
    */
   private static calculateStringSimilarity(str1: string, str2: string): number {
-    if (!(str1 && str2)) return 0;
+    if (!(str1 && str2)) {
+      return 0;
+    }
 
     // Normalize strings
     const norm1 = str1.toLowerCase().trim();
     const norm2 = str2.toLowerCase().trim();
 
-    if (norm1 === norm2) return 1.0;
+    if (norm1 === norm2) {
+      return 1.0;
+    }
 
     // Use Levenshtein distance
     return EnhancedBankReconciliationService.levenshteinSimilarity(
@@ -1026,7 +1046,9 @@ export class EnhancedBankReconciliationService {
     desc1: string,
     desc2: string
   ): number {
-    if (!(desc1 && desc2)) return 0;
+    if (!(desc1 && desc2)) {
+      return 0;
+    }
 
     // Normalize descriptions
     const norm1 = EnhancedBankReconciliationService.normalizeDescription(desc1);
@@ -1065,12 +1087,16 @@ export class EnhancedBankReconciliationService {
    * Levenshtein distance similarity calculation
    */
   private static levenshteinSimilarity(str1: string, str2: string): number {
-    const matrix = Array(str2.length + 1)
+    const matrix = new Array(str2.length + 1)
       .fill(null)
-      .map(() => Array(str1.length + 1).fill(null));
+      .map(() => new Array(str1.length + 1).fill(null));
 
-    for (let i = 0; i <= str1.length; i++) matrix[0][i] = i;
-    for (let j = 0; j <= str2.length; j++) matrix[j][0] = j;
+    for (let i = 0; i <= str1.length; i++) {
+      matrix[0][i] = i;
+    }
+    for (let j = 0; j <= str2.length; j++) {
+      matrix[j][0] = j;
+    }
 
     for (let j = 1; j <= str2.length; j++) {
       for (let i = 1; i <= str1.length; i++) {
@@ -1180,7 +1206,9 @@ export class EnhancedBankReconciliationService {
       for (const _fmt of formats) {
         try {
           const parsed = parseISO(dateStr) || new Date(dateStr);
-          if (isValid(parsed)) return parsed;
+          if (isValid(parsed)) {
+            return parsed;
+          }
         } catch {}
       }
 

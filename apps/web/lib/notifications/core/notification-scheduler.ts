@@ -70,13 +70,13 @@ export interface SchedulerStats {
 }
 
 export class NotificationScheduler {
-  private supabase;
-  private auditLogger: AuditLogger;
-  private cronJobs: Map<string, any> = new Map();
+  private readonly supabase;
+  private readonly auditLogger: AuditLogger;
+  private readonly cronJobs: Map<string, any> = new Map();
   private isRunning = false;
   private processingInterval: NodeJS.Timeout | null = null;
-  private batchSize = 100;
-  private processingIntervalMs = 60_000; // 1 minuto
+  private readonly batchSize = 100;
+  private readonly processingIntervalMs = 60_000; // 1 minuto
 
   constructor() {
     this.supabase = createClient(
@@ -188,7 +188,9 @@ export class NotificationScheduler {
         .from('scheduled_notifications')
         .insert(scheduledNotification);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Se for agendamento único e próximo, criar cron job específico
       if (!config.repeat_pattern && this.isNearFuture(config.scheduled_at)) {
@@ -203,7 +205,7 @@ export class NotificationScheduler {
           channel: config.channel,
           scheduled_at: config.scheduled_at,
           recipient: config.recipient,
-          has_repeat: !!config.repeat_pattern,
+          has_repeat: Boolean(config.repeat_pattern),
         },
       });
 
@@ -228,7 +230,9 @@ export class NotificationScheduler {
         .eq('id', scheduleId)
         .eq('status', 'pending');
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Remover cron job se existir
       if (this.cronJobs.has(scheduleId)) {
@@ -266,7 +270,9 @@ export class NotificationScheduler {
         })
         .eq('id', scheduleId);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Recriar cron job se necessário
       if (this.cronJobs.has(scheduleId)) {
@@ -342,7 +348,9 @@ export class NotificationScheduler {
 
       const { data, error } = await query;
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return data || [];
     } catch (error) {
@@ -359,7 +367,9 @@ export class NotificationScheduler {
         .from('scheduled_notifications')
         .select('status, channel, priority, scheduled_at');
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       const stats: SchedulerStats = {
         total_scheduled: data.length,
@@ -404,7 +414,9 @@ export class NotificationScheduler {
 
   // Métodos privados
   private async processScheduledNotifications(): Promise<void> {
-    if (!this.isRunning) return;
+    if (!this.isRunning) {
+      return;
+    }
 
     try {
       const now = new Date();
@@ -417,7 +429,9 @@ export class NotificationScheduler {
         .lte('scheduled_at', now.toISOString())
         .limit(this.batchSize);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       if (!notifications || notifications.length === 0) {
         return;
@@ -529,7 +543,9 @@ export class NotificationScheduler {
   private async scheduleNextOccurrence(
     notification: ScheduledNotification
   ): Promise<void> {
-    if (!notification.repeat_pattern) return;
+    if (!notification.repeat_pattern) {
+      return;
+    }
 
     const pattern = notification.repeat_pattern;
     const currentDate = new Date(notification.scheduled_at);
@@ -591,7 +607,9 @@ export class NotificationScheduler {
         .eq('status', 'pending')
         .lt('scheduled_at', expiredDate.toISOString());
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       await this.auditLogger.log({
         action: 'expired_notifications_cleaned',

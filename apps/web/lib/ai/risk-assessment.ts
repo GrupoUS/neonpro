@@ -73,7 +73,7 @@ export interface ModelMetrics {
  * Core system for patient health risk analysis and prediction
  */
 export class AIRiskAssessmentEngine {
-  private riskWeights: Map<string, number> = new Map();
+  private readonly riskWeights: Map<string, number> = new Map();
 
   constructor() {
     this.initializeRiskWeights();
@@ -441,7 +441,9 @@ export class AIRiskAssessmentEngine {
    * Calculate overall risk score from individual risk factors
    */
   private calculateOverallRiskScore(riskFactors: RiskFactor[]): number {
-    if (riskFactors.length === 0) return 10; // Low baseline risk
+    if (riskFactors.length === 0) {
+      return 10; // Low baseline risk
+    }
 
     let weightedScore = 0;
     let totalWeight = 0;
@@ -478,9 +480,15 @@ export class AIRiskAssessmentEngine {
   private determineRiskLevel(
     score: number
   ): 'low' | 'moderate' | 'high' | 'critical' {
-    if (score >= 75) return 'critical';
-    if (score >= 50) return 'high';
-    if (score >= 25) return 'moderate';
+    if (score >= 75) {
+      return 'critical';
+    }
+    if (score >= 50) {
+      return 'high';
+    }
+    if (score >= 25) {
+      return 'moderate';
+    }
     return 'low';
   }
 
@@ -757,10 +765,18 @@ export class AIRiskAssessmentEngine {
 
     // Increase risk based on relevant factors
     riskFactors.forEach((factor) => {
-      if (factor.id === 'smoking') risk += 0.3;
-      if (factor.id === 'chronic_conditions') risk += 0.2;
-      if (factor.id === 'previous_complications') risk += 0.25;
-      if (factor.id === 'bmi_risk') risk += 0.15;
+      if (factor.id === 'smoking') {
+        risk += 0.3;
+      }
+      if (factor.id === 'chronic_conditions') {
+        risk += 0.2;
+      }
+      if (factor.id === 'previous_complications') {
+        risk += 0.25;
+      }
+      if (factor.id === 'bmi_risk') {
+        risk += 0.15;
+      }
     });
 
     return Math.min(risk, 0.9);
@@ -773,10 +789,18 @@ export class AIRiskAssessmentEngine {
     let risk = 0.05; // Base risk
 
     riskFactors.forEach((factor) => {
-      if (factor.id === 'age_risk') risk += 0.2;
-      if (factor.id === 'smoking') risk += 0.35;
-      if (factor.id === 'chronic_conditions') risk += 0.25;
-      if (factor.id === 'bmi_risk') risk += 0.2;
+      if (factor.id === 'age_risk') {
+        risk += 0.2;
+      }
+      if (factor.id === 'smoking') {
+        risk += 0.35;
+      }
+      if (factor.id === 'chronic_conditions') {
+        risk += 0.25;
+      }
+      if (factor.id === 'bmi_risk') {
+        risk += 0.2;
+      }
     });
 
     return Math.min(risk, 0.8);
@@ -789,9 +813,15 @@ export class AIRiskAssessmentEngine {
     let satisfaction = 0.8; // Base satisfaction
 
     riskFactors.forEach((factor) => {
-      if (factor.id === 'poor_communication') satisfaction -= 0.2;
-      if (factor.id === 'poor_adherence') satisfaction -= 0.15;
-      if (factor.id === 'poor_compliance') satisfaction -= 0.15;
+      if (factor.id === 'poor_communication') {
+        satisfaction -= 0.2;
+      }
+      if (factor.id === 'poor_adherence') {
+        satisfaction -= 0.15;
+      }
+      if (factor.id === 'poor_compliance') {
+        satisfaction -= 0.15;
+      }
     });
 
     return Math.max(satisfaction, 0.2);

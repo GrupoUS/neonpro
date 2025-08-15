@@ -287,7 +287,7 @@ const TIER_HIERARCHY: Record<SubscriptionTier, number> = {
 // Route protection class
 export class RouteProtector {
   private accessLogs: AccessLog[] = [];
-  private rateLimitCache = new Map<
+  private readonly rateLimitCache = new Map<
     string,
     { count: number; resetTime: number }
   >();
@@ -605,7 +605,9 @@ export class RouteProtector {
     result: ValidationResult,
     duration: number
   ): void {
-    if (!permission || permission.auditLevel === 'none') return;
+    if (!permission || permission.auditLevel === 'none') {
+      return;
+    }
 
     const log: AccessLog = {
       userId: context.userId,

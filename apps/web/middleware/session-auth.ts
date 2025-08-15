@@ -8,7 +8,7 @@ import { SecurityEventType } from '@/types/session';
  * Validates and manages user sessions across the application
  */
 export class SessionAuthMiddleware {
-  private sessionManager: SessionManager;
+  private readonly sessionManager: SessionManager;
 
   constructor() {
     this.sessionManager = new SessionManager();

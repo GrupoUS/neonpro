@@ -21,8 +21,8 @@ import type {
 // ============================================================================
 
 export class AnalyticsExportService {
-  private analyticsService: AnalyticsService;
-  private supabase: ReturnType<typeof createClient>;
+  private readonly analyticsService: AnalyticsService;
+  private readonly supabase: ReturnType<typeof createClient>;
 
   constructor() {
     this.analyticsService = new AnalyticsService();
@@ -914,10 +914,18 @@ export class AnalyticsExportService {
   private calculateTotalRecords(data: ExportableData): number {
     let total = 0;
 
-    if (data.cohorts) total += data.cohorts.length;
-    if (data.forecasts) total += data.forecasts.length;
-    if (data.trials) total += data.trials.length;
-    if (data.rawMetrics) total += data.rawMetrics.length;
+    if (data.cohorts) {
+      total += data.cohorts.length;
+    }
+    if (data.forecasts) {
+      total += data.forecasts.length;
+    }
+    if (data.trials) {
+      total += data.trials.length;
+    }
+    if (data.rawMetrics) {
+      total += data.rawMetrics.length;
+    }
 
     return total;
   }

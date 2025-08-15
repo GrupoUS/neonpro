@@ -122,7 +122,9 @@ export function useStatisticalInsights(
           }),
         });
 
-        if (!response.ok) throw new Error('Failed to generate insights');
+        if (!response.ok) {
+          throw new Error('Failed to generate insights');
+        }
         const data = await response.json();
 
         return {
@@ -154,7 +156,9 @@ export function useStatisticalInsights(
         body: JSON.stringify(analysisConfig),
       });
 
-      if (!response.ok) throw new Error('Analysis failed');
+      if (!response.ok) {
+        throw new Error('Analysis failed');
+      }
       return response.json();
     },
     onSuccess: (data) => {
@@ -186,7 +190,9 @@ export function useStatisticalInsights(
         }),
       });
 
-      if (!response.ok) throw new Error('Anomaly detection failed');
+      if (!response.ok) {
+        throw new Error('Anomaly detection failed');
+      }
       return response.json();
     },
     onSuccess: (data) => {
@@ -219,7 +225,9 @@ export function useStatisticalInsights(
         }),
       });
 
-      if (!response.ok) throw new Error('Correlation analysis failed');
+      if (!response.ok) {
+        throw new Error('Correlation analysis failed');
+      }
       return response.json();
     },
     onSuccess: (data) => {
@@ -257,7 +265,9 @@ export function useStatisticalInsights(
         }),
       });
 
-      if (!response.ok) throw new Error('Prediction generation failed');
+      if (!response.ok) {
+        throw new Error('Prediction generation failed');
+      }
       return response.json();
     },
     onSuccess: (data) => {
@@ -281,7 +291,9 @@ export function useStatisticalInsights(
   // Export analysis mutation
   const exportAnalysisMutation = useMutation({
     mutationFn: async (format: 'csv' | 'pdf') => {
-      if (!insightsData) throw new Error('No analysis data to export');
+      if (!insightsData) {
+        throw new Error('No analysis data to export');
+      }
 
       const response = await fetch('/api/analytics/export', {
         method: 'POST',
@@ -293,7 +305,9 @@ export function useStatisticalInsights(
         }),
       });
 
-      if (!response.ok) throw new Error('Export failed');
+      if (!response.ok) {
+        throw new Error('Export failed');
+      }
 
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
@@ -383,10 +397,12 @@ export function useABTestAnalysis(testId: string) {
         body: JSON.stringify({ testId }),
       });
 
-      if (!response.ok) throw new Error('A/B test analysis failed');
+      if (!response.ok) {
+        throw new Error('A/B test analysis failed');
+      }
       return response.json();
     },
-    enabled: !!testId,
+    enabled: Boolean(testId),
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 }
@@ -408,7 +424,9 @@ export function useMetricBenchmarking(metrics: string[]) {
         }),
       });
 
-      if (!response.ok) throw new Error('Benchmarking analysis failed');
+      if (!response.ok) {
+        throw new Error('Benchmarking analysis failed');
+      }
       return response.json();
     },
     enabled: metrics.length > 0,
@@ -430,22 +448,36 @@ export function useStatisticalFormatters() {
 
       getCorrelationStrength: (correlation: number): string => {
         const abs = Math.abs(correlation);
-        if (abs >= 0.7) return 'Strong';
-        if (abs >= 0.4) return 'Moderate';
+        if (abs >= 0.7) {
+          return 'Strong';
+        }
+        if (abs >= 0.4) {
+          return 'Moderate';
+        }
         return 'Weak';
       },
 
       getCorrelationColor: (correlation: number): string => {
         const abs = Math.abs(correlation);
-        if (abs >= 0.7) return 'text-green-600';
-        if (abs >= 0.4) return 'text-yellow-600';
+        if (abs >= 0.7) {
+          return 'text-green-600';
+        }
+        if (abs >= 0.4) {
+          return 'text-yellow-600';
+        }
         return 'text-red-600';
       },
 
       formatSignificance: (pValue: number): string => {
-        if (pValue < 0.001) return 'p < 0.001 (***)';
-        if (pValue < 0.01) return `p = ${pValue.toFixed(3)} (**)`;
-        if (pValue < 0.05) return `p = ${pValue.toFixed(3)} (*)`;
+        if (pValue < 0.001) {
+          return 'p < 0.001 (***)';
+        }
+        if (pValue < 0.01) {
+          return `p = ${pValue.toFixed(3)} (**)`;
+        }
+        if (pValue < 0.05) {
+          return `p = ${pValue.toFixed(3)} (*)`;
+        }
         return `p = ${pValue.toFixed(3)} (ns)`;
       },
 

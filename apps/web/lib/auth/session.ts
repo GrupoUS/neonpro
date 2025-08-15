@@ -30,9 +30,9 @@ import {
 // ============================================================================
 
 export class SessionManager {
-  private supabase = createClient();
-  private config: SessionConfig;
-  private securityThresholds: SecurityThresholds;
+  private readonly supabase = createClient();
+  private readonly config: SessionConfig;
+  private readonly securityThresholds: SecurityThresholds;
 
   constructor() {
     this.config = {
@@ -96,7 +96,9 @@ export class SessionManager {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Log session creation
       await this.logSessionAction(
@@ -149,7 +151,9 @@ export class SessionManager {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Extend session if activity detected
       if (updates.last_activity) {
@@ -177,7 +181,9 @@ export class SessionManager {
         .eq('id', sessionId)
         .single();
 
-      if (!session) throw new Error('Session not found');
+      if (!session) {
+        throw new Error('Session not found');
+      }
 
       // Mark session as inactive
       const { error } = await this.supabase
@@ -188,7 +194,9 @@ export class SessionManager {
         })
         .eq('id', sessionId);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Log session termination
       await this.logSessionAction(
@@ -270,7 +278,9 @@ export class SessionManager {
         request.user_id,
         request.device_fingerprint
       );
-      if (!device?.trusted) score -= 20;
+      if (!device?.trusted) {
+        score -= 20;
+      }
 
       // Check location consistency
       if (await this.isUnusualLocation(request.user_id, request.ip_address)) {
@@ -322,7 +332,9 @@ export class SessionManager {
         .from('session_security_events')
         .insert(eventData);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       logger.warn('Security event created', {
         event_type: eventType,
@@ -401,7 +413,9 @@ export class SessionManager {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       logger.info('New device registered', {
         device_id: device.id,
@@ -573,7 +587,9 @@ export class SessionManager {
         .eq('is_active', true)
         .gt('expires_at', new Date().toISOString());
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return sessions || [];
     } catch (error) {
       logger.error('Failed to get active sessions', { error, userId });
@@ -662,7 +678,9 @@ export class SessionManager {
         .eq('action', SessionAction.LOGIN)
         .gte('timestamp', fiveMinutesAgo);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return (
         (recentLogins?.length || 0) >
@@ -685,7 +703,9 @@ export class SessionManager {
         .eq('id', sessionId)
         .single();
 
-      if (!session) return;
+      if (!session) {
+        return;
+      }
 
       const now = new Date();
       const expiresAt = new Date(session.expires_at);

@@ -187,11 +187,11 @@ interface AlertStatistics {
 }
 
 class SafetyAlertsSystem {
-  private supabase = createClient();
-  private config: AlertConfig;
-  private alertRules: Map<string, AlertRule> = new Map();
-  private activeAlerts: Map<string, SafetyAlert> = new Map();
-  private alertHistory: SafetyAlert[] = [];
+  private readonly supabase = createClient();
+  private readonly config: AlertConfig;
+  private readonly alertRules: Map<string, AlertRule> = new Map();
+  private readonly activeAlerts: Map<string, SafetyAlert> = new Map();
+  private readonly alertHistory: SafetyAlert[] = [];
   private isMonitoring = false;
   private monitoringInterval?: NodeJS.Timeout;
 
@@ -707,7 +707,7 @@ class SafetyAlertsSystem {
 
       // Find escalation rule
       const rule = this.alertRules.get(alert.type);
-      if (!(rule && rule.escalationRules[escalationLevel])) {
+      if (!rule?.escalationRules[escalationLevel]) {
         throw new Error('Escalation rule not found');
       }
 
@@ -757,19 +757,25 @@ class SafetyAlertsSystem {
     let alerts = Array.from(this.activeAlerts.values());
 
     if (filters) {
-      if (filters.type) alerts = alerts.filter((a) => a.type === filters.type);
-      if (filters.severity)
+      if (filters.type) {
+        alerts = alerts.filter((a) => a.type === filters.type);
+      }
+      if (filters.severity) {
         alerts = alerts.filter((a) => a.severity === filters.severity);
-      if (filters.priority)
+      }
+      if (filters.priority) {
         alerts = alerts.filter((a) => a.priority === filters.priority);
-      if (filters.patientId)
+      }
+      if (filters.patientId) {
         alerts = alerts.filter(
           (a) => a.details.patientId === filters.patientId
         );
-      if (filters.treatmentId)
+      }
+      if (filters.treatmentId) {
         alerts = alerts.filter(
           (a) => a.details.treatmentId === filters.treatmentId
         );
+      }
     }
 
     return alerts.sort((a, b) => {
@@ -778,7 +784,9 @@ class SafetyAlertsSystem {
       const aPriority = priorityOrder[a.priority];
       const bPriority = priorityOrder[b.priority];
 
-      if (aPriority !== bPriority) return bPriority - aPriority;
+      if (aPriority !== bPriority) {
+        return bPriority - aPriority;
+      }
       return b.metadata.timestamp.getTime() - a.metadata.timestamp.getTime();
     });
   }
@@ -867,7 +875,9 @@ class SafetyAlertsSystem {
    * Start real-time monitoring
    */
   private startRealTimeMonitoring(): void {
-    if (this.isMonitoring) return;
+    if (this.isMonitoring) {
+      return;
+    }
 
     this.isMonitoring = true;
     console.log('Starting real-time safety monitoring');
@@ -1221,7 +1231,9 @@ class SafetyAlertsSystem {
 
   private async applyAlertRules(alert: SafetyAlert): Promise<void> {
     const rule = this.alertRules.get(alert.type);
-    if (!rule) return;
+    if (!rule) {
+      return;
+    }
 
     // Apply rule actions
     for (const action of rule.actions) {

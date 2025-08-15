@@ -288,13 +288,17 @@ export function ExportDashboard({
   }, [formData, onExportError]);
 
   const pollActiveExports = useCallback(async () => {
-    if (activeExports.length === 0) return;
+    if (activeExports.length === 0) {
+      return;
+    }
 
     const pendingExports = activeExports.filter(
       (exp) => exp.status === 'pending' || exp.status === 'processing'
     );
 
-    if (pendingExports.length === 0) return;
+    if (pendingExports.length === 0) {
+      return;
+    }
 
     try {
       const statusPromises = pendingExports.map(async (exp) => {
@@ -392,7 +396,9 @@ export function ExportDashboard({
   }, []);
 
   const downloadExport = useCallback(async (exportItem: ActiveExport) => {
-    if (!exportItem.downloadUrl) return;
+    if (!exportItem.downloadUrl) {
+      return;
+    }
 
     try {
       const link = document.createElement('a');
@@ -430,7 +436,7 @@ export function ExportDashboard({
         current = current[keys[i]];
       }
 
-      current[keys[keys.length - 1]] = value;
+      current[keys.at(-1)] = value;
       return newData;
     });
   }, []);
@@ -508,20 +514,28 @@ export function ExportDashboard({
   };
 
   const formatFileSize = (bytes?: number) => {
-    if (!bytes) return 'Unknown';
+    if (!bytes) {
+      return 'Unknown';
+    }
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(1024));
     return `${Math.round((bytes / 1024 ** i) * 100) / 100} ${sizes[i]}`;
   };
 
   const formatDuration = (ms?: number) => {
-    if (!ms) return 'Unknown';
+    if (!ms) {
+      return 'Unknown';
+    }
     const seconds = Math.floor(ms / 1000);
     const minutes = Math.floor(seconds / 60);
     const hours = Math.floor(minutes / 60);
 
-    if (hours > 0) return `${hours}h ${minutes % 60}m`;
-    if (minutes > 0) return `${minutes}m ${seconds % 60}s`;
+    if (hours > 0) {
+      return `${hours}h ${minutes % 60}m`;
+    }
+    if (minutes > 0) {
+      return `${minutes}m ${seconds % 60}s`;
+    }
     return `${seconds}s`;
   };
 
@@ -758,7 +772,7 @@ export function ExportDashboard({
                         checked={formData.includeSummary}
                         id="includeSummary"
                         onCheckedChange={(checked) =>
-                          updateFormData({ includeSummary: !!checked })
+                          updateFormData({ includeSummary: Boolean(checked) })
                         }
                       />
                       <Label htmlFor="includeSummary">
@@ -771,7 +785,7 @@ export function ExportDashboard({
                         checked={formData.notifyOnComplete}
                         id="notifyOnComplete"
                         onCheckedChange={(checked) =>
-                          updateFormData({ notifyOnComplete: !!checked })
+                          updateFormData({ notifyOnComplete: Boolean(checked) })
                         }
                       />
                       <Label htmlFor="notifyOnComplete">

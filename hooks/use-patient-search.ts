@@ -162,19 +162,23 @@ export const usePatientSearch = (
 
       return false;
     },
-    [enableFuzzySearch, caseSensitive]
+    [enableFuzzySearch, caseSensitive, levenshteinDistance]
   );
 
   /**
    * Levenshtein distance for fuzzy matching
    */
   const levenshteinDistance = useCallback((a: string, b: string): number => {
-    const matrix = Array(b.length + 1)
+    const matrix = new Array(b.length + 1)
       .fill(null)
-      .map(() => Array(a.length + 1).fill(null));
+      .map(() => new Array(a.length + 1).fill(null));
 
-    for (let i = 0; i <= a.length; i++) matrix[0][i] = i;
-    for (let j = 0; j <= b.length; j++) matrix[j][0] = j;
+    for (let i = 0; i <= a.length; i++) {
+      matrix[0][i] = i;
+    }
+    for (let j = 0; j <= b.length; j++) {
+      matrix[j][0] = j;
+    }
 
     for (let j = 1; j <= b.length; j++) {
       for (let i = 1; i <= a.length; i++) {
@@ -217,7 +221,9 @@ export const usePatientSearch = (
           fuzzyMatch(field, debouncedSearchTerm)
         );
 
-        if (basicMatch) return true;
+        if (basicMatch) {
+          return true;
+        }
 
         // Healthcare-specific search (medical conditions, allergies, medications)
         const medicalFields = [

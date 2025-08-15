@@ -134,8 +134,12 @@ const formatValue = (value: number, format: string) => {
 };
 
 const getChangeColor = (change: number) => {
-  if (change > 0) return 'text-green-600';
-  if (change < 0) return 'text-red-600';
+  if (change > 0) {
+    return 'text-green-600';
+  }
+  if (change < 0) {
+    return 'text-red-600';
+  }
   return 'text-gray-600';
 };
 
@@ -152,12 +156,15 @@ const getChangeIcon = (trend: string) => {
 
 const getBenchmarkStatus = (value: number, benchmark: number) => {
   const ratio = value / benchmark;
-  if (ratio >= 1.1)
+  if (ratio >= 1.1) {
     return { status: 'excellent', color: 'text-green-600', icon: CheckCircle };
-  if (ratio >= 0.9)
+  }
+  if (ratio >= 0.9) {
     return { status: 'good', color: 'text-blue-600', icon: Target };
-  if (ratio >= 0.7)
+  }
+  if (ratio >= 0.7) {
     return { status: 'fair', color: 'text-yellow-600', icon: AlertTriangle };
+  }
   return { status: 'poor', color: 'text-red-600', icon: XCircle };
 };
 
@@ -213,7 +220,9 @@ export function AdvancedMetricsDashboard({
 
   // Process time series data for different granularities
   const processedTimeSeriesData = useMemo(() => {
-    if (timeGranularity === 'day') return timeSeriesData;
+    if (timeGranularity === 'day') {
+      return timeSeriesData;
+    }
 
     const grouped = timeSeriesData.reduce(
       (acc, item) => {
@@ -232,7 +241,9 @@ export function AdvancedMetricsDashboard({
         if (!acc[key]) {
           acc[key] = { date: key, count: 0 };
           Object.keys(item).forEach((k) => {
-            if (k !== 'date') acc[key][k] = 0;
+            if (k !== 'date') {
+              acc[key][k] = 0;
+            }
           });
         }
 
@@ -252,10 +263,10 @@ export function AdvancedMetricsDashboard({
       const processed = { ...item };
       Object.keys(processed).forEach((k) => {
         if (k !== 'date' && k !== 'count' && typeof processed[k] === 'number') {
-          processed[k] = processed[k] / item.count;
+          processed[k] /= item.count;
         }
       });
-      delete processed.count;
+      processed.count = undefined;
       return processed;
     });
   }, [timeSeriesData, timeGranularity]);
@@ -271,7 +282,9 @@ export function AdvancedMetricsDashboard({
 
   // Custom tooltip for charts
   const CustomTooltip = ({ active, payload, label }: any) => {
-    if (!(active && payload && payload.length)) return null;
+    if (!(active && payload && payload.length)) {
+      return null;
+    }
 
     return (
       <div className="max-w-xs rounded-lg border bg-white p-4 shadow-lg">

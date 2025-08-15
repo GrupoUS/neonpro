@@ -108,14 +108,14 @@ interface PredictiveAdjustment {
 }
 
 class RealTimeAdaptiveScheduling {
-  private supabase = createClient();
-  private aiCore: AISchedulingCore;
-  private realtimeChannel: RealtimeChannel | null = null;
-  private eventQueue: ScheduleEventData[] = [];
-  private activeActions: Map<string, AdaptiveAction> = new Map();
-  private conflictResolver: ConflictResolver;
-  private predictiveAnalyzer: PredictiveAnalyzer;
-  private isMonitoring = false;
+  private readonly supabase = createClient();
+  private readonly aiCore: AISchedulingCore;
+  private readonly realtimeChannel: RealtimeChannel | null = null;
+  private readonly eventQueue: ScheduleEventData[] = [];
+  private readonly activeActions: Map<string, AdaptiveAction> = new Map();
+  private readonly conflictResolver: ConflictResolver;
+  private readonly predictiveAnalyzer: PredictiveAnalyzer;
+  private readonly isMonitoring = false;
 
   constructor(
     aiCore: AISchedulingCore,
@@ -778,8 +778,6 @@ class RealTimeAdaptiveScheduling {
 
 // Helper classes
 class ConflictResolver {
-  constructor(_supabase: any, _aiCore: AISchedulingCore) {}
-
   async detectConflicts(): Promise<ScheduleConflict[]> {
     // Implementation for conflict detection
     return [];
@@ -791,8 +789,6 @@ class ConflictResolver {
 }
 
 class PredictiveAnalyzer {
-  constructor(_supabase: any) {}
-
   async generatePredictiveAdjustments(): Promise<PredictiveAdjustment[]> {
     // Implementation for predictive analysis
     return [];

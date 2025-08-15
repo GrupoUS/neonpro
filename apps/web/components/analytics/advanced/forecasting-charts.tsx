@@ -167,11 +167,13 @@ export function ForecastingCharts({
 
   // Calculate forecast insights
   const forecastInsights = useMemo(() => {
-    if (forecastData.length === 0) return null;
+    if (forecastData.length === 0) {
+      return null;
+    }
 
     const _firstForecast = forecastData[0];
-    const lastForecast = forecastData[forecastData.length - 1];
-    const lastHistorical = historicalData[historicalData.length - 1];
+    const lastForecast = forecastData.at(-1);
+    const lastHistorical = historicalData.at(-1);
 
     const growth = lastHistorical
       ? ((lastForecast.predicted - lastHistorical.value) /
@@ -216,7 +218,9 @@ export function ForecastingCharts({
 
   // Custom tooltip for forecast chart
   const ForecastTooltip = ({ active, payload, label }: any) => {
-    if (!(active && payload && payload.length)) return null;
+    if (!(active && payload && payload.length)) {
+      return null;
+    }
 
     const data = payload[0].payload;
     const isHistorical = data.type === 'historical';
@@ -460,7 +464,7 @@ export function ForecastingCharts({
                       label={{ value: 'Now', position: 'topRight' }}
                       stroke="#6b7280"
                       strokeDasharray="2 2"
-                      x={historicalData[historicalData.length - 1]?.date}
+                      x={historicalData.at(-1)?.date}
                     />
 
                     <Brush
@@ -593,7 +597,7 @@ export function ForecastingCharts({
               {/* Scenario Summary Cards */}
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {scenarios.map((scenario) => {
-                  const lastForecast = scenario.data[scenario.data.length - 1];
+                  const lastForecast = scenario.data.at(-1);
                   const firstForecast = scenario.data[0];
                   const growth = firstForecast
                     ? ((lastForecast.predicted - firstForecast.predicted) /

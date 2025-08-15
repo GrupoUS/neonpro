@@ -86,7 +86,9 @@ export class DemandForecastingService {
       .gte('created_at', startDate.toISOString())
       .order('created_at', { ascending: true });
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     return (
       transactions?.map((tx) => ({
@@ -138,7 +140,9 @@ export class DemandForecastingService {
       .in('status', ['completed', 'in_progress'])
       .order('date', { ascending: true });
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     return (
       appointments
@@ -167,7 +171,9 @@ export class DemandForecastingService {
   analyzeSeasonalPatterns(
     consumptionData: ConsumptionData[]
   ): SeasonalPattern[] {
-    if (consumptionData.length < 30) return []; // Dados insuficientes
+    if (consumptionData.length < 30) {
+      return []; // Dados insuficientes
+    }
 
     const patterns: SeasonalPattern[] = [];
 
@@ -355,7 +361,9 @@ export class DemandForecastingService {
       .eq('id', input.itemId)
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Analisar padrões sazonais
     const seasonalPatterns = this.analyzeSeasonalPatterns(historicalData);
@@ -552,8 +560,12 @@ export class DemandForecastingService {
     context?: string,
     appointmentId?: string
   ): ConsumptionData['type'] {
-    if (appointmentId) return 'appointment_based';
-    if (context?.includes('emergency')) return 'emergency';
+    if (appointmentId) {
+      return 'appointment_based';
+    }
+    if (context?.includes('emergency')) {
+      return 'emergency';
+    }
     return 'routine';
   }
 
@@ -706,7 +718,9 @@ export class DemandForecastingService {
 
   private calculateMAPE(actual: number[], predicted: number[]): number {
     const apeSum = actual.reduce((sum, val, idx) => {
-      if (val === 0) return sum;
+      if (val === 0) {
+        return sum;
+      }
       return sum + Math.abs((val - (predicted[idx] || 0)) / val);
     }, 0);
 
@@ -723,7 +737,9 @@ export class DemandForecastingService {
   }
 
   private calculateTrend(data: number[]): number {
-    if (data.length < 2) return 0;
+    if (data.length < 2) {
+      return 0;
+    }
 
     const firstHalf = data.slice(0, Math.floor(data.length / 2));
     const secondHalf = data.slice(Math.ceil(data.length / 2));
@@ -740,12 +756,16 @@ export class DemandForecastingService {
     actual: number[],
     predicted: number[]
   ): number {
-    if (actual.length === 0 || predicted.length === 0) return 0;
+    if (actual.length === 0 || predicted.length === 0) {
+      return 0;
+    }
 
-    const lastActual = actual[actual.length - 1];
-    const lastPredicted = predicted[predicted.length - 1] || 0;
+    const lastActual = actual.at(-1);
+    const lastPredicted = predicted.at(-1) || 0;
 
-    if (lastActual === 0) return 0;
+    if (lastActual === 0) {
+      return 0;
+    }
     return 1 - Math.abs((lastActual - lastPredicted) / lastActual);
   }
 
@@ -776,8 +796,12 @@ export class DemandForecastingService {
       patterns.forEach((pattern) => {
         if (pattern.pattern === 'weekly') {
           const dayOfWeek = idx % 7;
-          if (pattern.peaks.includes(dayOfWeek)) seasonalFactor *= 1.2;
-          if (pattern.valleys.includes(dayOfWeek)) seasonalFactor *= 0.8;
+          if (pattern.peaks.includes(dayOfWeek)) {
+            seasonalFactor *= 1.2;
+          }
+          if (pattern.valleys.includes(dayOfWeek)) {
+            seasonalFactor *= 0.8;
+          }
         }
       });
 
@@ -786,7 +810,9 @@ export class DemandForecastingService {
   }
 
   private projectTrend(trend: number[], _periods: number): number {
-    if (trend.length < 2) return trend[0] || 0;
+    if (trend.length < 2) {
+      return trend[0] || 0;
+    }
 
     const recentTrend = trend.slice(-Math.min(7, trend.length));
     return recentTrend.reduce((sum, val) => sum + val, 0) / recentTrend.length;
@@ -803,8 +829,12 @@ export class DemandForecastingService {
     patterns.forEach((pattern) => {
       if (pattern.pattern === 'monthly') {
         const month = currentPeriod.getMonth();
-        if (pattern.peaks.includes(month)) adjustment *= 1.2;
-        if (pattern.valleys.includes(month)) adjustment *= 0.8;
+        if (pattern.peaks.includes(month)) {
+          adjustment *= 1.2;
+        }
+        if (pattern.valleys.includes(month)) {
+          adjustment *= 0.8;
+        }
       }
     });
 
@@ -825,7 +855,9 @@ export class DemandForecastingService {
   }
 
   private calculateMovingAverageError(data: number[], window: number): number {
-    if (data.length < window) return 0;
+    if (data.length < window) {
+      return 0;
+    }
 
     const errors: number[] = [];
     for (let i = window; i < data.length; i++) {
@@ -838,7 +870,9 @@ export class DemandForecastingService {
   }
 
   private calculateMovingAverageMAPE(data: number[], window: number): number {
-    if (data.length < window) return 0;
+    if (data.length < window) {
+      return 0;
+    }
 
     const apes: number[] = [];
     for (let i = window; i < data.length; i++) {
@@ -853,7 +887,9 @@ export class DemandForecastingService {
   }
 
   private calculateMovingAverageRMSE(data: number[], window: number): number {
-    if (data.length < window) return 0;
+    if (data.length < window) {
+      return 0;
+    }
 
     const squaredErrors: number[] = [];
     for (let i = window; i < data.length; i++) {

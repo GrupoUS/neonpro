@@ -59,7 +59,7 @@ const cohortConfigSchema = z.object({
 });
 
 export class CohortAnalyzer {
-  private supabase = createClient();
+  private readonly supabase = createClient();
 
   /**
    * Generate cohort definitions based on subscription start dates
@@ -518,11 +518,13 @@ export class CohortAnalyzer {
   }
 
   private calculateTrendDirection(data: { period: number; value: number }[]) {
-    if (data.length < 2) return { direction: 'stable', rate: 0, confidence: 0 };
+    if (data.length < 2) {
+      return { direction: 'stable', rate: 0, confidence: 0 };
+    }
 
     const sortedData = data.sort((a, b) => a.period - b.period);
     const firstValue = sortedData[0].value;
-    const lastValue = sortedData[sortedData.length - 1].value;
+    const lastValue = sortedData.at(-1).value;
 
     const changeRate =
       firstValue > 0 ? ((lastValue - firstValue) / firstValue) * 100 : 0;

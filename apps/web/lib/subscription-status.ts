@@ -83,14 +83,16 @@ interface CacheEntry {
 }
 
 class SubscriptionCache {
-  private cache = new Map<string, CacheEntry>();
+  private readonly cache = new Map<string, CacheEntry>();
   private readonly DEFAULT_TTL = 5 * 60 * 1000; // 5 minutes
   private readonly GRACE_TTL = 30 * 1000; // 30 seconds for grace period
   private readonly ERROR_TTL = 30 * 1000; // 30 seconds for errors
 
   get(key: string): SubscriptionValidationResult | null {
     const entry = this.cache.get(key);
-    if (!entry) return null;
+    if (!entry) {
+      return null;
+    }
 
     if (entry.expires <= Date.now()) {
       this.cache.delete(key);

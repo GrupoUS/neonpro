@@ -47,12 +47,24 @@ export async function GET(request: NextRequest) {
 
     // Build filters
     const filters: any = {};
-    if (userId) filters.user_id = userId;
-    if (sessionId) filters.session_id = sessionId;
-    if (eventType) filters.event_type = eventType;
-    if (severity) filters.severity = severity;
-    if (startDate) filters.start_date = startDate;
-    if (endDate) filters.end_date = endDate;
+    if (userId) {
+      filters.user_id = userId;
+    }
+    if (sessionId) {
+      filters.session_id = sessionId;
+    }
+    if (eventType) {
+      filters.event_type = eventType;
+    }
+    if (severity) {
+      filters.severity = severity;
+    }
+    if (startDate) {
+      filters.start_date = startDate;
+    }
+    if (endDate) {
+      filters.end_date = endDate;
+    }
 
     const events = await manager.getSecurityEvents(filters, limit, offset);
     const totalCount = await manager.getSecurityEventsCount(filters);

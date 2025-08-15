@@ -280,7 +280,7 @@ const Dashboard = () => {
         <div className="-bottom-1/2 -right-1/2 absolute h-full w-full animate-background-position-spin bg-gradient-to-tl from-emerald-600/5 via-cyan-600/5 to-blue-600/5" />
 
         {/* Floating particles */}
-        {[...Array(20)].map((_, i) => (
+        {[...new Array(20)].map((_, i) => (
           <motion.div
             animate={{
               x: Math.random() * window.innerWidth,
@@ -477,7 +477,7 @@ const Dashboard = () => {
                               </span>
                               {patient.satisfaction && (
                                 <div className="flex">
-                                  {[...Array(patient.satisfaction)].map(
+                                  {[...new Array(patient.satisfaction)].map(
                                     (_, i) => (
                                       <Star
                                         className="h-3 w-3 fill-yellow-400 text-yellow-400"

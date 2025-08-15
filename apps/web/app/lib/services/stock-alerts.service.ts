@@ -44,7 +44,9 @@ export class StockAlertsService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return { success: true, data: config };
     } catch (error) {
       console.error('Error creating alert config:', error);
@@ -82,7 +84,9 @@ export class StockAlertsService {
       }
 
       const { data, error } = await query;
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return { success: true, data };
     } catch (error) {
@@ -115,7 +119,9 @@ export class StockAlertsService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return { success: true, data };
     } catch (error) {
       console.error('Error updating alert config:', error);
@@ -137,7 +143,9 @@ export class StockAlertsService {
         .delete()
         .eq('id', id);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return { success: true };
     } catch (error) {
       console.error('Error deleting alert config:', error);
@@ -192,7 +200,9 @@ export class StockAlertsService {
       }
 
       const { data, error } = await query;
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return { success: true, data };
     } catch (error) {
@@ -216,7 +226,9 @@ export class StockAlertsService {
         .eq('id', id)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return { success: true, data };
     } catch (error) {
       console.error('Error fetching alert:', error);
@@ -246,7 +258,9 @@ export class StockAlertsService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return { success: true, data: alert };
     } catch (error) {
       console.error('Error acknowledging alert:', error);
@@ -276,7 +290,9 @@ export class StockAlertsService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return { success: true, data: alert };
     } catch (error) {
       console.error('Error resolving alert:', error);
@@ -306,7 +322,9 @@ export class StockAlertsService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return { success: true, data: alert };
     } catch (error) {
       console.error('Error dismissing alert:', error);
@@ -334,7 +352,9 @@ export class StockAlertsService {
         .eq('clinic_id', clinic_id)
         .eq('is_active', true);
 
-      if (configError) throw configError;
+      if (configError) {
+        throw configError;
+      }
 
       const results = [];
 
@@ -425,7 +445,9 @@ export class StockAlertsService {
           .insert(alertsToCreate)
           .select();
 
-        if (error) throw error;
+        if (error) {
+          throw error;
+        }
         return { config_id: config.id, alerts_created: data?.length || 0 };
       }
 
@@ -484,7 +506,9 @@ export class StockAlertsService {
           .insert(alertsToCreate)
           .select();
 
-        if (error) throw error;
+        if (error) {
+          throw error;
+        }
         return { config_id: config.id, alerts_created: data?.length || 0 };
       }
 
@@ -533,7 +557,9 @@ export class StockAlertsService {
         .eq('clinic_id', clinic_id)
         .gte('created_at', since.toISOString());
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Processar dados para dashboard
       const summary = {
@@ -579,7 +605,9 @@ export class StockAlertsService {
         .order('created_at', { ascending: false })
         .limit(10);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return { success: true, data };
     } catch (error) {
       console.error('Error fetching critical alerts:', error);

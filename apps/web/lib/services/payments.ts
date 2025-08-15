@@ -110,7 +110,7 @@ export interface PaymentSummary {
 }
 
 export class PaymentsService {
-  private supabase = createClient();
+  private readonly supabase = createClient();
 
   async getAllPayments(): Promise<PaymentWithDetails[]> {
     try {
@@ -127,7 +127,9 @@ export class PaymentsService {
         `)
         .order('payment_date', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return (
         data?.map((payment) => ({
@@ -158,9 +160,13 @@ export class PaymentsService {
         .eq('id', id)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
-      if (!data) return null;
+      if (!data) {
+        return null;
+      }
 
       return {
         ...data,
@@ -181,7 +187,9 @@ export class PaymentsService {
         .eq('accounts_payable_id', payableId)
         .order('payment_date', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data || [];
     } catch (error) {
       console.error('Error fetching payments for payable:', error);
@@ -192,7 +200,9 @@ export class PaymentsService {
   async createPayment(paymentData: PaymentFormData): Promise<Payment> {
     try {
       const { data: currentUser } = await this.supabase.auth.getUser();
-      if (!currentUser.user) throw new Error('Usuário não autenticado');
+      if (!currentUser.user) {
+        throw new Error('Usuário não autenticado');
+      }
 
       const insertData: PaymentInsert = {
         ...paymentData,
@@ -207,7 +217,9 @@ export class PaymentsService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Update accounts payable paid amount if payment is completed
       if (paymentData.status === 'completed') {
@@ -224,7 +236,9 @@ export class PaymentsService {
   async processBulkPayments(bulkData: BulkPaymentData): Promise<Payment[]> {
     try {
       const { data: currentUser } = await this.supabase.auth.getUser();
-      if (!currentUser.user) throw new Error('Usuário não autenticado');
+      if (!currentUser.user) {
+        throw new Error('Usuário não autenticado');
+      }
 
       const payments: PaymentInsert[] = bulkData.payments.map((payment) => ({
         accounts_payable_id: payment.accounts_payable_id,
@@ -244,7 +258,9 @@ export class PaymentsService {
         .insert(payments)
         .select();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Update all related accounts payable
       for (const payment of bulkData.payments) {
@@ -270,7 +286,9 @@ export class PaymentsService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Update accounts payable paid amount if status changed
       if (updateData.status && data.accounts_payable_id) {
@@ -288,14 +306,18 @@ export class PaymentsService {
     try {
       // Get payment details first
       const payment = await this.getPaymentById(id);
-      if (!payment) throw new Error('Pagamento não encontrado');
+      if (!payment) {
+        throw new Error('Pagamento não encontrado');
+      }
 
       const { error } = await this.supabase
         .from('ap_payments')
         .delete()
         .eq('id', id);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Update accounts payable paid amount
       if (payment.accounts_payable_id) {
@@ -323,7 +345,9 @@ export class PaymentsService {
 
       const { data, error } = await query;
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       const payments = data || [];
       const completedPayments = payments.filter(
@@ -379,7 +403,9 @@ export class PaymentsService {
         .or(`reference_number.ilike.%${query}%,notes.ilike.%${query}%`)
         .order('payment_date', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return (
         data?.map((payment) => ({
@@ -405,7 +431,9 @@ export class PaymentsService {
         .neq('status', 'paid')
         .order('due_date', { ascending: true });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data || [];
     } catch (error) {
       console.error('Error fetching overdue payables:', error);
@@ -433,7 +461,9 @@ export class PaymentsService {
         .lte('payment_date', endDate)
         .order('payment_date', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return (
         data?.map((payment) => ({

@@ -169,7 +169,9 @@ export function useSubscription(
       force = false,
       backgroundUpdate = false
     ): Promise<SubscriptionValidationResult | null> => {
-      if (!currentUserId) return null;
+      if (!currentUserId) {
+        return null;
+      }
 
       try {
         // Set loading state (only if not background update)
@@ -370,6 +372,7 @@ export function useSubscription(
       mergedConfig.cacheStrategy,
       mergedConfig.onStatusChange,
       mergedConfig.onError,
+      getCacheTTL,
     ]
   );
 
@@ -422,7 +425,9 @@ export function useSubscription(
    * Prefetch subscription data
    */
   const prefetch = useCallback(async (): Promise<void> => {
-    if (!(mergedConfig.enablePrefetching && currentUserId)) return;
+    if (!(mergedConfig.enablePrefetching && currentUserId)) {
+      return;
+    }
 
     try {
       await fetchSubscription(false, true);
@@ -459,7 +464,9 @@ export function useSubscription(
 
   // Setup real-time subscription
   useEffect(() => {
-    if (!(mergedConfig.enableRealtime && currentUserId)) return;
+    if (!(mergedConfig.enableRealtime && currentUserId)) {
+      return;
+    }
 
     const channel = supabase
       .channel(`subscription_${currentUserId}`)
@@ -498,8 +505,12 @@ export function useSubscription(
 
   // Setup background sync
   useEffect(() => {
-    if (!mergedConfig.enableBackgroundSync || mergedConfig.refetchInterval <= 0)
+    if (
+      !mergedConfig.enableBackgroundSync ||
+      mergedConfig.refetchInterval <= 0
+    ) {
       return;
+    }
 
     backgroundSyncRef.current = setInterval(() => {
       if (currentUserId && !state.isFetching) {
@@ -560,13 +571,17 @@ export function useSubscription(
 
     // Feature access check
     const canAccessFeature = (feature: string): boolean => {
-      if (!(hasAccess && subscription?.plan?.features)) return false;
+      if (!(hasAccess && subscription?.plan?.features)) {
+        return false;
+      }
       return subscription.plan.features.includes(feature);
     };
 
     // Usage limit check
     const getUsageLimit = (resource: string): number | null => {
-      if (!subscription?.plan) return null;
+      if (!subscription?.plan) {
+        return null;
+      }
 
       const limits = {
         patients: subscription.plan.max_patients,

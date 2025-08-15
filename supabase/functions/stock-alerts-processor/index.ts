@@ -353,7 +353,9 @@ async function updatePerformanceMetrics(supabase: any, clinicIds: string[]) {
         .eq('clinic_id', clinicId)
         .eq('is_active', true);
 
-      if (!inventory || inventory.length === 0) continue;
+      if (!inventory || inventory.length === 0) {
+        continue;
+      }
 
       const totalValue = inventory.reduce(
         (sum: number, item: any) =>

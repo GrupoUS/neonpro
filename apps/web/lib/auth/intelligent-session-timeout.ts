@@ -83,12 +83,14 @@ const DEFAULT_TIMEOUT_CONFIGS: Record<UserRole, SessionTimeoutConfig> = {
 
 class IntelligentSessionTimeout {
   private static instance: IntelligentSessionTimeout;
-  private supabase = createClient();
-  private timeoutConfigs: Map<UserRole, SessionTimeoutConfig> = new Map();
-  private activeTimers: Map<string, NodeJS.Timeout> = new Map();
-  private warningTimers: Map<string, NodeJS.Timeout[]> = new Map();
-  private activityListeners: Map<string, () => void> = new Map();
-  private preservationData: Map<string, SessionPreservationData> = new Map();
+  private readonly supabase = createClient();
+  private readonly timeoutConfigs: Map<UserRole, SessionTimeoutConfig> =
+    new Map();
+  private readonly activeTimers: Map<string, NodeJS.Timeout> = new Map();
+  private readonly warningTimers: Map<string, NodeJS.Timeout[]> = new Map();
+  private readonly activityListeners: Map<string, () => void> = new Map();
+  private readonly preservationData: Map<string, SessionPreservationData> =
+    new Map();
 
   private constructor() {
     this.initializeDefaultConfigs();
@@ -378,7 +380,7 @@ class IntelligentSessionTimeout {
 
       const lastActivity =
         activities.length > 0
-          ? new Date(activities[activities.length - 1].created_at)
+          ? new Date(activities.at(-1).created_at)
           : new Date(session.created_at);
 
       return {

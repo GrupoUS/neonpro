@@ -286,7 +286,9 @@ export function CRMProvider({ children }: { children: ReactNode }) {
         )
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       dispatch({ type: 'SET_CUSTOMERS', payload: data || [] });
     } catch (error) {
@@ -314,7 +316,9 @@ export function CRMProvider({ children }: { children: ReactNode }) {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       dispatch({ type: 'ADD_CUSTOMER', payload: data });
       toast.success('Cliente criado com sucesso');
@@ -334,7 +338,9 @@ export function CRMProvider({ children }: { children: ReactNode }) {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       dispatch({ type: 'UPDATE_CUSTOMER', payload: data });
       toast.success('Cliente atualizado com sucesso');
@@ -352,7 +358,9 @@ export function CRMProvider({ children }: { children: ReactNode }) {
         .delete()
         .eq('id', customerId);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       dispatch({ type: 'DELETE_CUSTOMER', payload: customerId });
       toast.success('Cliente excluído com sucesso');
@@ -380,7 +388,9 @@ export function CRMProvider({ children }: { children: ReactNode }) {
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       dispatch({ type: 'SET_SEGMENTS', payload: data || [] });
     } catch (error) {
@@ -408,7 +418,9 @@ export function CRMProvider({ children }: { children: ReactNode }) {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       dispatch({ type: 'ADD_SEGMENT', payload: data });
       toast.success('Segmento criado com sucesso');
@@ -428,7 +440,9 @@ export function CRMProvider({ children }: { children: ReactNode }) {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       dispatch({ type: 'UPDATE_SEGMENT', payload: data });
       toast.success('Segmento atualizado com sucesso');
@@ -446,7 +460,9 @@ export function CRMProvider({ children }: { children: ReactNode }) {
         .delete()
         .eq('id', segmentId);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       dispatch({ type: 'DELETE_SEGMENT', payload: segmentId });
       toast.success('Segmento excluído com sucesso');
@@ -474,7 +490,9 @@ export function CRMProvider({ children }: { children: ReactNode }) {
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       dispatch({ type: 'SET_CAMPAIGNS', payload: data || [] });
     } catch (error) {
@@ -502,7 +520,9 @@ export function CRMProvider({ children }: { children: ReactNode }) {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       dispatch({ type: 'ADD_CAMPAIGN', payload: data });
       toast.success('Campanha criada com sucesso');
@@ -522,7 +542,9 @@ export function CRMProvider({ children }: { children: ReactNode }) {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       dispatch({ type: 'UPDATE_CAMPAIGN', payload: data });
       toast.success('Campanha atualizada com sucesso');
@@ -540,7 +562,9 @@ export function CRMProvider({ children }: { children: ReactNode }) {
         .delete()
         .eq('id', campaignId);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       dispatch({ type: 'DELETE_CAMPAIGN', payload: campaignId });
       toast.success('Campanha excluída com sucesso');
@@ -581,7 +605,9 @@ export function CRMProvider({ children }: { children: ReactNode }) {
         customer.profile?.email?.toLowerCase().includes(search) ||
         customer.profile?.phone?.includes(search);
 
-      if (!matchesSearch) return false;
+      if (!matchesSearch) {
+        return false;
+      }
     }
 
     // Status filter

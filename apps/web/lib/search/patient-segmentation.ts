@@ -119,9 +119,9 @@ export interface SegmentationAnalytics {
  * Creates and manages intelligent patient segments
  */
 export class PatientSegmentation {
-  private supabase: any;
-  private segmentCache: Map<string, PatientSegment> = new Map();
-  private cacheExpiry: Map<string, number> = new Map();
+  private readonly supabase: any;
+  private readonly segmentCache: Map<string, PatientSegment> = new Map();
+  private readonly cacheExpiry: Map<string, number> = new Map();
   private readonly CACHE_DURATION = 30 * 60 * 1000; // 30 minutes
 
   constructor(supabaseUrl?: string, supabaseKey?: string) {
@@ -136,7 +136,7 @@ export class PatientSegmentation {
   async createSegment(
     name: string,
     naturalLanguageQuery: string,
-    language: SupportedLanguage = 'pt',
+    language: SupportedLanguage,
     createdBy: string,
     description?: string
   ): Promise<PatientSegment> {
@@ -1035,7 +1035,9 @@ export class PatientSegmentation {
    * Calculate age from birth date
    */
   private calculateAge(birthDate: string): number {
-    if (!birthDate) return 0;
+    if (!birthDate) {
+      return 0;
+    }
 
     const birth = new Date(birthDate);
     const today = new Date();
@@ -1138,11 +1140,17 @@ export class PatientSegmentation {
 
     members.forEach((member) => {
       const age = member.demographics.age;
-      if (age <= 18) ageGroups['0-18']++;
-      else if (age <= 30) ageGroups['19-30']++;
-      else if (age <= 45) ageGroups['31-45']++;
-      else if (age <= 60) ageGroups['46-60']++;
-      else ageGroups['61+']++;
+      if (age <= 18) {
+        ageGroups['0-18']++;
+      } else if (age <= 30) {
+        ageGroups['19-30']++;
+      } else if (age <= 45) {
+        ageGroups['31-45']++;
+      } else if (age <= 60) {
+        ageGroups['46-60']++;
+      } else {
+        ageGroups['61+']++;
+      }
     });
 
     return Object.entries(ageGroups)
@@ -1187,7 +1195,9 @@ export class PatientSegmentation {
    * Calculate average match score
    */
   private calculateAverageMatchScore(members: PatientSegmentMember[]): number {
-    if (members.length === 0) return 0;
+    if (members.length === 0) {
+      return 0;
+    }
 
     const totalScore = members.reduce(
       (sum, member) => sum + member.matchScore,
@@ -1202,7 +1212,9 @@ export class PatientSegmentation {
   private calculateAverageVisitFrequency(
     members: PatientSegmentMember[]
   ): number {
-    if (members.length === 0) return 0;
+    if (members.length === 0) {
+      return 0;
+    }
 
     const totalFrequency = members.reduce(
       (sum, member) => sum + member.behavioralMetrics.visitFrequency,

@@ -20,8 +20,9 @@ export interface RecoveryStrategy {
 }
 
 export class ErrorRecoverySystem {
-  private recoveryStrategies: Map<string, RecoveryStrategy> = new Map();
-  private recoveryAttempts: Map<string, number> = new Map();
+  private readonly recoveryStrategies: Map<string, RecoveryStrategy> =
+    new Map();
+  private readonly recoveryAttempts: Map<string, number> = new Map();
   private recoveryHistory: ErrorContext[] = [];
 
   constructor() {

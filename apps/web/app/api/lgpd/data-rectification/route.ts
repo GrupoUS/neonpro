@@ -128,7 +128,9 @@ interface RectificationResult {
 // Data validation functions
 function validateCPF(cpf: string): boolean {
   const cleanCPF = cpf.replace(/\D/g, '');
-  if (cleanCPF.length !== 11) return false;
+  if (cleanCPF.length !== 11) {
+    return false;
+  }
 
   // Check for invalid patterns
   const invalidPatterns = [
@@ -143,7 +145,9 @@ function validateCPF(cpf: string): boolean {
     '88888888888',
     '99999999999',
   ];
-  if (invalidPatterns.includes(cleanCPF)) return false;
+  if (invalidPatterns.includes(cleanCPF)) {
+    return false;
+  }
 
   // Validate check digits
   let sum = 0;
@@ -151,14 +155,18 @@ function validateCPF(cpf: string): boolean {
     sum += Number.parseInt(cleanCPF.charAt(i), 10) * (10 - i);
   }
   let checkDigit1 = 11 - (sum % 11);
-  if (checkDigit1 >= 10) checkDigit1 = 0;
+  if (checkDigit1 >= 10) {
+    checkDigit1 = 0;
+  }
 
   sum = 0;
   for (let i = 0; i < 10; i++) {
     sum += Number.parseInt(cleanCPF.charAt(i), 10) * (11 - i);
   }
   let checkDigit2 = 11 - (sum % 11);
-  if (checkDigit2 >= 10) checkDigit2 = 0;
+  if (checkDigit2 >= 10) {
+    checkDigit2 = 0;
+  }
 
   return (
     checkDigit1 === Number.parseInt(cleanCPF.charAt(9), 10) &&
@@ -302,7 +310,9 @@ function requiresApproval(
   changes: Record<string, any>
 ): boolean {
   // Medical information always requires approval
-  if (requestType === 'medical') return true;
+  if (requestType === 'medical') {
+    return true;
+  }
 
   // Sensitive profile changes may require approval
   const sensitiveFields = [
@@ -335,7 +345,9 @@ async function createApprovalRequest(
     },
   ]);
 
-  if (error) throw error;
+  if (error) {
+    throw error;
+  }
 }
 
 // Log rectification request

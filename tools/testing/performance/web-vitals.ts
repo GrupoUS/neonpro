@@ -51,10 +51,16 @@ export function getPerformanceGrade(
   const thresholds =
     PERFORMANCE_THRESHOLDS[metric as keyof typeof PERFORMANCE_THRESHOLDS];
 
-  if (!thresholds) return 'poor';
+  if (!thresholds) {
+    return 'poor';
+  }
 
-  if (value <= thresholds.GOOD) return 'good';
-  if (value <= thresholds.NEEDS_IMPROVEMENT) return 'needs-improvement';
+  if (value <= thresholds.GOOD) {
+    return 'good';
+  }
+  if (value <= thresholds.NEEDS_IMPROVEMENT) {
+    return 'needs-improvement';
+  }
   return 'poor';
 }
 

@@ -1,68 +1,68 @@
 /* eslint-disable */
 window.PR_SHOULD_USE_CONTINUATION = true;
 (() => {
-  var h = ['break,continue,do,else,for,if,return,while'];
-  var u = [
+  const h = ['break,continue,do,else,for,if,return,while'];
+  const u = [
     h,
     'auto,case,char,const,default,double,enum,extern,float,goto,int,long,register,short,signed,sizeof,static,struct,switch,typedef,union,unsigned,void,volatile',
   ];
-  var p = [
+  const p = [
     u,
     'catch,class,delete,false,import,new,operator,private,protected,public,this,throw,true,try,typeof',
   ];
-  var l = [
+  const l = [
     p,
     'alignof,align_union,asm,axiom,bool,concept,concept_map,const_cast,constexpr,decltype,dynamic_cast,explicit,export,friend,inline,late_check,mutable,namespace,nullptr,reinterpret_cast,static_assert,static_cast,template,typeid,typename,using,virtual,where',
   ];
-  var x = [
+  const x = [
     p,
     'abstract,boolean,byte,extends,final,finally,implements,import,instanceof,null,native,package,strictfp,super,synchronized,throws,transient',
   ];
-  var R = [
+  const R = [
     x,
     'as,base,by,checked,decimal,delegate,descending,dynamic,event,fixed,foreach,from,group,implicit,in,interface,internal,into,is,lock,object,out,override,orderby,params,partial,readonly,ref,sbyte,sealed,stackalloc,string,select,uint,ulong,unchecked,unsafe,ushort,var',
   ];
-  var r =
+  const r =
     'all,and,by,catch,class,else,extends,false,finally,for,if,in,is,isnt,loop,new,no,not,null,of,off,on,or,return,super,then,true,try,unless,until,when,while,yes';
-  var w = [
+  const w = [
     p,
     'debugger,eval,export,function,get,null,set,undefined,var,with,Infinity,NaN',
   ];
-  var s =
+  const s =
     'caller,delete,die,do,dump,elsif,eval,exit,foreach,for,goto,if,import,last,local,my,next,no,our,print,package,redo,require,sub,undef,unless,until,use,wantarray,while,BEGIN,END';
-  var I = [
+  const I = [
     h,
     'and,as,assert,class,def,del,elif,except,exec,finally,from,global,import,in,is,lambda,nonlocal,not,or,pass,print,raise,try,with,yield,False,True,None',
   ];
-  var f = [
+  const f = [
     h,
     'alias,and,begin,case,class,def,defined,elsif,end,ensure,false,in,module,next,nil,not,or,redo,rescue,retry,self,super,then,true,undef,unless,until,when,yield,BEGIN,END',
   ];
-  var H = [h, 'case,done,elif,esac,eval,fi,function,in,local,set,then,until'];
-  var A = [l, R, w, s + I, f, H];
-  var e =
+  const H = [h, 'case,done,elif,esac,eval,fi,function,in,local,set,then,until'];
+  const A = [l, R, w, s + I, f, H];
+  const e =
     /^(DIR|FILE|vector|(de|priority_)?queue|list|stack|(const_)?iterator|(multi)?(set|map)|bitset|u?(int|float)\d*)/;
-  var C = 'str';
-  var z = 'kwd';
-  var j = 'com';
-  var O = 'typ';
-  var G = 'lit';
-  var L = 'pun';
-  var F = 'pln';
-  var m = 'tag';
-  var E = 'dec';
-  var J = 'src';
-  var P = 'atn';
-  var n = 'atv';
-  var N = 'nocode';
-  var M =
+  const C = 'str';
+  const z = 'kwd';
+  const j = 'com';
+  const O = 'typ';
+  const G = 'lit';
+  const L = 'pun';
+  const F = 'pln';
+  const m = 'tag';
+  const E = 'dec';
+  const J = 'src';
+  const P = 'atn';
+  const n = 'atv';
+  const N = 'nocode';
+  const M =
     '(?:^^\\.?|[+-]|\\!|\\!=|\\!==|\\#|\\%|\\%=|&|&&|&&=|&=|\\(|\\*|\\*=|\\+=|\\,|\\-=|\\->|\\/|\\/=|:|::|\\;|<|<<|<<=|<=|=|==|===|>|>=|>>|>>=|>>>|>>>=|\\?|\\@|\\[|\\^|\\^=|\\^\\^|\\^\\^=|\\{|\\||\\|=|\\|\\||\\|\\|=|\\~|break|case|continue|delete|do|else|finally|instanceof|return|throw|try|typeof)\\s*';
   function k(Z) {
-    var ad = 0;
-    var S = false;
-    var ac = false;
-    for (var V = 0, U = Z.length; V < U; ++V) {
-      var ae = Z[V];
+    let ad = 0;
+    let S = false;
+    let ac = false;
+    for (let V = 0, U = Z.length; V < U; ++V) {
+      const ae = Z[V];
       if (ae.ignoreCase) {
         ac = true;
       } else if (
@@ -75,13 +75,13 @@ window.PR_SHOULD_USE_CONTINUATION = true;
         break;
       }
     }
-    var Y = { b: 8, t: 9, n: 10, v: 11, f: 12, r: 13 };
+    const Y = { b: 8, t: 9, n: 10, v: 11, f: 12, r: 13 };
     function ab(ah) {
-      var ag = ah.charCodeAt(0);
+      let ag = ah.charCodeAt(0);
       if (ag !== 92) {
         return ag;
       }
-      var af = ah.charAt(1);
+      const af = ah.charAt(1);
       ag = Y[af];
       if (ag) {
         return ag;
@@ -98,28 +98,28 @@ window.PR_SHOULD_USE_CONTINUATION = true;
       if (af < 32) {
         return (af < 16 ? '\\x0' : '\\x') + af.toString(16);
       }
-      var ag = String.fromCharCode(af);
+      let ag = String.fromCharCode(af);
       if (ag === '\\' || ag === '-' || ag === '[' || ag === ']') {
         ag = `\\${ag}`;
       }
       return ag;
     }
     function X(am) {
-      var aq = am
+      const aq = am
         .substring(1, am.length - 1)
         .match(
           /\\u[0-9A-Fa-f]{4}|\\x[0-9A-Fa-f]{2}|\\[0-3][0-7]{0,2}|\\[0-7]{1,2}|\\[\s\S]|-|[^-\\]/g
         );
-      var ak = [];
-      var af = [];
-      var ao = aq[0] === '^';
-      for (var ar = ao ? 1 : 0, aj = aq.length; ar < aj; ++ar) {
-        var ah = aq[ar];
+      const ak = [];
+      const af = [];
+      const ao = aq[0] === '^';
+      for (let ar = ao ? 1 : 0, aj = aq.length; ar < aj; ++ar) {
+        const ah = aq[ar];
         if (/\\[bdsw]/i.test(ah)) {
           ak.push(ah);
         } else {
-          var ag = ab(ah);
-          var al;
+          const ag = ab(ah);
+          let al;
           if (ar + 2 < aj && aq[ar + 1] === '-') {
             al = ab(aq[ar + 2]);
             ar += 2;
@@ -138,23 +138,23 @@ window.PR_SHOULD_USE_CONTINUATION = true;
         }
       }
       af.sort((av, au) => av[0] - au[0] || au[1] - av[1]);
-      var ai = [];
-      var ap = [Number.NaN, Number.NaN];
-      for (var ar = 0; ar < af.length; ++ar) {
-        var at = af[ar];
+      const ai = [];
+      let ap = [Number.NaN, Number.NaN];
+      for (let ar = 0; ar < af.length; ++ar) {
+        const at = af[ar];
         if (at[0] <= ap[1] + 1) {
           ap[1] = Math.max(ap[1], at[1]);
         } else {
           ai.push((ap = at));
         }
       }
-      var an = ['['];
+      const an = ['['];
       if (ao) {
         an.push('^');
       }
       an.push.apply(an, ak);
-      for (var ar = 0; ar < ai.length; ++ar) {
-        var at = ai[ar];
+      for (let ar = 0; ar < ai.length; ++ar) {
+        const at = ai[ar];
         an.push(T(at[0]));
         if (at[1] > at[0]) {
           if (at[1] + 1 > at[0]) {
@@ -167,55 +167,55 @@ window.PR_SHOULD_USE_CONTINUATION = true;
       return an.join('');
     }
     function W(al) {
-      var aj = al.source.match(
+      const aj = al.source.match(
         /(?:\[(?:[^\x5C\x5D]|\\[\s\S])*\]|\\u[A-Fa-f0-9]{4}|\\x[A-Fa-f0-9]{2}|\\[0-9]+|\\[^ux0-9]|\(\?[:!=]|[()^]|[^\x5B\x5C()^]+)/g
       );
-      var ah = aj.length;
-      var an = [];
-      for (var ak = 0, am = 0; ak < ah; ++ak) {
-        var ag = aj[ak];
+      const ah = aj.length;
+      const an = [];
+      for (let ak = 0, am = 0; ak < ah; ++ak) {
+        const ag = aj[ak];
         if (ag === '(') {
           ++am;
         } else if (ag.charAt(0) === '\\') {
-          var af = +ag.substring(1);
+          const af = Number(ag.substring(1));
           if (af && af <= am) {
             an[af] = -1;
           }
         }
       }
-      for (var ak = 1; ak < an.length; ++ak) {
+      for (let ak = 1; ak < an.length; ++ak) {
         if (an[ak] === -1) {
           an[ak] = ++ad;
         }
       }
-      for (var ak = 0, am = 0; ak < ah; ++ak) {
-        var ag = aj[ak];
+      for (let ak = 0, am = 0; ak < ah; ++ak) {
+        const ag = aj[ak];
         if (ag === '(') {
           ++am;
           if (an[am] === undefined) {
             aj[ak] = '(?:';
           }
         } else if (ag.charAt(0) === '\\') {
-          var af = +ag.substring(1);
+          const af = Number(ag.substring(1));
           if (af && af <= am) {
             aj[ak] = `\\${an[am]}`;
           }
         }
       }
-      for (var ak = 0, _am = 0; ak < ah; ++ak) {
+      for (let ak = 0, _am = 0; ak < ah; ++ak) {
         if (aj[ak] === '^' && aj[ak + 1] !== '^') {
           aj[ak] = '';
         }
       }
       if (al.ignoreCase && S) {
-        for (var ak = 0; ak < ah; ++ak) {
-          var ag = aj[ak];
-          var ai = ag.charAt(0);
+        for (let ak = 0; ak < ah; ++ak) {
+          const ag = aj[ak];
+          const ai = ag.charAt(0);
           if (ag.length >= 2 && ai === '[') {
             aj[ak] = X(ag);
           } else if (ai !== '\\') {
             aj[ak] = ag.replace(/[a-zA-Z]/g, (ao) => {
-              var ap = ao.charCodeAt(0);
+              const ap = ao.charCodeAt(0);
               return `[${String.fromCharCode(ap & ~32, ap | 32)}]`;
             });
           }
@@ -223,9 +223,9 @@ window.PR_SHOULD_USE_CONTINUATION = true;
       }
       return aj.join('');
     }
-    var aa = [];
-    for (var V = 0, U = Z.length; V < U; ++V) {
-      var ae = Z[V];
+    const aa = [];
+    for (let V = 0, U = Z.length; V < U; ++V) {
+      const ae = Z[V];
       if (ae.global || ae.multiline) {
         throw new Error(`${ae}`);
       }
@@ -234,12 +234,12 @@ window.PR_SHOULD_USE_CONTINUATION = true;
     return new RegExp(aa.join('|'), ac ? 'gi' : 'g');
   }
   function a(V) {
-    var U = /(?:^|\s)nocode(?:\s|$)/;
-    var X = [];
-    var T = 0;
-    var Z = [];
-    var W = 0;
-    var S;
+    const U = /(?:^|\s)nocode(?:\s|$)/;
+    const X = [];
+    let T = 0;
+    const Z = [];
+    let W = 0;
+    let S;
     if (V.currentStyle) {
       S = V.currentStyle.whiteSpace;
     } else if (window.getComputedStyle) {
@@ -247,17 +247,17 @@ window.PR_SHOULD_USE_CONTINUATION = true;
         .getComputedStyle(V, null)
         .getPropertyValue('white-space');
     }
-    var Y = S && S.substring(0, 3) === 'pre';
+    const Y = S && S.substring(0, 3) === 'pre';
     function aa(ab) {
       switch (ab.nodeType) {
         case 1: {
           if (U.test(ab.className)) {
             return;
           }
-          for (var ae = ab.firstChild; ae; ae = ae.nextSibling) {
+          for (let ae = ab.firstChild; ae; ae = ae.nextSibling) {
             aa(ae);
           }
-          var ad = ab.nodeName;
+          const ad = ab.nodeName;
           if (ad === 'BR' || ad === 'LI') {
             X[W] = '\n';
             Z[W << 1] = T++;
@@ -267,7 +267,7 @@ window.PR_SHOULD_USE_CONTINUATION = true;
         }
         case 3:
         case 4: {
-          var ac = ab.nodeValue;
+          let ac = ab.nodeValue;
           if (ac.length) {
             if (Y) {
               ac = ac.replace(/\r\n?/g, '\n');
@@ -290,36 +290,36 @@ window.PR_SHOULD_USE_CONTINUATION = true;
     if (!U) {
       return;
     }
-    var V = { sourceCode: U, basePos: S };
+    const V = { sourceCode: U, basePos: S };
     W(V);
     T.push.apply(T, V.decorations);
   }
-  var v = /\S/;
+  const v = /\S/;
   function o(S) {
-    var V;
-    for (var U = S.firstChild; U; U = U.nextSibling) {
-      var T = U.nodeType;
+    let V;
+    for (let U = S.firstChild; U; U = U.nextSibling) {
+      const T = U.nodeType;
       V = T === 1 ? (V ? S : U) : T === 3 ? (v.test(U.nodeValue) ? S : V) : V;
     }
     return V === S ? undefined : V;
   }
   function g(U, T) {
-    var S = {};
-    var V;
+    const S = {};
+    let V;
     (() => {
-      var ad = U.concat(T);
-      var ah = [];
-      var ag = {};
-      for (var ab = 0, Z = ad.length; ab < Z; ++ab) {
-        var Y = ad[ab];
-        var ac = Y[3];
+      const ad = U.concat(T);
+      const ah = [];
+      const ag = {};
+      for (let ab = 0, Z = ad.length; ab < Z; ++ab) {
+        const Y = ad[ab];
+        const ac = Y[3];
         if (ac) {
-          for (var ae = ac.length; --ae >= 0; ) {
+          for (let ae = ac.length; --ae >= 0; ) {
             S[ac.charAt(ae)] = Y;
           }
         }
-        var af = Y[1];
-        var aa = `${af}`;
+        const af = Y[1];
+        const aa = `${af}`;
         if (!Object.hasOwn(ag, aa)) {
           ah.push(af);
           ag[aa] = null;
@@ -328,28 +328,28 @@ window.PR_SHOULD_USE_CONTINUATION = true;
       ah.push(/[\0-\uffff]/);
       V = k(ah);
     })();
-    var X = T.length;
-    var W = (ah) => {
-      var Z = ah.sourceCode,
+    const X = T.length;
+    const W = (ah) => {
+      const Z = ah.sourceCode,
         Y = ah.basePos;
-      var ad = [Y, F];
-      var af = 0;
-      var an = Z.match(V) || [];
-      var aj = {};
-      for (var ae = 0, aq = an.length; ae < aq; ++ae) {
-        var ag = an[ae];
-        var ap = aj[ag];
-        var ai = void 0;
-        var am;
+      const ad = [Y, F];
+      let af = 0;
+      const an = Z.match(V) || [];
+      const aj = {};
+      for (let ae = 0, aq = an.length; ae < aq; ++ae) {
+        const ag = an[ae];
+        let ap = aj[ag];
+        let ai = void 0;
+        let am;
         if (typeof ap === 'string') {
           am = false;
         } else {
-          var aa = S[ag.charAt(0)];
+          let aa = S[ag.charAt(0)];
           if (aa) {
             ai = ag.match(aa[1]);
             ap = aa[0];
           } else {
-            for (var ao = 0; ao < X; ++ao) {
+            for (let ao = 0; ao < X; ++ao) {
               aa = T[ao];
               ai = ag.match(aa[1]);
               if (ai) {
@@ -370,17 +370,17 @@ window.PR_SHOULD_USE_CONTINUATION = true;
             aj[ag] = ap;
           }
         }
-        var ab = af;
+        const ab = af;
         af += ag.length;
         if (am) {
-          var al = ai[1];
-          var ak = ag.indexOf(al);
-          var ac = ak + al.length;
+          const al = ai[1];
+          let ak = ag.indexOf(al);
+          let ac = ak + al.length;
           if (ai[2]) {
             ac = ag.length - ai[2].length;
             ak = ac - al.length;
           }
-          var ar = ap.substring(5);
+          const ar = ap.substring(5);
           B(Y + ab, ag.substring(0, ak), W, ad);
           B(Y + ab + ak, al, q(ar, al), ad);
           B(Y + ab + ac, ag.substring(ac), W, ad);
@@ -393,7 +393,7 @@ window.PR_SHOULD_USE_CONTINUATION = true;
     return W;
   }
   function i(T) {
-    var W = [],
+    const W = [],
       S = [];
     if (T.tripleQuotedStrings) {
       W.push([
@@ -420,7 +420,7 @@ window.PR_SHOULD_USE_CONTINUATION = true;
     if (T.verbatimStrings) {
       S.push([C, /^@"(?:[^"]|"")*(?:"|$)/, null]);
     }
-    var Y = T.hashComments;
+    const Y = T.hashComments;
     if (Y) {
       if (T.cStyleComments) {
         if (Y > 1) {
@@ -447,15 +447,15 @@ window.PR_SHOULD_USE_CONTINUATION = true;
       S.push([j, /^\/\*[\s\S]*?(?:\*\/|$)/, null]);
     }
     if (T.regexLiterals) {
-      var X =
+      const X =
         '/(?=[^/*])(?:[^/\\x5B\\x5C]|\\x5C[\\s\\S]|\\x5B(?:[^\\x5C\\x5D]|\\x5C[\\s\\S])*(?:\\x5D|$))+/';
       S.push(['lang-regex', new RegExp(`^${M}(${X})`)]);
     }
-    var V = T.types;
+    const V = T.types;
     if (V) {
       S.push([O, V]);
     }
-    var U = `${T.keywords}`.replace(/^ | $/g, '');
+    const U = `${T.keywords}`.replace(/^ | $/g, '');
     if (U.length) {
       S.push([z, new RegExp(`^(?:${U.replace(/[\s,]+/g, '|')})\\b`), null]);
     }
@@ -475,7 +475,7 @@ window.PR_SHOULD_USE_CONTINUATION = true;
     );
     return g(W, S);
   }
-  var K = i({
+  const K = i({
     keywords: A,
     hashComments: true,
     cStyleComments: true,
@@ -483,10 +483,10 @@ window.PR_SHOULD_USE_CONTINUATION = true;
     regexLiterals: true,
   });
   function Q(V, ag) {
-    var U = /(?:^|\s)nocode(?:\s|$)/;
-    var ab = /\r\n?|\n/;
-    var ac = V.ownerDocument;
-    var S;
+    const U = /(?:^|\s)nocode(?:\s|$)/;
+    const ab = /\r\n?|\n/;
+    const ac = V.ownerDocument;
+    let S;
     if (V.currentStyle) {
       S = V.currentStyle.whiteSpace;
     } else if (window.getComputedStyle) {
@@ -494,12 +494,12 @@ window.PR_SHOULD_USE_CONTINUATION = true;
         .getComputedStyle(V, null)
         .getPropertyValue('white-space');
     }
-    var Z = S && S.substring(0, 3) === 'pre';
-    var af = ac.createElement('LI');
+    const Z = S && S.substring(0, 3) === 'pre';
+    let af = ac.createElement('LI');
     while (V.firstChild) {
       af.appendChild(V.firstChild);
     }
-    var W = [af];
+    const W = [af];
     function ae(al) {
       switch (al.nodeType) {
         case 1:
@@ -512,7 +512,7 @@ window.PR_SHOULD_USE_CONTINUATION = true;
               al.parentNode.removeChild(al);
             }
           } else {
-            for (var an = al.firstChild; an; an = an.nextSibling) {
+            for (let an = al.firstChild; an; an = an.nextSibling) {
               ae(an);
             }
           }
@@ -520,14 +520,14 @@ window.PR_SHOULD_USE_CONTINUATION = true;
         case 3:
         case 4:
           if (Z) {
-            var am = al.nodeValue;
-            var aj = am.match(ab);
+            const am = al.nodeValue;
+            const aj = am.match(ab);
             if (aj) {
-              var ai = am.substring(0, aj.index);
+              const ai = am.substring(0, aj.index);
               al.nodeValue = ai;
-              var ah = am.substring(aj.index + aj[0].length);
+              const ah = am.substring(aj.index + aj[0].length);
               if (ah) {
-                var ak = al.parentNode;
+                const ak = al.parentNode;
                 ak.insertBefore(ac.createTextNode(ah), al.nextSibling);
               }
               ad(al);
@@ -547,35 +547,35 @@ window.PR_SHOULD_USE_CONTINUATION = true;
         }
       }
       function ai(al, ar) {
-        var aq = ar ? al.cloneNode(false) : al;
-        var ao = al.parentNode;
+        const aq = ar ? al.cloneNode(false) : al;
+        const ao = al.parentNode;
         if (ao) {
-          var ap = ai(ao, 1);
-          var an = al.nextSibling;
+          const ap = ai(ao, 1);
+          let an = al.nextSibling;
           ap.appendChild(aq);
-          for (var am = an; am; am = an) {
+          for (let am = an; am; am = an) {
             an = am.nextSibling;
             ap.appendChild(am);
           }
         }
         return aq;
       }
-      var ah = ai(ak.nextSibling, 0);
-      for (var aj; (aj = ah.parentNode) && aj.nodeType === 1; ) {
+      let ah = ai(ak.nextSibling, 0);
+      for (let aj; (aj = ah.parentNode) && aj.nodeType === 1; ) {
         ah = aj;
       }
       W.push(ah);
     }
-    for (var Y = 0; Y < W.length; ++Y) {
+    for (let Y = 0; Y < W.length; ++Y) {
       ae(W[Y]);
     }
     if (ag === (ag | 0)) {
       W[0].setAttribute('value', ag);
     }
-    var aa = ac.createElement('OL');
+    const aa = ac.createElement('OL');
     aa.className = 'linenums';
-    var X = Math.max(0, (ag - 1) | 0) || 0;
-    for (var Y = 0, T = W.length; Y < T; ++Y) {
+    const X = Math.max(0, (ag - 1) | 0) || 0;
+    for (let Y = 0, T = W.length; Y < T; ++Y) {
       af = W[Y];
       af.className = `L${(Y + X) % 10}`;
       if (!af.firstChild) {
@@ -586,19 +586,19 @@ window.PR_SHOULD_USE_CONTINUATION = true;
     V.appendChild(aa);
   }
   function D(ac) {
-    var aj = /\bMSIE\b/.test(navigator.userAgent);
-    var am = /\n/g;
-    var al = ac.sourceCode;
-    var an = al.length;
-    var V = 0;
-    var aa = ac.spans;
-    var T = aa.length;
-    var ah = 0;
-    var X = ac.decorations;
-    var Y = X.length;
-    var Z = 0;
+    const aj = /\bMSIE\b/.test(navigator.userAgent);
+    const am = /\n/g;
+    const al = ac.sourceCode;
+    const an = al.length;
+    let V = 0;
+    const aa = ac.spans;
+    const T = aa.length;
+    let ah = 0;
+    const X = ac.decorations;
+    let Y = X.length;
+    let Z = 0;
     X[Y] = an;
-    var ar, aq;
+    let ar, aq;
     for (aq = ar = 0; aq < Y; ) {
       if (X[aq] !== X[aq + 2]) {
         X[ar++] = X[aq++];
@@ -609,9 +609,9 @@ window.PR_SHOULD_USE_CONTINUATION = true;
     }
     Y = ar;
     for (aq = ar = 0; aq < Y; ) {
-      var at = X[aq];
-      var ab = X[aq + 1];
-      var W = aq + 2;
+      const at = X[aq];
+      const ab = X[aq + 1];
+      let W = aq + 2;
       while (W + 2 <= Y && X[W + 1] === ab) {
         W += 2;
       }
@@ -620,24 +620,24 @@ window.PR_SHOULD_USE_CONTINUATION = true;
       aq = W;
     }
     Y = X.length = ar;
-    var _ae = null;
+    const _ae = null;
     while (ah < T) {
-      var _af = aa[ah];
-      var S = aa[ah + 2] || an;
-      var _ag = X[Z];
-      var ap = X[Z + 2] || an;
-      var W = Math.min(S, ap);
-      var ak = aa[ah + 1];
-      var U;
+      const _af = aa[ah];
+      const S = aa[ah + 2] || an;
+      const _ag = X[Z];
+      const ap = X[Z + 2] || an;
+      const W = Math.min(S, ap);
+      let ak = aa[ah + 1];
+      let U;
       if (ak.nodeType !== 1 && (U = al.substring(V, W))) {
         if (aj) {
           U = U.replace(am, '\r');
         }
         ak.nodeValue = U;
-        var ai = ak.ownerDocument;
-        var ao = ai.createElement('SPAN');
+        const ai = ak.ownerDocument;
+        const ao = ai.createElement('SPAN');
         ao.className = X[Z + 1];
-        var ad = ak.parentNode;
+        const ad = ak.parentNode;
         ad.replaceChild(ao, ak);
         ao.appendChild(ak);
         if (V < S) {
@@ -654,10 +654,10 @@ window.PR_SHOULD_USE_CONTINUATION = true;
       }
     }
   }
-  var t = {};
+  const t = {};
   function c(U, V) {
-    for (var S = V.length; --S >= 0; ) {
-      var T = V[S];
+    for (let S = V.length; --S >= 0; ) {
+      const T = V[S];
       if (Object.hasOwn(t, T)) {
         if (window.console) {
           console.warn('cannot override language handler %s', T);
@@ -780,10 +780,10 @@ window.PR_SHOULD_USE_CONTINUATION = true;
   );
   c(g([], [[C, /^[\s\S]+/]]), ['regex']);
   function d(V) {
-    var U = V.langExtension;
+    const U = V.langExtension;
     try {
-      var S = a(V.sourceNode);
-      var T = S.sourceCode;
+      const S = a(V.sourceNode);
+      const T = S.sourceCode;
       V.sourceCode = T;
       V.spans = S.spans;
       V.basePos = 0;
@@ -796,12 +796,12 @@ window.PR_SHOULD_USE_CONTINUATION = true;
     }
   }
   function y(W, V, U) {
-    var S = document.createElement('PRE');
+    const S = document.createElement('PRE');
     S.innerHTML = W;
     if (U) {
       Q(S, U);
     }
-    var T = { langExtension: V, numberLines: U, sourceNode: S };
+    const T = { langExtension: V, numberLines: U, sourceNode: S };
     d(T);
     return S.innerHTML;
   }
@@ -809,40 +809,40 @@ window.PR_SHOULD_USE_CONTINUATION = true;
     function Y(af) {
       return document.getElementsByTagName(af);
     }
-    var ac = [Y('pre'), Y('code'), Y('xmp')];
-    var T = [];
-    for (var aa = 0; aa < ac.length; ++aa) {
-      for (var Z = 0, V = ac[aa].length; Z < V; ++Z) {
+    let ac = [Y('pre'), Y('code'), Y('xmp')];
+    const T = [];
+    for (let aa = 0; aa < ac.length; ++aa) {
+      for (let Z = 0, V = ac[aa].length; Z < V; ++Z) {
         T.push(ac[aa][Z]);
       }
     }
     ac = null;
-    var W = Date;
+    let W = Date;
     if (!W.now) {
       W = { now: () => Date.now() };
     }
-    var X = 0;
-    var S;
-    var ab = /\blang(?:uage)?-([\w.]+)(?!\S)/;
-    var _ae = /\bprettyprint\b/;
+    let X = 0;
+    let S;
+    const ab = /\blang(?:uage)?-([\w.]+)(?!\S)/;
+    const _ae = /\bprettyprint\b/;
     function U() {
-      var ag = window.PR_SHOULD_USE_CONTINUATION
+      const ag = window.PR_SHOULD_USE_CONTINUATION
         ? W.now() + 250
         : Number.POSITIVE_INFINITY;
       for (; X < T.length && W.now() < ag; X++) {
-        var aj = T[X];
-        var ai = aj.className;
+        const aj = T[X];
+        const ai = aj.className;
         if (ai.indexOf('prettyprint') >= 0) {
-          var ah = ai.match(ab);
-          var am;
+          let ah = ai.match(ab);
+          let am;
           if (!ah && (am = o(aj)) && am.tagName === 'CODE') {
             ah = am.className.match(ab);
           }
           if (ah) {
             ah = ah[1];
           }
-          var al = false;
-          for (var ak = aj.parentNode; ak; ak = ak.parentNode) {
+          let al = false;
+          for (let ak = aj.parentNode; ak; ak = ak.parentNode) {
             if (
               (ak.tagName === 'pre' ||
                 ak.tagName === 'code' ||
@@ -855,8 +855,8 @@ window.PR_SHOULD_USE_CONTINUATION = true;
             }
           }
           if (!al) {
-            var af = aj.className.match(/\blinenums\b(?::(\d+))?/);
-            af = af ? (af[1]?.length ? +af[1] : true) : false;
+            let af = aj.className.match(/\blinenums\b(?::(\d+))?/);
+            af = af ? (af[1]?.length ? Number(af[1]) : true) : false;
             if (af) {
               Q(aj, af);
             }

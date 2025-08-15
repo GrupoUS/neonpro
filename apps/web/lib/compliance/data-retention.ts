@@ -154,7 +154,7 @@ export const ANONYMIZATION_RULES: Record<string, AnonymizationRule[]> = {
 // ==================== DATA RETENTION ENGINE ====================
 
 export class DataRetentionEngine {
-  private supabase: ReturnType<typeof createClient>;
+  private readonly supabase: ReturnType<typeof createClient>;
 
   constructor() {
     this.supabase = createClient();
@@ -203,7 +203,9 @@ export class DataRetentionEngine {
   private async anonymizeExpiredData(
     policy: RetentionPolicy
   ): Promise<ComplianceRecord[]> {
-    if (!policy.anonymize_after_days) return [];
+    if (!policy.anonymize_after_days) {
+      return [];
+    }
 
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - policy.anonymize_after_days);
@@ -216,8 +218,12 @@ export class DataRetentionEngine {
         .lt('created_at', cutoffDate.toISOString())
         .is('anonymized_at', null);
 
-      if (error) throw error;
-      if (!records || records.length === 0) return [];
+      if (error) {
+        throw error;
+      }
+      if (!records || records.length === 0) {
+        return [];
+      }
 
       const complianceRecords: ComplianceRecord[] = [];
       const anonymizationRules = ANONYMIZATION_RULES[policy.table] || [];
@@ -288,8 +294,12 @@ export class DataRetentionEngine {
         .select('id')
         .lt('created_at', cutoffDate.toISOString());
 
-      if (selectError) throw selectError;
-      if (!records || records.length === 0) return [];
+      if (selectError) {
+        throw selectError;
+      }
+      if (!records || records.length === 0) {
+        return [];
+      }
 
       // Deletar registros expirados
       const { error: deleteError } = await this.supabase
@@ -297,7 +307,9 @@ export class DataRetentionEngine {
         .delete()
         .lt('created_at', cutoffDate.toISOString());
 
-      if (deleteError) throw deleteError;
+      if (deleteError) {
+        throw deleteError;
+      }
 
       const complianceRecords: ComplianceRecord[] = records.map((record) => ({
         id: crypto.randomUUID(),
@@ -326,7 +338,9 @@ export class DataRetentionEngine {
     const anonymizedRecord = { ...record };
 
     for (const rule of rules) {
-      if (!anonymizedRecord[rule.field_name]) continue;
+      if (!anonymizedRecord[rule.field_name]) {
+        continue;
+      }
 
       switch (rule.anonymization_type) {
         case 'mask':
@@ -366,7 +380,7 @@ export class DataRetentionEngine {
     for (let i = 0; i < value.length; i++) {
       const char = value.charCodeAt(i);
       hash = (hash << 5) - hash + char;
-      hash = hash & hash; // Convert to 32-bit integer
+      hash &= hash; // Convert to 32-bit integer
     }
     return `HASH_${Math.abs(hash).toString(36).toUpperCase()}`;
   }
@@ -395,7 +409,9 @@ export class DataRetentionEngine {
   private async logComplianceActions(
     complianceRecords: ComplianceRecord[]
   ): Promise<void> {
-    if (complianceRecords.length === 0) return;
+    if (complianceRecords.length === 0) {
+      return;
+    }
 
     try {
       const { error } = await this.supabase
@@ -422,10 +438,11 @@ export class DataRetentionEngine {
     compliance_percentage: number;
   }> {
     const policy = RETENTION_POLICIES.find((p) => p.table === tableName);
-    if (!policy)
+    if (!policy) {
       throw new Error(
         `Política de retenção não encontrada para tabela: ${tableName}`
       );
+    }
 
     try {
       // Contar total de registros

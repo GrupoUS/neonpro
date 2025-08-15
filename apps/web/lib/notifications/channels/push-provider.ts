@@ -116,9 +116,9 @@ class FCMPushProvider implements PushProvider {
   public readonly channel: NotificationChannel = 'push';
   public readonly priority = 1;
 
-  private config: PushProviderConfig['fcm'];
-  private accessToken: string | null = null;
-  private tokenExpiry: Date | null = null;
+  private readonly config: PushProviderConfig['fcm'];
+  private readonly accessToken: string | null = null;
+  private readonly tokenExpiry: Date | null = null;
 
   constructor(config: PushProviderConfig['fcm']) {
     this.config = config;
@@ -467,7 +467,7 @@ class FCMPushProvider implements PushProvider {
  * Manages push notification providers and device management
  */
 class PushProviderFactory {
-  private fcmProvider: FCMPushProvider;
+  private readonly fcmProvider: FCMPushProvider;
 
   constructor(config: PushProviderConfig) {
     this.config = config;

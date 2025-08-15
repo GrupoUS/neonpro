@@ -33,7 +33,7 @@ import type {
 } from '@/app/types/suppliers';
 
 export class SupplierManagementService {
-  private supabase: SupabaseClient;
+  private readonly supabase: SupabaseClient;
 
   constructor(supabaseUrl?: string, supabaseKey?: string) {
     this.supabase = createClient(
@@ -905,25 +905,43 @@ export class SupplierManagementService {
   }
 
   private calculateDeliveryScore(data: any): number {
-    if (data.totalOrders === 0) return 10;
+    if (data.totalOrders === 0) {
+      return 10;
+    }
     const onTimePercentage = (data.onTimeDeliveries / data.totalOrders) * 100;
     return Math.min(10, Math.max(0, onTimePercentage / 10));
   }
 
   private calculateQualityScore(data: any): number {
-    if (data.totalItems === 0) return 10;
+    if (data.totalItems === 0) {
+      return 10;
+    }
     const defectivePercentage = (data.defectiveItems / data.totalItems) * 100;
     return Math.min(10, Math.max(0, 10 - defectivePercentage));
   }
 
   private calculatePerformanceGrade(score: number): PerformanceGrade {
-    if (score >= 9.5) return 'A+';
-    if (score >= 9.0) return 'A';
-    if (score >= 8.5) return 'B+';
-    if (score >= 8.0) return 'B';
-    if (score >= 7.5) return 'C+';
-    if (score >= 7.0) return 'C';
-    if (score >= 6.0) return 'D';
+    if (score >= 9.5) {
+      return 'A+';
+    }
+    if (score >= 9.0) {
+      return 'A';
+    }
+    if (score >= 8.5) {
+      return 'B+';
+    }
+    if (score >= 8.0) {
+      return 'B';
+    }
+    if (score >= 7.5) {
+      return 'C+';
+    }
+    if (score >= 7.0) {
+      return 'C';
+    }
+    if (score >= 6.0) {
+      return 'D';
+    }
     return 'F';
   }
 }

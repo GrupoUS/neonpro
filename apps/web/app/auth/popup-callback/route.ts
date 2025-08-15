@@ -51,7 +51,7 @@ export async function GET(request: Request) {
 
   // Log para debugging
   console.log('=== Popup Callback Received ===');
-  console.log('Code present:', !!code);
+  console.log('Code present:', Boolean(code));
   console.log('Full URL:', request.url);
 
   if (code) {
@@ -70,7 +70,7 @@ export async function GET(request: Request) {
       const {
         data: { session },
       } = await supabase.auth.getSession();
-      console.log('Session created:', !!session);
+      console.log('Session created:', Boolean(session));
 
       // Em caso de sucesso, retorna uma página que fecha o popup
       // e comunica com a janela pai

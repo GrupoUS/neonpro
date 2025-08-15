@@ -92,7 +92,9 @@ export class PatientTreatmentIntegration {
         .eq('patient_id', patientId)
         .order('start_date', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return (
         treatments?.map((treatment) => ({
@@ -217,7 +219,9 @@ export class PatientTreatmentIntegration {
         .eq('patient_id', patientId)
         .order('date_recorded', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return records || [];
     } catch (error) {
@@ -245,7 +249,9 @@ export class PatientTreatmentIntegration {
         .select('id')
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       logger.info(`Linked patient ${patientId} to treatment ${treatment.id}`);
       return treatment.id;
@@ -277,7 +283,9 @@ export class PatientTreatmentIntegration {
         })
         .eq('id', treatmentId);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       logger.info(`Updated treatment progress for ${treatmentId}`);
     } catch (error) {
@@ -290,7 +298,9 @@ export class PatientTreatmentIntegration {
    * Calculate average from array of numbers
    */
   private static calculateAverage(numbers: number[]): number {
-    if (numbers.length === 0) return 0;
+    if (numbers.length === 0) {
+      return 0;
+    }
     return numbers.reduce((sum, num) => sum + num, 0) / numbers.length;
   }
 
@@ -313,10 +323,14 @@ export class PatientTreatmentIntegration {
   private static calculateAdherenceScore(
     treatments: TreatmentHistory[]
   ): number {
-    if (treatments.length === 0) return 0;
+    if (treatments.length === 0) {
+      return 0;
+    }
 
     const adherenceScores = treatments.map((treatment) => {
-      if (treatment.total_sessions === 0) return 1;
+      if (treatment.total_sessions === 0) {
+        return 1;
+      }
       return treatment.completed_sessions / treatment.total_sessions;
     });
 
@@ -459,7 +473,9 @@ export class PatientTreatmentIntegration {
         .eq('id', patientId)
         .single();
 
-      if (!patient) return [];
+      if (!patient) {
+        return [];
+      }
 
       const recommendations: string[] = [];
 

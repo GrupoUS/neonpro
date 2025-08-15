@@ -71,7 +71,7 @@ export interface SecurityAlert {
 
 // Security Event Logger Service
 export class SecurityEventLogger {
-  private supabase: SupabaseClient;
+  private readonly supabase: SupabaseClient;
 
   constructor(supabase: SupabaseClient) {
     this.supabase = supabase;
@@ -669,7 +669,9 @@ export class SecurityEventLogger {
    * Check for brute force attack patterns
    */
   private async checkForBruteForcePattern(event: SecurityEvent): Promise<void> {
-    if (!event.ipAddress) return;
+    if (!event.ipAddress) {
+      return;
+    }
 
     const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
 

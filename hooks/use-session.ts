@@ -127,11 +127,18 @@ export function useSession(options: UseSessionOptions = {}): UseSessionReturn {
         setIsValidating(false);
         setIsLoading(false);
       }
-    }, [onExpiry, onSecurityAlert, router]);
+    }, [
+      onExpiry,
+      onSecurityAlert,
+      router, // Setup session expiry warnings
+      setupExpiryWarnings,
+    ]);
 
   // Refresh session
   const refresh = useCallback(async (): Promise<void> => {
-    if (!session) return;
+    if (!session) {
+      return;
+    }
 
     try {
       const response = await fetch(SESSION_API.refresh, {
@@ -158,7 +165,7 @@ export function useSession(options: UseSessionOptions = {}): UseSessionReturn {
       setError(error);
       toast.error('Failed to refresh session');
     }
-  }, [session]);
+  }, [session, setupExpiryWarnings]);
 
   // Terminate session
   const terminate = useCallback(async (): Promise<void> => {
@@ -183,12 +190,14 @@ export function useSession(options: UseSessionOptions = {}): UseSessionReturn {
       setError(error);
       toast.error('Failed to terminate session');
     }
-  }, [router]);
+  }, [router, clearAllTimeouts]);
 
   // Extend session
   const extend = useCallback(
     async (minutes?: number): Promise<void> => {
-      if (!session) return;
+      if (!session) {
+        return;
+      }
 
       try {
         const response = await fetch(SESSION_API.extend, {
@@ -217,7 +226,7 @@ export function useSession(options: UseSessionOptions = {}): UseSessionReturn {
         toast.error('Failed to extend session');
       }
     },
-    [session]
+    [session, setupExpiryWarnings]
   );
 
   // Register device
@@ -438,7 +447,7 @@ export function useSession(options: UseSessionOptions = {}): UseSessionReturn {
   // Initial session validation
   useEffect(() => {
     validateSession();
-  }, []);
+  }, [validateSession]);
 
   // Cleanup on unmount
   useEffect(() => {

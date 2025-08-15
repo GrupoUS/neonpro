@@ -197,7 +197,7 @@ async function verifyCleanupPermissions(
   try {
     // Get authorization header
     const authorization = request.headers.get('authorization');
-    if (!(authorization && authorization.startsWith('Bearer '))) {
+    if (!authorization?.startsWith('Bearer ')) {
       return {
         success: false,
         error: {

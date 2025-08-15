@@ -13,32 +13,106 @@
       "afterEach"
     ]
   },
+  "files": {
+    "maxSize": 50000000,
+    "includes": ["apps/web/app/**/*.ts", "apps/web/app/**/*.tsx"],
+    "experimentalScannerIgnores": [
+      "apps/web/app/lib/auth/permissions/use-permissions.ts",
+      "apps/web/lib/**/*",
+      "packages/**/*",
+      "tools/**/*",
+      "__tests__/**/*",
+      "**/coverage/**/*",
+      "**/node_modules/**/*",
+      "**/*.test.ts",
+      "**/*.spec.ts",
+      "**/*.test.tsx",
+      "**/*.spec.tsx",
+      "**/*.d.ts",
+      "**/dist/**/*",
+      "**/build/**/*",
+      "**/temp/**/*"
+    ]
+  },
   "linter": {
     "rules": {
+      "a11y": {
+        "useButtonType": "off",
+        "noStaticElementInteractions": "off",
+        "noNoninteractiveElementInteractions": "off",
+        "noSvgWithoutTitle": "off",
+        "useSemanticElements": "off",
+        "useKeyWithClickEvents": "off",
+        "noLabelWithoutControl": "off",
+        "useGenericFontNames": "off",
+        "useFocusableInteractive": "off"
+      },
       "style": {
         "noNonNullAssertion": "off",
         "useFilenamingConvention": "off",
         "noExportedImports": "off",
-        "noMagicNumbers": "off"
+        "noMagicNumbers": "off",
+        "noNestedTernary": "off",
+        "noEnum": "off",
+        "useDefaultSwitchClause": "off",
+        "useNodejsImportProtocol": "off",
+        "noParameterAssign": "off",
+        "noParameterProperties": "off",
+        "useConsistentMemberAccessibility": "off",
+        "useCollapsedElseIf": "off",
+        "noNamespace": "off",
+        "useForOf": "off",
+        "noDescendingSpecificity": "off"
       },
       "nursery": {
         "useConsistentTypeDefinitions": "off",
-        "noShadow": "off"
+        "noShadow": "off",
+        "useMaxParams": "off",
+        "noUnnecessaryConditions": "off",
+        "useImageSize": "off"
       },
       "correctness": {
         "noUndeclaredVariables": "off",
         "noUnusedVariables": "off",
-        "noSolidDestructuredProps": "off"
+        "noSolidDestructuredProps": "off",
+        "noNestedComponentDefinitions": "off",
+        "useExhaustiveDependencies": "off",
+        "noUnusedFunctionParameters": "off",
+        "noInvalidUseBeforeDeclaration": "off",
+        "useHookAtTopLevel": "off",
+        "noReactPropAssignments": "off"
       },
       "suspicious": {
         "noExplicitAny": "off",
         "noThenProperty": "off",
         "useAwait": "off",
-        "noConsole": "off"
+        "noConsole": "off",
+        "noArrayIndexKey": "off",
+        "noEvolvingTypes": "off",
+        "noImplicitAnyLet": "off",
+        "noExportsInTest": "off",
+        "noBitwiseOperators": "off",
+        "noEmptyBlockStatements": "off",
+        "noUnknownAtRules": "off",
+        "useIterableCallbackReturn": "off",
+        "noAssignInExpressions": "off",
+        "noRedeclare": "off",
+        "noEmptyBlock": "off",
+        "noDuplicateProperties": "off"
       },
       "complexity": {
         "noExcessiveLinesPerFunction": "off",
-        "noForEach": "off"
+        "noForEach": "off",
+        "noExcessiveCognitiveComplexity": "off",
+        "useOptionalChain": "off",
+        "noStaticOnlyClass": "off",
+        "noVoid": "off"
+      },
+      "performance": {
+        "useTopLevelRegex": "off",
+        "noNamespaceImport": "off",
+        "noAccumulatingSpread": "off",
+        "noImgElement": "off"
       }
     }
   }

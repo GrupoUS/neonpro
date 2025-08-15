@@ -138,7 +138,14 @@ export function useSessionAnalytics(initialTimeframe = '7d') {
         setState((prev) => ({ ...prev, isLoading: false }));
       }
     },
-    [supabase, timeframe]
+    [
+      supabase,
+      timeframe,
+      processDeviceAnalytics,
+      processMetrics,
+      processSecurityAnalytics,
+      processTrends,
+    ]
   );
 
   // Process main metrics
@@ -212,7 +219,9 @@ export function useSessionAnalytics(initialTimeframe = '7d') {
   const calculateTrend = (
     events: any[]
   ): 'increasing' | 'decreasing' | 'stable' => {
-    if (events.length < 2) return 'stable';
+    if (events.length < 2) {
+      return 'stable';
+    }
 
     const now = Date.now();
     const halfPeriod =
@@ -229,8 +238,12 @@ export function useSessionAnalytics(initialTimeframe = '7d') {
 
     const olderEvents = events.length - recentEvents;
 
-    if (recentEvents > olderEvents * 1.2) return 'increasing';
-    if (recentEvents < olderEvents * 0.8) return 'decreasing';
+    if (recentEvents > olderEvents * 1.2) {
+      return 'increasing';
+    }
+    if (recentEvents < olderEvents * 0.8) {
+      return 'decreasing';
+    }
     return 'stable';
   };
 
@@ -273,7 +286,9 @@ export function useSessionAnalytics(initialTimeframe = '7d') {
       const {
         data: { user },
       } = await supabase.auth.getUser();
-      if (!user) return null;
+      if (!user) {
+        return null;
+      }
 
       const response = await fetch('/api/auth/session/analytics', {
         method: 'POST',
@@ -338,7 +353,7 @@ export function useSessionAnalytics(initialTimeframe = '7d') {
         return false;
       }
     },
-    [timeframe, state]
+    [timeframe, state, convertToCSV]
   );
 
   // Convert analytics data to CSV
@@ -405,7 +420,9 @@ export function useSessionAnalytics(initialTimeframe = '7d') {
 
   // Get analytics summary
   const getAnalyticsSummary = useCallback(() => {
-    if (!state.metrics) return null;
+    if (!state.metrics) {
+      return null;
+    }
 
     const summary = {
       healthStatus:

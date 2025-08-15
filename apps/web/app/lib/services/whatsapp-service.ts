@@ -19,7 +19,7 @@ import { createClient } from '@/app/utils/supabase/client';
 const WHATSAPP_API_BASE = 'https://graph.facebook.com/v18.0';
 
 class WhatsAppService {
-  private supabase = createClient();
+  private readonly supabase = createClient();
 
   // Configuration Management
   async getConfig(): Promise<WhatsAppConfig | null> {
@@ -75,7 +75,7 @@ class WhatsAppService {
     templateName?: string
   ): Promise<string> {
     const config = await this.getConfig();
-    if (!(config && config.isActive)) {
+    if (!config?.isActive) {
       throw new Error('WhatsApp is not configured or inactive');
     }
 
@@ -168,13 +168,13 @@ class WhatsAppService {
     patientId?: string
   ): Promise<string> {
     const config = await this.getConfig();
-    if (!(config && config.isActive)) {
+    if (!config?.isActive) {
       throw new Error('WhatsApp is not configured or inactive');
     }
 
     try {
       const template = await this.getTemplate(templateName);
-      if (!(template && template.isActive)) {
+      if (!template?.isActive) {
         throw new Error(`Template '${templateName}' not found or inactive`);
       }
 

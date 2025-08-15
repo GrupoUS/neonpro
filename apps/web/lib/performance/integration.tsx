@@ -132,7 +132,9 @@ function calculatePerformanceScore(metrics: PerformanceMetrics): number {
     const threshold = thresholds[key as keyof typeof thresholds];
     const weight = weights[key as keyof typeof weights];
 
-    if (!(threshold && weight)) return;
+    if (!(threshold && weight)) {
+      return;
+    }
 
     let score = 100;
 

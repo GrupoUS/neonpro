@@ -249,7 +249,9 @@ export function useSSO(options: UseSSOOptions = {}): SSOState & SSOActions {
    */
   const refreshSession = useCallback(async () => {
     try {
-      if (!state.session) return;
+      if (!state.session) {
+        return;
+      }
 
       const response = await fetch('/api/auth/sso/refresh', {
         method: 'POST',
@@ -290,7 +292,9 @@ export function useSSO(options: UseSSOOptions = {}): SSOState & SSOActions {
    */
   const getDomainProvider = useCallback((email: string): SSOProvider | null => {
     const domain = email.split('@')[1];
-    if (!domain) return null;
+    if (!domain) {
+      return null;
+    }
 
     // This would typically call an API to check domain mappings
     // For now, return null (no automatic domain mapping)
@@ -301,7 +305,9 @@ export function useSSO(options: UseSSOOptions = {}): SSOState & SSOActions {
    * Auto-refresh session when near expiry
    */
   useEffect(() => {
-    if (!(autoRefresh && state.session)) return;
+    if (!(autoRefresh && state.session)) {
+      return;
+    }
 
     const checkAndRefresh = () => {
       const expiresAt = new Date(state.session?.expiresAt);

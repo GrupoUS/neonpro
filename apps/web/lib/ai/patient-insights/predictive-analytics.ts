@@ -5,8 +5,8 @@ import { createClient } from '@/app/utils/supabase/client';
 import type { PatientRiskAssessment } from './types';
 
 export class PredictiveAnalyticsEngine {
-  private supabase = createClient();
-  private models: Map<string, PredictiveModel> = new Map();
+  private readonly supabase = createClient();
+  private readonly models: Map<string, PredictiveModel> = new Map();
 
   constructor() {
     this.initializePredictiveModels();
@@ -489,13 +489,17 @@ export class PredictiveAnalyticsEngine {
   }
 
   private calculateBMI(patientData: any): number {
-    if (!(patientData.weight && patientData.height)) return 25; // Default BMI
+    if (!(patientData.weight && patientData.height)) {
+      return 25; // Default BMI
+    }
     const heightM = patientData.height / 100;
     return patientData.weight / (heightM * heightM);
   }
 
   private calculatePreviousSuccessRate(treatments: any[]): number {
-    if (!treatments || treatments.length === 0) return 0.75; // Default rate
+    if (!treatments || treatments.length === 0) {
+      return 0.75; // Default rate
+    }
 
     const successful = treatments.filter(
       (t) => t.outcome === 'successful'
@@ -504,7 +508,9 @@ export class PredictiveAnalyticsEngine {
   }
 
   private calculateAverageSatisfaction(satisfactionScores: any[]): number {
-    if (!satisfactionScores || satisfactionScores.length === 0) return 7.5; // Default
+    if (!satisfactionScores || satisfactionScores.length === 0) {
+      return 7.5; // Default
+    }
 
     const average =
       satisfactionScores.reduce((sum, score) => sum + score.score, 0) /
@@ -739,7 +745,7 @@ export class PredictiveAnalyticsEngine {
 class MockPredictionModel {
   constructor(
     _type: string,
-    private baseline: number
+    private readonly baseline: number
   ) {}
 
   predict(features: PredictionFeatures): number {
@@ -747,8 +753,12 @@ class MockPredictionModel {
     let prediction = this.baseline;
 
     // Age adjustments
-    if (features.age > 65) prediction *= 0.9;
-    if (features.age < 25) prediction *= 0.95;
+    if (features.age > 65) {
+      prediction *= 0.9;
+    }
+    if (features.age < 25) {
+      prediction *= 0.95;
+    }
 
     // Risk adjustments
     prediction *= 1 - features.overallRiskScore / 200;

@@ -43,18 +43,25 @@ export function useMarketingCampaigns(
         limit: limit.toString(),
       });
 
-      if (filters?.channel) params.append('channel', filters.channel);
-      if (filters?.campaign_type)
+      if (filters?.channel) {
+        params.append('channel', filters.channel);
+      }
+      if (filters?.campaign_type) {
         params.append('campaign_type', filters.campaign_type);
-      if (filters?.status) params.append('status', filters.status);
+      }
+      if (filters?.status) {
+        params.append('status', filters.status);
+      }
       if (filters?.date_range) {
         params.append('start_date', filters.date_range.start.toISOString());
         params.append('end_date', filters.date_range.end.toISOString());
       }
-      if (filters?.min_roi)
+      if (filters?.min_roi) {
         params.append('min_roi', filters.min_roi.toString());
-      if (filters?.max_budget)
+      }
+      if (filters?.max_budget) {
         params.append('max_budget', filters.max_budget.toString());
+      }
 
       const response = await fetch(`/api/marketing-roi/campaigns?${params}`);
       if (!response.ok) {
@@ -62,7 +69,7 @@ export function useMarketingCampaigns(
       }
       return response.json();
     },
-    enabled: !!clinicId,
+    enabled: Boolean(clinicId),
   });
 }
 
@@ -81,7 +88,7 @@ export function useMarketingCampaign(campaignId: string) {
       }
       return response.json();
     },
-    enabled: !!campaignId,
+    enabled: Boolean(campaignId),
   });
 }
 
@@ -206,16 +213,22 @@ export function useTreatmentProfitabilityAnalysis(
           params.append('treatment_ids', id)
         );
       }
-      if (filters?.min_roi)
+      if (filters?.min_roi) {
         params.append('min_roi', filters.min_roi.toString());
-      if (filters?.min_procedures)
+      }
+      if (filters?.min_procedures) {
         params.append('min_procedures', filters.min_procedures.toString());
+      }
       if (filters?.date_range) {
         params.append('start_date', filters.date_range.start.toISOString());
         params.append('end_date', filters.date_range.end.toISOString());
       }
-      if (filters?.sort_by) params.append('sort_by', filters.sort_by);
-      if (filters?.sort_order) params.append('sort_order', filters.sort_order);
+      if (filters?.sort_by) {
+        params.append('sort_by', filters.sort_by);
+      }
+      if (filters?.sort_order) {
+        params.append('sort_order', filters.sort_order);
+      }
 
       const response = await fetch(
         `/api/marketing-roi/treatment-profitability?${params}`
@@ -225,7 +238,7 @@ export function useTreatmentProfitabilityAnalysis(
       }
       return response.json();
     },
-    enabled: !!clinicId,
+    enabled: Boolean(clinicId),
   });
 }
 
@@ -312,7 +325,7 @@ export function useCACLTVAnalysis(
       }
       return response.json();
     },
-    enabled: !!clinicId && !!periodStart && !!periodEnd,
+    enabled: Boolean(clinicId) && Boolean(periodStart) && Boolean(periodEnd),
   });
 }
 
@@ -430,7 +443,7 @@ export function useROIAlerts(clinicId: string) {
       }
       return response.json();
     },
-    enabled: !!clinicId,
+    enabled: Boolean(clinicId),
     refetchInterval: 30_000, // Refetch every 30 seconds for real-time alerts
   });
 }
@@ -544,7 +557,7 @@ export function useOptimizationRecommendations(clinicId: string) {
       }
       return response.json();
     },
-    enabled: !!clinicId,
+    enabled: Boolean(clinicId),
   });
 }
 
@@ -683,7 +696,7 @@ export function useROIDashboardMetrics(
       }
       return response.json();
     },
-    enabled: !!clinicId && !!periodStart && !!periodEnd,
+    enabled: Boolean(clinicId) && Boolean(periodStart) && Boolean(periodEnd),
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 }
@@ -713,7 +726,7 @@ export function useROITrendData(
       }
       return response.json();
     },
-    enabled: !!clinicId && !!periodStart && !!periodEnd,
+    enabled: Boolean(clinicId) && Boolean(periodStart) && Boolean(periodEnd),
   });
 }
 
@@ -755,11 +768,11 @@ export function useROIComparisons(
       return response.json();
     },
     enabled:
-      !!clinicId &&
-      !!currentPeriodStart &&
-      !!currentPeriodEnd &&
-      !!previousPeriodStart &&
-      !!previousPeriodEnd,
+      Boolean(clinicId) &&
+      Boolean(currentPeriodStart) &&
+      Boolean(currentPeriodEnd) &&
+      Boolean(previousPeriodStart) &&
+      Boolean(previousPeriodEnd),
   });
 }
 
@@ -842,7 +855,7 @@ export function useROIForecasts(
       }
       return response.json();
     },
-    enabled: !!clinicId,
+    enabled: Boolean(clinicId),
   });
 }
 
@@ -863,7 +876,7 @@ export function useMarketingROIInsights(clinicId: string) {
       }
       return response.json();
     },
-    enabled: !!clinicId,
+    enabled: Boolean(clinicId),
     staleTime: 10 * 60 * 1000, // 10 minutes
   });
 }
@@ -893,7 +906,7 @@ export function useROIMetricsSummary(
       }
       return response.json();
     },
-    enabled: !!clinicId && !!periodStart && !!periodEnd,
+    enabled: Boolean(clinicId) && Boolean(periodStart) && Boolean(periodEnd),
   });
 }
 
@@ -962,7 +975,7 @@ export function useRealTimeROIMonitoring(clinicId: string, enabled = true) {
       }
       return response.json();
     },
-    enabled: !!clinicId && enabled,
+    enabled: Boolean(clinicId) && enabled,
     refetchInterval: 10_000, // Refetch every 10 seconds
     refetchIntervalInBackground: true,
   });
@@ -985,7 +998,7 @@ export function useROICalculationSettings(clinicId: string) {
       }
       return response.json();
     },
-    enabled: !!clinicId,
+    enabled: Boolean(clinicId),
   });
 
   const updateSettings = useMutation({

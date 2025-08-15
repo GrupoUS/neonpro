@@ -186,7 +186,7 @@ export interface PatientSearchResult {
  * Handles comprehensive patient profile management with AI insights
  */
 export class PatientProfileManager {
-  private supabase;
+  private readonly supabase;
 
   constructor() {
     this.supabase = createClientComponentClient<Database>();
@@ -203,7 +203,9 @@ export class PatientProfileManager {
         .eq('patient_id', patientId)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data as PatientProfile;
     } catch (error) {
       console.error('Error fetching patient profile:', error);
@@ -229,7 +231,9 @@ export class PatientProfileManager {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Update search index
       await this.updateSearchIndex(patientId);
@@ -251,7 +255,9 @@ export class PatientProfileManager {
         { patient_uuid: patientId }
       );
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Update the profile with the new score
       await this.supabase
@@ -286,7 +292,9 @@ export class PatientProfileManager {
       }
 
       const { data, error } = await query;
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return data as PatientPhoto[];
     } catch (error) {
@@ -312,7 +320,9 @@ export class PatientProfileManager {
           .from('patient-photos')
           .upload(fileName, file);
 
-      if (uploadError) throw uploadError;
+      if (uploadError) {
+        throw uploadError;
+      }
 
       // Get public URL
       const { data: urlData } = this.supabase.storage
@@ -337,7 +347,9 @@ export class PatientProfileManager {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data as PatientPhoto;
     } catch (error) {
       console.error('Error uploading patient photo:', error);
@@ -364,7 +376,9 @@ export class PatientProfileManager {
       }
 
       const { data, error } = await query;
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return data as MedicalTimelineEvent[];
     } catch (error) {
@@ -393,7 +407,9 @@ export class PatientProfileManager {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data as MedicalTimelineEvent;
     } catch (error) {
       console.error('Error adding timeline event:', error);
@@ -435,7 +451,9 @@ export class PatientProfileManager {
       }
 
       const { data: searchData, error: searchError } = await searchQuery;
-      if (searchError) throw searchError;
+      if (searchError) {
+        throw searchError;
+      }
 
       if (!searchData || searchData.length === 0) {
         return [];
@@ -450,7 +468,9 @@ export class PatientProfileManager {
         )
         .in('patient_id', patientIds);
 
-      if (profilesError) throw profilesError;
+      if (profilesError) {
+        throw profilesError;
+      }
 
       // Combine search and profile data
       const results = searchData.map((search) => {
@@ -483,7 +503,9 @@ export class PatientProfileManager {
     try {
       // Get patient data for comparison
       const profile = await this.getPatientProfile(patientId);
-      if (!profile) return [];
+      if (!profile) {
+        return [];
+      }
 
       // Simple duplicate detection based on name similarity
       // In production, this would be more sophisticated
@@ -493,7 +515,9 @@ export class PatientProfileManager {
         .or(`patient_id_1.eq.${patientId},patient_id_2.eq.${patientId}`)
         .eq('review_status', 'pending');
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data as DuplicateCandidate[];
     } catch (error) {
       console.error('Error detecting duplicates:', error);
@@ -548,7 +572,9 @@ export class PatientProfileManager {
       completion_threshold?: number;
     }
   ): PatientSearchResult[] {
-    if (!filters) return results;
+    if (!filters) {
+      return results;
+    }
 
     return results.filter((result) => {
       // Risk level filter

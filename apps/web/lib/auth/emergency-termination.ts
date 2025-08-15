@@ -251,14 +251,17 @@ const DEFAULT_PROTOCOLS: EmergencyProtocol[] = [
 ];
 
 export class EmergencyTermination {
-  private supabase;
-  private sessionPreservation: SessionPreservation;
+  private readonly supabase;
+  private readonly sessionPreservation: SessionPreservation;
   private config: EmergencyConfig;
-  private protocols: Map<string, EmergencyProtocol> = new Map();
-  private pendingRequests: Map<string, EmergencyTerminationRequest> = new Map();
-  private rateLimitTracker: Map<string, { count: number; lastReset: Date }> =
+  private readonly protocols: Map<string, EmergencyProtocol> = new Map();
+  private readonly pendingRequests: Map<string, EmergencyTerminationRequest> =
     new Map();
-  private activeSessions: Map<string, any> = new Map();
+  private readonly rateLimitTracker: Map<
+    string,
+    { count: number; lastReset: Date }
+  > = new Map();
+  private readonly activeSessions: Map<string, any> = new Map();
 
   constructor(
     supabaseUrl: string,

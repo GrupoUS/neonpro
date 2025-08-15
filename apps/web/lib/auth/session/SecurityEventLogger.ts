@@ -33,10 +33,10 @@ import { removeUndefined, validateUUID } from './utils';
  * - Security reporting and analytics
  */
 export class SecurityEventLogger {
-  private supabase: SupabaseClient;
-  private config: SecurityConfig;
-  private patternCache: Map<string, SecurityPattern[]> = new Map();
-  private riskScores: Map<string, number> = new Map();
+  private readonly supabase: SupabaseClient;
+  private readonly config: SecurityConfig;
+  private readonly patternCache: Map<string, SecurityPattern[]> = new Map();
+  private readonly riskScores: Map<string, number> = new Map();
 
   constructor(config: SecurityConfig) {
     this.config = config;
@@ -660,11 +660,21 @@ export class SecurityEventLogger {
 
     // Context-specific adjustments
     if (details) {
-      if (details.newLocation) baseScore *= 1.3;
-      if (details.newDevice) baseScore *= 1.2;
-      if (details.offHours) baseScore *= 1.1;
-      if (details.vpnDetected) baseScore *= 1.2;
-      if (details.torDetected) baseScore *= 2.0;
+      if (details.newLocation) {
+        baseScore *= 1.3;
+      }
+      if (details.newDevice) {
+        baseScore *= 1.2;
+      }
+      if (details.offHours) {
+        baseScore *= 1.1;
+      }
+      if (details.vpnDetected) {
+        baseScore *= 1.2;
+      }
+      if (details.torDetected) {
+        baseScore *= 2.0;
+      }
     }
 
     return Math.round(baseScore * 10) / 10; // Round to 1 decimal
@@ -674,9 +684,15 @@ export class SecurityEventLogger {
     riskScore: number,
     severity: SecuritySeverity
   ): ThreatLevel {
-    if (severity === 'critical' || riskScore >= 15) return 'critical';
-    if (severity === 'high' || riskScore >= 10) return 'high';
-    if (severity === 'medium' || riskScore >= 5) return 'medium';
+    if (severity === 'critical' || riskScore >= 15) {
+      return 'critical';
+    }
+    if (severity === 'high' || riskScore >= 10) {
+      return 'high';
+    }
+    if (severity === 'medium' || riskScore >= 5) {
+      return 'medium';
+    }
     return 'low';
   }
 
@@ -747,7 +763,7 @@ export class SecurityEventLogger {
         severity: 'high',
         count: failedLogins.length,
         description: `${failedLogins.length} failed login attempts detected`,
-        firstOccurrence: failedLogins[failedLogins.length - 1].created_at,
+        firstOccurrence: failedLogins.at(-1).created_at,
         lastOccurrence: failedLogins[0].created_at,
       });
     }
@@ -762,8 +778,7 @@ export class SecurityEventLogger {
         severity: 'medium',
         count: deviceRegistrations.length,
         description: `${deviceRegistrations.length} new devices registered`,
-        firstOccurrence:
-          deviceRegistrations[deviceRegistrations.length - 1].created_at,
+        firstOccurrence: deviceRegistrations.at(-1).created_at,
         lastOccurrence: deviceRegistrations[0].created_at,
       });
     }
@@ -914,7 +929,9 @@ export class SecurityEventLogger {
   }
 
   private calculateAverageRiskScore(events: SecurityEvent[]): number {
-    if (events.length === 0) return 0;
+    if (events.length === 0) {
+      return 0;
+    }
     const total = events.reduce((sum, event) => sum + event.riskScore, 0);
     return Math.round((total / events.length) * 10) / 10;
   }

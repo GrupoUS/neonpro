@@ -119,25 +119,25 @@ export interface AuthSystemEvent {
 
 export class AdvancedAuthSystem {
   private config: AdvancedAuthConfig;
-  private sessionConfig: Config;
+  private readonly sessionConfig: Config;
 
   // Core components
-  private timeoutManager: IntelligentTimeoutManager;
-  private concurrentManager: ConcurrentSessionManager;
-  private suspiciousDetector: SuspiciousActivityDetector;
-  private securityMonitor: SecurityMonitor;
-  private syncManager: SessionSyncManager;
-  private preservationManager: SessionPreservationManager;
-  private emergencyManager: EmergencyShutdownManager;
-  private auditManager: AuditTrailManager;
-  private cleanupManager: DataCleanupManager;
+  private readonly timeoutManager: IntelligentTimeoutManager;
+  private readonly concurrentManager: ConcurrentSessionManager;
+  private readonly suspiciousDetector: SuspiciousActivityDetector;
+  private readonly securityMonitor: SecurityMonitor;
+  private readonly syncManager: SessionSyncManager;
+  private readonly preservationManager: SessionPreservationManager;
+  private readonly emergencyManager: EmergencyShutdownManager;
+  private readonly auditManager: AuditTrailManager;
+  private readonly cleanupManager: DataCleanupManager;
 
   // System state
-  private isInitialized = false;
-  private componentStatuses: Map<string, ComponentStatus> = new Map();
-  private systemMetrics: SystemMetrics;
-  private systemAlerts: SystemAlert[] = [];
-  private eventListeners: Map<string, Function[]> = new Map();
+  private readonly isInitialized = false;
+  private readonly componentStatuses: Map<string, ComponentStatus> = new Map();
+  private readonly systemMetrics: SystemMetrics;
+  private readonly systemAlerts: SystemAlert[] = [];
+  private readonly eventListeners: Map<string, Function[]> = new Map();
   private healthCheckInterval?: NodeJS.Timeout;
   private metricsInterval?: NodeJS.Timeout;
 

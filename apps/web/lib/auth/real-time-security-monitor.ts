@@ -236,15 +236,15 @@ const DEFAULT_CONFIG: MonitoringConfig = {
 };
 
 export class RealTimeSecurityMonitor {
-  private supabase;
-  private auditLogger: SecurityAuditLogger;
+  private readonly supabase;
+  private readonly auditLogger: SecurityAuditLogger;
   private config: MonitoringConfig;
   private metricsInterval?: NodeJS.Timeout;
   private websocketServer?: any; // WebSocket server instance
-  private connectedClients: Set<any> = new Set();
-  private lastMetrics?: SecurityMetrics;
-  private alertCooldowns: Map<string, Date> = new Map();
-  private activeIncidents: Map<string, SecurityIncident> = new Map();
+  private readonly connectedClients: Set<any> = new Set();
+  private readonly lastMetrics?: SecurityMetrics;
+  private readonly alertCooldowns: Map<string, Date> = new Map();
+  private readonly activeIncidents: Map<string, SecurityIncident> = new Map();
 
   constructor(
     supabaseUrl: string,

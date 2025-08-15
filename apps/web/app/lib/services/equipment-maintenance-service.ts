@@ -44,7 +44,9 @@ export class EquipmentMaintenanceService {
       .select()
       .single();
 
-    if (error) throw new Error(`Failed to create equipment: ${error.message}`);
+    if (error) {
+      throw new Error(`Failed to create equipment: ${error.message}`);
+    }
     return equipment;
   }
 
@@ -160,8 +162,9 @@ export class EquipmentMaintenanceService {
 
     const { data, error, count } = await query.order('name');
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to get clinic equipment: ${error.message}`);
+    }
 
     return {
       equipment: data || [],
@@ -190,7 +193,9 @@ export class EquipmentMaintenanceService {
       .select()
       .single();
 
-    if (error) throw new Error(`Failed to update equipment: ${error.message}`);
+    if (error) {
+      throw new Error(`Failed to update equipment: ${error.message}`);
+    }
     return data;
   }
 
@@ -226,10 +231,11 @@ export class EquipmentMaintenanceService {
       .select()
       .single();
 
-    if (error)
+    if (error) {
       throw new Error(
         `Failed to create maintenance schedule: ${error.message}`
       );
+    }
 
     // Create initial alert if needed
     if (schedule.alert_days_before > 0) {
@@ -271,8 +277,9 @@ export class EquipmentMaintenanceService {
       .eq('is_active', true)
       .order('next_due_date');
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to get equipment schedules: ${error.message}`);
+    }
     return data || [];
   }
 
@@ -317,10 +324,11 @@ export class EquipmentMaintenanceService {
       .select()
       .single();
 
-    if (error)
+    if (error) {
       throw new Error(
         `Failed to update maintenance schedule: ${error.message}`
       );
+    }
     return data;
   }
 
@@ -353,8 +361,9 @@ export class EquipmentMaintenanceService {
       .select()
       .single();
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to create maintenance alert: ${error.message}`);
+    }
     return alert;
   }
 
@@ -406,7 +415,9 @@ export class EquipmentMaintenanceService {
       ascending: false,
     });
 
-    if (error) throw new Error(`Failed to get active alerts: ${error.message}`);
+    if (error) {
+      throw new Error(`Failed to get active alerts: ${error.message}`);
+    }
     return data || [];
   }
 
@@ -433,7 +444,9 @@ export class EquipmentMaintenanceService {
       .select()
       .single();
 
-    if (error) throw new Error(`Failed to acknowledge alert: ${error.message}`);
+    if (error) {
+      throw new Error(`Failed to acknowledge alert: ${error.message}`);
+    }
     return data;
   }
 
@@ -460,7 +473,9 @@ export class EquipmentMaintenanceService {
       .select()
       .single();
 
-    if (error) throw new Error(`Failed to resolve alert: ${error.message}`);
+    if (error) {
+      throw new Error(`Failed to resolve alert: ${error.message}`);
+    }
     return data;
   }
 

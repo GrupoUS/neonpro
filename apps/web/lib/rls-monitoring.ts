@@ -28,7 +28,7 @@ export interface CacheStats {
 }
 
 export class RLSPerformanceMonitor {
-  private supabase: ReturnType<typeof createClient>;
+  private readonly supabase: ReturnType<typeof createClient>;
 
   constructor(supabaseClient: ReturnType<typeof createClient>) {
     this.supabase = supabaseClient;

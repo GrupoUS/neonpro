@@ -91,10 +91,10 @@ const HEALTHCARE_POOL_CONFIGS: Record<string, PoolConfiguration> = {
 
 export class NeonProConnectionPoolManager {
   private static instance: NeonProConnectionPoolManager;
-  private pools: Map<string, SupabaseClient<Database>> = new Map();
-  private healthChecks: Map<string, HealthcheckResult> = new Map();
-  private metrics: Map<string, ConnectionMetrics> = new Map();
-  private config: PoolConfiguration;
+  private readonly pools: Map<string, SupabaseClient<Database>> = new Map();
+  private readonly healthChecks: Map<string, HealthcheckResult> = new Map();
+  private readonly metrics: Map<string, ConnectionMetrics> = new Map();
+  private readonly config: PoolConfiguration;
   private monitoringInterval?: NodeJS.Timeout;
 
   private constructor(clinicSize: 'small' | 'medium' | 'large' = 'medium') {

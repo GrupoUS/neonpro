@@ -52,7 +52,9 @@ export async function getSubscriptionContext(
     const {
       data: { session },
     } = await supabase.auth.getSession();
-    if (!session) return null;
+    if (!session) {
+      return null;
+    }
 
     // Get user's clinic
     const { data: userClinic } = await supabase
@@ -62,7 +64,9 @@ export async function getSubscriptionContext(
       .eq('is_active', true)
       .single();
 
-    if (!userClinic) return null;
+    if (!userClinic) {
+      return null;
+    }
 
     // Get active subscription with plan
     const { data: subscription } = await supabase
@@ -75,7 +79,9 @@ export async function getSubscriptionContext(
       .in('status', ['trial', 'active'])
       .single();
 
-    if (!subscription) return null;
+    if (!subscription) {
+      return null;
+    }
 
     return {
       subscription: subscription as UserSubscription & {
@@ -277,7 +283,9 @@ function getUsagePeriodStart(
  * Check if a subscription is active and not expired
  */
 export function isSubscriptionActive(subscription: UserSubscription): boolean {
-  if (!subscription) return false;
+  if (!subscription) {
+    return false;
+  }
 
   const now = new Date();
 

@@ -64,17 +64,17 @@ export interface QuickAccessItem {
 }
 
 export class SystemIntegrationManager {
-  private supabase = createClient();
-  private auditLogger = new AuditLogger();
-  private lgpdManager = new LGPDManager();
-  private patientInsights = new PatientInsights();
+  private readonly supabase = createClient();
+  private readonly auditLogger = new AuditLogger();
+  private readonly lgpdManager = new LGPDManager();
+  private readonly patientInsights = new PatientInsights();
 
   /**
    * Advanced patient search with AI-powered suggestions
    */
   async searchPatients(
     query: string,
-    filters: PatientSearchFilters = {},
+    filters: PatientSearchFilters,
     userId: string,
     limit = 50
   ): Promise<{
@@ -155,7 +155,9 @@ export class SystemIntegrationManager {
         .limit(limit)
         .order('updated_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Enrich patient data
       const enrichedPatients = await Promise.all(
@@ -209,7 +211,9 @@ export class SystemIntegrationManager {
         .eq('id', patientId)
         .single();
 
-      if (patientError) throw patientError;
+      if (patientError) {
+        throw patientError;
+      }
 
       // Get appointments
       const { data: appointments } = await this.supabase
@@ -287,7 +291,9 @@ export class SystemIntegrationManager {
   ): Promise<SearchSuggestion[]> {
     const suggestions: SearchSuggestion[] = [];
 
-    if (!query || query.length < 2) return suggestions;
+    if (!query || query.length < 2) {
+      return suggestions;
+    }
 
     try {
       // Patient name suggestions
@@ -507,9 +513,15 @@ export class SystemIntegrationManager {
     const queryLower = query.toLowerCase();
     const textLower = text.toLowerCase();
 
-    if (textLower === queryLower) return 100;
-    if (textLower.startsWith(queryLower)) return 90;
-    if (textLower.includes(queryLower)) return 70;
+    if (textLower === queryLower) {
+      return 100;
+    }
+    if (textLower.startsWith(queryLower)) {
+      return 90;
+    }
+    if (textLower.includes(queryLower)) {
+      return 70;
+    }
 
     // Fuzzy matching could be implemented here
     return 50;

@@ -20,7 +20,7 @@ const openai = new OpenAI({
  * Integrates OpenAI GPT-4 with NeonPro clinic data for intelligent assistance
  */
 export class NeonProAIChatEngine {
-  private openai: OpenAI;
+  private readonly openai: OpenAI;
 
   constructor() {
     this.openai = openai;

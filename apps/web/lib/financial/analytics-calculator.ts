@@ -374,13 +374,19 @@ export class FinancialAnalyticsCalculator {
     previous: RevenueAnalytics[] | undefined,
     field: keyof RevenueAnalytics
   ): 'up' | 'down' | 'stable' {
-    if (!previous || previous.length === 0) return 'stable';
+    if (!previous || previous.length === 0) {
+      return 'stable';
+    }
 
     const currentValue = current[field] as number;
     const previousValue = previous[0][field] as number;
 
-    if (currentValue > previousValue * 1.05) return 'up';
-    if (currentValue < previousValue * 0.95) return 'down';
+    if (currentValue > previousValue * 1.05) {
+      return 'up';
+    }
+    if (currentValue < previousValue * 0.95) {
+      return 'down';
+    }
     return 'stable';
   }
 
@@ -389,12 +395,16 @@ export class FinancialAnalyticsCalculator {
     previous: RevenueAnalytics[] | undefined,
     field: keyof RevenueAnalytics
   ): number {
-    if (!previous || previous.length === 0) return 0;
+    if (!previous || previous.length === 0) {
+      return 0;
+    }
 
     const currentValue = current[field] as number;
     const previousValue = previous[0][field] as number;
 
-    if (previousValue === 0) return 0;
+    if (previousValue === 0) {
+      return 0;
+    }
     return ((currentValue - previousValue) / previousValue) * 100;
   }
 
@@ -418,14 +428,20 @@ export class FinancialAnalyticsCalculator {
     const revenues = historicalData.map((d) => d.totalRevenue);
     const periods = revenues.length;
 
-    if (periods < 2) return { trend: 'stable', growthRate: 0 };
+    if (periods < 2) {
+      return { trend: 'stable', growthRate: 0 };
+    }
 
     // Simple linear regression for trend
     const growthRate =
       (revenues[periods - 1] - revenues[0]) / (revenues[0] * (periods - 1));
 
-    if (growthRate > 0.02) return { trend: 'growing', growthRate };
-    if (growthRate < -0.02) return { trend: 'declining', growthRate };
+    if (growthRate > 0.02) {
+      return { trend: 'growing', growthRate };
+    }
+    if (growthRate < -0.02) {
+      return { trend: 'declining', growthRate };
+    }
     return { trend: 'stable', growthRate };
   }
 
@@ -455,7 +471,7 @@ export class FinancialAnalyticsCalculator {
     seasonalFactor: number;
   }> {
     const forecast = [];
-    const lastRevenue = historicalData[historicalData.length - 1].totalRevenue;
+    const lastRevenue = historicalData.at(-1).totalRevenue;
     const baseGrowth = trendAnalysis.growthRate;
 
     for (let i = 1; i <= forecastPeriods; i++) {

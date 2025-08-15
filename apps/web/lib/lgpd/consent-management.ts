@@ -235,15 +235,16 @@ export interface ConsentEvents {
  * - Audit trail and compliance monitoring
  */
 export class ConsentManager extends EventEmitter {
-  private consents: Map<string, ConsentRecord> = new Map();
-  private configurations: Map<string, ConsentConfiguration> = new Map();
+  private readonly consents: Map<string, ConsentRecord> = new Map();
+  private readonly configurations: Map<string, ConsentConfiguration> =
+    new Map();
   private analytics: ConsentAnalytics | null = null;
   private isInitialized = false;
   private cleanupInterval: NodeJS.Timeout | null = null;
   private analyticsInterval: NodeJS.Timeout | null = null;
 
   constructor(
-    private config: {
+    private readonly config: {
       defaultExpiryDays: number;
       renewalReminderDays: number;
       cleanupIntervalHours: number;

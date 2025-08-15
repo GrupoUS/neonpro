@@ -63,7 +63,9 @@ serve(async (req) => {
 
     // Process each scheduled report
     for (const config of reportConfigs || []) {
-      if (!config.schedule_config) continue;
+      if (!config.schedule_config) {
+        continue;
+      }
 
       const schedule = config.schedule_config;
       let shouldGenerate = false;
@@ -278,7 +280,9 @@ async function generateConsumptionReport(
     .gte('transaction_date', startDate.toISOString())
     .lte('transaction_date', endDate.toISOString());
 
-  if (error) throw error;
+  if (error) {
+    throw error;
+  }
 
   // Group by product
   const consumptionByProduct = new Map();
@@ -357,7 +361,9 @@ async function generateValuationReport(
     .eq('clinic_id', clinicId)
     .eq('is_active', true);
 
-  if (error) throw error;
+  if (error) {
+    throw error;
+  }
 
   const totalValue =
     inventory?.reduce(
@@ -436,7 +442,9 @@ async function generateMovementReport(
     .gte('transaction_date', startDate.toISOString())
     .lte('transaction_date', endDate.toISOString());
 
-  if (error) throw error;
+  if (error) {
+    throw error;
+  }
 
   const summary = {
     totalIn: 0,

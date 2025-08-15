@@ -48,7 +48,9 @@ export class IntelligentThresholdService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data as ReorderThreshold;
   }
 
@@ -97,7 +99,9 @@ export class IntelligentThresholdService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data as ReorderThreshold;
   }
 
@@ -111,7 +115,9 @@ export class IntelligentThresholdService {
       .single();
 
     if (error) {
-      if (error.code === 'PGRST116') return null; // Not found
+      if (error.code === 'PGRST116') {
+        return null; // Not found
+      }
       throw error;
     }
 
@@ -153,7 +159,9 @@ export class IntelligentThresholdService {
     }
 
     const { data, error } = await query;
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     return data as any[];
   }
@@ -282,7 +290,9 @@ export class IntelligentThresholdService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data as DemandForecast;
   }
 
@@ -308,7 +318,9 @@ export class IntelligentThresholdService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Trigger notification delivery
     await this.deliverNotification(data as ReorderAlert);
@@ -332,7 +344,9 @@ export class IntelligentThresholdService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data as ReorderAlert;
   }
 
@@ -428,7 +442,9 @@ export class IntelligentThresholdService {
     }
 
     const { data: alerts, error } = await query;
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     const stats = {
       total_alerts: alerts.length,
@@ -518,7 +534,9 @@ export class IntelligentThresholdService {
       .select('*')
       .eq('item_id', itemId);
 
-    if (error || !data.length) return 0.5; // Default variability
+    if (error || !data.length) {
+      return 0.5; // Default variability
+    }
 
     const leadTimes = data.map((d) => d.average_lead_time_days);
     const avg = leadTimes.reduce((sum, val) => sum + val, 0) / leadTimes.length;
@@ -563,8 +581,12 @@ export class IntelligentThresholdService {
 
   private estimateNotificationDeliveryTime(channels: string[]): number {
     // Estimate delivery time based on channels
-    if (channels.includes('sms') || channels.includes('push')) return 5000; // 5 seconds
-    if (channels.includes('email')) return 30_000; // 30 seconds
+    if (channels.includes('sms') || channels.includes('push')) {
+      return 5000; // 5 seconds
+    }
+    if (channels.includes('email')) {
+      return 30_000; // 30 seconds
+    }
     return 1000; // Dashboard only - 1 second
   }
 
@@ -604,7 +626,9 @@ export class IntelligentThresholdService {
     const resolvedAlerts = alerts.filter(
       (a) => a.status === 'resolved' && a.resolved_at
     );
-    if (resolvedAlerts.length === 0) return 0;
+    if (resolvedAlerts.length === 0) {
+      return 0;
+    }
 
     const totalTime = resolvedAlerts.reduce((sum, alert) => {
       const created = new Date(alert.created_at).getTime();

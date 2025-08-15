@@ -125,10 +125,10 @@ interface RiskDataPoint {
 }
 
 class RiskScoringAlgorithm {
-  private supabase = createClient();
+  private readonly supabase = createClient();
   private config: ScoringConfig;
-  private riskFactors: Map<string, RiskFactorDefinition> = new Map();
-  private populationStats: any = null;
+  private readonly riskFactors: Map<string, RiskFactorDefinition> = new Map();
+  private readonly populationStats: any = null;
 
   constructor(config?: Partial<ScoringConfig>) {
     this.config = this.initializeConfig(config);
@@ -312,35 +312,39 @@ class RiskScoringAlgorithm {
 
     // Age factor
     const age = patientData.age;
-    if (age < 1)
+    if (age < 1) {
       score += 20; // Neonatal
-    else if (age < 5)
+    } else if (age < 5) {
       score += 15; // Pediatric
-    else if (age < 18)
+    } else if (age < 18) {
       score += 5; // Adolescent
-    else if (age < 65)
+    } else if (age < 65) {
       score += 0; // Adult
-    else if (age < 75)
+    } else if (age < 75) {
       score += 10; // Elderly
-    else if (age < 85)
+    } else if (age < 85) {
       score += 20; // Very elderly
-    else score += 30; // Extreme elderly
+    } else {
+      score += 30; // Extreme elderly
+    }
 
     // BMI factor
     const bmi = patientData.bmi;
-    if (bmi < 16)
+    if (bmi < 16) {
       score += 25; // Severely underweight
-    else if (bmi < 18.5)
+    } else if (bmi < 18.5) {
       score += 15; // Underweight
-    else if (bmi < 25)
+    } else if (bmi < 25) {
       score += 0; // Normal
-    else if (bmi < 30)
+    } else if (bmi < 30) {
       score += 5; // Overweight
-    else if (bmi < 35)
+    } else if (bmi < 35) {
       score += 15; // Obese Class I
-    else if (bmi < 40)
+    } else if (bmi < 40) {
       score += 25; // Obese Class II
-    else score += 35; // Obese Class III
+    } else {
+      score += 35; // Obese Class III
+    }
 
     // Gender-specific factors
     if (patientData.gender === 'female') {
@@ -548,13 +552,15 @@ class RiskScoringAlgorithm {
 
     // Duration factor
     const duration = treatmentData.duration || 30;
-    if (duration > 180)
+    if (duration > 180) {
       score += 20; // >3 hours
-    else if (duration > 120)
+    } else if (duration > 120) {
       score += 15; // 2-3 hours
-    else if (duration > 60)
+    } else if (duration > 60) {
       score += 10; // 1-2 hours
-    else if (duration > 30) score += 5; // 30min-1hour
+    } else if (duration > 30) {
+      score += 5; // 30min-1hour
+    }
 
     // Equipment complexity
     const equipment = treatmentData.equipmentRequired || [];
@@ -583,10 +589,18 @@ class RiskScoringAlgorithm {
   private calculateDurationScore(treatmentData: any): number {
     const duration = treatmentData.duration || 30;
 
-    if (duration > 240) return 40; // >4 hours
-    if (duration > 180) return 30; // 3-4 hours
-    if (duration > 120) return 20; // 2-3 hours
-    if (duration > 60) return 10; // 1-2 hours
+    if (duration > 240) {
+      return 40; // >4 hours
+    }
+    if (duration > 180) {
+      return 30; // 3-4 hours
+    }
+    if (duration > 120) {
+      return 20; // 2-3 hours
+    }
+    if (duration > 60) {
+      return 10; // 1-2 hours
+    }
     return 5; // <1 hour
   }
 
@@ -594,7 +608,9 @@ class RiskScoringAlgorithm {
    * Calculate anesthesia score
    */
   private calculateAnesthesiaScore(treatmentData: any): number {
-    if (!treatmentData.anesthesiaRequired) return 0;
+    if (!treatmentData.anesthesiaRequired) {
+      return 0;
+    }
 
     const anesthesiaMap: Record<string, number> = {
       local: 10,
@@ -695,7 +711,9 @@ class RiskScoringAlgorithm {
    * Calculate previous outcomes score
    */
   private calculateOutcomesScore(historicalData: any[]): number {
-    if (historicalData.length === 0) return 0;
+    if (historicalData.length === 0) {
+      return 0;
+    }
 
     const complications = historicalData.filter(
       (record) =>
@@ -710,7 +728,9 @@ class RiskScoringAlgorithm {
    * Calculate complications score
    */
   private calculateComplicationsScore(historicalData: any[]): number {
-    if (historicalData.length === 0) return 0;
+    if (historicalData.length === 0) {
+      return 0;
+    }
 
     let score = 0;
     historicalData.forEach((record) => {
@@ -725,7 +745,9 @@ class RiskScoringAlgorithm {
    * Calculate recovery patterns score
    */
   private calculateRecoveryScore(historicalData: any[]): number {
-    if (historicalData.length === 0) return 0;
+    if (historicalData.length === 0) {
+      return 0;
+    }
 
     const slowRecoveries = historicalData.filter(
       (record) => record.recovery_time > record.expected_recovery_time * 1.5
@@ -739,7 +761,9 @@ class RiskScoringAlgorithm {
    * Calculate treatment adherence score
    */
   private calculateAdherenceScore(historicalData: any[]): number {
-    if (historicalData.length === 0) return 0;
+    if (historicalData.length === 0) {
+      return 0;
+    }
 
     const poorAdherence = historicalData.filter(
       (record) => record.adherence_score < 0.7 // Less than 70% adherence
@@ -818,10 +842,18 @@ class RiskScoringAlgorithm {
   ): 'minimal' | 'low' | 'moderate' | 'high' | 'critical' {
     const thresholds = this.config.thresholds;
 
-    if (score >= thresholds.high) return 'critical';
-    if (score >= thresholds.moderate) return 'high';
-    if (score >= thresholds.low) return 'moderate';
-    if (score >= thresholds.minimal) return 'low';
+    if (score >= thresholds.high) {
+      return 'critical';
+    }
+    if (score >= thresholds.moderate) {
+      return 'high';
+    }
+    if (score >= thresholds.low) {
+      return 'moderate';
+    }
+    if (score >= thresholds.minimal) {
+      return 'low';
+    }
     return 'minimal';
   }
 
@@ -835,9 +867,15 @@ class RiskScoringAlgorithm {
     let confidence = 100;
 
     // Reduce confidence for missing data
-    if (!inputData.patientData.medicalHistory?.length) confidence -= 10;
-    if (!inputData.patientData.medications?.length) confidence -= 5;
-    if (!inputData.patientData.familyHistory?.length) confidence -= 5;
+    if (!inputData.patientData.medicalHistory?.length) {
+      confidence -= 10;
+    }
+    if (!inputData.patientData.medications?.length) {
+      confidence -= 5;
+    }
+    if (!inputData.patientData.familyHistory?.length) {
+      confidence -= 5;
+    }
 
     // Reduce confidence for incomplete lifestyle data
     const lifestyle = inputData.patientData.lifestyle || {};
@@ -850,7 +888,9 @@ class RiskScoringAlgorithm {
       (sum, score) => sum + score,
       0
     );
-    if (totalHistorical === 0) confidence -= 20;
+    if (totalHistorical === 0) {
+      confidence -= 20;
+    }
 
     return Math.max(0, confidence);
   }
@@ -966,7 +1006,9 @@ class RiskScoringAlgorithm {
    * Calculate trend from score array
    */
   private calculateTrend(scores: number[]): number {
-    if (scores.length < 2) return 0;
+    if (scores.length < 2) {
+      return 0;
+    }
 
     let trend = 0;
     for (let i = 1; i < scores.length; i++) {
@@ -1019,11 +1061,21 @@ class RiskScoringAlgorithm {
    * Get age group for benchmarking
    */
   private getAgeGroup(age: number): string {
-    if (age < 18) return 'pediatric';
-    if (age < 35) return 'young_adult';
-    if (age < 50) return 'middle_aged';
-    if (age < 65) return 'mature';
-    if (age < 80) return 'elderly';
+    if (age < 18) {
+      return 'pediatric';
+    }
+    if (age < 35) {
+      return 'young_adult';
+    }
+    if (age < 50) {
+      return 'middle_aged';
+    }
+    if (age < 65) {
+      return 'mature';
+    }
+    if (age < 80) {
+      return 'elderly';
+    }
     return 'very_elderly';
   }
 
@@ -1222,8 +1274,12 @@ class RiskScoringAlgorithm {
     // This would parse and create a function from the database definition
     // For now, return a simple function
     return (value: any, _context: any) => {
-      if (typeof value === 'number') return Math.min(100, Math.max(0, value));
-      if (typeof value === 'boolean') return value ? 20 : 0;
+      if (typeof value === 'number') {
+        return Math.min(100, Math.max(0, value));
+      }
+      if (typeof value === 'boolean') {
+        return value ? 20 : 0;
+      }
       return 10; // Default score
     };
   }

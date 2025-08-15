@@ -73,7 +73,9 @@ function sendMetrics(
  * Get or create session ID for tracking
  */
 function getSessionId(): string {
-  if (typeof window === 'undefined') return 'server';
+  if (typeof window === 'undefined') {
+    return 'server';
+  }
 
   let sessionId = sessionStorage.getItem('neonpro-session-id');
   if (!sessionId) {
@@ -214,7 +216,9 @@ export const PerformanceDebug = {
    * Get all performance entries
    */
   getAllEntries: () => {
-    if (typeof window === 'undefined' || !('performance' in window)) return [];
+    if (typeof window === 'undefined' || !('performance' in window)) {
+      return [];
+    }
     return performance.getEntries();
   },
 
@@ -222,8 +226,9 @@ export const PerformanceDebug = {
    * Get navigation timing
    */
   getNavigationTiming: () => {
-    if (typeof window === 'undefined' || !('performance' in window))
+    if (typeof window === 'undefined' || !('performance' in window)) {
       return null;
+    }
     return performance.getEntriesByType(
       'navigation'
     )[0] as PerformanceNavigationTiming;
@@ -233,7 +238,9 @@ export const PerformanceDebug = {
    * Get resource timing
    */
   getResourceTiming: () => {
-    if (typeof window === 'undefined' || !('performance' in window)) return [];
+    if (typeof window === 'undefined' || !('performance' in window)) {
+      return [];
+    }
     return performance.getEntriesByType('resource');
   },
 
@@ -241,8 +248,9 @@ export const PerformanceDebug = {
    * Measure time between two marks
    */
   measureTime: (startMark: string, endMark: string, measureName: string) => {
-    if (typeof window === 'undefined' || !('performance' in window))
+    if (typeof window === 'undefined' || !('performance' in window)) {
       return null;
+    }
 
     try {
       performance.measure(measureName, startMark, endMark);
@@ -270,7 +278,9 @@ export const PerformanceDebug = {
    */
   logSummary: () => {
     const navigation = PerformanceDebug.getNavigationTiming();
-    if (!navigation) return;
+    if (!navigation) {
+      return;
+    }
 
     console.group('🚀 NeonPro Performance Summary');
     console.log(

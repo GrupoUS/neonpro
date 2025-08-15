@@ -53,8 +53,8 @@ export interface PredictionFeedback {
 // ===============================================
 
 export class AIDurationPredictionService {
-  private supabase: ReturnType<typeof createClient>;
-  private auditLogger: AuditLogger;
+  private readonly supabase: ReturnType<typeof createClient>;
+  private readonly auditLogger: AuditLogger;
 
   private readonly BASELINE_DURATIONS: Record<string, number> = {
     consultation: 30,
@@ -245,7 +245,9 @@ export class AIDurationPredictionService {
       .limit(1)
       .single();
 
-    if (error) return null;
+    if (error) {
+      return null;
+    }
 
     return {
       appointmentId: data.appointment_id,
@@ -267,7 +269,9 @@ export class AIDurationPredictionService {
         .eq('professional_id', professionalId)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return {
         professionalId,
@@ -297,7 +301,9 @@ export class AIDurationPredictionService {
       .limit(1)
       .single();
 
-    if (error) return null;
+    if (error) {
+      return null;
+    }
 
     return {
       version: data.model_version,
@@ -331,30 +337,49 @@ export class AIDurationPredictionService {
 
     // Age factor
     if (features.patientAge) {
-      if (features.patientAge > 65) multiplier *= 1.15;
-      if (features.patientAge < 18) multiplier *= 1.1;
+      if (features.patientAge > 65) {
+        multiplier *= 1.15;
+      }
+      if (features.patientAge < 18) {
+        multiplier *= 1.1;
+      }
     }
 
     // First visit
-    if (features.isFirstVisit) multiplier *= 1.2;
+    if (features.isFirstVisit) {
+      multiplier *= 1.2;
+    }
 
     // Anxiety level
-    if (features.patientAnxietyLevel === 'high') multiplier *= 1.25;
-    else if (features.patientAnxietyLevel === 'medium') multiplier *= 1.1;
+    if (features.patientAnxietyLevel === 'high') {
+      multiplier *= 1.25;
+    } else if (features.patientAnxietyLevel === 'medium') {
+      multiplier *= 1.1;
+    }
 
     // Treatment complexity
-    if (features.treatmentComplexity === 'complex') multiplier *= 1.5;
-    else if (features.treatmentComplexity === 'simple') multiplier *= 0.8;
+    if (features.treatmentComplexity === 'complex') {
+      multiplier *= 1.5;
+    } else if (features.treatmentComplexity === 'simple') {
+      multiplier *= 0.8;
+    }
 
     // Comorbidities
-    if (features.hasComorbidities) multiplier *= 1.2;
+    if (features.hasComorbidities) {
+      multiplier *= 1.2;
+    }
 
     // Special equipment
-    if (features.requiresSpecialEquipment) multiplier *= 1.15;
+    if (features.requiresSpecialEquipment) {
+      multiplier *= 1.15;
+    }
 
     // Mobility limitations
-    if (features.patientMobilityLevel === 'limited') multiplier *= 1.1;
-    else if (features.patientMobilityLevel === 'wheelchair') multiplier *= 1.2;
+    if (features.patientMobilityLevel === 'limited') {
+      multiplier *= 1.1;
+    } else if (features.patientMobilityLevel === 'wheelchair') {
+      multiplier *= 1.2;
+    }
 
     return multiplier;
   }
@@ -363,14 +388,18 @@ export class AIDurationPredictionService {
     let factor = 1.0;
 
     // Time of day impact
-    if (features.timeOfDay === 'morning')
+    if (features.timeOfDay === 'morning') {
       factor *= 0.95; // More efficient
-    else if (features.timeOfDay === 'evening') factor *= 1.1; // Less efficient
+    } else if (features.timeOfDay === 'evening') {
+      factor *= 1.1; // Less efficient
+    }
 
     // Day of week impact
-    if (features.dayOfWeek === 1)
+    if (features.dayOfWeek === 1) {
       factor *= 1.05; // Monday rush
-    else if (features.dayOfWeek === 5) factor *= 1.02; // Friday wind-down
+    } else if (features.dayOfWeek === 5) {
+      factor *= 1.02; // Friday wind-down
+    }
 
     return factor;
   }
@@ -388,7 +417,9 @@ export class AIDurationPredictionService {
     confidence += (featureCount - 4) * 0.02; // Boost for each additional feature
 
     // Historical data availability
-    if (features.historicalDuration) confidence += 0.1;
+    if (features.historicalDuration) {
+      confidence += 0.1;
+    }
 
     return Math.min(Math.max(confidence, 0.1), 1.0);
   }
@@ -419,8 +450,8 @@ export class AIDurationPredictionService {
 // ===============================================
 
 export class AIABTestingService {
-  private supabase: ReturnType<typeof createClient>;
-  private auditLogger: AuditLogger;
+  private readonly supabase: ReturnType<typeof createClient>;
+  private readonly auditLogger: AuditLogger;
 
   constructor() {
     this.supabase = createClient();
@@ -461,7 +492,9 @@ export class AIABTestingService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return {
         userId,
@@ -497,7 +530,9 @@ export class AIABTestingService {
         .from('ab_test_assignments')
         .select('test_group');
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       const controlGroup = data.filter(
         (d) => d.test_group === 'control'
@@ -537,7 +572,7 @@ export class AIABTestingService {
     for (let i = 0; i < userId.length; i++) {
       const char = userId.charCodeAt(i);
       hash = (hash << 5) - hash + char;
-      hash = hash & hash; // Convert to 32-bit integer
+      hash &= hash; // Convert to 32-bit integer
     }
     return Math.abs(hash);
   }
@@ -548,8 +583,8 @@ export class AIABTestingService {
 // ===============================================
 
 export class ModelPerformanceService {
-  private supabase: ReturnType<typeof createClient>;
-  private auditLogger: AuditLogger;
+  private readonly supabase: ReturnType<typeof createClient>;
+  private readonly auditLogger: AuditLogger;
 
   constructor() {
     this.supabase = createClient();
@@ -596,7 +631,9 @@ export class ModelPerformanceService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return {
         success: true,
@@ -626,7 +663,9 @@ export class ModelPerformanceService {
         .eq('is_active', true)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return {
         modelVersion: data.model_version,
@@ -677,7 +716,9 @@ export class ModelPerformanceService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return {
         success: true,

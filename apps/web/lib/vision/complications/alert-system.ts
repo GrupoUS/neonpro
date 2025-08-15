@@ -27,9 +27,9 @@ import type {
 } from './types';
 
 export class ComplicationAlertSystem {
-  private supabase = createClient();
-  private activeAlerts: Map<string, ComplicationAlert> = new Map();
-  private escalationTimers: Map<string, NodeJS.Timeout> = new Map();
+  private readonly supabase = createClient();
+  private readonly activeAlerts: Map<string, ComplicationAlert> = new Map();
+  private readonly escalationTimers: Map<string, NodeJS.Timeout> = new Map();
 
   constructor() {
     this.initializeAlertSystem();

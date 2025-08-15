@@ -50,7 +50,7 @@ class SessionManager {
   private sessionId: string | null = null;
   private heartbeatInterval: NodeJS.Timeout | null = null;
   private activityTimeout: NodeJS.Timeout | null = null;
-  private supabase = createClient();
+  private readonly supabase = createClient();
 
   /**
    * Initialize session management
@@ -108,7 +108,9 @@ class SessionManager {
     metadata?: Record<string, any>
   ): Promise<void> {
     const session = await this.getCurrentSession();
-    if (!session) return;
+    if (!session) {
+      return;
+    }
 
     const now = Date.now();
     session.lastActivity = now;
@@ -130,7 +132,9 @@ class SessionManager {
       const encryptedData = localStorage.getItem(
         `${SESSION_CONFIG.STORAGE_KEY_PREFIX}current`
       );
-      if (!encryptedData) return null;
+      if (!encryptedData) {
+        return null;
+      }
 
       const sessionData = JSON.parse(
         this.decrypt(encryptedData)
@@ -214,7 +218,9 @@ class SessionManager {
    */
   shouldRefreshToken(): boolean {
     const session = this.getCurrentSession();
-    if (!session) return false;
+    if (!session) {
+      return false;
+    }
 
     const timeToExpiry = session.expiresAt - Date.now();
     const refreshThreshold =

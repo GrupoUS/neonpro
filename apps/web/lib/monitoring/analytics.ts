@@ -33,7 +33,7 @@ export interface FeatureAdoptionMetric {
 }
 
 class UserAnalytics {
-  private supabase = createClient();
+  private readonly supabase = createClient();
   private currentSession: UserSession | null = null;
   private eventQueue: AnalyticsEvent[] = [];
   private flushInterval: NodeJS.Timeout | null = null;
@@ -89,7 +89,9 @@ class UserAnalytics {
     eventType: string,
     eventData?: Record<string, any>
   ): Promise<void> {
-    if (!this.currentSession) return;
+    if (!this.currentSession) {
+      return;
+    }
 
     this.currentSession.lastActivity = Date.now();
     this.currentSession.events.push(eventType);
@@ -114,7 +116,9 @@ class UserAnalytics {
    * Track page view
    */
   async trackPageView(pagePath?: string): Promise<void> {
-    if (!this.currentSession) return;
+    if (!this.currentSession) {
+      return;
+    }
 
     this.currentSession.pageViews++;
 
@@ -240,7 +244,9 @@ class UserAnalytics {
 
       data.forEach((record) => {
         const eventData = record.event_data as any;
-        if (!(eventData?.feature_name && eventData?.epic_name)) return;
+        if (!(eventData?.feature_name && eventData?.epic_name)) {
+          return;
+        }
 
         const key = `${eventData.epic_name}_${eventData.feature_name}`;
 
@@ -284,7 +290,9 @@ class UserAnalytics {
    * Flush events to database
    */
   private async flushEvents(): Promise<void> {
-    if (this.eventQueue.length === 0) return;
+    if (this.eventQueue.length === 0) {
+      return;
+    }
 
     const eventsToFlush = [...this.eventQueue];
     this.eventQueue = [];

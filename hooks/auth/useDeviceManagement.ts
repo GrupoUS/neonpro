@@ -87,7 +87,9 @@ export function useDeviceManagement(
   // =====================================================
 
   useEffect(() => {
-    if (!supabase) return;
+    if (!supabase) {
+      return;
+    }
 
     deviceManagerRef.current = new DeviceManager(supabase);
 
@@ -96,10 +98,12 @@ export function useDeviceManagement(
     } else {
       setState((prev) => ({ ...prev, isLoading: false }));
     }
-  }, [supabase, userId, validateOnMount]);
+  }, [supabase, userId, validateOnMount, initializeDeviceManagement]);
 
   const initializeDeviceManagement = useCallback(async () => {
-    if (!(userId && deviceManagerRef.current)) return;
+    if (!(userId && deviceManagerRef.current)) {
+      return;
+    }
 
     try {
       setState((prev) => ({ ...prev, isLoading: true, error: null }));
@@ -156,7 +160,13 @@ export function useDeviceManagement(
         error: error instanceof Error ? error.message : 'Initialization failed',
       }));
     }
-  }, [userId, autoRegister, showNotifications]);
+  }, [
+    userId,
+    autoRegister,
+    showNotifications,
+    registerDevice,
+    trustCurrentDevice,
+  ]);
 
   // =====================================================
   // DEVICE ACTIONS
@@ -271,7 +281,7 @@ export function useDeviceManagement(
         return false;
       }
     },
-    [userId, showNotifications]
+    [userId, showNotifications, refreshDevices]
   );
 
   const untrustDevice = useCallback(
@@ -309,7 +319,7 @@ export function useDeviceManagement(
         return false;
       }
     },
-    [userId, showNotifications]
+    [userId, showNotifications, refreshDevices]
   );
 
   const removeDevice = useCallback(
@@ -347,11 +357,13 @@ export function useDeviceManagement(
         return false;
       }
     },
-    [userId, showNotifications]
+    [userId, showNotifications, refreshDevices]
   );
 
   const refreshDevices = useCallback(async () => {
-    if (!(userId && deviceManagerRef.current)) return;
+    if (!(userId && deviceManagerRef.current)) {
+      return;
+    }
 
     try {
       const trustedDevices =
@@ -454,7 +466,9 @@ export function useDeviceManagement(
   // =====================================================
 
   useEffect(() => {
-    if (!(trackDeviceChanges && state.currentDevice)) return;
+    if (!(trackDeviceChanges && state.currentDevice)) {
+      return;
+    }
 
     const checkDeviceChanges = async () => {
       const currentDevice = await getCurrentDeviceInfo();
@@ -563,7 +577,7 @@ async function generateDeviceFingerprint(): Promise<string> {
   for (let i = 0; i < fingerprint.length; i++) {
     const char = fingerprint.charCodeAt(i);
     hash = (hash << 5) - hash + char;
-    hash = hash & hash; // Convert to 32-bit integer
+    hash &= hash; // Convert to 32-bit integer
   }
 
   return Math.abs(hash).toString(36);
@@ -603,18 +617,29 @@ function generateDeviceName(): string {
 
   // Detect browser
   let browser = 'Unknown Browser';
-  if (userAgent.includes('Chrome')) browser = 'Chrome';
-  else if (userAgent.includes('Firefox')) browser = 'Firefox';
-  else if (userAgent.includes('Safari')) browser = 'Safari';
-  else if (userAgent.includes('Edge')) browser = 'Edge';
+  if (userAgent.includes('Chrome')) {
+    browser = 'Chrome';
+  } else if (userAgent.includes('Firefox')) {
+    browser = 'Firefox';
+  } else if (userAgent.includes('Safari')) {
+    browser = 'Safari';
+  } else if (userAgent.includes('Edge')) {
+    browser = 'Edge';
+  }
 
   // Detect OS
   let os = 'Unknown OS';
-  if (userAgent.includes('Windows')) os = 'Windows';
-  else if (userAgent.includes('Mac')) os = 'macOS';
-  else if (userAgent.includes('Linux')) os = 'Linux';
-  else if (userAgent.includes('Android')) os = 'Android';
-  else if (userAgent.includes('iOS')) os = 'iOS';
+  if (userAgent.includes('Windows')) {
+    os = 'Windows';
+  } else if (userAgent.includes('Mac')) {
+    os = 'macOS';
+  } else if (userAgent.includes('Linux')) {
+    os = 'Linux';
+  } else if (userAgent.includes('Android')) {
+    os = 'Android';
+  } else if (userAgent.includes('iOS')) {
+    os = 'iOS';
+  }
 
   return `${browser} on ${os}`;
 }

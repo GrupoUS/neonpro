@@ -24,7 +24,7 @@ import type {
 import { createClient } from '@/app/utils/supabase/server';
 
 export class TreatmentSuccessService {
-  private supabase = createClient();
+  private readonly supabase = createClient();
 
   // Treatment Outcomes Management
   async getTreatmentOutcomes(

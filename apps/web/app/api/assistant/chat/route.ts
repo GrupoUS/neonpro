@@ -143,7 +143,7 @@ Seja sempre útil, preciso e contextualmente relevante para a gestão de clínic
     const coreMessages = convertToCoreMessages(messages);
 
     // Salvar mensagem do usuário
-    const userMessage = messages[messages.length - 1];
+    const userMessage = messages.at(-1);
     await supabase.from('assistant_messages').insert({
       conversation_id: conversation.id,
       user_id: user.id,
@@ -170,8 +170,8 @@ Seja sempre útil, preciso e contextualmente relevante para a gestão de clínic
         model,
         message_count: messages.length,
         context_used: {
-          has_preferences: !!preferences,
-          has_profile: !!profile,
+          has_preferences: Boolean(preferences),
+          has_profile: Boolean(profile),
           recent_appointments_count: recentAppointments?.length || 0,
         },
       },

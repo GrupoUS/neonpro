@@ -53,7 +53,7 @@ export interface AdverseEvent {
 }
 
 export class ANVISACompliance {
-  private supabase: any;
+  private readonly supabase: any;
 
   constructor() {
     this.supabase = createClient(
@@ -73,7 +73,9 @@ export class ANVISACompliance {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Log compliance action
       await this.logComplianceAction(
@@ -97,7 +99,9 @@ export class ANVISACompliance {
         .eq('id', productId)
         .single();
 
-      if (error || !product) return false;
+      if (error || !product) {
+        return false;
+      }
 
       // Check if product is approved and not expired
       const isApproved = product.regulatory_status === 'approved';
@@ -142,7 +146,9 @@ export class ANVISACompliance {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Log compliance action
       await this.logComplianceAction(
@@ -169,7 +175,9 @@ export class ANVISACompliance {
         .eq('id', procedureId)
         .single();
 
-      if (error || !procedure) return false;
+      if (error || !procedure) {
+        return false;
+      }
 
       // Check if professional has all required qualifications
       return procedure.required_qualifications.every((req: string) =>
@@ -192,7 +200,9 @@ export class ANVISACompliance {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Auto-determine if ANVISA reporting is required
       const requiresANVISAReport = this.requiresANVISAReporting(
@@ -223,10 +233,14 @@ export class ANVISACompliance {
     outcome: AdverseEvent['outcome']
   ): boolean {
     // Severe or life-threatening events always require reporting
-    if (eventType === 'severe' || eventType === 'life_threatening') return true;
+    if (eventType === 'severe' || eventType === 'life_threatening') {
+      return true;
+    }
 
     // Permanent damage or death always requires reporting
-    if (outcome === 'permanent_damage' || outcome === 'death') return true;
+    if (outcome === 'permanent_damage' || outcome === 'death') {
+      return true;
+    }
 
     return false;
   }

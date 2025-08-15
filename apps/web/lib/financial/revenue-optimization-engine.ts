@@ -96,7 +96,7 @@ export type CLVPrediction = z.infer<typeof CLVPredictionSchema>;
 
 // 🎯 Revenue Optimization Engine
 export class RevenueOptimizationEngine {
-  private supabase = createClient();
+  private readonly supabase = createClient();
 
   // 💰 Dynamic Pricing Optimization
   async optimizePricing(

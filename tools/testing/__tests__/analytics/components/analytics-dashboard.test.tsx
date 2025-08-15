@@ -38,8 +38,12 @@ jest.mock('recharts', () => ({
 // Mock date-fns
 jest.mock('date-fns', () => ({
   format: jest.fn((_date, formatStr) => {
-    if (formatStr === 'MMM yyyy') return 'Jan 2024';
-    if (formatStr === 'dd/MM/yyyy') return '01/01/2024';
+    if (formatStr === 'MMM yyyy') {
+      return 'Jan 2024';
+    }
+    if (formatStr === 'dd/MM/yyyy') {
+      return '01/01/2024';
+    }
     return '2024-01-01';
   }),
   subMonths: jest.fn(() => new Date('2023-12-01')),
@@ -633,12 +637,10 @@ describe('AnalyticsDashboard Component', () => {
           activeSubscriptions: 125,
           mrr: 15_000,
         },
-        rawData: Array(1000)
-          .fill(null)
-          .map((_, i) => ({
-            id: i,
-            value: Math.random() * 1000,
-          })),
+        rawData: new Array(1000).fill(null).map((_, i) => ({
+          id: i,
+          value: Math.random() * 1000,
+        })),
       };
 
       analyticsService.getDashboardMetrics.mockResolvedValue(mockMetrics);
@@ -664,13 +666,11 @@ describe('AnalyticsDashboard Component', () => {
           activeSubscriptions: 125,
           mrr: 15_000,
         },
-        detailsList: Array(10_000)
-          .fill(null)
-          .map((_, i) => ({
-            id: i,
-            name: `Subscription ${i}`,
-            value: Math.random() * 1000,
-          })),
+        detailsList: new Array(10_000).fill(null).map((_, i) => ({
+          id: i,
+          name: `Subscription ${i}`,
+          value: Math.random() * 1000,
+        })),
       };
 
       analyticsService.getDashboardMetrics.mockResolvedValue(mockMetrics);

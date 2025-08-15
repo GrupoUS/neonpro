@@ -78,10 +78,10 @@ export interface ResolutionNotificationData {
 }
 
 class StockNotificationsService {
-  private supabase = createClient();
-  private resend = new Resend(process.env.RESEND_API_KEY);
-  private maxRetries = 3;
-  private retryDelayMs = 30_000; // 30 seconds
+  private readonly supabase = createClient();
+  private readonly resend = new Resend(process.env.RESEND_API_KEY);
+  private readonly maxRetries = 3;
+  private readonly retryDelayMs = 30_000; // 30 seconds
 
   // ==========================================
   // TEMPLATE MANAGEMENT
@@ -939,7 +939,9 @@ class StockNotificationsService {
                   html: notification.content,
                 });
                 success = !emailResult.error;
-                if (emailResult.error) errorMessage = emailResult.error.message;
+                if (emailResult.error) {
+                  errorMessage = emailResult.error.message;
+                }
               }
               break;
 
@@ -954,7 +956,9 @@ class StockNotificationsService {
                   }
                 );
                 success = response.status >= 200 && response.status < 300;
-                if (!success) errorMessage = `HTTP ${response.status}`;
+                if (!success) {
+                  errorMessage = `HTTP ${response.status}`;
+                }
               }
               break;
 
@@ -966,7 +970,9 @@ class StockNotificationsService {
                   payload
                 );
                 success = pushResult.success;
-                if (!success) errorMessage = pushResult.errors.join(', ');
+                if (!success) {
+                  errorMessage = pushResult.errors.join(', ');
+                }
               }
               break;
           }

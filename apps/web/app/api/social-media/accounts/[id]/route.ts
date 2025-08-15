@@ -97,8 +97,8 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
     // Add token status information
     const accountWithTokenStatus = {
       ...account,
-      has_access_token: !!account.access_token,
-      has_refresh_token: !!account.refresh_token,
+      has_access_token: Boolean(account.access_token),
+      has_refresh_token: Boolean(account.refresh_token),
       token_valid: account.token_expires_at
         ? new Date(account.token_expires_at) > new Date()
         : null,

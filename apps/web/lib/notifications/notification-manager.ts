@@ -40,13 +40,13 @@ import {
  * Gerenciador central do sistema de notificações
  */
 class NotificationManager {
-  private supabase: any;
-  private templateEngine: TemplateEngine;
-  private channelManager: ChannelOrchestrator;
+  private readonly supabase: any;
+  private readonly templateEngine: TemplateEngine;
+  private readonly channelManager: ChannelOrchestrator;
   // private ruleEngine: RuleEngine;
   // private metricsCollector: MetricsCollector;
-  private config: NotificationSystemConfig;
-  private isInitialized = false;
+  private readonly config: NotificationSystemConfig;
+  private readonly isInitialized = false;
 
   constructor(supabaseUrl: string, supabaseKey: string) {
     this.supabase = createClient(supabaseUrl, supabaseKey);
@@ -550,7 +550,9 @@ class NotificationManager {
     recipient: NotificationRecipient,
     channels: NotificationChannel[]
   ): Promise<void> {
-    if (!this.config.rateLimiting.enabled) return;
+    if (!this.config.rateLimiting.enabled) {
+      return;
+    }
 
     // Implementar verificação de rate limiting
     // Por simplicidade, apenas log por enquanto

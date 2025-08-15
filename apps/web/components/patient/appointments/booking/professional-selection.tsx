@@ -60,7 +60,9 @@ export function ProfessionalSelection({
         }
       );
 
-      if (fetchError) throw fetchError;
+      if (fetchError) {
+        throw fetchError;
+      }
 
       setProfessionals(data || []);
     } catch (err) {
@@ -81,7 +83,9 @@ export function ProfessionalSelection({
   };
 
   const renderStars = (rating: number | null) => {
-    if (!rating) return null;
+    if (!rating) {
+      return null;
+    }
 
     const stars = [];
     const fullStars = Math.floor(rating);

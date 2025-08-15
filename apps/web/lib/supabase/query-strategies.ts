@@ -75,7 +75,7 @@ interface QueryStrategy {
 
 class HealthcareQueryStrategies {
   private static instance: HealthcareQueryStrategies;
-  private poolManager = getConnectionPoolManager();
+  private readonly poolManager = getConnectionPoolManager();
 
   // Predefined strategies for healthcare operations
   private readonly strategies: Record<HealthcareQueryType, QueryStrategy> = {
@@ -387,7 +387,7 @@ class HealthcareQueryStrategies {
   private isLGPDCompliant(context: QueryContext): boolean {
     // Implement LGPD compliance checks
     // Verify audit trail, consent, and data minimization
-    return context.requiresAudit && !!context.clinicId;
+    return context.requiresAudit && Boolean(context.clinicId);
   }
 
   /**
@@ -444,7 +444,7 @@ class HealthcareQueryStrategies {
   private verifyLGPDCompliance<T>(context: QueryContext, _data: T): boolean {
     // Implement LGPD verification logic
     // Check consent status, data minimization, purpose limitation
-    return context.requiresAudit && !!context.patientId;
+    return context.requiresAudit && Boolean(context.patientId);
   }
 
   /**

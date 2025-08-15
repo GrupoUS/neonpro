@@ -84,7 +84,9 @@ async function validateReportAccess(
       .eq('user_id', userId)
       .single();
 
-    if (!profile) return false;
+    if (!profile) {
+      return false;
+    }
 
     const hasReportAccess =
       profile.role === 'admin' ||

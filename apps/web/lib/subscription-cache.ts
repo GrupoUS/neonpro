@@ -53,7 +53,7 @@ export interface CacheOperation {
  * Intelligent subscription cache with LRU eviction and automatic cleanup
  */
 export class SubscriptionCache {
-  private cache = new Map<string, CacheEntry>();
+  private readonly cache = new Map<string, CacheEntry>();
   private hitCount = 0;
   private missCount = 0;
   private operations: CacheOperation[] = [];
@@ -396,7 +396,9 @@ export class SubscriptionCache {
    * Remove least useful cache entry
    */
   private evictLeastUseful(): boolean {
-    if (this.cache.size === 0) return false;
+    if (this.cache.size === 0) {
+      return false;
+    }
 
     let leastUsefulKey: string | null = null;
     let lowestPriority = Number.POSITIVE_INFINITY;

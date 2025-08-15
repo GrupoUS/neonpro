@@ -146,9 +146,9 @@ export interface AutomationAlert {
  * providing unified control, monitoring, and coordination.
  */
 export class LGPDAutomationOrchestrator {
-  private supabase: SupabaseClient;
-  private complianceManager: LGPDComplianceManager;
-  private config: LGPDAutomationConfig;
+  private readonly supabase: SupabaseClient;
+  private readonly complianceManager: LGPDComplianceManager;
+  private readonly config: LGPDAutomationConfig;
 
   // Automation modules
   private consentAutomation: ConsentAutomationManager;
@@ -160,8 +160,10 @@ export class LGPDAutomationOrchestrator {
   private thirdPartyCompliance: ThirdPartyComplianceAutomation;
   private auditReporting: AuditReportingAutomation;
   private monitoringInterval: NodeJS.Timeout | null = null;
-  private alertCallbacks: Array<(alert: AutomationAlert) => void> = [];
-  private statusCallbacks: Array<(status: AutomationStatus[]) => void> = [];
+  private readonly alertCallbacks: Array<(alert: AutomationAlert) => void> = [];
+  private readonly statusCallbacks: Array<
+    (status: AutomationStatus[]) => void
+  > = [];
 
   constructor(
     supabase: SupabaseClient,
@@ -445,7 +447,9 @@ export class LGPDAutomationOrchestrator {
         'get_automation_status'
       );
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return statusData || [];
     } catch (error) {
@@ -463,7 +467,9 @@ export class LGPDAutomationOrchestrator {
         'get_automation_metrics'
       );
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return metrics;
     } catch (error) {
@@ -520,7 +526,9 @@ export class LGPDAutomationOrchestrator {
 
       const { data: alerts, error, count } = await query;
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       const totalPages = Math.ceil((count || 0) / pagination.limit);
 
@@ -555,7 +563,9 @@ export class LGPDAutomationOrchestrator {
         })
         .eq('id', alertId);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Log alert resolution
       await this.complianceManager.logAuditEvent({
@@ -593,7 +603,9 @@ export class LGPDAutomationOrchestrator {
         'get_unified_automation_dashboard'
       );
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return dashboard;
     } catch (error) {
@@ -718,7 +730,9 @@ export class LGPDAutomationOrchestrator {
         .select('*')
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Trigger callbacks
       for (const callback of this.alertCallbacks) {

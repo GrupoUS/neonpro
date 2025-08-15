@@ -166,9 +166,15 @@ function getClientIP(request: NextRequest): string {
   const realIP = request.headers.get('x-real-ip');
   const cfConnectingIP = request.headers.get('cf-connecting-ip');
 
-  if (cfConnectingIP) return cfConnectingIP;
-  if (realIP) return realIP;
-  if (forwarded) return forwarded.split(',')[0].trim();
+  if (cfConnectingIP) {
+    return cfConnectingIP;
+  }
+  if (realIP) {
+    return realIP;
+  }
+  if (forwarded) {
+    return forwarded.split(',')[0].trim();
+  }
 
   // Fallback to connection IP
   return request.ip || 'unknown';

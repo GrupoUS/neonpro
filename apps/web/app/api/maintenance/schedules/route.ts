@@ -22,7 +22,9 @@ export async function GET(request: NextRequest) {
     const filters: any = {};
 
     const maintenanceTypes = searchParams.getAll('maintenance_type');
-    if (maintenanceTypes.length) filters.maintenance_type = maintenanceTypes;
+    if (maintenanceTypes.length) {
+      filters.maintenance_type = maintenanceTypes;
+    }
 
     if (searchParams.get('is_active') !== null) {
       filters.is_active = searchParams.get('is_active') === 'true';

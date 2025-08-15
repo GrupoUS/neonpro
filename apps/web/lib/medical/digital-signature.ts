@@ -167,9 +167,9 @@ export interface VerificationOptions {
 // ============================================================================
 
 export class DigitalSignatureManager {
-  private supabase;
-  private auditLogger: AuditLogger;
-  private lgpdManager: LGPDManager;
+  private readonly supabase;
+  private readonly auditLogger: AuditLogger;
+  private readonly lgpdManager: LGPDManager;
   private readonly SIGNATURE_VALIDITY_PERIOD = 10 * 365 * 24 * 60 * 60 * 1000; // 10 years
 
   constructor() {
@@ -314,7 +314,9 @@ export class DigitalSignatureManager {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Update document status
       await this.updateDocumentSignatureStatus(documentId);
@@ -354,7 +356,9 @@ export class DigitalSignatureManager {
         .eq('id', signatureId)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       if (!signature) {
         return { success: false, error: 'Signature not found' };
       }
@@ -504,7 +508,9 @@ export class DigitalSignatureManager {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Send notifications to signers
       await this.sendSignatureNotifications(request);
@@ -542,7 +548,9 @@ export class DigitalSignatureManager {
         .eq('id', requestId)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       if (!data) {
         return { success: false, error: 'Signature request not found' };
       }
@@ -625,7 +633,9 @@ export class DigitalSignatureManager {
         .update(updateData)
         .eq('id', requestId);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Log audit event
       await this.auditLogger.log({
@@ -819,7 +829,9 @@ export class DigitalSignatureManager {
         .eq('is_active', true)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data?.checksum || null;
     } catch (error) {
       console.error('Error getting document hash:', error);
@@ -837,7 +849,9 @@ export class DigitalSignatureManager {
         .select('id, is_valid')
         .eq('document_id', documentId);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       const totalSignatures = data?.length || 0;
       const validSignatures = data?.filter((s) => s.is_valid).length || 0;
@@ -896,7 +910,9 @@ export class DigitalSignatureManager {
         .eq('document_id', documentId)
         .order('created_at', { ascending: true });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return { success: true, data: data || [] };
     } catch (error) {
@@ -925,7 +941,9 @@ export class DigitalSignatureManager {
 
       const { data, error } = await query;
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return { success: true, data: data || [] };
     } catch (error) {
@@ -948,7 +966,9 @@ export class DigitalSignatureManager {
         .in('status', [RequestStatus.PENDING, RequestStatus.IN_PROGRESS])
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Filter requests where user hasn't signed yet
       const pendingRequests = (data || []).filter((request) => {
@@ -987,7 +1007,9 @@ export class DigitalSignatureManager {
         })
         .eq('id', signatureId);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Log audit event
       await this.auditLogger.log({
@@ -1028,7 +1050,9 @@ export class DigitalSignatureManager {
 
       const { data, error } = await query;
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Process statistics
       const stats = {

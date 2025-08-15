@@ -22,8 +22,9 @@ export interface PerformanceStats {
 
 class PerformanceTracker {
   private static instance: PerformanceTracker;
-  private metrics: Map<string, number[]> = new Map();
-  private metricTags: Map<string, Record<string, string>[]> = new Map();
+  private readonly metrics: Map<string, number[]> = new Map();
+  private readonly metricTags: Map<string, Record<string, string>[]> =
+    new Map();
   private readonly MAX_METRICS_PER_TYPE = 1000;
 
   private constructor() {}

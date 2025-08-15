@@ -132,8 +132,8 @@ export interface ForecastingOptions {
  * Core engine for all demand forecasting operations
  */
 export class DemandForecastingEngine {
-  private models: Map<string, ForecastModel> = new Map();
-  private externalFactors: ExternalFactor[] = [];
+  private readonly models: Map<string, ForecastModel> = new Map();
+  private readonly externalFactors: ExternalFactor[] = [];
   private readonly ACCURACY_THRESHOLD = 0.8; // 80% minimum accuracy requirement
 
   /**
@@ -286,7 +286,9 @@ export class DemandForecastingEngine {
         .eq('clinic_id', clinicId)
         .eq('status', 'active');
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       const forecasts: DemandForecast[] = [];
 
@@ -338,7 +340,9 @@ export class DemandForecastingEngine {
         .eq('id', forecastId)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Calculate adjustment factor based on recent trends
       const adjustmentFactor = await this.calculateAdjustmentFactor(
@@ -368,7 +372,9 @@ export class DemandForecastingEngine {
         .select()
         .single();
 
-      if (updateError) throw updateError;
+      if (updateError) {
+        throw updateError;
+      }
 
       return updatedForecast;
     } catch (error) {
@@ -445,7 +451,9 @@ export class DemandForecastingEngine {
       }
 
       const { data, error } = await query;
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return data || [];
     } catch (error) {
@@ -585,10 +593,15 @@ export class DemandForecastingEngine {
       const month = new Date(appointment.scheduled_at).getMonth() + 1;
       let season: string;
 
-      if (month >= 3 && month <= 5) season = 'spring';
-      else if (month >= 6 && month <= 8) season = 'summer';
-      else if (month >= 9 && month <= 11) season = 'autumn';
-      else season = 'winter';
+      if (month >= 3 && month <= 5) {
+        season = 'spring';
+      } else if (month >= 6 && month <= 8) {
+        season = 'summer';
+      } else if (month >= 9 && month <= 11) {
+        season = 'autumn';
+      } else {
+        season = 'winter';
+      }
 
       seasonalCount[season]++;
     });
@@ -896,7 +909,9 @@ export class DemandForecastingEngine {
         .eq('clinic_id', clinicId)
         .eq('status', 'active');
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       this.models.clear();
       models?.forEach((model) => {
@@ -924,7 +939,9 @@ export class DemandForecastingEngine {
         .select('*')
         .gte('end_date', new Date().toISOString());
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       this.externalFactors = factors || [];
     } catch (error) {
@@ -1188,10 +1205,18 @@ export const ForecastingUtils = {
    * Get confidence level description
    */
   getConfidenceDescription: (confidence: number): string => {
-    if (confidence >= 0.95) return 'Very High';
-    if (confidence >= 0.85) return 'High';
-    if (confidence >= 0.75) return 'Medium';
-    if (confidence >= 0.65) return 'Low';
+    if (confidence >= 0.95) {
+      return 'Very High';
+    }
+    if (confidence >= 0.85) {
+      return 'High';
+    }
+    if (confidence >= 0.75) {
+      return 'Medium';
+    }
+    if (confidence >= 0.65) {
+      return 'Low';
+    }
     return 'Very Low';
   },
 

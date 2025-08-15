@@ -47,8 +47,8 @@ const ComplicationDetectionRequestSchema = z.object({
  * Implements machine learning models for ≥90% accuracy medical complication detection
  */
 export class ComplicationDetector {
-  private models: Map<string, any> = new Map();
-  private isInitialized = false;
+  private readonly models: Map<string, any> = new Map();
+  private readonly isInitialized = false;
 
   constructor() {
     this.initializeDetector();
@@ -271,7 +271,9 @@ export class ComplicationDetector {
         .from('patient-images')
         .download(`${imageId}.jpg`);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return await data.arrayBuffer();
     } catch (error) {
@@ -479,9 +481,15 @@ export class ComplicationDetector {
   private calculateSeverity(
     probability: number
   ): 'low' | 'moderate' | 'high' | 'critical' {
-    if (probability >= 0.9) return 'critical';
-    if (probability >= 0.75) return 'high';
-    if (probability >= 0.6) return 'moderate';
+    if (probability >= 0.9) {
+      return 'critical';
+    }
+    if (probability >= 0.75) {
+      return 'high';
+    }
+    if (probability >= 0.6) {
+      return 'moderate';
+    }
     return 'low';
   }
 
@@ -710,7 +718,9 @@ export class ComplicationDetector {
         created_at: new Date().toISOString(),
       });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
     } catch (error) {
       logger.error('Failed to store detection result:', error);
       throw error;
@@ -827,7 +837,9 @@ export class ComplicationDetector {
           new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
         );
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return {
         totalDetections: data.length,

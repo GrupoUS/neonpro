@@ -457,7 +457,9 @@ async function getBatchedSubscriptionStatus(
       // Schedule batch execution
       setTimeout(async () => {
         const currentBatch = requestBatches.get(batchKey);
-        if (!currentBatch || currentBatch.length === 0) return;
+        if (!currentBatch || currentBatch.length === 0) {
+          return;
+        }
 
         requestBatches.delete(batchKey);
 
@@ -517,9 +519,15 @@ function getCacheTTL(strategy: string, pathname: string): number {
       return 60_000; // 1 minute
     case 'adaptive':
       // Adaptive TTL based on route criticality
-      if (pathname.includes('/api/')) return 120_000; // 2 minutes for API
-      if (pathname.includes('/analytics')) return 300_000; // 5 minutes for analytics
-      if (pathname.includes('/dashboard')) return 180_000; // 3 minutes for dashboard
+      if (pathname.includes('/api/')) {
+        return 120_000; // 2 minutes for API
+      }
+      if (pathname.includes('/analytics')) {
+        return 300_000; // 5 minutes for analytics
+      }
+      if (pathname.includes('/dashboard')) {
+        return 180_000; // 3 minutes for dashboard
+      }
       return 240_000; // 4 minutes default
     default:
       return 180_000; // 3 minutes default
@@ -530,10 +538,18 @@ function getCacheTTL(strategy: string, pathname: string): number {
  * Get request priority based on pathname
  */
 function getRequestPriority(pathname: string): 'high' | 'medium' | 'low' {
-  if (pathname.includes('/api/')) return 'high';
-  if (pathname.includes('/dashboard/patients')) return 'high';
-  if (pathname.includes('/dashboard/appointments')) return 'high';
-  if (pathname.includes('/dashboard/analytics')) return 'medium';
+  if (pathname.includes('/api/')) {
+    return 'high';
+  }
+  if (pathname.includes('/dashboard/patients')) {
+    return 'high';
+  }
+  if (pathname.includes('/dashboard/appointments')) {
+    return 'high';
+  }
+  if (pathname.includes('/dashboard/analytics')) {
+    return 'medium';
+  }
   return 'low';
 }
 
@@ -583,7 +599,9 @@ function handleCircuitBreakerFailure(
   _error: any,
   config: MiddlewareConfig
 ): void {
-  if (!config.circuitBreaker.enabled) return;
+  if (!config.circuitBreaker.enabled) {
+    return;
+  }
 
   circuitBreakerFailures++;
   lastFailureTime = Date.now();
@@ -603,10 +621,14 @@ function recordRequestMetrics(
   metrics: RequestMetrics,
   config: MiddlewareConfig
 ): void {
-  if (!config.monitoring.enabled) return;
+  if (!config.monitoring.enabled) {
+    return;
+  }
 
   // Sample requests in production
-  if (Math.random() > config.monitoring.sampleRate) return;
+  if (Math.random() > config.monitoring.sampleRate) {
+    return;
+  }
 
   requestMetrics.push(metrics);
 

@@ -91,7 +91,9 @@ function checkRetentionRequirements(record: any, recordType: string): boolean {
   const retentionPeriod =
     RETENTION_REQUIREMENTS[recordType as keyof typeof RETENTION_REQUIREMENTS];
 
-  if (!retentionPeriod) return false;
+  if (!retentionPeriod) {
+    return false;
+  }
 
   return now - recordDate < retentionPeriod;
 }
@@ -101,15 +103,15 @@ function anonymizeRecord(record: any): any {
   const anonymized = { ...record };
 
   // Remove or hash PII
-  delete anonymized.email;
-  delete anonymized.full_name;
-  delete anonymized.phone;
-  delete anonymized.address;
-  delete anonymized.birth_date;
-  delete anonymized.emergency_contact_name;
-  delete anonymized.emergency_contact_phone;
-  delete anonymized.cpf;
-  delete anonymized.rg;
+  anonymized.email = undefined;
+  anonymized.full_name = undefined;
+  anonymized.phone = undefined;
+  anonymized.address = undefined;
+  anonymized.birth_date = undefined;
+  anonymized.emergency_contact_name = undefined;
+  anonymized.emergency_contact_phone = undefined;
+  anonymized.cpf = undefined;
+  anonymized.rg = undefined;
 
   // Replace with anonymous IDs
   anonymized.user_id = `anon_${nanoid()}`;
@@ -142,7 +144,9 @@ async function deleteUserProfile(
 
   const { error } = await supabase.from('users').delete().eq('id', userId);
 
-  if (error) throw error;
+  if (error) {
+    throw error;
+  }
 
   return { deleted: !anonymize, anonymized: anonymize };
 }
@@ -318,7 +322,9 @@ async function deleteUserCommunications(
     .delete()
     .or(`sender_id.eq.${userId},recipient_id.eq.${userId}`);
 
-  if (error) throw error;
+  if (error) {
+    throw error;
+  }
 
   return { deleted: anonymize ? 0 : 1, retained: 0, anonymized };
 }
@@ -330,7 +336,9 @@ async function deleteUserPreferences(supabase: any, userId: string) {
     .delete()
     .eq('user_id', userId);
 
-  if (error) throw error;
+  if (error) {
+    throw error;
+  }
 
   return { deleted: 1, retained: 0, anonymized: 0 };
 }
@@ -358,7 +366,9 @@ async function scheduleDeletion(
     },
   ]);
 
-  if (error) throw error;
+  if (error) {
+    throw error;
+  }
 
   return deletionId;
 }
@@ -388,7 +398,9 @@ async function executeDeletion(supabase: any, userId: string, request: any) {
     totalDeleted += result.deleted;
     totalRetained += result.retained;
     totalAnonymized += result.anonymized;
-    if (result.retained > 0) retainedData.legal.push('appointments');
+    if (result.retained > 0) {
+      retainedData.legal.push('appointments');
+    }
   }
 
   if (deletionType === 'complete' || categories?.includes('treatments')) {
@@ -401,7 +413,9 @@ async function executeDeletion(supabase: any, userId: string, request: any) {
     totalDeleted += result.deleted;
     totalRetained += result.retained;
     totalAnonymized += result.anonymized;
-    if (result.retained > 0) retainedData.legal.push('treatments');
+    if (result.retained > 0) {
+      retainedData.legal.push('treatments');
+    }
   }
 
   if (deletionType === 'complete' || categories?.includes('payments')) {
@@ -414,7 +428,9 @@ async function executeDeletion(supabase: any, userId: string, request: any) {
     totalDeleted += result.deleted;
     totalRetained += result.retained;
     totalAnonymized += result.anonymized;
-    if (result.retained > 0) retainedData.legal.push('payments');
+    if (result.retained > 0) {
+      retainedData.legal.push('payments');
+    }
   }
 
   if (deletionType === 'complete' || categories?.includes('communications')) {

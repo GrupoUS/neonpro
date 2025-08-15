@@ -19,7 +19,7 @@ import type {
 import { createClient } from '@/app/utils/supabase/client';
 
 class TreatmentFollowupService {
-  private supabase = createClient();
+  private readonly supabase = createClient();
 
   // =====================================================================================
   // FOLLOW-UP MANAGEMENT

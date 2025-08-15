@@ -74,7 +74,9 @@ export async function PUT(
       })
       .eq('id', id);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     return NextResponse.json({
       success: true,
@@ -114,7 +116,9 @@ export async function DELETE(
       })
       .eq('id', id);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     return NextResponse.json({
       success: true,

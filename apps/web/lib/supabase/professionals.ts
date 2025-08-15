@@ -116,7 +116,9 @@ export async function getProfessional(
     .single();
 
   if (error) {
-    if (error.code === 'PGRST116') return null; // Not found
+    if (error.code === 'PGRST116') {
+      return null; // Not found
+    }
     throw new Error(`Failed to get professional: ${error.message}`);
   }
 
@@ -1072,7 +1074,9 @@ export async function generateExpirationAlerts(daysAhead = 30) {
  */
 export async function getComprehensiveProfessionalProfile(id: string) {
   const professional = await getProfessional(id);
-  if (!professional) return null;
+  if (!professional) {
+    return null;
+  }
 
   const [
     recentMetrics,

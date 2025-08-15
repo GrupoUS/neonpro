@@ -479,13 +479,11 @@ describe('Export API Routes', () => {
       };
 
       // Simulate large dataset
-      const largeDataset = Array(100_000)
-        .fill(null)
-        .map((_, i) => ({
-          id: `sub_${i}`,
-          user_id: `user_${i}`,
-          status: 'active',
-        }));
+      const largeDataset = new Array(100_000).fill(null).map((_, i) => ({
+        id: `sub_${i}`,
+        user_id: `user_${i}`,
+        status: 'active',
+      }));
 
       mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: mockUser },
@@ -540,7 +538,7 @@ describe('Export API Routes', () => {
 
       mockSupabase.from.mockReturnValue(mockFrom);
 
-      const requests = Array(5)
+      const requests = new Array(5)
         .fill(null)
         .map(
           () =>
@@ -569,13 +567,11 @@ describe('Export API Routes', () => {
         user_metadata: { role: 'admin' },
       };
 
-      const moderateDataset = Array(5000)
-        .fill(null)
-        .map((_, i) => ({
-          id: `sub_${i}`,
-          user_id: `user_${i}`,
-          status: 'active',
-        }));
+      const moderateDataset = new Array(5000).fill(null).map((_, i) => ({
+        id: `sub_${i}`,
+        user_id: `user_${i}`,
+        status: 'active',
+      }));
 
       mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: mockUser },

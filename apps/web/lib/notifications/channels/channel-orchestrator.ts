@@ -137,12 +137,12 @@ export interface ChannelHealthStatus {
  * Central hub for managing all notification channels with intelligent routing
  */
 class NotificationChannelOrchestrator {
-  private emailFactory: EmailProviderFactory;
-  private pushFactory: PushProviderFactory;
-  private smsFactory: SMSProviderFactory;
-  private whatsappFactory: WhatsAppProviderFactory;
-  private config: ChannelOrchestratorConfig;
-  private healthCache: Map<NotificationChannel, ChannelHealthStatus> =
+  private readonly emailFactory: EmailProviderFactory;
+  private readonly pushFactory: PushProviderFactory;
+  private readonly smsFactory: SMSProviderFactory;
+  private readonly whatsappFactory: WhatsAppProviderFactory;
+  private readonly config: ChannelOrchestratorConfig;
+  private readonly healthCache: Map<NotificationChannel, ChannelHealthStatus> =
     new Map();
   private lastHealthCheck: Date = new Date(0);
 

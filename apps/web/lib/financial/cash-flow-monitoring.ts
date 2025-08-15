@@ -56,7 +56,7 @@ export interface CashFlowPrediction {
 }
 
 export class CashFlowMonitoringEngine {
-  private clinicId: string;
+  private readonly clinicId: string;
 
   constructor(clinicId: string) {
     this.clinicId = clinicId;
@@ -253,7 +253,9 @@ export class CashFlowMonitoringEngine {
    */
   async checkAlertConditions(): Promise<void> {
     const alertSettings = await this.getAlertSettings();
-    if (!alertSettings) return;
+    if (!alertSettings) {
+      return;
+    }
 
     const today = await this.getCashFlowSummary('daily');
     const weekTrend = await this.getCashFlowTrend(7);
@@ -393,10 +395,18 @@ export class CashFlowMonitoringEngine {
   ): string[] {
     const factors: string[] = [];
 
-    if (seasonalFactor > 1.05) factors.push('High seasonal demand');
-    if (seasonalFactor < 0.95) factors.push('Low seasonal period');
-    if (weeklyFactor > 1.2) factors.push('Peak weekday');
-    if (weeklyFactor < 0.8) factors.push('Weekend period');
+    if (seasonalFactor > 1.05) {
+      factors.push('High seasonal demand');
+    }
+    if (seasonalFactor < 0.95) {
+      factors.push('Low seasonal period');
+    }
+    if (weeklyFactor > 1.2) {
+      factors.push('Peak weekday');
+    }
+    if (weeklyFactor < 0.8) {
+      factors.push('Weekend period');
+    }
 
     return factors;
   }

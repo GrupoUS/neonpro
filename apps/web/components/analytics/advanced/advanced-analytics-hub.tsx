@@ -132,7 +132,9 @@ export function AdvancedAnalyticsHub({
   // Fetch analytics data
   const fetchAnalyticsData = useCallback(
     async (showLoading = true) => {
-      if (showLoading) setLoading(true);
+      if (showLoading) {
+        setLoading(true);
+      }
       setError(null);
 
       try {
@@ -220,7 +222,9 @@ export function AdvancedAnalyticsHub({
         console.error('Analytics data fetch error:', err);
         setError('Failed to load analytics data. Please try again.');
       } finally {
-        if (showLoading) setLoading(false);
+        if (showLoading) {
+          setLoading(false);
+        }
       }
     },
     [config]

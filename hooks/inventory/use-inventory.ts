@@ -458,7 +458,7 @@ export function useInventory(
     if (enableRealTime) {
       setupRealTimeSubscriptions();
     }
-  }, [enableRealTime]);
+  }, [enableRealTime, setupRealTimeSubscriptions]);
 
   // Setup real-time subscriptions
   const setupRealTimeSubscriptions = useCallback(() => {
@@ -542,7 +542,15 @@ export function useInventory(
     return () => {
       cleanupSubscriptions();
     };
-  }, []);
+  }, [
+    alertRefreshInterval,
+    autoLoadData,
+    cleanupSubscriptions,
+    enableRealTime,
+    loadAlerts,
+    refreshData,
+    setupRealTimeSubscriptions,
+  ]);
 
   // Update filters effect
   useEffect(() => {

@@ -89,9 +89,15 @@ export async function GET(request: NextRequest) {
 
     // Build filters
     const filters: any = {};
-    if (status) filters.status = status;
-    if (customerId) filters.customerId = customerId;
-    if (frequency) filters.frequency = frequency;
+    if (status) {
+      filters.status = status;
+    }
+    if (customerId) {
+      filters.customerId = customerId;
+    }
+    if (frequency) {
+      filters.frequency = frequency;
+    }
 
     // Get payment plans
     const result = await installmentManager.getPaymentPlans({

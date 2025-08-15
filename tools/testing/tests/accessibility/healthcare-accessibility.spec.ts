@@ -43,7 +43,7 @@ const healthcareAxeConfig = {
 
 // Screen reader simulation helpers
 class ScreenReaderSimulator {
-  constructor(private page: Page) {}
+  constructor(private readonly page: Page) {}
 
   /**
    * Simulate NVDA screen reader navigation
@@ -125,7 +125,7 @@ class ScreenReaderSimulator {
 
 // Healthcare form testing utilities
 class HealthcareFormTester {
-  constructor(private page: Page) {}
+  constructor(private readonly page: Page) {}
 
   /**
    * Test Brazilian healthcare form patterns

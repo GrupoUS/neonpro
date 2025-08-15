@@ -114,7 +114,9 @@ export function useSession(options: UseSessionOptions = {}): UseSessionReturn {
   // =====================================================
 
   useEffect(() => {
-    if (!supabase) return;
+    if (!supabase) {
+      return;
+    }
 
     // Initialize session system
     sessionSystemRef.current = new UnifiedSessionSystem(supabase);
@@ -132,7 +134,10 @@ export function useSession(options: UseSessionOptions = {}): UseSessionReturn {
         clearTimeout(expiryTimerRef.current);
       }
     };
-  }, [supabase]);
+  }, [
+    supabase, // Check for existing session
+    checkExistingSession,
+  ]);
 
   // =====================================================
   // SESSION MANAGEMENT
@@ -188,7 +193,12 @@ export function useSession(options: UseSessionOptions = {}): UseSessionReturn {
         error: error instanceof Error ? error.message : 'Session check failed',
       });
     }
-  }, [autoRefresh]);
+  }, [
+    autoRefresh,
+    startAutoRefresh, // Start expiry timer
+    startExpiryTimer, // Update session stats
+    updateSessionStats,
+  ]);
 
   const login = useCallback(
     async (
@@ -267,7 +277,13 @@ export function useSession(options: UseSessionOptions = {}): UseSessionReturn {
         return false;
       }
     },
-    [autoRefresh, showWarnings]
+    [
+      autoRefresh,
+      showWarnings,
+      startAutoRefresh, // Start expiry timer
+      startExpiryTimer, // Update session stats
+      updateSessionStats,
+    ]
   );
 
   const logout = useCallback(async () => {
@@ -321,7 +337,9 @@ export function useSession(options: UseSessionOptions = {}): UseSessionReturn {
   const refreshSession = useCallback(async () => {
     try {
       const sessionId = localStorage.getItem('session_id');
-      if (!sessionId) return;
+      if (!sessionId) {
+        return;
+      }
 
       const deviceInfo = await getDeviceInfo();
       const validation = await sessionSystemRef.current?.validateSession(
@@ -355,12 +373,18 @@ export function useSession(options: UseSessionOptions = {}): UseSessionReturn {
           error instanceof Error ? error.message : 'Session refresh failed',
       }));
     }
-  }, [logout]);
+  }, [
+    logout, // Update expiry timer
+    startExpiryTimer, // Update session stats
+    updateSessionStats,
+  ]);
 
   const extendSession = useCallback(async () => {
     try {
       const sessionId = localStorage.getItem('session_id');
-      if (!(sessionId && sessionSystemRef.current)) return;
+      if (!(sessionId && sessionSystemRef.current)) {
+        return;
+      }
 
       const result =
         await sessionSystemRef.current.sessionManager.extendSession(sessionId);
@@ -389,12 +413,17 @@ export function useSession(options: UseSessionOptions = {}): UseSessionReturn {
         toast.error('Failed to extend session');
       }
     }
-  }, [showWarnings]);
+  }, [
+    showWarnings, // Update expiry timer
+    startExpiryTimer,
+  ]);
 
   const validateSession = useCallback(async (): Promise<boolean> => {
     try {
       const sessionId = localStorage.getItem('session_id');
-      if (!sessionId) return false;
+      if (!sessionId) {
+        return false;
+      }
 
       const deviceInfo = await getDeviceInfo();
       const validation = await sessionSystemRef.current?.validateSession(
@@ -413,10 +442,14 @@ export function useSession(options: UseSessionOptions = {}): UseSessionReturn {
   const updateActivity = useCallback(
     async (activityType: string, metadata?: any) => {
       try {
-        if (!trackActivity) return;
+        if (!trackActivity) {
+          return;
+        }
 
         const sessionId = localStorage.getItem('session_id');
-        if (!(sessionId && sessionSystemRef.current)) return;
+        if (!(sessionId && sessionSystemRef.current)) {
+          return;
+        }
 
         await sessionSystemRef.current.sessionManager.updateActivity(
           sessionId,
@@ -432,7 +465,7 @@ export function useSession(options: UseSessionOptions = {}): UseSessionReturn {
         console.error('Activity update error:', error);
       }
     },
-    [trackActivity, state.session]
+    [trackActivity, state.session, updateSessionStats]
   );
 
   // =====================================================
@@ -583,7 +616,7 @@ async function generateDeviceFingerprint(): Promise<string> {
   for (let i = 0; i < fingerprint.length; i++) {
     const char = fingerprint.charCodeAt(i);
     hash = (hash << 5) - hash + char;
-    hash = hash & hash; // Convert to 32-bit integer
+    hash &= hash; // Convert to 32-bit integer
   }
 
   return Math.abs(hash).toString(36);

@@ -31,8 +31,8 @@ export interface ProtocolOutcome {
   outcome_data: Record<string, any>;
   success_score: number;
   improvement_percentage?: number;
-  complications: Array<Record<string, any>>;
-  side_effects: Array<Record<string, any>>;
+  complications: Record<string, any>[];
+  side_effects: Record<string, any>[];
   patient_satisfaction?: number;
   follow_up_date?: string;
   outcome_date: string;
@@ -207,8 +207,8 @@ export interface CreateProtocolOutcomeRequest {
   outcome_data: Record<string, any>;
   success_score: number;
   improvement_percentage?: number;
-  complications?: Array<Record<string, any>>;
-  side_effects?: Array<Record<string, any>>;
+  complications?: Record<string, any>[];
+  side_effects?: Record<string, any>[];
   patient_satisfaction?: number;
   follow_up_date?: string;
   outcome_date: string;

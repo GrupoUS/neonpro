@@ -139,7 +139,8 @@ export interface PersonalizationFactor {
  * Core system for treatment outcome prediction and risk modeling
  */
 export class AIPredictiveAnalyticsEngine {
-  private patientResponseModels: Map<string, PatientResponseModel> = new Map();
+  private readonly patientResponseModels: Map<string, PatientResponseModel> =
+    new Map();
 
   constructor() {
     this.initializePredictionModels();
@@ -236,8 +237,11 @@ export class AIPredictiveAnalyticsEngine {
 
     // Age adjustment
     const age = this.calculateAge(patient.birth_date);
-    if (age < 30) adjustedSatisfaction += 0.5;
-    else if (age > 60) adjustedSatisfaction -= 0.3;
+    if (age < 30) {
+      adjustedSatisfaction += 0.5;
+    } else if (age > 60) {
+      adjustedSatisfaction -= 0.3;
+    }
 
     // Risk level adjustment
     const riskAdjustment = {
@@ -652,8 +656,11 @@ export class AIPredictiveAnalyticsEngine {
 
     // Age adjustment
     const age = this.calculateAge(patient.birth_date);
-    if (age > 60) factor *= 1.3;
-    else if (age < 30) factor *= 0.8;
+    if (age > 60) {
+      factor *= 1.3;
+    } else if (age < 30) {
+      factor *= 0.8;
+    }
 
     // Risk level adjustment
     const riskAdjustments = {
@@ -665,8 +672,12 @@ export class AIPredictiveAnalyticsEngine {
     factor *= riskAdjustments[riskAssessment.risk_level];
 
     // Lifestyle adjustments
-    if (patient.lifestyle_factors?.smoking === 'current') factor *= 1.4;
-    if (patient.lifestyle_factors?.exercise === 'high') factor *= 0.9;
+    if (patient.lifestyle_factors?.smoking === 'current') {
+      factor *= 1.4;
+    }
+    if (patient.lifestyle_factors?.exercise === 'high') {
+      factor *= 0.9;
+    }
 
     return factor;
   }
@@ -950,11 +961,17 @@ export class AIPredictiveAnalyticsEngine {
     let factor = 1.0;
 
     const age = this.calculateAge(patient.birth_date);
-    if (age < 30) factor *= 1.2;
-    else if (age > 60) factor *= 0.8;
+    if (age < 30) {
+      factor *= 1.2;
+    } else if (age > 60) {
+      factor *= 0.8;
+    }
 
-    if (riskAssessment.risk_level === 'low') factor *= 1.1;
-    else if (riskAssessment.risk_level === 'high') factor *= 0.9;
+    if (riskAssessment.risk_level === 'low') {
+      factor *= 1.1;
+    } else if (riskAssessment.risk_level === 'high') {
+      factor *= 0.9;
+    }
 
     return factor;
   }

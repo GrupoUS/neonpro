@@ -306,8 +306,9 @@ export interface DataCategoryRetention {
 
 // Main Privacy Protection Manager
 export class PrivacyProtectionManager {
-  private supabase = createClient();
-  private privacyProfiles: Map<string, PatientPrivacyProfile> = new Map();
+  private readonly supabase = createClient();
+  private readonly privacyProfiles: Map<string, PatientPrivacyProfile> =
+    new Map();
 
   constructor() {
     this.encryptionKey = process.env.PRIVACY_ENCRYPTION_KEY || 'default-key';
@@ -673,7 +674,9 @@ export class PrivacyProtectionManager {
 
       for (const pId of patients) {
         const profile = this.privacyProfiles.get(pId);
-        if (!profile) continue;
+        if (!profile) {
+          continue;
+        }
 
         const complianceData = await this.assessPatientPrivacyCompliance(
           profile,

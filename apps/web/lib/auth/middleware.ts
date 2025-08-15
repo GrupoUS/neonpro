@@ -10,7 +10,7 @@ export function authMiddleware() {
 export function requireAuth(request: Request) {
   const authorization = request.headers.get('authorization');
   return {
-    isAuthenticated: !!authorization,
+    isAuthenticated: Boolean(authorization),
     userId: 'demo-user',
   };
 }

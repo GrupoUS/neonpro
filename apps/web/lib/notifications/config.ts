@@ -312,26 +312,26 @@ export function isChannelEnabled(
   switch (channel) {
     case NotificationChannel.EMAIL:
       return (
-        !!(channelConfig as EmailConfig).apiKey ||
+        Boolean((channelConfig as EmailConfig).apiKey) ||
         config.development.mockProviders
       );
     case NotificationChannel.SMS: {
       const smsConfig = channelConfig as SMSConfig;
       return (
         (smsConfig.provider === 'twilio' &&
-          !!(smsConfig.accountSid && smsConfig.authToken)) ||
+          Boolean(smsConfig.accountSid && smsConfig.authToken)) ||
         (smsConfig.provider === 'vonage' &&
-          !!(smsConfig.apiKey && smsConfig.apiSecret)) ||
+          Boolean(smsConfig.apiKey && smsConfig.apiSecret)) ||
         config.development.mockProviders
       );
     }
     case NotificationChannel.PUSH: {
       const pushConfig = channelConfig as PushConfig;
       return (
-        (pushConfig.provider === 'fcm' && !!pushConfig.projectId) ||
+        (pushConfig.provider === 'fcm' && Boolean(pushConfig.projectId)) ||
         (pushConfig.provider === 'apns' &&
-          !!(pushConfig.keyId && pushConfig.teamId)) ||
-        (pushConfig.provider === 'expo' && !!pushConfig.accessToken) ||
+          Boolean(pushConfig.keyId && pushConfig.teamId)) ||
+        (pushConfig.provider === 'expo' && Boolean(pushConfig.accessToken)) ||
         config.development.mockProviders
       );
     }

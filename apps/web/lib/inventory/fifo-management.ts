@@ -89,7 +89,7 @@ export interface FIFOOptimizationConfig {
  * Advanced batch control with expiry optimization and intelligent selection
  */
 export class FIFOManager {
-  private supabase = createClientComponentClient<Database>();
+  private readonly supabase = createClientComponentClient<Database>();
 
   /**
    * Get comprehensive FIFO analysis for all products or specific product
@@ -116,7 +116,9 @@ export class FIFOManager {
         ascending: true,
       });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Group batches by product
       const batchesByProduct =
@@ -173,7 +175,9 @@ export class FIFOManager {
         .lte('dias_para_vencer', daysAhead)
         .order('dias_para_vencer', { ascending: true });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       const alerts =
         expiringBatches?.map((batch) => {
@@ -300,7 +304,9 @@ export class FIFOManager {
         .select()
         .single();
 
-      if (transferError) throw transferError;
+      if (transferError) {
+        throw transferError;
+      }
 
       // 3. Create transfer item
       await this.supabase.from('itens_transferencia_interna').insert({
@@ -375,7 +381,9 @@ export class FIFOManager {
           expiringBatches.map((b) => b.id)
         );
 
-      if (blockError) throw blockError;
+      if (blockError) {
+        throw blockError;
+      }
 
       // Log movements for all blocked batches
       for (const batch of expiringBatches) {
@@ -416,7 +424,9 @@ export class FIFOManager {
         .eq('lote_id', loteId)
         .order('data_movimento', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return {
         data: movements as BatchMovement[],
@@ -499,7 +509,9 @@ export class FIFOManager {
     let remainingQuantity = request.quantidade_necessaria;
 
     for (const batch of availableBatches) {
-      if (remainingQuantity <= 0) break;
+      if (remainingQuantity <= 0) {
+        break;
+      }
 
       const quantityToTake = Math.min(
         remainingQuantity,
@@ -590,9 +602,15 @@ export class FIFOManager {
     daysToExpiry: number,
     estimatedValue: number
   ): 'baixa' | 'media' | 'alta' | 'critica' {
-    if (daysToExpiry <= 0) return 'critica';
-    if (daysToExpiry <= 3) return 'alta';
-    if (daysToExpiry <= 7 || estimatedValue > 1000) return 'media';
+    if (daysToExpiry <= 0) {
+      return 'critica';
+    }
+    if (daysToExpiry <= 3) {
+      return 'alta';
+    }
+    if (daysToExpiry <= 7 || estimatedValue > 1000) {
+      return 'media';
+    }
     return 'baixa';
   }
 
@@ -600,9 +618,15 @@ export class FIFOManager {
    * Get recommendation reason for batch
    */
   private getRecommendationReason(batch: any): string {
-    if (batch.dias_para_vencer <= 7) return 'Vencimento iminente';
-    if (batch.dias_para_vencer <= 30) return 'Próximo ao vencimento';
-    if (batch.prioridade_uso <= 3) return 'Alta prioridade FIFO';
+    if (batch.dias_para_vencer <= 7) {
+      return 'Vencimento iminente';
+    }
+    if (batch.dias_para_vencer <= 30) {
+      return 'Próximo ao vencimento';
+    }
+    if (batch.prioridade_uso <= 3) {
+      return 'Alta prioridade FIFO';
+    }
     return 'FIFO otimizado';
   }
 

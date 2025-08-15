@@ -6,8 +6,8 @@
 import '@testing-library/jest-dom';
 
 // Polyfill for Web APIs in Node.js environment
-import { ReadableStream } from 'stream/web';
-import { TextDecoder, TextEncoder } from 'util';
+import { ReadableStream } from 'node:stream/web';
+import { TextDecoder, TextEncoder } from 'node:util';
 
 // Add Web APIs to global scope
 if (!globalThis.Request) {
@@ -108,7 +108,7 @@ jest.mock(
   () => ({
     workUnitAsyncStorage: {
       getStore: () => mockRequestContext,
-      run: (store: any, fn: any) => fn(),
+      run: (_store: any, fn: any) => fn(),
     },
   })
 );
@@ -130,7 +130,7 @@ Object.defineProperty(global, 'Request', {
 
 Object.defineProperty(global, 'Response', {
   value: class MockResponse {
-    constructor(body?: BodyInit, init?: ResponseInit) {
+    constructor(_body?: BodyInit, init?: ResponseInit) {
       this.status = init?.status || 200;
       this.statusText = init?.statusText || 'OK';
       this.ok = this.status >= 200 && this.status < 300;

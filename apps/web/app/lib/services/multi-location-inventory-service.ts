@@ -19,7 +19,7 @@ import type {
 import { createClient } from '@/app/utils/supabase/client';
 
 export class MultiLocationInventoryService {
-  private supabase = createClient();
+  private readonly supabase = createClient();
 
   // ===== INVENTORY ITEMS =====
 
@@ -41,7 +41,9 @@ export class MultiLocationInventoryService {
     }
 
     const { data, error } = await query;
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data || [];
   }
 
@@ -52,7 +54,9 @@ export class MultiLocationInventoryService {
       .eq('id', id)
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -63,7 +67,9 @@ export class MultiLocationInventoryService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -76,7 +82,9 @@ export class MultiLocationInventoryService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -86,7 +94,9 @@ export class MultiLocationInventoryService {
       .delete()
       .eq('id', id);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
   }
 
   // ===== INVENTORY STOCK =====
@@ -130,7 +140,9 @@ export class MultiLocationInventoryService {
     }
 
     const { data, error } = await query;
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data || [];
   }
 
@@ -158,7 +170,9 @@ export class MultiLocationInventoryService {
       `)
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -176,7 +190,9 @@ export class MultiLocationInventoryService {
       `)
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   } // ===== STOCK TRANSFERS =====
 
@@ -219,7 +235,9 @@ export class MultiLocationInventoryService {
     }
 
     const { data, error } = await query;
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data || [];
   }
 
@@ -242,7 +260,9 @@ export class MultiLocationInventoryService {
       `)
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -276,7 +296,9 @@ export class MultiLocationInventoryService {
       `)
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -321,7 +343,9 @@ export class MultiLocationInventoryService {
     }
 
     const { data, error } = await query;
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data || [];
   }
 
@@ -339,7 +363,9 @@ export class MultiLocationInventoryService {
       `)
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -355,7 +381,9 @@ export class MultiLocationInventoryService {
     }
 
     const { data, error } = await query;
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data || [];
   }
 
@@ -375,7 +403,9 @@ export class MultiLocationInventoryService {
       }
     );
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data || [];
   }
 
@@ -416,7 +446,9 @@ export class MultiLocationInventoryService {
         room:rooms(id, name, description)
       `);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data || [];
   }
 

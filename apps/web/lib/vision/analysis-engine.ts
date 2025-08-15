@@ -50,13 +50,13 @@ export interface ImageProcessingOptions {
  * Provides ≥95% accuracy with <30s processing time
  */
 export class VisionAnalysisEngine {
-  private supabase = createClient(
+  private readonly supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
 
-  private model: tf.LayersModel | null = null;
-  private isModelLoaded = false;
+  private readonly model: tf.LayersModel | null = null;
+  private readonly isModelLoaded = false;
 
   constructor() {
     this.initializeModel();
@@ -340,7 +340,9 @@ export class VisionAnalysisEngine {
         typeof value === 'number' && value !== metrics.overallImprovement
     );
 
-    if (values.length === 0) return 0;
+    if (values.length === 0) {
+      return 0;
+    }
 
     const average =
       values.reduce((sum, value) => sum + value, 0) / values.length;

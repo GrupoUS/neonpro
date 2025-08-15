@@ -107,7 +107,9 @@ export function PerformanceMetricsPanel({
    * Load historical performance data
    */
   const loadHistoricalData = async () => {
-    if (!clinicId || isLoadingHistory) return;
+    if (!clinicId || isLoadingHistory) {
+      return;
+    }
 
     try {
       setIsLoadingHistory(true);
@@ -180,12 +182,16 @@ export function PerformanceMetricsPanel({
 
   // Memoized calculations
   const categoryData = useMemo(() => {
-    if (!data) return null;
+    if (!data) {
+      return null;
+    }
     return data.categories[selectedCategory];
   }, [data, selectedCategory]);
 
   const overallMetrics = useMemo(() => {
-    if (!data) return [];
+    if (!data) {
+      return [];
+    }
 
     return [
       {
@@ -243,7 +249,9 @@ export function PerformanceMetricsPanel({
   }, [data]);
 
   const categoryMetrics = useMemo(() => {
-    if (!categoryData) return [];
+    if (!categoryData) {
+      return [];
+    }
 
     const metrics = Object.entries(categoryData.metrics).map(([key, value]) => {
       let title, unit, icon, threshold;
@@ -370,7 +378,7 @@ export function PerformanceMetricsPanel({
         <div className="animate-pulse">
           <div className="mb-4 h-8 w-1/3 rounded bg-gray-200" />
           <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {[...Array(4)].map((_, i) => (
+            {[...new Array(4)].map((_, i) => (
               <div className="h-32 rounded bg-gray-200" key={i} />
             ))}
           </div>

@@ -292,11 +292,11 @@ const DEFAULT_DETECTION_RULES: DetectionRule[] = [
 ];
 
 export class SuspiciousActivityDetector {
-  private supabase;
-  private auditLogger: SecurityAuditLogger;
+  private readonly supabase;
+  private readonly auditLogger: SecurityAuditLogger;
   private detectionRules: DetectionRule[];
-  private userBaselines: Map<string, UserBehaviorBaseline> = new Map();
-  private activityBuffer: Map<string, ActivityPattern[]> = new Map();
+  private readonly userBaselines: Map<string, UserBehaviorBaseline> = new Map();
+  private readonly activityBuffer: Map<string, ActivityPattern[]> = new Map();
   private processingInterval?: NodeJS.Timeout;
   private baselineUpdateInterval?: NodeJS.Timeout;
 
@@ -784,9 +784,8 @@ export class SuspiciousActivityDetector {
       const alert: SuspiciousActivityAlert = {
         alertId: `alert_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         userId,
-        sessionId:
-          windowActivities[windowActivities.length - 1]?.sessionId || '',
-        deviceId: windowActivities[windowActivities.length - 1]?.deviceId || '',
+        sessionId: windowActivities.at(-1)?.sessionId || '',
+        deviceId: windowActivities.at(-1)?.deviceId || '',
         alertType: rule.alertType,
         severity: rule.severity,
         riskScore: this.calculateAlertRiskScore(rule, conditionResults),
@@ -915,7 +914,9 @@ export class SuspiciousActivityDetector {
       .map((a) => a.metadata.mouseMovements || 0)
       .filter((m) => m > 0);
 
-    if (movements.length === 0) return 0;
+    if (movements.length === 0) {
+      return 0;
+    }
 
     const mean = movements.reduce((sum, m) => sum + m, 0) / movements.length;
     const variance =
@@ -1106,7 +1107,7 @@ export class SuspiciousActivityDetector {
       const rule = this.detectionRules.find(
         (r) => r.alertType === alert.alertType
       );
-      if (!(rule && rule.actions.length)) {
+      if (!rule?.actions.length) {
         return;
       }
 

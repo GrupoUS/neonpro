@@ -148,11 +148,12 @@ export interface DashboardWidget {
 }
 
 export class PortalDashboard {
-  private supabase: SupabaseClient;
-  private auditLogger: AuditLogger;
-  private sessionManager: SessionManager;
-  private config: DashboardConfig;
-  private cache: Map<string, { data: any; timestamp: Date }> = new Map();
+  private readonly supabase: SupabaseClient;
+  private readonly auditLogger: AuditLogger;
+  private readonly sessionManager: SessionManager;
+  private readonly config: DashboardConfig;
+  private readonly cache: Map<string, { data: any; timestamp: Date }> =
+    new Map();
 
   constructor(
     supabaseUrl: string,
@@ -280,7 +281,9 @@ export class PortalDashboard {
       `)
       .eq('id', patientId)
       .single();
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -308,7 +311,9 @@ export class PortalDashboard {
       .order('appointment_date', { ascending: true })
       .limit(this.config.maxRecentItems);
 
-    if (upcomingError) throw upcomingError;
+    if (upcomingError) {
+      throw upcomingError;
+    }
     // Get recent appointments
     const { data: recentData, error: recentError } = await this.supabase
       .from('appointments')
@@ -324,7 +329,9 @@ export class PortalDashboard {
       .order('appointment_date', { ascending: false })
       .limit(this.config.maxRecentItems);
 
-    if (recentError) throw recentError;
+    if (recentError) {
+      throw recentError;
+    }
 
     // Transform data to AppointmentSummary format
     const upcoming =
@@ -377,7 +384,9 @@ export class PortalDashboard {
       .eq('status', 'active')
       .order('last_update', { ascending: false })
       .limit(this.config.maxRecentItems);
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     return (
       data?.map((progress) => ({
@@ -409,7 +418,9 @@ export class PortalDashboard {
       .order('upload_date', { ascending: false })
       .limit(this.config.maxRecentItems);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     return (
       data?.map((upload) => ({
@@ -470,7 +481,9 @@ export class PortalDashboard {
       .order('created_at', { ascending: false })
       .limit(10);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     return (
       data?.map((notification) => ({
@@ -560,7 +573,9 @@ export class PortalDashboard {
       .eq('patient_id', patientId)
       .single();
 
-    if (error && error.code !== 'PGRST116') throw error;
+    if (error && error.code !== 'PGRST116') {
+      throw error;
+    }
 
     // Return default preferences if none found
     if (!data) {
@@ -599,7 +614,9 @@ export class PortalDashboard {
    */
   private getCachedData(key: string): any | null {
     const cached = this.cache.get(key);
-    if (!cached) return null;
+    if (!cached) {
+      return null;
+    }
 
     const now = new Date();
     const cacheAge = (now.getTime() - cached.timestamp.getTime()) / (1000 * 60); // minutes

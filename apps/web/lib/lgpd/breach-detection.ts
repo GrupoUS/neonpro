@@ -342,15 +342,15 @@ export interface BreachDetectionEvents {
  * - Forensic evidence collection
  */
 export class BreachDetectionSystem extends EventEmitter {
-  private incidents: Map<string, BreachIncident> = new Map();
-  private alerts: Map<string, MonitoringAlert> = new Map();
-  private rules: Map<string, DetectionRule> = new Map();
+  private readonly incidents: Map<string, BreachIncident> = new Map();
+  private readonly alerts: Map<string, MonitoringAlert> = new Map();
+  private readonly rules: Map<string, DetectionRule> = new Map();
   private isInitialized = false;
   private monitoringInterval: NodeJS.Timeout | null = null;
   private complianceCheckInterval: NodeJS.Timeout | null = null;
 
   constructor(
-    private config: {
+    private readonly config: {
       monitoringIntervalMinutes: number;
       complianceCheckIntervalHours: number;
       autoEscalationEnabled: boolean;
@@ -611,7 +611,9 @@ export class BreachDetectionSystem extends EventEmitter {
 
     // Check event against all enabled rules
     for (const rule of this.rules.values()) {
-      if (!rule.enabled) continue;
+      if (!rule.enabled) {
+        continue;
+      }
 
       const matches = await this.evaluateRule(rule, event);
       if (matches) {
@@ -765,38 +767,48 @@ export class BreachDetectionSystem extends EventEmitter {
       incident.affectedData.categories.includes(
         AffectedDataCategory.SENSITIVE_PERSONAL
       )
-    )
+    ) {
       score += 30;
+    }
     if (
       incident.affectedData.categories.includes(
         AffectedDataCategory.FINANCIAL_DATA
       )
-    )
+    ) {
       score += 25;
+    }
     if (
       incident.affectedData.categories.includes(
         AffectedDataCategory.HEALTH_DATA
       )
-    )
+    ) {
       score += 25;
+    }
     if (
       incident.affectedData.categories.includes(
         AffectedDataCategory.BIOMETRIC_DATA
       )
-    )
+    ) {
       score += 20;
+    }
     if (
       incident.affectedData.categories.includes(
         AffectedDataCategory.CHILDREN_DATA
       )
-    )
+    ) {
       score += 20;
+    }
 
     // Volume scoring
-    if (incident.affectedData.estimatedRecords > 100_000) score += 20;
-    else if (incident.affectedData.estimatedRecords > 10_000) score += 15;
-    else if (incident.affectedData.estimatedRecords > 1000) score += 10;
-    else if (incident.affectedData.estimatedRecords > 100) score += 5;
+    if (incident.affectedData.estimatedRecords > 100_000) {
+      score += 20;
+    } else if (incident.affectedData.estimatedRecords > 10_000) {
+      score += 15;
+    } else if (incident.affectedData.estimatedRecords > 1000) {
+      score += 10;
+    } else if (incident.affectedData.estimatedRecords > 100) {
+      score += 5;
+    }
 
     // Breach type scoring
     switch (incident.type) {
@@ -816,10 +828,18 @@ export class BreachDetectionSystem extends EventEmitter {
     }
 
     // Determine severity based on score
-    if (score >= 70) return BreachSeverity.CRITICAL;
-    if (score >= 50) return BreachSeverity.HIGH;
-    if (score >= 30) return BreachSeverity.MEDIUM;
-    if (score >= 10) return BreachSeverity.LOW;
+    if (score >= 70) {
+      return BreachSeverity.CRITICAL;
+    }
+    if (score >= 50) {
+      return BreachSeverity.HIGH;
+    }
+    if (score >= 30) {
+      return BreachSeverity.MEDIUM;
+    }
+    if (score >= 10) {
+      return BreachSeverity.LOW;
+    }
     return BreachSeverity.INFORMATIONAL;
   }
 
@@ -970,7 +990,9 @@ export class BreachDetectionSystem extends EventEmitter {
     const operator = condition.parameters.operator || '>=';
 
     const value = this.getNestedValue(event.data, field);
-    if (value === undefined) return false;
+    if (value === undefined) {
+      return false;
+    }
 
     switch (operator) {
       case '>=':
@@ -999,7 +1021,9 @@ export class BreachDetectionSystem extends EventEmitter {
     );
 
     const value = this.getNestedValue(event.data, field);
-    if (typeof value !== 'string') return false;
+    if (typeof value !== 'string') {
+      return false;
+    }
 
     return pattern.test(value);
   }
@@ -1016,7 +1040,9 @@ export class BreachDetectionSystem extends EventEmitter {
     const _threshold = condition.parameters.threshold || 2; // Standard deviations
 
     const value = this.getNestedValue(event.data, field);
-    if (typeof value !== 'number') return false;
+    if (typeof value !== 'number') {
+      return false;
+    }
 
     // For demo purposes, consider values > 1000 as anomalous
     return value > 1000;

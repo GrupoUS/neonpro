@@ -47,7 +47,9 @@ export function useRealTimeAvailability({
   const supabase = createClient();
 
   const fetchAvailability = useCallback(async () => {
-    if (!(serviceId && enabled)) return;
+    if (!(serviceId && enabled)) {
+      return;
+    }
 
     try {
       setLoading(true);
@@ -63,7 +65,9 @@ export function useRealTimeAvailability({
         }
       );
 
-      if (fetchError) throw fetchError;
+      if (fetchError) {
+        throw fetchError;
+      }
 
       const enrichedSlots: AvailabilitySlot[] = data.map((slot: any) => ({
         datetime: slot.datetime,
@@ -86,7 +90,9 @@ export function useRealTimeAvailability({
 
   // Set up real-time subscription
   useEffect(() => {
-    if (!(serviceId && enabled)) return;
+    if (!(serviceId && enabled)) {
+      return;
+    }
 
     const channelName = `availability:${serviceId}${professionalId ? `:${professionalId}` : ''}`;
 
@@ -157,7 +163,9 @@ export function useRealTimeAvailability({
 
   // Periodic refresh fallback (every 30 seconds)
   useEffect(() => {
-    if (!enabled) return;
+    if (!enabled) {
+      return;
+    }
 
     const interval = setInterval(() => {
       if (!isConnected) {
@@ -208,7 +216,9 @@ export function useConflictDetection() {
             p_duration_minutes: duration || 60,
           });
 
-        if (conflictError) throw conflictError;
+        if (conflictError) {
+          throw conflictError;
+        }
 
         if (conflictCheck?.has_conflict) {
           // Get alternative suggestions
@@ -272,7 +282,9 @@ export function useOptimisticBooking() {
           }
         );
 
-        if (error) throw error;
+        if (error) {
+          throw error;
+        }
 
         if (data?.reservation_id) {
           setReservedSlots((prev) => new Set([...prev, datetime]));

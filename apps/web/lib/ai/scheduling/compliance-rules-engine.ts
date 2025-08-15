@@ -146,10 +146,11 @@ interface BrazilianHealthcareRegulation {
 }
 
 class ComplianceRulesEngine {
-  private supabase = createClient();
-  private rules: Map<string, ComplianceRule> = new Map();
+  private readonly supabase = createClient();
+  private readonly rules: Map<string, ComplianceRule> = new Map();
   private brazilianRegulations: BrazilianHealthcareRegulation[] = [];
-  private ruleCache: Map<string, ComplianceValidationResult> = new Map();
+  private readonly ruleCache: Map<string, ComplianceValidationResult> =
+    new Map();
 
   constructor() {
     this.initializeBrazilianRegulations();
@@ -179,7 +180,9 @@ class ComplianceRulesEngine {
 
       // Validate against each active rule
       for (const rule of this.rules.values()) {
-        if (rule.status !== 'active') continue;
+        if (rule.status !== 'active') {
+          continue;
+        }
 
         const ruleResult = await this.validateRule(rule, validationContext);
 
@@ -318,7 +321,9 @@ class ComplianceRulesEngine {
     conditions: RuleCondition[],
     context: any
   ): Promise<boolean> {
-    if (conditions.length === 0) return true;
+    if (conditions.length === 0) {
+      return true;
+    }
 
     let result = true;
     let currentLogicalOperator: 'AND' | 'OR' = 'AND';

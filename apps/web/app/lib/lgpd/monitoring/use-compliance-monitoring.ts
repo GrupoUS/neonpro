@@ -244,7 +244,9 @@ export function useComplianceViolations() {
 
   const getViolationsByType = useCallback(
     (type?: ViolationType) => {
-      if (!type) return violations;
+      if (!type) {
+        return violations;
+      }
       return violations.filter((v) => v.type === type);
     },
     [violations]
@@ -252,7 +254,9 @@ export function useComplianceViolations() {
 
   const getViolationsByCategory = useCallback(
     (category?: ComplianceCategory) => {
-      if (!category) return violations;
+      if (!category) {
+        return violations;
+      }
       return violations.filter((v) => v.category === category);
     },
     [violations]
@@ -327,7 +331,9 @@ export function useComplianceAlerts() {
 
   const getAlertsByCategory = useCallback(
     (category?: ComplianceCategory) => {
-      if (!category) return alerts;
+      if (!category) {
+        return alerts;
+      }
       return alerts.filter((a) => a.category === category);
     },
     [alerts]
@@ -367,7 +373,9 @@ export function useComplianceRecommendations() {
 
   const getRecommendationsByPriority = useCallback(
     (priority?: string) => {
-      if (!priority) return recommendations;
+      if (!priority) {
+        return recommendations;
+      }
       return recommendations.filter((r) => r.priority === priority);
     },
     [recommendations]
@@ -379,7 +387,9 @@ export function useComplianceRecommendations() {
 
   const getRecommendationsByCategory = useCallback(
     (category?: ComplianceCategory) => {
-      if (!category) return recommendations;
+      if (!category) {
+        return recommendations;
+      }
       return recommendations.filter((r) => r.category === category);
     },
     [recommendations]

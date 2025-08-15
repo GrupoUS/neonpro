@@ -33,10 +33,10 @@ import { validateUUID } from './utils';
  * - Delivery tracking and retry logic
  */
 export class NotificationService {
-  private supabase: SupabaseClient;
-  private config: NotificationConfig;
-  private templates: Map<string, NotificationTemplate> = new Map();
-  private deliveryQueue: NotificationData[] = [];
+  private readonly supabase: SupabaseClient;
+  private readonly config: NotificationConfig;
+  private readonly templates: Map<string, NotificationTemplate> = new Map();
+  private readonly deliveryQueue: NotificationData[] = [];
   private isProcessingQueue = false;
 
   constructor(config: NotificationConfig) {
@@ -605,7 +605,9 @@ export class NotificationService {
   }
 
   private async processQueue(): Promise<void> {
-    if (this.isProcessingQueue) return;
+    if (this.isProcessingQueue) {
+      return;
+    }
 
     this.isProcessingQueue = true;
 

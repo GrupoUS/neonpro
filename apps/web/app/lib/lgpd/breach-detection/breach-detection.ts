@@ -184,8 +184,8 @@ export interface BreachDetectionRule {
 }
 
 class BreachDetectionSystem {
-  private supabase = createClient();
-  private detectionRules: Map<string, BreachDetectionRule> = new Map();
+  private readonly supabase = createClient();
+  private readonly detectionRules: Map<string, BreachDetectionRule> = new Map();
   private isMonitoring = false;
   private monitoringInterval?: NodeJS.Timeout;
 
@@ -202,7 +202,9 @@ class BreachDetectionSystem {
         .select('*')
         .eq('enabled', true);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       this.detectionRules.clear();
       rules?.forEach((rule) => {
@@ -305,7 +307,9 @@ class BreachDetectionSystem {
 
   // Start breach monitoring
   async startMonitoring(): Promise<void> {
-    if (this.isMonitoring) return;
+    if (this.isMonitoring) {
+      return;
+    }
 
     this.isMonitoring = true;
 
@@ -330,7 +334,9 @@ class BreachDetectionSystem {
 
   // Stop breach monitoring
   stopMonitoring(): void {
-    if (!this.isMonitoring) return;
+    if (!this.isMonitoring) {
+      return;
+    }
 
     this.isMonitoring = false;
 
@@ -344,7 +350,9 @@ class BreachDetectionSystem {
   private async runDetectionCycle(): Promise<void> {
     try {
       for (const rule of this.detectionRules.values()) {
-        if (!rule.enabled) continue;
+        if (!rule.enabled) {
+          continue;
+        }
 
         const detected = await this.evaluateRule(rule);
         if (detected) {
@@ -367,9 +375,13 @@ class BreachDetectionSystem {
         .gte('created_at', new Date(Date.now() - 3_600_000).toISOString()) // Last hour
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
-      if (!events || events.length === 0) return null;
+      if (!events || events.length === 0) {
+        return null;
+      }
 
       // Apply rule logic
       return this.applyRuleLogic(rule, events);

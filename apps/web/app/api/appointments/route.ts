@@ -101,7 +101,7 @@ export async function POST(request: Request) {
       );
     }
 
-    if (!(bookingResult && bookingResult.success)) {
+    if (!bookingResult?.success) {
       return NextResponse.json(
         {
           success: false,

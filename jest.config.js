@@ -102,6 +102,9 @@ module.exports = {
   // Global timeout
   testTimeout: 30_000,
 
+  // Global setup to suppress warnings
+  globalSetup: '<rootDir>/__tests__/setup/global-setup.js',
+
   // Verbose output
   verbose: true,
 

@@ -8,7 +8,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from './Breadcrumb';
-import { Button } from './Button';
 import type { SidebarItem, UserProfile } from './DashboardSidebar';
 import { DashboardSidebar } from './DashboardSidebar';
 

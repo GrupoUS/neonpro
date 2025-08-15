@@ -155,9 +155,10 @@ export interface InterventionAnalytics {
 
 // Main intervention engine class
 export class InterventionEngine {
-  private supabase = createClientComponentClient<Database>();
-  private interventionTypes: Map<string, InterventionType> = new Map();
-  private activeCampaigns: Map<string, InterventionCampaign> = new Map();
+  private readonly supabase = createClientComponentClient<Database>();
+  private readonly interventionTypes: Map<string, InterventionType> = new Map();
+  private readonly activeCampaigns: Map<string, InterventionCampaign> =
+    new Map();
 
   constructor() {
     this.initializeInterventionTypes();
@@ -490,7 +491,9 @@ export class InterventionEngine {
     appointmentOutcome: 'ATTENDED' | 'NO_SHOW' | 'CANCELLED' | 'RESCHEDULED'
   ): Promise<void> {
     const execution = await this.getExecution(executionId);
-    if (!execution) return;
+    if (!execution) {
+      return;
+    }
 
     const effectivenessScore = this.calculateEffectivenessScore(
       execution,
@@ -749,7 +752,9 @@ export class InterventionEngine {
   }
 
   private calculateTimingBonus(execution: InterventionExecution): number {
-    if (!execution.executedAt) return 0;
+    if (!execution.executedAt) {
+      return 0;
+    }
 
     const timeDiff = Math.abs(
       execution.scheduledAt.getTime() - execution.executedAt.getTime()

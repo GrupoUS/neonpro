@@ -6,7 +6,7 @@ import type { CampaignAnalytics } from '@/app/types/campaigns';
 import { createClient } from '@/app/utils/supabase/server';
 
 export class MarketingCampaignService {
-  private supabase;
+  private readonly supabase;
 
   constructor() {
     this.supabase = createClient();
@@ -28,7 +28,9 @@ export class MarketingCampaignService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Create audit trail
       await this.createAuditEntry(campaign.id, 'CAMPAIGN_CREATED', {
@@ -98,7 +100,9 @@ export class MarketingCampaignService {
 
       const { data: campaigns, error, count } = await query;
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return {
         success: true,
@@ -131,7 +135,9 @@ export class MarketingCampaignService {
         .eq('id', id)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Get campaign analytics
       const analytics = await this.getCampaignAnalytics(id);
@@ -161,7 +167,9 @@ export class MarketingCampaignService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Create audit trail
       await this.createAuditEntry(id, 'CAMPAIGN_UPDATED', {
@@ -182,7 +190,9 @@ export class MarketingCampaignService {
         .delete()
         .eq('id', id);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Create audit trail
       await this.createAuditEntry(id, 'CAMPAIGN_DELETED', {});
@@ -233,7 +243,9 @@ export class MarketingCampaignService {
           .select()
           .single();
 
-        if (error) throw error;
+        if (error) {
+          throw error;
+        }
         executions.push(execution);
       }
 
@@ -268,7 +280,9 @@ export class MarketingCampaignService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return { success: true, data: abTest };
     } catch (error) {
@@ -286,7 +300,9 @@ export class MarketingCampaignService {
         .eq('id', testId)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Split traffic and execute variations
       const _variations = Object.keys(abTest.variations);
@@ -323,7 +339,9 @@ export class MarketingCampaignService {
           .select()
           .single();
 
-        if (execError) throw execError;
+        if (execError) {
+          throw execError;
+        }
         executions.push(execution);
       }
 
@@ -352,7 +370,9 @@ export class MarketingCampaignService {
         .eq('patient_id', patientId)
         .single();
 
-      if (error && error.code !== 'PGRST116') throw error;
+      if (error && error.code !== 'PGRST116') {
+        throw error;
+      }
 
       return { success: true, data: profile };
     } catch (error) {
@@ -375,7 +395,9 @@ export class MarketingCampaignService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return { success: true, data: profile };
     } catch (error) {
@@ -398,7 +420,9 @@ export class MarketingCampaignService {
 
       const { data: consent, error } = await query;
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return { success: true, data: consent };
     } catch (error) {
@@ -420,7 +444,9 @@ export class MarketingCampaignService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return { success: true, data: consent };
     } catch (error) {
@@ -447,7 +473,9 @@ export class MarketingCampaignService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return { success: true, data: consent };
     } catch (error) {
@@ -467,7 +495,9 @@ export class MarketingCampaignService {
         .select('*')
         .eq('campaign_id', campaignId);
 
-      if (metricsError) throw metricsError;
+      if (metricsError) {
+        throw metricsError;
+      }
 
       // Calculate aggregated analytics
       const totalRecipients = metrics.reduce((sum, m) => sum + m.total_sent, 0);
@@ -497,7 +527,9 @@ export class MarketingCampaignService {
         .eq('id', campaignId)
         .single();
 
-      if (campaignError) throw campaignError;
+      if (campaignError) {
+        throw campaignError;
+      }
 
       const analytics: CampaignAnalytics = {
         campaign_id: campaignId,
@@ -542,7 +574,9 @@ export class MarketingCampaignService {
       .select('id, email, phone, preferences')
       .limit(1000); // Limit for safety
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Apply segmentation logic here
     return patients.filter((_patient) => {

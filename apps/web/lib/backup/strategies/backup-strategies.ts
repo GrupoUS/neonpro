@@ -64,10 +64,10 @@ export interface DataSourceHandler {
 
 export class DatabaseBackupStrategy implements DataSourceHandler {
   name = 'database';
-  private supabase;
-  private auditLogger: AuditLogger;
-  private encryptionService: EncryptionService;
-  private lgpdManager: LGPDManager;
+  private readonly supabase;
+  private readonly auditLogger: AuditLogger;
+  private readonly encryptionService: EncryptionService;
+  private readonly lgpdManager: LGPDManager;
 
   constructor() {
     this.supabase = createClient(
@@ -240,11 +240,15 @@ export class DatabaseBackupStrategy implements DataSourceHandler {
     try {
       // Verificar se arquivo existe
       const exists = await this.checkBackupExists(backupLocation);
-      if (!exists) return false;
+      if (!exists) {
+        return false;
+      }
 
       // Verificar checksum
       const checksumValid = await this.verifyBackupChecksum(backupLocation);
-      if (!checksumValid) return false;
+      if (!checksumValid) {
+        return false;
+      }
 
       // Verificar estrutura do backup
       const structureValid = await this.verifyBackupStructure(backupLocation);
@@ -257,7 +261,9 @@ export class DatabaseBackupStrategy implements DataSourceHandler {
   async getSize(): Promise<number> {
     try {
       const { data, error } = await this.supabase.rpc('get_database_size');
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data || 0;
     } catch (_error) {
       // Fallback: estimar baseado no número de registros
@@ -270,7 +276,9 @@ export class DatabaseBackupStrategy implements DataSourceHandler {
       const { data, error } = await this.supabase.rpc(
         'get_last_modification_time'
       );
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return new Date(data);
     } catch (_error) {
       return new Date(); // Fallback para agora
@@ -296,7 +304,9 @@ export class DatabaseBackupStrategy implements DataSourceHandler {
   private async getDatabaseTables(): Promise<string[]> {
     try {
       const { data, error } = await this.supabase.rpc('get_user_tables');
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data || [];
     } catch (_error) {
       // Fallback: lista padrão de tabelas conhecidas
@@ -331,7 +341,9 @@ export class DatabaseBackupStrategy implements DataSourceHandler {
       }
 
       const { data, error } = await query;
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Salvar dados em arquivo
       const backupData = JSON.stringify(data, null, 2);
@@ -357,7 +369,9 @@ export class DatabaseBackupStrategy implements DataSourceHandler {
       const { data: schema, error } = await this.supabase.rpc(
         'get_database_schema'
       );
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       const schemaData = JSON.stringify(schema, null, 2);
       const location = `${context.job_id}/schema.json`;
@@ -410,7 +424,9 @@ export class DatabaseBackupStrategy implements DataSourceHandler {
         .limit(1)
         .single();
 
-      if (error || !data) return null;
+      if (error || !data) {
+        return null;
+      }
       return new Date(data.completed_at);
     } catch (_error) {
       return null;
@@ -496,7 +512,7 @@ export class DatabaseBackupStrategy implements DataSourceHandler {
 
 export class FileSystemBackupStrategy implements DataSourceHandler {
   name = 'filesystem';
-  private auditLogger: AuditLogger;
+  private readonly auditLogger: AuditLogger;
 
   constructor() {
     this.auditLogger = new AuditLogger();
@@ -639,7 +655,9 @@ export class FileSystemBackupStrategy implements DataSourceHandler {
     try {
       // Verificar existência e integridade
       const exists = await this.checkFileSystemBackupExists(backupLocation);
-      if (!exists) return false;
+      if (!exists) {
+        return false;
+      }
 
       const checksumValid = await this.verifyFileSystemChecksum(backupLocation);
       return checksumValid;
@@ -743,8 +761,8 @@ export class FileSystemBackupStrategy implements DataSourceHandler {
 }
 
 export class BackupStrategyManager {
-  private strategies: Map<string, DataSourceHandler> = new Map();
-  private auditLogger: AuditLogger;
+  private readonly strategies: Map<string, DataSourceHandler> = new Map();
+  private readonly auditLogger: AuditLogger;
 
   constructor() {
     this.auditLogger = new AuditLogger();
@@ -817,8 +835,12 @@ export class BackupStrategyManager {
     const errors: string[] = [];
 
     // Validar campos obrigatórios
-    if (!strategy.name) errors.push('Nome da estratégia é obrigatório');
-    if (!strategy.type) errors.push('Tipo da estratégia é obrigatório');
+    if (!strategy.name) {
+      errors.push('Nome da estratégia é obrigatório');
+    }
+    if (!strategy.type) {
+      errors.push('Tipo da estratégia é obrigatório');
+    }
     if (!strategy.data_sources || strategy.data_sources.length === 0) {
       errors.push('Pelo menos uma fonte de dados deve ser especificada');
     }

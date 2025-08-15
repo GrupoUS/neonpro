@@ -259,10 +259,14 @@ export class HealthcareRBAC {
   async hasPermission(userId: string, permission: string): Promise<boolean> {
     try {
       const userRole = await this.getUserRole(userId);
-      if (!userRole) return false;
+      if (!userRole) {
+        return false;
+      }
 
       const role = this.roles.find((r) => r.name === userRole);
-      if (!role) return false;
+      if (!role) {
+        return false;
+      }
 
       return role.permissions.includes(permission);
     } catch (error) {
@@ -329,14 +333,18 @@ export class HealthcareRBAC {
 
   async getRolePermissions(roleName: string): Promise<Permission[]> {
     const role = this.roles.find((r) => r.name === roleName);
-    if (!role) return [];
+    if (!role) {
+      return [];
+    }
 
     return this.permissions.filter((p) => role.permissions.includes(p.id));
   }
 
   async getUserPermissions(userId: string): Promise<Permission[]> {
     const userRole = await this.getUserRole(userId);
-    if (!userRole) return [];
+    if (!userRole) {
+      return [];
+    }
 
     return this.getRolePermissions(userRole);
   }

@@ -59,7 +59,9 @@ export function useIntelligentThresholds({
       }
 
       const response = await fetch(`/api/inventory/thresholds?${params}`);
-      if (!response.ok) throw new Error('Failed to fetch thresholds');
+      if (!response.ok) {
+        throw new Error('Failed to fetch thresholds');
+      }
 
       const data = await response.json();
       setThresholds(data.data);
@@ -74,7 +76,9 @@ export function useIntelligentThresholds({
       const response = await fetch(
         `/api/inventory/thresholds/optimize?clinic_id=${clinicId}`
       );
-      if (!response.ok) throw new Error('Failed to fetch optimizations');
+      if (!response.ok) {
+        throw new Error('Failed to fetch optimizations');
+      }
 
       const data = await response.json();
       setOptimizations(data.data);
@@ -89,7 +93,9 @@ export function useIntelligentThresholds({
       const response = await fetch(
         `/api/inventory/alerts/stats?clinic_id=${clinicId}`
       );
-      if (!response.ok) throw new Error('Failed to fetch alert stats');
+      if (!response.ok) {
+        throw new Error('Failed to fetch alert stats');
+      }
 
       const data = await response.json();
       setAlertStats(data.data);
@@ -354,7 +360,9 @@ export function useIntelligentThresholds({
 
   // Auto-refresh
   useEffect(() => {
-    if (!autoRefresh) return;
+    if (!autoRefresh) {
+      return;
+    }
 
     const interval = setInterval(loadData, refreshInterval);
     return () => clearInterval(interval);

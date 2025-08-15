@@ -12,7 +12,7 @@ import {
 } from '@/lib/types/brazilian-tax';
 
 export class BrazilianTaxEngine {
-  private supabase = createClientComponentClient();
+  private readonly supabase = createClientComponentClient();
 
   // Get clinic tax configuration
   async getTaxConfiguration(

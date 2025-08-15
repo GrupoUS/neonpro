@@ -47,12 +47,12 @@ export interface IndexingStats {
  * Maintains up-to-date search index for all clinic content
  */
 export class SearchIndexer {
-  private supabase: any;
-  private indexingQueue: IndexableContent[] = [];
+  private readonly supabase: any;
+  private readonly indexingQueue: IndexableContent[] = [];
   private isProcessing = false;
-  private batchSize = 50;
-  private processingInterval = 1000; // 1 second
-  private stats: IndexingStats = {
+  private readonly batchSize = 50;
+  private readonly processingInterval = 1000; // 1 second
+  private readonly stats: IndexingStats = {
     totalEntries: 0,
     lastIndexed: new Date().toISOString(),
     indexingSpeed: 0,

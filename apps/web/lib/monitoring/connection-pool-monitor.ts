@@ -69,8 +69,8 @@ interface MonitoringMetrics {
 
 class ConnectionPoolMonitor {
   private static instance: ConnectionPoolMonitor;
-  private alerts: Map<string, HealthcareAlert> = new Map();
-  private metrics: MonitoringMetrics[] = [];
+  private readonly alerts: Map<string, HealthcareAlert> = new Map();
+  private readonly metrics: MonitoringMetrics[] = [];
   private monitoringInterval?: NodeJS.Timeout;
   private isMonitoring = false;
 
@@ -113,7 +113,9 @@ class ConnectionPoolMonitor {
    * Start continuous monitoring
    */
   public startMonitoring(): void {
-    if (this.isMonitoring) return;
+    if (this.isMonitoring) {
+      return;
+    }
 
     this.isMonitoring = true;
     console.log('🔍 Starting healthcare connection pool monitoring...');
@@ -289,9 +291,15 @@ class ConnectionPoolMonitor {
 
     // Check compliance status
     const complianceIssues = [];
-    if (!health.compliance.lgpdCompliant) complianceIssues.push('LGPD');
-    if (!health.compliance.anvisaCompliant) complianceIssues.push('ANVISA');
-    if (!health.compliance.cfmCompliant) complianceIssues.push('CFM');
+    if (!health.compliance.lgpdCompliant) {
+      complianceIssues.push('LGPD');
+    }
+    if (!health.compliance.anvisaCompliant) {
+      complianceIssues.push('ANVISA');
+    }
+    if (!health.compliance.cfmCompliant) {
+      complianceIssues.push('CFM');
+    }
 
     if (complianceIssues.length > 0) {
       await this.createAlert({
@@ -597,7 +605,9 @@ class ConnectionPoolMonitor {
         };
         const severityDiff =
           severityOrder[a.severity] - severityOrder[b.severity];
-        if (severityDiff !== 0) return severityDiff;
+        if (severityDiff !== 0) {
+          return severityDiff;
+        }
         return b.timestamp.getTime() - a.timestamp.getTime();
       });
   }
@@ -645,12 +655,16 @@ class ConnectionPoolMonitor {
       (a) => a.severity === 'emergency'
     );
 
-    const latestMetrics = this.metrics[this.metrics.length - 1];
+    const latestMetrics = this.metrics.at(-1);
 
     let status: 'healthy' | 'degraded' | 'critical' | 'emergency' = 'healthy';
-    if (emergencyAlerts.length > 0) status = 'emergency';
-    else if (criticalAlerts.length > 0) status = 'critical';
-    else if (activeAlerts.length > 0) status = 'degraded';
+    if (emergencyAlerts.length > 0) {
+      status = 'emergency';
+    } else if (criticalAlerts.length > 0) {
+      status = 'critical';
+    } else if (activeAlerts.length > 0) {
+      status = 'degraded';
+    }
 
     return {
       status,

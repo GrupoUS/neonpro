@@ -45,21 +45,21 @@ import { debounce, formatDuration, generateDeviceFingerprint } from './utils';
  * - Automatic cleanup and data management
  */
 export class UnifiedSessionSystem {
-  private supabase: SupabaseClient;
-  private sessionManager: SessionManager;
-  private deviceManager: DeviceManager;
-  private securityLogger: SecurityEventLogger;
-  private notificationService: NotificationService;
-  private cleanupService: DataCleanupService;
-  private config: {
+  private readonly supabase: SupabaseClient;
+  private readonly sessionManager: SessionManager;
+  private readonly deviceManager: DeviceManager;
+  private readonly securityLogger: SecurityEventLogger;
+  private readonly notificationService: NotificationService;
+  private readonly cleanupService: DataCleanupService;
+  private readonly config: {
     session: SessionConfig;
     device: DeviceConfig;
     security: SecurityConfig;
   };
 
   // Activity tracking for intelligent timeout
-  private activityTrackers = new Map<string, NodeJS.Timeout>();
-  private sessionWarnings = new Map<string, NodeJS.Timeout>();
+  private readonly activityTrackers = new Map<string, NodeJS.Timeout>();
+  private readonly sessionWarnings = new Map<string, NodeJS.Timeout>();
 
   // Real-time monitoring
   private securityMonitor: NodeJS.Timeout | null = null;
@@ -624,20 +624,23 @@ export class UnifiedSessionSystem {
     }
   }
 
-  private updateActivityTracking = debounce(async (sessionId: string) => {
-    // Reset inactivity timer
-    const existingTimer = this.activityTrackers.get(sessionId);
-    if (existingTimer) {
-      clearTimeout(existingTimer);
-    }
+  private readonly updateActivityTracking = debounce(
+    async (sessionId: string) => {
+      // Reset inactivity timer
+      const existingTimer = this.activityTrackers.get(sessionId);
+      if (existingTimer) {
+        clearTimeout(existingTimer);
+      }
 
-    // Setup new inactivity timer
-    const inactivityTimer = setTimeout(async () => {
-      await this.handleSessionInactivity(sessionId);
-    }, this.config.session.inactivityTimeout);
+      // Setup new inactivity timer
+      const inactivityTimer = setTimeout(async () => {
+        await this.handleSessionInactivity(sessionId);
+      }, this.config.session.inactivityTimeout);
 
-    this.activityTrackers.set(sessionId, inactivityTimer);
-  }, 1000); // Debounce activity updates
+      this.activityTrackers.set(sessionId, inactivityTimer);
+    },
+    1000
+  ); // Debounce activity updates
 
   private async handleSessionInactivity(sessionId: string): Promise<void> {
     try {
@@ -725,26 +728,35 @@ export class UnifiedSessionSystem {
   ): Promise<string[]> {
     const factors: string[] = [];
 
-    if (!device.trusted) factors.push('untrusted_device');
-    if (device.lastIpAddress && device.lastIpAddress !== request.ipAddress)
+    if (!device.trusted) {
+      factors.push('untrusted_device');
+    }
+    if (device.lastIpAddress && device.lastIpAddress !== request.ipAddress) {
       factors.push('ip_change');
+    }
 
     if (request.location && device.lastLocation) {
       const distance = this.calculateDistance(
         request.location,
         device.lastLocation
       );
-      if (distance > 1000) factors.push('location_change');
+      if (distance > 1000) {
+        factors.push('location_change');
+      }
     }
 
     const hour = new Date().getHours();
-    if (hour < 6 || hour > 22) factors.push('unusual_time');
+    if (hour < 6 || hour > 22) {
+      factors.push('unusual_time');
+    }
 
     const recentFailures = await this.securityLogger.getRecentFailedAttempts(
       request.userId,
       60 * 60 * 1000
     );
-    if (recentFailures > 3) factors.push('recent_failures');
+    if (recentFailures > 3) {
+      factors.push('recent_failures');
+    }
 
     return factors;
   }

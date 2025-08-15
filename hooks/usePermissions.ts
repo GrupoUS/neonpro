@@ -103,7 +103,9 @@ export function usePermissions(): UsePermissionsReturn {
    * Get user's permissions based on role
    */
   const permissions = useMemo(() => {
-    if (!(role && user)) return [];
+    if (!(role && user)) {
+      return [];
+    }
 
     // Import DEFAULT_ROLES from types (would need to be imported)
     // For now, we'll define basic permissions here
@@ -178,7 +180,9 @@ export function usePermissions(): UsePermissionsReturn {
    */
   const hasPermission = useCallback(
     async (permission: Permission, resourceId?: string): Promise<boolean> => {
-      if (!(user && role)) return false;
+      if (!(user && role)) {
+        return false;
+      }
 
       // Check cache first
       const cacheKey = getCacheKey(permission, resourceId);
@@ -284,7 +288,9 @@ export function usePermissions(): UsePermissionsReturn {
    */
   const hasMinimumRole = useCallback(
     (minimumRole: UserRole): boolean => {
-      if (!role) return false;
+      if (!role) {
+        return false;
+      }
       return ROLE_HIERARCHY[role] >= ROLE_HIERARCHY[minimumRole];
     },
     [role]
@@ -296,7 +302,9 @@ export function usePermissions(): UsePermissionsReturn {
   const canAccess = useCallback(
     (feature: string): boolean => {
       const featurePermissions = FEATURE_PERMISSIONS[feature];
-      if (!featurePermissions) return false;
+      if (!featurePermissions) {
+        return false;
+      }
 
       return featurePermissions.some((permission) =>
         permissions.includes(permission)
@@ -346,7 +354,9 @@ export function usePermissions(): UsePermissionsReturn {
    * Refresh user permissions
    */
   const refreshPermissions = useCallback(async () => {
-    if (!user) return;
+    if (!user) {
+      return;
+    }
 
     setIsLoading(true);
     setError(null);
@@ -385,7 +395,7 @@ export function usePermissions(): UsePermissionsReturn {
     if (user) {
       clearCache();
     }
-  }, [user?.id, clearCache]);
+  }, [user?.id, clearCache, user]);
 
   return {
     hasPermission,
@@ -417,7 +427,9 @@ export function usePermission(permission: Permission, resourceId?: string) {
     let mounted = true;
 
     const checkPermission = async () => {
-      if (isLoading) return;
+      if (isLoading) {
+        return;
+      }
 
       setChecking(true);
       try {

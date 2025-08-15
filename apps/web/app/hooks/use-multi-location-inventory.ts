@@ -28,7 +28,7 @@ export function useInventoryItem(id: string) {
   return useQuery({
     queryKey: ['inventory-item', id],
     queryFn: () => inventoryService.getInventoryItem(id),
-    enabled: !!id,
+    enabled: Boolean(id),
   });
 }
 
@@ -97,7 +97,7 @@ export function useStockByLocation(clinic_id: string, room_id?: string) {
   return useQuery({
     queryKey: ['stock-by-location', clinic_id, room_id],
     queryFn: () => inventoryService.getStockByLocation(clinic_id, room_id),
-    enabled: !!clinic_id,
+    enabled: Boolean(clinic_id),
     staleTime: 2 * 60 * 1000,
   });
 }

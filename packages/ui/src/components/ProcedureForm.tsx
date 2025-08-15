@@ -1,16 +1,7 @@
-import {
-  AlertTriangle,
-  Clock,
-  FileText,
-  MapPin,
-  Plus,
-  User,
-  X,
-} from 'lucide-react';
+import { AlertTriangle, Clock, FileText, Plus, User, X } from 'lucide-react';
 import * as React from 'react';
 import type { PractitionerData, ProcedureData, TreatmentData } from '../types';
 import { cn } from '../utils/cn';
-import { Badge } from './Badge';
 import { Button } from './Button';
 import { Checkbox } from './Checkbox';
 import { DatePicker } from './DatePicker';
@@ -284,7 +275,7 @@ const ProcedureForm = React.forwardRef<HTMLFormElement, ProcedureFormProps>(
                 onChange={(e) =>
                   handleInputChange(
                     'estimatedDuration',
-                    Number.parseInt(e.target.value) || 0
+                    Number.parseInt(e.target.value, 10) || 0
                   )
                 }
                 step="15"

@@ -126,16 +126,20 @@ export interface AnalyticsOptions {
  * Comprehensive analytics and performance monitoring for search operations
  */
 export class SearchAnalytics {
-  private supabase = createClient();
-  private performanceThresholds = {
+  private readonly supabase = createClient();
+  private readonly performanceThresholds = {
     responseTime: 2000, // 2 seconds
     successRate: 0.95, // 95%
     errorRate: 0.05, // 5%
     clickThroughRate: 0.3, // 30%
   };
-  private alertCallbacks: Array<(alert: PerformanceAlert) => void> = [];
-  private metricsCache = new Map<string, { data: any; timestamp: number }>();
-  private cacheTimeout = 5 * 60 * 1000; // 5 minutes
+  private readonly alertCallbacks: Array<(alert: PerformanceAlert) => void> =
+    [];
+  private readonly metricsCache = new Map<
+    string,
+    { data: any; timestamp: number }
+  >();
+  private readonly cacheTimeout = 5 * 60 * 1000; // 5 minutes
 
   /**
    * Track a search event

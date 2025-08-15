@@ -83,8 +83,8 @@ export interface PermissionCheckResult {
 
 class PermissionValidator {
   private static instance: PermissionValidator;
-  private permissionCache: Map<string, UserPermissions> = new Map();
-  private cacheExpiry: Map<string, number> = new Map();
+  private readonly permissionCache: Map<string, UserPermissions> = new Map();
+  private readonly cacheExpiry: Map<string, number> = new Map();
   private readonly CACHE_TTL = 300_000; // 5 minutes
 
   private constructor() {}
@@ -272,7 +272,9 @@ class PermissionValidator {
       if (userRoles) {
         for (const userRole of userRoles) {
           const role = userRole.roles;
-          if (!role) continue;
+          if (!role) {
+            continue;
+          }
 
           const rolePermissions: Permission[] = [];
 
@@ -744,7 +746,7 @@ class PermissionValidator {
         .single();
 
       return {
-        passed: !!data,
+        passed: Boolean(data),
         reason: data ? undefined : 'User is not a member of this clinic',
       };
     } catch (_error) {

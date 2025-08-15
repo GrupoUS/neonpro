@@ -33,9 +33,15 @@ export async function GET(request: NextRequest) {
       : 0;
 
     const filters: any = {};
-    if (assessmentId) filters.assessment_id = assessmentId;
-    if (validatorId) filters.validator_id = validatorId;
-    if (status) filters.validation_status = status;
+    if (assessmentId) {
+      filters.assessment_id = assessmentId;
+    }
+    if (validatorId) {
+      filters.validator_id = validatorId;
+    }
+    if (status) {
+      filters.validation_status = status;
+    }
 
     const validations = await riskAssessmentService.getAllValidations(
       filters,

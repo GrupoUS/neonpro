@@ -130,7 +130,7 @@ export class LGPDEncryptionService {
 // ============================================================================
 
 export class LGPDConsentService {
-  private supabase: any;
+  private readonly supabase: any;
 
   constructor() {
     this.supabase = createClient(
@@ -319,7 +319,7 @@ export class LGPDConsentService {
 // ============================================================================
 
 export class LGPDDataSubjectService {
-  private supabase: any;
+  private readonly supabase: any;
 
   constructor() {
     this.supabase = createClient(

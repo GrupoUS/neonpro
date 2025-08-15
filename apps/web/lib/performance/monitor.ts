@@ -23,7 +23,7 @@ export interface PerformanceBenchmark {
 export class PerformanceMonitor {
   private static instance: PerformanceMonitor;
   private metrics: PerformanceMetrics[] = [];
-  private benchmarks: Map<string, PerformanceBenchmark> = new Map();
+  private readonly benchmarks: Map<string, PerformanceBenchmark> = new Map();
 
   static getInstance(): PerformanceMonitor {
     if (!PerformanceMonitor.instance) {
@@ -93,7 +93,9 @@ export class PerformanceMonitor {
       (m) => m.operation === operation
     );
 
-    if (operationMetrics.length === 0) return null;
+    if (operationMetrics.length === 0) {
+      return null;
+    }
 
     const avgResponseTime =
       operationMetrics.reduce((sum, m) => sum + m.duration, 0) /
@@ -141,7 +143,9 @@ export class PerformanceMonitor {
     const operations = [...new Set(this.metrics.map((m) => m.operation))];
     operations.forEach((op) => {
       const benchmark = this.getBenchmark(op);
-      if (benchmark) report[op] = benchmark;
+      if (benchmark) {
+        report[op] = benchmark;
+      }
     });
 
     return report;

@@ -741,7 +741,9 @@ export const useBackupSystem = (): UseBackupSystemReturn => {
 
   // Auto-refresh data every 30 seconds when initialized
   useEffect(() => {
-    if (!state.isInitialized) return;
+    if (!state.isInitialized) {
+      return;
+    }
 
     const interval = setInterval(() => {
       refreshData();
@@ -757,7 +759,7 @@ export const useBackupSystem = (): UseBackupSystemReturn => {
     return () => {
       shutdownSystem();
     };
-  }, []);
+  }, [initializeSystem, shutdownSystem]);
 
   return {
     // State

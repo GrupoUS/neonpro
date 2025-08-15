@@ -11,7 +11,7 @@ import type {
 } from './types';
 
 export class CampaignManager {
-  private supabase: ReturnType<typeof createClient>;
+  private readonly supabase: ReturnType<typeof createClient>;
 
   constructor() {
     this.supabase = createClient();
@@ -51,13 +51,17 @@ export class CampaignManager {
       .select()
       .single();
 
-    if (error) throw new Error(`Failed to create campaign: ${error.message}`);
+    if (error) {
+      throw new Error(`Failed to create campaign: ${error.message}`);
+    }
 
     return { ...campaign, id: data.id };
   }
   async launchCampaign(campaignId: string): Promise<void> {
     const campaign = await this.getCampaign(campaignId);
-    if (!campaign) throw new Error('Campaign not found');
+    if (!campaign) {
+      throw new Error('Campaign not found');
+    }
 
     if (campaign.status !== 'draft') {
       throw new Error('Only draft campaigns can be launched');
@@ -99,7 +103,9 @@ export class CampaignManager {
       .eq('id', campaignId)
       .single();
 
-    if (error) return null;
+    if (error) {
+      return null;
+    }
     return this.mapDatabaseToCampaign(data);
   }
 
@@ -129,8 +135,9 @@ export class CampaignManager {
 
     const { data, error } = await query;
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to get eligible trials: ${error.message}`);
+    }
 
     return data?.map((trial) => this.mapDatabaseToTrial(trial)) || [];
   }
@@ -164,7 +171,9 @@ export class CampaignManager {
 
   async assignTestVariant(userId: string, campaignId: string): Promise<string> {
     const campaign = await this.getCampaign(campaignId);
-    if (!campaign?.abTest) return 'control';
+    if (!campaign?.abTest) {
+      return 'control';
+    }
 
     // Use deterministic assignment based on user ID hash
     const hash = this.hashUserId(userId);
@@ -188,7 +197,7 @@ export class CampaignManager {
     for (let i = 0; i < userId.length; i++) {
       const char = userId.charCodeAt(i);
       hash = (hash << 5) - hash + char;
-      hash = hash & hash; // Convert to 32-bit integer
+      hash &= hash; // Convert to 32-bit integer
     }
     return Math.abs(hash) % 100; // Return 0-99
   }
@@ -212,7 +221,9 @@ export class CampaignManager {
 
   async executeCampaign(campaignId: string, trial: Trial): Promise<void> {
     const campaign = await this.getCampaign(campaignId);
-    if (!campaign) return;
+    if (!campaign) {
+      return;
+    }
 
     // Get test variant if A/B testing enabled
     const variant = campaign.abTest

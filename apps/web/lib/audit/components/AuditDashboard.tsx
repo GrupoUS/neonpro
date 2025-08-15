@@ -111,7 +111,9 @@ export function AuditDashboard({ className }: AuditDashboardProps) {
 
   // Estatísticas resumidas
   const summaryStats = useMemo(() => {
-    if (!statistics.statistics) return null;
+    if (!statistics.statistics) {
+      return null;
+    }
 
     return {
       totalEvents: statistics.statistics.total_events,

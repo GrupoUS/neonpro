@@ -321,7 +321,9 @@ export async function DELETE(request: NextRequest) {
       .delete()
       .eq('id', providerId);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     return NextResponse.json(
       {

@@ -164,16 +164,28 @@ export function AppointmentStatusTracker({
   const recommendations = getRecommendations();
 
   const getScoreColor = (score: number) => {
-    if (score >= 85) return 'text-green-600';
-    if (score >= 70) return 'text-yellow-600';
+    if (score >= 85) {
+      return 'text-green-600';
+    }
+    if (score >= 70) {
+      return 'text-yellow-600';
+    }
     return 'text-red-600';
   };
 
   const getScoreDescription = (score: number) => {
-    if (score >= 90) return 'Excelente';
-    if (score >= 80) return 'Muito Bom';
-    if (score >= 70) return 'Bom';
-    if (score >= 60) return 'Regular';
+    if (score >= 90) {
+      return 'Excelente';
+    }
+    if (score >= 80) {
+      return 'Muito Bom';
+    }
+    if (score >= 70) {
+      return 'Bom';
+    }
+    if (score >= 60) {
+      return 'Regular';
+    }
     return 'Precisa Melhorar';
   };
 

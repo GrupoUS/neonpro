@@ -164,7 +164,7 @@ interface BatchExecutionResult {
 // ================================================================================
 
 export class NotificationScheduler {
-  private supabase: ReturnType<typeof createClient>;
+  private readonly supabase: ReturnType<typeof createClient>;
   private isProcessing = false;
   private processingInterval: NodeJS.Timeout | null = null;
 
@@ -344,7 +344,9 @@ export class NotificationScheduler {
    * Processa notificações agendadas que estão prontas para envio
    */
   private async processScheduledNotifications(): Promise<void> {
-    if (this.isProcessing) return;
+    if (this.isProcessing) {
+      return;
+    }
 
     this.isProcessing = true;
 
@@ -615,7 +617,9 @@ export class NotificationScheduler {
         [];
 
       hourlyEngagement.forEach(({ count, avgResponseTime }, hour) => {
-        if (count < 2) return; // Dados insuficientes para essa hora
+        if (count < 2) {
+          return; // Dados insuficientes para essa hora
+        }
 
         // Score baseado em frequência de engajamento e tempo de resposta
         const engagementScore = count / history.length;
@@ -683,7 +687,9 @@ export class NotificationScheduler {
     time: Date,
     quietHours?: { start: string; end: string }
   ): boolean {
-    if (!quietHours) return false;
+    if (!quietHours) {
+      return false;
+    }
 
     const hour = time.getHours();
     const minute = time.getMinutes();
@@ -710,7 +716,9 @@ export class NotificationScheduler {
     time: Date,
     quietHours?: { start: string; end: string }
   ): Date {
-    if (!quietHours) return time;
+    if (!quietHours) {
+      return time;
+    }
 
     const result = new Date(time);
     const [endHour, endMinute] = quietHours.end.split(':').map(Number);
@@ -940,7 +948,9 @@ export class NotificationScheduler {
     filters: any[],
     clinicId: string
   ): Promise<string[]> {
-    if (!filters || filters.length === 0) return [];
+    if (!filters || filters.length === 0) {
+      return [];
+    }
 
     try {
       let query = this.supabase

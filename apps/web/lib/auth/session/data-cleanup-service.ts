@@ -65,7 +65,7 @@ export interface CleanupStats {
 
 // Data Cleanup Service
 export class DataCleanupService {
-  private supabase: SupabaseClient;
+  private readonly supabase: SupabaseClient;
   private config: CleanupConfig;
 
   constructor(supabase: SupabaseClient, config?: Partial<CleanupConfig>) {

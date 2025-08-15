@@ -42,7 +42,9 @@ export async function GET(
         .eq('id', id)
         .single();
 
-      if (segmentError) throw segmentError;
+      if (segmentError) {
+        throw segmentError;
+      }
 
       const defaultPerformance = {
         segment_id: id,

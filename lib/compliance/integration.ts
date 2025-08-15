@@ -51,10 +51,10 @@ export interface ComplianceValidation {
 }
 
 export class ComplianceIntegration {
-  private rbacManager: RBACManager;
-  private securityMiddleware: SecurityMiddleware;
-  private rlsManager: RLSManager;
-  private auditLogger: AuditLogger;
+  private readonly rbacManager: RBACManager;
+  private readonly securityMiddleware: SecurityMiddleware;
+  private readonly rlsManager: RLSManager;
+  private readonly auditLogger: AuditLogger;
 
   constructor() {
     this.consentManager = new ConsentManager();
@@ -530,7 +530,9 @@ export class ComplianceIntegration {
   }
 
   private calculateCategoryScore(validations: ComplianceValidation[]): number {
-    if (validations.length === 0) return 0;
+    if (validations.length === 0) {
+      return 0;
+    }
     return Math.round(
       validations.reduce((sum, v) => sum + v.score, 0) / validations.length
     );
@@ -539,8 +541,12 @@ export class ComplianceIntegration {
   private getComplianceStatus(
     score: number
   ): 'compliant' | 'partial' | 'non_compliant' {
-    if (score >= 90) return 'compliant';
-    if (score >= 70) return 'partial';
+    if (score >= 90) {
+      return 'compliant';
+    }
+    if (score >= 70) {
+      return 'partial';
+    }
     return 'non_compliant';
   }
 
@@ -578,31 +584,54 @@ export class ComplianceIntegration {
 
   private identifyStrongestAreas(status: ComplianceStatus): string[] {
     const areas = [];
-    if (status.lgpd_compliance.score >= 90) areas.push('LGPD Compliance');
-    if (status.anvisa_compliance.score >= 90) areas.push('ANVISA Compliance');
-    if (status.cfm_compliance.score >= 90) areas.push('CFM Compliance');
-    if (status.security_compliance.score >= 90) areas.push('Security');
-    if (status.database_compliance.score >= 90) areas.push('Database Security');
+    if (status.lgpd_compliance.score >= 90) {
+      areas.push('LGPD Compliance');
+    }
+    if (status.anvisa_compliance.score >= 90) {
+      areas.push('ANVISA Compliance');
+    }
+    if (status.cfm_compliance.score >= 90) {
+      areas.push('CFM Compliance');
+    }
+    if (status.security_compliance.score >= 90) {
+      areas.push('Security');
+    }
+    if (status.database_compliance.score >= 90) {
+      areas.push('Database Security');
+    }
     return areas;
   }
 
   private identifyImprovementAreas(status: ComplianceStatus): string[] {
     const areas = [];
-    if (status.lgpd_compliance.score < 80) areas.push('LGPD Compliance');
-    if (status.anvisa_compliance.score < 80) areas.push('ANVISA Compliance');
-    if (status.cfm_compliance.score < 80) areas.push('CFM Compliance');
-    if (status.security_compliance.score < 80) areas.push('Security');
-    if (status.database_compliance.score < 80) areas.push('Database Security');
+    if (status.lgpd_compliance.score < 80) {
+      areas.push('LGPD Compliance');
+    }
+    if (status.anvisa_compliance.score < 80) {
+      areas.push('ANVISA Compliance');
+    }
+    if (status.cfm_compliance.score < 80) {
+      areas.push('CFM Compliance');
+    }
+    if (status.security_compliance.score < 80) {
+      areas.push('Security');
+    }
+    if (status.database_compliance.score < 80) {
+      areas.push('Database Security');
+    }
     return areas;
   }
 
   private assessOverallRisk(status: ComplianceStatus): string {
-    if (status.overall_score >= 90)
+    if (status.overall_score >= 90) {
       return 'Low Risk - Excellent compliance posture';
-    if (status.overall_score >= 80)
+    }
+    if (status.overall_score >= 80) {
       return 'Medium Risk - Good compliance with minor gaps';
-    if (status.overall_score >= 70)
+    }
+    if (status.overall_score >= 70) {
       return 'High Risk - Significant compliance gaps requiring attention';
+    }
     return 'Critical Risk - Major compliance deficiencies requiring immediate action';
   }
 

@@ -540,7 +540,9 @@ export class MedicalTimelineService {
     const treatmentEvents = events.filter(
       (e) => e.eventType === 'treatment' || e.eventType === 'procedure'
     );
-    if (treatmentEvents.length < 2) return 0;
+    if (treatmentEvents.length < 2) {
+      return 0;
+    }
 
     const dates = treatmentEvents.map((e) => e.date.getTime()).sort();
     const intervals = [];
@@ -557,7 +559,9 @@ export class MedicalTimelineService {
     const eventsWithOutcomes = events.filter((e) => e.outcome);
     const totalOutcomes = eventsWithOutcomes.length;
 
-    if (totalOutcomes === 0) return { successRate: 0, avgSatisfaction: 0 };
+    if (totalOutcomes === 0) {
+      return { successRate: 0, avgSatisfaction: 0 };
+    }
 
     const successfulOutcomes = eventsWithOutcomes.filter(
       (e) => e.outcome?.success

@@ -426,9 +426,15 @@ export const parseAnalyticsFilters = (
   const plan = params.get('plan');
   const region = params.get('region');
 
-  if (status) filters.status = status;
-  if (plan) filters.plan = plan;
-  if (region) filters.region = region;
+  if (status) {
+    filters.status = status;
+  }
+  if (plan) {
+    filters.plan = plan;
+  }
+  if (region) {
+    filters.region = region;
+  }
 
   const result: AnalyticsFilters = {
     period,
@@ -436,9 +442,15 @@ export const parseAnalyticsFilters = (
     filters: Object.keys(filters).length > 0 ? filters : {},
   };
 
-  if (startDate) result.startDate = startDate;
-  if (endDate) result.endDate = endDate;
-  if (groupBy) result.groupBy = groupBy;
+  if (startDate) {
+    result.startDate = startDate;
+  }
+  if (endDate) {
+    result.endDate = endDate;
+  }
+  if (groupBy) {
+    result.groupBy = groupBy;
+  }
 
   return result;
 };

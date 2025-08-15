@@ -112,8 +112,8 @@ export interface PaymentRetryConfig {
 
 // Main Subscription Manager Class
 export class SubscriptionManager {
-  private supabase: any;
-  private stripe: Stripe;
+  private readonly supabase: any;
+  private readonly stripe: Stripe;
 
   constructor() {
     this.supabase = createClient(
@@ -772,7 +772,9 @@ export class SubscriptionManager {
   ): Promise<void> {
     try {
       const subscription = await this.getSubscription(subscriptionId);
-      if (!subscription) return;
+      if (!subscription) {
+        return;
+      }
 
       // Initialize common usage types based on plan features
       const usageTypes = [
@@ -815,7 +817,9 @@ export class SubscriptionManager {
     usageType: string
   ): number | null {
     const feature = features.find((f) => f.toLowerCase().includes(usageType));
-    if (!feature) return null;
+    if (!feature) {
+      return null;
+    }
 
     const match = feature.match(/(\d+)/);
     return match ? Number.parseInt(match[1], 10) : null;
@@ -844,7 +848,9 @@ export class SubscriptionManager {
   ): Promise<void> {
     try {
       const subscription = await this.getSubscription(subscriptionId);
-      if (!subscription) return;
+      if (!subscription) {
+        return;
+      }
 
       await sendNotification({
         type: notificationType,

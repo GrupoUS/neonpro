@@ -79,10 +79,11 @@ export class PersonalizedRecommendationService {
       .select()
       .single();
 
-    if (error)
+    if (error) {
       throw new Error(
         `Failed to create recommendation profile: ${error.message}`
       );
+    }
     return profile as RecommendationProfile;
   }
 
@@ -115,10 +116,11 @@ export class PersonalizedRecommendationService {
       .select()
       .single();
 
-    if (error)
+    if (error) {
       throw new Error(
         `Failed to update recommendation profile: ${error.message}`
       );
+    }
     return data as RecommendationProfile;
   }
 
@@ -331,9 +333,11 @@ export class PersonalizedRecommendationService {
       );
       if (ageFactor) {
         const age = ageFactor.factor_value.age;
-        if (age < 30)
+        if (age < 30) {
           adjustedProbability *= 1.1; // Better results for younger patients
-        else if (age > 60) adjustedProbability *= 0.95; // Slightly lower for older patients
+        } else if (age > 60) {
+          adjustedProbability *= 0.95; // Slightly lower for older patients
+        }
       }
 
       // Apply treatment history factor
@@ -372,7 +376,9 @@ export class PersonalizedRecommendationService {
     options: TreatmentOption[],
     safetyProfile: SafetyProfile | null
   ): TreatmentOption[] {
-    if (!safetyProfile) return options;
+    if (!safetyProfile) {
+      return options;
+    }
 
     return options.filter((option) => {
       // Check contraindications
@@ -505,10 +511,11 @@ export class PersonalizedRecommendationService {
       .select()
       .single();
 
-    if (error)
+    if (error) {
       throw new Error(
         `Failed to create treatment recommendation: ${error.message}`
       );
+    }
     return recommendation as TreatmentRecommendation;
   }
 
@@ -526,25 +533,31 @@ export class PersonalizedRecommendationService {
       { count: 'exact' }
     );
 
-    if (query.patient_id)
+    if (query.patient_id) {
       queryBuilder = queryBuilder.eq('patient_id', query.patient_id);
-    if (query.provider_id)
+    }
+    if (query.provider_id) {
       queryBuilder = queryBuilder.eq('provider_id', query.provider_id);
-    if (query.status) queryBuilder = queryBuilder.eq('status', query.status);
-    if (query.recommendation_type)
+    }
+    if (query.status) {
+      queryBuilder = queryBuilder.eq('status', query.status);
+    }
+    if (query.recommendation_type) {
       queryBuilder = queryBuilder.eq(
         'recommendation_type',
         query.recommendation_type
       );
+    }
 
     const { data, count, error } = await queryBuilder
       .order(query.sort_by, { ascending: query.sort_order === 'asc' })
       .range(query.offset, query.offset + query.limit - 1);
 
-    if (error)
+    if (error) {
       throw new Error(
         `Failed to get treatment recommendations: ${error.message}`
       );
+    }
 
     return {
       recommendations: (data || []) as RecommendationWithDetails[],
@@ -591,8 +604,9 @@ export class PersonalizedRecommendationService {
       .select()
       .single();
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to approve recommendation: ${error.message}`);
+    }
     return data as TreatmentRecommendation;
   }
 
@@ -612,8 +626,9 @@ export class PersonalizedRecommendationService {
       .select()
       .single();
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to reject recommendation: ${error.message}`);
+    }
     return data as TreatmentRecommendation;
   }
 
@@ -639,10 +654,11 @@ export class PersonalizedRecommendationService {
       .select()
       .single();
 
-    if (error)
+    if (error) {
       throw new Error(
         `Failed to create recommendation feedback: ${error.message}`
       );
+    }
     return feedback as RecommendationFeedback;
   }
 
@@ -655,26 +671,31 @@ export class PersonalizedRecommendationService {
       .from('recommendation_feedback')
       .select('*', { count: 'exact' });
 
-    if (query.recommendation_id)
+    if (query.recommendation_id) {
       queryBuilder = queryBuilder.eq(
         'recommendation_id',
         query.recommendation_id
       );
-    if (query.provider_id)
+    }
+    if (query.provider_id) {
       queryBuilder = queryBuilder.eq('provider_id', query.provider_id);
-    if (query.feedback_type)
+    }
+    if (query.feedback_type) {
       queryBuilder = queryBuilder.eq('feedback_type', query.feedback_type);
-    if (query.adoption_status)
+    }
+    if (query.adoption_status) {
       queryBuilder = queryBuilder.eq('adoption_status', query.adoption_status);
+    }
 
     const { data, count, error } = await queryBuilder
       .order(query.sort_by, { ascending: query.sort_order === 'asc' })
       .range(query.offset, query.offset + query.limit - 1);
 
-    if (error)
+    if (error) {
       throw new Error(
         `Failed to get recommendation feedback: ${error.message}`
       );
+    }
 
     return {
       feedback: (data || []) as RecommendationFeedback[],
@@ -701,10 +722,11 @@ export class PersonalizedRecommendationService {
       .select()
       .single();
 
-    if (error)
+    if (error) {
       throw new Error(
         `Failed to create personalization factor: ${error.message}`
       );
+    }
     return factor as PersonalizationFactor;
   }
 
@@ -718,10 +740,11 @@ export class PersonalizedRecommendationService {
       .eq('patient_id', patientId)
       .order('created_at', { ascending: false });
 
-    if (error)
+    if (error) {
       throw new Error(
         `Failed to get personalization factors: ${error.message}`
       );
+    }
     return (data || []) as PersonalizationFactor[];
   }
 
@@ -742,8 +765,9 @@ export class PersonalizedRecommendationService {
       .select()
       .single();
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to create safety profile: ${error.message}`);
+    }
     return data as SafetyProfile;
   }
 
@@ -777,8 +801,9 @@ export class PersonalizedRecommendationService {
       .select()
       .single();
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to update safety profile: ${error.message}`);
+    }
     return data as SafetyProfile;
   }
 
@@ -803,10 +828,11 @@ export class PersonalizedRecommendationService {
       .select()
       .single();
 
-    if (error)
+    if (error) {
       throw new Error(
         `Failed to record recommendation performance: ${error.message}`
       );
+    }
     return performance as RecommendationPerformance;
   }
 
@@ -819,33 +845,40 @@ export class PersonalizedRecommendationService {
       .from('recommendation_performance')
       .select('*', { count: 'exact' });
 
-    if (query.recommendation_id)
+    if (query.recommendation_id) {
       queryBuilder = queryBuilder.eq(
         'recommendation_id',
         query.recommendation_id
       );
-    if (query.patient_id)
+    }
+    if (query.patient_id) {
       queryBuilder = queryBuilder.eq('patient_id', query.patient_id);
-    if (query.date_from)
+    }
+    if (query.date_from) {
       queryBuilder = queryBuilder.gte('measured_at', query.date_from);
-    if (query.date_to)
+    }
+    if (query.date_to) {
       queryBuilder = queryBuilder.lte('measured_at', query.date_to);
-    if (query.min_adoption_rate)
+    }
+    if (query.min_adoption_rate) {
       queryBuilder = queryBuilder.gte('adoption_rate', query.min_adoption_rate);
-    if (query.min_effectiveness)
+    }
+    if (query.min_effectiveness) {
       queryBuilder = queryBuilder.gte(
         'effectiveness_score',
         query.min_effectiveness
       );
+    }
 
     const { data, count, error } = await queryBuilder
       .order('measured_at', { ascending: false })
       .range(query.offset, query.offset + query.limit - 1);
 
-    if (error)
+    if (error) {
       throw new Error(
         `Failed to get recommendation performance: ${error.message}`
       );
+    }
 
     return {
       performance: (data || []) as RecommendationPerformance[],
@@ -861,19 +894,28 @@ export class PersonalizedRecommendationService {
     const supabase = await createClient();
     const query = supabase.from('treatment_recommendations').select('*');
 
-    if (dateFrom) query.gte('created_at', dateFrom);
-    if (dateTo) query.lte('created_at', dateTo);
+    if (dateFrom) {
+      query.gte('created_at', dateFrom);
+    }
+    if (dateTo) {
+      query.lte('created_at', dateTo);
+    }
 
     const { data: recommendations, error } = await query;
-    if (error)
+    if (error) {
       throw new Error(
         `Failed to get recommendation analytics: ${error.message}`
       );
+    }
 
     const feedbackQuery = supabase.from('recommendation_feedback').select('*');
 
-    if (dateFrom) feedbackQuery.gte('created_at', dateFrom);
-    if (dateTo) feedbackQuery.lte('created_at', dateTo);
+    if (dateFrom) {
+      feedbackQuery.gte('created_at', dateFrom);
+    }
+    if (dateTo) {
+      feedbackQuery.lte('created_at', dateTo);
+    }
 
     const { data: feedback } = await feedbackQuery;
 
@@ -929,7 +971,9 @@ export class PersonalizedRecommendationService {
     const supabase = await createClient();
     let factorsQuery = supabase.from('personalization_factors').select('*');
 
-    if (patientId) factorsQuery = factorsQuery.eq('patient_id', patientId);
+    if (patientId) {
+      factorsQuery = factorsQuery.eq('patient_id', patientId);
+    }
 
     const { data: factors } = await factorsQuery;
 

@@ -29,17 +29,17 @@ export interface CachePerformanceReport {
 }
 
 export class CacheOptimizer {
-  private cache: Map<string, any> = new Map();
-  private accessTimes: Map<string, number> = new Map();
-  private accessCounts: Map<string, number> = new Map();
-  private metrics: CacheMetrics = {
+  private readonly cache: Map<string, any> = new Map();
+  private readonly accessTimes: Map<string, number> = new Map();
+  private readonly accessCounts: Map<string, number> = new Map();
+  private readonly metrics: CacheMetrics = {
     hits: 0,
     misses: 0,
     evictions: 0,
     memoryUsage: 0,
     averageAccessTime: 0,
   };
-  private strategy: CacheOptimizationStrategy;
+  private readonly strategy: CacheOptimizationStrategy;
 
   constructor(strategy: CacheOptimizationStrategy) {
     this.strategy = strategy;

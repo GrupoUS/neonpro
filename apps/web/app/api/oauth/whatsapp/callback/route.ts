@@ -16,9 +16,9 @@ export async function GET(request: NextRequest) {
     Logger.info('WhatsApp OAuth callback received', {
       requestId,
       provider: 'whatsapp',
-      hasCode: !!code,
-      hasState: !!state,
-      hasError: !!error,
+      hasCode: Boolean(code),
+      hasState: Boolean(state),
+      hasError: Boolean(error),
       errorDescription,
       userAgent: request.headers.get('user-agent'),
       ip:
@@ -48,8 +48,8 @@ export async function GET(request: NextRequest) {
       Logger.error('WhatsApp OAuth callback missing required parameters', {
         requestId,
         provider: 'whatsapp',
-        hasCode: !!code,
-        hasState: !!state,
+        hasCode: Boolean(code),
+        hasState: Boolean(state),
       });
 
       return NextResponse.redirect(

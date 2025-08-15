@@ -131,7 +131,7 @@ export async function GET(request: NextRequest) {
       return {
         ...platform,
         connection_status: connection || null,
-        is_connected: !!connection,
+        is_connected: Boolean(connection),
         connection_health: connection?.connection_health_score || null,
       };
     });

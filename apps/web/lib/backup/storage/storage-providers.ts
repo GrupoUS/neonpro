@@ -170,7 +170,7 @@ export abstract class StorageProvider {
 
 // Implementação para armazenamento local
 export class LocalStorageProvider extends StorageProvider {
-  private basePath: string;
+  private readonly basePath: string;
 
   constructor(config: StorageConfig) {
     super(config);
@@ -444,7 +444,7 @@ export class LocalStorageProvider extends StorageProvider {
 
 // Implementação para Amazon S3
 export class S3StorageProvider extends StorageProvider {
-  private bucket: string;
+  private readonly bucket: string;
 
   constructor(config: StorageConfig) {
     super(config);
@@ -613,7 +613,7 @@ export class S3StorageProvider extends StorageProvider {
       available_storage_gb: this.config.max_storage_gb * 0.8,
       total_files: Math.floor(Math.random() * 5000),
       upload_success_rate: 98 + Math.random() * 2,
-      download_success_rate: 99 + Math.random() * 1,
+      download_success_rate: 99 + Number(Math.random()),
       average_upload_speed_mbps: 100 + Math.random() * 100,
       average_download_speed_mbps: 150 + Math.random() * 100,
       total_cost: Math.random() * 500,
@@ -650,10 +650,10 @@ export class S3StorageProvider extends StorageProvider {
 
 // Gerenciador de provedores de armazenamento
 export class StorageManager {
-  private supabase;
-  private auditLogger: AuditLogger;
-  private providers: Map<string, StorageProvider> = new Map();
-  private activeOperations: Map<string, StorageOperation> = new Map();
+  private readonly supabase;
+  private readonly auditLogger: AuditLogger;
+  private readonly providers: Map<string, StorageProvider> = new Map();
+  private readonly activeOperations: Map<string, StorageOperation> = new Map();
 
   constructor() {
     this.supabase = createClient(
@@ -989,7 +989,9 @@ export class StorageManager {
 
       const { data, error, count } = await query;
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       const operations = data.map(this.mapDatabaseToStorageOperation);
 
@@ -1043,7 +1045,9 @@ export class StorageManager {
       metadata: config.metadata,
     });
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
   }
 
   private async deleteStorageConfig(name: string): Promise<void> {
@@ -1052,7 +1056,9 @@ export class StorageManager {
       .delete()
       .eq('name', name);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
   }
 
   private async saveStorageOperation(
@@ -1077,7 +1083,9 @@ export class StorageManager {
       metadata: operation.metadata,
     });
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
   }
 
   private mapDatabaseToStorageOperation(data: any): StorageOperation {

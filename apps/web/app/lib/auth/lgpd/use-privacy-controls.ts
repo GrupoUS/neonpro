@@ -36,7 +36,9 @@ export function usePrivacyControls(userId: string): UsePrivacyControlsResult {
 
   // Load privacy settings
   const loadSettings = useCallback(async () => {
-    if (!userId) return;
+    if (!userId) {
+      return;
+    }
 
     try {
       setIsLoading(true);
@@ -56,7 +58,9 @@ export function usePrivacyControls(userId: string): UsePrivacyControlsResult {
   // Update consent
   const updateConsent = useCallback(
     async (type: ConsentType, granted: boolean) => {
-      if (!(userId && settings)) return;
+      if (!(userId && settings)) {
+        return;
+      }
 
       try {
         const updatedSettings = {
@@ -83,7 +87,9 @@ export function usePrivacyControls(userId: string): UsePrivacyControlsResult {
   // Update communication preferences
   const updateCommunicationPreferences = useCallback(
     async (preferences: any) => {
-      if (!(userId && settings)) return;
+      if (!(userId && settings)) {
+        return;
+      }
 
       try {
         const updatedSettings = {
@@ -109,7 +115,9 @@ export function usePrivacyControls(userId: string): UsePrivacyControlsResult {
 
   // Request data export
   const requestDataExport = useCallback(async () => {
-    if (!userId) return;
+    if (!userId) {
+      return;
+    }
 
     try {
       await lgpdComplianceManager.processDataSubjectRequest(
@@ -128,7 +136,9 @@ export function usePrivacyControls(userId: string): UsePrivacyControlsResult {
 
   // Request data deletion
   const requestDataDeletion = useCallback(async () => {
-    if (!userId) return;
+    if (!userId) {
+      return;
+    }
 
     const confirmed = window.confirm(
       'Tem certeza que deseja solicitar a exclusão dos seus dados? ' +
@@ -136,7 +146,9 @@ export function usePrivacyControls(userId: string): UsePrivacyControlsResult {
         'conforme exigências legais.'
     );
 
-    if (!confirmed) return;
+    if (!confirmed) {
+      return;
+    }
 
     try {
       await lgpdComplianceManager.processDataSubjectRequest(
@@ -154,7 +166,9 @@ export function usePrivacyControls(userId: string): UsePrivacyControlsResult {
 
   // Request data access
   const requestDataAccess = useCallback(async () => {
-    if (!userId) return;
+    if (!userId) {
+      return;
+    }
 
     try {
       await lgpdComplianceManager.processDataSubjectRequest(
@@ -205,7 +219,9 @@ export function useConsentManagement(userId: string) {
   const [isLoading, setIsLoading] = useState(true);
 
   const loadConsents = useCallback(async () => {
-    if (!userId) return;
+    if (!userId) {
+      return;
+    }
 
     try {
       setIsLoading(true);
@@ -225,7 +241,9 @@ export function useConsentManagement(userId: string) {
 
   const grantConsent = useCallback(
     async (type: ConsentType, purpose: DataProcessingPurpose) => {
-      if (!userId) return;
+      if (!userId) {
+        return;
+      }
 
       try {
         const consent = await lgpdComplianceManager.recordConsent(
@@ -244,7 +262,9 @@ export function useConsentManagement(userId: string) {
 
   const withdrawConsent = useCallback(
     async (type: ConsentType, purpose: DataProcessingPurpose) => {
-      if (!userId) return;
+      if (!userId) {
+        return;
+      }
 
       try {
         const consent = await lgpdComplianceManager.recordConsent(
@@ -280,7 +300,9 @@ export function useDataSubjectRequests(userId: string) {
   const [isLoading, setIsLoading] = useState(true);
 
   const loadRequests = useCallback(async () => {
-    if (!userId) return;
+    if (!userId) {
+      return;
+    }
 
     try {
       setIsLoading(true);
@@ -302,7 +324,9 @@ export function useDataSubjectRequests(userId: string) {
 
   const submitRequest = useCallback(
     async (type: LGPDRights, description?: string) => {
-      if (!userId) return;
+      if (!userId) {
+        return;
+      }
 
       try {
         const request = await lgpdComplianceManager.processDataSubjectRequest(

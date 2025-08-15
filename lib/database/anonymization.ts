@@ -31,7 +31,7 @@ export class DataAnonymizer {
   private readonly SALT_LENGTH = 32;
   private readonly IV_LENGTH = 16;
   private readonly ALGORITHM = 'aes-256-gcm';
-  private masterKey: Buffer;
+  private readonly masterKey: Buffer;
 
   constructor() {
     // In production, load from secure vault
@@ -173,13 +173,15 @@ export class DataAnonymizer {
   // Email anonymization
   private anonymizeEmail(email: string): string {
     const [localPart, domain] = email.split('@');
-    if (!domain) return this.createHash(email);
+    if (!domain) {
+      return this.createHash(email);
+    }
 
     const anonymizedLocal = this.createHash(localPart).substring(0, 8);
     const domainParts = domain.split('.');
     const anonymizedDomain =
       domainParts.length > 1
-        ? `${this.createHash(domainParts[0]).substring(0, 6)}.${domainParts[domainParts.length - 1]}`
+        ? `${this.createHash(domainParts[0]).substring(0, 6)}.${domainParts.at(-1)}`
         : this.createHash(domain).substring(0, 8);
 
     return `${anonymizedLocal}@${anonymizedDomain}`;
@@ -188,7 +190,9 @@ export class DataAnonymizer {
   // Phone anonymization
   private anonymizePhone(phone: string): string {
     const cleanPhone = phone.replace(/\D/g, '');
-    if (cleanPhone.length < 4) return '****';
+    if (cleanPhone.length < 4) {
+      return '****';
+    }
 
     const lastFour = cleanPhone.slice(-4);
     const prefix =
@@ -200,7 +204,9 @@ export class DataAnonymizer {
   // CPF anonymization (Brazilian tax ID)
   private anonymizeCPF(cpf: string): string {
     const cleanCPF = cpf.replace(/\D/g, '');
-    if (cleanCPF.length !== 11) return '***.***.***-**';
+    if (cleanCPF.length !== 11) {
+      return '***.***.***-**';
+    }
 
     return `***.***.***-${cleanCPF.slice(-2)}`;
   }
@@ -414,17 +420,30 @@ export class DataAnonymizer {
     let riskScore = 0;
 
     // Higher risk factors
-    if (config.reversible) riskScore += 3;
-    if (config.key_storage === 'database') riskScore += 2;
-    if (config.strategy === 'pseudonymization') riskScore += 2;
+    if (config.reversible) {
+      riskScore += 3;
+    }
+    if (config.key_storage === 'database') {
+      riskScore += 2;
+    }
+    if (config.strategy === 'pseudonymization') {
+      riskScore += 2;
+    }
 
     // Lower risk factors
-    if (config.strategy === 'anonymization') riskScore -= 2;
-    if (config.retention_period_days && config.retention_period_days < 365)
+    if (config.strategy === 'anonymization') {
+      riskScore -= 2;
+    }
+    if (config.retention_period_days && config.retention_period_days < 365) {
       riskScore -= 1;
+    }
 
-    if (riskScore <= 0) return 'Low Risk - Strong anonymization practices';
-    if (riskScore <= 3) return 'Medium Risk - Review security measures';
+    if (riskScore <= 0) {
+      return 'Low Risk - Strong anonymization practices';
+    }
+    if (riskScore <= 3) {
+      return 'Medium Risk - Review security measures';
+    }
     return 'High Risk - Immediate security review required';
   }
 }

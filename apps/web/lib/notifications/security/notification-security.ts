@@ -96,12 +96,12 @@ export interface ContentFilterResult {
 }
 
 export class NotificationSecurity {
-  private supabase;
-  private auditLogger: AuditLogger;
-  private lgpdManager: LGPDManager;
-  private encryptionService: EncryptionService;
-  private securityConfig: SecurityConfig;
-  private rateLimitCache: Map<string, RateLimitStatus> = new Map();
+  private readonly supabase;
+  private readonly auditLogger: AuditLogger;
+  private readonly lgpdManager: LGPDManager;
+  private readonly encryptionService: EncryptionService;
+  private readonly securityConfig: SecurityConfig;
+  private readonly rateLimitCache: Map<string, RateLimitStatus> = new Map();
   private suspiciousPatterns: RegExp[];
   private piiPatterns: RegExp[];
   private spamKeywords: string[];
@@ -438,7 +438,9 @@ export class NotificationSecurity {
    * Incrementa contador de rate limit
    */
   async incrementRateLimit(userId: string): Promise<void> {
-    if (!this.securityConfig.rate_limiting.enabled) return;
+    if (!this.securityConfig.rate_limiting.enabled) {
+      return;
+    }
 
     try {
       const status = await this.checkRateLimit(userId);
@@ -470,7 +472,9 @@ export class NotificationSecurity {
    * Anonimiza dados de notificação para compliance LGPD
    */
   async anonymizeNotificationData(notificationId: string): Promise<void> {
-    if (!this.securityConfig.anonymization_enabled) return;
+    if (!this.securityConfig.anonymization_enabled) {
+      return;
+    }
 
     try {
       await this.lgpdManager.anonymizeData('notification_logs', {
@@ -524,7 +528,9 @@ export class NotificationSecurity {
             .delete()
             .lt('created_at', cutoffDate.toISOString());
 
-          if (error) throw error;
+          if (error) {
+            throw error;
+          }
           deletedCount = expiredNotifications.length;
         }
       }
@@ -784,7 +790,9 @@ export class NotificationSecurity {
   ): Promise<SecurityViolation[]> {
     const violations: SecurityViolation[] = [];
 
-    if (!userId) return violations;
+    if (!userId) {
+      return violations;
+    }
 
     try {
       // Verificar consentimento

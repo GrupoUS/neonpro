@@ -125,7 +125,7 @@ export function useLgpdConsent(): UseLgpdConsentReturn {
         setIsLoading(false);
       }
     },
-    []
+    [logDataAccess]
   );
 
   // Revoke specific consent types
@@ -165,7 +165,7 @@ export function useLgpdConsent(): UseLgpdConsentReturn {
         setIsLoading(false);
       }
     },
-    []
+    [logDataAccess]
   );
 
   // Update existing consent
@@ -211,7 +211,7 @@ export function useLgpdConsent(): UseLgpdConsentReturn {
         setIsLoading(false);
       }
     },
-    []
+    [logDataModification]
   );
 
   // Log data access for audit trail

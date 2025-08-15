@@ -55,7 +55,7 @@ export interface BillingCycle {
  * Subscription Service for managing recurring payments
  */
 export class SubscriptionService {
-  private supabase = createClient();
+  private readonly supabase = createClient();
 
   /**
    * Create a new subscription

@@ -88,7 +88,9 @@ async function validateAuditAccess(
       .eq('user_id', userId)
       .single();
 
-    if (!profile) return false;
+    if (!profile) {
+      return false;
+    }
 
     // Verifica se tem permissão de auditoria
     const hasAuditPermission =

@@ -34,9 +34,15 @@ export async function GET(request: NextRequest) {
     const emailService = new EmailService(supabase, profile.clinic_id);
 
     const filters: any = {};
-    if (category) filters.category = category;
-    if (isActive !== null) filters.isActive = isActive === 'true';
-    if (search) filters.search = search;
+    if (category) {
+      filters.category = category;
+    }
+    if (isActive !== null) {
+      filters.isActive = isActive === 'true';
+    }
+    if (search) {
+      filters.search = search;
+    }
 
     const templates = await emailService.getTemplates(filters);
 

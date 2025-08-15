@@ -361,8 +361,8 @@ const DEFAULT_PERMISSIONS: RolePermission[] = [
 ];
 
 class PermissionValidationSystem {
-  private permissionCache = new Map<string, PermissionResult>();
-  private cacheTimeout = 5 * 60 * 1000; // 5 minutes
+  private readonly permissionCache = new Map<string, PermissionResult>();
+  private readonly cacheTimeout = 5 * 60 * 1000; // 5 minutes
 
   /**
    * Check if user has permission to perform action on resource

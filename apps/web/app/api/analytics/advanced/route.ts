@@ -293,7 +293,9 @@ async function handleStatisticalAnalysis(
       ) // Last 90 days
       .order('created_at', { ascending: true });
 
-    if (dataError) throw dataError;
+    if (dataError) {
+      throw dataError;
+    }
 
     if (analyticsData.length < 30) {
       return NextResponse.json(
@@ -378,7 +380,7 @@ async function handleStatisticalAnalysis(
           data_points: processedData.length,
           date_range: {
             start: analyticsData[0]?.created_at,
-            end: analyticsData[analyticsData.length - 1]?.created_at,
+            end: analyticsData.at(-1)?.created_at,
           },
         },
       },
@@ -535,7 +537,9 @@ async function calculateCorrelations(
 
 function calculatePearsonCorrelation(x: number[], y: number[]) {
   const n = Math.min(x.length, y.length);
-  if (n < 2) return 0;
+  if (n < 2) {
+    return 0;
+  }
 
   const sumX = x.slice(0, n).reduce((sum, val) => sum + val, 0);
   const sumY = y.slice(0, n).reduce((sum, val) => sum + val, 0);
@@ -566,9 +570,15 @@ function studentTCDF(t: number, df: number) {
 function getSignificanceCategory(
   pValue: number
 ): 'high' | 'medium' | 'low' | 'none' {
-  if (pValue < 0.001) return 'high';
-  if (pValue < 0.01) return 'medium';
-  if (pValue < 0.05) return 'low';
+  if (pValue < 0.001) {
+    return 'high';
+  }
+  if (pValue < 0.01) {
+    return 'medium';
+  }
+  if (pValue < 0.05) {
+    return 'low';
+  }
   return 'none';
 }
 

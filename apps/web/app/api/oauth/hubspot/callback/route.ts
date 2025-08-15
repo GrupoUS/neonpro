@@ -16,9 +16,9 @@ export async function GET(request: NextRequest) {
     Logger.info('HubSpot OAuth callback received', {
       requestId,
       provider: 'hubspot',
-      hasCode: !!code,
-      hasState: !!state,
-      hasError: !!error,
+      hasCode: Boolean(code),
+      hasState: Boolean(state),
+      hasError: Boolean(error),
       errorDescription,
       userAgent: request.headers.get('user-agent'),
       ip:
@@ -48,8 +48,8 @@ export async function GET(request: NextRequest) {
       Logger.error('HubSpot OAuth callback missing required parameters', {
         requestId,
         provider: 'hubspot',
-        hasCode: !!code,
-        hasState: !!state,
+        hasCode: Boolean(code),
+        hasState: Boolean(state),
       });
 
       return NextResponse.redirect(

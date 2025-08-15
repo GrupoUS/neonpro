@@ -177,7 +177,7 @@ async function queueRequestForSync(request) {
 
     // Store in cache for persistence
     const cache = await caches.open(OFFLINE_QUEUE_CACHE);
-    const queueResponse = new Response(JSON.stringify(requestData));
+    const queueResponse = Response.json(requestData);
     await cache.put(`queue-${requestData.id}`, queueResponse);
 
     // Register background sync
@@ -347,7 +347,9 @@ async function cacheFirst(request, cacheName) {
     // Update cache in background for fresh content
     fetch(request)
       .then((response) => {
-        if (response.ok) cache.put(request, response.clone());
+        if (response.ok) {
+          cache.put(request, response.clone());
+        }
       })
       .catch(() => {});
 
@@ -676,10 +678,7 @@ async function updateNotificationPreferences(preferences) {
   // Store preferences for offline use
   try {
     const cache = await caches.open('preferences');
-    await cache.put(
-      '/preferences/notifications',
-      new Response(JSON.stringify(preferences))
-    );
+    await cache.put('/preferences/notifications', Response.json(preferences));
   } catch (error) {
     console.error('[SW] Error storing preferences:', error);
   }

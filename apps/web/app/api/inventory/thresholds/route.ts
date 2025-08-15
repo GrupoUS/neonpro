@@ -38,11 +38,15 @@ export async function GET(request: NextRequest) {
     } = queryParamsSchema.parse(params);
 
     const filters: any = {};
-    if (item_category) filters.item_category = [item_category];
-    if (auto_reorder_enabled !== undefined)
+    if (item_category) {
+      filters.item_category = [item_category];
+    }
+    if (auto_reorder_enabled !== undefined) {
       filters.auto_reorder_enabled = auto_reorder_enabled;
-    if (needs_optimization !== undefined)
+    }
+    if (needs_optimization !== undefined) {
       filters.needs_optimization = needs_optimization;
+    }
 
     const thresholds = await thresholdService.getThresholdsByClinic(
       clinic_id,

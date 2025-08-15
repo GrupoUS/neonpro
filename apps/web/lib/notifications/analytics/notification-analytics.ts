@@ -117,9 +117,9 @@ interface TimeSeriesData {
 // ================================================================================
 
 export class NotificationAnalytics {
-  private supabase: ReturnType<typeof createClient>;
-  private config: MetricsConfig;
-  private cache = new Map<string, { data: any; expiry: number }>();
+  private readonly supabase: ReturnType<typeof createClient>;
+  private readonly config: MetricsConfig;
+  private readonly cache = new Map<string, { data: any; expiry: number }>();
 
   constructor(config: Partial<MetricsConfig> = {}) {
     this.supabase = createClient();
@@ -136,7 +136,9 @@ export class NotificationAnalytics {
   async getRealTimeMetrics(clinicId: string): Promise<NotificationMetrics> {
     const cacheKey = `realtime_metrics_${clinicId}`;
     const cached = this.getFromCache(cacheKey);
-    if (cached) return cached;
+    if (cached) {
+      return cached;
+    }
 
     try {
       const now = new Date();
@@ -159,7 +161,9 @@ export class NotificationAnalytics {
         .eq('clinic_id', clinicId)
         .gte('sent_at', last24h.toISOString());
 
-      if (error) throw new Error(`Erro ao buscar métricas: ${error.message}`);
+      if (error) {
+        throw new Error(`Erro ao buscar métricas: ${error.message}`);
+      }
 
       const metrics = this.calculateMetrics(baseMetrics || []);
 
@@ -314,8 +318,9 @@ export class NotificationAnalytics {
         .lte('sent_at', validatedQuery.endDate)
         .order('sent_at', { ascending: true });
 
-      if (error)
+      if (error) {
         throw new Error(`Erro ao buscar dados históricos: ${error.message}`);
+      }
 
       // Calcular métricas do período
       const summary = this.calculateMetrics(historicalData || []);
@@ -539,7 +544,9 @@ export class NotificationAnalytics {
       return sentDate >= thirtyDaysAgo;
     });
 
-    if (recentData.length === 0) return 0.5;
+    if (recentData.length === 0) {
+      return 0.5;
+    }
 
     const delivered = recentData.filter((n) => n.status === 'delivered').length;
     const engaged = recentData.filter(
@@ -568,7 +575,9 @@ export class NotificationAnalytics {
       (n) => n.opened_at || n.clicked_at
     ).length;
 
-    if (previous === 0) return 0.5;
+    if (previous === 0) {
+      return 0.5;
+    }
 
     const engagementChange = (recent - previous) / previous;
     return Math.max(0, Math.min(1, -engagementChange));
@@ -660,8 +669,7 @@ export class NotificationAnalytics {
     );
 
     if (deliveryTrend.length >= 2) {
-      const isDecreasing =
-        deliveryTrend[deliveryTrend.length - 1].value < deliveryTrend[0].value;
+      const isDecreasing = deliveryTrend.at(-1).value < deliveryTrend[0].value;
       if (isDecreasing) {
         recommendations.push(
           '📉 Taxa de entrega em declínio. Monitore reputação do remetente e listas de bloqueio.'

@@ -33,8 +33,8 @@ import { generateSessionToken, removeUndefined, validateUUID } from './utils';
  * - Session metrics and analytics
  */
 export class SessionManager {
-  private supabase: SupabaseClient;
-  private config: SessionConfig;
+  private readonly supabase: SupabaseClient;
+  private readonly config: SessionConfig;
 
   constructor(config: SessionConfig) {
     this.config = config;

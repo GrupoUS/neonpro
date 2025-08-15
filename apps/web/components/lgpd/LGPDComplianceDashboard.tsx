@@ -241,8 +241,12 @@ export default function LGPDComplianceDashboard({
    * Get compliance score color
    */
   const getComplianceColor = (score: number) => {
-    if (score >= 90) return 'text-green-600';
-    if (score >= 70) return 'text-yellow-600';
+    if (score >= 90) {
+      return 'text-green-600';
+    }
+    if (score >= 70) {
+      return 'text-yellow-600';
+    }
     return 'text-red-600';
   };
 
@@ -250,9 +254,15 @@ export default function LGPDComplianceDashboard({
    * Get risk level badge
    */
   const getRiskBadge = (score: number) => {
-    if (score <= 20) return <Badge variant="default">Baixo</Badge>;
-    if (score <= 50) return <Badge variant="secondary">Médio</Badge>;
-    if (score <= 80) return <Badge variant="destructive">Alto</Badge>;
+    if (score <= 20) {
+      return <Badge variant="default">Baixo</Badge>;
+    }
+    if (score <= 50) {
+      return <Badge variant="secondary">Médio</Badge>;
+    }
+    if (score <= 80) {
+      return <Badge variant="destructive">Alto</Badge>;
+    }
     return <Badge variant="destructive">Crítico</Badge>;
   };
 

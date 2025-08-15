@@ -89,8 +89,8 @@ interface RBACContext {
  * Healthcare RBAC Middleware for API Protection
  */
 export class HealthcareRBACMiddleware {
-  private rbacEngine: HealthcareRBACEngine;
-  private supabase: any;
+  private readonly rbacEngine: HealthcareRBACEngine;
+  private readonly supabase: any;
 
   constructor() {
     // Initialize Supabase client
@@ -779,7 +779,9 @@ export function requireSystemAdminAccess(
 export function extractRBACContext(request: NextRequest): RBACContext | null {
   try {
     const contextHeader = request.headers.get('x-rbac-context');
-    if (!contextHeader) return null;
+    if (!contextHeader) {
+      return null;
+    }
 
     const contextData = JSON.parse(
       Buffer.from(contextHeader, 'base64').toString()

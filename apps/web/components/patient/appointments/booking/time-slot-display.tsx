@@ -76,7 +76,9 @@ export function TimeSlotDisplay({
         }
       );
 
-      if (fetchError) throw fetchError;
+      if (fetchError) {
+        throw fetchError;
+      }
 
       // Group slots by date
       const groupedSlots: Record<string, TimeSlot[]> = {};
@@ -116,8 +118,12 @@ export function TimeSlotDisplay({
 
   const formatDateHeader = (dateString: string) => {
     const date = new Date(dateString);
-    if (isToday(date)) return 'Hoje';
-    if (isTomorrow(date)) return 'Amanhã';
+    if (isToday(date)) {
+      return 'Hoje';
+    }
+    if (isTomorrow(date)) {
+      return 'Amanhã';
+    }
     return format(date, "EEEE, d 'de' MMMM", { locale: ptBR });
   };
 

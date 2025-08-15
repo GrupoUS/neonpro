@@ -78,8 +78,8 @@ export interface ModelPerformance {
 
 // Main no-show prediction engine class
 export class NoShowPredictionEngine {
-  private supabase = createClientComponentClient<Database>();
-  private modelVersion = '2.1.0';
+  private readonly supabase = createClientComponentClient<Database>();
+  private readonly modelVersion = '2.1.0';
 
   /**
    * Predict no-show probability for a specific appointment
@@ -513,9 +513,15 @@ export class NoShowPredictionEngine {
   private getRiskLevel(
     riskScore: number
   ): 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' {
-    if (riskScore >= 80) return 'CRITICAL';
-    if (riskScore >= 50) return 'HIGH';
-    if (riskScore >= 25) return 'MEDIUM';
+    if (riskScore >= 80) {
+      return 'CRITICAL';
+    }
+    if (riskScore >= 50) {
+      return 'HIGH';
+    }
+    if (riskScore >= 25) {
+      return 'MEDIUM';
+    }
     return 'LOW';
   }
 
@@ -573,9 +579,15 @@ export class NoShowPredictionEngine {
 
   private getSeason(date: Date): string {
     const month = date.getMonth() + 1;
-    if (month >= 3 && month <= 5) return 'spring';
-    if (month >= 6 && month <= 8) return 'summer';
-    if (month >= 9 && month <= 11) return 'autumn';
+    if (month >= 3 && month <= 5) {
+      return 'spring';
+    }
+    if (month >= 6 && month <= 8) {
+      return 'summer';
+    }
+    if (month >= 9 && month <= 11) {
+      return 'autumn';
+    }
     return 'winter';
   }
 

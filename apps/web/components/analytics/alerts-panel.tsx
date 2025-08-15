@@ -316,7 +316,7 @@ export function AlertsPanel({ alerts, isLoading }: AlertsPanelProps) {
         </CardHeader>
         <CardContent>
           <div className="animate-pulse space-y-4">
-            {[...Array(3)].map((_, i) => (
+            {[...new Array(3)].map((_, i) => (
               <div className="h-24 rounded bg-gray-200" key={i} />
             ))}
           </div>
@@ -447,7 +447,9 @@ export function AlertsPanel({ alerts, isLoading }: AlertsPanelProps) {
                         };
                         const severityDiff =
                           severityOrder[b.severity] - severityOrder[a.severity];
-                        if (severityDiff !== 0) return severityDiff;
+                        if (severityDiff !== 0) {
+                          return severityDiff;
+                        }
 
                         return (
                           new Date(b.timestamp).getTime() -

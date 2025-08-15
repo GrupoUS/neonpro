@@ -117,7 +117,9 @@ export function isValidIP(ip: string): boolean {
  * Valida se uma sessão está ativa
  */
 export function isSessionActive(session: UserSession): boolean {
-  if (!session.isActive) return false;
+  if (!session.isActive) {
+    return false;
+  }
 
   const now = new Date();
   const expiresAt = new Date(session.expiresAt);
@@ -132,7 +134,9 @@ export function isSessionNearTimeout(
   session: UserSession,
   thresholdMinutes = 5
 ): boolean {
-  if (!isSessionActive(session)) return false;
+  if (!isSessionActive(session)) {
+    return false;
+  }
 
   const now = new Date();
   const expiresAt = new Date(session.expiresAt);
@@ -247,7 +251,9 @@ export function formatDuration(ms: number, _locale = 'pt-BR'): string {
  */
 export function formatBytes(bytes: number): string {
   const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-  if (bytes === 0) return '0 Bytes';
+  if (bytes === 0) {
+    return '0 Bytes';
+  }
 
   const i = Math.floor(Math.log(bytes) / Math.log(1024));
   return `${Math.round((bytes / 1024 ** i) * 100) / 100} ${sizes[i]}`;
@@ -526,7 +532,7 @@ export function detectAnomalousActivity(
   // Verificar frequência de atividades
   const activityCount = activities.length;
   const timeSpan =
-    new Date(activities[activities.length - 1].createdAt).getTime() -
+    new Date(activities.at(-1).createdAt).getTime() -
     new Date(activities[0].createdAt).getTime();
   const activityRate = activityCount / (timeSpan / (60 * 1000)); // atividades por minuto
 

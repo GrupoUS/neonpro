@@ -196,7 +196,7 @@ export function useSession(): UseSessionReturn {
   return {
     session,
     isLoading,
-    isAuthenticated: !!session,
+    isAuthenticated: Boolean(session),
     refreshSession,
     destroySession,
     updateActivity,

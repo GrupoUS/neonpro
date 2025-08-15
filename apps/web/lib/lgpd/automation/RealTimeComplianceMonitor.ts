@@ -106,11 +106,11 @@ export interface ComplianceDashboard {
 }
 
 export class RealTimeComplianceMonitor {
-  private supabase: SupabaseClient;
-  private complianceManager: LGPDComplianceManager;
-  private config: MonitoringConfig;
+  private readonly supabase: SupabaseClient;
+  private readonly complianceManager: LGPDComplianceManager;
+  private readonly config: MonitoringConfig;
   private monitoringInterval: NodeJS.Timeout | null = null;
-  private alertCallbacks: Array<(alert: ComplianceAlert) => void> = [];
+  private readonly alertCallbacks: Array<(alert: ComplianceAlert) => void> = [];
 
   constructor(
     supabase: SupabaseClient,
@@ -189,7 +189,9 @@ export class RealTimeComplianceMonitor {
         .order('severity_score', { ascending: false })
         .limit(50);
 
-      if (alertsError) throw alertsError;
+      if (alertsError) {
+        throw alertsError;
+      }
 
       // Get trends data
       const trends = await this.getComplianceTrends();
@@ -272,7 +274,9 @@ export class RealTimeComplianceMonitor {
             }))
           );
 
-        if (alertsError) throw alertsError;
+        if (alertsError) {
+          throw alertsError;
+        }
 
         // Trigger alert notifications
         for (const alert of newAlerts) {
@@ -347,7 +351,9 @@ export class RealTimeComplianceMonitor {
         })
         .eq('id', alertId);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Log resolution
       await this.complianceManager.logAuditEvent({
@@ -396,7 +402,9 @@ export class RealTimeComplianceMonitor {
         }
       );
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Store report
       const { data: report, error: reportError } = await this.supabase
@@ -410,7 +418,9 @@ export class RealTimeComplianceMonitor {
         .select('id')
         .single();
 
-      if (reportError) throw reportError;
+      if (reportError) {
+        throw reportError;
+      }
 
       return {
         report_id: report.id,
@@ -430,7 +440,9 @@ export class RealTimeComplianceMonitor {
         'calculate_compliance_metrics'
       );
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return {
         overall_score: metrics.overall_score || 0,
@@ -470,7 +482,9 @@ export class RealTimeComplianceMonitor {
           ).toISOString()
         );
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       if (expiringConsents && expiringConsents.length > 0) {
         alerts.push({
@@ -510,7 +524,9 @@ export class RealTimeComplianceMonitor {
         .in('status', ['pending', 'in_progress'])
         .lt('legal_deadline', new Date().toISOString());
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       if (overdueRequests && overdueRequests.length > 0) {
         alerts.push({
@@ -561,7 +577,9 @@ export class RealTimeComplianceMonitor {
           ).toISOString()
         );
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       if (breachIncidents && breachIncidents.length > 0) {
         alerts.push({
@@ -606,7 +624,9 @@ export class RealTimeComplianceMonitor {
         'check_retention_compliance'
       );
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       if (retentionViolations && retentionViolations.length > 0) {
         alerts.push({
@@ -644,7 +664,9 @@ export class RealTimeComplianceMonitor {
         'check_documentation_compliance'
       );
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       if (documentationIssues && documentationIssues.missing_documents > 0) {
         alerts.push({
@@ -682,7 +704,9 @@ export class RealTimeComplianceMonitor {
         'check_third_party_compliance'
       );
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       if (thirdPartyIssues && thirdPartyIssues.non_compliant_shares > 0) {
         alerts.push({
@@ -840,7 +864,9 @@ export class RealTimeComplianceMonitor {
       }
     );
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return trends;
   }
 
@@ -849,7 +875,9 @@ export class RealTimeComplianceMonitor {
       'get_upcoming_legal_deadlines'
     );
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return deadlines || [];
   }
 
@@ -860,7 +888,9 @@ export class RealTimeComplianceMonitor {
       .order('created_at', { ascending: false })
       .limit(20);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return activities || [];
   }
 }

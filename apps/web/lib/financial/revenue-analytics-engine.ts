@@ -61,7 +61,7 @@ export interface PatientLTVData {
 }
 
 export class RevenueAnalyticsEngine {
-  private supabase = createClient();
+  private readonly supabase = createClient();
 
   // =====================================================================================
   // SERVICE-BASED REVENUE ANALYSIS
@@ -86,8 +86,9 @@ export class RevenueAnalyticsEngine {
       }
     );
 
-    if (error)
+    if (error) {
       throw new Error(`Service revenue analysis failed: ${error.message}`);
+    }
 
     // Calculate profitability metrics for each service
     const enrichedData = await Promise.all(
@@ -214,8 +215,9 @@ export class RevenueAnalyticsEngine {
       }
     );
 
-    if (error)
+    if (error) {
       throw new Error(`Provider performance analysis failed: ${error.message}`);
+    }
 
     // Enrich with additional metrics
     const enrichedData = await Promise.all(
@@ -315,7 +317,9 @@ export class RevenueAnalyticsEngine {
       }
     );
 
-    if (error) throw new Error(`Time series analysis failed: ${error.message}`);
+    if (error) {
+      throw new Error(`Time series analysis failed: ${error.message}`);
+    }
 
     return timeSeriesData.map((period: any) => ({
       period: period.period,
@@ -366,8 +370,9 @@ export class RevenueAnalyticsEngine {
       }
     );
 
-    if (error)
+    if (error) {
       throw new Error(`Patient LTV calculation failed: ${error.message}`);
+    }
 
     return ltvData.map((patient: any) => ({
       patientId: patient.patient_id,
@@ -426,7 +431,9 @@ export class RevenueAnalyticsEngine {
       }
     );
 
-    if (error) throw new Error(`Revenue forecasting failed: ${error.message}`);
+    if (error) {
+      throw new Error(`Revenue forecasting failed: ${error.message}`);
+    }
 
     return forecastData.map((forecast: any) => ({
       period: forecast.period,
@@ -533,7 +540,7 @@ export class RevenueAnalyticsEngine {
           serviceRevenue.length,
         topServiceRevenue: serviceRevenue[0]?.totalRevenue || 0,
         topProviderRevenue: providerPerformance[0]?.totalRevenue || 0,
-        growthRate: timeSeries[timeSeries.length - 1]?.growthRate || 0,
+        growthRate: timeSeries.at(-1)?.growthRate || 0,
       },
     };
   }

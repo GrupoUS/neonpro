@@ -101,9 +101,9 @@ export function useKeyboardShortcuts({
       const matchingShortcut = shortcuts.find((shortcut) => {
         return (
           shortcut.key.toLowerCase() === event.key.toLowerCase() &&
-          !!shortcut.ctrlKey === event.ctrlKey &&
-          !!shortcut.altKey === event.altKey &&
-          !!shortcut.shiftKey === event.shiftKey
+          Boolean(shortcut.ctrlKey) === event.ctrlKey &&
+          Boolean(shortcut.altKey) === event.altKey &&
+          Boolean(shortcut.shiftKey) === event.shiftKey
         );
       });
 
@@ -130,9 +130,15 @@ export function useKeyboardShortcuts({
   const formatShortcut = (shortcut: KeyboardShortcut): string => {
     const parts: string[] = [];
 
-    if (shortcut.ctrlKey) parts.push('Ctrl');
-    if (shortcut.altKey) parts.push('Alt');
-    if (shortcut.shiftKey) parts.push('Shift');
+    if (shortcut.ctrlKey) {
+      parts.push('Ctrl');
+    }
+    if (shortcut.altKey) {
+      parts.push('Alt');
+    }
+    if (shortcut.shiftKey) {
+      parts.push('Shift');
+    }
 
     const key = shortcut.key === '?' ? '?' : shortcut.key.toUpperCase();
     parts.push(key);

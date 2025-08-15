@@ -136,7 +136,9 @@ export function useAnalyticsFilters(
 
   // Check if filters have changed since last applied
   const hasChanges = useMemo(() => {
-    if (!appliedFilters) return true;
+    if (!appliedFilters) {
+      return true;
+    }
     return JSON.stringify(filters) !== JSON.stringify(appliedFilters);
   }, [filters, appliedFilters]);
 

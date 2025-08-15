@@ -44,10 +44,10 @@ export interface RolloutConfig {
 }
 
 class FeatureFlagManager {
-  private supabase = createClient();
-  private flagCache = new Map<string, FeatureFlag>();
-  private cacheExpiry = new Map<string, number>();
-  private cacheTimeout = 5 * 60 * 1000; // 5 minutes
+  private readonly supabase = createClient();
+  private readonly flagCache = new Map<string, FeatureFlag>();
+  private readonly cacheExpiry = new Map<string, number>();
+  private readonly cacheTimeout = 5 * 60 * 1000; // 5 minutes
 
   /**
    * Check if a feature flag is enabled for the current user
@@ -196,8 +196,12 @@ class FeatureFlagManager {
     percentage: number,
     userId?: string
   ): boolean {
-    if (percentage <= 0) return false;
-    if (percentage >= 100) return true;
+    if (percentage <= 0) {
+      return false;
+    }
+    if (percentage >= 100) {
+      return true;
+    }
 
     // Use consistent hashing to determine if user is in rollout
     const hashInput = `${flagName}_${userId || 'anonymous'}`;
@@ -215,7 +219,7 @@ class FeatureFlagManager {
     for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i);
       hash = (hash << 5) - hash + char;
-      hash = hash & hash; // Convert to 32-bit integer
+      hash &= hash; // Convert to 32-bit integer
     }
     return Math.abs(hash);
   }

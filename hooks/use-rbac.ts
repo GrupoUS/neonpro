@@ -243,7 +243,9 @@ export function useRBAC(options: UseRBACOptions = {}) {
    */
   const isAtLeastRole = useCallback(
     (role: UserRole): boolean => {
-      if (!state.roleDefinition) return false;
+      if (!state.roleDefinition) {
+        return false;
+      }
 
       const roleHierarchy: Record<UserRole, number> = {
         owner: 1,
@@ -279,7 +281,9 @@ export function useRBAC(options: UseRBACOptions = {}) {
 
   // Auto refresh on role changes if enabled
   useEffect(() => {
-    if (!(autoRefresh && user?.id && clinicId)) return;
+    if (!(autoRefresh && user?.id && clinicId)) {
+      return;
+    }
 
     const channel = supabase
       .channel('role_changes')
@@ -391,7 +395,9 @@ export function useRoleGuard(allowedRoles: UserRole[], clinicId?: string) {
   const { userRole, isLoading } = useRBAC({ clinicId });
 
   const isAllowed = useMemo(() => {
-    if (!userRole) return false;
+    if (!userRole) {
+      return false;
+    }
     return allowedRoles.includes(userRole);
   }, [userRole, allowedRoles]);
 

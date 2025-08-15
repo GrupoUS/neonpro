@@ -119,8 +119,9 @@ export function useAvailabilityManager() {
   // Função para reservar slot selecionado
   const bookSelectedSlot = useCallback(
     async (patientId: string) => {
-      if (!selectedSlot)
+      if (!selectedSlot) {
         return { success: false, error: 'Nenhum slot selecionado' };
+      }
 
       setIsBooking(true);
       try {
@@ -140,7 +141,9 @@ export function useAvailabilityManager() {
 
   // Função para verificar se um slot está disponível para reserva
   const isSlotBookable = useCallback((slot: TimeSlot) => {
-    if (!slot.is_available) return false;
+    if (!slot.is_available) {
+      return false;
+    }
 
     const slotDateTime = new Date(`${slot.date}T${slot.start_time}`);
     const now = new Date();
@@ -171,8 +174,12 @@ export function useAvailabilityManager() {
       excludeSlotId?: string
     ) => {
       return timeSlots.some((existingSlot) => {
-        if (excludeSlotId && existingSlot.id === excludeSlotId) return false;
-        if (existingSlot.date !== newSlot.date) return false;
+        if (excludeSlotId && existingSlot.id === excludeSlotId) {
+          return false;
+        }
+        if (existingSlot.date !== newSlot.date) {
+          return false;
+        }
 
         const newStart = new Date(`${newSlot.date}T${newSlot.start_time}`);
         const newEnd = new Date(`${newSlot.date}T${newSlot.end_time}`);

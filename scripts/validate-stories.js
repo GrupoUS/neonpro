@@ -124,7 +124,9 @@ class StoryValidator {
    * Extrai status do texto
    */
   extractStatus(statusLine) {
-    if (!statusLine) return 'UNKNOWN';
+    if (!statusLine) {
+      return 'UNKNOWN';
+    }
 
     if (statusLine.includes('COMPLETED') || statusLine.includes('✅')) {
       return 'COMPLETED';

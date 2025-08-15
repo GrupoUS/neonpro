@@ -70,8 +70,8 @@ const forecastConfigSchema = z.object({
 });
 
 export class ForecastingEngine {
-  private supabase = createClient();
-  private modelCache = new Map<string, any>();
+  private readonly supabase = createClient();
+  private readonly modelCache = new Map<string, any>();
 
   /**
    * Generate forecasts for subscription metrics
@@ -208,7 +208,9 @@ export class ForecastingEngine {
         splitPoint + config.horizon
       );
 
-      if (trainData.length < 10 || testData.length === 0) continue;
+      if (trainData.length < 10 || testData.length === 0) {
+        continue;
+      }
 
       // Generate forecast for this split
       const features = this.generateModelFeatures(config);
@@ -552,7 +554,7 @@ export class ForecastingEngine {
       );
 
       // Generate future date
-      const lastDate = new Date(extendedData[extendedData.length - 1].date);
+      const lastDate = new Date(extendedData.at(-1).date);
       const nextDate = this.getNextDate(
         lastDate,
         features,

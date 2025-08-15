@@ -166,8 +166,8 @@ export interface BehaviorPrediction {
  * Core system for analyzing and predicting patient behavior patterns
  */
 export class AIBehaviorAnalysisEngine {
-  private segmentationModels: Map<string, PatientSegment> = new Map();
-  private behaviorHistory: Map<string, BehaviorAnalysis[]> = new Map();
+  private readonly segmentationModels: Map<string, PatientSegment> = new Map();
+  private readonly behaviorHistory: Map<string, BehaviorAnalysis[]> = new Map();
 
   constructor() {
     this.initializeBehaviorModels();
@@ -258,7 +258,7 @@ export class AIBehaviorAnalysisEngine {
     context: any
   ): Promise<BehaviorPrediction[]> {
     const behaviorHistory = this.behaviorHistory.get(patient.id) || [];
-    const latestAnalysis = behaviorHistory[behaviorHistory.length - 1];
+    const latestAnalysis = behaviorHistory.at(-1);
 
     if (!latestAnalysis) {
       throw new Error('No behavior analysis available for prediction');
@@ -640,16 +640,22 @@ export class AIBehaviorAnalysisEngine {
     // Appointment engagement pattern
     const appointmentPattern =
       this.analyzeAppointmentEngagementPattern(appointments);
-    if (appointmentPattern) patterns.push(appointmentPattern);
+    if (appointmentPattern) {
+      patterns.push(appointmentPattern);
+    }
 
     // Treatment engagement pattern
     const treatmentPattern = this.analyzeTreatmentEngagementPattern(treatments);
-    if (treatmentPattern) patterns.push(treatmentPattern);
+    if (treatmentPattern) {
+      patterns.push(treatmentPattern);
+    }
 
     // Communication engagement pattern
     const communicationPattern =
       this.analyzeCommunicationEngagementPattern(communications);
-    if (communicationPattern) patterns.push(communicationPattern);
+    if (communicationPattern) {
+      patterns.push(communicationPattern);
+    }
 
     return patterns;
   }
@@ -801,62 +807,102 @@ export class AIBehaviorAnalysisEngine {
   private categorizeResponseTime(
     avgHours: number
   ): 'immediate' | 'same_day' | 'delayed' | 'inconsistent' {
-    if (avgHours <= 1) return 'immediate';
-    if (avgHours <= 24) return 'same_day';
-    if (avgHours <= 72) return 'delayed';
+    if (avgHours <= 1) {
+      return 'immediate';
+    }
+    if (avgHours <= 24) {
+      return 'same_day';
+    }
+    if (avgHours <= 72) {
+      return 'delayed';
+    }
     return 'inconsistent';
   }
 
   private categorizeCommunicationFrequency(
     count: number
   ): 'minimal' | 'moderate' | 'frequent' | 'excessive' {
-    if (count <= 5) return 'minimal';
-    if (count <= 15) return 'moderate';
-    if (count <= 30) return 'frequent';
+    if (count <= 5) {
+      return 'minimal';
+    }
+    if (count <= 15) {
+      return 'moderate';
+    }
+    if (count <= 30) {
+      return 'frequent';
+    }
     return 'excessive';
   }
 
   private categorizeSchedulingPattern(
     avgDays: number
   ): 'advance_planner' | 'last_minute' | 'flexible' | 'rigid' {
-    if (avgDays >= 14) return 'advance_planner';
-    if (avgDays <= 3) return 'last_minute';
-    if (avgDays >= 7) return 'flexible';
+    if (avgDays >= 14) {
+      return 'advance_planner';
+    }
+    if (avgDays <= 3) {
+      return 'last_minute';
+    }
+    if (avgDays >= 7) {
+      return 'flexible';
+    }
     return 'rigid';
   }
 
   private categorizeCancellationTendency(
     rate: number
   ): 'rare' | 'occasional' | 'frequent' | 'chronic' {
-    if (rate <= 0.1) return 'rare';
-    if (rate <= 0.25) return 'occasional';
-    if (rate <= 0.5) return 'frequent';
+    if (rate <= 0.1) {
+      return 'rare';
+    }
+    if (rate <= 0.25) {
+      return 'occasional';
+    }
+    if (rate <= 0.5) {
+      return 'frequent';
+    }
     return 'chronic';
   }
 
   private categorizeReschedulingPattern(
     rate: number
   ): 'minimal' | 'moderate' | 'frequent' {
-    if (rate <= 0.15) return 'minimal';
-    if (rate <= 0.35) return 'moderate';
+    if (rate <= 0.15) {
+      return 'minimal';
+    }
+    if (rate <= 0.35) {
+      return 'moderate';
+    }
     return 'frequent';
   }
 
   private categorizeNoShowRisk(
     rate: number
   ): 'low' | 'moderate' | 'high' | 'critical' {
-    if (rate <= 0.05) return 'low';
-    if (rate <= 0.15) return 'moderate';
-    if (rate <= 0.3) return 'high';
+    if (rate <= 0.05) {
+      return 'low';
+    }
+    if (rate <= 0.15) {
+      return 'moderate';
+    }
+    if (rate <= 0.3) {
+      return 'high';
+    }
     return 'critical';
   }
 
   private categorizeAdherence(
     rate: number
   ): 'poor' | 'fair' | 'good' | 'excellent' {
-    if (rate <= 0.5) return 'poor';
-    if (rate <= 0.7) return 'fair';
-    if (rate <= 0.9) return 'good';
+    if (rate <= 0.5) {
+      return 'poor';
+    }
+    if (rate <= 0.7) {
+      return 'fair';
+    }
+    if (rate <= 0.9) {
+      return 'good';
+    }
     return 'excellent';
   }
 
@@ -869,23 +915,41 @@ export class AIBehaviorAnalysisEngine {
     let score = 0;
 
     // Communication engagement
-    if (communication.response_time_pattern === 'immediate') score += 3;
-    else if (communication.response_time_pattern === 'same_day') score += 2;
-    else if (communication.response_time_pattern === 'delayed') score += 1;
+    if (communication.response_time_pattern === 'immediate') {
+      score += 3;
+    } else if (communication.response_time_pattern === 'same_day') {
+      score += 2;
+    } else if (communication.response_time_pattern === 'delayed') {
+      score += 1;
+    }
 
     // Appointment engagement
-    if (appointment.no_show_risk === 'low') score += 3;
-    else if (appointment.no_show_risk === 'moderate') score += 2;
-    else if (appointment.no_show_risk === 'high') score += 1;
+    if (appointment.no_show_risk === 'low') {
+      score += 3;
+    } else if (appointment.no_show_risk === 'moderate') {
+      score += 2;
+    } else if (appointment.no_show_risk === 'high') {
+      score += 1;
+    }
 
     // Treatment engagement
-    if (treatment.adherence_level === 'excellent') score += 3;
-    else if (treatment.adherence_level === 'good') score += 2;
-    else if (treatment.adherence_level === 'fair') score += 1;
+    if (treatment.adherence_level === 'excellent') {
+      score += 3;
+    } else if (treatment.adherence_level === 'good') {
+      score += 2;
+    } else if (treatment.adherence_level === 'fair') {
+      score += 1;
+    }
 
-    if (score >= 8) return 'very_high';
-    if (score >= 6) return 'high';
-    if (score >= 4) return 'moderate';
+    if (score >= 8) {
+      return 'very_high';
+    }
+    if (score >= 6) {
+      return 'high';
+    }
+    if (score >= 4) {
+      return 'moderate';
+    }
     return 'low';
   }
 
@@ -1248,7 +1312,9 @@ export class AIBehaviorAnalysisEngine {
   }
 
   private calculateBehaviorRiskScore(risks: BehaviorRiskIndicator[]): number {
-    if (risks.length === 0) return 0;
+    if (risks.length === 0) {
+      return 0;
+    }
 
     const totalRisk = risks.reduce((sum, risk) => {
       const severityScores = {
@@ -1271,8 +1337,12 @@ export class AIBehaviorAnalysisEngine {
   ): string {
     const overallScore = (engagement + compliance + communication - risk) / 3;
 
-    if (overallScore >= 0.75) return 'high_engagement';
-    if (overallScore >= 0.5) return 'moderate_engagement';
+    if (overallScore >= 0.75) {
+      return 'high_engagement';
+    }
+    if (overallScore >= 0.5) {
+      return 'moderate_engagement';
+    }
     return 'low_engagement';
   }
 
@@ -1362,7 +1432,9 @@ export class AIBehaviorAnalysisEngine {
 
   // Anomaly detection methods
   private calculateBaselineEngagement(history: BehaviorAnalysis[]): number {
-    if (history.length === 0) return 0.5;
+    if (history.length === 0) {
+      return 0.5;
+    }
 
     const scores = history.map((h) => {
       const scores = { low: 0.25, moderate: 0.5, high: 0.75, very_high: 1.0 };
@@ -1381,8 +1453,12 @@ export class AIBehaviorAnalysisEngine {
     baseline: number
   ): 'low' | 'moderate' | 'high' {
     const deviation = Math.abs(current - baseline);
-    if (deviation > 0.4) return 'high';
-    if (deviation > 0.2) return 'moderate';
+    if (deviation > 0.4) {
+      return 'high';
+    }
+    if (deviation > 0.2) {
+      return 'moderate';
+    }
     return 'low';
   }
 

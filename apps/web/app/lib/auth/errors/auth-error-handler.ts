@@ -172,7 +172,7 @@ class AuthErrorHandler {
       severity: this.determineSeverity(type, code),
       timestamp: Date.now(),
       userMessage: errorConfig.user,
-      actionable: !!errorConfig.action,
+      actionable: Boolean(errorConfig.action),
       retryable: this.isRetryable(type, code),
       fallbackAvailable: this.hasFallback(type, code),
     };

@@ -10,7 +10,7 @@ interface LogEntry {
 }
 
 class Logger {
-  private isDevelopment = process.env.NODE_ENV === 'development';
+  private readonly isDevelopment = process.env.NODE_ENV === 'development';
 
   private formatMessage(
     level: LogLevel,

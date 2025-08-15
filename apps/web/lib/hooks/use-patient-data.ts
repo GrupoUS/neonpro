@@ -107,7 +107,9 @@ export function usePatientData(): PatientDataContextType {
   }, [patient, refreshAll]);
 
   const refreshAppointments = async () => {
-    if (!patient) return;
+    if (!patient) {
+      return;
+    }
 
     try {
       const { data, error } = await supabase
@@ -132,7 +134,9 @@ export function usePatientData(): PatientDataContextType {
   };
 
   const refreshTreatmentHistory = async () => {
-    if (!patient) return;
+    if (!patient) {
+      return;
+    }
 
     try {
       const { data, error } = await supabase
@@ -153,7 +157,9 @@ export function usePatientData(): PatientDataContextType {
   };
 
   const refreshDocuments = async () => {
-    if (!patient) return;
+    if (!patient) {
+      return;
+    }
 
     try {
       const { data, error } = await supabase
@@ -174,7 +180,9 @@ export function usePatientData(): PatientDataContextType {
   };
 
   const refreshAll = async () => {
-    if (!patient) return;
+    if (!patient) {
+      return;
+    }
 
     setIsLoading(true);
     setError(null);

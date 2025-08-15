@@ -75,7 +75,9 @@ export function useSessionSecurity(options: UseSessionSecurityOptions = {}) {
    * Initialize session security
    */
   const initializeSecurity = useCallback(async () => {
-    if (!user) return;
+    if (!user) {
+      return;
+    }
 
     try {
       // Generate session ID if not exists
@@ -272,7 +274,9 @@ export function useSessionSecurity(options: UseSessionSecurityOptions = {}) {
 
     const handleActivity = async () => {
       const now = Date.now();
-      if (now - lastActivityTime < throttleMs) return;
+      if (now - lastActivityTime < throttleMs) {
+        return;
+      }
 
       lastActivityTime = now;
 
@@ -324,7 +328,9 @@ export function useSessionSecurity(options: UseSessionSecurityOptions = {}) {
    */
   const extendSession = useCallback(
     async (minutes: number = config.timeoutMinutes) => {
-      if (!securityState.sessionId) return;
+      if (!securityState.sessionId) {
+        return;
+      }
 
       try {
         await fetch('/api/security/session-timeout/extend', {
@@ -365,7 +371,9 @@ export function useSessionSecurity(options: UseSessionSecurityOptions = {}) {
    * Refresh CSRF token
    */
   const refreshCSRFToken = useCallback(async () => {
-    if (!(enableCSRF && securityState.sessionId)) return;
+    if (!(enableCSRF && securityState.sessionId)) {
+      return;
+    }
 
     try {
       const newToken = await fetchCSRFToken(securityState.sessionId);
@@ -444,7 +452,9 @@ export function useCSRFToken(sessionId?: string) {
   const [error, setError] = useState<string | null>(null);
 
   const fetchToken = useCallback(async () => {
-    if (!sessionId) return;
+    if (!sessionId) {
+      return;
+    }
 
     setLoading(true);
     setError(null);
@@ -487,7 +497,9 @@ export function useSessionTimeout(sessionId?: string, onTimeout?: () => void) {
   const [warning, setWarning] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!sessionId) return;
+    if (!sessionId) {
+      return;
+    }
 
     const checkTimeout = async () => {
       try {

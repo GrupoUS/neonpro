@@ -186,7 +186,9 @@ export default function LGPDTransparencyPortal({
     ).length;
     const totalRequests = requests.length;
 
-    if (totalConsents === 0 && totalRequests === 0) return 100;
+    if (totalConsents === 0 && totalRequests === 0) {
+      return 100;
+    }
 
     const consentScore =
       totalConsents > 0 ? (activeConsents / totalConsents) * 50 : 50;

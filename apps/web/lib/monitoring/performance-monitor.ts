@@ -134,7 +134,9 @@ export class PerformanceMonitor {
   } {
     const cacheKey = `summary_${timeWindow}_${Date.now() - (Date.now() % 30_000)}`;
     const cached = aggregationCache.get(cacheKey);
-    if (cached) return cached;
+    if (cached) {
+      return cached;
+    }
 
     const now = Date.now();
     const recentMetrics = this.metrics.filter(
@@ -248,7 +250,9 @@ export class PerformanceMonitor {
    * 📊 Calculate percentile
    */
   private percentile(values: number[], p: number): number {
-    if (values.length === 0) return 0;
+    if (values.length === 0) {
+      return 0;
+    }
     const index = Math.ceil((p / 100) * values.length) - 1;
     return values[Math.max(0, index)];
   }
@@ -257,7 +261,9 @@ export class PerformanceMonitor {
    * 📈 Generate performance trends
    */
   private generateTrends(metrics: PerformanceMetric[], buckets = 10): any[] {
-    if (metrics.length === 0) return [];
+    if (metrics.length === 0) {
+      return [];
+    }
 
     const sorted = metrics.sort((a, b) => a.timestamp - b.timestamp);
     const bucketSize = Math.ceil(sorted.length / buckets);
@@ -314,7 +320,7 @@ export class PerformanceMonitor {
       p95: this.percentile(values, 95),
       p99: this.percentile(values, 99),
       min: values[0],
-      max: values[values.length - 1],
+      max: values.at(-1),
     };
   }
 

@@ -76,7 +76,9 @@ async function validateSecurityAccess(
       .eq('user_id', userId)
       .single();
 
-    if (!profile) return false;
+    if (!profile) {
+      return false;
+    }
 
     const hasSecurityAccess =
       profile.role === 'admin' ||

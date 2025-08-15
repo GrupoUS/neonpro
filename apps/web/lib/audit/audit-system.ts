@@ -158,8 +158,8 @@ export interface AuditStatistics {
  * Sistema principal de auditoria
  */
 export class AuditSystem {
-  private supabase = createClient();
-  private encryptionKey: string;
+  private readonly supabase = createClient();
+  private readonly encryptionKey: string;
 
   constructor() {
     this.encryptionKey =

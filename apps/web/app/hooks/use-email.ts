@@ -26,10 +26,15 @@ export function useEmailTemplates(filters?: {
     queryKey: ['email-templates', filters],
     queryFn: async () => {
       const params = new URLSearchParams();
-      if (filters?.category) params.append('category', filters.category);
-      if (filters?.isActive !== undefined)
+      if (filters?.category) {
+        params.append('category', filters.category);
+      }
+      if (filters?.isActive !== undefined) {
         params.append('isActive', filters.isActive.toString());
-      if (filters?.search) params.append('search', filters.search);
+      }
+      if (filters?.search) {
+        params.append('search', filters.search);
+      }
 
       const response = await fetch(`/api/email/templates?${params}`);
       if (!response.ok) {
@@ -46,12 +51,14 @@ export function useEmailTemplate(id: string) {
     queryFn: async () => {
       const response = await fetch(`/api/email/templates/${id}`);
       if (!response.ok) {
-        if (response.status === 404) return null;
+        if (response.status === 404) {
+          return null;
+        }
         throw new Error('Failed to fetch email template');
       }
       return response.json() as Promise<EmailTemplate>;
     },
-    enabled: !!id,
+    enabled: Boolean(id),
   });
 }
 
@@ -324,12 +331,18 @@ export function useEmailAnalytics(filters?: {
     queryKey: ['email-analytics', filters],
     queryFn: async () => {
       const params = new URLSearchParams();
-      if (filters?.startDate)
+      if (filters?.startDate) {
         params.append('startDate', filters.startDate.toISOString());
-      if (filters?.endDate)
+      }
+      if (filters?.endDate) {
         params.append('endDate', filters.endDate.toISOString());
-      if (filters?.templateId) params.append('templateId', filters.templateId);
-      if (filters?.campaignId) params.append('campaignId', filters.campaignId);
+      }
+      if (filters?.templateId) {
+        params.append('templateId', filters.templateId);
+      }
+      if (filters?.campaignId) {
+        params.append('campaignId', filters.campaignId);
+      }
 
       const response = await fetch(`/api/email/analytics?${params}`);
       if (!response.ok) {
@@ -346,12 +359,14 @@ export function useEmailDeliveryReport(messageId: string) {
     queryFn: async () => {
       const response = await fetch(`/api/email/delivery/${messageId}`);
       if (!response.ok) {
-        if (response.status === 404) return null;
+        if (response.status === 404) {
+          return null;
+        }
         throw new Error('Failed to fetch delivery report');
       }
       return response.json() as Promise<EmailDeliveryReport>;
     },
-    enabled: !!messageId,
+    enabled: Boolean(messageId),
   });
 }
 
@@ -365,12 +380,18 @@ export function useEmailEvents(filters?: {
     queryKey: ['email-events', filters],
     queryFn: async () => {
       const params = new URLSearchParams();
-      if (filters?.startDate)
+      if (filters?.startDate) {
         params.append('startDate', filters.startDate.toISOString());
-      if (filters?.endDate)
+      }
+      if (filters?.endDate) {
         params.append('endDate', filters.endDate.toISOString());
-      if (filters?.messageId) params.append('messageId', filters.messageId);
-      if (filters?.event) params.append('event', filters.event);
+      }
+      if (filters?.messageId) {
+        params.append('messageId', filters.messageId);
+      }
+      if (filters?.event) {
+        params.append('event', filters.event);
+      }
 
       const response = await fetch(`/api/email/events?${params}`);
       if (!response.ok) {
@@ -391,7 +412,9 @@ export function useEmailSettings() {
     queryFn: async () => {
       const response = await fetch('/api/email/settings');
       if (!response.ok) {
-        if (response.status === 404) return null;
+        if (response.status === 404) {
+          return null;
+        }
         throw new Error('Failed to fetch email settings');
       }
       return response.json() as Promise<EmailSettings>;

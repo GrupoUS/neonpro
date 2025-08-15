@@ -112,13 +112,13 @@ interface SchedulingEvent {
 }
 
 class AISchedulingSystem {
-  private supabase = createClient();
-  private aiCore: AISchedulingCore;
-  private optimizationEngine: OptimizationEngine;
-  private realTimeAdaptive: RealTimeAdaptiveScheduling;
-  private complianceEngine: ComplianceRulesEngine;
+  private readonly supabase = createClient();
+  private readonly aiCore: AISchedulingCore;
+  private readonly optimizationEngine: OptimizationEngine;
+  private readonly realTimeAdaptive: RealTimeAdaptiveScheduling;
+  private readonly complianceEngine: ComplianceRulesEngine;
   private config: AISchedulingConfig;
-  private eventListeners: Map<string, Function[]> = new Map();
+  private readonly eventListeners: Map<string, Function[]> = new Map();
 
   constructor(config?: Partial<AISchedulingConfig>) {
     // Initialize with default configuration
@@ -582,7 +582,9 @@ class AISchedulingSystem {
     optimizationResult?: OptimizationResult,
     complianceResult?: ComplianceValidationResult
   ): number {
-    if (recommendations.length === 0) return 0;
+    if (recommendations.length === 0) {
+      return 0;
+    }
 
     let score = 70; // Base score
 

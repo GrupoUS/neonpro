@@ -41,7 +41,7 @@ interface QueryMetrics {
 
 class QueryPerformanceMonitor {
   private metrics: QueryMetrics[] = [];
-  private maxMetrics = 1000;
+  private readonly maxMetrics = 1000;
 
   logQuery(metrics: QueryMetrics): void {
     this.metrics.push(metrics);
@@ -77,13 +77,17 @@ class QueryPerformanceMonitor {
   }
 
   getAverageQueryTime(): number {
-    if (this.metrics.length === 0) return 0;
+    if (this.metrics.length === 0) {
+      return 0;
+    }
     const total = this.metrics.reduce((sum, m) => sum + m.duration, 0);
     return total / this.metrics.length;
   }
 
   getCacheHitRate(): number {
-    if (this.metrics.length === 0) return 0;
+    if (this.metrics.length === 0) {
+      return 0;
+    }
     const cached = this.metrics.filter((m) => m.cached).length;
     return cached / this.metrics.length;
   }
@@ -96,8 +100,8 @@ const queryMonitor = new QueryPerformanceMonitor();
 // =====================================================
 
 export class OptimizedQueryBuilder {
-  private supabase: any;
-  private tableName: string;
+  private readonly supabase: any;
+  private readonly tableName: string;
 
   constructor(supabase: any, tableName: string) {
     this.supabase = supabase;
@@ -267,7 +271,7 @@ export class OptimizedQueryBuilder {
 // =====================================================
 
 export class StockAlertQueries {
-  private supabase: any;
+  private readonly supabase: any;
 
   constructor(supabaseClient?: any) {
     this.supabase =
@@ -530,7 +534,9 @@ export class StockAlertQueries {
 
   private async evaluateConfig(config: any): Promise<any | null> {
     const product = config.product;
-    if (!product) return null;
+    if (!product) {
+      return null;
+    }
 
     // Evaluation logic (same as in background job)
     let shouldAlert = false;
@@ -562,7 +568,9 @@ export class StockAlertQueries {
         return null;
     }
 
-    if (!shouldAlert) return null;
+    if (!shouldAlert) {
+      return null;
+    }
 
     // Check for existing alert
     const { data: existingAlert } = await this.supabase
@@ -573,7 +581,9 @@ export class StockAlertQueries {
       .is('acknowledged_at', null)
       .single();
 
-    if (existingAlert) return null;
+    if (existingAlert) {
+      return null;
+    }
 
     return {
       clinic_id: config.clinic_id,
@@ -598,7 +608,7 @@ export class StockAlertQueries {
 // =====================================================
 
 export class DatabaseHealthMonitor {
-  private supabase: any;
+  private readonly supabase: any;
 
   constructor() {
     this.supabase = createClient(

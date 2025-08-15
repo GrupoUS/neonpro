@@ -157,8 +157,12 @@ export const GET = withErrorMonitoring(async (request: NextRequest) => {
         group.totalProcessingTime += item.processing_time_ms;
         group.totalConfidence += item.confidence_score;
 
-        if (item.accuracy_score >= accuracyTarget) group.accuracyCompliant++;
-        if (item.processing_time_ms <= timeTarget) group.timeCompliant++;
+        if (item.accuracy_score >= accuracyTarget) {
+          group.accuracyCompliant++;
+        }
+        if (item.processing_time_ms <= timeTarget) {
+          group.timeCompliant++;
+        }
       });
 
       timeSeriesData = Array.from(groupedData.values())
@@ -197,8 +201,12 @@ export const GET = withErrorMonitoring(async (request: NextRequest) => {
       breakdown.totalAccuracy += item.accuracy_score;
       breakdown.totalProcessingTime += item.processing_time_ms;
 
-      if (item.accuracy_score >= accuracyTarget) breakdown.accuracyCompliant++;
-      if (item.processing_time_ms <= timeTarget) breakdown.timeCompliant++;
+      if (item.accuracy_score >= accuracyTarget) {
+        breakdown.accuracyCompliant++;
+      }
+      if (item.processing_time_ms <= timeTarget) {
+        breakdown.timeCompliant++;
+      }
     });
 
     const treatmentStats = Array.from(treatmentBreakdown.entries()).map(

@@ -14,7 +14,7 @@ export interface TimeSlot {
 export type UrgencyLevel = 'low' | 'medium' | 'high' | 'critical';
 
 export class ConflictDetectionService {
-  private supabase: any;
+  private readonly supabase: any;
 
   constructor() {
     this.supabase = createClient(supabaseUrl, supabaseKey);
@@ -30,7 +30,9 @@ export class ConflictDetectionService {
         .gt('end_time', appointmentData.start_time)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       const conflictCount = data?.count || 0;
       return {
@@ -96,7 +98,7 @@ export class ConflictDetectionService {
 }
 
 export class WaitlistService {
-  private supabase: any;
+  private readonly supabase: any;
 
   constructor() {
     this.supabase = createClient(supabaseUrl, supabaseKey);
@@ -110,7 +112,9 @@ export class WaitlistService {
         .select('id')
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return {
         success: true,
@@ -183,7 +187,9 @@ export class WaitlistService {
         .order('created_at', { ascending: true })
         .limit(10);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Simulate processing and matching
       const processed = waitlistEntries?.length || 2;

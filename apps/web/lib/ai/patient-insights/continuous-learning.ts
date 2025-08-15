@@ -11,10 +11,11 @@ import type {
 } from './types';
 
 export class ContinuousLearningSystem {
-  private supabase = createClient();
-  private models: Map<string, LearningModel> = new Map();
-  private performanceHistory: Map<string, ModelPerformance[]> = new Map();
-  private learningQueue: LearningTask[] = [];
+  private readonly supabase = createClient();
+  private readonly models: Map<string, LearningModel> = new Map();
+  private readonly performanceHistory: Map<string, ModelPerformance[]> =
+    new Map();
+  private readonly learningQueue: LearningTask[] = [];
 
   constructor() {
     this.initializeLearningModels();
@@ -248,7 +249,9 @@ export class ContinuousLearningSystem {
     try {
       // 1. Get model and recent data
       const model = this.models.get(modelId);
-      if (!model) throw new Error(`Model ${modelId} not found`);
+      if (!model) {
+        throw new Error(`Model ${modelId} not found`);
+      }
 
       const analysisData = await this.getFeatureAnalysisData(
         modelId,
@@ -478,7 +481,9 @@ export class ContinuousLearningSystem {
     // For now, we'll simulate model training
 
     const model = this.models.get(modelId);
-    if (!model) throw new Error(`Model ${modelId} not found`);
+    if (!model) {
+      throw new Error(`Model ${modelId} not found`);
+    }
 
     // Simulate training process
     const updatedModel: LearningModel = {
@@ -502,7 +507,9 @@ export class ContinuousLearningSystem {
     testData: TrainingDataPoint[]
   ): Promise<ModelPerformance> {
     const model = this.models.get(modelId);
-    if (!model) throw new Error(`Model ${modelId} not found`);
+    if (!model) {
+      throw new Error(`Model ${modelId} not found`);
+    }
 
     // Simulate model evaluation
     return {

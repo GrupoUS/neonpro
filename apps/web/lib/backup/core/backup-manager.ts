@@ -110,12 +110,12 @@ export interface BackupVerification {
 }
 
 export class BackupManager {
-  private supabase;
-  private auditLogger: AuditLogger;
-  private encryptionService: EncryptionService;
-  private config: BackupConfig;
-  private activeJobs: Map<string, BackupJob> = new Map();
-  private scheduledJobs: Map<string, NodeJS.Timeout> = new Map();
+  private readonly supabase;
+  private readonly auditLogger: AuditLogger;
+  private readonly encryptionService: EncryptionService;
+  private readonly config: BackupConfig;
+  private readonly activeJobs: Map<string, BackupJob> = new Map();
+  private readonly scheduledJobs: Map<string, NodeJS.Timeout> = new Map();
 
   constructor(config?: Partial<BackupConfig>) {
     this.supabase = createClient(
@@ -306,7 +306,9 @@ export class BackupManager {
         .single();
 
       if (error) {
-        if (error.code === 'PGRST116') return null;
+        if (error.code === 'PGRST116') {
+          return null;
+        }
         throw error;
       }
 
@@ -370,7 +372,9 @@ export class BackupManager {
 
       const { data, error, count } = await query;
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       const jobs = data.map(this.mapDatabaseToBackupJob);
 
@@ -458,7 +462,9 @@ export class BackupManager {
         .from('recovery_points')
         .insert(recoveryPoint);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Verificar integridade
       await this.verifyRecoveryPoint(recoveryPointId);
@@ -528,7 +534,9 @@ export class BackupManager {
         .from('recovery_requests')
         .insert(recoveryRequest);
 
-      if (insertError) throw insertError;
+      if (insertError) {
+        throw insertError;
+      }
 
       // Executar recuperação
       this.executeRecovery(requestId).catch((error) => {
@@ -574,7 +582,9 @@ export class BackupManager {
         .select('*')
         .gte('created_at', startDate.toISOString());
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       const totalBackups = jobs.length;
       const successfulBackups = jobs.filter(
@@ -755,7 +765,9 @@ export class BackupManager {
 
   private async executeBackupJob(jobId: string): Promise<void> {
     const job = this.activeJobs.get(jobId);
-    if (!job) return;
+    if (!job) {
+      return;
+    }
 
     try {
       job.status = 'running';
@@ -846,7 +858,9 @@ export class BackupManager {
       .eq('id', requestId)
       .single();
 
-    if (error || !request) return;
+    if (error || !request) {
+      return;
+    }
 
     try {
       // Atualizar status
@@ -1046,7 +1060,9 @@ export class BackupManager {
       created_at: job.created_at.toISOString(),
     });
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
   }
 
   private async updateBackupJob(job: BackupJob): Promise<void> {
@@ -1068,7 +1084,9 @@ export class BackupManager {
       })
       .eq('id', job.id);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
   }
 }
 

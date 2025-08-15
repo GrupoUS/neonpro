@@ -5,9 +5,9 @@ import { createClient } from '@/app/utils/supabase/client';
 import type { HealthTrend, HealthTrendAnalysis, TrendAlert } from './types';
 
 export class HealthTrendMonitor {
-  private supabase = createClient();
-  private trendCache: Map<string, HealthTrend[]> = new Map();
-  private alertThresholds: TrendAlertThresholds;
+  private readonly supabase = createClient();
+  private readonly trendCache: Map<string, HealthTrend[]> = new Map();
+  private readonly alertThresholds: TrendAlertThresholds;
 
   constructor() {
     this.alertThresholds = this.initializeAlertThresholds();
@@ -314,19 +314,27 @@ export class HealthTrendMonitor {
 
     // Analyze blood pressure trends
     const bpTrend = this.analyzeBPTrend(vitalSigns);
-    if (bpTrend) trends.push(bpTrend);
+    if (bpTrend) {
+      trends.push(bpTrend);
+    }
 
     // Analyze heart rate trends
     const hrTrend = this.analyzeHRTrend(vitalSigns);
-    if (hrTrend) trends.push(hrTrend);
+    if (hrTrend) {
+      trends.push(hrTrend);
+    }
 
     // Analyze weight trends
     const weightTrend = this.analyzeWeightTrend(vitalSigns);
-    if (weightTrend) trends.push(weightTrend);
+    if (weightTrend) {
+      trends.push(weightTrend);
+    }
 
     // Analyze BMI trends
     const bmiTrend = this.analyzeBMITrend(vitalSigns);
-    if (bmiTrend) trends.push(bmiTrend);
+    if (bmiTrend) {
+      trends.push(bmiTrend);
+    }
 
     return trends;
   }
@@ -344,7 +352,9 @@ export class HealthTrendMonitor {
         symptomType,
         symptomData as any[]
       );
-      if (trend) trends.push(trend);
+      if (trend) {
+        trends.push(trend);
+      }
     });
 
     return trends;
@@ -359,15 +369,21 @@ export class HealthTrendMonitor {
     // Analyze treatment effectiveness over time
     const effectivenessTrend =
       this.analyzeTreatmentEffectiveness(treatmentSessions);
-    if (effectivenessTrend) trends.push(effectivenessTrend);
+    if (effectivenessTrend) {
+      trends.push(effectivenessTrend);
+    }
 
     // Analyze side effects trends
     const sideEffectsTrend = this.analyzeSideEffectsTrend(treatmentSessions);
-    if (sideEffectsTrend) trends.push(sideEffectsTrend);
+    if (sideEffectsTrend) {
+      trends.push(sideEffectsTrend);
+    }
 
     // Analyze recovery time trends
     const recoveryTrend = this.analyzeRecoveryTimeTrend(treatmentSessions);
-    if (recoveryTrend) trends.push(recoveryTrend);
+    if (recoveryTrend) {
+      trends.push(recoveryTrend);
+    }
 
     return trends;
   }
@@ -382,11 +398,15 @@ export class HealthTrendMonitor {
       treatmentSessions,
       healthAssessments
     );
-    if (overallRecoveryTrend) trends.push(overallRecoveryTrend);
+    if (overallRecoveryTrend) {
+      trends.push(overallRecoveryTrend);
+    }
 
     // Analyze healing rate trends
     const healingRateTrend = this.analyzeHealingRate(treatmentSessions);
-    if (healingRateTrend) trends.push(healingRateTrend);
+    if (healingRateTrend) {
+      trends.push(healingRateTrend);
+    }
 
     return trends;
   }
@@ -400,7 +420,9 @@ export class HealthTrendMonitor {
     // Analyze overall satisfaction trend
     const overallSatisfactionTrend =
       this.analyzeOverallSatisfactionTrend(satisfactionScores);
-    if (overallSatisfactionTrend) trends.push(overallSatisfactionTrend);
+    if (overallSatisfactionTrend) {
+      trends.push(overallSatisfactionTrend);
+    }
 
     // Analyze satisfaction dimension trends
     const dimensionTrends =
@@ -417,11 +439,15 @@ export class HealthTrendMonitor {
 
     // Analyze compliance trends
     const complianceTrend = this.analyzeComplianceTrend(healthData);
-    if (complianceTrend) trends.push(complianceTrend);
+    if (complianceTrend) {
+      trends.push(complianceTrend);
+    }
 
     // Analyze lifestyle trends
     const lifestyleTrend = this.analyzeLifestyleTrend(healthData);
-    if (lifestyleTrend) trends.push(lifestyleTrend);
+    if (lifestyleTrend) {
+      trends.push(lifestyleTrend);
+    }
 
     return trends;
   }
@@ -437,7 +463,9 @@ export class HealthTrendMonitor {
       }))
       .sort((a, b) => a.date.getTime() - b.date.getTime());
 
-    if (bpReadings.length < 3) return null;
+    if (bpReadings.length < 3) {
+      return null;
+    }
 
     const systolicTrend = this.calculateLinearTrend(
       bpReadings.map((r) => r.systolic)
@@ -464,7 +492,7 @@ export class HealthTrendMonitor {
       significance,
       timeframe: this.calculateTimeframe(
         bpReadings[0].date,
-        bpReadings[bpReadings.length - 1].date
+        bpReadings.at(-1).date
       ),
       dataPoints: bpReadings.length,
       description: this.generateBPTrendDescription(
@@ -490,7 +518,9 @@ export class HealthTrendMonitor {
       }))
       .sort((a, b) => a.date.getTime() - b.date.getTime());
 
-    if (hrReadings.length < 3) return null;
+    if (hrReadings.length < 3) {
+      return null;
+    }
 
     const trend = this.calculateLinearTrend(hrReadings.map((r) => r.heartRate));
 
@@ -506,7 +536,7 @@ export class HealthTrendMonitor {
       significance,
       timeframe: this.calculateTimeframe(
         hrReadings[0].date,
-        hrReadings[hrReadings.length - 1].date
+        hrReadings.at(-1).date
       ),
       dataPoints: hrReadings.length,
       description: this.generateHRTrendDescription(direction, trend),
@@ -524,7 +554,9 @@ export class HealthTrendMonitor {
       }))
       .sort((a, b) => a.date.getTime() - b.date.getTime());
 
-    if (weightReadings.length < 3) return null;
+    if (weightReadings.length < 3) {
+      return null;
+    }
 
     const trend = this.calculateLinearTrend(
       weightReadings.map((r) => r.weight)
@@ -542,7 +574,7 @@ export class HealthTrendMonitor {
       significance,
       timeframe: this.calculateTimeframe(
         weightReadings[0].date,
-        weightReadings[weightReadings.length - 1].date
+        weightReadings.at(-1).date
       ),
       dataPoints: weightReadings.length,
       description: this.generateWeightTrendDescription(direction, trend),
@@ -560,7 +592,9 @@ export class HealthTrendMonitor {
       }))
       .sort((a, b) => a.date.getTime() - b.date.getTime());
 
-    if (bmiReadings.length < 3) return null;
+    if (bmiReadings.length < 3) {
+      return null;
+    }
 
     const trend = this.calculateLinearTrend(bmiReadings.map((r) => r.bmi));
 
@@ -576,7 +610,7 @@ export class HealthTrendMonitor {
       significance,
       timeframe: this.calculateTimeframe(
         bmiReadings[0].date,
-        bmiReadings[bmiReadings.length - 1].date
+        bmiReadings.at(-1).date
       ),
       dataPoints: bmiReadings.length,
       description: this.generateBMITrendDescription(direction, trend),
@@ -617,7 +651,9 @@ export class HealthTrendMonitor {
   ): 'improving' | 'stable' | 'deteriorating' {
     const avgSlope = slope2 !== undefined ? (slope + slope2) / 2 : slope;
 
-    if (Math.abs(avgSlope) < 0.01) return 'stable';
+    if (Math.abs(avgSlope) < 0.01) {
+      return 'stable';
+    }
     return avgSlope > 0 ? 'improving' : 'deteriorating';
   }
 
@@ -628,8 +664,12 @@ export class HealthTrendMonitor {
     const avgRSquared =
       rSquared2 !== undefined ? (rSquared + rSquared2) / 2 : rSquared;
 
-    if (avgRSquared > 0.7) return 'high';
-    if (avgRSquared > 0.4) return 'medium';
+    if (avgRSquared > 0.7) {
+      return 'high';
+    }
+    if (avgRSquared > 0.4) {
+      return 'medium';
+    }
     return 'low';
   }
 
@@ -662,7 +702,9 @@ export class HealthTrendMonitor {
     systolicTrend: LinearTrendResult,
     diastolicTrend: LinearTrendResult
   ): 'none' | 'low' | 'medium' | 'high' {
-    if (direction === 'stable') return 'none';
+    if (direction === 'stable') {
+      return 'none';
+    }
 
     const maxSlope = Math.max(
       Math.abs(systolicTrend.slope),
@@ -673,9 +715,15 @@ export class HealthTrendMonitor {
       diastolicTrend.rSquared
     );
 
-    if (significance === 'high' && maxSlope > 1) return 'high';
-    if (significance === 'medium' && maxSlope > 0.5) return 'medium';
-    if (maxSlope > 0.1) return 'low';
+    if (significance === 'high' && maxSlope > 1) {
+      return 'high';
+    }
+    if (significance === 'medium' && maxSlope > 0.5) {
+      return 'medium';
+    }
+    if (maxSlope > 0.1) {
+      return 'low';
+    }
 
     return 'none';
   }
@@ -726,7 +774,9 @@ export class HealthTrendMonitor {
   private groupSymptomsByType(symptoms: any[]): Record<string, any[]> {
     return symptoms.reduce((groups, symptom) => {
       const type = symptom.type || 'general';
-      if (!groups[type]) groups[type] = [];
+      if (!groups[type]) {
+        groups[type] = [];
+      }
       groups[type].push(symptom);
       return groups;
     }, {});

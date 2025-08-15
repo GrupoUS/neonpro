@@ -46,13 +46,13 @@ export interface SessionTimeoutConfig {
 }
 
 export class IntelligentTimeoutManager {
-  private activityBuffer: Map<string, ActivityEvent[]> = new Map();
-  private timeoutTimers: Map<string, NodeJS.Timeout> = new Map();
-  private warningTimers: Map<string, NodeJS.Timeout> = new Map();
-  private activeWarnings: Map<string, TimeoutWarning[]> = new Map();
-  private sessionExtensions: Map<string, number> = new Map();
-  private config: SessionConfig;
-  private utils: SessionUtils;
+  private readonly activityBuffer: Map<string, ActivityEvent[]> = new Map();
+  private readonly timeoutTimers: Map<string, NodeJS.Timeout> = new Map();
+  private readonly warningTimers: Map<string, NodeJS.Timeout> = new Map();
+  private readonly activeWarnings: Map<string, TimeoutWarning[]> = new Map();
+  private readonly sessionExtensions: Map<string, number> = new Map();
+  private readonly config: SessionConfig;
+  private readonly utils: SessionUtils;
 
   constructor() {
     this.config = SessionConfig.getInstance();
@@ -147,7 +147,9 @@ export class IntelligentTimeoutManager {
     metadata?: Record<string, any>
   ): void {
     const sessionId = this.getCurrentSessionId();
-    if (!sessionId) return;
+    if (!sessionId) {
+      return;
+    }
 
     const activity: ActivityEvent = {
       type,
@@ -485,7 +487,7 @@ export class IntelligentTimeoutManager {
     });
 
     const lastActivity =
-      activities.length > 0 ? activities[activities.length - 1].timestamp : 0;
+      activities.length > 0 ? activities.at(-1).timestamp : 0;
     const activityScore = Math.min(100, (recentActivities.length / 10) * 100); // Score out of 100
 
     return {

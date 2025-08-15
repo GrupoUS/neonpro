@@ -140,11 +140,15 @@ export function useOptimizedForm<T extends FormValues>(
 
   const validateField = useCallback(
     async (field: keyof T): Promise<string | undefined> => {
-      if (!validationSchema) return;
+      if (!validationSchema) {
+        return;
+      }
 
       try {
         const fieldSchema = validationSchema.shape?.[field as string];
-        if (!fieldSchema) return;
+        if (!fieldSchema) {
+          return;
+        }
 
         await fieldSchema.parseAsync(state.values[field]);
         return;
@@ -159,7 +163,9 @@ export function useOptimizedForm<T extends FormValues>(
   );
 
   const validateForm = useCallback(async (): Promise<FormErrors> => {
-    if (!validationSchema) return {};
+    if (!validationSchema) {
+      return {};
+    }
 
     try {
       await validationSchema.parseAsync(state.values);
@@ -186,7 +192,9 @@ export function useOptimizedForm<T extends FormValues>(
       }
 
       validationTimeoutRef.current = setTimeout(async () => {
-        if (!mountedRef.current) return;
+        if (!mountedRef.current) {
+          return;
+        }
 
         setState((prev) => ({ ...prev, isValidating: true }));
 
@@ -430,7 +438,7 @@ export function useOptimizedForm<T extends FormValues>(
         }
       }
     },
-    [state.values, validateForm, onValidationError, onSubmit]
+    [state.values, validateForm, onValidationError, onSubmit, helpers]
   );
 
   // =====================================================================================

@@ -7,7 +7,7 @@ import type {
 import { createClient } from '@/app/utils/supabase/client';
 
 export class ConsentService {
-  private supabase = createClient();
+  private readonly supabase = createClient();
 
   // Consent Form Management
   async getConsentForms(clinicId: string): Promise<ConsentForm[]> {

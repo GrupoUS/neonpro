@@ -101,7 +101,7 @@ async function buildUniversalContext(
       .eq('id', userId)
       .single();
 
-    if (!(profile && profile.clinics)) {
+    if (!profile?.clinics) {
       throw new Error('User profile or clinic not found');
     }
 

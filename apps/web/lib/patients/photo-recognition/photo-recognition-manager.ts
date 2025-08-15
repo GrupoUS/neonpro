@@ -105,10 +105,10 @@ export interface PrivacyControls {
 }
 
 export class PhotoRecognitionManager {
-  private supabase: any;
-  private auditLogger: AuditLogger;
-  private lgpdManager: LGPDManager;
-  private config: PhotoRecognitionConfig;
+  private readonly supabase: any;
+  private readonly auditLogger: AuditLogger;
+  private readonly lgpdManager: LGPDManager;
+  private readonly config: PhotoRecognitionConfig;
 
   constructor(
     supabase: any,
@@ -502,7 +502,9 @@ export class PhotoRecognitionManager {
 
       // Compare with stored encodings
       for (const photo of storedPhotos || []) {
-        if (!photo.recognition_data?.encoding) continue;
+        if (!photo.recognition_data?.encoding) {
+          continue;
+        }
 
         const similarity = this.calculateFacialSimilarity(
           features.encoding,

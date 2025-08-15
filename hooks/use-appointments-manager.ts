@@ -234,7 +234,13 @@ export function useAppointmentsManager() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [fetchAppointments, supabase]);
+  }, [
+    fetchAppointments,
+    supabase,
+    handleAppointmentDelete,
+    handleAppointmentInsert,
+    handleAppointmentUpdate,
+  ]);
 
   // Real-time event handlers
   const handleAppointmentInsert = (_newAppointment: any) => {

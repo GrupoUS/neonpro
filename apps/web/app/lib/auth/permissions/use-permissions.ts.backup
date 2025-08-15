@@ -46,7 +46,9 @@ export function usePermissions(userId: string): UsePermissionsResult {
 
   // Load user permissions
   const loadPermissions = useCallback(async () => {
-    if (!userId) return;
+    if (!userId) {
+      return;
+    }
 
     try {
       setIsLoading(true);
@@ -69,7 +71,9 @@ export function usePermissions(userId: string): UsePermissionsResult {
       action: Permission,
       resourceId?: string
     ): Promise<boolean> => {
-      if (!userId) return false;
+      if (!userId) {
+        return false;
+      }
 
       try {
         return await hasPermission(userId, resource, action, resourceId);
@@ -92,7 +96,9 @@ export function usePermissions(userId: string): UsePermissionsResult {
   // Check if user has any of the specified roles
   const hasAnyRole = useCallback(
     (roles: SystemRole[]): boolean => {
-      if (!userPermissions) return false;
+      if (!userPermissions) {
+        return false;
+      }
       return roles.some((role) => userPermissions.roles.includes(role));
     },
     [userPermissions]
@@ -101,7 +107,9 @@ export function usePermissions(userId: string): UsePermissionsResult {
   // Check if user has higher role than target
   const hasHigherRole = useCallback(
     (targetRole: SystemRole): boolean => {
-      if (!userPermissions) return false;
+      if (!userPermissions) {
+        return false;
+      }
 
       return userPermissions.roles.some((userRole) =>
         permissionValidator.isHigherRole(userRole, targetRole)
@@ -153,7 +161,9 @@ export function usePermissionCheck(
   const [isLoading, setIsLoading] = useState(true);
 
   const checkPermission = useCallback(async () => {
-    if (!userId) return;
+    if (!userId) {
+      return;
+    }
 
     try {
       setIsLoading(true);
@@ -204,7 +214,9 @@ export function useMultiplePermissions(
   const [isLoading, setIsLoading] = useState(true);
 
   const checkPermissions = useCallback(async () => {
-    if (!userId || permissions.length === 0) return;
+    if (!userId || permissions.length === 0) {
+      return;
+    }
 
     try {
       setIsLoading(true);
@@ -257,7 +269,9 @@ export function useRoleAccess(userId: string, allowedRoles: SystemRole[]) {
   const { roles, isLoading } = usePermissions(userId);
 
   const hasAccess = useMemo(() => {
-    if (isLoading || !roles.length) return false;
+    if (isLoading || !roles.length) {
+      return false;
+    }
     return allowedRoles.some((role) => roles.includes(role));
   }, [roles, allowedRoles, isLoading]);
 
@@ -270,7 +284,7 @@ export function useRoleAccess(userId: string, allowedRoles: SystemRole[]) {
 
 // HOC for permission-based component protection
 export function withPermissionCheck<T extends object>(
-  Component: React.ComponentType<T>,
+  _Component: React.ComponentType<T>,
   resource: ResourceType,
   action: Permission,
   fallback?: React.ComponentType
@@ -287,9 +301,7 @@ export function withPermissionCheck<T extends object>(
     );
 
     if (isLoading) {
-      return <div>Verificando;
-      permissões;
-      ...</div>
+      return <div>Verificando permissões...</div>
     }
 
     if (!allowed) {
@@ -297,8 +309,7 @@ export function withPermissionCheck<T extends object>(
         const FallbackComponent = fallback;
         return <FallbackComponent />
       }
-      return <div>Acesso;
-      negado < /;>div;
+      return <div>Acesso negado</div>
     }
 
     return <Component {...(componentProps as T)} />

@@ -40,12 +40,12 @@ interface RealTimeMetrics {
  * Serviço de monitoramento de backups
  */
 export class MonitoringService {
-  private supabase;
-  private backupManager: any;
-  private config: MonitoringConfig;
-  private realTimeMetrics: RealTimeMetrics;
-  private alertHistory = new Map<string, BackupAlert[]>();
-  private performanceHistory: PerformanceMetrics[] = [];
+  private readonly supabase;
+  private readonly backupManager: any;
+  private readonly config: MonitoringConfig;
+  private readonly realTimeMetrics: RealTimeMetrics;
+  private readonly alertHistory = new Map<string, BackupAlert[]>();
+  private readonly performanceHistory: PerformanceMetrics[] = [];
   private monitoringInterval?: NodeJS.Timeout;
 
   constructor(backupManager: any) {
@@ -139,7 +139,9 @@ export class MonitoringService {
         .lte('startTime', end.toISOString())
         .order('startTime', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       const records = backups || [];
       const totalBackups = records.length;
@@ -374,11 +376,19 @@ export class MonitoringService {
     try {
       const channels: NotificationChannel[] = [];
 
-      if (this.config.notifications.email) channels.push('EMAIL');
-      if (this.config.notifications.sms) channels.push('SMS');
-      if (this.config.notifications.push) channels.push('PUSH');
+      if (this.config.notifications.email) {
+        channels.push('EMAIL');
+      }
+      if (this.config.notifications.sms) {
+        channels.push('SMS');
+      }
+      if (this.config.notifications.push) {
+        channels.push('PUSH');
+      }
 
-      if (channels.length === 0) return;
+      if (channels.length === 0) {
+        return;
+      }
 
       const notification = {
         title: `Alerta de Backup - ${alert.severity}`,
@@ -683,7 +693,9 @@ export class MonitoringService {
         .eq('resolved', false)
         .order('timestamp', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return {
         success: true,
@@ -713,7 +725,9 @@ export class MonitoringService {
         })
         .eq('id', alertId);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       await auditLogger.log({
         action: 'ALERT_ACKNOWLEDGED',
@@ -753,7 +767,9 @@ export class MonitoringService {
         })
         .eq('id', alertId);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       await auditLogger.log({
         action: 'ALERT_RESOLVED',

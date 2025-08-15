@@ -72,9 +72,9 @@ export type DashboardLayout = z.infer<typeof DashboardLayoutSchema>;
 
 // Dashboard Layout Engine Class
 export class DashboardLayoutEngine {
-  private supabase = createClient();
-  private cache = new Map<string, DashboardLayout>();
-  private cacheExpiry = new Map<string, number>();
+  private readonly supabase = createClient();
+  private readonly cache = new Map<string, DashboardLayout>();
+  private readonly cacheExpiry = new Map<string, number>();
   private readonly CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
   /**
@@ -242,15 +242,24 @@ export class DashboardLayoutEngine {
         updated_at: now,
       };
 
-      if (updates.name) dashboardUpdates.name = updates.name;
-      if (updates.description !== undefined)
+      if (updates.name) {
+        dashboardUpdates.name = updates.name;
+      }
+      if (updates.description !== undefined) {
         dashboardUpdates.description = updates.description;
-      if (updates.layout) dashboardUpdates.layout = updates.layout;
-      if (updates.filters) dashboardUpdates.filters = updates.filters;
-      if (updates.isDefault !== undefined)
+      }
+      if (updates.layout) {
+        dashboardUpdates.layout = updates.layout;
+      }
+      if (updates.filters) {
+        dashboardUpdates.filters = updates.filters;
+      }
+      if (updates.isDefault !== undefined) {
         dashboardUpdates.is_default = updates.isDefault;
-      if (updates.isPublic !== undefined)
+      }
+      if (updates.isPublic !== undefined) {
         dashboardUpdates.is_public = updates.isPublic;
+      }
 
       const { error: dashboardError } = await this.supabase
         .from('executive_dashboards')

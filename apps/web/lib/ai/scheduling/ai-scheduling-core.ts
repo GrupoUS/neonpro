@@ -81,9 +81,12 @@ interface SchedulingRecommendation {
 }
 
 class AISchedulingCore {
-  private supabase = createClient();
-  private config: AISchedulingConfig;
-  private patientPreferenceCache = new Map<string, PatientPreference>();
+  private readonly supabase = createClient();
+  private readonly config: AISchedulingConfig;
+  private readonly patientPreferenceCache = new Map<
+    string,
+    PatientPreference
+  >();
 
   constructor(config: Partial<AISchedulingConfig> = {}) {
     this.config = {

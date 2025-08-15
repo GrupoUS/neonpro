@@ -32,9 +32,9 @@ export interface StressTestReport {
 }
 
 export class StressTester {
-  private activeTests: Map<string, NodeJS.Timeout> = new Map();
+  private readonly activeTests: Map<string, NodeJS.Timeout> = new Map();
   private reports: StressTestReport[] = [];
-  private loadTester: LoadTester;
+  private readonly loadTester: LoadTester;
 
   constructor() {
     this.loadTester = new LoadTester();
@@ -242,7 +242,9 @@ export class StressTester {
    * Calculate system stability score
    */
   private calculateStabilityScore(loadResult: any): number {
-    if (!loadResult.totalRequests) return 0;
+    if (!loadResult.totalRequests) {
+      return 0;
+    }
 
     const successRate =
       (loadResult.totalRequests - loadResult.failedRequests) /
@@ -259,7 +261,9 @@ export class StressTester {
    * Calculate performance degradation
    */
   private calculatePerformanceDegradation(baseline: any, current: any): number {
-    if (!(baseline && current)) return 0;
+    if (!(baseline && current)) {
+      return 0;
+    }
 
     const baselineScore = baseline.overallScore || 100;
     const currentScore = current.overallScore || 100;

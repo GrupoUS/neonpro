@@ -140,7 +140,7 @@ function calculateMetricStats(metrics: any[]) {
       durations.reduce((a, b) => a + b, 0) / durations.length
     ),
     min_duration: durations[0],
-    max_duration: durations[durations.length - 1],
+    max_duration: durations.at(-1),
     p95_duration: durations[Math.floor(durations.length * 0.95)],
     error_rate: (errorCount / metrics.length) * 100,
   };

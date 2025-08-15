@@ -328,12 +328,12 @@ export interface DataDrift {
  * Core system for automated model improvement and validation
  */
 export class AIContinuousLearningSystem {
-  private models: Map<string, MLModel> = new Map();
+  private readonly models: Map<string, MLModel> = new Map();
   private feedbackBuffer: FeedbackData[] = [];
-  private abTests: Map<string, ABTestResult> = new Map();
-  private driftDetectors: Map<string, any> = new Map();
+  private readonly abTests: Map<string, ABTestResult> = new Map();
+  private readonly driftDetectors: Map<string, any> = new Map();
 
-  constructor(private config: LearningConfiguration) {
+  constructor(private readonly config: LearningConfiguration) {
     this.initializeLearningSystem();
     this.setupPerformanceMonitoring();
     this.initializeDriftDetection();
@@ -1062,22 +1062,15 @@ export class AIContinuousLearningSystem {
     const endTime = Date.now();
     session.end_time = new Date(endTime);
     session.duration_minutes = (endTime - startTime) / (1000 * 60);
-    session.final_loss =
-      session.training_metrics.epoch_losses[
-        session.training_metrics.epoch_losses.length - 1
-      ];
+    session.final_loss = session.training_metrics.epoch_losses.at(-1);
 
     // Calculate validation metrics
     session.validation_metrics.validation_loss = session.final_loss * 1.1;
     session.validation_metrics.validation_accuracy =
-      session.training_metrics.epoch_accuracies[
-        session.training_metrics.epoch_accuracies.length - 1
-      ] * 0.95;
+      session.training_metrics.epoch_accuracies.at(-1) * 0.95;
     session.validation_metrics.overfitting_score = Math.abs(
       session.validation_metrics.validation_accuracy -
-        session.training_metrics.epoch_accuracies[
-          session.training_metrics.epoch_accuracies.length - 1
-        ]
+        session.training_metrics.epoch_accuracies.at(-1)
     );
   }
 
@@ -1086,7 +1079,9 @@ export class AIContinuousLearningSystem {
     session: TrainingSession
   ): Promise<void> {
     const model = this.models.get(modelId);
-    if (!model) return;
+    if (!model) {
+      return;
+    }
 
     // Update model with new training results
     model.last_trained = session.end_time;
@@ -1276,9 +1271,15 @@ export class AIContinuousLearningSystem {
       0
     );
 
-    if (accuracy < 0.7) return 'reject';
-    if (accuracy < 0.8 || biasScore > 0.1) return 'retrain';
-    if (accuracy < 0.85) return 'further_validation';
+    if (accuracy < 0.7) {
+      return 'reject';
+    }
+    if (accuracy < 0.8 || biasScore > 0.1) {
+      return 'retrain';
+    }
+    if (accuracy < 0.85) {
+      return 'further_validation';
+    }
     return 'deploy';
   }
 
@@ -1317,7 +1318,9 @@ export class AIContinuousLearningSystem {
 
     // Simulate incremental learning update
     const model = this.models.get(modelId);
-    if (!model) return;
+    if (!model) {
+      return;
+    }
 
     // Adjust model performance based on feedback
     const avgRating =

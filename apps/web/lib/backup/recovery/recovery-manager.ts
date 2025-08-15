@@ -138,10 +138,10 @@ export interface RecoveryMetrics {
 }
 
 export class RecoveryManager {
-  private supabase;
-  private auditLogger: AuditLogger;
-  private strategyManager: BackupStrategyManager;
-  private activeExecutions: Map<string, RecoveryExecution> = new Map();
+  private readonly supabase;
+  private readonly auditLogger: AuditLogger;
+  private readonly strategyManager: BackupStrategyManager;
+  private readonly activeExecutions: Map<string, RecoveryExecution> = new Map();
 
   constructor() {
     this.supabase = createClient(
@@ -297,7 +297,9 @@ export class RecoveryManager {
         .single();
 
       if (error) {
-        if (error.code === 'PGRST116') return null;
+        if (error.code === 'PGRST116') {
+          return null;
+        }
         throw error;
       }
 
@@ -434,7 +436,9 @@ export class RecoveryManager {
 
       const { data, error, count } = await query;
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       const plans = data.map(this.mapDatabaseToRecoveryPlan);
 
@@ -503,7 +507,9 @@ export class RecoveryManager {
 
       const { data, error, count } = await query;
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       const executions = data.map(this.mapDatabaseToRecoveryExecution);
 
@@ -543,7 +549,9 @@ export class RecoveryManager {
         .select('*')
         .gte('started_at', startDate.toISOString());
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       const totalRecoveries = executions.length;
       const successfulRecoveries = executions.filter(
@@ -683,7 +691,9 @@ export class RecoveryManager {
     plan: RecoveryPlan
   ): Promise<void> {
     const execution = this.activeExecutions.get(executionId);
-    if (!execution) return;
+    if (!execution) {
+      return;
+    }
 
     try {
       execution.status = 'running';
@@ -930,8 +940,12 @@ export class RecoveryManager {
   ): Promise<{ valid: boolean; errors: string[] }> {
     const errors: string[] = [];
 
-    if (!plan.name) errors.push('Nome é obrigatório');
-    if (!plan.recovery_type) errors.push('Tipo de recuperação é obrigatório');
+    if (!plan.name) {
+      errors.push('Nome é obrigatório');
+    }
+    if (!plan.recovery_type) {
+      errors.push('Tipo de recuperação é obrigatório');
+    }
     if (!plan.data_sources || plan.data_sources.length === 0) {
       errors.push('Pelo menos uma fonte de dados deve ser especificada');
     }
@@ -979,10 +993,15 @@ export class RecoveryManager {
     const errors: string[] = [];
     const warnings: string[] = [];
 
-    if (!step.name) errors.push('Nome do step é obrigatório');
-    if (!step.data_source) errors.push('Data source é obrigatório');
-    if (!step.backup_location)
+    if (!step.name) {
+      errors.push('Nome do step é obrigatório');
+    }
+    if (!step.data_source) {
+      errors.push('Data source é obrigatório');
+    }
+    if (!step.backup_location) {
       errors.push('Localização do backup é obrigatória');
+    }
 
     return { valid: errors.length === 0, errors, warnings };
   }
@@ -1107,7 +1126,9 @@ export class RecoveryManager {
       metadata: plan.metadata,
     });
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
   }
 
   private async getRecoveryPlan(planId: string): Promise<RecoveryPlan | null> {
@@ -1118,7 +1139,9 @@ export class RecoveryManager {
       .single();
 
     if (error) {
-      if (error.code === 'PGRST116') return null;
+      if (error.code === 'PGRST116') {
+        return null;
+      }
       throw error;
     }
 
@@ -1148,7 +1171,9 @@ export class RecoveryManager {
       metadata: execution.metadata,
     });
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
   }
 
   private async updateRecoveryExecution(
@@ -1171,7 +1196,9 @@ export class RecoveryManager {
       })
       .eq('id', execution.id);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
   }
 
   private mapDatabaseToRecoveryPlan(data: any): RecoveryPlan {

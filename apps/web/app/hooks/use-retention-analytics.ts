@@ -40,7 +40,8 @@ export function usePatientRetentionMetrics(
     queryKey: ['patient-retention-metrics', patientId, clinicId],
     queryFn: () =>
       retentionService.getPatientRetentionMetrics(patientId, clinicId),
-    enabled: options?.enabled !== false && !!patientId && !!clinicId,
+    enabled:
+      options?.enabled !== false && Boolean(patientId) && Boolean(clinicId),
     refetchInterval: options?.refetchInterval || 5 * 60 * 1000, // 5 minutes
     staleTime: 2 * 60 * 1000, // 2 minutes
   });
@@ -63,7 +64,7 @@ export function useClinicRetentionMetrics(
     queryKey: ['clinic-retention-metrics', clinicId, limit, offset],
     queryFn: () =>
       retentionService.getClinicRetentionMetrics(clinicId, limit, offset),
-    enabled: enabled && !!clinicId,
+    enabled: enabled && Boolean(clinicId),
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 }
@@ -121,7 +122,7 @@ export function useChurnPredictions(
     queryKey: ['churn-predictions', clinicId, riskLevel, limit, offset],
     queryFn: () =>
       retentionService.getChurnPredictions(clinicId, riskLevel, limit, offset),
-    enabled: enabled && !!clinicId,
+    enabled: enabled && Boolean(clinicId),
     staleTime: 10 * 60 * 1000, // 10 minutes
   });
 }
@@ -175,7 +176,7 @@ export function useRetentionStrategies(
     queryKey: ['retention-strategies', clinicId, activeOnly],
     queryFn: () =>
       retentionService.getRetentionStrategies(clinicId, activeOnly),
-    enabled: enabled && !!clinicId,
+    enabled: enabled && Boolean(clinicId),
     staleTime: 15 * 60 * 1000, // 15 minutes
   });
 }
@@ -249,7 +250,10 @@ export function useRetentionAnalyticsDashboard(
         periodEnd
       ),
     enabled:
-      options?.enabled !== false && !!clinicId && !!periodStart && !!periodEnd,
+      options?.enabled !== false &&
+      Boolean(clinicId) &&
+      Boolean(periodStart) &&
+      Boolean(periodEnd),
     refetchInterval: options?.refetchInterval || 15 * 60 * 1000, // 15 minutes
     staleTime: 10 * 60 * 1000, // 10 minutes
   });
@@ -344,7 +348,7 @@ export function useRetentionStrategyAnalytics(
 
       return strategies;
     },
-    enabled: options?.enabled !== false && !!clinicId,
+    enabled: options?.enabled !== false && Boolean(clinicId),
     staleTime: 10 * 60 * 1000,
   });
 }
@@ -370,12 +374,15 @@ export function usePatientRiskInsights(
         await retentionService.getChurnPredictions(clinicId);
       return allPredictions.filter((p) => p.patient_id === patientId);
     },
-    enabled: options?.enabled !== false && !!patientId && !!clinicId,
+    enabled:
+      options?.enabled !== false && Boolean(patientId) && Boolean(clinicId),
   });
 
   // Generate insights based on metrics and predictions
   const insights = React.useMemo(() => {
-    if (!metrics) return null;
+    if (!metrics) {
+      return null;
+    }
 
     const riskFactors = [];
     const recommendations = [];
@@ -587,9 +594,15 @@ export function useRetentionAnalyticsFormatters() {
   };
 
   const formatDaysToChurn = (days: number | null): string => {
-    if (!days) return 'N/A';
-    if (days < 30) return `${days} dias`;
-    if (days < 365) return `${Math.round(days / 30)} meses`;
+    if (!days) {
+      return 'N/A';
+    }
+    if (days < 30) {
+      return `${days} dias`;
+    }
+    if (days < 365) {
+      return `${Math.round(days / 30)} meses`;
+    }
     return `${Math.round(days / 365)} anos`;
   };
 

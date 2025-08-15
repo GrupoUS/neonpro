@@ -147,10 +147,10 @@ export {
  * High-level interface for the entire forecasting system
  */
 export class ForecastingSystemAPI {
-  private engine: DemandForecastingEngine;
-  private modelManager: ForecastModelManager;
-  private resourceOptimizer: ResourceAllocationOptimizer;
-  private initialized = false;
+  private readonly engine: DemandForecastingEngine;
+  private readonly modelManager: ForecastModelManager;
+  private readonly resourceOptimizer: ResourceAllocationOptimizer;
+  private readonly initialized = false;
 
   constructor() {
     this.engine = demandForecastingEngine;

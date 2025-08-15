@@ -82,7 +82,7 @@ export interface CashFlowForecast {
 }
 
 export class CashFlowEngine {
-  private supabase = createClient();
+  private readonly supabase = createClient();
 
   /**
    * Calculate real-time cash flow for a clinic
@@ -383,10 +383,12 @@ export class CashFlowEngine {
    * Calculate trend from historical data
    */
   private calculateTrend(data: Array<{ closing_balance: number }>): number {
-    if (data.length < 2) return 0;
+    if (data.length < 2) {
+      return 0;
+    }
 
     const first = data[0].closing_balance;
-    const last = data[data.length - 1].closing_balance;
+    const last = data.at(-1).closing_balance;
 
     return first > 0 ? (last - first) / first : 0;
   }
@@ -471,7 +473,7 @@ export class CashFlowEngine {
 
       // Calculate growth rate
       const firstBalance = balances[0];
-      const lastBalance = balances[balances.length - 1];
+      const lastBalance = balances.at(-1);
       const monthlyGrowthRate =
         firstBalance > 0
           ? ((lastBalance - firstBalance) / firstBalance) * 100

@@ -98,8 +98,12 @@ export async function GET(request: NextRequest) {
     }
     // Get alert instances (default)
     const filters: any = {};
-    if (status) filters.status = status;
-    if (severity) filters.severity = severity;
+    if (status) {
+      filters.status = status;
+    }
+    if (severity) {
+      filters.severity = severity;
+    }
 
     const instances = await alertSystem.getAlertInstances(
       filters,

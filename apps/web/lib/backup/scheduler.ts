@@ -38,10 +38,10 @@ interface ScheduledBackupTask {
  * Serviço de agendamento de backups
  */
 export class SchedulerService {
-  private supabase;
-  private backupManager: any; // Referência circular evitada
-  private scheduledTasks = new Map<string, ScheduledBackupTask>();
-  private isInitialized = false;
+  private readonly supabase;
+  private readonly backupManager: any; // Referência circular evitada
+  private readonly scheduledTasks = new Map<string, ScheduledBackupTask>();
+  private readonly isInitialized = false;
 
   constructor(backupManager: any) {
     this.supabase = createClient(
@@ -55,7 +55,9 @@ export class SchedulerService {
    * Inicializar o scheduler
    */
   async initialize(): Promise<void> {
-    if (this.isInitialized) return;
+    if (this.isInitialized) {
+      return;
+    }
 
     try {
       // Carregar configurações ativas
@@ -64,7 +66,9 @@ export class SchedulerService {
         .select('*')
         .eq('enabled', true);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Agendar cada configuração
       for (const config of configs || []) {
@@ -441,7 +445,9 @@ export class SchedulerService {
   getTaskStatus(configId: string): ScheduledTask | null {
     const task = this.scheduledTasks.get(configId);
 
-    if (!task) return null;
+    if (!task) {
+      return null;
+    }
 
     return {
       id: task.id,

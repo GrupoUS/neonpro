@@ -30,7 +30,7 @@ export interface SearchAction {
 }
 
 export class UnifiedSearchSystem {
-  private duplicateDetection = new DuplicateDetectionSystem();
+  private readonly duplicateDetection = new DuplicateDetectionSystem();
 
   /**
    * Executa busca unificada em todo o sistema com análise NLP
@@ -144,36 +144,48 @@ export class UnifiedSearchSystem {
     // Based on intent target, prioritize certain search types
     switch (nlpAnalysis.intent.target) {
       case 'patient':
-        if (!refinedTypes.includes('patients'))
+        if (!refinedTypes.includes('patients')) {
           refinedTypes.unshift('patients');
-        if (!refinedTypes.includes('photos')) refinedTypes.push('photos');
-        if (!refinedTypes.includes('duplicates'))
+        }
+        if (!refinedTypes.includes('photos')) {
+          refinedTypes.push('photos');
+        }
+        if (!refinedTypes.includes('duplicates')) {
           refinedTypes.push('duplicates');
+        }
         break;
 
       case 'appointment':
-        if (!refinedTypes.includes('appointments'))
+        if (!refinedTypes.includes('appointments')) {
           refinedTypes.unshift('appointments');
+        }
         break;
 
       case 'treatment':
-        if (!refinedTypes.includes('medical_records'))
+        if (!refinedTypes.includes('medical_records')) {
           refinedTypes.unshift('medical_records');
-        if (!refinedTypes.includes('timeline_events'))
+        }
+        if (!refinedTypes.includes('timeline_events')) {
           refinedTypes.push('timeline_events');
+        }
         break;
 
       case 'procedure':
-        if (!refinedTypes.includes('timeline_events'))
+        if (!refinedTypes.includes('timeline_events')) {
           refinedTypes.unshift('timeline_events');
-        if (!refinedTypes.includes('medical_records'))
+        }
+        if (!refinedTypes.includes('medical_records')) {
           refinedTypes.push('medical_records');
+        }
         break;
 
       case 'record':
-        if (!refinedTypes.includes('medical_records'))
+        if (!refinedTypes.includes('medical_records')) {
           refinedTypes.unshift('medical_records');
-        if (!refinedTypes.includes('documents')) refinedTypes.push('documents');
+        }
+        if (!refinedTypes.includes('documents')) {
+          refinedTypes.push('documents');
+        }
         break;
     }
 
@@ -351,7 +363,7 @@ export class UnifiedSearchSystem {
             metadata: {
               ...patient,
               matchReasons,
-              nlpEnhanced: !!nlpAnalysis,
+              nlpEnhanced: Boolean(nlpAnalysis),
             },
             highlights: matchReasons,
             url: `/patients/${patient.id}`,
@@ -636,9 +648,15 @@ export class UnifiedSearchSystem {
     const term = searchTerm.toLowerCase();
     const content = text.toLowerCase();
 
-    if (content === term) return 1.0;
-    if (content.startsWith(term)) return 0.9;
-    if (content.includes(term)) return 0.7;
+    if (content === term) {
+      return 1.0;
+    }
+    if (content.startsWith(term)) {
+      return 0.9;
+    }
+    if (content.includes(term)) {
+      return 0.7;
+    }
 
     // Calcular similaridade por palavras
     const termWords = term.split(' ');

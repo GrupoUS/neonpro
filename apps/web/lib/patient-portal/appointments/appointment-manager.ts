@@ -69,10 +69,10 @@ export interface CancellationRequest {
 }
 
 export class AppointmentManager {
-  private supabase: SupabaseClient;
-  private auditLogger: AuditLogger;
-  private sessionManager: SessionManager;
-  private config: AppointmentConfig;
+  private readonly supabase: SupabaseClient;
+  private readonly auditLogger: AuditLogger;
+  private readonly sessionManager: SessionManager;
+  private readonly config: AppointmentConfig;
 
   constructor(
     supabaseUrl: string,
@@ -138,7 +138,9 @@ export class AppointmentManager {
         .eq('id', serviceId)
         .single();
 
-      if (serviceError) throw serviceError;
+      if (serviceError) {
+        throw serviceError;
+      }
 
       // Build staff filter
       let staffFilter = {};
@@ -158,7 +160,9 @@ export class AppointmentManager {
         .match(staffFilter)
         .eq('staff_availability.is_available', true);
 
-      if (staffError) throw staffError;
+      if (staffError) {
+        throw staffError;
+      }
 
       // Get existing appointments in the date range
       const { data: existingAppointments, error: appointmentsError } =
@@ -170,7 +174,9 @@ export class AppointmentManager {
           .gte('appointment_date', startDate.toISOString().split('T')[0])
           .lte('appointment_date', endDate.toISOString().split('T')[0])
           .in('status', ['scheduled', 'confirmed', 'in_progress']);
-      if (appointmentsError) throw appointmentsError;
+      if (appointmentsError) {
+        throw appointmentsError;
+      }
 
       // Generate available time slots
       const availableSlots: TimeSlot[] = [];
@@ -264,7 +270,9 @@ export class AppointmentManager {
       if (slotStart >= minBookingTime) {
         // Check for conflicts with existing appointments
         const hasConflict = existingAppointments.some((apt) => {
-          if (apt.staff_id !== staff.id) return false;
+          if (apt.staff_id !== staff.id) {
+            return false;
+          }
 
           const aptDate = new Date(
             `${apt.appointment_date}T${apt.appointment_time}`
@@ -344,7 +352,9 @@ export class AppointmentManager {
           .eq('appointment_time', request.preferredTime)
           .in('status', ['scheduled', 'confirmed', 'in_progress']);
 
-      if (conflictError) throw conflictError;
+      if (conflictError) {
+        throw conflictError;
+      }
 
       if (conflictingAppointments && conflictingAppointments.length > 0) {
         // Get alternative slots
@@ -382,7 +392,9 @@ export class AppointmentManager {
         .select()
         .single();
 
-      if (insertError) throw insertError;
+      if (insertError) {
+        throw insertError;
+      }
 
       // Log successful booking
       await this.auditLogger.log({

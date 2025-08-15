@@ -87,14 +87,24 @@ export function useInventoryAlerts(): UseAlertsResult {
 
       const searchParams = new URLSearchParams();
 
-      if (filters.type) searchParams.set('type', filters.type);
-      if (filters.severity) searchParams.set('severity', filters.severity);
-      if (filters.is_read !== undefined)
+      if (filters.type) {
+        searchParams.set('type', filters.type);
+      }
+      if (filters.severity) {
+        searchParams.set('severity', filters.severity);
+      }
+      if (filters.is_read !== undefined) {
         searchParams.set('is_read', filters.is_read.toString());
-      if (filters.location_id)
+      }
+      if (filters.location_id) {
         searchParams.set('location_id', filters.location_id);
-      if (filters.limit) searchParams.set('limit', filters.limit.toString());
-      if (filters.offset) searchParams.set('offset', filters.offset.toString());
+      }
+      if (filters.limit) {
+        searchParams.set('limit', filters.limit.toString());
+      }
+      if (filters.offset) {
+        searchParams.set('offset', filters.offset.toString());
+      }
 
       const response = await fetch(
         `/api/inventory/alerts?${searchParams.toString()}`

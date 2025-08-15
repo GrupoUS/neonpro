@@ -89,9 +89,10 @@ export interface AnalyticsFilters {
 }
 
 export class NotificationAnalytics {
-  private supabase;
-  private metricsCache: Map<string, { data: any; expires: number }> = new Map();
-  private cacheTimeout = 300_000; // 5 minutos
+  private readonly supabase;
+  private readonly metricsCache: Map<string, { data: any; expires: number }> =
+    new Map();
+  private readonly cacheTimeout = 300_000; // 5 minutos
 
   constructor() {
     this.supabase = createClient(
@@ -109,13 +110,17 @@ export class NotificationAnalytics {
   ): Promise<NotificationMetrics> {
     const cacheKey = `overall_metrics_${JSON.stringify(filters)}`;
     const cached = this.getFromCache(cacheKey);
-    if (cached) return cached;
+    if (cached) {
+      return cached;
+    }
 
     try {
       const query = this.buildBaseQuery('notification_logs', filters);
       const { data, error } = await query;
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       const metrics = this.calculateMetrics(data);
       this.setCache(cacheKey, metrics);
@@ -134,7 +139,9 @@ export class NotificationAnalytics {
   ): Promise<ChannelMetrics[]> {
     const cacheKey = `channel_metrics_${JSON.stringify(filters)}`;
     const cached = this.getFromCache(cacheKey);
-    if (cached) return cached;
+    if (cached) {
+      return cached;
+    }
 
     try {
       const channels = ['email', 'sms', 'push', 'whatsapp', 'in_app'];
@@ -147,7 +154,9 @@ export class NotificationAnalytics {
         const query = this.buildBaseQuery('notification_logs', channelFilters);
         const { data, error } = await query;
 
-        if (error) throw error;
+        if (error) {
+          throw error;
+        }
 
         const metrics = this.calculateMetrics(data);
 
@@ -206,7 +215,9 @@ export class NotificationAnalytics {
       }
 
       const { data, error } = await query;
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Agrupar por usuário
       const userGroups = data.reduce(
@@ -270,7 +281,9 @@ export class NotificationAnalytics {
       }
 
       const { data, error } = await query;
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Agrupar por template
       const templateGroups = data.reduce(
@@ -344,7 +357,9 @@ export class NotificationAnalytics {
       }
 
       const { data, error } = await query;
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Agrupar por campanha
       const campaignGroups = data.reduce(
@@ -382,7 +397,7 @@ export class NotificationAnalytics {
         // Datas da campanha
         const dates = notifications.map((n) => new Date(n.sent_at)).sort();
         const startDate = dates[0];
-        const endDate = dates[dates.length - 1];
+        const endDate = dates.at(-1);
 
         campaignMetrics.push({
           campaign_id: campaignId,

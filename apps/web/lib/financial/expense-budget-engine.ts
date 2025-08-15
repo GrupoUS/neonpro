@@ -77,7 +77,7 @@ export interface ExpenseForecast {
 }
 
 export class ExpenseBudgetEngine {
-  private supabase = createClient();
+  private readonly supabase = createClient();
 
   // =====================================================================================
   // AUTOMATED EXPENSE CATEGORIZATION
@@ -98,8 +98,9 @@ export class ExpenseBudgetEngine {
       }
     );
 
-    if (error)
+    if (error) {
       throw new Error(`Expense categorization failed: ${error.message}`);
+    }
 
     return {
       categorized: categorizationResult.categorized_count,
@@ -124,8 +125,9 @@ export class ExpenseBudgetEngine {
       }
     );
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to fetch expense categories: ${error.message}`);
+    }
 
     return categoryData.map((category: any) => ({
       categoryId: category.category_id,
@@ -197,8 +199,9 @@ export class ExpenseBudgetEngine {
       .lte('created_at', dateRange.end.toISOString())
       .order('created_at', { ascending: false });
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to fetch budget alerts: ${error.message}`);
+    }
 
     return alertData.map((alert: any) => ({
       alertId: alert.id,
@@ -243,8 +246,9 @@ export class ExpenseBudgetEngine {
       .select('id')
       .single();
 
-    if (error)
+    if (error) {
       throw new Error(`Failed to create budget alert: ${error.message}`);
+    }
 
     return alertData.id;
   }
@@ -271,8 +275,9 @@ export class ExpenseBudgetEngine {
       }
     );
 
-    if (error)
+    if (error) {
       throw new Error(`Expense trend analysis failed: ${error.message}`);
+    }
 
     return trendData.map((trend: any) => ({
       period: trend.period,
@@ -300,8 +305,9 @@ export class ExpenseBudgetEngine {
       }
     );
 
-    if (error)
+    if (error) {
       throw new Error(`Cost optimization analysis failed: ${error.message}`);
+    }
 
     return insights.map((insight: any) => ({
       category: insight.category,
@@ -334,8 +340,9 @@ export class ExpenseBudgetEngine {
       }
     );
 
-    if (error)
+    if (error) {
       throw new Error(`Vendor expense analysis failed: ${error.message}`);
+    }
 
     return vendorData.map((vendor: any) => ({
       vendorId: vendor.vendor_id,
@@ -371,8 +378,9 @@ export class ExpenseBudgetEngine {
       }
     );
 
-    if (error)
+    if (error) {
       throw new Error(`Cost center allocation failed: ${error.message}`);
+    }
 
     return allocationData.map((center: any) => ({
       costCenterId: center.cost_center_id,
@@ -407,7 +415,9 @@ export class ExpenseBudgetEngine {
       }
     );
 
-    if (error) throw new Error(`Expense forecasting failed: ${error.message}`);
+    if (error) {
+      throw new Error(`Expense forecasting failed: ${error.message}`);
+    }
 
     return forecastData.map((forecast: any) => ({
       period: forecast.period,
@@ -442,7 +452,9 @@ export class ExpenseBudgetEngine {
       }
     );
 
-    if (error) throw new Error(`Budget plan creation failed: ${error.message}`);
+    if (error) {
+      throw new Error(`Budget plan creation failed: ${error.message}`);
+    }
 
     return budgetPlan;
   }

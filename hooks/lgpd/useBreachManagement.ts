@@ -206,7 +206,9 @@ export function useBreachManagement(): UseBreachManagementReturn {
         // Update statistics
         setStatistics((prev) => {
           const incident = incidents.find((i) => i.id === incidentId);
-          if (!incident) return prev;
+          if (!incident) {
+            return prev;
+          }
 
           const newStats = { ...prev };
 

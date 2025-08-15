@@ -338,7 +338,7 @@ export async function GET(
           stats.totalCollected = totalCollected;
           stats.averageCollectionPerActivity =
             totalCollected / activities.length;
-          stats.lastActivityDate = activities[activities.length - 1].created_at;
+          stats.lastActivityDate = activities.at(-1).created_at;
 
           // Find most effective activity type
           let maxEffectiveness = 0;
@@ -673,17 +673,27 @@ export async function PUT(
       updated_at: new Date().toISOString(),
     };
 
-    if (validatedData.currentStage)
+    if (validatedData.currentStage) {
       updateData.current_stage = validatedData.currentStage;
-    if (validatedData.nextActionType)
+    }
+    if (validatedData.nextActionType) {
       updateData.next_action_type = validatedData.nextActionType;
-    if (validatedData.nextActionDate)
+    }
+    if (validatedData.nextActionDate) {
       updateData.next_action_date = validatedData.nextActionDate;
-    if (validatedData.status) updateData.status = validatedData.status;
-    if (validatedData.assignedTo)
+    }
+    if (validatedData.status) {
+      updateData.status = validatedData.status;
+    }
+    if (validatedData.assignedTo) {
       updateData.assigned_to = validatedData.assignedTo;
-    if (validatedData.priority) updateData.priority = validatedData.priority;
-    if (validatedData.notes) updateData.notes = validatedData.notes;
+    }
+    if (validatedData.priority) {
+      updateData.priority = validatedData.priority;
+    }
+    if (validatedData.notes) {
+      updateData.notes = validatedData.notes;
+    }
 
     const { data: updatedWorkflow, error } = await supabase
       .from('collection_workflows')

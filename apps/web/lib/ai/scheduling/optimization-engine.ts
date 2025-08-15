@@ -108,9 +108,9 @@ interface AlternativeScenario {
 }
 
 class OptimizationEngine {
-  private supabase = createClient();
-  private aiCore: AISchedulingCore;
-  private constraints: OptimizationConstraints;
+  private readonly supabase = createClient();
+  private readonly aiCore: AISchedulingCore;
+  private readonly constraints: OptimizationConstraints;
 
   constructor(aiCore: AISchedulingCore) {
     this.aiCore = aiCore;
@@ -383,7 +383,9 @@ class OptimizationEngine {
     recommendations: SchedulingRecommendation[],
     metrics: OptimizationMetrics
   ): number {
-    if (recommendations.length === 0) return 0;
+    if (recommendations.length === 0) {
+      return 0;
+    }
 
     let confidence = 0.5; // Base confidence
 

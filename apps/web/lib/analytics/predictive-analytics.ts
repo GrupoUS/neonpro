@@ -509,13 +509,13 @@ export interface PlotArtifact {
 
 // Main Predictive Analytics Engine
 export class PredictiveAnalyticsEngine {
-  private supabase = createClient();
-  private models: Map<string, PredictiveModel> = new Map();
-  private predictions: Map<string, PredictionResult> = new Map();
-  private forecasts: Map<string, ForecastResult> = new Map();
-  private isTraining = false;
-  private predictionCache: Map<string, PredictionResult> = new Map();
-  private cacheTTL = 300_000; // 5 minutes
+  private readonly supabase = createClient();
+  private readonly models: Map<string, PredictiveModel> = new Map();
+  private readonly predictions: Map<string, PredictionResult> = new Map();
+  private readonly forecasts: Map<string, ForecastResult> = new Map();
+  private readonly isTraining = false;
+  private readonly predictionCache: Map<string, PredictionResult> = new Map();
+  private readonly cacheTTL = 300_000; // 5 minutes
 
   constructor() {
     this.initializeEngine();
@@ -564,7 +564,7 @@ export class PredictiveAnalyticsEngine {
       // Get model
       const model = this.models.get(request.modelId);
 
-      if (!(model && model.isActive)) {
+      if (!model?.isActive) {
         throw new Error(`Model not found or inactive: ${request.modelId}`);
       }
 
@@ -674,7 +674,7 @@ export class PredictiveAnalyticsEngine {
           dataPoints: timeSeriesData.length,
           trainingPeriod: {
             start: timeSeriesData[0]?.timestamp || '',
-            end: timeSeriesData[timeSeriesData.length - 1]?.timestamp || '',
+            end: timeSeriesData.at(-1)?.timestamp || '',
           },
           processingTime: Date.now() - Date.now(),
           qualityScore: this.calculateDataQuality(timeSeriesData),
@@ -889,7 +889,9 @@ export class PredictiveAnalyticsEngine {
   }
 
   private async initializeDefaultModels(): Promise<void> {
-    if (this.models.size > 0) return;
+    if (this.models.size > 0) {
+      return;
+    }
 
     // Create default models for each prediction type
     const defaultModels: Partial<PredictiveModel>[] = [
@@ -1119,7 +1121,9 @@ export class PredictiveAnalyticsEngine {
     for (const feature of model.features) {
       const value = processed[feature.name];
 
-      if (value === undefined || value === null) continue;
+      if (value === undefined || value === null) {
+        continue;
+      }
 
       for (const step of feature.preprocessing) {
         processed[feature.name] = this.applyPreprocessingStep(value, step);
@@ -1283,10 +1287,18 @@ export class PredictiveAnalyticsEngine {
     const confidence =
       rawPrediction.confidence || rawPrediction.probability || 0;
 
-    if (confidence >= 0.9) return 'very_high';
-    if (confidence >= 0.8) return 'high';
-    if (confidence >= 0.6) return 'medium';
-    if (confidence >= 0.4) return 'low';
+    if (confidence >= 0.9) {
+      return 'very_high';
+    }
+    if (confidence >= 0.8) {
+      return 'high';
+    }
+    if (confidence >= 0.6) {
+      return 'medium';
+    }
+    if (confidence >= 0.4) {
+      return 'low';
+    }
     return 'very_low';
   }
 
@@ -1343,14 +1355,18 @@ export class PredictiveAnalyticsEngine {
   }
 
   private interpretContribution(feature: string, contribution: number): string {
-    if (contribution > 0.1)
+    if (contribution > 0.1) {
       return `${feature} strongly supports the prediction`;
-    if (contribution > 0.05)
+    }
+    if (contribution > 0.05) {
       return `${feature} moderately supports the prediction`;
-    if (contribution < -0.1)
+    }
+    if (contribution < -0.1) {
       return `${feature} strongly opposes the prediction`;
-    if (contribution < -0.05)
+    }
+    if (contribution < -0.05) {
       return `${feature} moderately opposes the prediction`;
+    }
     return `${feature} has minimal impact on the prediction`;
   }
 

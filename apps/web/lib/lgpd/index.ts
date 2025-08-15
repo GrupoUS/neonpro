@@ -250,19 +250,19 @@ export interface LGPDSystemEvents {
  * orchestrating their interactions and ensuring comprehensive compliance.
  */
 export class LGPDComplianceSystem extends EventEmitter {
-  private consentManager: ConsentManager;
-  private dataSubjectRightsManager: DataSubjectRightsManager;
-  private complianceMonitor: ComplianceMonitor;
-  private dataRetentionManager: DataRetentionManager;
-  private breachDetectionSystem: BreachDetectionSystem;
-  private dataMinimizationManager: DataMinimizationManager;
-  private impactAssessmentManager: ImpactAssessmentManager;
-  private legalDocumentationManager: LegalDocumentationManager;
+  private readonly consentManager: ConsentManager;
+  private readonly dataSubjectRightsManager: DataSubjectRightsManager;
+  private readonly complianceMonitor: ComplianceMonitor;
+  private readonly dataRetentionManager: DataRetentionManager;
+  private readonly breachDetectionSystem: BreachDetectionSystem;
+  private readonly dataMinimizationManager: DataMinimizationManager;
+  private readonly impactAssessmentManager: ImpactAssessmentManager;
+  private readonly legalDocumentationManager: LegalDocumentationManager;
 
   private isInitialized = false;
   private healthCheckInterval: NodeJS.Timeout | null = null;
 
-  constructor(private config: LGPDSystemConfiguration) {
+  constructor(private readonly config: LGPDSystemConfiguration) {
     super();
     this.setMaxListeners(100);
 
@@ -465,8 +465,11 @@ export class LGPDComplianceSystem extends EventEmitter {
       const status = this.consentManager.getHealthStatus();
       moduleStatuses.consent = status;
       if (status.status !== 'healthy') {
-        if (status.status === 'unhealthy') overallStatus = 'unhealthy';
-        else if (overallStatus === 'healthy') overallStatus = 'degraded';
+        if (status.status === 'unhealthy') {
+          overallStatus = 'unhealthy';
+        } else if (overallStatus === 'healthy') {
+          overallStatus = 'degraded';
+        }
       }
     }
 
@@ -474,8 +477,11 @@ export class LGPDComplianceSystem extends EventEmitter {
       const status = this.dataSubjectRightsManager.getHealthStatus();
       moduleStatuses.dataSubjectRights = status;
       if (status.status !== 'healthy') {
-        if (status.status === 'unhealthy') overallStatus = 'unhealthy';
-        else if (overallStatus === 'healthy') overallStatus = 'degraded';
+        if (status.status === 'unhealthy') {
+          overallStatus = 'unhealthy';
+        } else if (overallStatus === 'healthy') {
+          overallStatus = 'degraded';
+        }
       }
     }
 
@@ -483,8 +489,11 @@ export class LGPDComplianceSystem extends EventEmitter {
       const status = this.complianceMonitor.getHealthStatus();
       moduleStatuses.compliance = status;
       if (status.status !== 'healthy') {
-        if (status.status === 'unhealthy') overallStatus = 'unhealthy';
-        else if (overallStatus === 'healthy') overallStatus = 'degraded';
+        if (status.status === 'unhealthy') {
+          overallStatus = 'unhealthy';
+        } else if (overallStatus === 'healthy') {
+          overallStatus = 'degraded';
+        }
       }
     }
 
@@ -492,8 +501,11 @@ export class LGPDComplianceSystem extends EventEmitter {
       const status = this.dataRetentionManager.getHealthStatus();
       moduleStatuses.retention = status;
       if (status.status !== 'healthy') {
-        if (status.status === 'unhealthy') overallStatus = 'unhealthy';
-        else if (overallStatus === 'healthy') overallStatus = 'degraded';
+        if (status.status === 'unhealthy') {
+          overallStatus = 'unhealthy';
+        } else if (overallStatus === 'healthy') {
+          overallStatus = 'degraded';
+        }
       }
     }
 
@@ -501,8 +513,11 @@ export class LGPDComplianceSystem extends EventEmitter {
       const status = this.breachDetectionSystem.getHealthStatus();
       moduleStatuses.breachDetection = status;
       if (status.status !== 'healthy') {
-        if (status.status === 'unhealthy') overallStatus = 'unhealthy';
-        else if (overallStatus === 'healthy') overallStatus = 'degraded';
+        if (status.status === 'unhealthy') {
+          overallStatus = 'unhealthy';
+        } else if (overallStatus === 'healthy') {
+          overallStatus = 'degraded';
+        }
       }
     }
 
@@ -510,8 +525,11 @@ export class LGPDComplianceSystem extends EventEmitter {
       const status = this.dataMinimizationManager.getHealthStatus();
       moduleStatuses.minimization = status;
       if (status.status !== 'healthy') {
-        if (status.status === 'unhealthy') overallStatus = 'unhealthy';
-        else if (overallStatus === 'healthy') overallStatus = 'degraded';
+        if (status.status === 'unhealthy') {
+          overallStatus = 'unhealthy';
+        } else if (overallStatus === 'healthy') {
+          overallStatus = 'degraded';
+        }
       }
     }
 
@@ -519,8 +537,11 @@ export class LGPDComplianceSystem extends EventEmitter {
       const status = this.impactAssessmentManager.getHealthStatus();
       moduleStatuses.impactAssessment = status;
       if (status.status !== 'healthy') {
-        if (status.status === 'unhealthy') overallStatus = 'unhealthy';
-        else if (overallStatus === 'healthy') overallStatus = 'degraded';
+        if (status.status === 'unhealthy') {
+          overallStatus = 'unhealthy';
+        } else if (overallStatus === 'healthy') {
+          overallStatus = 'degraded';
+        }
       }
     }
 
@@ -528,8 +549,11 @@ export class LGPDComplianceSystem extends EventEmitter {
       const status = this.legalDocumentationManager.getHealthStatus();
       moduleStatuses.documentation = status;
       if (status.status !== 'healthy') {
-        if (status.status === 'unhealthy') overallStatus = 'unhealthy';
-        else if (overallStatus === 'healthy') overallStatus = 'degraded';
+        if (status.status === 'unhealthy') {
+          overallStatus = 'unhealthy';
+        } else if (overallStatus === 'healthy') {
+          overallStatus = 'degraded';
+        }
       }
     }
 

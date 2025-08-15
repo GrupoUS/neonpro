@@ -28,12 +28,13 @@ import type {
 // =======================================
 
 export class EmailService {
-  private providers: Map<EmailProvider, EmailServiceInterface> = new Map();
+  private readonly providers: Map<EmailProvider, EmailServiceInterface> =
+    new Map();
   private settings: EmailSettings | null = null;
 
   constructor(
-    private supabase: any,
-    private clinicId: string
+    private readonly supabase: any,
+    private readonly clinicId: string
   ) {}
 
   // =======================================
@@ -42,7 +43,9 @@ export class EmailService {
 
   async initializeProviders(configs: EmailProviderConfig[]): Promise<void> {
     for (const config of configs) {
-      if (!config.isActive) continue;
+      if (!config.isActive) {
+        continue;
+      }
 
       try {
         const provider = await this.createProvider(config);
@@ -294,7 +297,9 @@ export class EmailService {
       .single();
 
     if (error) {
-      if (error.code === 'PGRST116') return null;
+      if (error.code === 'PGRST116') {
+        return null;
+      }
       throw new Error(`Failed to get email template: ${error.message}`);
     }
 
@@ -458,7 +463,7 @@ export class EmailService {
     return {
       messageId,
       recipient: events[0]?.metadata?.recipient || 'unknown',
-      status: events[events.length - 1]?.event || 'unknown',
+      status: events.at(-1)?.event || 'unknown',
       sentAt: sentEvent?.timestamp || new Date(),
       deliveredAt: deliveredEvent?.timestamp,
       openedAt: openedEvent?.timestamp,
@@ -487,7 +492,9 @@ export class EmailService {
 
   private getProviderName(provider: EmailServiceInterface): string {
     for (const [name, p] of this.providers.entries()) {
-      if (p === provider) return name;
+      if (p === provider) {
+        return name;
+      }
     }
     return 'unknown';
   }
@@ -546,7 +553,9 @@ export class EmailService {
       .single();
 
     if (error) {
-      if (error.code === 'PGRST116') return null;
+      if (error.code === 'PGRST116') {
+        return null;
+      }
       throw new Error(`Failed to get email settings: ${error.message}`);
     }
 
@@ -650,7 +659,7 @@ export class EmailService {
 // =======================================
 
 class SMTPEmailProvider implements EmailServiceInterface {
-  private transporter: nodemailer.Transporter;
+  private readonly transporter: nodemailer.Transporter;
 
   constructor(config: SMTPConfig) {
     this.transporter = nodemailer.createTransporter({
@@ -752,9 +761,9 @@ class SMTPEmailProvider implements EmailServiceInterface {
 }
 
 class SESEmailProvider implements EmailServiceInterface {
-  private client: SESClient;
+  private readonly client: SESClient;
 
-  constructor(private config: SESConfig) {
+  constructor(private readonly config: SESConfig) {
     this.client = new SESClient({
       region: config.region,
       credentials: {
@@ -861,8 +870,6 @@ class SESEmailProvider implements EmailServiceInterface {
 
 // Placeholder implementations for other providers
 class SendGridEmailProvider implements EmailServiceInterface {
-  constructor(_config: SendGridConfig) {}
-
   async sendEmail(_message: EmailMessage): Promise<EmailServiceResponse> {
     // SendGrid implementation would go here
     return { success: false, error: 'SendGrid not implemented yet' };
@@ -895,8 +902,6 @@ class SendGridEmailProvider implements EmailServiceInterface {
 }
 
 class MailgunEmailProvider implements EmailServiceInterface {
-  constructor(_config: MailgunConfig) {}
-
   async sendEmail(_message: EmailMessage): Promise<EmailServiceResponse> {
     return { success: false, error: 'Mailgun not implemented yet' };
   }
@@ -928,8 +933,6 @@ class MailgunEmailProvider implements EmailServiceInterface {
 }
 
 class ResendEmailProvider implements EmailServiceInterface {
-  constructor(_config: ResendConfig) {}
-
   async sendEmail(_message: EmailMessage): Promise<EmailServiceResponse> {
     return { success: false, error: 'Resend not implemented yet' };
   }
@@ -961,8 +964,6 @@ class ResendEmailProvider implements EmailServiceInterface {
 }
 
 class PostmarkEmailProvider implements EmailServiceInterface {
-  constructor(_config: PostmarkConfig) {}
-
   async sendEmail(_message: EmailMessage): Promise<EmailServiceResponse> {
     return { success: false, error: 'Postmark not implemented yet' };
   }

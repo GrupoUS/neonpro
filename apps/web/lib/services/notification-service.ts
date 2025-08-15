@@ -232,7 +232,9 @@ export class NotificationService {
         const priorityDiff =
           priorityOrder[b.priority] - priorityOrder[a.priority];
 
-        if (priorityDiff !== 0) return priorityDiff;
+        if (priorityDiff !== 0) {
+          return priorityDiff;
+        }
 
         return (
           new Date(a.accounts_payable.due_date).getTime() -
@@ -337,8 +339,12 @@ export class NotificationService {
     for (const payment of overdue) {
       // Determinar nível de escalação baseado em dias de atraso
       let escalationLevel = 1;
-      if (payment.days_overdue > 7) escalationLevel = 2;
-      if (payment.days_overdue > 15) escalationLevel = 3;
+      if (payment.days_overdue > 7) {
+        escalationLevel = 2;
+      }
+      if (payment.days_overdue > 15) {
+        escalationLevel = 3;
+      }
 
       // Criar notificação de escalação
       await this.queueNotification({

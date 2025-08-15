@@ -98,11 +98,11 @@ export interface DetectionRule {
 }
 
 export class SuspiciousActivityDetector {
-  private utils: SessionUtils;
-  private behaviorBaselines: Map<string, BehaviorBaseline> = new Map();
-  private activePatterns: Map<string, BehaviorPattern[]> = new Map();
-  private anomalyAlerts: Map<string, AnomalyAlert> = new Map();
-  private detectionRules: Map<string, DetectionRule> = new Map();
+  private readonly utils: SessionUtils;
+  private readonly behaviorBaselines: Map<string, BehaviorBaseline> = new Map();
+  private readonly activePatterns: Map<string, BehaviorPattern[]> = new Map();
+  private readonly anomalyAlerts: Map<string, AnomalyAlert> = new Map();
+  private readonly detectionRules: Map<string, DetectionRule> = new Map();
   private learningMode = true;
   private analysisInterval: NodeJS.Timeout | null = null;
 
@@ -324,7 +324,9 @@ export class SuspiciousActivityDetector {
           (p) => Date.now() - p.timestamp < 300_000 // Last 5 minutes
         );
 
-        if (recentPatterns.length === 0) continue;
+        if (recentPatterns.length === 0) {
+          continue;
+        }
 
         // Analyze patterns for anomalies
         const anomalies = await this.detectAnomalies(userId, recentPatterns);
@@ -352,13 +354,17 @@ export class SuspiciousActivityDetector {
     const anomalies: AnomalyAlert[] = [];
 
     for (const rule of this.detectionRules.values()) {
-      if (!rule.enabled) continue;
+      if (!rule.enabled) {
+        continue;
+      }
 
       const relevantPatterns = patterns.filter((p) =>
         rule.patternTypes.includes(p.patternType)
       );
 
-      if (relevantPatterns.length === 0) continue;
+      if (relevantPatterns.length === 0) {
+        continue;
+      }
 
       const anomaly = await this.applyDetectionRule(
         userId,
@@ -548,11 +554,21 @@ export class SuspiciousActivityDetector {
     let confidence = 50; // Base confidence
 
     // Increase confidence based on baseline data quality
-    if (baseline.avgTypingSpeed > 0) confidence += 10;
-    if (baseline.commonNavigationPaths.length > 5) confidence += 10;
-    if (baseline.usualLoginTimes.length > 3) confidence += 10;
-    if (baseline.frequentLocations.length > 2) confidence += 10;
-    if (baseline.avgSessionDuration > 0) confidence += 10;
+    if (baseline.avgTypingSpeed > 0) {
+      confidence += 10;
+    }
+    if (baseline.commonNavigationPaths.length > 5) {
+      confidence += 10;
+    }
+    if (baseline.usualLoginTimes.length > 3) {
+      confidence += 10;
+    }
+    if (baseline.frequentLocations.length > 2) {
+      confidence += 10;
+    }
+    if (baseline.avgSessionDuration > 0) {
+      confidence += 10;
+    }
 
     return Math.min(100, confidence);
   }
@@ -714,10 +730,15 @@ export class SuspiciousActivityDetector {
     const now = new Date();
     const hour = now.getHours();
 
-    if (hour < 6 || hour > 22) factors.push('off_hours');
-    if (patterns.length > 10) factors.push('high_activity');
-    if (patterns.some((p) => p.anomalyScore > 70))
+    if (hour < 6 || hour > 22) {
+      factors.push('off_hours');
+    }
+    if (patterns.length > 10) {
+      factors.push('high_activity');
+    }
+    if (patterns.some((p) => p.anomalyScore > 70)) {
       factors.push('multiple_anomalies');
+    }
 
     return factors;
   }

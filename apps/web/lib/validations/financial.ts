@@ -34,10 +34,14 @@ const cnpjSchema = z
   .regex(/^\d{14}$/, 'CNPJ must have exactly 14 digits')
   .refine((cnpj) => {
     // Basic CNPJ validation (simplified)
-    if (cnpj.length !== 14) return false;
+    if (cnpj.length !== 14) {
+      return false;
+    }
 
     // Check for invalid patterns (all same digits)
-    if (/^(\d)\1{13}$/.test(cnpj)) return false;
+    if (/^(\d)\1{13}$/.test(cnpj)) {
+      return false;
+    }
 
     return true;
   }, 'Invalid CNPJ format');
@@ -47,10 +51,14 @@ const cpfSchema = z
   .regex(/^\d{11}$/, 'CPF must have exactly 11 digits')
   .refine((cpf) => {
     // Basic CPF validation (simplified)
-    if (cpf.length !== 11) return false;
+    if (cpf.length !== 11) {
+      return false;
+    }
 
     // Check for invalid patterns (all same digits)
-    if (/^(\d)\1{10}$/.test(cpf)) return false;
+    if (/^(\d)\1{10}$/.test(cpf)) {
+      return false;
+    }
 
     return true;
   }, 'Invalid CPF format');
@@ -209,7 +217,9 @@ export const createInvoiceSchema = z
       .datetime('Invalid due date format')
       .optional()
       .refine((date) => {
-        if (!date) return true;
+        if (!date) {
+          return true;
+        }
         return new Date(date) > new Date();
       }, 'Due date must be in the future'),
     items: z
@@ -250,7 +260,9 @@ export const updateInvoiceSchema = z.object({
     .datetime('Invalid due date format')
     .optional()
     .refine((date) => {
-      if (!date) return true;
+      if (!date) {
+        return true;
+      }
       return new Date(date) > new Date();
     }, 'Due date must be in the future'),
   status: invoiceStatusSchema.optional(),

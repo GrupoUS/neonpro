@@ -136,9 +136,9 @@ const DEFAULT_DEVICE_POLICIES: Record<UserRole, DeviceSecurityPolicy> = {
 };
 
 export class DeviceTrackingManager {
-  private supabase;
-  private auditLogger: SecurityAuditLogger;
-  private devicePolicies: Record<UserRole, DeviceSecurityPolicy>;
+  private readonly supabase;
+  private readonly auditLogger: SecurityAuditLogger;
+  private readonly devicePolicies: Record<UserRole, DeviceSecurityPolicy>;
   private cleanupInterval?: NodeJS.Timeout;
 
   constructor(
@@ -206,7 +206,7 @@ export class DeviceTrackingManager {
     for (let i = 0; i < fingerprintString.length; i++) {
       const char = fingerprintString.charCodeAt(i);
       hash = (hash << 5) - hash + char;
-      hash = hash & hash; // Convert to 32-bit integer
+      hash &= hash; // Convert to 32-bit integer
     }
 
     return `dev_${Math.abs(hash).toString(36)}_${Date.now().toString(36)}`;
@@ -849,15 +849,33 @@ export class DeviceTrackingManager {
   private calculateRiskScore(riskFactors: DeviceRiskFactors): number {
     let score = 0;
 
-    if (riskFactors.isNewDevice) score += 0.2;
-    if (riskFactors.locationChange) score += 0.3;
-    if (riskFactors.fingerprintMismatch) score += 0.2;
-    if (riskFactors.suspiciousUserAgent) score += 0.4;
-    if (riskFactors.vpnDetected) score += 0.3;
-    if (riskFactors.torDetected) score += 0.6;
-    if (riskFactors.knownMaliciousIP) score += 0.8;
-    if (riskFactors.rapidLocationChanges) score += 0.5;
-    if (riskFactors.unusualAccessPatterns) score += 0.4;
+    if (riskFactors.isNewDevice) {
+      score += 0.2;
+    }
+    if (riskFactors.locationChange) {
+      score += 0.3;
+    }
+    if (riskFactors.fingerprintMismatch) {
+      score += 0.2;
+    }
+    if (riskFactors.suspiciousUserAgent) {
+      score += 0.4;
+    }
+    if (riskFactors.vpnDetected) {
+      score += 0.3;
+    }
+    if (riskFactors.torDetected) {
+      score += 0.6;
+    }
+    if (riskFactors.knownMaliciousIP) {
+      score += 0.8;
+    }
+    if (riskFactors.rapidLocationChanges) {
+      score += 0.5;
+    }
+    if (riskFactors.unusualAccessPatterns) {
+      score += 0.4;
+    }
 
     return Math.min(score, 1.0); // Cap at 1.0
   }
@@ -866,7 +884,9 @@ export class DeviceTrackingManager {
     coord1?: { latitude: number; longitude: number },
     coord2?: { latitude: number; longitude: number }
   ): number {
-    if (!(coord1 && coord2)) return 0;
+    if (!(coord1 && coord2)) {
+      return 0;
+    }
 
     const R = 6371; // Earth's radius in km
     const dLat = this.toRadians(coord2.latitude - coord1.latitude);

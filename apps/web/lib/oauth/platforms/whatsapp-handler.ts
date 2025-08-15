@@ -111,7 +111,7 @@ export class WhatsAppOAuthHandler extends BaseOAuthHandler {
 
       logger.info('WhatsApp token exchange successful', {
         provider: 'whatsapp',
-        hasRefreshToken: !!tokenData.refresh_token,
+        hasRefreshToken: Boolean(tokenData.refresh_token),
         expiresAt,
       });
 

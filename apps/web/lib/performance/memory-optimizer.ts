@@ -105,7 +105,9 @@ export class MemoryOptimizer {
   private detectLeaks(): MemoryLeak[] {
     const leaks: MemoryLeak[] = [];
 
-    if (this.snapshots.length < 5) return leaks;
+    if (this.snapshots.length < 5) {
+      return leaks;
+    }
 
     const recent = this.snapshots.slice(-5);
     const growthRate = this.calculateGrowthRate(recent);
@@ -140,7 +142,7 @@ export class MemoryOptimizer {
     const peak = this.snapshots.reduce((max, snap) =>
       snap.heapUsed > max.heapUsed ? snap : max
     );
-    const current = this.snapshots[this.snapshots.length - 1];
+    const current = this.snapshots.at(-1);
 
     return {
       baseline,
@@ -177,10 +179,12 @@ export class MemoryOptimizer {
    * Calculate memory growth rate
    */
   private calculateGrowthRate(snapshots: MemorySnapshot[]): number {
-    if (snapshots.length < 2) return 0;
+    if (snapshots.length < 2) {
+      return 0;
+    }
 
     const first = snapshots[0];
-    const last = snapshots[snapshots.length - 1];
+    const last = snapshots.at(-1);
     const timeDiff = (last.timestamp - first.timestamp) / (1000 * 60); // minutes
     const memoryDiff = last.heapUsed - first.heapUsed;
 
@@ -194,7 +198,7 @@ export class MemoryOptimizer {
     const opportunities: string[] = [];
 
     if (this.snapshots.length > 0) {
-      const current = this.snapshots[this.snapshots.length - 1];
+      const current = this.snapshots.at(-1);
 
       if (current.heapUsed > 100) {
         opportunities.push(
@@ -214,18 +218,28 @@ export class MemoryOptimizer {
    * Calculate memory efficiency score
    */
   private calculateEfficiency(): number {
-    if (this.snapshots.length === 0) return 100;
+    if (this.snapshots.length === 0) {
+      return 100;
+    }
 
-    const current = this.snapshots[this.snapshots.length - 1];
+    const current = this.snapshots.at(-1);
     const growthRate = this.calculateGrowthRate(this.snapshots.slice(-10));
 
     // Base score on memory usage and growth rate
     let score = 100;
 
-    if (current.heapUsed > 200) score -= 20;
-    if (current.heapUsed > 500) score -= 30;
-    if (growthRate > 10) score -= 25;
-    if (growthRate > 25) score -= 25;
+    if (current.heapUsed > 200) {
+      score -= 20;
+    }
+    if (current.heapUsed > 500) {
+      score -= 30;
+    }
+    if (growthRate > 10) {
+      score -= 25;
+    }
+    if (growthRate > 25) {
+      score -= 25;
+    }
 
     return Math.max(0, score);
   }

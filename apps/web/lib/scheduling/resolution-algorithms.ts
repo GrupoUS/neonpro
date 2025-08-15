@@ -295,11 +295,15 @@ export class MIPOptimizationAlgorithm implements ResolutionAlgorithm {
   private determineResolutionMethod(
     changes: AppointmentChange[]
   ): ResolutionMethod {
-    if (changes.length === 0) return 'manual_override';
-    if (changes.every((c) => c.changeType === 'reschedule'))
+    if (changes.length === 0) {
+      return 'manual_override';
+    }
+    if (changes.every((c) => c.changeType === 'reschedule')) {
       return 'automatic_reschedule';
-    if (changes.some((c) => c.changeType === 'reassign'))
+    }
+    if (changes.some((c) => c.changeType === 'reassign')) {
       return 'staff_reassignment';
+    }
     return 'resource_reallocation';
   }
 
@@ -953,7 +957,9 @@ export class RuleBasedAlgorithm implements ResolutionAlgorithm {
       (a) => a.id === conflict.appointmentBId
     );
 
-    if (!(appointment1 && appointment2)) return changes;
+    if (!(appointment1 && appointment2)) {
+      return changes;
+    }
 
     const targetAppointment =
       appointment1.priorityScore <= appointment2.priorityScore
@@ -1010,11 +1016,15 @@ export class RuleBasedAlgorithm implements ResolutionAlgorithm {
   ): boolean {
     // Check against business hours
     const hour = time.getHours();
-    if (hour < 8 || hour > 18) return false;
+    if (hour < 8 || hour > 18) {
+      return false;
+    }
 
     // Check against other appointments (simplified)
     const conflicts = context.availableAppointments.filter((a) => {
-      if (a.id === appointment.id) return false;
+      if (a.id === appointment.id) {
+        return false;
+      }
       const timeDiff = Math.abs(a.appointmentDate.getTime() - time.getTime());
       return timeDiff < 60 * 60 * 1000; // Less than 1 hour difference
     });
@@ -1025,10 +1035,18 @@ export class RuleBasedAlgorithm implements ResolutionAlgorithm {
   private calculateImpactSeverity(originalTime: Date, newTime: Date): number {
     const hoursDiff =
       Math.abs(newTime.getTime() - originalTime.getTime()) / (1000 * 60 * 60);
-    if (hoursDiff <= 2) return 1;
-    if (hoursDiff <= 6) return 2;
-    if (hoursDiff <= 12) return 3;
-    if (hoursDiff <= 24) return 4;
+    if (hoursDiff <= 2) {
+      return 1;
+    }
+    if (hoursDiff <= 6) {
+      return 2;
+    }
+    if (hoursDiff <= 12) {
+      return 3;
+    }
+    if (hoursDiff <= 24) {
+      return 4;
+    }
     return 5;
   }
 
@@ -1055,7 +1073,9 @@ export class RuleBasedAlgorithm implements ResolutionAlgorithm {
   private determineResolutionMethod(
     changes: AppointmentChange[]
   ): ResolutionMethod {
-    if (changes.length === 0) return 'manual_override';
+    if (changes.length === 0) {
+      return 'manual_override';
+    }
     return 'automatic_reschedule';
   }
 }
@@ -1064,12 +1084,13 @@ export class RuleBasedAlgorithm implements ResolutionAlgorithm {
  * Algorithm Factory for creating appropriate resolution algorithms
  */
 export class ResolutionAlgorithmFactory {
-  private algorithms: Map<StrategyType, () => ResolutionAlgorithm> = new Map([
-    ['mip_optimization', () => new MIPOptimizationAlgorithm()],
-    ['constraint_programming', () => new ConstraintProgrammingAlgorithm()],
-    ['genetic_algorithm', () => new GeneticAlgorithmOptimizer()],
-    ['rule_based', () => new RuleBasedAlgorithm()],
-  ]);
+  private readonly algorithms: Map<StrategyType, () => ResolutionAlgorithm> =
+    new Map([
+      ['mip_optimization', () => new MIPOptimizationAlgorithm()],
+      ['constraint_programming', () => new ConstraintProgrammingAlgorithm()],
+      ['genetic_algorithm', () => new GeneticAlgorithmOptimizer()],
+      ['rule_based', () => new RuleBasedAlgorithm()],
+    ]);
 
   createAlgorithm(strategyType: StrategyType): ResolutionAlgorithm {
     const factory = this.algorithms.get(strategyType);
@@ -1088,12 +1109,18 @@ export class ResolutionAlgorithmFactory {
     context: ResolutionContext
   ): StrategyType {
     // Simple recommendation logic - would be ML-powered in production
-    if (conflict.severityLevel <= 2) return 'rule_based';
-    if (conflict.conflictType === 'resource_conflict')
+    if (conflict.severityLevel <= 2) {
+      return 'rule_based';
+    }
+    if (conflict.conflictType === 'resource_conflict') {
       return 'mip_optimization';
-    if (context.systemConstraints.resourceCapacityLimits.length > 5)
+    }
+    if (context.systemConstraints.resourceCapacityLimits.length > 5) {
       return 'constraint_programming';
-    if (context.availableAppointments.length > 10) return 'genetic_algorithm';
+    }
+    if (context.availableAppointments.length > 10) {
+      return 'genetic_algorithm';
+    }
 
     return 'constraint_programming'; // Default fallback
   }

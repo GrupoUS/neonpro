@@ -225,7 +225,9 @@ async function getAnalyticsData(
 
   const { data, error } = await query.order('timestamp', { ascending: false });
 
-  if (error) throw error;
+  if (error) {
+    throw error;
+  }
   return data || [];
 }
 
@@ -264,7 +266,9 @@ async function getTrialsData(
 
   const { data, error } = await query.order('created_at', { ascending: false });
 
-  if (error) throw error;
+  if (error) {
+    throw error;
+  }
   return data || [];
 }
 
@@ -302,7 +306,9 @@ async function getSubscriptionsData(
 
   const { data, error } = await query.order('created_at', { ascending: false });
 
-  if (error) throw error;
+  if (error) {
+    throw error;
+  }
   return data || [];
 }
 
@@ -336,7 +342,9 @@ async function getUsersData(request: any) {
 
   const { data, error } = await query.order('created_at', { ascending: false });
 
-  if (error) throw error;
+  if (error) {
+    throw error;
+  }
   return data || [];
 }
 
@@ -365,14 +373,18 @@ async function getCampaignsData(request: any) {
 
   const { data, error } = await query.order('created_at', { ascending: false });
 
-  if (error) throw error;
+  if (error) {
+    throw error;
+  }
   return data || [];
 }
 
 // Helper functions for file conversion
 
 function convertToCSV(data: any[]): string {
-  if (data.length === 0) return '';
+  if (data.length === 0) {
+    return '';
+  }
 
   const headers = Object.keys(data[0]);
   const csvRows = [];

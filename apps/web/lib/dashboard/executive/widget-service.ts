@@ -82,9 +82,9 @@ export type WidgetData = z.infer<typeof WidgetDataSchema>;
 
 // Widget Service
 export class WidgetService {
-  private supabase = createClient();
-  private dataCache = new Map<string, WidgetData>();
-  private refreshTimers = new Map<string, NodeJS.Timeout>();
+  private readonly supabase = createClient();
+  private readonly dataCache = new Map<string, WidgetData>();
+  private readonly refreshTimers = new Map<string, NodeJS.Timeout>();
 
   /**
    * Get all widgets for a dashboard
@@ -599,12 +599,10 @@ export class WidgetService {
   /**
    * Get widget templates for quick setup
    */
-  getWidgetTemplates(): Array<
-    Omit<
-      WidgetConfiguration,
-      'id' | 'dashboardId' | 'clinicId' | 'createdAt' | 'updatedAt'
-    >
-  > {
+  getWidgetTemplates(): Omit<
+    WidgetConfiguration,
+    'id' | 'dashboardId' | 'clinicId' | 'createdAt' | 'updatedAt'
+  >[] {
     return [
       {
         title: 'Receita Mensal',

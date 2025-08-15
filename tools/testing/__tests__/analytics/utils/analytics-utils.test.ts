@@ -499,13 +499,11 @@ describe('Analytics Utils', () => {
       });
 
       test('should handle large datasets with pagination', () => {
-        const largeData = Array(1000)
-          .fill(null)
-          .map((_, i) => ({
-            id: i,
-            name: `User ${i}`,
-            amount: Math.random() * 100,
-          }));
+        const largeData = new Array(1000).fill(null).map((_, i) => ({
+          id: i,
+          name: `User ${i}`,
+          amount: Math.random() * 100,
+        }));
 
         const result = exportToPDF(largeData, 'Large Report');
 

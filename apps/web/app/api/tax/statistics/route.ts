@@ -45,8 +45,12 @@ export async function GET(request: Request) {
 
     // Build date filter
     const dateFilters = [];
-    if (startDate) dateFilters.push(['created_at', 'gte', startDate]);
-    if (endDate) dateFilters.push(['created_at', 'lte', endDate]);
+    if (startDate) {
+      dateFilters.push(['created_at', 'gte', startDate]);
+    }
+    if (endDate) {
+      dateFilters.push(['created_at', 'lte', endDate]);
+    }
 
     // Get tax calculation statistics
     let taxQuery = supabase

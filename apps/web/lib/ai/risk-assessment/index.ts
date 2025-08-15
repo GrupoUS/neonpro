@@ -268,16 +268,16 @@ interface SystemAnalytics {
 }
 
 class AIRiskAssessmentSystem {
-  private supabase = createClient();
-  private config: AIRiskAssessmentConfig;
-  private mlEngine: MLRiskAssessmentEngine;
-  private scoringAlgorithm: RiskScoringAlgorithm;
-  private safetyAlerts: SafetyAlertsSystem;
-  private insightsEngine: PredictiveInsightsEngine;
-  private isInitialized = false;
-  private assessmentCache: Map<string, ComprehensiveAssessmentResult> =
+  private readonly supabase = createClient();
+  private readonly config: AIRiskAssessmentConfig;
+  private readonly mlEngine: MLRiskAssessmentEngine;
+  private readonly scoringAlgorithm: RiskScoringAlgorithm;
+  private readonly safetyAlerts: SafetyAlertsSystem;
+  private readonly insightsEngine: PredictiveInsightsEngine;
+  private readonly isInitialized = false;
+  private readonly assessmentCache: Map<string, ComprehensiveAssessmentResult> =
     new Map();
-  private processingQueue: AssessmentRequest[] = [];
+  private readonly processingQueue: AssessmentRequest[] = [];
 
   constructor(config?: Partial<AIRiskAssessmentConfig>) {
     this.config = this.initializeConfig(config);
@@ -1132,9 +1132,15 @@ class AIRiskAssessmentSystem {
   ): string[] {
     const flags: string[] = [];
 
-    if (this.config.compliance.cfm) flags.push('CFM_COMPLIANT');
-    if (this.config.compliance.anvisa) flags.push('ANVISA_COMPLIANT');
-    if (this.config.compliance.lgpd) flags.push('LGPD_COMPLIANT');
+    if (this.config.compliance.cfm) {
+      flags.push('CFM_COMPLIANT');
+    }
+    if (this.config.compliance.anvisa) {
+      flags.push('ANVISA_COMPLIANT');
+    }
+    if (this.config.compliance.lgpd) {
+      flags.push('LGPD_COMPLIANT');
+    }
 
     return flags;
   }

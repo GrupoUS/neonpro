@@ -77,9 +77,9 @@ export class InAppProvider implements ChannelProvider {
   readonly channel = NotificationChannel.IN_APP;
 
   private config: InAppConfig | null = null;
-  private notifications: Map<string, InAppNotification[]> = new Map();
-  private websocket: WebSocket | null = null;
-  private listeners: Map<
+  private readonly notifications: Map<string, InAppNotification[]> = new Map();
+  private readonly websocket: WebSocket | null = null;
+  private readonly listeners: Map<
     string,
     ((notification: InAppNotification) => void)[]
   > = new Map();
@@ -125,7 +125,9 @@ export class InAppProvider implements ChannelProvider {
    * Inicializa conexão WebSocket
    */
   private async initializeWebSocket(): Promise<void> {
-    if (!this.config?.websocketUrl) return;
+    if (!this.config?.websocketUrl) {
+      return;
+    }
 
     try {
       this.websocket = new WebSocket(this.config.websocketUrl);
@@ -329,10 +331,18 @@ export class InAppProvider implements ChannelProvider {
     const userNotifications = this.notifications.get(userId) || [];
 
     const filtered = userNotifications.filter((n) => {
-      if (options.unreadOnly && n.isRead) return false;
-      if (options.category && n.category !== options.category) return false;
-      if (n.isArchived) return false;
-      if (n.expiresAt && n.expiresAt < new Date()) return false;
+      if (options.unreadOnly && n.isRead) {
+        return false;
+      }
+      if (options.category && n.category !== options.category) {
+        return false;
+      }
+      if (n.isArchived) {
+        return false;
+      }
+      if (n.expiresAt && n.expiresAt < new Date()) {
+        return false;
+      }
       return true;
     });
 
@@ -348,10 +358,14 @@ export class InAppProvider implements ChannelProvider {
    */
   async markAsRead(userId: string, notificationId: string): Promise<boolean> {
     const userNotifications = this.notifications.get(userId);
-    if (!userNotifications) return false;
+    if (!userNotifications) {
+      return false;
+    }
 
     const notification = userNotifications.find((n) => n.id === notificationId);
-    if (!notification) return false;
+    if (!notification) {
+      return false;
+    }
 
     notification.isRead = true;
     notification.readAt = new Date();
@@ -380,7 +394,9 @@ export class InAppProvider implements ChannelProvider {
    */
   async markAllAsRead(userId: string): Promise<number> {
     const userNotifications = this.notifications.get(userId);
-    if (!userNotifications) return 0;
+    if (!userNotifications) {
+      return 0;
+    }
 
     let count = 0;
     const now = new Date();
@@ -409,10 +425,14 @@ export class InAppProvider implements ChannelProvider {
     notificationId: string
   ): Promise<boolean> {
     const userNotifications = this.notifications.get(userId);
-    if (!userNotifications) return false;
+    if (!userNotifications) {
+      return false;
+    }
 
     const notification = userNotifications.find((n) => n.id === notificationId);
-    if (!notification) return false;
+    if (!notification) {
+      return false;
+    }
 
     notification.isArchived = true;
 
@@ -432,10 +452,14 @@ export class InAppProvider implements ChannelProvider {
     notificationId: string
   ): Promise<boolean> {
     const userNotifications = this.notifications.get(userId);
-    if (!userNotifications) return false;
+    if (!userNotifications) {
+      return false;
+    }
 
     const index = userNotifications.findIndex((n) => n.id === notificationId);
-    if (index === -1) return false;
+    if (index === -1) {
+      return false;
+    }
 
     userNotifications.splice(index, 1);
 
@@ -546,7 +570,9 @@ export class InAppProvider implements ChannelProvider {
    */
   private cleanupExpiredNotifications(userId: string): void {
     const userNotifications = this.notifications.get(userId);
-    if (!userNotifications) return;
+    if (!userNotifications) {
+      return;
+    }
 
     const now = new Date();
     const validNotifications = userNotifications.filter(

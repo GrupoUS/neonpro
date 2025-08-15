@@ -72,7 +72,7 @@ export class CacheKeyGenerator {
     for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i);
       hash = (hash << 5) - hash + char;
-      hash = hash & hash; // Convert to 32bit integer
+      hash &= hash; // Convert to 32bit integer
     }
     return hash.toString(36);
   }
@@ -80,7 +80,7 @@ export class CacheKeyGenerator {
 
 // Multi-level cache manager
 export class CacheManager {
-  private memoryCache = new Map<
+  private readonly memoryCache = new Map<
     string,
     { data: any; expires: number; tags: string[] }
   >();
@@ -96,7 +96,9 @@ export class CacheManager {
   get<T = any>(key: string): T | null {
     const cached = this.memoryCache.get(key);
 
-    if (!cached) return null;
+    if (!cached) {
+      return null;
+    }
 
     if (Date.now() > cached.expires) {
       this.memoryCache.delete(key);
@@ -276,10 +278,16 @@ export class CDNOptimization {
 
     // Use Next.js Image Optimization API
     const params = new URLSearchParams();
-    if (width) params.set('w', width.toString());
-    if (height) params.set('h', height.toString());
+    if (width) {
+      params.set('w', width.toString());
+    }
+    if (height) {
+      params.set('h', height.toString());
+    }
     params.set('q', quality.toString());
-    if (format !== 'auto') params.set('f', format);
+    if (format !== 'auto') {
+      params.set('f', format);
+    }
 
     return `/_next/image?url=${encodeURIComponent(src)}&${params.toString()}`;
   }
@@ -297,8 +305,12 @@ export class CDNOptimization {
       .map((resource) => {
         let link = `<link rel="preload" href="${resource.href}" as="${resource.as}"`;
 
-        if (resource.type) link += ` type="${resource.type}"`;
-        if (resource.crossorigin) link += ' crossorigin';
+        if (resource.type) {
+          link += ` type="${resource.type}"`;
+        }
+        if (resource.crossorigin) {
+          link += ' crossorigin';
+        }
 
         return `${link}>`;
       })

@@ -82,8 +82,8 @@ export interface ComprehensiveSearchResponse {
  * Provides unified search across all clinic data
  */
 export class ComprehensiveSearch {
-  private supabase: any;
-  private searchableTypes: Map<string, SearchableDataType> = new Map();
+  private readonly supabase: any;
+  private readonly searchableTypes: Map<string, SearchableDataType> = new Map();
 
   constructor(supabaseUrl?: string, supabaseKey?: string) {
     if (supabaseUrl && supabaseKey) {
@@ -728,7 +728,9 @@ export class ComprehensiveSearch {
    * Format file size
    */
   private formatFileSize(bytes: number): string {
-    if (!bytes) return '0 B';
+    if (!bytes) {
+      return '0 B';
+    }
 
     const k = 1024;
     const sizes = ['B', 'KB', 'MB', 'GB'];

@@ -18,7 +18,7 @@ import type {
 import { createClient } from '@/app/utils/supabase/server';
 
 export class MarketingCampaignsService {
-  private supabase;
+  private readonly supabase;
 
   constructor() {
     this.supabase = createClient();

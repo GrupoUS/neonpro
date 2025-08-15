@@ -52,9 +52,9 @@ const DEFAULT_CONFIG: CleanupJobConfig = {
 // ==================== AUTOMATED CLEANUP JOB CLASS ====================
 
 export class AutomatedCleanupJob {
-  private supabase: ReturnType<typeof createClient>;
+  private readonly supabase: ReturnType<typeof createClient>;
   private config: CleanupJobConfig;
-  private retentionEngine: DataRetentionEngine;
+  private readonly retentionEngine: DataRetentionEngine;
 
   constructor(config: Partial<CleanupJobConfig> = {}) {
     this.supabase = createClient();
@@ -405,7 +405,7 @@ export async function handleCleanupRequest(
   try {
     // Verificar autenticação (implementar conforme necessário)
     const authHeader = request.headers.get('Authorization');
-    if (!(authHeader && authHeader.startsWith('Bearer '))) {
+    if (!authHeader?.startsWith('Bearer ')) {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {
         status: 401,
         headers: { 'Content-Type': 'application/json' },

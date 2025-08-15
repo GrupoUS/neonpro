@@ -70,7 +70,7 @@ export interface ConflictDetectionConfig {
  * Detecta conflitos de agendamento em tempo real
  */
 export class ConflictDetectionEngine {
-  private supabase = createClient();
+  private readonly supabase = createClient();
   private config: ConflictDetectionConfig;
 
   constructor(config: Partial<ConflictDetectionConfig> = {}) {
@@ -652,7 +652,9 @@ export class ConflictDetectionEngine {
   private calculateOverallSeverity(
     conflicts: DetectedConflict[]
   ): 'low' | 'medium' | 'high' | 'critical' {
-    if (conflicts.length === 0) return 'low';
+    if (conflicts.length === 0) {
+      return 'low';
+    }
 
     const severityScores = {
       low: 1,
@@ -669,9 +671,15 @@ export class ConflictDetectionEngine {
     ).length;
     const highCount = conflicts.filter((c) => c.severity === 'high').length;
 
-    if (criticalCount > 0 || highCount >= 3) return 'critical';
-    if (maxSeverity >= 3) return 'high';
-    if (maxSeverity >= 2) return 'medium';
+    if (criticalCount > 0 || highCount >= 3) {
+      return 'critical';
+    }
+    if (maxSeverity >= 3) {
+      return 'high';
+    }
+    if (maxSeverity >= 2) {
+      return 'medium';
+    }
     return 'low';
   }
 

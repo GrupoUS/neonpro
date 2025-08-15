@@ -27,7 +27,7 @@ import type {
 import { createServerClient } from '@/app/utils/supabase/server';
 
 export class TreatmentPredictionService {
-  private supabase;
+  private readonly supabase;
 
   constructor() {
     this.supabase = createServerClient();
@@ -63,7 +63,9 @@ export class TreatmentPredictionService {
     }
 
     const { data, error } = await query;
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data as PredictionModel[];
   }
 
@@ -76,7 +78,9 @@ export class TreatmentPredictionService {
       .limit(1)
       .single();
 
-    if (error && error.code !== 'PGRST116') throw error;
+    if (error && error.code !== 'PGRST116') {
+      throw error;
+    }
     return (data as PredictionModel) || null;
   }
 
@@ -89,7 +93,9 @@ export class TreatmentPredictionService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data as PredictionModel;
   }
 
@@ -101,7 +107,9 @@ export class TreatmentPredictionService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data as PredictionModel;
   }
 
@@ -119,7 +127,9 @@ export class TreatmentPredictionService {
       .select('*, prediction_models(name, version, accuracy)')
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data as TreatmentPrediction;
   }
 
@@ -167,7 +177,9 @@ export class TreatmentPredictionService {
     }
 
     const { data, error } = await query;
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data as TreatmentPrediction[];
   }
 
@@ -188,7 +200,9 @@ export class TreatmentPredictionService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Update model performance after outcome validation
     await this.updateModelPerformance(data.model_id);
@@ -205,7 +219,9 @@ export class TreatmentPredictionService {
       .eq('patient_id', patientId)
       .single();
 
-    if (error && error.code !== 'PGRST116') throw error;
+    if (error && error.code !== 'PGRST116') {
+      throw error;
+    }
     return (data as PatientFactors) || null;
   }
 
@@ -218,7 +234,9 @@ export class TreatmentPredictionService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data as PatientFactors;
   }
 
@@ -235,7 +253,9 @@ export class TreatmentPredictionService {
     }
 
     const { data, error } = await query;
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data as TreatmentCharacteristics[];
   }
 
@@ -251,7 +271,9 @@ export class TreatmentPredictionService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data as TreatmentCharacteristics;
   }
 
@@ -792,7 +814,9 @@ export class TreatmentPredictionService {
     factor: string,
     impact: number
   ): string | undefined {
-    if (!this.isModifiableFactor(factor)) return;
+    if (!this.isModifiableFactor(factor)) {
+      return;
+    }
 
     const recommendations: Record<string, string> = {
       smoking_status: 'Consider smoking cessation program before treatment',
@@ -869,7 +893,9 @@ export class TreatmentPredictionService {
     }
 
     const { data, error } = await query;
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data as ModelPerformance[];
   }
 
@@ -881,7 +907,9 @@ export class TreatmentPredictionService {
       .eq('model_id', modelId)
       .eq('accuracy_validated', true);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     if (predictions && predictions.length > 0) {
       const correctPredictions = predictions.filter((p) => {
@@ -907,7 +935,9 @@ export class TreatmentPredictionService {
         .select()
         .single();
 
-      if (perfError) throw perfError;
+      if (perfError) {
+        throw perfError;
+      }
       return performanceData as ModelPerformance;
     }
 
@@ -925,7 +955,9 @@ export class TreatmentPredictionService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data as PredictionFeedback;
   }
 
@@ -940,7 +972,9 @@ export class TreatmentPredictionService {
     }
 
     const { data, error } = await query;
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data as PredictionFeedback[];
   }
 
@@ -1013,7 +1047,9 @@ export class TreatmentPredictionService {
     }
 
     const { data, error } = await query;
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Calculate analytics
     const analytics = {
@@ -1049,7 +1085,9 @@ export class TreatmentPredictionService {
   }
 
   private calculateOverallAccuracy(validatedPredictions: any[]): number {
-    if (validatedPredictions.length === 0) return 0;
+    if (validatedPredictions.length === 0) {
+      return 0;
+    }
 
     const correctPredictions = validatedPredictions.filter((p) => {
       const successThreshold = 0.7;
